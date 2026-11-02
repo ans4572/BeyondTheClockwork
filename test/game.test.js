@@ -64,9 +64,9 @@ test('crits use the cap and multiplier, and never touch damage over time', () =>
   assert.equal(g.s.effects.at(-1).color, '#e8433a');
   g.hitEnemy(enemy, 100, { dot: true }); assert.equal(enemy.hp, 1e5 - 300);
   g.random = () => 0.45; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 400);
-  // Every body starts with a 20% chance before any tuning.
-  g.s.profile.stats.critChance = 0; g.random = () => 0.19; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 600);
-  g.random = () => 0.21; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 700);
+  // Every body starts with a 10% chance before any tuning.
+  g.s.profile.stats.critChance = 0; g.random = () => 0.09; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 600);
+  g.random = () => 0.11; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 700);
 });
 test('the new economy, dodge, energy and status stats each do their job', () => {
   const g = arena(); g.s.profile.stats.dodgeCooldown = 20; g.dodge();

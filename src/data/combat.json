@@ -11,7 +11,7 @@
   },
   "player": {
     "maxHp": 100,
-    "critChance": 0.2,
+    "critChance": 0.1,
     "speed": 3.5,
     "maxEnergy": 100,
     "energyPerBasicPhase": 8,
@@ -51,7 +51,7 @@
     "permanentConditionalDamageBonus": 0.6,
     "totalCooldownReduction": 0.35,
     "minDodgeCooldown": 0.45,
-    "critChance": 0.4,
+    "critChance": 0.3,
     "critMultiplier": 1.5,
     "shieldFractionMaxHp": 0.5,
     "lightHealBasePerRoom": 12,

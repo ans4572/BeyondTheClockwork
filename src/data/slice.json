@@ -868,7 +868,7 @@
     {
       "id": "critChance",
       "name": "치명타 확률",
-      "description": "공격이 치명타로 들어갈 확률이 기본 20%에서 늘어난다.",
+      "description": "공격이 치명타로 들어갈 확률이 기본 10%에서 늘어난다.",
       "perRank": 0.01,
       "unit": "percent",
       "maxRank": 20,
