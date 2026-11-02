@@ -14,7 +14,7 @@ export function segmentDistance(p, a, b) {
   return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
 }
 
-const JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
+const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
 export class Game {
   constructor(data, savedState = null, onSave = () => {}) {
@@ -275,7 +275,7 @@ export class Game {
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount); enemy.flashUntil = this.s.time + 0.09;
     this.tutorial.onHit(enemy, !!options.basic);
-    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? '#ffb02e' : options.color || '#fff4cd', 0.65, amount, { crit });
+    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
     const held = enemy.statuses.windPressure > this.s.time ? this.trait('galeHold')?.stunMultiplier || 1 : 1;
     if (!enemy.boss && options.stagger) enemy.stunUntil = Math.max(enemy.stunUntil, this.s.time + this.config.rules.normalHitStun * held);
@@ -290,14 +290,12 @@ export class Game {
   }
   /** Queues a hit for the browser to feel; nobody drains it in tests, so it stops growing. */
   sense(hit) { if (this.feel.length < FEEL_LIMIT) this.feel.push(hit); }
-  /** A wrench blow lands: the body jolts, light enemies give ground, and a spark marks the contact. */
+  /** A wrench blow lands: the body jolts and light enemies give ground. */
   punch(enemy, attack, hit) {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
     this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
     if (!enemy.boss && !enemy.dummy && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
-    this.effect('impact', enemy.x - cos * enemy.radius * 0.6, enemy.y - sin * enemy.radius * 0.6 - 0.4, hit.crit ? '#ffd257' : '#fff6d6', 0.14, heavy || hit.crit ? 1 : 0.7, { angle: attack.angle });
-    if (heavy) this.effect('ring', enemy.x, enemy.y - 0.3, '#fff6d6', 0.22, 1.1);
   }
   addStagger(enemy, amount, applyPressure = true) {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;

@@ -7,7 +7,7 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
-const SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_POP = 0.15;
+const SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
@@ -415,9 +415,8 @@ export class CanvasRenderer {
       if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
-      // Numbers pop larger for an instant, and critical ones stay larger with a mark.
-      if (fx.type === 'number') { const pop = fraction < NUMBER_POP ? 1 + (NUMBER_POP - fraction) / NUMBER_POP * 0.6 : 1; this.text(`${Math.round(fx.value)}${fx.crit ? '!' : ''}`, x, y - fraction * 20 - 15, fx.color, Math.round((fx.crit ? 14 : 10) * pop)); }
-      if (fx.type === 'impact') { c.globalAlpha = 1; c.lineWidth = 3; const reach = fx.value * 20 * (0.5 + fraction * 0.6); for (let i = 0; i < 8; i++) { const a = fx.angle + i * TAU / 8, r = i % 2 ? reach * 0.55 : reach; this.line(x + Math.cos(a) * reach * 0.25, y + Math.sin(a) * reach * 0.25, x + Math.cos(a) * r, y + Math.sin(a) * r, fx.color, i % 2 ? 2 : 3); } if (fraction < 0.4) this.circle(x, y, 4 * fx.value, fx.color); }
+      // Critical hits show in red, a little larger.
+      if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
       if (fx.type === 'swing') { c.lineWidth = 5; c.beginPath(); c.arc(x, y, fx.value * 20 * 0.8, fx.angle - 0.8, fx.angle + 0.8); c.stroke(); }
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }

@@ -61,7 +61,7 @@ test('crits use the cap and multiplier, and never touch damage over time', () =>
   const g = arena(), enemy = inert(g); enemy.hp = enemy.maxHp = 1e5;
   g.s.profile.stats.critChance = 20; g.s.profile.stats.critDamage = 20; g.random = () => 0.1;
   g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 200);
-  assert.equal(g.s.effects.at(-1).color, '#ffb02e');
+  assert.equal(g.s.effects.at(-1).color, '#e8433a');
   g.hitEnemy(enemy, 100, { dot: true }); assert.equal(enemy.hp, 1e5 - 300);
   g.random = () => 0.2; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 400);
   g.s.profile.stats.critChance = 0; let rolls = 0; g.random = () => { rolls++; return 0; };
