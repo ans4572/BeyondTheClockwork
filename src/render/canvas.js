@@ -9,7 +9,7 @@ import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
-const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
+const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
@@ -75,7 +75,8 @@ export class CanvasRenderer {
     for (const badge of badges) {
       const image = this.mapImages?.get(STATUS_ICONS[badge.id]);
       if (image) c.drawImage(image, x, y, BADGE_SIZE, BADGE_SIZE);
-      if (badge.count > 1) { this.rect(x + BADGE_SIZE, y + 3, COUNT_WIDTH - 1, 9, '#2b3345'); this.text(String(badge.count), x + BADGE_SIZE + 3, y + 11, '#fff4d6', 8); }
+      // Stacks read as a small ×N beside the icon, outlined so it stays legible over any floor.
+      if (badge.count > 1) { c.font = `700 ${COUNT_SIZE}px "Malgun Gothic", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
       x += width(badge);
     }
   }

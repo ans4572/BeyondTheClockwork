@@ -9991,8 +9991,8 @@
     "drummer-move/south": {
       "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south/sheet.png",
       "provider": "pixellab",
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "frameWidth": 160,
+      "frameHeight": 160,
       "columns": 6,
       "frameCount": 8,
       "frameDurationsMs": [
@@ -10009,16 +10009,16 @@
       "loop": true,
       "scale": 1,
       "anchor": [
-        62,
-        105
+        75,
+        124
       ],
       "bodyHeight": 100
     },
     "drummer-idle/south": {
       "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south.png",
       "provider": "pixellab",
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "frameWidth": 160,
+      "frameHeight": 160,
       "columns": 1,
       "frameCount": 1,
       "frameDurationsMs": [
@@ -10028,8 +10028,8 @@
       "loop": false,
       "scale": 1,
       "anchor": [
-        59,
-        108
+        75,
+        124
       ],
       "bodyHeight": 100
     },

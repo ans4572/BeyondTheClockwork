@@ -4718,13 +4718,13 @@
       "enemy": "drummer",
       "direction": "south",
       "provider": "pixellab",
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "frameWidth": 160,
+      "frameHeight": 160,
       "columns": 6,
       "rows": 2,
       "anchor": [
-        0.4846955128205128,
-        0.8203125
+        0.47032390510948907,
+        0.775
       ],
       "scale": 0.82,
       "action": "move",
@@ -4748,13 +4748,13 @@
       "enemy": "drummer",
       "direction": "south",
       "provider": "pixellab",
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "frameWidth": 160,
+      "frameHeight": 160,
       "columns": 1,
       "rows": 1,
       "anchor": [
-        0.4629048813868613,
-        0.84375
+        0.47032390510948907,
+        0.775
       ],
       "scale": 0.82,
       "action": "idle",
