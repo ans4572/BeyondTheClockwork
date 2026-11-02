@@ -56,7 +56,7 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 0.42,
+    "waveDamageShare": 0.9,
     "introEnemyHp": 52,
     "aggroUnits": 6,
     "aggroLinkUnits": 3.5,
@@ -132,7 +132,7 @@
     "nutcracker": {
       "name": "방패 호두까기",
       "hp": 300,
-      "damage": 13,
+      "damage": 12,
       "speed": 1.5,
       "radius": 0.55,
       "attackRange": 2.8,
@@ -207,6 +207,82 @@
       "attack": "doubleWave",
       "followupDelay": 0.8,
       "followupRadiusBonus": 1.0
+    },
+    "musicbox": {
+      "name": "오르골 포탑",
+      "hp": 160,
+      "damage": 7,
+      "speed": 0,
+      "radius": 0.5,
+      "attackRange": 8,
+      "tell": 0.9,
+      "recovery": 1.6,
+      "color": "#9fd0c4",
+      "attack": "spiral",
+      "stationary": true,
+      "bullets": 8,
+      "volleys": 3,
+      "volleyGap": 0.35,
+      "projectileSpeed": 4.5
+    },
+    "jackbox": {
+      "name": "깜짝 상자",
+      "hp": 110,
+      "damage": 12,
+      "speed": 3.4,
+      "radius": 0.45,
+      "attackRange": 3.5,
+      "tell": 0.9,
+      "recovery": 1.8,
+      "color": "#d9534f",
+      "attack": "ambush",
+      "popRadius": 1.4
+    },
+    "spintop": {
+      "name": "팽이 병정",
+      "hp": 140,
+      "damage": 9,
+      "speed": 2,
+      "radius": 0.45,
+      "attackRange": 6,
+      "tell": 0.7,
+      "recovery": 1.5,
+      "color": "#c44a4a",
+      "attack": "spin",
+      "spinSpeed": 8,
+      "spinSeconds": 1.6,
+      "spinHitGap": 0.5
+    },
+    "drummer": {
+      "name": "북치기 인형",
+      "hp": 120,
+      "damage": 0,
+      "speed": 1.6,
+      "radius": 0.4,
+      "attackRange": 6,
+      "tell": 0.8,
+      "recovery": 2.5,
+      "color": "#e0a33c",
+      "attack": "beat",
+      "beatRadius": 4.5,
+      "beatSeconds": 4,
+      "beatHaste": 0.4,
+      "beatArmor": 0.4
+    },
+    "pikeman": {
+      "name": "태엽 창병",
+      "hp": 150,
+      "damage": 11,
+      "speed": 1.9,
+      "radius": 0.42,
+      "attackRange": 3.4,
+      "tell": 0.75,
+      "recovery": 1.4,
+      "color": "#d1a85a",
+      "attack": "thrust",
+      "thrustWidth": 0.45,
+      "followupDelay": 0.45,
+      "followupLength": 2.4
     }
   },
   "bossAI": {
@@ -501,7 +577,7 @@
           "guard"
         ],
         [
-          "rat",
+          "jackbox",
           "rat",
           "rat",
           "rat",
@@ -530,7 +606,7 @@
         [
           "guard",
           "guard",
-          "rabbit",
+          "musicbox",
           "rabbit",
           "guard",
           "guard"
@@ -563,14 +639,14 @@
         [
           "trumpet",
           "trumpet",
-          "rabbit",
+          "drummer",
           "rabbit",
           "trumpet",
           "trumpet"
         ],
         [
-          "guard",
-          "guard",
+          "pikeman",
+          "pikeman",
           "rat",
           "rat",
           "rat",
@@ -611,7 +687,7 @@
       "short": "적재장",
       "waves": [
         [
-          "guard",
+          "spintop",
           "guard",
           "guard",
           "trumpet",
@@ -619,7 +695,7 @@
           "guard"
         ],
         [
-          "rat",
+          "jackbox",
           "rat",
           "rat",
           "rat",
@@ -630,7 +706,7 @@
         ],
         [
           "nutcracker",
-          "trumpet",
+          "musicbox",
           "trumpet",
           "nutcracker",
           "trumpet"
@@ -646,7 +722,7 @@
       "short": "분수",
       "waves": [
         [
-          "rabbit",
+          "drummer",
           "rabbit",
           "rabbit",
           "trumpet",
@@ -655,7 +731,7 @@
         ],
         [
           "nutcracker",
-          "guard",
+          "pikeman",
           "guard",
           "rat",
           "rat",
@@ -664,7 +740,7 @@
           "guard"
         ],
         [
-          "rabbit",
+          "musicbox",
           "rabbit",
           "trumpet",
           "trumpet",
@@ -683,7 +759,7 @@
       "guaranteedMod": true,
       "waves": [
         [
-          "guard",
+          "spintop",
           "guard",
           "guard",
           "trumpet",
@@ -695,7 +771,7 @@
         [
           "nutcracker",
           "nutcracker",
-          "rat",
+          "jackbox",
           "rat",
           "rat",
           "nutcracker",
@@ -703,14 +779,14 @@
           "rat"
         ],
         [
-          "rabbit",
+          "pikeman",
           "rabbit",
           "trumpet",
           "rabbit",
           "rabbit"
         ]
       ],
-      "power": 0.76
+      "power": 0.74
     },
     {
       "id": "stop-11",
@@ -720,8 +796,8 @@
       "short": "리본길",
       "waves": [
         [
-          "rat",
-          "rat",
+          "jackbox",
+          "jackbox",
           "rat",
           "rat",
           "rat",
@@ -731,7 +807,7 @@
         ],
         [
           "nutcracker",
-          "guard",
+          "drummer",
           "guard",
           "trumpet",
           "trumpet",
@@ -743,14 +819,14 @@
           "guard",
           "rabbit",
           "rabbit",
-          "trumpet",
+          "musicbox",
           "trumpet",
           "guard",
           "rabbit",
           "rabbit"
         ]
       ],
-      "power": 0.8
+      "power": 0.77
     },
     {
       "id": "stop-12",
@@ -761,8 +837,8 @@
       "waves": [
         [
           "elite",
-          "guard",
-          "guard",
+          "spintop",
+          "pikeman",
           "trumpet",
           "trumpet",
           "elite",
@@ -771,8 +847,8 @@
         ],
         [
           "nutcracker",
-          "nutcracker",
-          "rat",
+          "guard",
+          "jackbox",
           "rat",
           "rat",
           "nutcracker",
@@ -781,14 +857,14 @@
         ],
         [
           "elite",
-          "rabbit",
+          "drummer",
           "rabbit",
           "trumpet",
           "elite",
           "rabbit"
         ]
       ],
-      "power": 0.8
+      "power": 0.76
     },
     {
       "id": "stop-13",

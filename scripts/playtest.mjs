@@ -49,12 +49,15 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     let dodge = false;
     // A player reads a tell from as far as that enemy can reach, not from a fixed distance.
     const danger = enemies.find(e => e.tell && e.tell.until - game.s.time < 0.28 && (e.boss || distance(game.p, e) < Math.max(4, (e.attackRange || 0) + (e.burstRadius || 0) + 1)));
+    // A swing plants the feet, so the bot does not start one while a nearby enemy is about to strike.
+    const windingUp = enemies.some(e => e.tell && e.tell.until - game.s.time < 0.6 && (e.boss || distance(game.p, e) < Math.max(4, (e.attackRange || 0) + (e.burstRadius || 0) + 1)));
     if (danger) {
       const type = danger.tell.type;
       move = type === 'overcharge' || type === 'doubleWave' || type === 'eliteWave' || type === 'magnet' ? Math.atan2(game.p.y - danger.tell.y, game.p.x - danger.tell.x) : danger.tell.angle + Math.PI / 2;
       if (type === 'march') move = Math.PI;
       // A swing or a burst is stepped back from, not sidestepped inside its reach.
       if (type === 'melee' || type === 'burst') move = Math.atan2(game.p.y - danger.y, game.p.x - danger.x);
+      if (type === 'ambush') move = Math.atan2(game.p.y - danger.tell.targetY, game.p.x - danger.tell.targetX);
       speed = 1; dodge = danger.tell.until - game.s.time < 0.13;
     }
     if (tick % 30 === 0) {
@@ -63,7 +66,7 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     }
     // Still stuck half a second later, it tries the next quarter turn.
     if (stuckFrames >= 30) move += Math.PI / 2 * (stuckFrames / 30);
-    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && calm && d < 2.5, dodge, skill: calm ? tick % 4 : undefined, fusion: calm });
+    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && !windingUp && calm && d < 1.6 + (target.radius || 0), dodge, skill: calm ? tick % 4 : undefined, fusion: calm });
   }
   return { seed, mode: game.s.mode, node: game.s.run ? game.s.run.node + 1 : game.s.result?.node, seconds: Math.round(game.s.run?.elapsed || game.s.result?.elapsed || 0), hp: Math.round(game.p.hp), damageTaken: Math.round(game.s.run?.damageTaken || game.s.result?.damageTaken || 0), baseGears: game.s.run?.baseGears || game.s.result?.baseGears || 0, upgrades: game.s.profile.stats };
 }

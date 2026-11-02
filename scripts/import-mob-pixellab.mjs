@@ -52,7 +52,8 @@ for (const [enemy, { size: listed, scale, ...actions }] of Object.entries(jobs))
     const base = { enemy, direction, provider: 'pixellab', frameWidth: size, frameHeight: size, columns: COLUMNS, rows, anchor, scale };
     clips.push({ ...base, action, image: `clips/${enemy}-${action}-${direction}/sheet.png`, frameCount: frames, frameDurationsMs, durationMs, loop: action === 'move', attackEvents: action === 'attack' ? [{ timeMs: Math.round(timing(enemy).tell * 1000) }] : [] });
     const still = `${ROOT}/rotations/${enemy}/${direction}.png`, stillSize = (await sharp(still).metadata()).width;
-    if (action === 'move') clips.push({ ...base, action: 'idle', frameWidth: stillSize, frameHeight: stillSize, anchor: await feet(still, stillSize), columns: 1, rows: 1, image: `rotations/${enemy}/${direction}.png`, frameCount: 1, frameDurationsMs: [0], durationMs: 0, loop: false, attackEvents: [] });
+    // Every direction gets a still from its rotation once, even a mob that never walks.
+    if (!clips.some(c => c.enemy === enemy && c.action === 'idle' && c.direction === direction)) clips.push({ ...base, action: 'idle', frameWidth: stillSize, frameHeight: stillSize, anchor: await feet(still, stillSize), columns: 1, rows: 1, image: `rotations/${enemy}/${direction}.png`, frameCount: 1, frameDurationsMs: [0], durationMs: 0, loop: false, attackEvents: [] });
   }
 }
 await writeFile(`${ROOT}/clips.json`, `${JSON.stringify({ schemaVersion: 1, producer: 'pixellab', clips }, null, 2)}\n`);

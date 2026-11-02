@@ -19,8 +19,8 @@ const battle = (type = 'guard') => {
 };
 const tick = (a, g, seconds = 1 / 60) => { g.s.time += seconds; return a.update(seconds, g); };
 
-test('all four mobs and both bosses have idle, move and attack in eight directions on real sheets', () => {
-  assert.equal(Object.keys(clips.clips).length, 192);
+test('every mob and both bosses have idle and attack in eight directions, and all but the music box move on real sheets', () => {
+  assert.equal(Object.keys(clips.clips).length, 304);
   for (const [key, clip] of Object.entries(clips.clips)) {
     for (const url of [clip.sheet, clip.effect].filter(Boolean)) {
       const [width, height] = pngSize(new URL(`..${url}`, import.meta.url));

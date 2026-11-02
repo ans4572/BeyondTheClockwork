@@ -35,7 +35,21 @@
     "collectorRoco-attack",
     "captainBrass-move",
     "captainBrass-idle",
-    "captainBrass-attack"
+    "captainBrass-attack",
+    "musicbox-attack",
+    "musicbox-idle",
+    "jackbox-move",
+    "jackbox-idle",
+    "jackbox-attack",
+    "spintop-move",
+    "spintop-idle",
+    "spintop-attack",
+    "drummer-move",
+    "drummer-idle",
+    "drummer-attack",
+    "pikeman-move",
+    "pikeman-idle",
+    "pikeman-attack"
   ],
   "clips": {
     "guard-idle/east": {
@@ -8453,6 +8467,2627 @@
         159
       ],
       "bodyHeight": 122
+    },
+    "musicbox-attack/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-attack/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-attack/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "musicbox-attack/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        105
+      ],
+      "bodyHeight": 81
+    },
+    "musicbox-attack/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 79
+    },
+    "musicbox-attack/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 80
+    },
+    "musicbox-attack/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "musicbox-attack/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "musicbox-idle/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "jackbox-move/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        57,
+        108
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-move/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        113
+      ],
+      "bodyHeight": 102
+    },
+    "jackbox-move/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        117
+      ],
+      "bodyHeight": 105
+    },
+    "jackbox-move/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        116
+      ],
+      "bodyHeight": 104
+    },
+    "jackbox-move/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        111
+      ],
+      "bodyHeight": 96
+    },
+    "jackbox-move/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        116
+      ],
+      "bodyHeight": 104
+    },
+    "jackbox-move/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        117
+      ],
+      "bodyHeight": 105
+    },
+    "jackbox-move/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-idle/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        57,
+        114
+      ],
+      "bodyHeight": 104
+    },
+    "jackbox-attack/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "jackbox-attack/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "spintop-move/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-move/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        98
+      ],
+      "bodyHeight": 77
+    },
+    "spintop-move/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        101
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-move/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        99
+      ],
+      "bodyHeight": 77
+    },
+    "spintop-move/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-move/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 76
+    },
+    "spintop-move/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        101
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-move/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-idle/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        99
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "spintop-attack/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        98
+      ],
+      "bodyHeight": 78
+    },
+    "drummer-move/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        105
+      ],
+      "bodyHeight": 100
+    },
+    "drummer-idle/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        108
+      ],
+      "bodyHeight": 100
+    },
+    "drummer-move/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        66,
+        110
+      ],
+      "bodyHeight": 93
+    },
+    "drummer-idle/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        113
+      ],
+      "bodyHeight": 102
+    },
+    "drummer-move/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        116
+      ],
+      "bodyHeight": 99
+    },
+    "drummer-idle/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        116
+      ],
+      "bodyHeight": 102
+    },
+    "drummer-move/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        60,
+        112
+      ],
+      "bodyHeight": 101
+    },
+    "drummer-idle/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        113
+      ],
+      "bodyHeight": 102
+    },
+    "drummer-move/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        106
+      ],
+      "bodyHeight": 96
+    },
+    "drummer-idle/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        109
+      ],
+      "bodyHeight": 101
+    },
+    "drummer-move/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        111
+      ],
+      "bodyHeight": 102
+    },
+    "drummer-idle/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        113
+      ],
+      "bodyHeight": 102
+    },
+    "drummer-move/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        115
+      ],
+      "bodyHeight": 98
+    },
+    "drummer-idle/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        116
+      ],
+      "bodyHeight": 103
+    },
+    "drummer-move/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        110
+      ],
+      "bodyHeight": 103
+    },
+    "drummer-idle/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        113
+      ],
+      "bodyHeight": 103
+    },
+    "drummer-attack/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        86,
+        129
+      ],
+      "bodyHeight": 100
+    },
+    "drummer-attack/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        77,
+        131
+      ],
+      "bodyHeight": 103
+    },
+    "drummer-attack/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        72,
+        130
+      ],
+      "bodyHeight": 100
+    },
+    "drummer-attack/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        76,
+        126
+      ],
+      "bodyHeight": 98
+    },
+    "drummer-attack/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        85,
+        128
+      ],
+      "bodyHeight": 99
+    },
+    "drummer-attack/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        82,
+        132
+      ],
+      "bodyHeight": 100
+    },
+    "drummer-attack/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        71,
+        133
+      ],
+      "bodyHeight": 103
+    },
+    "drummer-attack/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        77,
+        127
+      ],
+      "bodyHeight": 95
+    },
+    "pikeman-move/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        67,
+        103
+      ],
+      "bodyHeight": 99
+    },
+    "pikeman-idle/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        54,
+        105
+      ],
+      "bodyHeight": 99
+    },
+    "pikeman-move/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        66,
+        106
+      ],
+      "bodyHeight": 100
+    },
+    "pikeman-idle/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        56,
+        108
+      ],
+      "bodyHeight": 99
+    },
+    "pikeman-move/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 89
+    },
+    "pikeman-idle/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        110
+      ],
+      "bodyHeight": 100
+    },
+    "pikeman-move/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        59,
+        105
+      ],
+      "bodyHeight": 94
+    },
+    "pikeman-idle/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        110
+      ],
+      "bodyHeight": 98
+    },
+    "pikeman-move/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        103
+      ],
+      "bodyHeight": 100
+    },
+    "pikeman-idle/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        107
+      ],
+      "bodyHeight": 100
+    },
+    "pikeman-move/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 99
+    },
+    "pikeman-idle/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        108
+      ],
+      "bodyHeight": 103
+    },
+    "pikeman-move/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        106
+      ],
+      "bodyHeight": 96
+    },
+    "pikeman-idle/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        58,
+        109
+      ],
+      "bodyHeight": 103
+    },
+    "pikeman-move/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 102
+    },
+    "pikeman-idle/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        55,
+        108
+      ],
+      "bodyHeight": 103
+    },
+    "pikeman-attack/south": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 164,
+      "frameHeight": 164,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        269,
+        269,
+        268,
+        269,
+        269,
+        269,
+        268,
+        269
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        72,
+        123
+      ],
+      "bodyHeight": 99
+    },
+    "pikeman-attack/south-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        76,
+        128
+      ],
+      "bodyHeight": 81
+    },
+    "pikeman-attack/west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        73,
+        126
+      ],
+      "bodyHeight": 81
+    },
+    "pikeman-attack/north-west": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-west/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        81,
+        123
+      ],
+      "bodyHeight": 78
+    },
+    "pikeman-attack/north": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        92,
+        128
+      ],
+      "bodyHeight": 103
+    },
+    "pikeman-attack/north-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        93,
+        139
+      ],
+      "bodyHeight": 82
+    },
+    "pikeman-attack/east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        80,
+        138
+      ],
+      "bodyHeight": 103
+    },
+    "pikeman-attack/south-east": {
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-east/sheet.png",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 750,
+      "anchor": [
+        81,
+        134
+      ],
+      "bodyHeight": 90
     }
   }
 }

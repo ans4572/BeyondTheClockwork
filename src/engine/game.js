@@ -14,6 +14,7 @@ export function segmentDistance(p, a, b) {
   return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
 }
 
+const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
 export class Game {
@@ -284,7 +285,7 @@ export class Game {
     return Math.abs(angleDiff(Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), enemy.facing)) * 360 / Math.PI <= enemy.guardArcDegrees;
   }
   hitEnemy(enemy, base, options = {}) {
-    if (enemy.hp <= 0) return { crit: false, killed: false };
+    if (enemy.hp <= 0 || enemy.hidden) return { crit: false, killed: false };
     if (!enemy.aggro) this.rouse(enemy);
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
@@ -292,7 +293,8 @@ export class Game {
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.3, 1, { targetX: this.p.x, targetY: this.p.y });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
-    enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount); enemy.flashUntil = this.s.time + 0.09;
+    const beaten = !options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1;
+    enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.09;
     this.tutorial.onHit(enemy, !!options.basic);
     this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
@@ -314,7 +316,7 @@ export class Game {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
     this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
-    if (!enemy.boss && !enemy.dummy && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
+    if (!enemy.boss && !enemy.dummy && !enemy.stationary && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
   }
   addStagger(enemy, amount, applyPressure = true) {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;
@@ -634,6 +636,36 @@ export class Game {
         if (distance(tell, p) < enemy.burstRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
       case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed); break;
+      // Music box: a ring of shots, turned a little each volley so the gaps move.
+      case 'spiral': {
+        enemy.spiralTurn = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets;
+        for (let i = 0; i < enemy.bullets; i++) this.fireBullet(enemy, enemy.spiralTurn + i * TAU_ENEMY / enemy.bullets, enemy.projectileSpeed);
+        enemy.volleyLeft = (enemy.volleyLeft ?? enemy.volleys) - 1;
+        if (enemy.volleyLeft > 0) { enemy.followup = { type: 'spiral', at: this.s.time + enemy.volleyGap }; enemy.ready = this.s.time; } else enemy.volleyLeft = undefined;
+        break;
+      }
+      // Jack-in-the-box: springs up where the player stood when the circle appeared.
+      case 'ambush': {
+        const spot = { x: tell.targetX, y: tell.targetY };
+        if (!this.map?.walkable || fitsMap(spot.x, spot.y, enemy.radius, this.map)) Object.assign(enemy, spot);
+        enemy.hidden = false;
+        this.effect('ring', spot.x, spot.y, '#e8914e', 0.3, enemy.popRadius);
+        if (distance(spot, p) < enemy.popRadius) damage(); break;
+      }
+      // Spinning top: rolls off in a straight line and bounces from walls until it winds down.
+      case 'spin': enemy.spin = { angle: tell.angle, until: this.s.time + enemy.spinSeconds, hitReady: 0 }; break;
+      // Drummer: no damage of its own; nearby soldiers move faster and shrug off hits for a while.
+      case 'beat':
+        for (const ally of this.s.enemies) if (ally !== enemy && !ally.boss && ally.hp > 0 && distance(ally, enemy) <= enemy.beatRadius) { ally.beatUntil = this.s.time + enemy.beatSeconds; ally.aggro = true; }
+        this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.5, enemy.beatRadius); break;
+      // Pikeman: a long thrust, then a shorter one re-aimed at where the player went.
+      case 'thrust': case 'thrust2': {
+        const length = tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength, end = { x: tell.x + Math.cos(tell.angle) * length, y: tell.y + Math.sin(tell.angle) * length };
+        if (segmentDistance(p, tell, end) <= enemy.thrustWidth + this.config.arena.playerRadius) damage();
+        this.effect('beam', tell.x, tell.y, '#d1a85a', 0.2, 1, { targetX: end.x, targetY: end.y });
+        if (tell.type === 'thrust') enemy.followup = { type: 'thrust2', at: this.s.time + enemy.followupDelay };
+        break;
+      }
       case 'doubleWave':
         if (distance(tell, p) < enemy.attackRange) damage();
         this.effect('ring', tell.x, tell.y, '#d86e76', 0.25, enemy.attackRange);
@@ -679,6 +711,18 @@ export class Game {
       }
     }
   }
+  /** One frame of a spinning top: straight on, turning back from whatever wall it meets, hurting on contact. */
+  spinEnemy(enemy, dt) {
+    const s = enemy.spin, step = enemy.spinSpeed * dt, before = { x: enemy.x, y: enemy.y };
+    this.move(enemy, Math.cos(s.angle) * step, Math.sin(s.angle) * step);
+    if (distance(before, enemy) < step * 0.5) {
+      const across = Math.PI - s.angle, back = -s.angle;
+      s.angle = [across, back, s.angle + Math.PI].find(angle => { const test = { ...enemy }; this.move(test, Math.cos(angle) * step, Math.sin(angle) * step); return distance(test, enemy) >= step * 0.5; }) ?? s.angle + Math.PI;
+    }
+    enemy.facing = s.angle;
+    if (this.s.time >= s.hitReady && distance(this.p, enemy) <= enemy.radius + this.config.arena.playerRadius && this.hurt(enemy.damage)) s.hitReady = this.s.time + enemy.spinHitGap;
+    if (this.s.time >= s.until) { enemy.spin = null; enemy.ready = this.s.time + enemy.recovery; }
+  }
   fireBullet(enemy, angle, speed) { this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: enemy.damage, friendly: false, until: this.s.time + this.config.rules.enemyProjectileLifetime }); }
   updateEnemies(dt) {
     this.tickBossHazards(dt);
@@ -702,6 +746,7 @@ export class Game {
         if (!this.active) return;
         d.elapsed += dt; if (d.elapsed >= enemy.dashDuration) enemy.dash = null; continue;
       }
+      if (enemy.spin) { this.spinEnemy(enemy, dt); if (!this.active) return; continue; }
       if (enemy.tell) { if (this.s.time >= enemy.tell.until) this.executeEnemy(enemy); if (!this.active) return; continue; }
       if (enemy.followup) {
         const next = enemy.followup; enemy.followup = null;
@@ -709,14 +754,16 @@ export class Game {
       }
       const a = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), d = distance(this.p, enemy);
       if (!enemy.aggro) { if (d > this.config.rules.aggroUnits) continue; this.rouse(enemy); }
+      // An ambusher travels underground between strikes and cannot be hit there.
+      enemy.hidden = enemy.attack === 'ambush' && this.s.time >= enemy.ready;
       enemy.facing = a;
       if (this.s.time >= enemy.ready && (enemy.boss || d < enemy.attackRange) && (enemy.boss || enemy.attack === 'shot' || activeMelee < this.config.rules.maxActiveMelee)) {
         const type = enemy.boss ? this.nextBossPattern(enemy) : enemy.attack;
         this.beginEnemyTell(enemy, type); if (!enemy.boss && enemy.attack !== 'shot') activeMelee++;
-      } else if (d > this.config.rules.enemyStopDistance[enemy.boss ? 'boss' : enemy.attack === 'shot' ? 'ranged' : 'melee']) {
+      } else if (!enemy.stationary && d > this.config.rules.enemyStopDistance[enemy.boss ? 'boss' : RANGED_ATTACKS.includes(enemy.attack) ? 'ranged' : 'melee']) {
         const chill = this.c.statuses.find(s => s.id === 'chill');
         const slow = enemy.statuses.chill > this.s.time ? (enemy.boss ? Math.min(this.c.caps.bossSlow, chill.slow * this.statusPower) : chill.slow * this.statusPower) : 0;
-        const step = enemy.speed * (1 - slow) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
+        const step = enemy.speed * (1 - slow) * (enemy.beatUntil > this.s.time ? 1 + this.config.enemies.drummer.beatHaste : 1) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
         this.move(enemy, Math.cos(way) * step, Math.sin(way) * step);
       }
     }
@@ -869,7 +916,8 @@ export class Game {
       this.moveDodge(dt);
       const slip = this.trait('slipstream');
       if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration;
-    } else if (!this.s.casts.some(c => c.shape === 'dash')) {
+    // A wrench swing plants the feet: the player stands still until the swing and its recovery end.
+    } else if (!p.attack && !this.s.casts.some(c => c.shape === 'dash')) {
       const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0));
       this.move(p, dx * speed * dt, dy * speed * dt);
     }

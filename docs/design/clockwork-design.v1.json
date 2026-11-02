@@ -1787,7 +1787,7 @@
       "name": "행진대장 브라스",
       "kind": "regionBoss",
       "hp": 1000,
-      "damage": 13,
+      "damage": 12,
       "minimumTell": 0.8,
       "region": "smileStreet",
       "concept": "주민들의 걸음을 지휘하는 금관 병정"

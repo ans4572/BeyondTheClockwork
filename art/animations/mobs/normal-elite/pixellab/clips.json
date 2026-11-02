@@ -2865,6 +2865,3195 @@
           "timeMs": 800
         }
       ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5060596955128205,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5118560303514377,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.51171875,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/musicbox-attack-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        313,
+        312,
+        313,
+        312,
+        313,
+        312,
+        313,
+        312
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "musicbox",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5162240415335463,
+        0.8203125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/musicbox/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4471647036474164,
+        0.84375
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.47613856589147285,
+        0.8828125
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.51171875,
+        0.9140625
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.487609011627907,
+        0.90625
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5096966911764705,
+        0.8671875
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4971992924528302,
+        0.90625
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.45703125,
+        0.9140625
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "move",
+      "image": "clips/jackbox-move-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4459468482905983,
+        0.890625
+      ],
+      "scale": 0.8,
+      "action": "idle",
+      "image": "rotations/jackbox/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "jackbox",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 156,
+      "frameHeight": 156,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45664796196711094,
+        0.782051282051282
+      ],
+      "scale": 0.8,
+      "action": "attack",
+      "image": "clips/jackbox-attack-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        338,
+        337,
+        338,
+        337,
+        338,
+        337,
+        338,
+        337
+      ],
+      "durationMs": 2700,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 900
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49564732142857143,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49710181451612906,
+        0.7890625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.496484375,
+        0.7734375
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49615384615384617,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49698660714285714,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.496875,
+        0.7890625
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "move",
+      "image": "clips/spintop-move-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49974798387096775,
+        0.7734375
+      ],
+      "scale": 0.75,
+      "action": "idle",
+      "image": "rotations/spintop/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "spintop",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4990079365079365,
+        0.765625
+      ],
+      "scale": 0.75,
+      "action": "attack",
+      "image": "clips/spintop-attack-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275,
+        275
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 700
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4846955128205128,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4629048813868613,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5172112944162437,
+        0.859375
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49667744252873564,
+        0.8828125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5082212936046512,
+        0.90625
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49158653846153844,
+        0.90625
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.46571539256198347,
+        0.875
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4713134765625,
+        0.8828125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.49290393013100436,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4850736788617886,
+        0.8515625
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.49453965053763443,
+        0.8671875
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5011245265151515,
+        0.8828125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.48420516304347827,
+        0.8984375
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4761051829268293,
+        0.90625
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4796875,
+        0.859375
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/drummer-move-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.46305462786259544,
+        0.8828125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/drummer/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.5364042207792208,
+        0.80625
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-south/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.48299851190476184,
+        0.81875
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-south-west/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.4518105158730159,
+        0.8125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-west/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.47637755102040813,
+        0.7875
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-north-west/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.5341871584699454,
+        0.8
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-north/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.5128720238095238,
+        0.825
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-north-east/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.44119525547445254,
+        0.83125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-east/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "drummer",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.4827517667844523,
+        0.79375
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/drummer-attack-south-east/sheet.png",
+      "frameCount": 6,
+      "frameDurationsMs": [
+        550,
+        550,
+        550,
+        550,
+        550,
+        550
+      ],
+      "durationMs": 3300,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.524169921875,
+        0.8046875
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4184827302631579,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5147715336134454,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-south-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4379904708520179,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.49514910130718953,
+        0.8125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.45745998475609756,
+        0.859375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4591578185328185,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-north-west/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.46143867924528303,
+        0.859375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4934303977272727,
+        0.8046875
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-north/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.48509615384615384,
+        0.8359375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5001524390243902,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-north-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4971672232824427,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.479666095890411,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4534931282722513,
+        0.8515625
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.49709821428571427,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/pikeman-move-south-east/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4326593137254902,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/pikeman/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 164,
+      "frameHeight": 164,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.43637676508344025,
+        0.75
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-south/sheet.png",
+      "frameCount": 8,
+      "frameDurationsMs": [
+        269,
+        269,
+        268,
+        269,
+        269,
+        269,
+        268,
+        269
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.4759036144578313,
+        0.8
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-south-west/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.45326492537313434,
+        0.7875
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-west/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.504824144486692,
+        0.76875
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-north-west/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.5747340425531915,
+        0.8
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-north/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.5276458616010854,
+        0.7897727272727273
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-north-east/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.4533534647171011,
+        0.7840909090909091
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-east/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
+    },
+    {
+      "enemy": "pikeman",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "rows": 1,
+      "anchor": [
+        0.4599732076866223,
+        0.7613636363636364
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/pikeman-attack-south-east/sheet.png",
+      "frameCount": 3,
+      "frameDurationsMs": [
+        717,
+        716,
+        717
+      ],
+      "durationMs": 2150,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 750
+        }
+      ]
     }
   ]
 }

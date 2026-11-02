@@ -319,6 +319,14 @@ export class CanvasRenderer {
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.text('↓ 吸 ↓', tell.targetX * 20, tell.targetY * 20 + 3, '#b85863', 10); break;
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.text('!', x, y - 12, '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
+      case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
+      case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.text('!', tell.targetX * 20, tell.targetY * 20 + 4, '#b85863', 14); break;
+      case 'spin': this.line(x, y, x + Math.cos(tell.angle) * 80, y + Math.sin(tell.angle) * 80, '#b85863', 1.5); this.text('↻', x, y - 18, '#b85863', 12); break;
+      case 'beat': c.strokeStyle = '#d9a43a'; ring(x, y, enemy.beatRadius); break;
+      case 'thrust': case 'thrust2': {
+        const length = (tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength) * 20, width = enemy.thrustWidth * 20;
+        c.translate(x, y); c.rotate(tell.angle); c.strokeRect(0, -width, length, width * 2); break;
+      }
       case 'doubleWave': case 'eliteWave': ring(x, y, enemy.attackRange + (tell.type === 'eliteWave' ? enemy.followupRadiusBonus : 0)); break;
       case 'march': {
         for (const lane of g.marchLanes(enemy)) this.lanePath(lane, ai.marchWidth, true);
@@ -401,7 +409,7 @@ export class CanvasRenderer {
       if (actor.npc) { this.drawNpc(actor.npc, depthMask); continue; }
       if (actor.hubPlayer) { this.drawSprite(map.spawn.x * 20, map.spawn.y * 20, this.animator.static(-2.4), this.sprites, false, PLAYER_SCALE); this.coverBody(depthMask, map.spawn.x, map.spawn.y); continue; }
       const blink = actor.player && actor.invulnerableUntil > s.time && Math.floor(s.time * 22) % 2 === 0;
-      c.globalAlpha = blink && !s.profile.settings.reducedMotion ? 0.45 : 1;
+      c.globalAlpha = actor.hidden ? 0.25 : blink && !s.profile.settings.reducedMotion ? 0.45 : 1;
       const mobPose = mobPoses?.get(actor.id), mobClip = mobPose && this.mobSprites.clip(mobPose.action, mobPose.direction);
       // A struck body trembles side to side for a moment, even while the hit holds time still.
       const jolt = !actor.player && actor.joltUntil > s.time && !s.profile.settings.reducedMotion ? (Math.floor(performance.now() / 32) % 2 ? JOLT_PX : -JOLT_PX) : 0;

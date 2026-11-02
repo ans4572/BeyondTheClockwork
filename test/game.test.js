@@ -47,6 +47,12 @@ test('insufficient funds never modify a purchase or a rank', () => {
   assert.equal(g.s.profile.stats.maxHp, 0); assert.equal(refundAll(data, g.s.profile), 0);
   assert.equal(buyRank(data, g.s.profile, 'nothing'), false);
 });
+test('a wrench swing plants the feet until it and its recovery end', () => {
+  const g = arena(); inert(g); g.p.x = 8; g.p.y = 8; g.p.angle = 0;
+  assert.equal(g.basicAttack(), true); step(g, 0.2, { x: 1 }); assert.equal(g.p.x, 8);
+  step(g, 0.5, { x: 1 }); assert.equal(g.p.attack, null); assert.ok(g.p.x > 8);
+});
+
 test('every stat changes what it says', () => {
   const g = arena(), enemy = inert(g), base = g.damageMultiplier(enemy, false);
   g.s.profile.stats.attackDamage = 20;

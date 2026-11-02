@@ -20,8 +20,8 @@ test('Roco minimum tells precede damage, claw is directional, magnet remains esc
 test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');
   e.hp = e.maxHp * 0.49; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');
-  assert.ok(e.tell.until - e.tell.started >= 0.8); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 87);
-  g.s.time += 1; g.p.x = 15; g.beginEnemyTell(e, 'march'); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 87);
+  assert.ok(e.tell.until - e.tell.started >= 0.8); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 88);
+  g.s.time += 1; g.p.x = 15; g.beginEnemyTell(e, 'march'); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 88);
 });
 test('Brass fan followup is separately telegraphed and trumpet wave preserves the shown gap', () => {
   const [g, e] = boss('captainBrass'); g.p.x = 18; g.p.y = 8;

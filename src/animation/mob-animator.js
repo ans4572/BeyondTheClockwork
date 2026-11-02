@@ -41,6 +41,7 @@ export class MobAnimator {
     if (hit && track.hitAt !== null && hitElapsed < hit.durationMs) return { action: `${enemy.type}-hit`, direction, frame: frameAtProgress(hit, hitElapsed / hit.durationMs) };
     if (track.stillFor >= MOTION_GAP_SECONDS) return { action: `${enemy.type}-idle`, direction, frame: 0 };
     const walk = this.clip(enemy, 'move', direction);
+    if (!walk) return { action: `${enemy.type}-idle`, direction, frame: 0 };
     // Phase follows distance so slows and blocked steps do not slide the feet.
     track.phase = (track.phase + moved / (enemy.speed * walk.durationMs / 1000)) % 1;
     return { action: `${enemy.type}-move`, direction, frame: Math.floor(track.phase * walk.frameCount) % walk.frameCount };
