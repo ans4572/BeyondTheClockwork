@@ -85,7 +85,7 @@ export class Game {
     if (lesson) this.tutorial.start();
     else {
       const guard = this.spawnEnemy(this.config.rules.introEnemy, yard?.enemySpawns[0] || { x: 12, y: 9 }); guard.ready += hold; guard.hp = guard.maxHp = this.config.rules.introEnemyHp;
-      this.notify('렌치를 주웠습니다. 경비를 때려 보세요.'); this.s.notices.at(-1).until += hold;
+      this.notify('태엽 렌치를 손에 쥐었습니다. 다가오는 경비를 때려 보세요.'); this.s.notices.at(-1).until += hold;
     }
     this.save(); return true;
   }

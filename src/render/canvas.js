@@ -450,7 +450,7 @@ export class CanvasRenderer {
       if (near && !seen) this.pointTo(near, ENEMY_ARROW);
     }
     if (g.walking && mapImage) {
-      if (s.mode !== 'registration') this.tag(g.village.exit.label, g.village.exit.at[0] * 20, g.village.exit.at[1] * 20);
+      if (s.mode !== 'registration') this.nameplate(g.village.exit.label, g.village.exit.at[0] * 20, g.village.exit.at[1] * 20 + NAME_SIZE);
       const npc = g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
       // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
