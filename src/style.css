@@ -54,7 +54,7 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .reward-card .reward-icon { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; background: var(--paper); color: var(--accent, var(--ink)); font-size: 19px; }
 /* Element parts are drawn at 32px and shown at whole multiples so every pixel stays square. */
 .reward-card .element-icon { width: 64px; height: 64px; margin: -4px 0 0 -4px; image-rendering: pixelated; }
-.codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 4px -10px -4px; vertical-align: middle; image-rendering: pixelated; }
+.codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 0; image-rendering: pixelated; }
 .reward-card .rarity { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; color: var(--label); }
 .reward-card .card-label { font-size: 12px; color: var(--label); }
 .reward-card h3 { font-size: 16px; margin: 2px 0 6px; }
@@ -75,10 +75,23 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .panel .codex-tabs button.on { background: var(--ink); color: var(--paper); }
 .reward-card .replace-note { margin: 8px 0 0; font-weight: 700; }
 .codex-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.codex-entry { padding: 10px 12px; background: var(--paper-low); }
-.codex-entry h3 { font-size: 14px; margin: 0 0 4px; }
-.codex-entry p { font-size: 12px; margin: 4px 0; }
-.codex-entry small { font-size: 12px; color: var(--label); }
+.codex-entry { padding: 10px 12px; background: var(--paper-low); border-top: 4px solid var(--accent, var(--ink)); }
+.codex-entry h3 { display: flex; align-items: center; gap: 6px; font-size: 15px; margin: 0 0 6px; }
+.codex-entry .pair { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; font-size: 13px; font-weight: 700; }
+.codex-entry .pair b { margin: 0 4px; color: var(--label); }
+.codex-move { display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: start; padding: 6px 0; }
+.codex-move + .codex-move { border-top: 1px solid #2b334526; }
+.codex-move .move-icon { width: 48px; height: 48px; image-rendering: pixelated; }
+.codex-move h4 { margin: 0; font-size: 14px; }
+.codex-move h4 small { font-size: 12px; font-weight: 700; color: var(--label); }
+.panel .codex-move p { margin: 2px 0 6px; font-size: 13px; line-height: 1.5; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; background: var(--paper); box-shadow: inset 0 0 0 1px #2b334555; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.tag.status img { width: 12px; height: 12px; image-rendering: pixelated; }
+.status-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; margin-top: 10px; }
+.panel .status-legend p { display: flex; align-items: baseline; gap: 6px; margin: 2px 0; font-size: 12px; color: var(--label); }
+.status-legend img { width: 16px; height: 16px; align-self: center; image-rendering: pixelated; }
+.status-legend strong { color: var(--ink); white-space: nowrap; }
 
 .result-stats { display: flex; gap: 28px; padding: 8px 0; }
 .result-stats span { font-size: 12px; color: var(--label); }
