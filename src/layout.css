@@ -134,6 +134,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .talk-who.quiet { filter: brightness(.55) saturate(.7); transform: translateY(14px); }
 .talk-name { position: absolute; left: 310px; top: -18px; padding: 2px 16px; background: #2b3345; color: #f6ecd2; font-size: 17px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .player-talks .talk-name { left: auto; right: 310px; }
+.talk-unread { visibility: hidden; }
 .talk-text { position: absolute; left: 310px; right: 310px; top: 24px; color: #2b3345; word-break: keep-all; }
 .alone .talk-text { left: 120px; }
 .alone .talk-who.player { filter: none; transform: none; }

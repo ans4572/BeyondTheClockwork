@@ -23,6 +23,8 @@ export class DialogueBox {
     root.innerHTML = `<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▶</div></div>`;
     [this.other, this.player] = root.querySelectorAll('img');
     this.name = root.querySelector('.talk-name'); this.text = root.querySelector('.talk-text'); this.next = root.querySelector('.talk-next');
+    // The whole line is laid out from the first letter; the unread part waits invisible, so words never jump to the next line mid-type.
+    this.shown = document.createElement('span'); this.unread = document.createElement('span'); this.unread.className = 'talk-unread';
     this.faces = Promise.all(Object.entries(speakers).map(async ([id, speaker]) => [id, await portrait(speaker)])).then(Object.fromEntries);
   }
   get open() { return !this.root.hidden; }
@@ -46,9 +48,9 @@ export class DialogueBox {
     this.next.hidden = true; this.typed = 0;
     clearInterval(this.typing); this.typing = 0;
     if (this.reducedMotion()) return this.finishLine();
-    this.text.textContent = '';
+    this.shown.textContent = ''; this.unread.textContent = line.text; this.text.replaceChildren(this.shown, this.unread);
     this.typing = setInterval(() => {
-      this.text.textContent = line.text.slice(0, ++this.typed);
+      this.typed++; this.shown.textContent = line.text.slice(0, this.typed); this.unread.textContent = line.text.slice(this.typed);
       if (this.typed >= line.text.length) this.finishLine();
     }, TYPE_MS);
   }
