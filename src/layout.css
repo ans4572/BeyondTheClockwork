@@ -138,3 +138,39 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .talk-choices { display: grid; gap: 2px; margin-top: 6px; }
 #hud .talk-choices button { padding: 0 8px 0 4px; border: 0; background: none; text-align: left; justify-self: start; }
 #hud .talk-choices button:focus { outline: none; color: #a92f2b; background: #ffd25766; }
+
+/* Touch: thumbs on a phone held sideways. These sit in screen pixels, outside the scaled sheet. */
+#rotate { display: none; }
+#touch { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
+#touch[hidden] { display: none; }
+body.touch, body.touch #app { touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+body.touch #skills, body.touch .binding-list, body.touch .hud-tools kbd { display: none; }
+body.touch .panel { touch-action: pan-y; }
+body.touch .talk-skip { padding: 6px 12px 6px 0; font-size: 16px; font-weight: 700; }
+.touch-zone { position: absolute; left: 0; top: 0; bottom: 0; width: 45%; pointer-events: auto; touch-action: none; }
+.touch-stick { position: absolute; left: -52px; top: -52px; width: 104px; height: 104px; border-radius: 50%; background: #16202a55; box-shadow: inset 0 0 0 3px #f6ecd2aa; pointer-events: none; }
+.touch-stick[hidden] { display: none; }
+.touch-stick i { position: absolute; left: 28px; top: 28px; width: 48px; height: 48px; border-radius: 50%; background: #f6ecd2cc; }
+#touch button { position: relative; overflow: hidden; pointer-events: auto; touch-action: none; border: 0; padding: 0; color: #2b3345; background: #f6ecd2d9; box-shadow: inset 0 0 0 2px #2b3345; font: 700 13px "Malgun Gothic", sans-serif; }
+#touch button.empty { opacity: .45; }
+#touch button.ready { background: #ffd257; }
+#touch button img { width: 62%; height: 62%; margin-top: 19%; image-rendering: pixelated; pointer-events: none; }
+#touch button.empty img { display: none; }
+#touch .cool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #0e121ab8; }
+#touch .left { position: absolute; inset: 0; display: grid; place-items: center; color: #fff4d6; font-size: 16px; text-shadow: 1px 1px 0 #0e121a; }
+.touch-pad { position: absolute; right: calc(10px + env(safe-area-inset-right)); bottom: 10px; width: 216px; height: 190px; }
+#touch .touch-pad button { position: absolute; width: 48px; height: 48px; border-radius: 50%; }
+#touch .touch-pad .touch-attack { right: 0; bottom: 0; width: 80px; height: 80px; }
+#touch .touch-pad .touch-dodge { right: 88px; bottom: 0; width: 56px; height: 56px; }
+#touch .touch-pad .touch-skill0 { right: 150px; bottom: 60px; }
+#touch .touch-pad .touch-skill1 { right: 96px; bottom: 66px; }
+#touch .touch-pad .touch-skill2 { right: 48px; bottom: 92px; }
+#touch .touch-pad .touch-skill3 { right: 0; bottom: 92px; }
+#touch .touch-pad .touch-fusion { right: 152px; bottom: 4px; }
+.touch-tools { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: 62px; display: flex; gap: 6px; }
+#touch .touch-tools button { width: 44px; height: 34px; }
+#touch .touch-talk { position: absolute; right: calc(236px + env(safe-area-inset-right)); bottom: 20px; width: 84px; height: 48px; background: #ffd257; }
+#touch .touch-talk[hidden] { display: none; }
+@media (orientation: portrait) {
+  body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Malgun Gothic", sans-serif; }
+}

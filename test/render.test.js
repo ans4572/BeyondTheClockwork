@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import fs from 'node:fs';
+import { stickVector, autoAim } from '../src/ui/touch-controls.js';
 import { CanvasRenderer, STATUS_ICONS } from '../src/render/canvas.js';
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))])));
 
@@ -65,4 +66,16 @@ test('every status has its icon on disk, at the size it is drawn', () => {
     const png = fs.readFileSync(new URL(`..${url}`, import.meta.url));
     assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [24, 24], url);
   }
+});
+
+test('the thumb stick has a dead zone and never passes full speed', () => {
+  assert.deepEqual(stickVector(2, 0), { x: 0, y: 0 });
+  assert.deepEqual(stickVector(0, 26), { x: 0, y: 0.5 });
+  const { x, y } = stickVector(300, 400); assert.ok(Math.abs(Math.hypot(x, y) - 1) < 1e-9);
+});
+
+test('touch aims at the nearest living enemy, or where the player is heading', () => {
+  const player = { x: 0, y: 0, moveAngle: 0 };
+  assert.deepEqual(autoAim(player, [{ x: 9, y: 0, hp: 5 }, { x: 2, y: 0, hp: 0 }, { x: 0, y: 4, hp: 5 }]), { x: 0, y: 4 });
+  assert.deepEqual(autoAim(player, []), { x: 3, y: 0 });
 });

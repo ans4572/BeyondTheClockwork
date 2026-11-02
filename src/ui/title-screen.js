@@ -1,4 +1,4 @@
-const F2_SHEET = '/art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
+const F2_SHEET = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
 const STAGE = [1120, 640], SLAM_MS = 170, SETTLE_MS = 520, LINE_MS = 1100, LAST_LINE_MS = 1500;
 const STAMP_WAIT_MS = 700, STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_ZOOM = 3, TOOL_RISE = 780;

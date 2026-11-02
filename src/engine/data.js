@@ -31,7 +31,7 @@ export function validateData(data) {
 export async function loadData() {
   const names = ['combat', 'progression', 'slice', 'maps', 'dialogue'];
   const values = await Promise.all(names.map(async name => {
-    const response = await fetch(`/src/data/${name}.json`);
+    const response = await fetch(`src/data/${name}.json`);
     if (!response.ok) throw new Error(`${name}.json을 불러올 수 없습니다 (${response.status})`);
     return response.json();
   }));

@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#16202a">
   <title>태엽 밖으로 · Beyond the Clockwork</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b5551'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-size='46' fill='%23f2c878'%3E⚙%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="/src/style.css">
-  <link rel="stylesheet" href="/src/layout.css">
+  <link rel="stylesheet" href="src/style.css">
+  <link rel="stylesheet" href="src/layout.css">
 </head>
 <body>
   <main id="app">
@@ -23,8 +23,10 @@
       </div>
       <div id="toast" role="status"></div><div id="hint" role="status" hidden></div><div id="overlay"></div>
     </div>
+    <div id="touch" hidden></div>
   </main>
   <div id="title" hidden></div>
-  <script type="module" src="/src/main.js"></script>
+  <div id="rotate">폰을 가로로 돌려 주세요</div>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
