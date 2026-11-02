@@ -17,6 +17,7 @@ status: open
 
 ## Decisions so far
 
+- [후반 맵 6장 구성 결정](tickets/08-late-rooms.md): 해가 지는 순서로 6장을 연결했다.
 - [무료 음악·효과음 후보 조사](tickets/03-audio-sources.md): 효과음은 Kenney와 ZzFX, 음악은 CC0 묶음 2개를 들어 보고 고른다.
 
 ## Not yet specified

@@ -2,11 +2,12 @@ import {clampCorners} from '../engine/fusion-geometry.js';
 import { PlayerAnimator } from '../animation/player-animator.js';
 import { MobAnimator } from '../animation/mob-animator.js';
 import { CastEffects } from '../animation/cast-effects.js';
+import { nearestDirection } from '../animation/player-animator.js';
 import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
-const BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
+const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
@@ -237,6 +238,48 @@ export class CanvasRenderer {
     const x = enemy.x * 20;
     this.rect(x - 4, top - 15, 8, 14, '#2b3345'); this.rect(x - 1.5, top - 13, 3, 6, '#ffd257'); this.rect(x - 1.5, top - 6, 3, 2, '#ffd257');
   }
+  /** A long band along a line, filled and outlined in the current colours. */
+  lanePath([[ax, ay], [bx, by]], halfWidth, fill) {
+    const c = this.ctx, width = halfWidth * 20, length = Math.hypot(bx - ax, by - ay) * 20;
+    c.save(); c.translate(ax * 20, ay * 20); c.rotate(Math.atan2(by - ay, bx - ax));
+    if (fill) c.fillRect(0, -width, length, width * 2);
+    c.strokeRect(0, -width, length, width * 2); c.restore();
+  }
+  /** Everywhere that will be hit, in a wash that deepens as the blow comes. */
+  floorWash(progress) {
+    const c = this.ctx, walkable = this.game.map?.walkable, { left, top, right, bottom } = this.game.config.arena.bounds;
+    const points = walkable || [[left, top], [right, top], [right, bottom], [left, bottom]];
+    c.save(); c.setLineDash([]); c.fillStyle = `rgba(190, 81, 95, ${0.1 + progress * 0.2})`; c.beginPath();
+    points.forEach(([x, y], i) => (i ? c.lineTo(x * 20, y * 20) : c.moveTo(x * 20, y * 20))); c.closePath(); c.fill(); c.restore();
+  }
+  columnPreview() {
+    const g = this.game, ai = g.config.bossAI.captainBrass, { start } = g.map?.column || {}, { left, top, bottom } = g.config.arena.bounds;
+    const [a, b] = start || [[left, top], [left, bottom]];
+    this.line(a[0] * 20, a[1] * 20, b[0] * 20, b[1] * 20, '#b85863', 2); this.text(`대열 행진`, (a[0] + b[0]) * 10, (a[1] + b[1]) * 10 - 8, '#b85863', 10);
+    return ai;
+  }
+  /** The soldiers of the marching line, walking in step, with their gap. */
+  drawColumn() {
+    const g = this.game, line = g.columnLine;
+    if (!line) return;
+    const { a, b, gapA, gapB } = line, { start, end } = g.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), direction = nearestDirection(heading);
+    const clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
+    for (const [from, to] of [[a, gapA], [gapB, b]]) {
+      const length = Math.hypot(to[0] - from[0], to[1] - from[1]), count = Math.max(1, Math.round(length / COLUMN_SPACING_UNITS));
+      for (let i = 0; i <= count; i++) {
+        const x = (from[0] + (to[0] - from[0]) * i / count) * 20, y = (from[1] + (to[1] - from[1]) * i / count) * 20;
+        if (!(clip && this.drawSprite(x, y, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(x - 7, y - 26, 14, 26, '#dc8b83');
+      }
+    }
+  }
+  /** What a running boss pattern needs on screen: who is listening, and who must hold still. */
+  drawBossState() {
+    const { s, p } = this.game, c = this.ctx;
+    for (const enemy of s.enemies.filter(e => e.boss && e.hp > 0)) {
+      if (enemy.alarmUntil > s.time) { c.save(); c.setLineDash([]); c.strokeStyle = Math.floor(s.time * 8) % 2 ? '#c43c36' : '#ffd257'; c.lineWidth = 3; c.beginPath(); c.arc(enemy.x * 20, enemy.y * 20, 40, 0, TAU); c.stroke(); c.restore(); this.drawAlert(enemy, enemy.y * 20 - 78); }
+      if (enemy.bellUntil > s.time) { c.save(); c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 16, 7, 0, 0, TAU); c.stroke(); c.restore(); }
+    }
+  }
   drawTell(enemy) {
     const tell = enemy.tell;
     if (!tell) return;
@@ -260,8 +303,22 @@ export class CanvasRenderer {
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'doubleWave': case 'eliteWave': ring(x, y, enemy.attackRange + (tell.type === 'eliteWave' ? enemy.followupRadiusBonus : 0)); break;
       case 'march': {
-        const lanes = [...ai.marchLanes, ...(enemy.hp <= enemy.maxHp * ai.phaseTwoHpFraction ? [ai.phaseTwoLane] : [])];
-        for (const lane of lanes) { const lx = lane * 20 - ai.marchWidth * 20; c.fillRect(lx, 60, ai.marchWidth * 40, 230); c.strokeRect(lx, 60, ai.marchWidth * 40, 230); for (let yy = 80; yy < 280; yy += 28) this.text('▼', lane * 20, yy, '#b85863', 8); } break;
+        for (const lane of g.marchLanes(enemy)) this.lanePath(lane, ai.marchWidth, true);
+        break;
+      }
+      case 'alarm': ring(x, y, 1.6); this.text('!', x, y - 44, '#b85863', 15); break;
+      case 'bell': ring(x, y, 1.6); this.text('종', x, y - 44, '#b85863', 12); break;
+      case 'column': this.columnPreview(); break;
+      case 'crane':
+        // Rings first: the crates change the fill colour the rings share.
+        for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.craneRadius);
+        for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170; this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); this.rect(dx * 20 - 8, top, 16, 3, '#c79a5e'); }
+        break;
+      case 'carpet': {
+        const lanes = g.marchLanes(enemy, true);
+        this.floorWash(progress);
+        c.setLineDash([]); c.strokeStyle = '#3fbf7f'; c.fillStyle = 'rgba(63, 191, 127, 0.3)'; c.lineWidth = 3; this.lanePath(lanes[tell.safe], ai.carpetSafeWidth, true);
+        break;
       }
       case 'trumpetWave':
         ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 72, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.text('틈', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '#67805b', 8); break;
@@ -337,6 +394,7 @@ export class CanvasRenderer {
       const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction);
       this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight / 2 + 21 : 54));
     }
+    this.drawColumn(); this.drawBossState();
     for (const bullet of s.projectiles) { this.circle(bullet.x * 20, bullet.y * 20, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bullet.x * 20, bullet.y * 20, 2, '#f7e6b0'); }
     for (const fx of s.effects) {
       if (fx.type === 'number' && !s.profile.settings.damageNumbers) continue;

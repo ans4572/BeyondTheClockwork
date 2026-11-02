@@ -178,7 +178,25 @@
       "magnetDuration": 2,
       "magnetDamageDelay": 1,
       "overchargeRadius": 3.2,
-      "overchargeRecovery": 2.4
+      "overchargeRecovery": 2.4,
+      "phasePatterns": [
+        {
+          "pattern": "alarm",
+          "below": 0.6
+        },
+        {
+          "pattern": "crane",
+          "below": 0.3
+        }
+      ],
+      "tellSeconds": {
+        "alarm": 0.7,
+        "crane": 1.1
+      },
+      "alarmSeconds": 2,
+      "craneDrops": 4,
+      "craneRadius": 1.3,
+      "craneSpread": 4.5
     },
     "captainBrass": {
       "radius": 0.75,
@@ -203,7 +221,31 @@
       "phaseTwoHpFraction": 0.5,
       "waveSpeed": 5.5,
       "waveCount": 9,
-      "waveGapDegrees": 65
+      "waveGapDegrees": 65,
+      "phasePatterns": [
+        {
+          "pattern": "bell",
+          "below": 1
+        },
+        {
+          "pattern": "column",
+          "below": 0.5
+        },
+        {
+          "pattern": "carpet",
+          "below": 0.5
+        }
+      ],
+      "tellSeconds": {
+        "bell": 0.9,
+        "column": 1.2,
+        "carpet": 2.2
+      },
+      "bellSeconds": 1.5,
+      "columnSpeed": 4.5,
+      "columnGapUnits": 3.5,
+      "columnWidth": 0.5,
+      "carpetSafeWidth": 1.1
     }
   },
   "skillBehavior": {

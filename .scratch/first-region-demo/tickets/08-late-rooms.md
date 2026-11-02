@@ -1,7 +1,7 @@
 ---
 title: 후반 맵 6장 구성 결정
 labels: [wayfinder:grilling]
-status: open
+status: closed
 assignee:
 ---
 
@@ -16,3 +16,7 @@ assignee:
 ## Progress
 
 방별 구조와 시간대 제안을 프롬프트로 작성했다: `art/smile-street/maps/background-large-prompts.md`. 배경을 받은 뒤 구성을 확인하고 닫는다. 브라스 행진 경로는 새 맵의 카펫 위치에 맞춰 옮긴다.
+
+## Resolution
+
+6장 모두 38.4×25.6으로 연결했다. 구성은 프롬프트대로이고, 브라스 행진은 카펫 위치를 따른다.

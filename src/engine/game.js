@@ -5,7 +5,7 @@ import { FlowField } from './flow-field.js';
 
 export const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, PORTAL_REACH_UNITS = 1, LEAVE_REFUSED_UNITS = 1.5, DIRECT_UNITS = 2, LAST_WAVE_ALREADY_PLAYED = 99;
+const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, PORTAL_REACH_UNITS = 1, LEAVE_REFUSED_UNITS = 1.5, DIRECT_UNITS = 2, LAST_WAVE_ALREADY_PLAYED = 99, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
 const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
 export function segmentDistance(p, a, b) {
@@ -70,7 +70,7 @@ export class Game {
     const stats = this.stats, spawn = this.config.arena.spawn;
     this.s.player = { ...spawn, hp: this.c.player.maxHp + (stats.maxHp || 0), maxHp: this.c.player.maxHp + (stats.maxHp || 0), energy: 0, angle: 0, moveAngle: 0, attack: null, combo: 0, comboExpires: 0, invulnerableUntil: 0, dodge: null, dodgeReady: 0, cooldowns: {}, fusionReady: 0 };
   }
-  clearCombat() { this.s.clearAt = null; this.s.panel = null; this.s.enemies = []; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; }
+  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; }
   /** `wake` opens on the player getting up, with the world held until they stand. */
   beginIntro({ wake = false, lesson = false } = {}) {
     if (!['opening', 'introDeath'].includes(this.s.mode)) return false;
@@ -266,6 +266,8 @@ export class Game {
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     const amount = base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    // Hitting a boss during its alarm brings the claw straight back at whoever did it.
+    if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.3, 1, { targetX: this.p.x, targetY: this.p.y });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount); enemy.flashUntil = this.s.time + 0.09;
     this.tutorial.onHit(enemy, !!options.basic);
@@ -506,11 +508,79 @@ export class Game {
     this.s.effects.push({ id: this.id('fx'), type, x, y, color, created: this.s.time, until: this.s.time + duration, duration, value, ...extra });
   }
   beginEnemyTell(enemy, type, delay = null) {
-    const tellTime = delay ?? (enemy.minimumTell || enemy.tellDuration || this.config.enemies[enemy.type]?.tell || 0.7);
+    const tellTime = delay ?? (enemy.tellSeconds?.[type] || enemy.minimumTell || enemy.tellDuration || this.config.enemies[enemy.type]?.tell || 0.7);
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
     enemy.facing = angle;
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
+    if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
+    if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     enemy.state = 'tell';
+  }
+  /** What the boss will do next: its usual round, plus what it has unlocked by being hurt. */
+  nextBossPattern(enemy) {
+    const round = [...enemy.patterns, ...(enemy.phasePatterns || []).filter(({ below }) => enemy.hp <= enemy.maxHp * below).map(({ pattern }) => pattern)];
+    return round[enemy.pattern++ % round.length];
+  }
+  /** The carpets, as line segments, on the map or down the plain arena. */
+  marchLanes(enemy, all = false) {
+    const ai = this.config.bossAI[enemy.type], { top, bottom } = this.config.arena.bounds, map = this.map;
+    const lanes = map?.lanes || [...ai.marchLanes, ai.phaseTwoLane].map(x => [[x, top], [x, bottom]]);
+    return all || enemy.hp <= enemy.maxHp * ai.phaseTwoHpFraction ? lanes : lanes.slice(0, ai.marchLanes.length);
+  }
+  onLane(lane, width) {
+    const [[ax, ay], [bx, by]] = lane;
+    return segmentDistance(this.p, { x: ax, y: ay }, { x: bx, y: by }) < width + this.config.arena.playerRadius;
+  }
+  /** One crate always lands on the player; the rest land round them, on the floor. */
+  craneDrops(enemy) {
+    const ai = this.config.bossAI[enemy.type], { x, y } = this.p, drops = [{ x, y }], map = this.map, { bounds } = this.config.arena;
+    for (let tries = 0; tries < 40 && drops.length < ai.craneDrops; tries++) {
+      const angle = this.random() * Math.PI * 2, reach = ai.craneRadius * 2 + this.random() * ai.craneSpread, spot = { x: x + Math.cos(angle) * reach, y: y + Math.sin(angle) * reach };
+      if (map ? fitsMap(spot.x, spot.y, 0.4, map) : spot.x > bounds.left && spot.x < bounds.right && spot.y > bounds.top && spot.y < bounds.bottom) drops.push(spot);
+    }
+    return drops;
+  }
+  /** The safe carpet is always one the player can reach in time. */
+  safeCarpet(enemy, seconds) {
+    const lanes = this.marchLanes(enemy, true), reach = this.c.player.speed * seconds * CARPET_REACH_SHARE;
+    const away = lanes.map(([[ax, ay], [bx, by]]) => segmentDistance(this.p, { x: ax, y: ay }, { x: bx, y: by }));
+    const near = lanes.map((_, i) => i).filter(i => away[i] <= reach);
+    return near.length ? near[Math.floor(this.random() * near.length)] : away.indexOf(Math.min(...away));
+  }
+  startColumn(enemy) {
+    const ai = this.config.bossAI[enemy.type], { left, right, top, bottom } = this.config.arena.bounds;
+    const { start, end } = this.map?.column || { start: [[left, top], [left, bottom]], end: [[right, top], [right, bottom]] };
+    const span = Math.hypot(start[1][0] - start[0][0], start[1][1] - start[0][1]), travel = Math.hypot(end[0][0] - start[0][0], end[0][1] - start[0][1]), gapShare = ai.columnGapUnits / span;
+    this.s.column = { start, end, at: 0, seconds: travel / ai.columnSpeed, gapFrom: gapShare / 2 + this.random() * (1 - gapShare * 2), gapShare, damage: enemy.damage, width: ai.columnWidth, spent: false };
+  }
+  /** Where the marching line stands now, as the two stretches either side of its gap. */
+  get columnLine() {
+    const column = this.s.column;
+    if (!column) return null;
+    const { start, end, at, gapFrom, gapShare } = column, lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const a = lerp(start[0], end[0], at), b = lerp(start[1], end[1], at);
+    return { a, b, gapA: lerp(a, b, gapFrom), gapB: lerp(a, b, gapFrom + gapShare) };
+  }
+  tickBossHazards(dt) {
+    const { s, p } = this, bell = s.enemies.find(e => e.bellUntil > s.time);
+    if (!bell) s.bellWatch = null;
+    else if (s.bellWatch && (Math.hypot(p.x - s.bellWatch.x, p.y - s.bellWatch.y) > BELL_DRIFT_UNITS || p.attack || p.lastCast?.at >= s.bellWatch.at)) { s.bellWatch = null; this.hurt(bell.damage); if (!this.active) return; }
+    const column = s.column;
+    if (!column) return;
+    column.at += dt / column.seconds;
+    if (column.at >= 1) { s.column = null; return; }
+    const { a, b, gapA, gapB } = this.columnLine, near = (from, to) => this.onLane([from, to], column.width);
+    if (!column.spent && (near(a, gapA) || near(gapB, b)) && this.hurt(column.damage)) column.spent = true;
+  }
+  /** A line for the player to read while a boss pattern is running. */
+  get bossWarning() {
+    const { time } = this.s, boss = this.s.enemies.find(e => e.boss && e.hp > 0);
+    if (!boss) return '';
+    if (boss.alarmUntil > time || boss.tell?.type === 'alarm') return '경보! 공격을 멈추세요';
+    if (boss.bellUntil > time || boss.tell?.type === 'bell') return '종이 울립니다! 움직이지 마세요';
+    if (boss.tell?.type === 'carpet') return '초록 카펫 위로 이동하세요';
+    if (boss.tell?.type === 'column' || this.s.column) return '대열의 틈으로 지나가세요';
+    return '';
   }
   executeEnemy(enemy) {
     const tell = enemy.tell; enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + enemy.recovery;
@@ -542,9 +612,24 @@ export class Game {
         this.effect('swing', tell.x, tell.y, '#dc817b', 0.25, ai.fanRange, { angle: tell.angle, phase: 2 });
         if (tell.type === 'fan') enemy.followup = { type: 'fanSecond', at: this.s.time + ai.followupDelay }; break;
       case 'march': {
-        const lanes = [...ai.marchLanes, ...(enemy.hp <= enemy.maxHp * ai.phaseTwoHpFraction ? [ai.phaseTwoLane] : [])];
-        if (lanes.some(x => Math.abs(p.x - x) < ai.marchWidth + this.config.arena.playerRadius)) damage();
-        for (const x of lanes) this.effect('beam', x, this.config.arena.bounds.top, '#cf767a', 0.35, 1, { targetX: x, targetY: this.config.arena.bounds.bottom }); break;
+        const lanes = this.marchLanes(enemy);
+        if (lanes.some(lane => this.onLane(lane, ai.marchWidth))) damage();
+        for (const [[ax, ay], [bx, by]] of lanes) this.effect('beam', ax, ay, '#cf767a', 0.35, 1, { targetX: bx, targetY: by }); break;
+      }
+      case 'alarm': enemy.alarmUntil = this.s.time + ai.alarmSeconds; enemy.ready = enemy.alarmUntil + enemy.recovery; break;
+      case 'crane':
+        if (tell.drops.some(drop => distance(drop, p) <= ai.craneRadius + this.config.arena.playerRadius)) damage();
+        for (const { x, y } of tell.drops) { this.effect('ring', x, y, '#c9a66b', 0.3, ai.craneRadius); this.effect('scrap', x, y, '#c9a66b', 0.5, 1); }
+        break;
+      case 'bell':
+        enemy.bellUntil = this.s.time + ai.bellSeconds; enemy.ready = enemy.bellUntil + enemy.recovery;
+        this.s.bellWatch = { x: p.x, y: p.y, at: this.s.time }; break;
+      case 'column': this.startColumn(enemy); break;
+      case 'carpet': {
+        const lanes = this.marchLanes(enemy, true);
+        if (!this.onLane(lanes[tell.safe], ai.carpetSafeWidth)) damage();
+        lanes.forEach(([[ax, ay], [bx, by]], i) => { if (i !== tell.safe) this.effect('beam', ax, ay, '#cf767a', 0.35, 1, { targetX: bx, targetY: by }); });
+        break;
       }
       case 'trumpetWave': {
         const safeAngle = tell.angle, gap = ai.waveGapDegrees * Math.PI / 180;
@@ -555,6 +640,8 @@ export class Game {
   }
   fireBullet(enemy, angle, speed) { this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: enemy.damage, friendly: false, until: this.s.time + this.config.rules.enemyProjectileLifetime }); }
   updateEnemies(dt) {
+    this.tickBossHazards(dt);
+    if (!this.active) return;
     const flow = this.flowField;
     flow?.update(this.p.x, this.p.y);
     let activeMelee = this.s.enemies.filter(e => !e.boss && (e.tell || e.dash) && e.attack !== 'shot').length;
@@ -566,7 +653,7 @@ export class Game {
         this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * (this.statusPower + this.upgradeAmount('statusDamage')), { dot: true, color: '#efaa71' });
         enemy.burnTick += info.tickInterval;
       }
-      if (enemy.hp <= 0 || enemy.held || enemy.exposedUntil > this.s.time || enemy.stunUntil > this.s.time) continue;
+      if (enemy.hp <= 0 || enemy.held || enemy.exposedUntil > this.s.time || enemy.stunUntil > this.s.time || enemy.alarmUntil > this.s.time || enemy.bellUntil > this.s.time) continue;
       if (enemy.dash) {
         const d = enemy.dash, start = { x: enemy.x, y: enemy.y };
         this.move(enemy, Math.cos(d.angle) * enemy.dashDistance / enemy.dashDuration * dt, Math.sin(d.angle) * enemy.dashDistance / enemy.dashDuration * dt);
@@ -582,7 +669,7 @@ export class Game {
       const a = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), d = distance(this.p, enemy);
       enemy.facing = a;
       if (this.s.time >= enemy.ready && (enemy.boss || d < enemy.attackRange) && (enemy.boss || enemy.attack === 'shot' || activeMelee < this.config.rules.maxActiveMelee)) {
-        const type = enemy.boss ? enemy.patterns[enemy.pattern++ % enemy.patterns.length] : enemy.attack;
+        const type = enemy.boss ? this.nextBossPattern(enemy) : enemy.attack;
         this.beginEnemyTell(enemy, type); if (!enemy.boss && enemy.attack !== 'shot') activeMelee++;
       } else if (d > this.config.rules.enemyStopDistance[enemy.boss ? 'boss' : enemy.attack === 'shot' ? 'ranged' : 'melee']) {
         const chill = this.c.statuses.find(s => s.id === 'chill');
@@ -683,7 +770,7 @@ export class Game {
   }
   /** The last enemy gets a moment to fall before anything covers the room. */
   holdClear() {
-    this.s.projectiles = this.s.projectiles.filter(b => b.friendly);
+    this.s.projectiles = this.s.projectiles.filter(b => b.friendly); this.s.column = null;
     this.s.casts = this.s.casts.filter(c => c.shape !== 'magnet');
     this.s.clearAt ??= this.s.time + CLEAR_HOLD_SECONDS;
     if (this.s.time >= this.s.clearAt) this.finishCombat();

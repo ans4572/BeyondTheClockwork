@@ -17,6 +17,23 @@ export function playtest(seed = 123, maxSeconds = 600) {
     if (game.s.mode === 'route') { game.nextNode(0); continue; }
     if (game.s.mode === 'shop') { game.buyShop('heal'); game.nextNode(); continue; }
     if (game.s.mode === 'unwind') { game.unwind(); continue; }
+    const boss = game.s.enemies.find(e => e.boss && e.hp > 0), now = game.s.time, tellType = boss?.tell?.type;
+    // The bot obeys the boss's warnings the way a player reading them would.
+    if (tellType === 'bell' || boss?.bellUntil > now) { game.update(1 / 60, {}); continue; }
+    if (tellType === 'carpet') {
+      const [[ax, ay], [bx, by]] = game.marchLanes(boss, true)[boss.tell.safe], t = Math.max(0, Math.min(1, ((game.p.x - ax) * (bx - ax) + (game.p.y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)));
+      const angle = Math.atan2(ay + (by - ay) * t - game.p.y, ax + (bx - ax) * t - game.p.x), near = Math.hypot(ay + (by - ay) * t - game.p.y, ax + (bx - ax) * t - game.p.x) < 0.5;
+      game.update(1 / 60, near ? {} : { x: Math.cos(angle), y: Math.sin(angle) }); continue;
+    }
+    if (tellType === 'crane') {
+      const drop = boss.tell.drops.reduce((a, b) => distance(game.p, a) < distance(game.p, b) ? a : b), angle = Math.atan2(game.p.y - drop.y, game.p.x - drop.x) + 0.01;
+      game.update(1 / 60, distance(game.p, drop) < 2 ? { x: Math.cos(angle), y: Math.sin(angle) } : {}); continue;
+    }
+    const calm = !(boss?.alarmUntil > now), line = game.columnLine;
+    if (line) {
+      const { start, end } = game.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), ahead = (game.p.x - line.a[0]) * Math.cos(heading) + (game.p.y - line.a[1]) * Math.sin(heading);
+      if (Math.abs(ahead) < 1.1) { game.update(1 / 60, { x: Math.cos(heading), y: Math.sin(heading), dodge: true }); continue; }
+    }
     const enemies = game.s.enemies.filter(e => e.hp > 0), target = enemies.sort((a, b) => distance(game.p, a) - distance(game.p, b))[0];
     if (!target) { game.update(1 / 60, {}); continue; }
     const d = distance(game.p, target), angle = Math.atan2(target.y - game.p.y, target.x - game.p.x);
@@ -34,7 +51,7 @@ export function playtest(seed = 123, maxSeconds = 600) {
       previous = { ...game.p };
     }
     if (stuckFrames >= 30) move += Math.PI / 2;
-    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger, dodge, skill: tick % 4, fusion: true });
+    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && calm, dodge, skill: calm ? tick % 4 : undefined, fusion: calm });
   }
   return { seed, mode: game.s.mode, node: game.s.run ? game.s.run.node + 1 : game.s.result?.node, seconds: Math.round(game.s.run?.elapsed || game.s.result?.elapsed || 0), hp: Math.round(game.p.hp), damageTaken: Math.round(game.s.run?.damageTaken || game.s.result?.damageTaken || 0), baseGears: game.s.run?.baseGears || game.s.result?.baseGears || 0, upgrades: game.s.profile.stats };
 }

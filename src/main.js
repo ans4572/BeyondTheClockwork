@@ -222,6 +222,7 @@ try {
   function lessonHint() {
     const keys = bindings(), lesson = game.tutorial;
     if (!screen && game.s.mode === 'route' && game.s.run.node === 0) return '노란 표시로 걸어 나가세요';
+    if (!screen && game.s.mode === 'combat' && game.bossWarning) return game.bossWarning;
     if (!screen && game.s.mode === 'practice') return '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다';
     if (screen || !['intro', 'registration'].includes(game.s.mode) || game.wakeProgress !== null) return '';
     return {
@@ -429,7 +430,7 @@ try {
     gamepadLast = pad.buttons.map(b => b.pressed); return result;
   }
 
-  let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1;
+  let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1, lastBossTellAt = -1;
   function frame(now) {
     const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta;
     if (game.s.mode === 'opening' && !screen) playOpening(false);
@@ -451,6 +452,8 @@ try {
     if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
     const charging = game.s.enemies.find(e => ['dash', 'shot'].includes(e.tell?.type) && e.tell.started > lastChargeAt);
     if (charging) { lastChargeAt = charging.tell.started; beep(880, 0.1, 0.015); }
+    const bossTell = game.s.enemies.find(e => ['bell', 'alarm'].includes(e.tell?.type) && e.tell.started > lastBossTellAt);
+    if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else beep(660, 0.25, 0.04); }
     const soundEffect = game.s.effects.findLast(f => ['swing', 'hurt', 'scrap'].includes(f.type));
     if (soundEffect && soundEffect.id !== lastSoundId) { lastSoundId = soundEffect.id; beep(soundEffect.type === 'hurt' ? 110 : soundEffect.type === 'scrap' ? 660 : 320, 0.06); }
     renderer.talkKey = keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); renderOverlay(); updateHUD(); requestAnimationFrame(frame);

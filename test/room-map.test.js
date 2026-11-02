@@ -9,16 +9,16 @@ import { CanvasRenderer } from '../src/render/canvas.js';
 
 const json = async name => JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'));
 const [combat, progression, slice, maps] = await Promise.all(['combat', 'progression', 'slice', 'maps'].map(json));
-const data = { combat, progression, slice, maps }, map = placeOf(maps, maps.maps['stop-02']), oldRoom = maps.maps['stop-08'];
+const data = { combat, progression, slice, maps }, map = placeOf(maps, maps.maps['stop-02']);
 const run = (input = data) => { const g = new Game(input); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(4711); return g; };
 
 test('every stage has a short label for the journey strip', () => {
   for (const room of slice.rooms) assert.ok(room.short?.length, room.id);
 });
 
-test('every stage up to the night market has a large map, and only the last boss keeps the code arena', () => {
-  for (const room of slice.rooms) assert.equal(!!maps.maps[room.id], room.boss !== 'captainBrass', room.id);
-  for (const id of ['stop-02', 'stop-03', 'stop-04', 'stop-05', 'stop-06']) {
+test('every stage has a large map with its art on disk', () => {
+  for (const room of slice.rooms) assert.ok(maps.maps[room.id], room.id);
+  for (const id of slice.rooms.map(room => room.id).filter(id => id !== 'stop-07')) {
     const place = placeOf(maps, maps.maps[id]);
     assert.deepEqual(place.size, [38.4, 25.6], id);
     for (const file of [place.background, place.mask]) assert.ok(fs.existsSync(new URL(`..${file}`, import.meta.url)), file);
@@ -68,11 +68,6 @@ test('map data is validated, and a spawn outside the floor is rejected', () => {
   assert.throws(() => validateData(broken), /이동 영역 밖/);
 });
 
-test('a room not yet enlarged keeps a background the size of the game canvas', () => {
-  const png = fs.readFileSync(new URL(`..${oldRoom.background}`, import.meta.url));
-  assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1120, 640]);
-});
-
 test('entering the room uses its authored spawns', () => {
   const g = run();
   assert.deepEqual([g.p.x, g.p.y], [map.spawn.x, map.spawn.y]);
@@ -99,19 +94,17 @@ test('a body saved off the floor can walk back onto it', () => {
   assert.ok(circleInPolygon(g.p.x, g.p.y, slice.arena.playerRadius, map.walkable));
 });
 
-test('rooms without a map, and games without map data, keep the rectangular arena', () => {
-  const g = run();
-  g.s.run.node = 11;
-  assert.equal(g.map, null);
-  assert.deepEqual(g.bounds, slice.arena.bounds);
+test('games without map data keep the rectangular arena', () => {
   const plain = run({ combat, progression, slice });
+  assert.deepEqual(plain.bounds, slice.arena.bounds);
   assert.equal(plain.map, null);
   assert.deepEqual([plain.p.x, plain.p.y], [slice.arena.spawn.x, slice.arena.spawn.y]);
 });
 
 test('scenery repaints over a body behind it and not over one in front', () => {
-  const g = run(), calls = [], map = oldRoom;
-  g.s.run.node = 6; g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1;
+  const stage = placeOf(maps, maps.maps['stop-02']), map = { ...stage, occluders: [{ id: 'a', baseY: 9, polygon: [[10, 6], [12, 6], [12, 9]] }, { id: 'b', baseY: 20, polygon: [[10, 18], [12, 18], [12, 20]] }] };
+  const input = { ...data, maps: { ...maps, maps: { ...maps.maps, 'stop-02': map } } }, g = run(input), calls = [];
+  g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1;
   const context = new Proxy({}, { get: (_, name) => (...args) => { calls.push(name); return args; }, set: () => true });
   const r = new CanvasRenderer({ getContext: () => context }, g), order = () => { calls.length = 0; r.render(1 / 60); };
   r.mapImages = new Map([[map.background, { fake: true }]]);
