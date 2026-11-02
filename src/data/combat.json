@@ -133,7 +133,7 @@
     {
       "id": "ice",
       "name": "얼음",
-      "device": "냉각 밸브",
+      "device": "냉각 분사기",
       "role": "둔화·공간 제어",
       "status": "chill"
     },

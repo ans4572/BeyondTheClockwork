@@ -52,9 +52,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .reward-card { position: relative; display: flex; flex-direction: column; padding: 12px; background: var(--paper-low); border-top: 6px solid var(--accent, var(--ink)); text-align: left; }
 .reward-card .reward-icon { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; background: var(--paper); color: var(--accent, var(--ink)); font-size: 19px; }
-/* Element parts are drawn at 64px; whole-pixel size keeps them crisp. */
-.reward-card .element-icon { width: 64px; height: 64px; margin: -8px 0 0 -8px; image-rendering: pixelated; }
-.codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 4px -10px -4px; vertical-align: middle; }
+/* Element parts are drawn at 32px and shown at whole multiples so every pixel stays square. */
+.reward-card .element-icon { width: 64px; height: 64px; margin: -4px 0 0 -4px; image-rendering: pixelated; }
+.codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 4px -10px -4px; vertical-align: middle; image-rendering: pixelated; }
 .reward-card .rarity { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; color: var(--label); }
 .reward-card .card-label { font-size: 12px; color: var(--label); }
 .reward-card h3 { font-size: 16px; margin: 2px 0 6px; }
