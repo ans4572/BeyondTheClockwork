@@ -87,6 +87,21 @@ export class CanvasRenderer {
     c.filter = 'none';
     this.drawStatuses(enemy, enemy.y * 20 - 70);
   }
+  /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
+  drawMinimap(target) {
+    const place = this.minimapPlace, g = this.game, s = g.s;
+    if (!place?.mapImage || !place.map) return false;
+    const c = target.getContext('2d'), W = target.width, H = target.height, [mw, mh] = place.size, k = Math.min(W / mw, H / mh), ox = (W - mw * k) / 2, oy = (H - mh * k) / 2;
+    const at = (x, y) => [ox + x * k, oy + y * k], dot = (x, y, r, fill, edge = '#2b3345') => { const [px, py] = at(x, y); c.beginPath(); c.arc(px, py, r, 0, TAU); c.fillStyle = fill; c.fill(); c.lineWidth = 2; c.strokeStyle = edge; c.stroke(); };
+    c.clearRect(0, 0, W, H); c.fillStyle = '#2b3345'; c.fillRect(0, 0, W, H);
+    c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.globalAlpha = 0.85; c.drawImage(place.mapImage, ox, oy, mw * k, mh * k); c.globalAlpha = 1;
+    const [vx, vy] = at(this.camera.x, this.camera.y); c.lineWidth = 2; c.strokeStyle = '#fff4d6cc'; c.strokeRect(vx, vy, SCREEN_UNITS[0] * k, SCREEN_UNITS[1] * k);
+    if (place.goal) dot(place.goal.x, place.goal.y, 5, '#ffd257');
+    for (const npc of (place.map.npcs || []).filter(npc => npc.label)) dot(npc.x, npc.y, 4, '#7fc7b0');
+    for (const enemy of s.enemies) if (enemy.hp > 0 && !enemy.hidden && !enemy.dummy) dot(enemy.x, enemy.y, enemy.boss ? 6 : 3.5, '#e0564c');
+    dot(g.p.x, g.p.y, 5, '#fff4d6');
+    return true;
+  }
   /** The yellow ring and arrow: a place to walk to, and the portal between the yard and the town. */
   marker({ x, y }) {
     const c = this.ctx, beat = this.game.s.profile.settings.reducedMotion ? 0 : Math.sin(this.visualTime * 4);
@@ -377,6 +392,7 @@ export class CanvasRenderer {
     // The portal the player came through stays marked until they have met the town.
     const portal = s.mode === 'registration' && g.village ? g.hubMap.arrival.portal : null;
     for (const spot of [portal, goal]) if (spot) this.marker(spot);
+    this.minimapPlace = { map, mapImage, size, goal: goal || portal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
     for (const cast of s.casts) {
       if(cast.shape==='clamp'){

@@ -99,7 +99,7 @@ try {
   const gameViewport = $('overlay').parentElement;
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
-  let audio = null, lastSoundId = null, codexTab = 'elements';
+  let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null;
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -143,6 +143,7 @@ try {
   async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
   function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
   function resume() {
+    mapPick = null;
     if (onTitle) { screen = 'title'; bindingTarget = null; renderOverlay(true); title.focus(); return; }
     screen = null; game.s.paused = false; bindingTarget = null; clearInput(); renderOverlay(true); $('game').focus({ preventScroll: true }); }
   function button(label, action, extra = '', classes = '') { return `<button class="${classes}" data-action="${action}" ${extra}>${label}</button>`; }
@@ -275,28 +276,25 @@ try {
     const how = isTouch ? '융합 버튼' : '우클릭';
     return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-tabs">${tab('elements', '속성 4')}${tab('fusions', '융합 6')}</div><div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? `<p class="notice">장착한 두 속성의 융합 하나를 ${how}으로 씁니다. 축전은 렌치로 때리면 찹니다.</p>` : legend}`, 'wide');
   }
-  /** Where the player stands right now, for the area half of the map. */
-  function currentArea() {
-    const s = game.s, hub = !s.run;
-    if (!['combat', 'reward', 'route', 'shop', 'unwind', 'hub', 'registration', 'complete'].includes(s.mode)) return null;
-    return (hub ? game.hubMap : game.map) || null;
-  }
-  function areaMap(area) {
-    if (!area) return '<div class="area-map empty"><span>이곳은 지도에 없는 공간입니다.</span></div>';
-    const [width, height] = area.size || [data.slice.arena.width, data.slice.arena.height], at = (x, y) => `left:${x / width * 100}%;top:${y / height * 100}%`;
-    const npcs = (area.npcs || []).filter(npc => npc.label).map(npc => `<i class="marker npc" style="${at(npc.x, npc.y)}"><b>${npc.label}</b></i>`).join('');
-    const exit = area.exit ? `<i class="marker exit" style="${at(...area.exit.at)}"><b>출구</b></i>` : '';
-    return `<div class="area-map" style="aspect-ratio:${width}/${height}"><img src="${assetUrl(area.background)}" alt="">${npcs}${exit}<i class="marker you" style="${at(game.p.x, game.p.y)}"><b>나</b></i></div>`;
-  }
   const stopIcon = (room, i) => (room.kind === 'shop' ? '◈' : room.boss ? '✣' : i + 1);
+  /** Who waits in a stop, named once each, so the map can say what an area is like before walking in. */
+  function stopFoes(room) {
+    if (room.boss) return [data.combat.bosses.find(b => b.id === room.boss)?.name || room.short];
+    return [...new Set((room.waves || []).flat())].map(type => data.slice.enemies[type].name);
+  }
+  /** The region drawn like a world map: each stop is a small view of its own art, joined by the road walked in order. */
   function mapPanel() {
     const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1, route = [data.maps.route.start, ...rooms.map(room => data.maps.route[room.id])];
-    // The town is where a run starts, so it sits before the first numbered stop.
+    const picked = mapPick ?? (s.run ? rooms[node]?.id : 'town');
     const lines = route.slice(1).map(([x, y], i) => `<line class="${i <= node ? 'done' : ''}" x1="${route[i][0]}" y1="${route[i][1]}" x2="${x}" y2="${y}"/>`).join('');
-    const stop = (state, classes, icon, label, [x, y]) => `<div class="route-stop ${state} ${classes}" style="left:${x}%;top:${y}%"><span>${icon}</span><small>${label}</small></div>`;
-    const stops = stop(s.run ? 'done' : 'current', '', '⌂', '마을', route[0]) + rooms.map((room, i) => stop(i === node ? 'current' : i < node ? 'done' : '', room.boss ? 'boss' : '', stopIcon(room, i), room.short, route[i + 1])).join('');
-    const place = game.room?.name || HOME_NAME, note = !s.run ? '출발 전입니다. 남쪽 큰길이 웃음거리로 이어집니다.' : game.room.description;
-    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="map-sheet"><div class="route-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><div class="area-side"><strong>${place}</strong>${areaMap(currentArea())}<p>${note}</p></div></div><p class="notice">⌂ 마을 · 숫자 전투 구간 · ◈ 야시장 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'wide');
+    const spot = (id, state, classes, icon, label, [x, y]) => `<button class="atlas-stop ${state} ${classes} ${picked === id ? 'picked' : ''}" data-action="map-stop" data-id="${id}" style="left:${x}%;top:${y}%"><img src="art/ui/world-map/${id}.png" alt=""><span class="atlas-badge">${icon}</span><small>${label}</small>${state === 'current' ? '<i class="atlas-you">나</i>' : ''}</button>`;
+    const stops = spot('town', s.run ? 'done' : 'current', 'town', '⌂', HOME_NAME, route[0])
+      + rooms.map((room, i) => spot(room.id, i === node ? 'current' : i < node ? 'done' : 'ahead', room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '', stopIcon(room, i), room.short, route[i + 1])).join('');
+    const index = rooms.findIndex(room => room.id === picked), room = rooms[index];
+    const detail = room
+      ? `<strong>${stopIcon(room, index)} · ${room.name}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
+      : `<strong>⌂ · ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
+    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><p class="atlas-detail">${detail}</p><p class="notice">구간을 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
@@ -424,6 +422,7 @@ try {
     if (name === 'resume') resume();
     if (name === 'codex') pause('codex');
     if (name === 'codex-tab') codexTab = d.id;
+    if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
     if (name === 'export') { game.save(); saveDownload(); }
@@ -609,7 +608,7 @@ try {
     // The swing itself is only air; what it hits is voiced by feelHits.
     const swing = game.s.effects.findLast(f => f.type === 'swing');
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7); }
-    renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });

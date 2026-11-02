@@ -33,28 +33,30 @@
 .panel.shop .reward-card .values { grid-column: 2; grid-row: 1; margin: 0; text-align: right; }
 .panel.shop .reward-card .pick { grid-column: 2; grid-row: 2; margin: 0; padding: 4px; }
 
-.map-sheet { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; margin-top: 10px; align-items: start; }
-.route-map { position: relative; aspect-ratio: 1.75; background: var(--paper-low); }
-.route-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.route-map line { stroke: #b8ad8c; vector-effect: non-scaling-stroke; stroke-width: 3px; }
-.route-map line.done { stroke: var(--ink); }
-.route-stop { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 1px; width: 62px; }
-.route-stop span { display: grid; place-items: center; width: 26px; height: 26px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-size: 12px; font-weight: 700; color: var(--ink); }
-.route-stop small { font-size: 11px; color: var(--ink); white-space: nowrap; }
-.route-stop.done span { background: var(--ink); color: var(--paper); }
-.route-stop.boss span { box-shadow: inset 0 0 0 2px var(--red); color: var(--red); }
-.route-stop.done.boss span { background: var(--red); color: var(--paper); }
-.route-stop.current span { background: #ffd257; color: var(--ink); }
-.route-stop.current small { font-weight: 700; }
-.area-side strong { display: block; margin-bottom: 4px; font-size: 14px; }
-.panel .area-side p { margin-top: 6px; font-size: 12px; }
-.area-map { position: relative; overflow: hidden; background: var(--paper-low); }
-.area-map img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.area-map.empty { display: grid; place-items: center; min-height: 120px; font-size: 12px; color: var(--label); }
-.marker { position: absolute; width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--ink); box-shadow: 0 0 0 2px var(--paper); font-style: normal; }
-.marker b { position: absolute; left: 50%; bottom: 11px; transform: translateX(-50%); padding: 0 3px; background: var(--paper); color: var(--ink); font-size: 11px; font-weight: 700; white-space: nowrap; }
-.marker.exit { background: var(--gold); }
-.marker.you { background: #c43c36; z-index: 1; }
+.panel.atlas-panel { width: min(1040px, 100%); padding: 14px 18px; }
+/* The region board: a sunlit lawn under the road, darkening toward the parade ground at the top. */
+.atlas { position: relative; aspect-ratio: 2.25; margin-top: 4px; background: linear-gradient(0deg, #cfdcb4, #d9c9a0 55%, #caa883); box-shadow: inset 0 0 0 3px var(--ink); overflow: hidden; }
+.atlas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.atlas line { stroke: #9b8a68; stroke-width: 6px; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.atlas line.done { stroke: var(--ink); stroke-dasharray: none; }
+.panel button.atlas-stop, .panel button.atlas-stop:hover:not(:disabled) { position: absolute; width: 14.2%; transform: translate(-50%, -50%); padding: 0; background: none; box-shadow: none; border: 0; cursor: pointer; }
+.panel button.atlas-stop:focus-visible { outline: none; }
+.atlas-stop img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 3px #0e121a55; image-rendering: auto; }
+.atlas-stop.ahead img { filter: saturate(.55) brightness(.92); }
+.atlas-stop:hover img, .atlas-stop:focus-visible img { box-shadow: 0 0 0 3px var(--gold), 4px 4px 0 3px #0e121a55; }
+.atlas-stop.picked img { box-shadow: 0 0 0 3px var(--ink), 0 0 0 6px #ffd257, 4px 4px 0 6px #0e121a55; }
+.atlas-badge { position: absolute; left: -8px; top: -8px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 3px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-size: 12px; font-weight: 700; color: var(--ink); }
+.atlas-stop.done .atlas-badge { background: var(--ink); color: var(--paper); }
+.atlas-stop.boss .atlas-badge { box-shadow: inset 0 0 0 2px var(--red); color: var(--red); }
+.atlas-stop.done.boss .atlas-badge { background: var(--red); color: var(--paper); }
+.atlas-stop.current .atlas-badge { background: #ffd257; color: var(--ink); }
+.atlas-stop small { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); padding: 0 5px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-size: 11px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.atlas-you { position: absolute; right: -6px; top: -10px; padding: 1px 5px; background: #c43c36; color: #fff4d6; font-size: 11px; font-style: normal; font-weight: 700; box-shadow: 0 0 0 2px var(--paper); animation: atlas-bob 1.2s ease-in-out infinite; }
+@keyframes atlas-bob { 50% { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .atlas-you { animation: none; } }
+.panel p.atlas-detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-height: 44px; margin: 12px 0 0; }
+.atlas-detail strong { font-size: 14px; }
+.atlas-detail em { font-style: normal; font-size: 12px; color: var(--red); }
 
 #title { position: fixed; inset: 0; z-index: 20; overflow: hidden; background: repeating-linear-gradient(0deg, #3d6a63 0 24px, #35605a 24px 26px); font-family: "Malgun Gothic", sans-serif; }
 #title[hidden], #title [hidden] { display: none; }
@@ -97,6 +99,9 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-bar i { position: absolute; left: 2px; top: 2px; bottom: 2px; background: #c43c36; }
 .hud-bar.energy i { background: #c79a3e; }
 .hud-bar b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; line-height: 1; }
+.hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px #2b3345, 4px 4px 0 3px #0e121a55; }
+.hud-minimap:not([hidden]) ~ .hud-wallet { top: 136px; }
+.hud-minimap:not([hidden]) ~ .hud-tools { top: 180px; }
 .hud-wallet { position: absolute; right: 14px; top: 12px; display: flex; gap: 16px; padding: 8px 14px; }
 .hud-tools { position: absolute; right: 14px; top: 56px; display: flex; gap: 6px; }
 .hud-tools button { padding: 3px 10px; font-size: 12px; }
