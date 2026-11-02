@@ -572,6 +572,8 @@ try {
     if (game.s.mode === 'registration' && game.tutorial.step === 'town' && bellRinging) game.tutorial.heardBell();
     if (!screen && game.tutorial.takeCall()) moruCalls();
     const boss = game.room?.boss;
+    // After Brass, F2 says what the title means: the spring stays, but who winds it changes.
+    if (!screen && game.s.mode === 'complete' && !game.s.profile.bossTalks?.includes('brassAfter')) { (game.s.profile.bossTalks ??= []).push('brassAfter'); game.save(); talk('brassAfter'); }
     if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0)) meetBoss(boss);
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening');
     const pad = pollGamepad(), map = bindings();
