@@ -12,3 +12,7 @@ assignee:
 ## Blocked by
 
 - 없음
+
+## Progress
+
+방별 구조와 시간대 제안을 프롬프트로 작성했다: `art/smile-street/maps/background-large-prompts.md`. 배경을 받은 뒤 구성을 확인하고 닫는다. 브라스 행진 경로는 새 맵의 카펫 위치에 맞춰 옮긴다.

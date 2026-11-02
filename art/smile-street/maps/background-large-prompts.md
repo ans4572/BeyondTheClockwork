@@ -11,3 +11,16 @@
 | 5 | 분실물 회수소 | `lost-and-found/background-large.prompt.txt` | `workshop-road-a/background.png` | `lost-and-found/background-large.png` | 34×22 |
 
 맵 1유닛은 40픽셀입니다. 5장 모두 1536×1024로 받아 38.4×25.6유닛으로 게임에 연결했습니다. 표의 최종 맵 크기는 제작 전 계획값입니다. 3구간은 사물이 이미 기존 맵보다 커서 키우지 않고 원본 그대로 썼습니다.
+
+## 야시장 이후 6장
+
+구간이 뒤로 갈수록 해가 져서, 11구간과 브라스 방은 밤입니다. 첫 번째 참조로 아래 표의 그림을, 두 번째 참조로 `night-market/background-v2.png`를 넣습니다. 결과는 1536×1024면 됩니다.
+
+| 구간 | 방 | 프롬프트 | 참조 그림 1 | 저장 위치 |
+|---|---|---|---|---|
+| 07 | 태엽 적재마당 | `workshop-road-c/background-large.prompt.txt` | `workshop-road-c/background.png` | `workshop-road-c/background-large.png` |
+| 08 | 분수 우회광장 | `first-step-c/background-large.prompt.txt` | `first-step-c/background.png` | `first-step-c/background-large.png` |
+| 09 | 깃발 검문광장 | `parade-approach-c/background-large.prompt.txt` | `parade-approach-c/background.png` | `parade-approach-c/background-large.png` |
+| 10 | 사탕색 골목 | `ribbon-alley-a/background-large.prompt.txt` | `ribbon-alley-a/background.png` | `ribbon-alley-a/background-large.png` |
+| 11 | 행진 적재뜰 | `parade-approach-d/background-large.prompt.txt` | `parade-approach-d/background.png` | `parade-approach-d/background-large.png` |
+| 12 | 멈추지 않는 행진 | `march-gate/background-large.prompt.txt` | `parade-approach-d/background.png` | `march-gate/background-large.png` |
