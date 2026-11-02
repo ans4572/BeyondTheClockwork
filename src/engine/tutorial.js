@@ -69,6 +69,6 @@ export class Tutorial {
   }
   guardBeaten() {
     this.state.step = 'door';
-    this.game.notify('문 너머에서 누군가 부릅니다.');
+    this.game.notify('폐기장 밖에서 누군가 부릅니다.');
   }
 }

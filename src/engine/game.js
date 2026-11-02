@@ -81,7 +81,7 @@ export class Game {
     if (lesson) this.tutorial.start();
     else {
       this.spawnEnemy(this.config.rules.introEnemy, yard?.enemySpawns[0] || { x: 12, y: 9 }).ready += hold;
-      this.notify('렌치를 주웠습니다. 좌클릭으로 공격하세요.'); this.s.notices.at(-1).until += hold;
+      this.notify('렌치를 주웠습니다. 경비를 때려 보세요.'); this.s.notices.at(-1).until += hold;
     }
     this.save(); return true;
   }
@@ -110,7 +110,7 @@ export class Game {
   }
   enterHub() {
     Object.assign(this.p, this.hubMap?.spawn);
-    this.notify('모루에게 다가가 E · 남쪽 큰길로 나가면 출발합니다.');
+    this.notify('모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
   }
   talk() {
     const npc = this.nearbyNpc;
@@ -928,7 +928,7 @@ export class Game {
     if (reward.kind === 'trait') (run.traits ??= []).push(reward.id);
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
     run.rewardChoices = [];
-    if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost} + 우클릭`);
+    if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
     else this.s.mode = 'route';
     this.save(); return true;

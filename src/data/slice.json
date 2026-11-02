@@ -819,7 +819,7 @@
     },
     {
       "id": "cooldownReduction",
-      "name": "쿨타임 감소",
+      "name": "기술 대기시간",
       "description": "기술과 융합을 더 자주 쓴다.",
       "perRank": 0.01,
       "unit": "percent",
@@ -849,7 +849,7 @@
     },
     {
       "id": "dodgeCooldown",
-      "name": "회피 쿨타임",
+      "name": "회피 대기시간",
       "description": "회피를 더 자주 쓴다.",
       "perRank": 0.01,
       "unit": "percent",
@@ -903,7 +903,7 @@
       "id": "overload",
       "skill": "heatSwing",
       "name": "과부하",
-      "description": "적에게 화상을 입히면 이 기술의 쿨타임이 2초 줄어든다.",
+      "description": "적에게 화상을 입히면 이 기술의 대기시간이 2초 줄어든다.",
       "cooldownRefund": 2
     },
     {
@@ -982,7 +982,7 @@
       "id": "coldReap",
       "element": "ice",
       "name": "냉각 회수",
-      "description": "둔화 걸린 적을 처치하면 기술 쿨타임이 1초 줄어든다.",
+      "description": "둔화 걸린 적을 처치하면 기술 대기시간이 1초 줄어든다.",
       "cooldownRefund": 1
     },
     {

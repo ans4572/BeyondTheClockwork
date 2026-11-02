@@ -17,6 +17,10 @@ const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(s
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
 const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
 const HOME_NAME = '웃음 마을';
+// The thirteen tuning rows read as four short lists by what they change.
+const STAT_GROUPS = [['버티기', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['때리기', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['기술', ['cooldownReduction', 'energyGain', 'statusPower']], ['모으기', ['gearGain', 'coinGain']]];
+/** Parser errors arrive in English; players get one plain sentence instead. */
+const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
 
@@ -83,7 +87,7 @@ try {
   const gameViewport = $('overlay').parentElement;
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
-  let audio = null, lastSoundId = null;
+  let audio = null, lastSoundId = null, codexTab = 'elements';
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -151,10 +155,14 @@ try {
   }
   function statRow(stat) {
     const rank = game.s.profile.stats[stat.id], maxed = rank >= stat.maxRank, cost = statCost(stat, rank), blocked = maxed || game.s.profile.freeGears < cost;
-    return `<div class="stat-row" title="${stat.description}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${stat.maxRank}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i></div><span class="stat-value">${statValue(stat, rank)}${maxed ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : `⚙ ${cost}`}</button></div>`;
+    return `<div class="stat-row" data-tip="${stat.name}: ${stat.description}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${stat.maxRank}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i></div><span class="stat-value">${statValue(stat, rank)}${maxed ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : `⚙ ${cost}`}</button></div>`;
+  }
+  function statGroups() {
+    const stats = data.slice.permanentStats, grouped = STAT_GROUPS.flatMap(([, ids]) => ids), rest = stats.filter(stat => !grouped.includes(stat.id));
+    return [...STAT_GROUPS, ...(rest.length ? [['기타', rest.map(stat => stat.id)]] : [])].map(([name, ids]) => `<h3 class="stat-group">${name}</h3>${ids.map(id => stats.find(stat => stat.id === id)).filter(Boolean).map(statRow).join('')}`).join('');
   }
   function tuningPanel() {
-    return panel(`<div class="panel-header"><div><h2>몸을 조율한다.</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${data.slice.permanentStats.map(statRow).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div><p class="notice">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p>`, 'side');
+    return panel(`<div class="panel-header"><div><h2>몸을 조율한다.</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
   function elementsPanel() {
     const { loadout } = game.s.profile, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
@@ -178,9 +186,9 @@ try {
     return { name: desc.name, icon: '✧', label: '출력 부품', description: desc.description, value: `${reward.id === 'maxHp' ? '+' + upgrade.perRank + ' HP' : '+' + Math.round(upgrade.perRank * 100) + '%'} · ${(game.s.run.upgrades[reward.id] || 0) + 1}/${upgrade.maxRank} 단계`, rarity: '원정' };
   }
   function rewardsPanel() {
-    return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>방 완료 보상은 이미 저장되었습니다. 아래 부품 중 하나를 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
+    return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card" style="--accent:${info.color || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${info.rarity}</span>${info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 교체`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
+      return `<article class="reward-card" style="--accent:${info.color || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${info.rarity}</span>${info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
     }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   function settingsPanel() {
@@ -189,7 +197,10 @@ try {
     return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
   }
   function codexPanel() {
-    return panel(`<div class="panel-header"><div><h2>속성과 연결의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-list">${data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · ${skill.totalDirectDamage} 피해 / ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('')}</div><div class="divider"></div><div class="codex-list">${data.combat.fusions.map(f => `<article class="codex-entry"><h3>${f.name} ${game.s.profile.discoveredFusions.includes(f.id) ? '✓' : ''}</h3><p>${f.pair.map(id => data.combat.elements.find(e => e.id === id).name).join(' + ')} · ${f.totalDirectDamage} 피해<br>${f.effect}</p><small>축전 ${f.energyCost} · ${f.cooldown}초 / 두 슬롯 중 낮은 단계·등급 적용</small></article>`).join('')}</div><p class="notice">지금은 4속성 6융합까지 열려 있습니다.</p>`, 'wide');
+    const elementName = id => data.combat.elements.find(e => e.id === id).name, tab = (id, label) => button(label, 'codex-tab', `data-id="${id}" aria-pressed="${codexTab === id}"`, codexTab === id ? 'tab on' : 'tab');
+    const elements = data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · 피해 ${skill.totalDirectDamage} · 대기 ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('');
+    const fusions = data.combat.fusions.map(f => `<article class="codex-entry"><h3>${f.name}${game.s.profile.discoveredFusions.includes(f.id) ? ' ✓' : ''}</h3><p>${f.pair.map(elementName).join(' + ')} · 피해 ${f.totalDirectDamage} · 축전 ${f.energyCost} · 대기 ${f.cooldown}초<br>${f.effect}</p></article>`).join('');
+    return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-tabs">${tab('elements', '속성 4')}${tab('fusions', '융합 6')}</div><div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? '<p class="notice">두 속성을 장착하면 그 조합의 융합을 씁니다. ✓는 써 본 융합입니다.</p>' : ''}`, 'wide');
   }
   /** Where the player stands right now, for the area half of the map. */
   function currentArea() {
@@ -204,7 +215,7 @@ try {
     const exit = area.exit ? `<i class="marker exit" style="${at(...area.exit.at)}"><b>출구</b></i>` : '';
     return `<div class="area-map" style="aspect-ratio:${width}/${height}"><img src="${assetUrl(area.background)}" alt="">${npcs}${exit}<i class="marker you" style="${at(game.p.x, game.p.y)}"><b>나</b></i></div>`;
   }
-  const stopIcon = (room, i) => (room.kind === 'shop' ? '⌂' : room.boss ? '✣' : i + 1);
+  const stopIcon = (room, i) => (room.kind === 'shop' ? '◈' : room.boss ? '✣' : i + 1);
   function mapPanel() {
     const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1, route = [data.maps.route.start, ...rooms.map(room => data.maps.route[room.id])];
     // The town is where a run starts, so it sits before the first numbered stop.
@@ -212,7 +223,7 @@ try {
     const stop = (state, classes, icon, label, [x, y]) => `<div class="route-stop ${state} ${classes}" style="left:${x}%;top:${y}%"><span>${icon}</span><small>${label}</small></div>`;
     const stops = stop(s.run ? 'done' : 'current', '', '⌂', '마을', route[0]) + rooms.map((room, i) => stop(i === node ? 'current' : i < node ? 'done' : '', room.boss ? 'boss' : '', stopIcon(room, i), room.short, route[i + 1])).join('');
     const place = game.room?.name || HOME_NAME, note = !s.run ? '출발 전입니다. 남쪽 큰길이 웃음거리로 이어집니다.' : game.room.description;
-    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="map-sheet"><div class="route-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><div class="area-side"><strong>${place}</strong>${areaMap(currentArea())}<p>${note}</p></div></div><p class="notice">⌂ 마을 · 숫자 전투방 · ✣ 보스 · ${keyName(bindings().map)} 키로 닫기</p>`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="map-sheet"><div class="route-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><div class="area-side"><strong>${place}</strong>${areaMap(currentArea())}<p>${note}</p></div></div><p class="notice">⌂ 마을 · 숫자 전투 구간 · ◈ 야시장 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'wide');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
@@ -220,8 +231,8 @@ try {
     if (!force && key === overlayKey) return;
     overlayKey = key;
     let html = '';
-    if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(loadError)}</p><p>기존 저장을 보존하고 있습니다. 먼저 원본을 내보내거나 다른 저장 파일을 불러올 수 있습니다.</p><div class="actions">${button('기존 저장 원본 내보내기', 'export-raw')}${button('파일 불러오기', 'import')}${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json">`, 'compact');
-    if (mode === 'confirmNew') html = panel(`<h2>저장을 새로 시작할까요?</h2><p>현재 브라우저의 진행을 새 게임으로 교체합니다. 파일로 내보낸 기록은 유지됩니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('새 게임 시작', 'new-game', '', 'danger')}</div>`, 'compact');
+    if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>기존 저장을 보존하고 있습니다. 먼저 원본을 내보내거나 다른 저장 파일을 불러올 수 있습니다.</p><div class="actions">${button('기존 저장 원본 내보내기', 'export-raw')}${button('파일 불러오기', 'import')}${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json">`, 'compact');
+    if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다. 파일로 내보낸 저장은 그대로 남습니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
@@ -230,13 +241,14 @@ try {
     if (mode === 'shop') html = panel(`<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
-      return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '강화 가능한 첫 슬롯의 기술 단계 +1', persistentGears: `영구 톱니 ${item.amount}개 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(sold ? '구매 완료' : '구매', 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+      const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
+      return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
-    if (mode === 'unwind') html = panel(`<h2>통제축을 풀어 주세요.</h2><p>${game.room.boss === 'collectorRoco' ? '“올바른 장소는 내가 고를게.”' : '마을의 행진은 주민의 선택이 아니라 명령이었다.'}<br>동력은 남기고 명령 회로를 분리합니다.</p><div class="actions">${button(`${keyName(bindings().interact)} · 태엽 풀기`, 'unwind', '', 'primary')}${button('연출 건너뛰기', 'unwind', '', 'quiet')}</div><p class="notice">건너뛰어도 동일한 기록과 보상을 한 번만 받습니다.</p>`, 'compact');
+    if (mode === 'unwind') html = panel(`<h2>통제축을 풀어 주세요.</h2><p>${game.room.boss === 'collectorRoco' ? '“올바른 장소는 내가 고를게.”' : '마을의 행진은 주민의 선택이 아니라 명령이었다.'}<br>동력은 남기고 명령 회로를 분리합니다.</p><div class="actions">${button(isTouch ? '태엽 풀기' : `${keyName(bindings().interact)} · 태엽 풀기`, 'unwind', '', 'primary')}</div>`, 'compact');
     if (mode === 'complete') html = panel(`<div class="complete-seal">✣</div><h2>처음으로, 행진이 멈췄다.</h2><p>웃음거리의 통제축을 풀었습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>시계탑의 본신호는 아직 남아 있습니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">리본정원 이후의 이야기는 아직 만들고 있습니다.</p>`, 'compact');
     if (mode === 'returned') {
       const result = s.result;
-      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 유효 귀환 보너스 <strong>⚙ +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 귀환 보너스 <strong>⚙ +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
@@ -261,7 +273,7 @@ try {
       walk: `${moveWord} 노란 표시까지 걸어가세요`,
       attack: `${isTouch ? '렌치 버튼으로' : '좌클릭으로'} 경비를 때리세요 ${lesson.state?.hits ?? 0} / ${HITS_TO_LEARN}`,
       dodge: `경비 머리 위에 ! 가 뜨면 ${isTouch ? '회피 버튼으로' : `${keyName(keys.dodge)} 키로`} 피하세요`,
-      door: '빛나는 문으로 걸어가세요',
+      door: '노란 표시로 걸어 나가세요',
       moru: '노란 화살표를 따라 모루에게 걸어가세요'
     }[lesson.step] || '';
   }
@@ -297,6 +309,7 @@ try {
       element.querySelector('.left').textContent = remaining > 0 ? remaining.toFixed(1) : '';
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
     });
+    $('skills').hidden = !!game.village;
     const resetting = game.s.practice?.resetCooldowns;
     $('practice-reset').hidden = game.s.mode !== 'practice';
     $('practice-reset').textContent = `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`;
@@ -336,6 +349,7 @@ try {
     if (name === 'abandon-confirmed') { game.returnToHub(game.s.mode === 'complete' ? 'clear' : 'abandon'); resume(); }
     if (name === 'resume') resume();
     if (name === 'codex') pause('codex');
+    if (name === 'codex-tab') codexTab = d.id;
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
     if (name === 'export') { game.save(); saveDownload(); }
@@ -355,9 +369,11 @@ try {
       try {
         const state = decodeSave(await e.target.files[0].text(), data);
         game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; resume(); renderOverlay(true); updateHUD();
-      } catch (error) { const p = document.createElement('p'); p.className = 'error'; p.textContent = '불러오기 실패: ' + error.message; $('overlay').querySelector('.panel').append(p); }
+      } catch (error) { const p = document.createElement('p'); p.className = 'error'; p.textContent = '불러오기 실패: ' + saveProblem(error.message); $('overlay').querySelector('.panel').append(p); }
     }
   });
+  // The row under the pointer or the keyboard explains itself in the line below the list.
+  for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
   $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
   $('fullscreen').addEventListener('click', () => { $('app').requestFullscreen?.().catch(() => {}); });
 
@@ -533,6 +549,7 @@ try {
       else if (name === 'interact') interact();
       else if (name === 'menu') { if (!saveBlocked) pause(); }
       else if (name === 'map' && !saveBlocked) pause('map');
+      else if (name === 'fullscreen') $('app').requestFullscreen?.().catch(() => {});
     });
     document.addEventListener('pointerdown', openAudio, { once: true });
   }

@@ -68,6 +68,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .binding { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
 .panel .binding button { min-width: 62px; padding: 4px 6px; font-size: 12px; }
 
+.codex-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.panel .codex-tabs button.on { background: var(--ink); color: var(--paper); }
+.reward-card .replace-note { margin: 8px 0 0; font-weight: 700; }
 .codex-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .codex-entry { padding: 10px 12px; background: var(--paper-low); }
 .codex-entry h3 { font-size: 14px; margin: 0 0 4px; }

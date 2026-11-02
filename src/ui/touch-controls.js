@@ -13,12 +13,13 @@ export function autoAim(player, enemies) {
 }
 
 const SLOT_BUTTONS = ['attack', 'skill0', 'skill1', 'skill2', 'skill3', 'fusion', 'dodge'];
+const SLOT_NAMES = { attack: '렌치 공격', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', fusion: '융합', dodge: '회피' };
 
 /** Thumb controls over the game. Holds no game state: it reports presses and what is being held. */
 export class TouchControls {
   constructor(root, onPress) {
     this.root = root; this.onPress = onPress; this.move = { x: 0, y: 0 }; this.attacking = false; this.stickId = null;
-    root.innerHTML = `<div class="touch-zone"></div><div class="touch-stick" hidden><i></i></div><div class="touch-tools"><button data-press="menu" aria-label="메뉴">≡</button><button data-press="map">지도</button></div><button class="touch-talk" data-press="interact" hidden>말 걸기</button><div class="touch-pad">${SLOT_BUTTONS.map(id => `<button class="touch-${id}" data-press="${id}" aria-label="${id}"><img alt=""><span class="cool"></span><b class="left"></b></button>`).join('')}</div>`;
+    root.innerHTML = `<div class="touch-zone"></div><div class="touch-stick" hidden><i></i></div><div class="touch-tools">${document.fullscreenEnabled ? '<button data-press="fullscreen">전체화면</button>' : ''}<button data-press="map">지도</button><button data-press="menu">메뉴</button></div><button class="touch-talk" data-press="interact" hidden>말 걸기</button><div class="touch-pad">${SLOT_BUTTONS.map(id => `<button class="touch-${id}" data-press="${id}" aria-label="${SLOT_NAMES[id]}"><img alt=""><span class="cool"></span><b class="left"></b></button>`).join('')}</div>`;
     this.zone = root.querySelector('.touch-zone'); this.stick = root.querySelector('.touch-stick'); this.knob = this.stick.firstChild; this.talk = root.querySelector('.touch-talk');
     this.slots = SLOT_BUTTONS.map(id => root.querySelector(`.touch-${id}`));
     this.zone.addEventListener('pointerdown', e => this.grab(e));
