@@ -53,6 +53,8 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
       const type = danger.tell.type;
       move = type === 'overcharge' || type === 'doubleWave' || type === 'eliteWave' || type === 'magnet' ? Math.atan2(game.p.y - danger.tell.y, game.p.x - danger.tell.x) : danger.tell.angle + Math.PI / 2;
       if (type === 'march') move = Math.PI;
+      // A swing or a burst is stepped back from, not sidestepped inside its reach.
+      if (type === 'melee' || type === 'burst') move = Math.atan2(game.p.y - danger.y, game.p.x - danger.x);
       speed = 1; dodge = danger.tell.until - game.s.time < 0.13;
     }
     if (tick % 30 === 0) {
