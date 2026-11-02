@@ -7,7 +7,8 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
-const ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
+// Bosses are drawn larger than their sheets so they tower over the room's other bodies.
+const BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
@@ -391,12 +392,12 @@ export class CanvasRenderer {
       const mobPose = mobPoses?.get(actor.id), mobClip = mobPose && this.mobSprites.clip(mobPose.action, mobPose.direction);
       // A struck body trembles side to side for a moment, even while the hit holds time still.
       const jolt = !actor.player && actor.joltUntil > s.time && !s.profile.settings.reducedMotion ? (Math.floor(performance.now() / 32) % 2 ? JOLT_PX : -JOLT_PX) : 0;
-      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK));
+      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
       if (!actor.player && actor.hp > 0) {
-        const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
+        const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
         this.rect(actor.x * 20 - width / 2, yy, width, 3, '#869282'); this.rect(actor.x * 20 - width / 2, yy, width * Math.max(0, actor.hp / actor.maxHp), 3, actor.boss ? '#bf787b' : '#b38578');
         if (actor.boss) { this.text(actor.name, actor.x * 20, yy - 5, '#52645c', 8); const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);

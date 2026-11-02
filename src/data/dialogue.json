@@ -18,11 +18,11 @@
     },
     "roco": {
       "name": "로코",
-      "sheet": "/art/animations/mobs/bosses/clips/collectorRoco-idle-south-east.png",
-      "cell": 224,
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-east.png",
+      "cell": 160,
       "crop": [
-        37,
-        64,
+        5,
+        0,
         150,
         150
       ],
@@ -30,11 +30,11 @@
     },
     "brass": {
       "name": "브라스",
-      "sheet": "/art/animations/mobs/bosses/clips/captainBrass-idle-south-east.png",
-      "cell": 224,
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-east.png",
+      "cell": 160,
       "crop": [
-        37,
-        64,
+        5,
+        0,
         150,
         150
       ],

@@ -10,7 +10,11 @@ export class MobAnimator {
   constructor(library) { this.library = library; this.tracks = new Map(); this.poses = new Map(); }
   clip(enemy, action, direction) { return this.library.clip(`${enemy.type}-${action}`, direction); }
   update(delta, game) {
-    if (game.s.paused || delta <= 0) return this.poses;
+    // While paused (a boss talk, a menu) bodies hold still, but one seen for the first time still stands in its sheet.
+    if (game.s.paused || delta <= 0) {
+      for (const enemy of game.s.enemies) if (enemy.hp > 0 && !this.poses.has(enemy.id) && this.clip(enemy, 'idle', 'south')) this.poses.set(enemy.id, { action: `${enemy.type}-idle`, direction: nearestDirection(enemy.facing), frame: 0 });
+      return this.poses;
+    }
     const { s } = game, poses = new Map();
     for (const id of this.tracks.keys()) if (!s.enemies.some(enemy => enemy.id === id)) this.tracks.delete(id);
     for (const enemy of s.enemies) {

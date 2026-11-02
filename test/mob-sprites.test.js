@@ -19,8 +19,8 @@ const battle = (type = 'guard') => {
 };
 const tick = (a, g, seconds = 1 / 60) => { g.s.time += seconds; return a.update(seconds, g); };
 
-test('all four mobs have idle, move and attack in eight directions on real sheets', () => {
-  assert.equal(Object.keys(clips.clips).length, 144);
+test('all four mobs and both bosses have idle, move and attack in eight directions on real sheets', () => {
+  assert.equal(Object.keys(clips.clips).length, 192);
   for (const [key, clip] of Object.entries(clips.clips)) {
     for (const url of [clip.sheet, clip.effect].filter(Boolean)) {
       const [width, height] = pngSize(new URL(`..${url}`, import.meta.url));
@@ -111,7 +111,7 @@ test('adding hit and death clips plays them with no code change', () => {
   assert.equal(a.tracks.size, 0);
 });
 
-test('renderer draws body then effect, flashes on a hit, and leaves bosses as dolls', () => {
+test('renderer draws body then effect, flashes on a hit, and draws bosses from their sheets', () => {
   const calls = [], filters = [];
   const context = new Proxy({ filter: 'none' }, { get: (t, name) => name === 'filter' ? t.filter : (...args) => { calls.push([name, ...args]); }, set: (t, name, value) => { if (name === 'filter') { t.filter = value; filters.push(value); } return true; } });
   const { g, enemy } = battle(), r = new CanvasRenderer({ getContext: () => context }, g);
@@ -124,5 +124,6 @@ test('renderer draws body then effect, flashes on a hit, and leaves bosses as do
   enemy.flashUntil = g.s.time + 0.09; filters.length = 0; r.render(1 / 60);
   assert.ok(filters.some(value => value.startsWith('brightness')) && filters.at(-1) === 'none');
   g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1; g.spawnEnemy('collectorRoco', { x: 18, y: 8 }); calls.length = 0; r.render(1 / 60);
-  assert.ok(calls.some(call => call[0] === 'doll' && call[1] === 'collectorRoco'));
+  assert.ok(!calls.some(call => call[0] === 'doll' && call[1] === 'collectorRoco'));
+  assert.ok(calls.some(call => call[0] === 'drawImage' && String(call[1].fake).includes('collectorRoco')));
 });
