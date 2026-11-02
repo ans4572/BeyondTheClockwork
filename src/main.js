@@ -383,7 +383,6 @@ try {
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
       element.classList.toggle('short', !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost);
     });
-    $('skills').hidden = !!game.village;
     const resetting = game.s.practice?.resetCooldowns;
     $('practice-reset').hidden = game.s.mode !== 'practice';
     $('practice-reset').textContent = `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`;
