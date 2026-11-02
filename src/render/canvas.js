@@ -8,7 +8,7 @@ import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
-const NAME_SIZE = 8, NAME_GAP = 3, BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
+const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
@@ -111,11 +111,11 @@ export class CanvasRenderer {
     this.labels.push({ label, x: x * 20, y: y * 20 - clip.bodyHeight * clip.scale / 2 - NAME_GAP });
   }
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
-  nameplate(label, x, bottom) {
+  nameplate(label, x, bottom, fill = '#fff4d6') {
     const c = this.ctx;
     c.save(); c.font = `700 ${NAME_SIZE}px "Malgun Gothic", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     c.lineJoin = 'round'; c.lineWidth = 2.5; c.strokeStyle = '#2b3345'; c.strokeText(label, x, bottom);
-    c.fillStyle = '#fff4d6'; c.fillText(label, x, bottom); c.restore();
+    c.fillStyle = fill; c.fillText(label, x, bottom); c.restore();
   }
   tag(label, x, top) {
     this.rect(x - label.length * 3.5 - 4, top - 1, label.length * 7 + 8, 11, '#fff8e8');
@@ -453,7 +453,8 @@ export class CanvasRenderer {
       if (s.mode !== 'registration') this.tag(g.village.exit.label, g.village.exit.at[0] * 20, g.village.exit.at[1] * 20);
       const npc = g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
-      if (clip && !this.talking) this.tag(`${this.talkKey} · 말 걸기`, npc.x * 20, npc.y * 20 - clip.bodyHeight * clip.scale / 2 - 25);
+      // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
+      if (clip && !this.talking) this.nameplate(`${this.talkKey} 말 걸기`, npc.x * 20, npc.y * 20 - clip.bodyHeight * clip.scale / 2 - NAME_GAP - (npc.label ? NAME_SIZE + 3 : 0), ACTION_GOLD);
     }
     if (g.wakeProgress !== null) {
       // Eyes opening: two dark lids part, then the world holds until the player is up.
