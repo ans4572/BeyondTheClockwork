@@ -4,13 +4,13 @@ import { MobAnimator } from '../animation/mob-animator.js';
 import { CastEffects } from '../animation/cast-effects.js';
 import { nearestDirection } from '../animation/player-animator.js';
 import { NpcDirector } from '../animation/npc-director.js';
-import { cameraFor } from '../engine/map-geometry.js';
+import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
-const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
+const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
@@ -354,7 +354,8 @@ export class CanvasRenderer {
     const focus = hub && !g.village ? map?.spawn : g.p;
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
     const [shakeX, shakeY] = this.shakeOffset();
-    c.setTransform(2, 0, 0, 2, -Math.round(this.camera.x * 40) + shakeX, -Math.round(this.camera.y * 40) + shakeY); c.imageSmoothingEnabled = false;
+    const zoom = 2 * CAMERA_ZOOM;
+    c.setTransform(zoom, 0, 0, zoom, -Math.round(this.camera.x * PIXELS_PER_UNIT) + shakeX, -Math.round(this.camera.y * PIXELS_PER_UNIT) + shakeY); c.imageSmoothingEnabled = false;
     if (mapImage) c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); else this.scenery(hub);
     if (s.mode === 'shop' && !mapImage) { this.building(217, 113, 110, 69, '#d9c49a', '볼트의 부품 상점', '#88aaa0'); this.drawDoll(273, 212, { type: 'moru', color: '#c7a968' }); }
     const yardExit = s.mode === 'practice' ? map?.exit.at : null;
@@ -459,7 +460,7 @@ export class CanvasRenderer {
     if (g.wakeProgress !== null) {
       // Eyes opening: two dark lids part, then the world holds until the player is up.
       const open = Math.min(1, g.wakeProgress / EYES_OPEN_SHARE), lid = 160 * (1 - open * open * (3 - 2 * open));
-      this.rect(0, 0, 560, lid, '#0e1218'); this.rect(0, 320 - lid, 560, lid, '#0e1218');
+      c.save(); c.setTransform(2, 0, 0, 2, 0, 0); this.rect(0, 0, 560, lid, '#0e1218'); this.rect(0, 320 - lid, 560, lid, '#0e1218'); c.restore();
     }
     if (g.active && this.pointer && g.wakeProgress === null) {
       const x = this.pointer.x * 20, y = this.pointer.y * 20;

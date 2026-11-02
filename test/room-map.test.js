@@ -104,7 +104,7 @@ test('games without map data keep the rectangular arena', () => {
 });
 
 test('scenery repaints over a body behind it and not over one in front', () => {
-  const stage = placeOf(maps, maps.maps['stop-02']), map = { ...stage, occluders: [{ id: 'a', baseY: 9, polygon: [[10, 6], [12, 6], [12, 9]] }, { id: 'b', baseY: 20, polygon: [[10, 18], [12, 18], [12, 20]] }] };
+  const stage = placeOf(maps, maps.maps['stop-02']), map = { ...stage, occluders: [{ id: 'a', baseY: 9, polygon: [[10, 6], [12, 6], [12, 9]] }, { id: 'b', baseY: 15, polygon: [[10, 13], [12, 13], [12, 15]] }] };
   const input = { ...data, maps: { ...maps, maps: { ...maps.maps, 'stop-02': map } } }, g = run(input), calls = [];
   g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1;
   const context = new Proxy({}, { get: (_, name) => (...args) => { calls.push(name); return args; }, set: () => true });

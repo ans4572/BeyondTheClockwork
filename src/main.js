@@ -1,7 +1,7 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
 import { encodeSave, decodeSave, hasProgress, SAVE_KEY } from './engine/storage.js';
-import { placeOf } from './engine/map-geometry.js';
+import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
 import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
@@ -511,7 +511,7 @@ try {
   document.addEventListener('keyup', e => held.delete(e.code));
   function mousePosition(e) {
     const rect = $('game').getBoundingClientRect(), scale = Math.min(rect.width / 1120, rect.height / 640);
-    pointer = { x: (e.clientX - rect.left - (rect.width - 1120 * scale) / 2) / scale / 40 + renderer.camera.x, y: (e.clientY - rect.top - (rect.height - 640 * scale) / 2) / scale / 40 + renderer.camera.y };
+    pointer = { x: (e.clientX - rect.left - (rect.width - 1120 * scale) / 2) / scale / PIXELS_PER_UNIT + renderer.camera.x, y: (e.clientY - rect.top - (rect.height - 640 * scale) / 2) / scale / PIXELS_PER_UNIT + renderer.camera.y };
     renderer.pointer = pointer;
   }
   $('game').addEventListener('pointermove', e => { if (!isTouch) mousePosition(e); });

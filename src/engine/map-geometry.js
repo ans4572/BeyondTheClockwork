@@ -24,7 +24,9 @@ export function circleInPolygon(x, y, radius, polygon) {
 /** A place in a shared village: the village's map with this place's spawn, NPCs and exit on top. */
 export const placeOf = (maps, place) => (place?.village ? { ...maps.villages[place.village], ...place } : place || null);
 
-const VIEW_UNITS = [28, 16];
+// The camera sits close enough that bodies read large; the 1120x640 frame shows 22.4 by 12.8 units of world.
+export const CAMERA_ZOOM = 1.25, PIXELS_PER_UNIT = 40 * CAMERA_ZOOM;
+export const VIEW_UNITS = [1120 / PIXELS_PER_UNIT, 640 / PIXELS_PER_UNIT];
 /** Top-left of the view centred on the target, stopping at the edges of a map larger than the screen. */
 export function cameraFor(target, [width, height] = VIEW_UNITS) {
   const axis = (at, size, view) => Math.max(0, Math.min(size - view, at - view / 2));

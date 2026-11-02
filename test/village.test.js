@@ -143,9 +143,10 @@ test('a save resumes on foot with panels closed, and an old off-map position ret
 });
 
 test('the camera follows the player and stops at the map edges', () => {
-  assert.deepEqual(cameraFor({ x: 21, y: 12 }, [42, 24]), { x: 7, y: 4 });
+  // The view is 22.4 by 12.8 units at the 1.25x camera.
+  assert.deepEqual(cameraFor({ x: 21, y: 12 }, [42, 24]), { x: 9.8, y: 5.6 });
   assert.deepEqual(cameraFor({ x: 1, y: 1 }, [42, 24]), { x: 0, y: 0 });
-  assert.deepEqual(cameraFor({ x: 41, y: 23 }, [42, 24]), { x: 14, y: 8 });
+  const edge = cameraFor({ x: 41, y: 23 }, [42, 24]); assert.ok(Math.abs(edge.x - 19.6) < 1e-9 && Math.abs(edge.y - 11.2) < 1e-9);
   assert.deepEqual(cameraFor({ x: 20, y: 3 }), { x: 0, y: 0 });
 });
 
