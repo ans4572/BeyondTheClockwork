@@ -515,7 +515,7 @@ try {
     renderer.pointer = pointer;
   }
   $('game').addEventListener('pointermove', e => { if (!isTouch) mousePosition(e); });
-  $('game').addEventListener('pointerdown', e => { if (!game.active || isTouch) return; e.preventDefault(); openAudio(); mousePosition(e); $('game').focus({ preventScroll: true }); if (e.button === 0) mouseHeld = true; if (e.button === 2) pending.fusion = true; });
+  $('game').addEventListener('pointerdown', e => { if (!(game.active || game.leaving) || isTouch) return; e.preventDefault(); openAudio(); mousePosition(e); $('game').focus({ preventScroll: true }); if (e.button === 0) mouseHeld = true; if (e.button === 2) pending.fusion = true; });
   document.addEventListener('pointerup', () => mouseHeld = false);
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });

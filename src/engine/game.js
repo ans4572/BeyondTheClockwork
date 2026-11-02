@@ -220,7 +220,7 @@ export class Game {
     this.p.hp += actual; return actual;
   }
   dodge() {
-    if (!this.active || this.s.time < this.p.dodgeReady || this.p.dodge) return false;
+    if (!this.onFoot || this.s.time < this.p.dodgeReady || this.p.dodge) return false;
     const attack = this.p.attack;
     if (attack) {
       const phase = this.c.player.combo[attack.phase];
@@ -232,13 +232,14 @@ export class Game {
     this.p.dodge = { elapsed: 0, angle: this.p.moveAngle, x: this.p.x, y: this.p.y };
     this.p.dodgeReady = this.s.time + Math.max(this.c.caps.minDodgeCooldown, d.cooldown * (1 - (this.stats.dodgeCooldown || 0)) * (1 - this.upgradeAmount('dodgeCooldownReduction')));
     this.p.invulnerableUntil = Math.max(this.p.invulnerableUntil, this.s.time + d.invincibility);
-    this.tutorial.onDodge();
+    if (this.active) this.tutorial.onDodge();
     const strike = this.wrenchMod('dashStrike');
     if (strike) this.p.strikeUntil = this.s.time + strike.window;
     this.effect('dodge', this.p.x, this.p.y, '#badbd3', 0.3, 0.7); return true;
   }
   basicAttack() {
-    if (!this.active || this.p.attack || this.p.dodge || this.s.casts.some(c => c.shape === 'dash')) return false;
+    // The wrench swings in a fight and after one; in town it stays lowered.
+    if (!(this.active || this.leaving) || this.p.attack || this.p.dodge || this.s.casts.some(c => c.shape === 'dash')) return false;
     if (this.s.time > this.p.comboExpires) this.p.combo = 0;
     const phase = this.p.combo, info = this.c.player.combo[phase];
     const mod = this.s.run?.mods.includes('quickThird') && phase === 2 ? this.config.mods.find(m => m.id === 'quickThird').recoveryReduction : 0;
@@ -732,14 +733,25 @@ export class Game {
     else if (this.s.mode === 'hub' && this.readyToLeave) this.startRun();
     else if (this.s.mode === 'hub') { p.y -= LEAVE_REFUSED_UNITS; this.notify('모루에게 속성 2개를 고른 뒤 출발하세요.'); }
   }
-  stepFeet(dt, input, radius) {
+  /** One step of a dodge already under way. */
+  moveDodge(dt, radius) {
+    const p = this.p, d = this.c.player.dodge, stepTime = Math.min(dt, d.duration - p.dodge.elapsed);
+    this.move(p, Math.cos(p.dodge.angle) * d.distance / d.duration * stepTime, Math.sin(p.dodge.angle) * d.distance / d.duration * stepTime, radius);
+    p.dodge.elapsed += dt; if (p.dodge.elapsed >= d.duration - 1e-7) p.dodge = null;
+  }
+  /** Out of a fight the body still dodges; after a cleared room the wrench still swings, in town it does not. */
+  stepFeet(dt, input, radius, swing = false) {
     dt = Math.min(dt, 1 / 30); this.s.time += dt; this.s.tick++;
     const p = this.p, { x = 0, y = 0 } = input, length = Math.hypot(x, y);
-    if (length > 0) {
+    if (swing && input.aim && distance(p, input.aim) > 0.1) p.angle = Math.atan2(input.aim.y - p.y, input.aim.x - p.x);
+    if (input.dodge) this.dodge();
+    if (p.dodge) this.moveDodge(dt, radius);
+    else if (length > 0) {
       const scale = Math.max(1, length), speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0));
       p.angle = p.moveAngle = Math.atan2(y, x);
       this.move(p, x / scale * speed * dt, y / scale * speed * dt, radius);
     }
+    if (swing) { if (input.basic) this.basicAttack(); this.updateBasic(dt); }
     this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
   }
   /** Built once per room: the floor never changes, only where the player stands on it. */
@@ -810,7 +822,7 @@ export class Game {
   }
   /** The portal only takes someone walking into it, so a player already standing there is not whisked away. */
   walkToPortal(dt, input) {
-    this.stepFeet(dt, input, this.config.arena.playerRadius);
+    this.stepFeet(dt, input, this.config.arena.playerRadius, true);
     const near = distance(this.p, this.portal) <= PORTAL_REACH_UNITS, run = this.s.run;
     if (!near) run.portalArmed = true;
     else if (run.portalArmed) { run.portalArmed = false; this.nextNode(0); }
@@ -837,12 +849,9 @@ export class Game {
     else if (!p.dodge) p.moveAngle = p.angle;
     if (input.dodge) this.dodge();
     if (p.dodge) {
-      const d = this.c.player.dodge;
-      const stepTime = Math.min(dt, d.duration - p.dodge.elapsed);
-      this.move(p, Math.cos(p.dodge.angle) * d.distance / d.duration * stepTime, Math.sin(p.dodge.angle) * d.distance / d.duration * stepTime);
+      this.moveDodge(dt);
       const slip = this.trait('slipstream');
       if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration;
-      p.dodge.elapsed += dt; if (p.dodge.elapsed >= d.duration - 1e-7) p.dodge = null;
     } else if (!this.s.casts.some(c => c.shape === 'dash')) {
       const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0));
       this.move(p, dx * speed * dt, dy * speed * dt);

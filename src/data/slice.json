@@ -56,7 +56,7 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 0.5,
+    "waveDamageShare": 1.0,
     "introEnemyHp": 52,
     "aggroUnits": 6,
     "aggroLinkUnits": 3.5,
