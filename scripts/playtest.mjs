@@ -47,7 +47,8 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     const open = route && route.nearestOpen(...route.cell(game.p.x, game.p.y)), way = route && (route.heading(game.p.x, game.p.y) ?? (open && route.heading((open[0] + 0.5) * 0.5, (open[1] + 0.5) * 0.5)));
     let move = d > 1.3 ? way ?? angle : angle + Math.PI / 2, speed = d > 1.3 ? 1 : 0;
     let dodge = false;
-    const danger = enemies.find(e => e.tell && e.tell.until - game.s.time < 0.28 && (e.boss || distance(game.p, e) < 4));
+    // A player reads a tell from as far as that enemy can reach, not from a fixed distance.
+    const danger = enemies.find(e => e.tell && e.tell.until - game.s.time < 0.28 && (e.boss || distance(game.p, e) < Math.max(4, (e.attackRange || 0) + (e.burstRadius || 0) + 1)));
     if (danger) {
       const type = danger.tell.type;
       move = type === 'overcharge' || type === 'doubleWave' || type === 'eliteWave' || type === 'magnet' ? Math.atan2(game.p.y - danger.tell.y, game.p.x - danger.tell.x) : danger.tell.angle + Math.PI / 2;

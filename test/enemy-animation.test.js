@@ -4,7 +4,7 @@ const json=async p=>JSON.parse(await readFile(new URL(p,import.meta.url),'utf8')
 const [config,slice]=await Promise.all([json('../art/animations/mobs/normal-elite/enemies.json'),json('../src/data/slice.json')]),rig=new EnemyRig(config,slice),dist=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
 test('enemy motion timelines preserve tell, dash and separately telegraphed elite followup',()=>{
  const g=enemyTimeline('guard',slice),r=enemyTimeline('rabbit',slice),t=enemyTimeline('trumpet',slice),e=enemyTimeline('elite',slice);
- assert.deepEqual([g.primaryMs,r.primaryMs,t.primaryMs,e.primaryMs],[650,700,800,800]);assert.equal(g.durationMs,1650);assert.equal(r.dashEndMs-r.primaryMs,350);assert.equal(r.rootMotionDistanceUnits,4);assert.equal(r.durationMs,2000);assert.equal(t.durationMs,2500);assert.equal(e.followupMs,1600);assert.equal(e.durationMs,3000);
+ assert.deepEqual([g.primaryMs,r.primaryMs,t.primaryMs,e.primaryMs],[650,700,800,800]);assert.equal(g.durationMs,1650);assert.equal(r.dashEndMs-r.primaryMs,350);assert.equal(r.rootMotionDistanceUnits,slice.enemies.rabbit.dashDistance);assert.equal(r.durationMs,2000);assert.equal(t.durationMs,2500);assert.equal(e.followupMs,1600);assert.equal(e.durationMs,3000);
  for(const id of ['guard','rabbit','trumpet','elite']){const tl=enemyTimeline(id,slice),f=enemyFrameSchedule(tl);assert.equal(f.durationsMs.reduce((a,b)=>a+b,0),tl.durationMs);assert.ok(f.durationsMs.every(d=>d>0&&d%10===0));for(const event of tl.events)assert.ok(f.timesMs.includes(event.timeMs));}
 });
 test('all moves loop exactly and attacks return to idle without baking root travel',()=>{
