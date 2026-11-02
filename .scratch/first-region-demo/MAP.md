@@ -12,7 +12,7 @@ status: open
 
 - 영역: 게임 제작. 맵 배경은 제가 프롬프트를 만들고 사용자가 생성한다.
 - 포탈은 튜토리얼의 노란 표시를 뜻한다.
-- 작업은 브랜치에 올리고 확인 후 `main`에 합친다. 업데이트는 README 끝에 기록한다.
+- 당분간 작업은 `main`에 바로 올린다. 업데이트는 README 끝에 기록한다.
 - 티켓은 `tickets/`에 있다. 상태는 `status`, 담당은 `assignee`, 선행 조건은 `Blocked by`로 표시한다.
 
 ## Decisions so far
