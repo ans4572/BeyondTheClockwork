@@ -1,7 +1,7 @@
 const F2_SHEET = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
-const STAGE = [1120, 640], SLAM_MS = 170, SETTLE_MS = 520, LINE_MS = 1100, LAST_LINE_MS = 1500;
-const STAMP_WAIT_MS = 700, STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_ZOOM = 3, TOOL_RISE = 780;
+const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
+const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
 const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
 
 /** Malgun Gothic cut down to hard pixels, so lettering sits in the same world as the sprites. */
@@ -24,7 +24,7 @@ function stampImage(size) {
   small.width = Math.ceil(word.width * 1.35); small.height = Math.ceil(word.height * 1.75);
   const s = small.getContext('2d', { willReadFrequently: true }); s.imageSmoothingEnabled = false;
   s.translate(small.width / 2, small.height / 2); s.rotate(-0.2); s.strokeStyle = RED; s.lineWidth = 4;
-  s.strokeRect(-word.width / 2 - 5, -word.height / 2 - 3, word.width + 10, word.height + 6); s.drawImage(word, -word.width / 2, -word.height / 2);
+  s.strokeRect(-word.width / 2 - 8, -word.height / 2 - 6, word.width + 16, word.height + 12); s.drawImage(word, -word.width / 2, -word.height / 2);
   const image = s.getImageData(0, 0, small.width, small.height);
   for (let i = 3; i < image.data.length; i += 4) image.data[i] = image.data[i] > 127 ? 255 : 0;
   s.putImageData(image, 0, 0);
@@ -70,8 +70,8 @@ function drawForm(c, f2) {
 export class TitleScreen {
   constructor(root, { onNew, onLoad, onSettings, onThud, reducedMotion }) {
     this.root = root; this.onThud = onThud; this.reducedMotion = reducedMotion; this.timers = [];
-    root.innerHTML = `<div class="title-stage"><canvas class="title-form" width="${STAGE[0]}" height="${STAGE[1]}"></canvas><canvas class="title-mark" hidden></canvas><nav aria-label="타이틀 메뉴"><button data-do="new">새로 시작하기</button><button data-do="load">게임 불러오기</button><button data-do="settings">환경설정</button></nav><div class="title-press"></div></div><canvas class="title-slam" hidden></canvas><div class="title-dark" hidden></div>`;
-    this.stage = root.querySelector('.title-stage'); this.dark = root.querySelector('.title-dark'); this.slamMark = root.querySelector('.title-slam'); this.mark = root.querySelector('.title-mark');
+    root.innerHTML = `<div class="title-stage"><canvas class="title-form" width="${STAGE[0]}" height="${STAGE[1]}" role="img" aria-label="태엽 밖으로. 웃음거리 품질관리국 불량 판정서. 제품 번호 F2, 판정 사유 스스로 생각함."></canvas><canvas class="title-mark" hidden></canvas><nav aria-label="타이틀 메뉴"><button data-do="new">새로 시작하기</button><button data-do="load">게임 불러오기</button><button data-do="settings">환경설정</button></nav><div class="title-press"></div></div><div class="title-dark" hidden></div>`;
+    this.stage = root.querySelector('.title-stage'); this.dark = root.querySelector('.title-dark'); this.mark = root.querySelector('.title-mark');
     this.buttons = [...root.querySelectorAll('button')];
     this.tool = toolImage(); this.burst = burstImage(); this.tool.hidden = this.burst.hidden = true;
     this.tool.className = 'title-tool'; this.burst.className = 'title-burst';
@@ -84,19 +84,19 @@ export class TitleScreen {
       button.addEventListener('mouseenter', () => { if (!button.disabled) button.focus(); });
     });
     document.addEventListener('keydown', e => {
-      if (this.root.hidden || !this.dark.hidden) return;
+      if (this.root.hidden || this.root.inert || this.stage.inert || !this.dark.hidden) return;
       const delta = { ArrowDown: 1, ArrowUp: -1 }[e.key];
       if (delta) { e.preventDefault(); this.move(delta); }
     });
     addEventListener('resize', () => this.fit());
     this.ready = load(F2_SHEET).then(f2 => {
       const c = root.querySelector('.title-form').getContext('2d'); c.imageSmoothingEnabled = false; drawForm(c, f2);
-      const stamp = stampImage(20), mark = this.mark.getContext('2d');
+      const stamp = stampImage(MARK_SIZE), mark = this.mark.getContext('2d');
       this.mark.width = stamp.width; this.mark.height = stamp.height; mark.drawImage(stamp, 0, 0);
       this.mark.style.width = `${stamp.width * MARK_ZOOM}px`; this.mark.style.left = `${MARK_CENTER[0] - stamp.width * MARK_ZOOM / 2}px`; this.mark.style.top = `${MARK_CENTER[1] - stamp.height * MARK_ZOOM / 2}px`;
     });
   }
-  fit() { const k = Math.min(innerWidth / STAGE[0], innerHeight / STAGE[1]); this.stage.style.transform = `translate(-50%, -50%) scale(${k})`; }
+  fit() { const k = Math.min(innerWidth / STAGE[0], innerHeight / STAGE[1]); this.stage.style.transform = `translate(-50%, -50%) scale(${k})`; this.stage.style.setProperty('--k', k); }
   move(delta) {
     const open = this.buttons.filter(button => !button.disabled), at = open.indexOf(document.activeElement);
     open[(at + delta + open.length) % open.length]?.focus();
@@ -104,58 +104,56 @@ export class TitleScreen {
   activate() { if (this.buttons.includes(document.activeElement)) document.activeElement.click(); }
   focus() { const [fresh, resume] = this.buttons; (resume.disabled ? fresh : resume).focus({ preventScroll: true }); }
   show({ canLoad }) {
-    this.root.hidden = false; this.dark.hidden = true; this.slamMark.hidden = true; this.fit();
+    this.root.hidden = false; this.dark.hidden = true; this.stage.inert = false; this.fit();
     this.buttons[1].disabled = !canLoad;
     this.focus();
-    this.mark.hidden = true;
-    if (this.reducedMotion()) this.mark.hidden = false; else this.stampDown();
+    // Blank until the player's own click brings the stamp down; a body already at work has been judged.
+    this.mark.hidden = !canLoad;
   }
   hide() { this.root.hidden = true; this.tool.hidden = this.burst.hidden = true; this.root.classList.remove('title-shake'); this.timers.forEach(clearTimeout); this.timers = []; }
   later(ms, run) { this.timers.push(setTimeout(run, ms)); }
-  /** The stamp drops, bites the paper and lifts away, leaving the mark. */
-  stampDown() {
-    const { tool, burst } = this, down = STAMP_WAIT_MS + STAMP_DROP_MS, up = down + STAMP_PRESS_MS;
-    this.later(STAMP_WAIT_MS, () => {
-      tool.hidden = false;
-      tool.animate([{ transform: `translateY(-${TOOL_RISE}px)` }, { transform: 'none' }], { duration: STAMP_DROP_MS, easing: 'cubic-bezier(.6, 0, 1, .6)', fill: 'both' });
-    });
-    this.later(down, () => {
-      this.mark.hidden = false; burst.hidden = false; this.onThud(); this.root.classList.add('title-shake');
-      tool.animate([{ transform: 'scaleY(.93)' }, { transform: 'none' }], { duration: STAMP_PRESS_MS, easing: 'steps(3)', fill: 'both' });
-    });
-    this.later(down + BURST_MS, () => { burst.hidden = true; });
-    this.later(down + SHAKE_MS, () => this.root.classList.remove('title-shake'));
-    this.later(up, () => tool.animate([{ transform: 'none' }, { transform: `translateY(-${TOOL_RISE}px)` }], { duration: STAMP_LIFT_MS, easing: 'cubic-bezier(.3, 0, .8, .4)', fill: 'both' }));
-    this.later(up + STAMP_LIFT_MS, () => { tool.hidden = true; });
-  }
   /** Resolves after `ms`, or at once when the player skips. */
   wait(ms) { return new Promise(done => { if (this.skipped) done(); else { this.resume = done; this.timers.push(setTimeout(done, ms)); } }); }
-  /** The big stamp comes down on the form. */
-  async slam() {
-    if (this.reducedMotion()) return;
-    const stamp = stampImage(40), c = this.slamMark.getContext('2d');
-    this.slamMark.width = stamp.width; this.slamMark.height = stamp.height; c.drawImage(stamp, 0, 0);
-    this.slamMark.hidden = false;
-    await this.wait(SLAM_MS);
-    this.onThud(); this.root.classList.add('title-shake');
-    await this.wait(SETTLE_MS);
-    this.root.classList.remove('title-shake');
+  /** The stamp drops, bites the paper and lifts away, leaving the mark long enough to read. */
+  async stamp() {
+    const { tool, burst } = this, moving = !this.reducedMotion();
+    this.mark.hidden = true;
+    if (moving) {
+      tool.hidden = false;
+      tool.animate([{ transform: `translateY(-${TOOL_RISE}px)` }, { transform: 'none' }], { duration: STAMP_DROP_MS, easing: 'cubic-bezier(.6, 0, 1, .6)', fill: 'both' });
+      await this.wait(STAMP_DROP_MS);
+    }
+    this.mark.hidden = false; this.onThud();
+    if (moving) {
+      burst.hidden = false; this.root.classList.add('title-shake');
+      tool.animate([{ transform: 'scaleY(.93)' }, { transform: 'none' }], { duration: STAMP_PRESS_MS, easing: 'steps(3)', fill: 'both' });
+      this.later(BURST_MS, () => { burst.hidden = true; });
+      this.later(SHAKE_MS, () => this.root.classList.remove('title-shake'));
+      await this.wait(STAMP_PRESS_MS);
+      tool.animate([{ transform: 'none' }, { transform: `translateY(-${TOOL_RISE}px)` }], { duration: STAMP_LIFT_MS, easing: 'cubic-bezier(.3, 0, .8, .4)', fill: 'both' });
+      await this.wait(STAMP_LIFT_MS);
+      tool.hidden = true;
+    }
+    await this.wait(STAMP_HOLD_MS);
   }
   /** The three opening sentences on black. Any key or click skips the rest. */
   async opening(lines, { stamp }) {
-    this.root.hidden = false; this.skipped = false;
+    this.root.hidden = false; this.skipped = false; this.stage.inert = true;
     const skip = e => { if (e.type === 'keydown' && e.repeat) return; e.preventDefault(); this.skipped = true; this.resume?.(); };
     addEventListener('keydown', skip, true); addEventListener('pointerdown', skip, true);
-    if (stamp) await this.slam();
+    if (stamp) await this.stamp();
     this.dark.hidden = false; this.dark.replaceChildren();
+    // Whole multiples keep the lettering's pixels square, and the longest sentence decides for all three.
+    const widest = Math.max(...lines.map(line => pixelText(line, OPENING_SIZE, INK, 1).width));
+    const scale = Math.max(1, Math.min(OPENING_SCALE, Math.floor(innerWidth * OPENING_WIDTH / widest)));
     for (const [i, line] of lines.entries()) {
       if (this.skipped) break;
-      const last = i === lines.length - 1, text = pixelText(line, 15, last ? '#e0564c' : '#f3e6c8', 3);
+      const last = i === lines.length - 1, text = pixelText(line, OPENING_SIZE, last ? '#e0564c' : '#f3e6c8', scale);
       this.dark.append(text);
       if (last) this.onThud();
       await this.wait(last ? LAST_LINE_MS : LINE_MS);
     }
     removeEventListener('keydown', skip, true); removeEventListener('pointerdown', skip, true);
-    this.dark.replaceChildren(); this.slamMark.hidden = true;
+    this.dark.replaceChildren();
   }
 }

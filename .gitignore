@@ -2,6 +2,8 @@ node_modules/
 .DS_Store
 artifacts/
 *.log
+.impeccable/
+.codex/
 
 # Concept sheets and packed review bundles stay local; art the game uses is tracked.
 art/dialog-concepts/

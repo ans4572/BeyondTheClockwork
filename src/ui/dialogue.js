@@ -19,7 +19,7 @@ function portrait({ sheet, cell }) {
 export class DialogueBox {
   constructor(root, { speakers, player }, { reducedMotion, skipLabel }) {
     this.root = root; this.speakers = speakers; this.playerId = player; this.reducedMotion = reducedMotion;
-    root.innerHTML = '<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▶</div></div>';
+    root.innerHTML = `<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▶</div></div>`;
     [this.other, this.player] = root.querySelectorAll('img');
     this.name = root.querySelector('.talk-name'); this.text = root.querySelector('.talk-text'); this.next = root.querySelector('.talk-next');
     this.faces = Promise.all(Object.entries(speakers).map(async ([id, speaker]) => [id, await portrait(speaker)])).then(Object.fromEntries);

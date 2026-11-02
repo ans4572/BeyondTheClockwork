@@ -1,6 +1,7 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
 import { encodeSave, decodeSave, hasProgress, SAVE_KEY } from './engine/storage.js';
+import { placeOf } from './engine/map-geometry.js';
 import { statCost } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
 import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
@@ -16,7 +17,7 @@ const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(s
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
 const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
 const HOME_NAME = '웃음 마을';
-const TOUCH_PANEL_ZOOM = 0.85;
+const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
 
 try {
@@ -41,7 +42,7 @@ try {
   const fitHud = () => {
     const scale = $('game').getBoundingClientRect().width / 1120;
     $('hud').style.transform = `scale(${scale})`;
-    for (const id of ['toast', 'hint']) $(id).style.zoom = scale;
+    for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels would be unreadable at a phone's scale, and scroll instead of shrinking.
     $('overlay').style.zoom = isTouch ? Math.max(scale, TOUCH_PANEL_ZOOM) : scale;
   };
@@ -56,29 +57,48 @@ try {
     const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
     if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
   };
-  for (const background of new Set([...Object.values(data?.maps?.maps || {}), ...Object.values(data?.maps?.villages || {})].flatMap(map => [map.background, map.mask, ...(map.props || []).map(prop => prop.image)]).concat(data?.maps?.practice?.dummyImage, Object.values(STATUS_ICONS)).filter(Boolean))) {
-    const image = new Image();
-    image.onload = () => { renderer.mapImages.set(background, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(background)).forEach(buildDepth); };
-    image.onerror = () => console.warn(`맵 배경을 불러올 수 없습니다: ${background}`);
-    image.src = assetUrl(background);
+  // Map art runs to megabytes a file: the place underfoot downloads first and the rest follows a few at a time.
+  const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
+  const allPlaces = [...Object.values(data?.maps?.maps || {}), ...Object.values(data?.maps?.villages || {})];
+  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...allPlaces.flatMap(artOf)].filter(Boolean))];
+  let imagesLoading = 0, placeLoaded = null;
+  function fetchImages() {
+    while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
+      const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
+      imagesLoading++;
+      image.onload = () => { renderer.mapImages.set(file, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); };
+      image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
+      image.src = assetUrl(file);
+    }
   }
+  function bringPlaceForward() {
+    const place = game.village || game.map;
+    if (place?.background === placeLoaded) return;
+    placeLoaded = place?.background;
+    const next = game.room && placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]), wanted = [...artOf(place), ...artOf(next)];
+    imageQueue = [...wanted.filter(file => imageQueue.includes(file)), ...imageQueue.filter(file => !wanted.includes(file))];
+    fetchImages();
+  }
+  fetchImages();
   const gameViewport = $('overlay').parentElement;
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
   let audio = null, lastSoundId = null;
+  // The in-game setting, or the same wish made once for every app on the device.
+  const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function bindings() { return { ...defaultBindings, ...game.s.profile.settings.bindings }; }
   function clearInput() { held.clear(); mouseHeld = false; pending = {}; touch?.release(); }
   function pause(view = 'pause') { screen = view; game.s.paused = true; clearInput(); renderOverlay(true); }
   // Panels sit inside the game frame, whose stacking would keep them under the title.
   const placeOverlay = () => (onTitle ? document.body : gameViewport).append($('overlay'));
-  function openTitle() { onTitle = true; screen = 'title'; game.s.paused = true; document.body.classList.add('on-title'); placeOverlay(); clearInput(); renderOverlay(true); title.show({ canLoad: hasProgress(game.s) }); }
-  function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); placeOverlay(); title.hide(); }
+  function openTitle() { onTitle = true; screen = 'title'; game.s.paused = true; document.body.classList.add('on-title'); $('app').inert = true; placeOverlay(); clearInput(); renderOverlay(true); title.show({ canLoad: hasProgress(game.s) }); }
+  function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); $('app').inert = false; $('title').inert = false; placeOverlay(); title.hide(); }
   /** The stamp and the opening sentences, then control of a waking body. */
   async function playOpening(stamp) {
     screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true); leaveTitle();
     await title.opening(data.progression.intro.openingText, { stamp });
-    game.s.paused = false; game.beginIntro({ wake: !game.s.profile.settings.reducedMotion, lesson: true });
+    game.s.paused = false; game.beginIntro({ wake: !reducedMotion(), lesson: true });
     title.hide(); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
   }
   /** Runs a script, with any side question it offers, and resolves with the final choice. */
@@ -164,8 +184,9 @@ try {
     }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   function settingsPanel() {
+    const keysOpen = !!$('overlay').querySelector('details.keys[open]');
     const settings = game.s.profile.settings, map = bindings();
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}${button('키 기본값', 'reset-bindings', '', 'quiet')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
   }
   function codexPanel() {
     return panel(`<div class="panel-header"><div><h2>속성과 연결의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-list">${data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · ${skill.totalDirectDamage} 피해 / ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('')}</div><div class="divider"></div><div class="codex-list">${data.combat.fusions.map(f => `<article class="codex-entry"><h3>${f.name} ${game.s.profile.discoveredFusions.includes(f.id) ? '✓' : ''}</h3><p>${f.pair.map(id => data.combat.elements.find(e => e.id === id).name).join(' + ')} · ${f.totalDirectDamage} 피해<br>${f.effect}</p><small>축전 ${f.energyCost} · ${f.cooldown}초 / 두 슬롯 중 낮은 단계·등급 적용</small></article>`).join('')}</div><p class="notice">지금은 4속성 6융합까지 열려 있습니다.</p>`, 'wide');
@@ -201,6 +222,7 @@ try {
     let html = '';
     if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(loadError)}</p><p>기존 저장을 보존하고 있습니다. 먼저 원본을 내보내거나 다른 저장 파일을 불러올 수 있습니다.</p><div class="actions">${button('기존 저장 원본 내보내기', 'export-raw')}${button('파일 불러오기', 'import')}${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json">`, 'compact');
     if (mode === 'confirmNew') html = panel(`<h2>저장을 새로 시작할까요?</h2><p>현재 브라우저의 진행을 새 게임으로 교체합니다. 파일로 내보낸 기록은 유지됩니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('새 게임 시작', 'new-game', '', 'danger')}</div>`, 'compact');
+    if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : tuningPanel();
@@ -220,10 +242,13 @@ try {
     if (mode === 'codex') html = codexPanel();
     if (mode === 'map') html = mapPanel();
     if (html && storageError && mode !== 'pause') html = html.replace('</section>', `<p class="error">${escapeHTML(storageError)}</p></section>`);
+    // Re-rendering a sheet must not throw the keyboard back to its first button.
+    const was = document.activeElement?.dataset, same = was?.action && ['action', 'key', 'id', 'row'].filter(name => was[name]).map(name => `[data-${name}="${was[name]}"]`).join('');
     $('overlay').innerHTML = html;
+    if (onTitle) $('title').inert = !!html;
     // Headings are cut to hard pixels like the title, so every sheet reads as the same form.
     for (const heading of $('overlay').querySelectorAll('h2')) { heading.setAttribute('aria-label', heading.textContent); heading.replaceChildren(pixelText(heading.textContent, 15, '#2b3345')); }
-    if (html) { clearInput(); $('overlay').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); }
+    if (html) { clearInput(); ((same && $('overlay').querySelector(`${same}:not(:disabled)`)) || $('overlay').querySelector('button:not(:disabled)'))?.focus({ preventScroll: true }); }
   }
 
   function lessonHint() {
@@ -306,7 +331,9 @@ try {
     if (name === 'unwind') game.unwind();
     if (name === 'return-complete') game.returnToHub('clear');
     if (name === 'acknowledge') game.acknowledgeReturn();
-    if (name === 'abandon') { game.returnToHub(game.s.mode === 'complete' ? 'clear' : 'abandon'); resume(); }
+    if (name === 'abandon') screen = 'confirmAbandon';
+    if (name === 'cancel-abandon') screen = 'pause';
+    if (name === 'abandon-confirmed') { game.returnToHub(game.s.mode === 'complete' ? 'clear' : 'abandon'); resume(); }
     if (name === 'resume') resume();
     if (name === 'codex') pause('codex');
     if (name === 'rebind') bindingTarget = d.key;
@@ -342,8 +369,21 @@ try {
     else if (game.s.mode === 'complete') game.returnToHub('clear');
     renderOverlay();
   }
+  /** A sheet owns the keyboard: Tab and arrows walk its controls, and game keys stay out of Space and Enter. */
+  function sheetKeys(e, sheet) {
+    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, Tab: e.shiftKey ? -1 : 1 }[e.key];
+    if (step) {
+      e.preventDefault();
+      const controls = [...sheet.querySelectorAll('button:not(:disabled), input[type=checkbox], summary')].filter(control => control.matches('summary') || !control.closest('details:not([open])')), at = controls.indexOf(document.activeElement);
+      controls[at < 0 ? 0 : (at + step + controls.length) % controls.length]?.focus({ preventScroll: true });
+      return true;
+    }
+    if (e.key !== ' ' && e.key !== 'Enter') return false;
+    // A key still held from the fight must not press whatever the sheet focused.
+    if (e.repeat) e.preventDefault();
+    return document.activeElement?.closest('.panel') === sheet;
+  }
   document.addEventListener('keydown', e => {
-    if (e.target.matches('input')) return;
     if (bindingTarget) {
       e.preventDefault();
       if (e.code !== 'Escape' && !['MetaLeft', 'MetaRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'].includes(e.code)) {
@@ -363,6 +403,8 @@ try {
       if (['Space', 'Enter', keys.interact, keys.skill1].includes(e.code)) { e.preventDefault(); talkBox.advance(); }
       return;
     }
+    const sheet = $('overlay').querySelector('.panel');
+    if (sheet && sheetKeys(e, sheet)) return;
     if (e.code === 'Escape') { e.preventDefault(); if (e.repeat || saveBlocked || screen === 'title') return; if (screen) resume(); else if (game.s.panel) { game.closePanel(); renderOverlay(); } else pause(); return; }
     if (e.code === 'F9') { e.preventDefault(); if (e.repeat || saveBlocked) return; if (screen === 'debug') resume(); else pause('debug'); return; }
     if (screen === 'title') return;
@@ -445,6 +487,7 @@ try {
   let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1, lastBossTellAt = -1;
   function frame(now) {
     const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta;
+    bringPlaceForward();
     if (game.s.mode === 'opening' && !screen) playOpening(false);
     if (game.tutorial.readyToRegister && !screen) meetMoru();
     const bellRinging = !!renderer.npcDirector?.stopped;
@@ -471,14 +514,14 @@ try {
     if (soundEffect && soundEffect.id !== lastSoundId) { lastSoundId = soundEffect.id; beep(soundEffect.type === 'hurt' ? 110 : soundEffect.type === 'scrap' ? 660 : 320, 0.06); }
     renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
-  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion: () => game.s.profile.settings.reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
+  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
     onNew: startNew,
     onLoad: () => { openAudio(); leaveTitle(); resume(); },
     onSettings: () => { screen = 'pause'; renderOverlay(true); },
     onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; beep(70, 0.2, 0.09); game.s.paused = paused; },
-    reducedMotion: () => game.s.profile.settings.reducedMotion
+    reducedMotion
   });
   if (isTouch) {
     const skillPress = { skill0: 0, skill1: 1, skill2: 2, skill3: 3 };
@@ -496,6 +539,10 @@ try {
   if (!loadError) openTitle();
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
 } catch (error) {
-  $('overlay').innerHTML = `<section class="panel compact"><h2>태엽이 연결되지 않았습니다.</h2><p class="error">${escapeHTML(error.message)}</p><p>프로젝트 폴더에서 <code>npm start</code>를 실행한 뒤 <a href="http://localhost:4173">localhost:4173</a>을 열어 주세요.</p></section>`;
+  // Anyone with the link can land here, so the local-server advice is for this machine only.
+  const local = ['localhost', '127.0.0.1'].includes(location.hostname), reload = '<div class="actions"><button class="primary" onclick="location.reload()">다시 불러오기</button></div>';
+  $('overlay').innerHTML = `<section class="panel compact"><h2>게임을 불러오지 못했습니다</h2>${local ? `<p class="error">${escapeHTML(error.message)}</p><p>프로젝트 폴더에서 <code>npm start</code>를 실행한 뒤 <a href="http://localhost:4173">localhost:4173</a>을 열어 주세요.</p>` : '<p>인터넷 연결을 확인한 뒤 다시 불러와 주세요. 진행 기록은 이 브라우저에 그대로 남아 있습니다.</p>'}${reload}</section>`;
+  const heading = $('overlay').querySelector('h2');
+  heading.setAttribute('aria-label', heading.textContent); heading.replaceChildren(pixelText(heading.textContent, 15, '#2b3345'));
   console.error(error);
 }

@@ -63,12 +63,10 @@
 .title-stage button:hover:not(:disabled), .title-stage button:focus { color: #a92f2b; }
 .title-stage button:hover:not(:disabled)::before, .title-stage button:focus::before { background: #c43c36; box-shadow: inset 0 0 0 3px currentColor, inset 0 0 0 6px #f6ecd2; }
 .title-stage button:disabled { color: #a8a596; cursor: default; }
-#title .title-slam { position: absolute; left: 50%; top: 50%; width: min(56vw, 88vh); transform: translate(-50%, -50%); animation: title-slam 170ms cubic-bezier(.5, 0, 1, .5) both; }
-@keyframes title-slam { from { transform: translate(-50%, -50%) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 .title-shake .title-stage { animation: title-shake 220ms steps(4) both; }
 @keyframes title-shake { 25% { margin: 6px 0 0 -8px; } 50% { margin: -5px 0 0 6px; } 75% { margin: 3px 0 0 -3px; } }
 .title-dark { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: #0e1218; }
-.title-dark canvas { max-width: 92vw; image-rendering: pixelated; }
+.title-dark canvas { image-rendering: pixelated; }
 .title-press { position: absolute; inset: 0; pointer-events: none; }
 #title .title-tool { position: absolute; width: 280px; height: 300px; transform-origin: 50% 100%; }
 #title .title-burst { position: absolute; width: 400px; height: 340px; }
@@ -144,9 +142,26 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #touch { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 #touch[hidden] { display: none; }
 body.touch, body.touch #app { touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-body.touch #skills, body.touch .binding-list, body.touch .hud-tools kbd { display: none; }
+body.touch #skills, body.touch details.keys, body.touch .hud-tools kbd { display: none; }
 body.touch .panel { touch-action: pan-y; }
-body.touch .talk-skip { padding: 6px 12px 6px 0; font-size: 16px; font-weight: 700; }
+body.touch .talk-skip { padding: 6px 12px 6px 0; font-size: 20px; font-weight: 700; }
+/* The sheet is scaled down to the phone, so anything read or pressed is set back up to a thumb's size. */
+body.touch .title-stage nav { top: auto; bottom: 28px; gap: 0; }
+body.touch .title-stage button { height: max(42px, calc(44px / var(--k, 1))); gap: calc(10px / var(--k, 1)); font-size: max(21px, calc(17px / var(--k, 1))); }
+body.touch .title-stage button::before { width: calc(14px / var(--k, 1)); height: calc(14px / var(--k, 1)); }
+body.touch #hint { top: 72px; bottom: auto; }
+body.touch #toast { top: 112px; }
+body.touch #dialogue { font-size: 25px; }
+body.touch .talk-box { height: 208px; }
+body.touch .talk-name { font-size: 24px; top: -24px; }
+body.touch .talk-text { left: 268px; right: 268px; top: 26px; }
+body.touch .alone .talk-text { left: 60px; right: 300px; }
+body.touch .talk-skip, body.touch .talk-name { left: 268px; }
+body.touch .player-talks .talk-name { left: auto; right: 268px; }
+body.touch .alone .talk-skip { left: 60px; }
+body.touch .talk-next { right: 280px; font-size: 20px; }
+body.touch .hud-vitals { transform: scale(1.3); transform-origin: 0 0; }
+body.touch .hud-wallet { transform: scale(1.3); transform-origin: 100% 0; }
 .touch-zone { position: absolute; left: 0; top: 0; bottom: 0; width: 45%; pointer-events: auto; touch-action: none; }
 .touch-stick { position: absolute; left: -52px; top: -52px; width: 104px; height: 104px; border-radius: 50%; background: #16202a55; box-shadow: inset 0 0 0 3px #f6ecd2aa; pointer-events: none; }
 .touch-stick[hidden] { display: none; }
