@@ -34,27 +34,52 @@
 .panel.shop .reward-card .pick { grid-column: 2; grid-row: 2; margin: 0; padding: 4px; }
 
 .panel.atlas-panel { width: min(1040px, 100%); padding: 14px 18px; }
-/* The region board: a sunlit lawn under the road, darkening toward the parade ground at the top. */
-.atlas { position: relative; aspect-ratio: 2.25; margin-top: 4px; background: linear-gradient(0deg, #cfdcb4, #d9c9a0 55%, #caa883); box-shadow: inset 0 0 0 3px var(--ink); overflow: hidden; }
-.atlas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.atlas line { stroke: #9b8a68; stroke-width: 6px; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.atlas line.done { stroke: var(--ink); stroke-dasharray: none; }
-.panel button.atlas-stop, .panel button.atlas-stop:hover:not(:disabled) { position: absolute; width: 14.2%; transform: translate(-50%, -50%); padding: 0; background: none; box-shadow: none; border: 0; cursor: pointer; }
-.panel button.atlas-stop:focus-visible { outline: none; }
-.atlas-stop img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 3px #0e121a55; image-rendering: auto; }
-.atlas-stop.ahead img { filter: saturate(.55) brightness(.92); }
-.atlas-stop:hover img, .atlas-stop:focus-visible img { box-shadow: 0 0 0 3px var(--gold), 4px 4px 0 3px #0e121a55; }
-.atlas-stop.picked img { box-shadow: 0 0 0 3px var(--ink), 0 0 0 6px #ffd257, 4px 4px 0 6px #0e121a55; }
-.atlas-badge { position: absolute; left: -8px; top: -8px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 3px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-size: 12px; font-weight: 700; color: var(--ink); }
-.atlas-stop.done .atlas-badge { background: var(--ink); color: var(--paper); }
-.atlas-stop.boss .atlas-badge { box-shadow: inset 0 0 0 2px var(--red); color: var(--red); }
-.atlas-stop.done.boss .atlas-badge { background: var(--red); color: var(--paper); }
-.atlas-stop.current .atlas-badge { background: #ffd257; color: var(--ink); }
-.atlas-stop small { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); padding: 0 5px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-size: 11px; font-weight: 700; color: var(--ink); white-space: nowrap; }
-.atlas-you { position: absolute; right: -6px; top: -10px; padding: 1px 5px; background: #c43c36; color: #fff4d6; font-size: 11px; font-style: normal; font-weight: 700; box-shadow: 0 0 0 2px var(--paper); animation: atlas-bob 1.2s ease-in-out infinite; }
-@keyframes atlas-bob { 50% { transform: translateY(-3px); } }
-@media (prefers-reduced-motion: reduce) { .atlas-you { animation: none; } }
-.panel p.atlas-detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-height: 44px; margin: 12px 0 0; }
+/* The region board: one floating island drawn in SVG by src/ui/world-map.js. */
+.atlas { margin-top: 4px; line-height: 0; }
+.world-map { display: block; width: 100%; height: min(450px, calc(100vh - 290px)); aspect-ratio: auto; border: 3px solid var(--ink); background: linear-gradient(#9fd3ec, #d7eef6); }
+.wm-cloud ellipse { fill: #fff; stroke: #b9d7e6; stroke-width: 2; paint-order: stroke; }
+.wm-cliff { fill: url(#wm-rock); stroke: #3c2a1c; stroke-width: 3; }
+.wm-strata { fill: none; stroke: #4a3220; stroke-width: 2; opacity: .45; }
+.wm-fall { stroke: #e9f7ff; stroke-width: 9; stroke-linecap: round; opacity: .9; }
+.wm-fall.thin { stroke: #b9e3f5; stroke-width: 4; }
+.wm-island { fill: url(#wm-lawn); }
+.wm-rim { fill: none; stroke: #4c6b33; stroke-width: 4; }
+.wm-patch { fill: #ffffff; opacity: .12; }
+.wm-flower.f0 { fill: #f4a6b8; } .wm-flower.f1 { fill: #fff4d6; } .wm-flower.f2 { fill: #ffd257; }
+.wm-shadow { fill: #1f2a1666; }
+.wm-trunk { fill: #7a5232; stroke: #3c2a1c; stroke-width: 1.5; }
+.wm-leaf { stroke: #2f4a22; stroke-width: 2.5; }
+.wm-leaf.a { fill: #5d9e45; } .wm-leaf.b { fill: #7bb552; }
+.wm-shine { fill: #ffffff; opacity: .28; }
+.wm-road-edge { fill: none; stroke: #8a6a44; stroke-width: 24; stroke-linecap: round; stroke-linejoin: round; }
+.wm-road { fill: none; stroke: #f1dfb2; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+.wm-road-walked { fill: none; stroke: #ffd257; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+.wm-road-dots { fill: none; stroke: #b99a68; stroke-width: 4; stroke-dasharray: 1 13; stroke-linecap: round; }
+.wm-stop { cursor: pointer; outline: none; }
+.wm-ring { fill: var(--paper); stroke: var(--ink); stroke-width: 3; }
+.wm-edge { fill: none; stroke: var(--ink); stroke-width: 3; }
+.wm-stop.ahead image { filter: saturate(.5) brightness(.9); }
+.wm-stop.current .wm-ring, .wm-stop:hover .wm-ring, .wm-stop:focus-visible .wm-ring { fill: #ffd257; }
+.wm-stop.picked .wm-ring { fill: #ffd257; stroke: var(--red); stroke-width: 4; }
+.wm-stop.boss .wm-ring { stroke: var(--red); }
+.wm-badge circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+.wm-badge text { font: 700 13px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.wm-stop.done .wm-badge circle { fill: var(--ink); } .wm-stop.done .wm-badge text { fill: var(--paper); }
+.wm-stop.boss .wm-badge circle { stroke: var(--red); } .wm-stop.boss .wm-badge text { fill: var(--red); }
+.wm-stop.done.boss .wm-badge circle { fill: var(--red); } .wm-stop.done.boss .wm-badge text { fill: var(--paper); }
+.wm-stop.current .wm-badge circle { fill: #ffd257; } .wm-stop.current .wm-badge text { fill: var(--ink); }
+.wm-plate rect { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+.wm-plate text { font: 700 12.5px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.wm-you { animation: atlas-bob 1.2s ease-in-out infinite; }
+.wm-you path { fill: #c43c36; stroke: var(--paper); stroke-width: 2.5; }
+.wm-you text { font: 700 14px "Malgun Gothic", sans-serif; fill: #c43c36; stroke: var(--paper); stroke-width: 4; paint-order: stroke; text-anchor: middle; }
+@keyframes atlas-bob { 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .wm-you { animation: none; } }
+.wm-title path { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
+.wm-title text { font: 700 17px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.wm-title text.sub { font-size: 9px; letter-spacing: 2px; fill: var(--label); }
+.panel p.atlas-detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; min-height: 40px; margin: 8px 0 0; }
+.panel.atlas-panel p.notice { margin: 2px 0 0; }
 .atlas-detail strong { font-size: 14px; }
 .atlas-detail em { font-style: normal; font-size: 12px; color: var(--red); }
 

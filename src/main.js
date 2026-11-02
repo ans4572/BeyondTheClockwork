@@ -8,6 +8,7 @@ import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
 import { TitleScreen, pixelText } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
+import { worldMapSvg } from './ui/world-map.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 
@@ -284,17 +285,15 @@ try {
   }
   /** The region drawn like a world map: each stop is a small view of its own art, joined by the road walked in order. */
   function mapPanel() {
-    const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1, route = [data.maps.route.start, ...rooms.map(room => data.maps.route[room.id])];
+    const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1;
     const picked = mapPick ?? (s.run ? rooms[node]?.id : 'town');
-    const lines = route.slice(1).map(([x, y], i) => `<line class="${i <= node ? 'done' : ''}" x1="${route[i][0]}" y1="${route[i][1]}" x2="${x}" y2="${y}"/>`).join('');
-    const spot = (id, state, classes, icon, label, [x, y]) => `<button class="atlas-stop ${state} ${classes} ${picked === id ? 'picked' : ''}" data-action="map-stop" data-id="${id}" style="left:${x}%;top:${y}%"><img src="art/ui/world-map/${id}.png" alt=""><span class="atlas-badge">${icon}</span><small>${label}</small>${state === 'current' ? '<i class="atlas-you">나</i>' : ''}</button>`;
-    const stops = spot('town', s.run ? 'done' : 'current', 'town', '⌂', HOME_NAME, route[0])
-      + rooms.map((room, i) => spot(room.id, i === node ? 'current' : i < node ? 'done' : 'ahead', room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '', stopIcon(room, i), room.short, route[i + 1])).join('');
+    const stops = [{ id: 'town', icon: '⌂', label: HOME_NAME, state: s.run ? 'done' : 'current', kind: 'town' },
+      ...rooms.map((room, i) => ({ id: room.id, icon: stopIcon(room, i), label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
     const index = rooms.findIndex(room => room.id === picked), room = rooms[index];
     const detail = room
       ? `<strong>${stopIcon(room, index)} · ${room.name}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
       : `<strong>⌂ · ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><p class="atlas-detail">${detail}</p><p class="notice">구간을 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
+    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice">구간을 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
