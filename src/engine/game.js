@@ -84,7 +84,7 @@ export class Game {
     this.s.wakeUntil = this.s.time + hold;
     if (lesson) this.tutorial.start();
     else {
-      this.spawnEnemy(this.config.rules.introEnemy, yard?.enemySpawns[0] || { x: 12, y: 9 }).ready += hold;
+      const guard = this.spawnEnemy(this.config.rules.introEnemy, yard?.enemySpawns[0] || { x: 12, y: 9 }); guard.ready += hold; guard.hp = guard.maxHp = this.config.rules.introEnemyHp;
       this.notify('렌치를 주웠습니다. 경비를 때려 보세요.'); this.s.notices.at(-1).until += hold;
     }
     this.save(); return true;
@@ -177,7 +177,7 @@ export class Game {
   }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
-    const enemy = { ...template, ...position, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
+    const enemy = { ...template, ...position, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
     this.s.enemies.push(enemy); return enemy;
   }
   enterNode() {
@@ -188,7 +188,7 @@ export class Game {
     if (room.boss) { this.spawnEnemy(room.boss, map?.bossSpawn || { x: 18, y: 8.5 }); this.notify(room.description); }
     else if (room.waves) {
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
-      room.waves[0].forEach((type, i) => this.spawnWaveEnemy(type, spawns[i] || this.arrivalSpot()));
+      room.waves[0].forEach(type => this.spawnWaveEnemy(type, this.spreadSpot()));
       this.notify(room.name);
     }
     this.save();
@@ -267,6 +267,7 @@ export class Game {
   }
   hitEnemy(enemy, base, options = {}) {
     if (enemy.hp <= 0) return { crit: false, killed: false };
+    if (!enemy.aggro) this.rouse(enemy);
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     const amount = base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
@@ -394,9 +395,12 @@ export class Game {
     const entry = this.skillSlots[index];
     if (!entry || !this.active || this.p.dodge || this.s.casts.some(c => c.shape === 'dash')) return false;
     const recast = entry.skill.id === 'pressureDash' && this.s.time < (this.p.dashRecastUntil || 0), ready = (this.p.cooldowns[entry.skill.id] || 0) <= this.s.time;
-    if (!recast && !ready) return false;
+    // Skills spend charge built by the wrench, so they wait for the moment that earns them.
+    const cost = entry.skill.energyCost || 0;
+    if (!recast && (!ready || this.p.energy < cost)) return false;
     if (recast) this.p.dashRecastUntil = 0;
     else {
+      this.p.energy -= cost;
       this.p.cooldowns[entry.skill.id] = this.s.time + entry.skill.cooldown * this.cooldownFactor;
       const dash = this.skillMod('doubleDash');
       if (dash && entry.skill.id === dash.skill) this.p.dashRecastUntil = this.s.time + dash.window;
@@ -686,6 +690,7 @@ export class Game {
         this.beginEnemyTell(enemy, next.type, Math.max(this.config.rules.minimumFollowupTell, next.at - this.s.time)); continue;
       }
       const a = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), d = distance(this.p, enemy);
+      if (!enemy.aggro) { if (d > this.config.rules.aggroUnits) continue; this.rouse(enemy); }
       enemy.facing = a;
       if (this.s.time >= enemy.ready && (enemy.boss || d < enemy.attackRange) && (enemy.boss || enemy.attack === 'shot' || activeMelee < this.config.rules.maxActiveMelee)) {
         const type = enemy.boss ? this.nextBossPattern(enemy) : enemy.attack;
@@ -749,6 +754,29 @@ export class Game {
     const enemy = this.spawnEnemy(type, spot);
     const { power } = this.room;
     enemy.hp = enemy.maxHp = Math.round(enemy.hp * power); enemy.damage = Math.max(1, Math.round(enemy.damage * power * this.config.rules.waveDamageShare));
+    // Wave bodies wait where they stand until the player comes near; nothing rushes in from across the map.
+    enemy.aggro = false;
+  }
+  /** Anywhere on the floor, well away from the player and from bodies already placed, so a room fills evenly. */
+  spreadSpot() {
+    const { spreadMinUnits, spreadGapUnits } = this.config.rules, map = this.map, { arena } = this.config, radius = 0.6;
+    const [width, height] = map?.size || [arena.width, arena.height], taken = [...this.s.enemies.filter(e => e.hp > 0), ...(this.s.run?.arrivals || [])], flow = this.flowField;
+    flow?.update(this.p.x, this.p.y);
+    for (let tries = 0; tries < 80; tries++) {
+      const spot = { x: this.random() * width, y: this.random() * height };
+      const floor = map?.walkable ? fitsMap(spot.x, spot.y, radius, map) : spot.x > arena.bounds.left && spot.x < arena.bounds.right && spot.y > arena.bounds.top && spot.y < arena.bounds.bottom;
+      if (floor && (!flow || flow.reachable(spot.x, spot.y)) && distance(spot, this.p) >= spreadMinUnits && taken.every(other => distance(spot, other) >= spreadGapUnits)) return spot;
+    }
+    return this.arrivalSpot();
+  }
+  /** A waiting body notices the player, and so do the ones standing beside it. */
+  rouse(enemy) {
+    const { aggroLinkUnits, } = this.config.rules, woken = [enemy];
+    enemy.aggro = true; enemy.ready = Math.max(enemy.ready, this.s.time + this.config.rules.enemyInitialDelay);
+    while (woken.length) {
+      const from = woken.pop();
+      for (const other of this.s.enemies) if (!other.aggro && other.hp > 0 && distance(from, other) <= aggroLinkUnits) { other.aggro = true; other.ready = Math.max(other.ready, this.s.time + this.config.rules.enemyInitialDelay); woken.push(other); }
+    }
   }
   /** Somewhere on the floor, off the player's feet but close enough to arrive soon. */
   arrivalSpot() {
@@ -768,7 +796,7 @@ export class Game {
     const { run } = this.s, { waveWarnSeconds } = this.config.rules;
     run.wave++;
     for (const type of this.room.waves[run.wave]) {
-      const spot = this.arrivalSpot();
+      const spot = this.spreadSpot();
       run.arrivals.push({ type, ...spot, at: this.s.time + waveWarnSeconds });
       this.effect('friendlyTell', spot.x, spot.y, '#e0a03c', waveWarnSeconds, 0.7);
     }

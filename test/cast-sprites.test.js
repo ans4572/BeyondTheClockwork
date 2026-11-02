@@ -96,7 +96,7 @@ test('ending combat does not freeze the caster mid-cast', () => {
 
 test('a cast shows over a held basic attack, and a dodge still takes over', () => {
   const g = battle(), a = new PlayerAnimator(library), input = { aim: { x: 14, y: 8 }, basic: true };
-  g.s.run.slots = [{ element: 'fire', level: 1, rarity: 'common' }];
+  g.s.run.slots = [{ element: 'fire', level: 1, rarity: 'common' }]; g.p.energy = 100;
   for (let i = 0; i < 10; i++) { g.update(1 / 60, input); a.update(1 / 60, g); }
   assert.match(a.pose.action, /^attack-/);
   g.update(1 / 60, { ...input, skill: 0 });
@@ -112,7 +112,7 @@ test('a cast shows over a held basic attack, and a dodge still takes over', () =
 
 test('a short skill plays through its peak while walking', () => {
   const g = battle(), a = new PlayerAnimator(library);
-  g.s.run.slots = [{ element: 'fire', level: 1, rarity: 'common' }];
+  g.s.run.slots = [{ element: 'fire', level: 1, rarity: 'common' }]; g.p.energy = 100;
   const input = { aim: { x: 14, y: 8 }, x: 1 };
   for (let i = 0; i < 10; i++) { g.update(1 / 60, input); a.update(1 / 60, g); }
   g.update(1 / 60, { ...input, skill: 0 });

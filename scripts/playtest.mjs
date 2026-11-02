@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { Game, distance } from '../src/engine/game.js';
+import { FlowField } from '../src/engine/flow-field.js';
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice', 'maps'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))])));
 
 /** Deterministic input bot. Uses the same public actions as the UI; no stat or damage cheats. */
@@ -8,6 +9,7 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
   const game = new Game(data);
   game.s.mode = 'hub'; game.s.profile.registered = true; game.s.profile.loadout = [...loadout]; Object.assign(game.s.profile.stats, stats); game.startRun(seed);
   let tick = 0, stuckFrames = 0, previous = { ...game.p };
+  const routes = {};
   while (tick++ < maxSeconds * 60 && !['complete', 'returned'].includes(game.s.mode)) {
     if (game.s.mode === 'reward') {
       const options = game.s.run.rewardChoices;
@@ -38,7 +40,12 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     const enemies = game.s.enemies.filter(e => e.hp > 0), target = enemies.sort((a, b) => distance(game.p, a) - distance(game.p, b))[0];
     if (!target) { game.update(1 / 60, {}); continue; }
     const d = distance(game.p, target), angle = Math.atan2(target.y - game.p.y, target.x - game.p.x);
-    let move = d > 1.3 ? angle : angle + Math.PI / 2, speed = d > 1.3 ? 1 : 0;
+    // Enemies wait spread over the map, so the bot walks the floor to them the way they would walk to it.
+    const map = game.map, route = map?.walkable && d > 3 ? (routes[map.id] ??= new FlowField(map, map.size)) : null;
+    route?.update(target.x, target.y);
+    // Against a wall the bot's own cell may be too tight to map; the nearest open cell gives the way instead.
+    const open = route && route.nearestOpen(...route.cell(game.p.x, game.p.y)), way = route && (route.heading(game.p.x, game.p.y) ?? (open && route.heading((open[0] + 0.5) * 0.5, (open[1] + 0.5) * 0.5)));
+    let move = d > 1.3 ? way ?? angle : angle + Math.PI / 2, speed = d > 1.3 ? 1 : 0;
     let dodge = false;
     const danger = enemies.find(e => e.tell && e.tell.until - game.s.time < 0.28 && (e.boss || distance(game.p, e) < 4));
     if (danger) {
@@ -51,8 +58,9 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
       stuckFrames = distance(game.p, previous) < 0.15 && d > 2 ? stuckFrames + 30 : 0;
       previous = { ...game.p };
     }
-    if (stuckFrames >= 30) move += Math.PI / 2;
-    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && calm, dodge, skill: calm ? tick % 4 : undefined, fusion: calm });
+    // Still stuck half a second later, it tries the next quarter turn.
+    if (stuckFrames >= 30) move += Math.PI / 2 * (stuckFrames / 30);
+    game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && calm && d < 2.5, dodge, skill: calm ? tick % 4 : undefined, fusion: calm });
   }
   return { seed, mode: game.s.mode, node: game.s.run ? game.s.run.node + 1 : game.s.result?.node, seconds: Math.round(game.s.run?.elapsed || game.s.result?.elapsed || 0), hp: Math.round(game.p.hp), damageTaken: Math.round(game.s.run?.damageTaken || game.s.result?.damageTaken || 0), baseGears: game.s.run?.baseGears || game.s.result?.baseGears || 0, upgrades: game.s.profile.stats };
 }

@@ -89,18 +89,18 @@ test('saves with the old tuning rows get their gears back', () => {
 });
 test('one swing hits multiple targets once but charges only once per phase', () => {
   const g = arena(), a = inert(g), b = inert(g, 'guard', { x: 9, y: 8.4 });
-  g.basicAttack(); step(g, 0.36);
-  assert.equal(a.hp, 36); assert.equal(b.hp, 36); assert.equal(g.p.energy, 8);
+  const full = a.maxHp; g.basicAttack(); step(g, 0.36);
+  assert.equal(a.hp, full - 16); assert.equal(b.hp, full - 16); assert.equal(g.p.energy, 8);
   step(g, 0.15); assert.equal(g.basicAttack(), true); step(g, 0.51);
-  assert.equal(a.hp, 18); assert.equal(g.p.energy, 16);
-  g.basicAttack(); step(g, 0.75); assert.equal(a.hp, 0); assert.equal(g.p.energy, 24);
+  assert.equal(a.hp, full - 34); assert.equal(g.p.energy, 16);
+  g.basicAttack(); step(g, 0.75); assert.equal(a.hp, full - 62); assert.equal(g.p.energy, 24);
 });
 test('standing still never regenerates charge', () => {
   const g = arena(); inert(g, 'guard', { x: 20, y: 12 }); step(g, 10); assert.equal(g.p.energy, 0);
 });
 test('basic windup can be dodge cancelled; active frames cannot be duplicated', () => {
   const g = arena(); const e = inert(g); g.basicAttack(); step(g, 0.033);
-  assert.equal(g.dodge(), true); step(g, 0.3); assert.equal(e.hp, 52); assert.equal(g.p.energy, 0);
+  assert.equal(g.dodge(), true); step(g, 0.3); assert.equal(e.hp, e.maxHp); assert.equal(g.p.energy, 0);
   g.p.x = 8; g.p.y = 8; g.p.dodgeReady = 0; g.basicAttack(); step(g, 0.18);
   assert.equal(g.dodge(), false); assert.equal(g.p.energy, 8); step(g, 0.75); assert.equal(g.p.energy, 8);
 });
@@ -152,7 +152,7 @@ test('all six fusion combinations actually deal their direct damage', () => {
 test('all eight individual skills hit; pressure dash grants no invulnerability', () => {
   for (const skill of data.combat.skills) {
     const g = arena(), e = inert(g, 'captainBrass', { x: 9.1, y: 8 }); e.hp = e.maxHp = 100000;
-    g.s.run.slots = [{ element: skill.element, level: 1, rarity: 'common' }];
+    g.s.run.slots = [{ element: skill.element, level: 1, rarity: 'common' }]; g.p.energy = 100;
     const index = g.skillSlots.findIndex(entry => entry.skill.id === skill.id);
     assert.equal(g.castSkill(index, e), true); step(g, 3);
     assert.ok(e.hp < 100000, `${skill.id} failed to hit`);
@@ -184,7 +184,7 @@ test('boss stagger exposes for 1.5s and locks reapplication for eight more secon
 });
 test('bosses do not move when vortex pulls normal enemies', () => {
   const g = arena(), e = inert(g, 'collectorRoco', { x: 10, y: 8 }), normal = inert(g, 'guard', { x: 11.8, y: 8 });
-  g.s.run.slots = [{ element: 'wind', level: 1, rarity: 'common' }]; const before = { ...e }, normalBefore = normal.x;
+  g.s.run.slots = [{ element: 'wind', level: 1, rarity: 'common' }]; g.p.energy = 100; const before = { ...e }, normalBefore = normal.x;
   g.castSkill(1, { x: 9, y: 8 }); step(g, 0.5);
   assert.equal(e.x, before.x); assert.equal(e.y, before.y); assert.ok(normal.x < normalBefore);
 });
@@ -361,12 +361,12 @@ test('every melee enemy can reach a player who stands still', () => {
   assert.equal(rat.hp, 0); assert.equal(g.p.hp, hp - rat.damage);
 });
 
-test('every combat room runs two or three waves of ten to fifteen enemies, and gets harder as it goes', () => {
+test('every combat room runs two or three waves of fifteen to twenty-four enemies, and gets harder as it goes', () => {
   const rooms = data.slice.rooms.filter(room => room.waves), weight = room => room.waves.flat().reduce((sum, type) => sum + data.slice.enemies[type].hp, 0) * room.power;
   assert.equal(rooms.length, 9);
   for (const room of rooms) {
     assert.ok(room.waves.length >= 2 && room.waves.length <= 3, room.id);
-    const count = room.waves.flat().length; assert.ok(count >= 10 && count <= 15, room.id);
+    const count = room.waves.flat().length; assert.ok(count >= 15 && count <= 24, room.id);
   }
   for (let i = 1; i < rooms.length; i++) assert.ok(weight(rooms[i]) > weight(rooms[i - 1]), rooms[i].id);
 });

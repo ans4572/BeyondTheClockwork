@@ -32,6 +32,8 @@ export class FlowField {
       }
     }
   }
+  /** Whether a point can be walked to from the last target, so nothing is placed where it can never be reached. */
+  reachable(x, y) { const [col, row] = this.cell(x, y); return this.isOpen(col, row) && this.steps[row * this.cols + col] >= 0; }
   /** Angle of the next cell on the way, or null where the floor is too tight to map. */
   heading(x, y) {
     const [col, row] = this.cell(x, y);

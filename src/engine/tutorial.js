@@ -43,6 +43,7 @@ export class Tutorial {
   }
   dropGuard() {
     const { game } = this, spot = game.map.enemySpawns[0], guard = game.spawnEnemy(game.config.rules.introEnemy, spot);
+    guard.hp = guard.maxHp = game.config.rules.introEnemyHp;
     guard.held = true;
     game.effect('ring', spot.x, spot.y, '#c79a3e', 0.5, 2);
     this.state.step = 'attack';

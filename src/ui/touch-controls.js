@@ -49,10 +49,10 @@ export class TouchControls {
   }
   /** `slots` is the HUD's list, in the order of SLOT_BUTTONS, with what each button is showing. */
   update(slots) {
-    slots.forEach(({ art, share, left, ready }, i) => {
+    slots.forEach(({ art, share, left, ready, short }, i) => {
       const button = this.slots[i], image = button.firstChild, src = art ? `art/ui/skill-icons/${art}.png` : '';
       if (button.dataset.art !== src) { button.dataset.art = src; button.classList.toggle('empty', !art); if (art) image.src = src; else image.removeAttribute('src'); }
-      button.children[1].style.height = `${share * 100}%`; button.children[2].textContent = left; button.classList.toggle('ready', !!ready);
+      button.children[1].style.height = `${share * 100}%`; button.children[2].textContent = left; button.classList.toggle('ready', !!ready); button.classList.toggle('short', !!short);
     });
   }
 }

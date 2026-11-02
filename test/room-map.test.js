@@ -68,10 +68,12 @@ test('map data is validated, and a spawn outside the floor is rejected', () => {
   assert.throws(() => validateData(broken), /이동 영역 밖/);
 });
 
-test('entering the room uses its authored spawns', () => {
-  const g = run();
+test('entering the room spreads the first wave over reachable floor, away from the player and waiting', () => {
+  const g = run(), { spreadMinUnits } = data.slice.rules, flow = g.flowField; flow.update(g.p.x, g.p.y);
   assert.deepEqual([g.p.x, g.p.y], [map.spawn.x, map.spawn.y]);
-  g.s.enemies.forEach((enemy, i) => assert.deepEqual([enemy.x, enemy.y], [map.enemySpawns[i].x, map.enemySpawns[i].y]));
+  for (const enemy of g.s.enemies) {
+    assert.ok(flow.reachable(enemy.x, enemy.y)); assert.ok(Math.hypot(enemy.x - g.p.x, enemy.y - g.p.y) >= spreadMinUnits); assert.equal(enemy.aggro, false);
+  }
   assert.deepEqual(g.obstacles, []);
 });
 

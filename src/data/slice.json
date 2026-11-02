@@ -56,7 +56,12 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 0.5
+    "waveDamageShare": 0.5,
+    "introEnemyHp": 52,
+    "aggroUnits": 6,
+    "aggroLinkUnits": 3.5,
+    "spreadMinUnits": 8,
+    "spreadGapUnits": 2.5
   },
   "presentation": {
     "codex": {
@@ -107,7 +112,7 @@
   "enemies": {
     "rat": {
       "name": "태엽 쥐",
-      "hp": 16,
+      "hp": 40,
       "damage": 9,
       "speed": 3.2,
       "radius": 0.3,
@@ -120,7 +125,7 @@
     },
     "nutcracker": {
       "name": "방패 호두까기",
-      "hp": 120,
+      "hp": 300,
       "damage": 13,
       "speed": 1.5,
       "radius": 0.55,
@@ -146,7 +151,7 @@
     },
     "guard": {
       "name": "목각 경비",
-      "hp": 52,
+      "hp": 130,
       "damage": 8,
       "speed": 2.1,
       "radius": 0.4,
@@ -158,7 +163,7 @@
     },
     "rabbit": {
       "name": "스프링 토끼",
-      "hp": 45,
+      "hp": 113,
       "damage": 10,
       "speed": 2.9,
       "radius": 0.35,
@@ -172,7 +177,7 @@
     },
     "trumpet": {
       "name": "나팔 사수",
-      "hp": 60,
+      "hp": 150,
       "damage": 10,
       "speed": 1.3,
       "radius": 0.4,
@@ -185,7 +190,7 @@
     },
     "elite": {
       "name": "정예 목각 경비",
-      "hp": 80,
+      "hp": 200,
       "damage": 12,
       "speed": 2,
       "radius": 0.5,
@@ -453,18 +458,24 @@
         [
           "guard",
           "guard",
+          "guard",
+          "guard",
           "guard"
         ],
         [
           "guard",
           "rabbit",
           "rat",
-          "rat"
+          "rat",
+          "guard",
+          "rabbit"
         ],
         [
           "guard",
           "guard",
-          "rabbit"
+          "rabbit",
+          "guard",
+          "rat"
         ]
       ],
       "power": 0.55
@@ -479,9 +490,13 @@
         [
           "guard",
           "guard",
-          "trumpet"
+          "trumpet",
+          "guard",
+          "guard"
         ],
         [
+          "rat",
+          "rat",
           "rat",
           "rat",
           "rat",
@@ -491,7 +506,9 @@
           "guard",
           "guard",
           "trumpet",
-          "rabbit"
+          "rabbit",
+          "guard",
+          "guard"
         ]
       ],
       "power": 0.6
@@ -508,18 +525,24 @@
           "guard",
           "guard",
           "rabbit",
-          "rabbit"
+          "rabbit",
+          "guard",
+          "guard"
         ],
         [
           "nutcracker",
           "rat",
           "rat",
+          "rat",
+          "nutcracker",
           "rat"
         ],
         [
           "guard",
           "guard",
-          "trumpet"
+          "trumpet",
+          "guard",
+          "guard"
         ]
       ],
       "power": 0.65
@@ -535,19 +558,26 @@
           "trumpet",
           "trumpet",
           "rabbit",
-          "rabbit"
+          "rabbit",
+          "trumpet",
+          "trumpet"
         ],
         [
           "guard",
           "guard",
           "rat",
           "rat",
+          "rat",
+          "guard",
+          "guard",
           "rat"
         ],
         [
           "nutcracker",
           "rabbit",
-          "trumpet"
+          "trumpet",
+          "nutcracker",
+          "rabbit"
         ]
       ],
       "power": 0.7
@@ -578,18 +608,25 @@
           "guard",
           "guard",
           "guard",
-          "trumpet"
+          "trumpet",
+          "guard",
+          "guard"
         ],
         [
           "rat",
           "rat",
           "rat",
           "rat",
-          "rabbit"
+          "rabbit",
+          "rat",
+          "rat",
+          "guard"
         ],
         [
           "nutcracker",
           "trumpet",
+          "trumpet",
+          "nutcracker",
           "trumpet"
         ]
       ],
@@ -606,20 +643,27 @@
           "rabbit",
           "rabbit",
           "rabbit",
-          "trumpet"
+          "trumpet",
+          "rabbit",
+          "rabbit"
         ],
         [
           "nutcracker",
           "guard",
           "guard",
           "rat",
-          "rat"
+          "rat",
+          "nutcracker",
+          "guard",
+          "guard"
         ],
         [
           "rabbit",
           "rabbit",
           "trumpet",
-          "trumpet"
+          "trumpet",
+          "rabbit",
+          "rabbit"
         ]
       ],
       "power": 0.8
@@ -637,19 +681,27 @@
           "guard",
           "guard",
           "trumpet",
-          "trumpet"
+          "trumpet",
+          "guard",
+          "guard",
+          "guard"
         ],
         [
           "nutcracker",
           "nutcracker",
           "rat",
           "rat",
+          "rat",
+          "nutcracker",
+          "nutcracker",
           "rat"
         ],
         [
           "rabbit",
           "rabbit",
-          "trumpet"
+          "trumpet",
+          "rabbit",
+          "rabbit"
         ]
       ],
       "power": 0.8
@@ -666,21 +718,30 @@
           "rat",
           "rat",
           "rat",
-          "rat"
+          "rat",
+          "rat",
+          "guard",
+          "guard"
         ],
         [
           "nutcracker",
           "guard",
           "guard",
           "trumpet",
-          "trumpet"
+          "trumpet",
+          "nutcracker",
+          "guard",
+          "guard"
         ],
         [
           "guard",
           "rabbit",
           "rabbit",
           "trumpet",
-          "trumpet"
+          "trumpet",
+          "guard",
+          "rabbit",
+          "rabbit"
         ]
       ],
       "power": 0.85
@@ -697,20 +758,28 @@
           "guard",
           "guard",
           "trumpet",
-          "trumpet"
+          "trumpet",
+          "elite",
+          "guard",
+          "guard"
         ],
         [
           "nutcracker",
           "nutcracker",
           "rat",
           "rat",
+          "rat",
+          "nutcracker",
+          "nutcracker",
           "rat"
         ],
         [
           "elite",
           "rabbit",
           "rabbit",
-          "trumpet"
+          "trumpet",
+          "elite",
+          "rabbit"
         ]
       ],
       "power": 0.85

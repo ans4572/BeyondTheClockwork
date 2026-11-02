@@ -156,6 +156,7 @@
   "skills": [
     {
       "id": "heatSwing",
+      "energyCost": 20,
       "element": "fire",
       "name": "과열 휘두르기",
       "cooldown": 5,
@@ -168,6 +169,7 @@
     },
     {
       "id": "exhaustBurst",
+      "energyCost": 30,
       "element": "fire",
       "name": "배기 폭발",
       "cooldown": 9,
@@ -180,6 +182,7 @@
     },
     {
       "id": "frostBolt",
+      "energyCost": 20,
       "element": "ice",
       "name": "서리 볼트",
       "cooldown": 6,
@@ -192,6 +195,7 @@
     },
     {
       "id": "coolingField",
+      "energyCost": 30,
       "element": "ice",
       "name": "냉각 지대",
       "cooldown": 11,
@@ -204,6 +208,7 @@
     },
     {
       "id": "conductiveSpanner",
+      "energyCost": 20,
       "element": "lightning",
       "name": "도전 스패너",
       "cooldown": 5,
@@ -218,6 +223,7 @@
     },
     {
       "id": "capacitorStrike",
+      "energyCost": 30,
       "element": "lightning",
       "name": "축전 낙뢰",
       "cooldown": 10,
@@ -230,6 +236,7 @@
     },
     {
       "id": "pressureDash",
+      "energyCost": 15,
       "element": "wind",
       "name": "압축 돌진",
       "cooldown": 5,
@@ -242,6 +249,7 @@
     },
     {
       "id": "vortexIntake",
+      "energyCost": 30,
       "element": "wind",
       "name": "회오리 흡입",
       "cooldown": 10,

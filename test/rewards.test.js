@@ -64,10 +64,10 @@ test('chosen mods and traits persist through a save and are validated', () => {
 
 test('overload refunds the cooldown once per cast when the swing lands a burn, and not on a miss', () => {
   const input = { aim: { x: 9, y: 8 }, skill: 0 };
-  const g = arena(); const e = dummy(g); g.update(1 / 60, input); const plain = g.p.cooldowns.heatSwing;
-  const h = arena(); h.s.run.skillMods = ['overload']; const f = dummy(h), far = dummy(h, 9, 8.4);
+  const g = arena(); g.p.energy = 100; const e = dummy(g); g.update(1 / 60, input); const plain = g.p.cooldowns.heatSwing;
+  const h = arena(); h.p.energy = 100; h.s.run.skillMods = ['overload']; const f = dummy(h), far = dummy(h, 9, 8.4);
   h.update(1 / 60, input); assert.ok(Math.abs(plain - h.p.cooldowns.heatSwing - 2) < 1e-6); assert.ok(e.hp < e.maxHp && f.burnStacks.length && far.burnStacks.length);
-  const miss = arena(); miss.s.run.skillMods = ['overload']; miss.update(1 / 60, input); assert.ok(Math.abs(miss.p.cooldowns.heatSwing - plain) < 1e-6);
+  const miss = arena(); miss.p.energy = 100; miss.s.run.skillMods = ['overload']; miss.update(1 / 60, input); assert.ok(Math.abs(miss.p.cooldowns.heatSwing - plain) < 1e-6);
 });
 
 test('backflow pushes normal enemies on the last blast, never bosses', () => {
@@ -105,7 +105,7 @@ test('homing strike lands on a nearby enemy', () => {
 });
 
 test('double dash grants one free recast inside the window', () => {
-  const g = arena(['wind', 'fire']); g.s.run.skillMods = ['doubleDash']; const input = { aim: { x: 20, y: 8 }, skill: 0 };
+  const g = arena(['wind', 'fire']); g.p.energy = 100; g.s.run.skillMods = ['doubleDash']; const input = { aim: { x: 20, y: 8 }, skill: 0 };
   g.update(1 / 60, input); const cooldown = g.p.cooldowns.pressureDash;
   step(g, 0.3); g.update(1 / 60, input); assert.ok(g.s.casts.some(c => c.shape === 'dash')); assert.equal(g.p.cooldowns.pressureDash, cooldown);
   step(g, 0.3); g.update(1 / 60, input); assert.ok(!g.s.casts.some(c => c.shape === 'dash'));

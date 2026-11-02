@@ -7,7 +7,7 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
-const SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
+const ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
@@ -92,13 +92,13 @@ export class CanvasRenderer {
     c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(x * 20 - 7, y * 20 - 34 + beat * 3); c.lineTo(x * 20 + 7, y * 20 - 34 + beat * 3); c.lineTo(x * 20, y * 20 - 24 + beat * 3); c.fill();
   }
   /** A goal off the screen is pointed at from the edge nearest to it. */
-  pointTo(goal) {
+  pointTo(goal, fill = '#ffd257') {
     const c = this.ctx, halfW = SCREEN_UNITS[0] / 2, halfH = SCREEN_UNITS[1] / 2, centerX = this.camera.x + halfW, centerY = this.camera.y + halfH;
     const dx = goal.x - centerX, dy = goal.y - centerY;
     if (Math.abs(dx) <= halfW && Math.abs(dy) <= halfH) return;
     const reach = Math.min((halfW - 1.5) / (Math.abs(dx) || 1e-6), (halfH - 2) / (Math.abs(dy) || 1e-6));
     c.save(); c.translate((centerX + dx * reach) * 20, (centerY + dy * reach) * 20); c.rotate(Math.atan2(dy, dx));
-    c.fillStyle = '#ffd257'; c.strokeStyle = '#3b2f1c'; c.lineWidth = 2; c.beginPath(); c.moveTo(13, 0); c.lineTo(-9, -11); c.lineTo(-4, 0); c.lineTo(-9, 11); c.closePath(); c.stroke(); c.fill(); c.restore();
+    c.fillStyle = fill; c.strokeStyle = '#3b2f1c'; c.lineWidth = 2; c.beginPath(); c.moveTo(13, 0); c.lineTo(-9, -11); c.lineTo(-4, 0); c.lineTo(-9, 11); c.closePath(); c.stroke(); c.fill(); c.restore();
   }
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
   coverBody(mask, x, y, halfWidth = 1.3, tall = 2.9) { return mask?.cover(this.ctx, x, y, halfWidth, tall) || 0; }
@@ -435,6 +435,12 @@ export class CanvasRenderer {
     if (ghost && playerPose) { c.globalAlpha = ghost; this.drawSprite(g.p.x * 20, g.p.y * 20, playerPose, this.sprites, false, PLAYER_SCALE); c.globalAlpha = 1; }
     for (const { label, x, y } of this.labels) this.tag(label, x, y);
     if (goal && mapImage) this.pointTo(goal);
+    // Enemies wait spread over the room; when none is in view, a red arrow points to the nearest.
+    if (s.mode === 'combat' && mapImage && !goal) {
+      const living = s.enemies.filter(e => e.hp > 0), near = living.reduce((best, e) => (!best || Math.hypot(e.x - g.p.x, e.y - g.p.y) < Math.hypot(best.x - g.p.x, best.y - g.p.y) ? e : best), null);
+      const seen = living.some(e => e.x > this.camera.x && e.x < this.camera.x + SCREEN_UNITS[0] && e.y > this.camera.y && e.y < this.camera.y + SCREEN_UNITS[1]);
+      if (near && !seen) this.pointTo(near, ENEMY_ARROW);
+    }
     if (g.walking && mapImage) {
       if (s.mode !== 'registration') this.tag(g.village.exit.label, g.village.exit.at[0] * 20, g.village.exit.at[1] * 20);
       const npc = g.nearbyNpc;

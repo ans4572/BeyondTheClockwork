@@ -228,7 +228,7 @@ try {
   function describeReward(reward) {
     if (reward.kind === 'element') {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
-      return { name: element.device, art: element.id, label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
+      return { name: element.device, art: element.id, label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
     if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: '⚒', label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개', rarity: '개조' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element], rarity: '개조' }; }
@@ -368,6 +368,7 @@ try {
       element.querySelector('.cool').style.height = `${Math.min(1, remaining / total) * 100}%`;
       element.querySelector('.left').textContent = remaining > 0 ? remaining.toFixed(1) : '';
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
+      element.classList.toggle('short', !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost);
     });
     $('skills').hidden = !!game.village;
     const resetting = game.s.practice?.resetCooldowns;
@@ -377,7 +378,7 @@ try {
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : skill ? p.cooldowns[skill.id] || 0 : 0;
       const total = slot.dodge ? data.combat.player.dodge.cooldown : skill?.cooldown || 1, remaining = Math.max(0, until - s.time);
-      return { art: slot.icon || skill?.id, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost };
+      return { art: slot.icon || skill?.id, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
     if ($('hint').textContent !== hint) $('hint').textContent = hint;
