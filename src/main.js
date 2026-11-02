@@ -293,7 +293,7 @@ try {
     const detail = room
       ? `<strong>${stopIcon(room, index)} · ${room.name}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
       : `<strong>⌂ · ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice">구간을 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice">번호를 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스 · ? 준비 중${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);

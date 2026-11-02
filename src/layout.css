@@ -37,47 +37,56 @@
 /* The region board: one floating island drawn in SVG by src/ui/world-map.js. */
 .atlas { margin-top: 4px; line-height: 0; }
 .world-map { display: block; width: 100%; height: min(450px, calc(100vh - 290px)); aspect-ratio: auto; border: 3px solid var(--ink); background: linear-gradient(#9fd3ec, #d7eef6); }
-.wm-cloud ellipse { fill: #fff; stroke: #b9d7e6; stroke-width: 2; paint-order: stroke; }
-.wm-cliff { fill: url(#wm-rock); stroke: #3c2a1c; stroke-width: 3; }
-.wm-strata { fill: none; stroke: #4a3220; stroke-width: 2; opacity: .45; }
-.wm-fall { stroke: #e9f7ff; stroke-width: 9; stroke-linecap: round; opacity: .9; }
-.wm-fall.thin { stroke: #b9e3f5; stroke-width: 4; }
-.wm-island { fill: url(#wm-lawn); }
-.wm-rim { fill: none; stroke: #4c6b33; stroke-width: 4; }
-.wm-patch { fill: #ffffff; opacity: .12; }
-.wm-flower.f0 { fill: #f4a6b8; } .wm-flower.f1 { fill: #fff4d6; } .wm-flower.f2 { fill: #ffd257; }
-.wm-shadow { fill: #1f2a1666; }
-.wm-trunk { fill: #7a5232; stroke: #3c2a1c; stroke-width: 1.5; }
-.wm-leaf { stroke: #2f4a22; stroke-width: 2.5; }
-.wm-leaf.a { fill: #5d9e45; } .wm-leaf.b { fill: #7bb552; }
-.wm-shine { fill: #ffffff; opacity: .28; }
-.wm-road-edge { fill: none; stroke: #8a6a44; stroke-width: 24; stroke-linecap: round; stroke-linejoin: round; }
-.wm-road { fill: none; stroke: #f1dfb2; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
-.wm-road-walked { fill: none; stroke: #ffd257; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
-.wm-road-dots { fill: none; stroke: #b99a68; stroke-width: 4; stroke-dasharray: 1 13; stroke-linecap: round; }
-.wm-stop { cursor: pointer; outline: none; }
-.wm-ring { fill: var(--paper); stroke: var(--ink); stroke-width: 3; }
-.wm-edge { fill: none; stroke: var(--ink); stroke-width: 3; }
-.wm-stop.ahead image { filter: saturate(.5) brightness(.9); }
-.wm-stop.current .wm-ring, .wm-stop:hover .wm-ring, .wm-stop:focus-visible .wm-ring { fill: #ffd257; }
-.wm-stop.picked .wm-ring { fill: #ffd257; stroke: var(--red); stroke-width: 4; }
-.wm-stop.boss .wm-ring { stroke: var(--red); }
-.wm-badge circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
-.wm-badge text { font: 700 13px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
-.wm-stop.done .wm-badge circle { fill: var(--ink); } .wm-stop.done .wm-badge text { fill: var(--paper); }
-.wm-stop.boss .wm-badge circle { stroke: var(--red); } .wm-stop.boss .wm-badge text { fill: var(--red); }
-.wm-stop.done.boss .wm-badge circle { fill: var(--red); } .wm-stop.done.boss .wm-badge text { fill: var(--paper); }
-.wm-stop.current .wm-badge circle { fill: #ffd257; } .wm-stop.current .wm-badge text { fill: var(--ink); }
-.wm-plate rect { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
-.wm-plate text { font: 700 12.5px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
-.wm-you { animation: atlas-bob 1.2s ease-in-out infinite; }
-.wm-you path { fill: #c43c36; stroke: var(--paper); stroke-width: 2.5; }
-.wm-you text { font: 700 14px "Malgun Gothic", sans-serif; fill: #c43c36; stroke: var(--paper); stroke-width: 4; paint-order: stroke; text-anchor: middle; }
+.world-map .cloud ellipse { fill: #fff; stroke: #b9d7e6; stroke-width: 2; paint-order: stroke; }
+.world-map .cliff { fill: url(#wm-rock); stroke: #3c2a1c; stroke-width: 3; }
+.world-map .lawn { fill: url(#wm-lawn); }
+.world-map .rim { fill: none; stroke: #4c6b33; stroke-width: 4; }
+.world-map .fall { stroke: #e9f7ff; stroke-width: 10; stroke-linecap: round; }
+.world-map .hill { fill: #cfc6b0; } .world-map .hill-rim { stroke: #7a6f58; }
+.world-map .hill-cliff { fill: #9b8f78; stroke: #4e4536; stroke-width: 3; } .world-map .works-cliff { fill: #857a68; }
+.world-map .works { fill: #a49a8a; } .world-map .works-edge { fill: none; stroke: #6e6457; stroke-width: 3; stroke-dasharray: 8 5; }
+.world-map .town { fill: #ecd9b0; } .world-map .town-edge { fill: none; stroke: #b99a68; stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; }
+.world-map .bed { fill: #6aa84f; stroke: var(--ink); stroke-width: 2; } .world-map .bloom.b0 { fill: #f4a6b8; } .world-map .bloom.b1 { fill: #ffd257; }
+.world-map .shadow { fill: #1f2a1655; }
+.world-map .trunk { fill: #7a5232; stroke: #3c2a1c; stroke-width: 1.5; }
+.world-map .leaf { stroke: #2f4a22; stroke-width: 2.5; } .world-map .leaf.a { fill: #5d9e45; } .world-map .leaf.b { fill: #7bb552; }
+.world-map .shine { fill: #fff; opacity: .28; }
+.world-map .pine { fill: #4d7d4a; stroke: #2f4a22; stroke-width: 2.5; } .world-map .pine-lit { fill: #6b9a5c; }
+.world-map .ink { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.world-map .door { fill: #7a5232; stroke: var(--ink); stroke-width: 2; } .world-map .pane { fill: #7fc7e0; stroke: var(--ink); stroke-width: 1.5; }
+.world-map .hand { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+.world-map .cog { fill: #b08b4a; stroke-dasharray: 4 3; } .world-map .hub { fill: #5c4630; }
+.world-map .crate { fill: #c08a52; stroke: var(--ink); stroke-width: 1.5; }
+.world-map .smoke { fill: #d7d9de; stroke: #9a9ea8; stroke-width: 2; opacity: .9; }
+.world-map .road-edge { fill: none; stroke: #8a6a44; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+.world-map .road { fill: none; stroke: #f1dfb2; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+.world-map .road-edge.future { stroke: #6e6457; } .world-map .road.future { stroke: #d6ccb6; }
+.world-map .road-dash { fill: none; stroke: #8f8573; stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+.world-map .road-walked { fill: none; stroke: #ffd257; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.world-map .node { cursor: pointer; outline: none; }
+.world-map .node.locked { cursor: default; }
+.world-map .node .hit { fill: transparent; stroke: none; }
+.world-map .node circle:not(.hit) { fill: #fff4d6; stroke: var(--ink); stroke-width: 2.5; }
+.world-map .node text { font: 700 9.5px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.world-map .node.done circle:not(.hit) { fill: var(--ink); } .world-map .node.done > text { fill: #fff4d6; }
+.world-map .node.boss circle:not(.hit) { stroke: var(--red); } .world-map .node.boss > text { fill: var(--red); }
+.world-map .node.done.boss circle:not(.hit) { fill: var(--red); } .world-map .node.done.boss > text { fill: #fff4d6; }
+.world-map .node.current circle:not(.hit) { fill: #ffd257; stroke-width: 3; } .world-map .node.current > text { fill: var(--ink); }
+.world-map .node:hover circle:not(.hit), .world-map .node.picked circle:not(.hit) { stroke: var(--red); stroke-width: 4; }
+.world-map .node.locked circle:not(.hit) { fill: #d6d2c6; stroke: #6e6457; stroke-width: 2.5; } .world-map .node.locked > text { fill: #6e6457; }
+.world-map .name rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 2.5; } .world-map .name text { font-size: 12.5px; }
+.world-map .you { animation: atlas-bob 1.2s ease-in-out infinite; }
+.world-map .you path { fill: #c43c36; stroke: #fff4d6; stroke-width: 2; }
+.world-map .you text { font: 700 13px "Malgun Gothic", sans-serif; fill: #c43c36; stroke: #fff4d6; stroke-width: 4; paint-order: stroke; text-anchor: middle; }
 @keyframes atlas-bob { 50% { transform: translateY(-4px); } }
-@media (prefers-reduced-motion: reduce) { .wm-you { animation: none; } }
-.wm-title path { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
-.wm-title text { font: 700 17px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
-.wm-title text.sub { font-size: 9px; letter-spacing: 2px; fill: var(--label); }
+@media (prefers-reduced-motion: reduce) { .world-map .you { animation: none; } }
+.world-map .banner rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
+.world-map .banner text { font: 700 16px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.world-map .banner.dark rect { fill: #4a4d58; } .world-map .banner.blue rect { fill: #4f6fa1; } .world-map .banner.dark text, .world-map .banner.blue text { fill: #f6ecd2; }
+.world-map .soon { font: 700 10.5px "Malgun Gothic", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
+.world-map .plate path { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
+.world-map .plate text { font: 700 18px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.world-map .plate text.sub { font-size: 9px; letter-spacing: 2px; fill: var(--label); }
 .panel p.atlas-detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; min-height: 40px; margin: 8px 0 0; }
 .panel.atlas-panel p.notice { margin: 2px 0 0; }
 .atlas-detail strong { font-size: 14px; }
