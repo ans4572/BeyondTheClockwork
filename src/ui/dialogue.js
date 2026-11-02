@@ -1,14 +1,15 @@
 const ZOOM = 3, TYPE_MS = 26;
 
 /** One cell of a sprite sheet, enlarged with hard pixels for the standing portraits. */
-function portrait({ sheet, cell }) {
+function portrait({ sheet, cell, crop = [0, 0, cell, cell], zoom = ZOOM }) {
   return new Promise((done, fail) => {
     const image = new Image();
     image.onerror = fail;
     image.onload = () => {
       const out = document.createElement('canvas'), c = out.getContext('2d');
-      out.width = out.height = cell * ZOOM; c.imageSmoothingEnabled = false;
-      c.drawImage(image, 0, 0, cell, cell, 0, 0, cell * ZOOM, cell * ZOOM);
+      const [x, y, w, h] = crop;
+      out.width = w * zoom; out.height = h * zoom; c.imageSmoothingEnabled = false;
+      c.drawImage(image, x, y, w, h, 0, 0, w * zoom, h * zoom);
       done(out.toDataURL());
     };
     image.src = sheet.replace(/^\//, '');

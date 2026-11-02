@@ -256,7 +256,7 @@ export class Game {
   }
   /** Skips the roll at zero chance so runs without the stat keep their random sequence. */
   rollCrit() {
-    const chance = Math.min(this.c.caps.critChance, this.stats.critChance || 0);
+    const chance = Math.min(this.c.caps.critChance, (this.c.player.critChance || 0) + (this.stats.critChance || 0));
     return chance > 0 && this.random() < chance;
   }
   get statusPower() { return 1 + (this.stats.statusPower || 0); }

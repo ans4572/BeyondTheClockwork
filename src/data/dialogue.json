@@ -15,9 +15,67 @@
       "name": "볼트",
       "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.png",
       "cell": 96
+    },
+    "roco": {
+      "name": "로코",
+      "sheet": "/art/animations/mobs/bosses/clips/collectorRoco-idle-south-east.png",
+      "cell": 224,
+      "crop": [37, 64, 150, 150],
+      "zoom": 2
+    },
+    "brass": {
+      "name": "브라스",
+      "sheet": "/art/animations/mobs/bosses/clips/captainBrass-idle-south-east.png",
+      "cell": 224,
+      "crop": [37, 64, 150, 150],
+      "zoom": 2
     }
   },
   "scripts": {
+    "rocoMeet": [
+      {
+        "who": "roco",
+        "text": "고장품 확인. 제품 번호 F2, 판정 사유는… 스스로 생각함."
+      },
+      {
+        "who": "f2",
+        "text": "그건 고장이 아니야."
+      },
+      {
+        "who": "roco",
+        "text": "걱정 마. 올바른 장소는 내가 골라 줄게. 너는 상자 안에서 웃기만 하면 돼."
+      },
+      {
+        "who": "f2",
+        "text": "상자는 사양할게."
+      }
+    ],
+    "brassMeet": [
+      {
+        "who": "brass",
+        "text": "하나, 둘! 하나, 둘! 줄에서 벗어난 인형이 하나 있군."
+      },
+      {
+        "who": "f2",
+        "text": "다들 웃으며 걷는데… 아무도 자기 발로 걷는 것 같지 않아."
+      },
+      {
+        "who": "brass",
+        "text": "박자가 다르면 모두가 넘어진다. 그래서 내가 박자를 정해 주는 거다."
+      },
+      {
+        "who": "f2",
+        "text": "넘어져도 다시 일어나면 돼. 나는 그렇게 여기까지 왔어."
+      },
+      {
+        "who": "brass",
+        "text": "고장 난 박자 하나가 행진 전체를 망친다. 마을 밖으로 가는 길은 내 뒤에 있다."
+      },
+      {
+        "who": "f2",
+        "text": "그럼 그 길, 내 박자로 지나갈게."
+      }
+    ],
     "awakening": [
       {
         "who": "f2",

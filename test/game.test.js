@@ -50,11 +50,11 @@ test('insufficient funds never modify a purchase or a rank', () => {
 test('every stat changes what it says', () => {
   const g = arena(), enemy = inert(g), base = g.damageMultiplier(enemy, false);
   g.s.profile.stats.attackDamage = 20;
-  assert.ok(Math.abs(g.damageMultiplier(enemy, true) - base * 1.4) < 1e-9); assert.ok(Math.abs(g.damageMultiplier(enemy, false) - base * 1.4) < 1e-9);
-  g.s.profile.stats.damageReduction = 20; g.hurt(50); assert.ok(Math.abs(g.p.hp - 60) < 1e-9);
-  g.s.profile.stats.moveSpeed = 20; const x = g.p.x; step(g, 0.5, { x: 1 }); assert.ok(Math.abs(g.p.x - x - 3.5 * 1.6 * 0.5) < 0.2);
-  g.s.profile.stats.attackSpeed = 20; g.p.attack = null; g.p.x = 8; assert.equal(g.basicAttack(), true); g.updateBasic(0.1); assert.ok(Math.abs(g.p.attack.elapsed - 0.16) < 1e-9);
-  g.s.profile.stats.cooldownReduction = 20; assert.ok(Math.abs(g.cooldownFactor - 0.8) < 1e-9);
+  assert.ok(Math.abs(g.damageMultiplier(enemy, true) - base * 1.6) < 1e-9); assert.ok(Math.abs(g.damageMultiplier(enemy, false) - base * 1.6) < 1e-9);
+  g.s.profile.stats.damageReduction = 20; g.hurt(50); assert.ok(Math.abs(g.p.hp - 65) < 1e-9);
+  g.s.profile.stats.moveSpeed = 20; const x = g.p.x; step(g, 0.5, { x: 1 }); assert.ok(Math.abs(g.p.x - x - 3.5 * 1.4 * 0.5) < 0.2);
+  g.s.profile.stats.attackSpeed = 20; g.p.attack = null; g.p.x = 8; assert.equal(g.basicAttack(), true); g.updateBasic(0.1); assert.ok(Math.abs(g.p.attack.elapsed - 0.14) < 1e-9);
+  g.s.profile.stats.cooldownReduction = 20; assert.ok(Math.abs(g.cooldownFactor - 0.7) < 1e-9);
   g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownFactor - 0.65) < 1e-9);
 });
 test('crits use the cap and multiplier, and never touch damage over time', () => {
@@ -63,20 +63,21 @@ test('crits use the cap and multiplier, and never touch damage over time', () =>
   g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 200);
   assert.equal(g.s.effects.at(-1).color, '#e8433a');
   g.hitEnemy(enemy, 100, { dot: true }); assert.equal(enemy.hp, 1e5 - 300);
-  g.random = () => 0.2; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 400);
-  g.s.profile.stats.critChance = 0; let rolls = 0; g.random = () => { rolls++; return 0; };
-  g.hitEnemy(enemy, 100); assert.equal(rolls, 0); assert.equal(enemy.hp, 1e5 - 500);
+  g.random = () => 0.45; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 400);
+  // Every body starts with a 20% chance before any tuning.
+  g.s.profile.stats.critChance = 0; g.random = () => 0.19; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 600);
+  g.random = () => 0.21; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 700);
 });
 test('the new economy, dodge, energy and status stats each do their job', () => {
   const g = arena(); g.s.profile.stats.dodgeCooldown = 20; g.dodge();
-  assert.ok(Math.abs(g.p.dodgeReady - g.s.time - 0.6) < 1e-9);
+  assert.ok(Math.abs(g.p.dodgeReady - g.s.time - 0.45) < 1e-9);
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
-  assert.equal(j.s.run.baseGears, 10); assert.equal(j.s.run.coins, 21);
-  assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.3) < 1e-9);
+  assert.equal(j.s.run.baseGears, 11); assert.equal(j.s.run.coins, 21);
+  assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.5) < 1e-9);
   const b = arena(), burned = inert(b); burned.hp = burned.maxHp = 1000; b.s.profile.stats.statusPower = 20; burned.burnStacks = [b.s.time + 4]; burned.burnTick = b.s.time; b.updateEnemies(1 / 60);
-  assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.3)) < 1e-9);
+  assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.5)) < 1e-9);
 });
 test('saves with the old tuning rows get their gears back', () => {
   const g = hub(), raw = JSON.parse(encodeSave(g.s));

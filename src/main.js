@@ -127,6 +127,12 @@ try {
     renderOverlay(true);
   }
   async function meetMoru() { await talk('registration'); game.register(); game.openElements(); renderOverlay(true); }
+  // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
+  const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet' };
+  async function meetBoss(boss) {
+    (game.s.profile.bossTalks ??= []).push(boss); game.save();
+    game.s.paused = true; await talk(BOSS_TALKS[boss]); game.s.paused = false;
+  }
   async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
   function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
   function resume() {
@@ -565,6 +571,8 @@ try {
     bellWasRinging = bellRinging;
     if (game.s.mode === 'registration' && game.tutorial.step === 'town' && bellRinging) game.tutorial.heardBell();
     if (!screen && game.tutorial.takeCall()) moruCalls();
+    const boss = game.room?.boss;
+    if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0)) meetBoss(boss);
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening');
     const pad = pollGamepad(), map = bindings();
     if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.enemies); }
