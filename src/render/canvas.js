@@ -7,6 +7,7 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
+const SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_POP = 0.15;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 7, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = [28, 16], TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
@@ -14,7 +15,16 @@ const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
-  constructor(canvas, game) { this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; }
+  constructor(canvas, game) { this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
+  /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
+  kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
+  wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
+  shakeOffset() {
+    const left = this.shakeUntil - performance.now();
+    if (left <= 0) return [0, 0];
+    const size = this.shakeSize * left / SHAKE_MS;
+    return [Math.round((Math.random() * 2 - 1) * size), Math.round((Math.random() * 2 - 1) * size)];
+  }
   /** Clips the map background to a polygon and repaints it, so scenery covers what stands behind it. */
   drawOccluder(image, polygon, [width, height]) {
     const c = this.ctx, xs = polygon.map(point => point[0]), ys = polygon.map(point => point[1]), left = Math.max(0, Math.min(...xs)), top = Math.max(0, Math.min(...ys));
@@ -335,7 +345,8 @@ export class CanvasRenderer {
     // Panels over the hub show the spot the player will stand on; everywhere else follows the body.
     const focus = hub && !g.village ? map?.spawn : g.p;
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
-    c.setTransform(2, 0, 0, 2, -Math.round(this.camera.x * 40), -Math.round(this.camera.y * 40)); c.imageSmoothingEnabled = false;
+    const [shakeX, shakeY] = this.shakeOffset();
+    c.setTransform(2, 0, 0, 2, -Math.round(this.camera.x * 40) + shakeX, -Math.round(this.camera.y * 40) + shakeY); c.imageSmoothingEnabled = false;
     if (mapImage) c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); else this.scenery(hub);
     if (s.mode === 'shop' && !mapImage) { this.building(217, 113, 110, 69, '#d9c49a', '볼트의 부품 상점', '#88aaa0'); this.drawDoll(273, 212, { type: 'moru', color: '#c7a968' }); }
     const yardExit = s.mode === 'practice' ? map?.exit.at : null;
@@ -378,7 +389,9 @@ export class CanvasRenderer {
       const blink = actor.player && actor.invulnerableUntil > s.time && Math.floor(s.time * 22) % 2 === 0;
       c.globalAlpha = blink && !s.profile.settings.reducedMotion ? 0.45 : 1;
       const mobPose = mobPoses?.get(actor.id), mobClip = mobPose && this.mobSprites.clip(mobPose.action, mobPose.direction);
-      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK));
+      // A struck body trembles side to side for a moment, even while the hit holds time still.
+      const jolt = !actor.player && actor.joltUntil > s.time && !s.profile.settings.reducedMotion ? (Math.floor(performance.now() / 32) % 2 ? JOLT_PX : -JOLT_PX) : 0;
+      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK));
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
@@ -402,7 +415,9 @@ export class CanvasRenderer {
       if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
-      if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, 10);
+      // Numbers pop larger for an instant, and critical ones stay larger with a mark.
+      if (fx.type === 'number') { const pop = fraction < NUMBER_POP ? 1 + (NUMBER_POP - fraction) / NUMBER_POP * 0.6 : 1; this.text(`${Math.round(fx.value)}${fx.crit ? '!' : ''}`, x, y - fraction * 20 - 15, fx.color, Math.round((fx.crit ? 14 : 10) * pop)); }
+      if (fx.type === 'impact') { c.globalAlpha = 1; c.lineWidth = 3; const reach = fx.value * 20 * (0.5 + fraction * 0.6); for (let i = 0; i < 8; i++) { const a = fx.angle + i * TAU / 8, r = i % 2 ? reach * 0.55 : reach; this.line(x + Math.cos(a) * reach * 0.25, y + Math.sin(a) * reach * 0.25, x + Math.cos(a) * r, y + Math.sin(a) * r, fx.color, i % 2 ? 2 : 3); } if (fraction < 0.4) this.circle(x, y, 4 * fx.value, fx.color); }
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
       if (fx.type === 'swing') { c.lineWidth = 5; c.beginPath(); c.arc(x, y, fx.value * 20 * 0.8, fx.angle - 0.8, fx.angle + 0.8); c.stroke(); }
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }
@@ -436,5 +451,7 @@ export class CanvasRenderer {
       const x = this.pointer.x * 20, y = this.pointer.y * 20;
       this.line(x - 6, y, x - 2, y, '#557d70'); this.line(x + 2, y, x + 6, y, '#557d70'); this.line(x, y - 6, x, y - 2, '#557d70'); this.line(x, y + 2, x, y + 6, '#557d70');
     }
+    const hurtLeft = this.hurtUntil - performance.now();
+    if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
   }
 }

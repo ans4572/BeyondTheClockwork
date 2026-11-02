@@ -14,10 +14,14 @@ export function segmentDistance(p, a, b) {
   return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
 }
 
+const JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
+
 export class Game {
   constructor(data, savedState = null, onSave = () => {}) {
     this.data = data;
     this.onSave = onSave;
+    // Hits the screen should feel (stop, shake, sound). The browser drains it; the rules never wait on it.
+    this.feel = [];
     this.tutorial = new Tutorial(this);
     this.state = savedState || {
       mode: 'opening', time: 0, tick: 0, paused: false, rng: 1, sequence: 0,
@@ -262,7 +266,7 @@ export class Game {
     return Math.abs(angleDiff(Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), enemy.facing)) * 360 / Math.PI <= enemy.guardArcDegrees;
   }
   hitEnemy(enemy, base, options = {}) {
-    if (enemy.hp <= 0) return;
+    if (enemy.hp <= 0) return { crit: false, killed: false };
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     const amount = base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
@@ -271,7 +275,7 @@ export class Game {
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount); enemy.flashUntil = this.s.time + 0.09;
     this.tutorial.onHit(enemy, !!options.basic);
-    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? '#ffb02e' : options.color || '#fff4cd', 0.65, amount);
+    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? '#ffb02e' : options.color || '#fff4cd', 0.65, amount, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
     const held = enemy.statuses.windPressure > this.s.time ? this.trait('galeHold')?.stunMultiplier || 1 : 1;
     if (!enemy.boss && options.stagger) enemy.stunUntil = Math.max(enemy.stunUntil, this.s.time + this.config.rules.normalHitStun * held);
@@ -280,7 +284,20 @@ export class Game {
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
+      if (!enemy.dummy) this.sense({ kind: 'kill' });
     }
+    return { crit, killed: enemy.hp <= 0 };
+  }
+  /** Queues a hit for the browser to feel; nobody drains it in tests, so it stops growing. */
+  sense(hit) { if (this.feel.length < FEEL_LIMIT) this.feel.push(hit); }
+  /** A wrench blow lands: the body jolts, light enemies give ground, and a spark marks the contact. */
+  punch(enemy, attack, hit) {
+    const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
+    this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit });
+    enemy.joltUntil = this.s.time + JOLT_SECONDS;
+    if (!enemy.boss && !enemy.dummy && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
+    this.effect('impact', enemy.x - cos * enemy.radius * 0.6, enemy.y - sin * enemy.radius * 0.6 - 0.4, hit.crit ? '#ffd257' : '#fff6d6', 0.14, heavy || hit.crit ? 1 : 0.7, { angle: attack.angle });
+    if (heavy) this.effect('ring', enemy.x, enemy.y - 0.3, '#fff6d6', 0.22, 1.1);
   }
   addStagger(enemy, amount, applyPressure = true) {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;
@@ -340,7 +357,7 @@ export class Game {
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
       if (!a.shown) { this.effect('swing', this.p.x, this.p.y, a.phase === 2 ? '#f0c369' : '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
-        a.hit.push(enemy.id); this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] });
+        a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
         if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) this.addEnergy(this.trait('staticCharge').energy);
         this.triggerShock(enemy);
         if (!a.energyGiven) { this.addEnergy(this.c.player.energyPerBasicPhase * (1 + (this.stats.energyGain || 0))); a.energyGiven = true; }
@@ -428,7 +445,10 @@ export class Game {
     this.p.lastCast = { id: cast.id, skillId: skill.id, at: this.s.time, angle };
   }
   castHit(cast, enemy, damage = cast.damage) {
-    this.hitEnemy(enemy, damage, { slot: cast.slot, color: cast.color });
+    const hit = this.hitEnemy(enemy, damage, { slot: cast.slot, color: cast.color });
+    enemy.joltUntil = this.s.time + JOLT_SECONDS;
+    // A cast that lands many times is felt once, on its first contact.
+    if (!cast.felt) { cast.felt = true; this.sense({ kind: cast.fusion ? 'fusion' : 'skill', crit: hit.crit }); }
     if (enemy.hp > 0) for (const element of cast.elements) this.applyStatus(enemy, element, cast);
     if (cast.overload && enemy.burnStacks.some(t => t > this.s.time)) { this.p.cooldowns[cast.skillId] = Math.max(0, (this.p.cooldowns[cast.skillId] || 0) - cast.overload); cast.overload = 0; }
     this.castStagger(enemy, cast.fusion ? this.c.balance.fusionStaggerPerCastCap : this.c.balance.skillStaggerPerCastCap, cast);
@@ -497,6 +517,7 @@ export class Game {
     this.p.invulnerableUntil = this.s.time + this.c.player.hurtInvulnerability;
     if (this.p.attack && this.p.attack.elapsed < this.c.player.combo[this.p.attack.phase].windup) this.p.attack = null;
     this.effect('hurt', this.p.x, this.p.y, '#e67d73', 0.25, 0.8);
+    this.sense({ kind: 'hurt' });
     if (this.p.hp <= 0) {
       if (this.tutorial.step) this.tutorial.rise();
       else if (this.s.mode === 'intro') { this.s.mode = 'introDeath'; this.clearCombat(); this.save(); }

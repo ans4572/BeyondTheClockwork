@@ -21,6 +21,9 @@ const HOME_NAME = '웃음 마을';
 const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
+// How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
+const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 } };
+const CRIT_STOP = 0.03, CRIT_SHAKE = 3;
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
@@ -137,6 +140,48 @@ try {
     const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = 'triangle'; osc.frequency.value = frequency;
     gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
     osc.connect(gain).connect(audio.destination); osc.start(); osc.stop(audio.currentTime + duration);
+  }
+  let noiseBuffer = null;
+  /** A burst of filtered noise: the body of every whoosh, clank and crunch. */
+  function noise(duration, volume, frequency, q = 1.2) {
+    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    if (!noiseBuffer) { noiseBuffer = audio.createBuffer(1, audio.sampleRate * 0.5, audio.sampleRate); const d = noiseBuffer.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+    const source = audio.createBufferSource(), filter = audio.createBiquadFilter(), gain = audio.createGain();
+    source.buffer = noiseBuffer; filter.type = 'bandpass'; filter.frequency.value = frequency; filter.Q.value = q;
+    gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
+    source.connect(filter).connect(gain).connect(audio.destination); source.start(); source.stop(audio.currentTime + duration);
+  }
+  /** A pitch that falls as it fades, for the weight under a hit. */
+  function thump(from, to, duration, volume, type = 'triangle') {
+    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = type;
+    osc.frequency.setValueAtTime(from, audio.currentTime); osc.frequency.exponentialRampToValueAtTime(to, audio.currentTime + duration);
+    gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
+    osc.connect(gain).connect(audio.destination); osc.start(); osc.stop(audio.currentTime + duration);
+  }
+  const HIT_SOUNDS = {
+    hit: () => { noise(0.05, 0.12, 1800); thump(170, 90, 0.07, 0.07); },
+    heavy: () => { noise(0.08, 0.16, 1100); thump(120, 50, 0.14, 0.11); },
+    skill: () => { noise(0.05, 0.08, 2400); thump(200, 120, 0.06, 0.04); },
+    fusion: () => { noise(0.12, 0.12, 900); thump(110, 45, 0.18, 0.1); },
+    kill: () => { noise(0.14, 0.14, 700, 0.8); thump(520, 160, 0.12, 0.05, 'square'); },
+    hurt: () => { thump(150, 70, 0.16, 0.1, 'sawtooth'); noise(0.06, 0.08, 500); }
+  };
+  let hitstop = 0;
+  /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
+  function feelHits() {
+    const hits = game.feel.splice(0);
+    if (!hits.length) return;
+    const calm = reducedMotion();
+    for (const hit of hits) {
+      const kind = FEEL[hit.kind];
+      hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0));
+      const shake = Math.max(kind.shake || 0, hit.crit ? CRIT_SHAKE : 0);
+      if (shake && !calm) renderer.kick(shake);
+      if (hit.kind === 'hurt' && !calm) renderer.wince();
+    }
+    for (const kind of new Set(hits.map(hit => hit.kind))) HIT_SOUNDS[kind]();
+    if (hits.some(hit => hit.crit)) thump(1400, 900, 0.08, 0.03, 'square');
   }
   /** Two slow strokes of the town bell. */
   function toll() {
@@ -527,16 +572,19 @@ try {
     if (pad?.fusion) pending.fusion = true;
     if (pad?.skill !== undefined) pending.skill = pad.skill;
     while (accumulator >= 1 / 60) {
+      // A landed hit holds the rules still for a few frames; input pressed meanwhile waits for the next step.
+      if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; continue; }
       const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0), y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0), aim: pointer, basic: mouseHeld || pad?.basic || touch?.attacking, ...pending };
-      game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60;
+      game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
     }
     if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
     const charging = game.s.enemies.find(e => ['dash', 'shot'].includes(e.tell?.type) && e.tell.started > lastChargeAt);
     if (charging) { lastChargeAt = charging.tell.started; beep(880, 0.1, 0.015); }
     const bossTell = game.s.enemies.find(e => ['bell', 'alarm'].includes(e.tell?.type) && e.tell.started > lastBossTellAt);
     if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else beep(660, 0.25, 0.04); }
-    const soundEffect = game.s.effects.findLast(f => ['swing', 'hurt', 'scrap'].includes(f.type));
-    if (soundEffect && soundEffect.id !== lastSoundId) { lastSoundId = soundEffect.id; beep(soundEffect.type === 'hurt' ? 110 : soundEffect.type === 'scrap' ? 660 : 320, 0.06); }
+    // The swing itself is only air; what it hits is voiced by feelHits.
+    const swing = game.s.effects.findLast(f => f.type === 'swing');
+    if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7); }
     renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
