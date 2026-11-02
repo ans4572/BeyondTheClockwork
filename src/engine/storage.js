@@ -31,6 +31,8 @@ export function decodeSave(raw, data) {
   for (const key of ['runs', 'wins', 'combatClears']) if (!integerIn(s.profile[key], 0, Number.MAX_SAFE_INTEGER)) fail('저장된 진행 기록이 올바르지 않습니다.');
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion'].every(key => typeof s.profile.settings[key] === 'boolean')) fail('저장된 설정이 올바르지 않습니다.');
   s.profile.loadout ??= [];
+  s.profile.ownedElements ??= [...s.profile.loadout];
+  if (!Array.isArray(s.profile.ownedElements) || s.profile.ownedElements.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 부품이 올바르지 않습니다.');
   if (!Array.isArray(s.profile.loadout) || s.profile.loadout.length > 2 || s.profile.loadout.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 선택이 올바르지 않습니다.');
   const p = s.player;
   for (const key of ['hp', 'maxHp', 'energy', 'invulnerableUntil', 'dodgeReady', 'fusionReady']) if (!validNumber(p[key])) fail('저장된 플레이어 수치가 올바르지 않습니다.');

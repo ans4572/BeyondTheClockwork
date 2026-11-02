@@ -123,10 +123,10 @@ try {
     const choice = await talk(npc.character);
     if (choice === 'open') game.talk();
     if (choice === 'elements') game.openElements();
-    if (choice === 'practice' && !game.enterPractice()) game.notify('속성 2개를 고르면 시험할 수 있습니다.');
+    if (choice === 'practice' && !game.enterPractice()) game.notify('속성 부품을 하나 이상 장착하면 시험할 수 있습니다.');
     renderOverlay(true);
   }
-  async function meetMoru() { await talk('registration'); game.register(); game.openElements(); renderOverlay(true); }
+  async function meetMoru() { await talk('registration'); game.register(); renderOverlay(true); }
   // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
   const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet' };
   async function meetBoss(boss) {
@@ -217,18 +217,24 @@ try {
   function tuningPanel() {
     return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
+  /** Moru's parts shelf: owned elements are equipped (two at most), the rest are bought with gears one at a time. */
   function elementsPanel() {
-    const { loadout } = game.s.profile, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
+    const { loadout, ownedElements, freeGears, history } = game.s.profile, price = game.nextElementPrice, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
     const cards = data.combat.elements.map(element => {
-      const picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
-      return `<article class="reward-card ${picked ? 'picked' : ''}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')}</article>`;
+      const owned = ownedElements.includes(element.id), picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
+      const action = owned ? button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')
+        : price === null ? button(ownedElements.length ? '모두 보유' : '첫 귀환 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
+        : button(price === 0 ? '무료로 달기' : `⚙ ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
+      return `<article class="reward-card ${picked ? 'picked' : ''} ${owned ? '' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${action}</article>`;
     }).join('');
-    return panel(`<div class="panel-header"><div><h2>몸에 달 속성 2개</h2></div><strong>${loadout.length} / 2</strong></div><p>두 속성은 원정을 시작할 때 그대로 장착됩니다. 언제든 모루에게 바꿀 수 있습니다.</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${fusion.effect}` : '두 속성을 고르면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length === 2 ? '' : 'disabled')}</div>`, 'wide');
+    const note = !ownedElements.length ? (history.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.' : '첫 원정은 렌치만으로 나갑니다. 돌아오면 모루가 첫 속성 부품을 무료로 달아 줍니다.')
+      : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ⚙ ${price}입니다.` : ''}`;
+    return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><strong>장착 ${loadout.length} / 2</strong></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
   }
   function describeReward(reward) {
     if (reward.kind === 'element') {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
-      return { name: element.device, art: element.id, label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
+      return { name: element.device, art: element.id, label: game.s.profile.ownedElements.includes(element.id) ? `${element.name} 속성 모듈` : `${element.name} 속성 모듈 · 이번 원정 체험`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
     if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: '⚒', label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개', rarity: '개조' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element], rarity: '개조' }; }
@@ -397,6 +403,7 @@ try {
     if (name === 'register') game.register();
     if (name === 'close-panel') game.closePanel();
     if (name === 'element') game.toggleElement(d.id);
+    if (name === 'buy-element') game.buyElement(d.id);
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
     if (name === 'tune-buy') game.tune(d.row, 'buy');
     if (name === 'refund') game.tune(null, 'refund');

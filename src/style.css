@@ -55,6 +55,7 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 /* Element parts are drawn at 32px and shown at whole multiples so every pixel stays square. */
 .reward-card .element-icon { width: 64px; height: 64px; margin: -4px 0 0 -4px; image-rendering: pixelated; }
 .codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 0; image-rendering: pixelated; }
+.reward-card.unowned .element-icon { filter: grayscale(.7); opacity: .7; }
 .reward-card .rarity { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; color: var(--label); }
 .reward-card .card-label { font-size: 12px; color: var(--label); }
 .reward-card h3 { font-size: 16px; margin: 2px 0 6px; }

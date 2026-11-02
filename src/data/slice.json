@@ -56,12 +56,18 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 1.0,
+    "waveDamageShare": 0.85,
     "introEnemyHp": 52,
     "aggroUnits": 6,
     "aggroLinkUnits": 3.5,
     "spreadMinUnits": 8,
-    "spreadGapUnits": 2.5
+    "spreadGapUnits": 2.5,
+    "elementPrices": [
+      0,
+      80,
+      120,
+      160
+    ]
   },
   "presentation": {
     "codex": {

@@ -28,6 +28,8 @@ export class Game {
       profile: createProfile(data), run: null, player: {}, enemies: [], casts: [], projectiles: [], effects: [], notices: [], result: null
     };
     this.state.profile.loadout ??= [];
+    // Elements are bought from Moru one at a time; a save from before owns what it had equipped.
+    this.state.profile.ownedElements ??= [...this.state.profile.loadout];
     // A run saved before waves existed finishes its current room as it stands.
     if (this.state.run) { this.state.run.arrivals ??= []; this.state.run.wave ??= LAST_WAVE_ALREADY_PLAYED; }
     if (!savedState) this.resetPlayer();
@@ -114,7 +116,8 @@ export class Game {
   }
   enterHub() {
     Object.assign(this.p, this.hubMap?.spawn);
-    this.notify('모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
+    const { ownedElements, history } = this.s.profile;
+    this.notify(!ownedElements.length && history.length ? '모루에게 가면 첫 속성 부품을 무료로 달아 줍니다.' : '모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
   }
   talk() {
     const npc = this.nearbyNpc;
@@ -123,19 +126,33 @@ export class Game {
   }
   closePanel() { this.s.panel = null; }
   openElements() { if (this.s.mode === 'hub') this.s.panel = 'elements'; }
-  /** Two elements go in the body; picking a third takes the place of the older one. */
+  /** Gears for the next element: the first is Moru's gift once the player has come back from one expedition. */
+  get nextElementPrice() {
+    const { ownedElements, history } = this.s.profile, prices = this.config.rules.elementPrices;
+    if (ownedElements.length >= prices.length) return null;
+    return ownedElements.length === 0 && !history.length ? null : prices[ownedElements.length];
+  }
+  buyElement(id) {
+    const profile = this.s.profile, price = this.nextElementPrice;
+    if (this.s.mode !== 'hub' || !this.config.elements.includes(id) || profile.ownedElements.includes(id) || price === null || profile.freeGears < price) return false;
+    profile.freeGears -= price; profile.ownedElements.push(id);
+    if (profile.loadout.length < 2) profile.loadout.push(id);
+    this.save(); return true;
+  }
+  /** Two owned elements go in the body; picking a third takes the place of the older one. */
   toggleElement(id) {
-    const { loadout } = this.s.profile;
-    if (this.s.mode !== 'hub' || !this.config.elements.includes(id)) return false;
+    const { loadout, ownedElements } = this.s.profile;
+    if (this.s.mode !== 'hub' || !ownedElements.includes(id)) return false;
     if (loadout.includes(id)) loadout.splice(loadout.indexOf(id), 1);
     else { if (loadout.length === 2) loadout.shift(); loadout.push(id); }
     this.save(); return true;
   }
   get loadoutSlots() { return this.s.profile.loadout.map(element => ({ element, level: 1, rarity: 'common' })); }
-  get readyToLeave() { return this.s.profile.loadout.length === 2; }
+  // The wrench alone is enough to set out; elements are added as they are bought.
+  get readyToLeave() { return this.s.profile.registered; }
   /** Moru's back yard: the equipped elements against a dummy that never falls. */
   enterPractice() {
-    if (this.s.mode !== 'hub' || !this.readyToLeave) return false;
+    if (this.s.mode !== 'hub' || !this.s.profile.loadout.length) return false;
     this.clearCombat(); this.resetPlayer();
     this.s.mode = 'practice'; this.s.practice = { slots: this.loadoutSlots, resetCooldowns: false };
     const yard = this.map;
@@ -943,7 +960,8 @@ export class Game {
     if (!run.rewardChoices.length) {
       let choices = [];
       if (this.room.guaranteedMod && run.mods.length < this.data.progression.run.wrenchModsMax) choices = this.sample(this.config.mods.filter(m => !run.mods.includes(m.id)).map(m => ({ kind: 'mod', id: m.id })), 3);
-      else if (this.slots.length < 2 && run.clears.length <= 2) {
+      // The first expedition is the wrench alone; after that, an element not yet bought can be tried for one run.
+      else if (this.slots.length < 2 && run.clears.length <= 2 && this.s.profile.history.length) {
         choices = this.c.elements.filter(e => !this.slots.some(s => s.element === e.id)).map(e => ({ kind: 'element', id: e.id, rarity: 'common' }));
         // Rotate rather than silently exclude the fourth element on every fresh save.
         const offset = Math.floor(this.random() * choices.length); choices = choices.slice(offset).concat(choices.slice(0, offset));
@@ -953,7 +971,7 @@ export class Game {
         choices = this.sample(build, 1);
         const pool = [
           ...build.filter(reward => reward !== choices[0]),
-          ...this.c.elements.filter(e => !this.slots.some(s => s.element === e.id)).map(e => ({ kind: 'element', id: e.id, rarity: this.rarity() })),
+          ...(this.s.profile.history.length ? this.c.elements.filter(e => !this.slots.some(s => s.element === e.id)).map(e => ({ kind: 'element', id: e.id, rarity: this.rarity() })) : []),
           ...this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean)
         ];
         choices.push(...this.sample(pool, 3 - choices.length));

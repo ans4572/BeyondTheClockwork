@@ -345,11 +345,19 @@ test('every room has a portal the player can reach from its entrance', () => {
   }
 });
 
-test('two elements chosen at Moru go into the run, and the town will not let anyone leave without them', () => {
-  const g = new Game(data); g.s.mode = 'registration'; g.register();
-  const { polygon } = g.village.exit, inside = () => { g.p.x = (polygon[0][0] + polygon[1][0]) / 2; g.p.y = (polygon[0][1] + polygon[2][1]) / 2; };
-  inside(); g.update(1 / 60, {}); assert.equal(g.s.mode, 'hub'); assert.ok(!pointInPolygon(g.p.x, g.p.y, polygon));
-  assert.equal(g.enterPractice(), false);
+test('the first trip leaves with the wrench alone; elements are bought one at a time and two owned ones go into the run', () => {
+  const fresh = new Game(data); fresh.s.mode = 'registration'; fresh.register();
+  const { polygon } = fresh.village.exit, walkOut = game => { game.p.x = (polygon[0][0] + polygon[1][0]) / 2; game.p.y = (polygon[0][1] + polygon[2][1]) / 2; game.update(1 / 60, {}); };
+  assert.equal(fresh.enterPractice(), false); assert.equal(fresh.nextElementPrice, null); assert.equal(fresh.buyElement('fire'), false);
+  walkOut(fresh); assert.equal(fresh.s.mode, 'combat'); assert.equal(fresh.slots.length, 0);
+  const g = new Game(data); g.s.mode = 'registration'; g.register(); g.s.profile.history = [{ reason: 'defeat' }];
+  const inside = () => { g.p.x = (polygon[0][0] + polygon[1][0]) / 2; g.p.y = (polygon[0][1] + polygon[2][1]) / 2; };
+  assert.equal(g.toggleElement('fire'), false, 'an element not yet bought cannot be equipped');
+  assert.equal(g.nextElementPrice, 0); assert.equal(g.buyElement('fire'), true); assert.equal(g.s.profile.freeGears, 0);
+  assert.equal(g.nextElementPrice, 80); assert.equal(g.buyElement('ice'), false, 'not enough gears');
+  g.s.profile.freeGears = 1000; for (const id of ['ice', 'wind']) assert.equal(g.buyElement(id), true);
+  assert.equal(g.s.profile.freeGears, 1000 - 80 - 120); assert.deepEqual(g.s.profile.ownedElements, ['fire', 'ice', 'wind']);
+  g.s.profile.loadout = [];
   for (const id of ['fire', 'ice', 'wind']) g.toggleElement(id);
   assert.deepEqual(g.s.profile.loadout, ['ice', 'wind']);
   g.toggleElement('ice'); assert.deepEqual(g.s.profile.loadout, ['wind']); g.toggleElement('fire');
