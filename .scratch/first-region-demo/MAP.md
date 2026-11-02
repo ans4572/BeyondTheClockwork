@@ -21,6 +21,7 @@ status: open
 
 - [후반 맵 6장 구성 결정](tickets/08-late-rooms.md): 해가 지는 순서로 6장을 연결했다.
 - [무료 음악·효과음 후보 조사](tickets/03-audio-sources.md): 효과음은 Kenney와 ZzFX, 음악은 CC0 묶음 2개를 들어 보고 고른다.
+- [속성 조합 6개 비교](tickets/02-element-pairs.md): 봇 기준 6조합 모두 완주권, 시간 차 10% 이내. 얼음+바람이 가장 약해 사람 측정 뒤 재확인.
 
 ## Not yet specified
 

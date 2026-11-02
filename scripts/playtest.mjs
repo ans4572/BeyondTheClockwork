@@ -3,9 +3,10 @@ import { Game, distance } from '../src/engine/game.js';
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice', 'maps'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))])));
 
 /** Deterministic input bot. Uses the same public actions as the UI; no stat or damage cheats. */
-export function playtest(seed = 123, maxSeconds = 600) {
+/** `loadout` picks the two elements; `stats` sets permanent tuning ranks by id, as a returning player would have them. */
+export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice'], stats = {} } = {}) {
   const game = new Game(data);
-  game.s.mode = 'hub'; game.s.profile.registered = true; game.s.profile.loadout = ['fire', 'ice']; game.startRun(seed);
+  game.s.mode = 'hub'; game.s.profile.registered = true; game.s.profile.loadout = [...loadout]; Object.assign(game.s.profile.stats, stats); game.startRun(seed);
   let tick = 0, stuckFrames = 0, previous = { ...game.p };
   while (tick++ < maxSeconds * 60 && !['complete', 'returned'].includes(game.s.mode)) {
     if (game.s.mode === 'reward') {
