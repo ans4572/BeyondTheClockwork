@@ -85,7 +85,10 @@ export class DepthMask {
     this.scratchContext.clearRect(0, 0, this.scratch.width, this.scratch.height);
     this.scratchContext.putImageData(patch, 0, 0);
     const scale = 20 / perUnit;
+    // Matches the smooth background it patches, so no seam shows around a covered body.
+    const smooth = context.imageSmoothingEnabled; context.imageSmoothingEnabled = true;
     context.drawImage(this.scratch, 0, 0, w, h, left * scale, top * scale, w * scale, h * scale);
+    context.imageSmoothingEnabled = smooth;
     return hidden / (inBody || 1);
   }
 }

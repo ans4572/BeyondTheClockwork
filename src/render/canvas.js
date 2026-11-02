@@ -32,7 +32,7 @@ export class CanvasRenderer {
     const w = Math.min(width, Math.max(...xs)) - left, h = Math.min(height, Math.max(...ys)) - top, perUnit = image.width / width;
     c.save(); c.beginPath();
     polygon.forEach(([x, y], i) => c[i ? 'lineTo' : 'moveTo'](x * 20, y * 20));
-    c.closePath(); c.clip(); c.drawImage(image, left * perUnit, top * perUnit, w * perUnit, h * perUnit, left * 20, top * 20, w * 20, h * 20); c.restore();
+    c.closePath(); c.clip(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(image, left * perUnit, top * perUnit, w * perUnit, h * perUnit, left * 20, top * 20, w * 20, h * 20); c.restore();
   }
   useSprites(library) { this.sprites = library; this.animator = new PlayerAnimator(library); this.castEffects = new CastEffects(library); }
   useNpcSprites(library) { this.npcSprites = library; this.npcDirector = new NpcDirector(library); }
@@ -343,6 +343,8 @@ export class CanvasRenderer {
     }
     c.restore();
   }
+  /** Backing pixels per layout pixel: 1 for the plain 1120x640 canvas, more when main.js sizes it to the screen. */
+  get backing() { return (this.canvas.width || 1120) / 1120; }
   render(delta = 0.016) {
     const g = this.game, s = g.s, c = this.ctx;
     if (!s.paused && !s.profile.settings.reducedMotion) this.visualTime += delta;
@@ -354,9 +356,12 @@ export class CanvasRenderer {
     const focus = hub && !g.village ? map?.spawn : g.p;
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
     const [shakeX, shakeY] = this.shakeOffset();
-    const zoom = 2 * CAMERA_ZOOM;
-    c.setTransform(zoom, 0, 0, zoom, -Math.round(this.camera.x * PIXELS_PER_UNIT) + shakeX, -Math.round(this.camera.y * PIXELS_PER_UNIT) + shakeY); c.imageSmoothingEnabled = false;
-    if (mapImage) c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); else this.scenery(hub);
+    // The canvas is backed at screen resolution; k maps the 1120x640 layout onto it, so nothing is stretched twice.
+    const k = this.backing, zoom = 2 * CAMERA_ZOOM * k;
+    c.setTransform(zoom, 0, 0, zoom, Math.round((-this.camera.x * PIXELS_PER_UNIT + shakeX) * k), Math.round((-this.camera.y * PIXELS_PER_UNIT + shakeY) * k));
+    // Painted backgrounds are resampled smoothly; sprites below stay on hard pixels.
+    if (mapImage) { c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); } else this.scenery(hub);
+    c.imageSmoothingEnabled = false;
     if (s.mode === 'shop' && !mapImage) { this.building(217, 113, 110, 69, '#d9c49a', '볼트의 부품 상점', '#88aaa0'); this.drawDoll(273, 212, { type: 'moru', color: '#c7a968' }); }
     const yardExit = s.mode === 'practice' ? map?.exit.at : null;
     const goal = s.mode === 'route' ? g.portal : yardExit ? { x: yardExit[0], y: yardExit[1] } : ['intro', 'registration'].includes(s.mode) ? g.tutorial.goal : null;
@@ -460,13 +465,13 @@ export class CanvasRenderer {
     if (g.wakeProgress !== null) {
       // Eyes opening: two dark lids part, then the world holds until the player is up.
       const open = Math.min(1, g.wakeProgress / EYES_OPEN_SHARE), lid = 160 * (1 - open * open * (3 - 2 * open));
-      c.save(); c.setTransform(2, 0, 0, 2, 0, 0); this.rect(0, 0, 560, lid, '#0e1218'); this.rect(0, 320 - lid, 560, lid, '#0e1218'); c.restore();
+      c.save(); c.setTransform(2 * k, 0, 0, 2 * k, 0, 0); this.rect(0, 0, 560, lid, '#0e1218'); this.rect(0, 320 - lid, 560, lid, '#0e1218'); c.restore();
     }
     if (g.active && this.pointer && g.wakeProgress === null) {
       const x = this.pointer.x * 20, y = this.pointer.y * 20;
       this.line(x - 6, y, x - 2, y, '#557d70'); this.line(x + 2, y, x + 6, y, '#557d70'); this.line(x, y - 6, x, y - 2, '#557d70'); this.line(x, y + 2, x, y + 6, '#557d70');
     }
     const hurtLeft = this.hurtUntil - performance.now();
-    if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
   }
 }

@@ -48,7 +48,14 @@ try {
   SpriteLibrary.load('/art/animations/npc/game-clips.json').then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
+  // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
+  const MAX_BACKING_WIDTH = 2560;
+  const fitCanvas = () => {
+    const shown = $('game').getBoundingClientRect().width, width = Math.max(1120, Math.min(MAX_BACKING_WIDTH, Math.round(shown * Math.min(devicePixelRatio || 1, 2))));
+    if ($('game').width !== width) { $('game').width = width; $('game').height = Math.round(width * 640 / 1120); }
+  };
   const fitHud = () => {
+    fitCanvas();
     const scale = $('game').getBoundingClientRect().width / 1120;
     $('hud').style.transform = `scale(${scale})`;
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
