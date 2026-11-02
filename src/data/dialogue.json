@@ -171,7 +171,7 @@
         "choices": [
           {
             "id": "open",
-            "label": "몸을 조율한다"
+            "label": "조율판을 연다"
           },
           {
             "id": "elements",

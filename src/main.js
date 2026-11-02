@@ -17,9 +17,10 @@ const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(s
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
 const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
 const HOME_NAME = '웃음 마을';
-// The thirteen tuning rows read as four short lists by what they change.
-const STAT_GROUPS = [['버티기', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['때리기', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['기술', ['cooldownReduction', 'energyGain', 'statusPower']], ['모으기', ['gearGain', 'coinGain']]];
+// The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
+const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
+const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
@@ -162,20 +163,20 @@ try {
     return [...STAT_GROUPS, ...(rest.length ? [['기타', rest.map(stat => stat.id)]] : [])].map(([name, ids]) => `<h3 class="stat-group">${name}</h3>${ids.map(id => stats.find(stat => stat.id === id)).filter(Boolean).map(statRow).join('')}`).join('');
   }
   function tuningPanel() {
-    return panel(`<div class="panel-header"><div><h2>몸을 조율한다.</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
+    return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
   function elementsPanel() {
     const { loadout } = game.s.profile, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
     const cards = data.combat.elements.map(element => {
       const picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
-      return `<article class="reward-card ${picked ? 'picked' : ''}" style="--accent:${data.slice.presentation.colors[element.id]}"><h3>${element.name}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')}</article>`;
+      return `<article class="reward-card ${picked ? 'picked' : ''}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')}</article>`;
     }).join('');
     return panel(`<div class="panel-header"><div><h2>몸에 달 속성 2개</h2></div><strong>${loadout.length} / 2</strong></div><p>두 속성은 원정을 시작할 때 그대로 장착됩니다. 언제든 모루에게 바꿀 수 있습니다.</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${fusion.effect}` : '두 속성을 고르면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length === 2 ? '' : 'disabled')}</div>`, 'wide');
   }
   function describeReward(reward) {
     if (reward.kind === 'element') {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
-      return { name: element.device, icon: { fire: '♨', ice: '❄', lightning: 'ϟ', wind: '≋' }[element.id], label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
+      return { name: element.device, art: element.id, label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
     if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: '⚒', label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개', rarity: '개조' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element], rarity: '개조' }; }
@@ -188,7 +189,7 @@ try {
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card" style="--accent:${info.color || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${info.rarity}</span>${info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
+      return `<article class="reward-card" style="--accent:${info.color || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${info.rarity}</span>${info.art ? elementIcon(info.art) : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
     }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   function settingsPanel() {
@@ -198,7 +199,7 @@ try {
   }
   function codexPanel() {
     const elementName = id => data.combat.elements.find(e => e.id === id).name, tab = (id, label) => button(label, 'codex-tab', `data-id="${id}" aria-pressed="${codexTab === id}"`, codexTab === id ? 'tab on' : 'tab');
-    const elements = data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · 피해 ${skill.totalDirectDamage} · 대기 ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('');
+    const elements = data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id, 'codex-icon')}${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · 피해 ${skill.totalDirectDamage} · 대기 ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('');
     const fusions = data.combat.fusions.map(f => `<article class="codex-entry"><h3>${f.name}${game.s.profile.discoveredFusions.includes(f.id) ? ' ✓' : ''}</h3><p>${f.pair.map(elementName).join(' + ')} · 피해 ${f.totalDirectDamage} · 축전 ${f.energyCost} · 대기 ${f.cooldown}초<br>${f.effect}</p></article>`).join('');
     return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-tabs">${tab('elements', '속성 4')}${tab('fusions', '융합 6')}</div><div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? '<p class="notice">두 속성을 장착하면 그 조합의 융합을 씁니다. ✓는 써 본 융합입니다.</p>' : ''}`, 'wide');
   }
