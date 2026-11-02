@@ -1,0 +1,17 @@
+[
+  {
+    "action": "frostBolt",
+    "name": "얼음 · 서리 볼트",
+    "direction": "north",
+    "requestedFrames": 8,
+    "sourceFrameCount": 8,
+    "jobId": "48dea367-ffc7-48b3-9a79-56c4c210d796",
+    "sourceMode": "skeleton-v3",
+    "characterId": "3f7a0f77-b8f6-4cff-94f0-754fa6c56c06",
+    "groupId": "8aacff33-3dec-4c33-aa33-3f18396b2b64",
+    "frameUrlTemplate": "https://backblaze.pixellab.ai/file/pixellab-characters/6c661d9f-cdf4-4c03-b3a4-d7885126a472/3f7a0f77-b8f6-4cff-94f0-754fa6c56c06/animations/78690938-350e-4a2f-af56-752056e853d1/north/{i}.png?t=1793409450156",
+    "description": "casts three ice bolts",
+    "priority": 3,
+    "threeDimensionalBoneGuide": true
+  }
+]

@@ -1,0 +1,250 @@
+{
+  "clips": 48,
+  "displayedFrames": 1451,
+  "compositeFramesMatchedToExport": 1365,
+  "bodyAndEffectViewModes": "verified_for_all_six_fusions",
+  "errors": [],
+  "missing": [],
+  "checks": [
+    {
+      "id": "steamShatter",
+      "direction": "south",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "south-west",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "west",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "north-west",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "north",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "north-east",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "east",
+      "frames": 37
+    },
+    {
+      "id": "steamShatter",
+      "direction": "south-east",
+      "frames": 17
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "south",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "south-west",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "west",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "north-west",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "north",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "north-east",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "east",
+      "frames": 37
+    },
+    {
+      "id": "arcFurnace",
+      "direction": "south-east",
+      "frames": 17
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "south",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "south-west",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "west",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "north-west",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "north",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "north-east",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "east",
+      "frames": 31
+    },
+    {
+      "id": "fireCyclone",
+      "direction": "south-east",
+      "frames": 17
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "south",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "south-west",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "west",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "north-west",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "north",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "north-east",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "east",
+      "frames": 33
+    },
+    {
+      "id": "magneticIceClamp",
+      "direction": "south-east",
+      "frames": 9
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "south",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "south-west",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "west",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "north-west",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "north",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "north-east",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "east",
+      "frames": 20
+    },
+    {
+      "id": "frostCrosscut",
+      "direction": "south-east",
+      "frames": 17
+    },
+    {
+      "id": "stormFloat",
+      "direction": "south",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "south-west",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "west",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "north-west",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "north",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "north-east",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "east",
+      "frames": 37
+    },
+    {
+      "id": "stormFloat",
+      "direction": "south-east",
+      "frames": 9
+    }
+  ]
+}

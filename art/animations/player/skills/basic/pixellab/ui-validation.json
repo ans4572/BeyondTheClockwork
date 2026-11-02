@@ -1,0 +1,201 @@
+{
+  "pages": 1,
+  "clips": 32,
+  "displayedFrames": 472,
+  "errors": [],
+  "missing": [],
+  "checks": [
+    {
+      "action": "heatSwing",
+      "direction": "south",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "south-west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north-west",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north-east",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "heatSwing",
+      "direction": "south-east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south-west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north-west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north-east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south-east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south-west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north-west",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north-east",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south-east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south-west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "west",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north-west",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north-east",
+      "frames": 8,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south-east",
+      "frames": 17,
+      "status": "all_frames_rendered"
+    }
+  ]
+}

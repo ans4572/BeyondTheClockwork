@@ -1,0 +1,50 @@
+{
+  "bodies": {
+    "exhaustBurst": {
+      "south": "18c1e86e-059e-4335-81cc-bb5afee73bbe",
+      "south-west": "70f892b1-dd51-4764-aa72-2c03054efea6",
+      "west": "a4f26cdb-336e-4777-9f25-6243bf9e7f5e",
+      "north-west": "2444963c-4fdd-4004-8bf4-4b555bbfba6d",
+      "north": "e4359420-6a6b-42f5-9561-e54f87ae5db6",
+      "north-east": "99971a5d-56b6-483d-ae2f-1a1e96f28def",
+      "east": "532ffea9-0184-4d1a-9f1d-b5aea1aff633",
+      "south-east": "751649c4-6f4e-4d86-804e-1725a06f319f"
+    },
+    "coolingField": {
+      "south": "42031d4f-8dc3-426f-b44f-6cb9dd7ad142",
+      "south-west": "371fe68e-9434-4ae9-9744-973221afe077",
+      "west": "2694f5e2-df33-4968-acaa-f8e41af5e564",
+      "north-west": "582813fb-b882-46b6-9efc-77d7219aeaa4",
+      "north": "f4ef6b39-c747-41b9-898a-6286ea9c38a3",
+      "north-east": "357018bc-c76c-42a2-8eff-20479ac19a69",
+      "east": "a8dc9325-f66b-4e0d-83f4-2c6a805e209b",
+      "south-east": "39cdb76b-6fde-4237-b759-a38b9bf6831b"
+    },
+    "capacitorStrike": {
+      "south": "cdd8c951-41c2-4688-b1b1-f20b4f404eb3",
+      "south-west": "a5870692-ecb0-4528-b63b-405cf580d7ec",
+      "west": "d28ff94b-e631-42db-9293-99d18cd99d4f",
+      "north-west": "37751502-9abc-403d-bec5-aeeb069c259f",
+      "north": "27b02121-6880-4e30-9482-06d4e4afc3fe",
+      "north-east": "69ba701b-8640-4119-a185-ed11e6a66261",
+      "east": "660a7b26-63e1-47a3-bd31-a87708b4764f",
+      "south-east": "3af720a2-2c3f-4ea8-9e75-0d87f75235de"
+    },
+    "vortexIntake": {
+      "south": "175d9545-51fd-4927-a3c2-62d9b6fca679",
+      "south-west": "2be1cc7e-01b6-4934-ab7b-7c0f61d19f8c",
+      "west": "036926ff-e65f-4715-9181-c43275b6a46d",
+      "north-west": "780adea7-89d3-4ef8-86ed-e638318170ad",
+      "north": "a8e2b163-09ea-4df9-9a56-9297fdc964c1",
+      "north-east": "9afe6280-a684-4c9d-a9be-eb138409defa",
+      "east": "415b3681-ea09-4d13-b7ff-cccc13b29ef2",
+      "south-east": "24cd3cb7-359f-4dd3-987c-be30b3ae6d2c"
+    }
+  },
+  "effects": {
+    "exhaustBurst": { "job": "18487942-1f22-4dbb-9265-2ba931e4365c", "frames": 13, "concept": "https://backblaze.pixellab.ai/file/pixellab-characters/objects/6c661d9f-cdf4-4c03-b3a4-d7885126a472/4848e34b-1e17-4892-a7fe-84d24067820b/rotations/unknown.png" },
+    "coolingField": { "job": "4e801131-fe38-4525-b887-ee8951f59a1a", "frames": 17, "concept": "https://backblaze.pixellab.ai/file/pixellab-characters/objects/6c661d9f-cdf4-4c03-b3a4-d7885126a472/ad8df488-764b-4bfc-b67c-a9e83a277de3/rotations/unknown.png" },
+    "capacitorStrike": { "job": "15b53d33-0fa4-46bc-a492-6a4cc6793133", "frames": 13, "concept": "https://backblaze.pixellab.ai/file/pixellab-characters/objects/6c661d9f-cdf4-4c03-b3a4-d7885126a472/676ba2ae-bdae-4874-a792-55fa99d9fe54/rotations/unknown.png" },
+    "vortexIntake": { "job": "64476db3-ac14-4da1-8139-d92bb1ad13d3", "frames": 17, "concept": "https://backblaze.pixellab.ai/file/pixellab-characters/objects/6c661d9f-cdf4-4c03-b3a4-d7885126a472/9030b988-3d95-4f35-bfdc-9f2b96e76fea/rotations/unknown.png" }
+  }
+}

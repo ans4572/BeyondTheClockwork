@@ -1,0 +1,12 @@
+character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06
+animation: pixminimax custom (Seamless in-place IDLE loop in the current facing direction. Preserve exact patched robot identity and proportions. ONE long turquoise open-jaw wrench remains firmly connected to anatomical RIGHT hand for EVERY frame, held upright alongside body with rigid unchanged length, at least its tip visible where natural; empty LEFT hand relaxed. No swapping or duplicate weapon. Both soles stay planted, no steps, no foot sliding. Tiny chest/shoulder breathing and gentle 1-pixel head bob, scarf tip settles softly; ready calm posture. Maintain neutral direction, silhouette, patch, cyan face when visible and back shell in rear views. Fixed camera, transparent, no effects. End matches start.)
+directions: south, south-west, west, north-west, north, north-east, east, south-east (8 jobs)
+job_ids: south=ff0912b3-ce33-4f44-a4a8-77922196a80a, south-west=dfc9b2c8-fc60-4f57-91f4-45a4411a96c3, west=9855223f-ff28-4b88-b576-24ae33943a86, north-west=4703e90b-54cb-4acb-a37f-59c1ac61d7df, north=5d2cd925-474b-4f3a-8b0d-4d45408b3ba8, north-east=78712c85-6e13-4872-918e-d11a605feb1e, east=b6e1a2f4-df25-4086-af4f-58e5da069f5c, south-east=76324cce-b6c2-43c9-a28d-b4e0301a534b
+group: 708a71c5-8d57-4117-b26c-653a5d22fc7e
+frames: 9 (1 reference + 8 animated)
+canvas: south 120x120, south-west 124x124, west 124x124, north-west 120x120, north 120x120, north-east 120x120, east 124x124, south-east 124x124 (frames are stored at this size: the character plus room to move)
+cost: 8 generations (1/dir x 8)
+eta: ~2 min/direction
+
+hint: get_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06")
+add more directions to this group: animate_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06", action_description="Seamless in-place IDLE loop in the current facing direction. Preserve exact patched robot identity and proportions. ONE long turquoise open-jaw wrench remains firmly connected to anatomical RIGHT hand for EVERY frame, held upright alongside body with rigid unchanged length, at least its tip visible where natural; empty LEFT hand relaxed. No swapping or duplicate weapon. Both soles stay planted, no steps, no foot sliding. Tiny chest/shoulder breathing and gentle 1-pixel head bob, scarf tip settles softly; ready calm posture. Maintain neutral direction, silhouette, patch, cyan face when visible and back shell in rear views. Fixed camera, transparent, no effects. End matches start.", mode="pixminimax", animation_group_id="708a71c5-8d57-4117-b26c-653a5d22fc7e", directions=[...])

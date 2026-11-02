@@ -1,0 +1,163 @@
+{
+  "action": "frostBolt",
+  "name": "얼음 · 서리 볼트",
+  "description": "casts three ice bolts",
+  "groupId": "8aacff33-3dec-4c33-aa33-3f18396b2b64",
+  "jobIds": {
+    "north-west": "77779dae-e3a9-41a2-9ad4-678af3d66ae5",
+    "north": "48dea367-ffc7-48b3-9a79-56c4c210d796",
+    "north-east": "a27f79a9-a119-4808-b769-854ba983c1d0"
+  },
+  "receipt": "character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\nanimation: casts three ice bolts\nmode: skeleton-v3 (custom motion)\ndirections: north-west, north, north-east (3 jobs)\n  north-west: job 77779dae-e3a9-41a2-9ad4-678af3d66ae5\n  north: job 48dea367-ffc7-48b3-9a79-56c4c210d796\n  north-east: job a27f79a9-a119-4808-b769-854ba983c1d0\ngroup: 8aacff33-3dec-4c33-aa33-3f18396b2b64\nframes: 8\ncost: 3 generations per direction\neta: about 3-5 min per direction\nadd more directions to this group (same motion, no poses needed): animate_character(character_id=\"3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\", mode=\"skeleton-v3\", action_description=\"casts three ice bolts\", animation_group_id=\"8aacff33-3dec-4c33-aa33-3f18396b2b64\", directions=[...])\n\nhint: get_character(character_id=\"3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\")",
+  "move": {
+    "name": "cast",
+    "side": "left",
+    "energy": 0.85
+  },
+  "poses": [
+    {
+      "frame": 1,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 2,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 3,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 4,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 5,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 6,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 7,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 8,
+      "right_hand": [
+        0.268,
+        0.073,
+        0.088
+      ],
+      "right_elbow": [
+        1,
+        0,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    }
+  ]
+}

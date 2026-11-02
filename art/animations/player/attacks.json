@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "producer": "local_articulated_pixel_rig",
+  "pixelLabGeneration": false,
+  "timingSource": "/src/data/combat.json#/player/combo",
+  "frameDurationMs": 20,
+  "nativeSize": 96,
+  "origin": [48, 73],
+  "notes": "Pose shifts are visual only; no gameplay damage or root movement is applied by this asset.",
+  "attacks": [
+    {
+      "id": "attack-1", "label": "1타 · 횡타", "comboIndex": 0,
+      "keys": [
+        {"phase":"windup","at":0,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]},
+        {"phase":"windup","at":1,"yaw":0.6,"drop":0.025,"lean":-0.02,"step":0.04,"right":[0.35,0.34,-0.06],"left":[-0.24,0.12,0.10],"weapon":[1.7,0.2]},
+        {"phase":"active","at":0.68,"yaw":-0.3,"drop":0.04,"lean":0.07,"step":0.10,"right":[0.08,0.30,0.28],"left":[-0.22,0.06,-0.06],"weapon":[-0.55,0.08]},
+        {"phase":"active","at":1,"yaw":-0.55,"drop":0.045,"lean":0.05,"step":0.10,"right":[-0.02,0.21,0.20],"left":[-0.22,0.04,-0.08],"weapon":[-1.5,-0.15]},
+        {"phase":"recovery","at":1,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]}
+      ]
+    },
+    {
+      "id": "attack-2", "label": "2타 · 반대 횡타", "comboIndex": 1,
+      "keys": [
+        {"phase":"windup","at":0,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]},
+        {"phase":"windup","at":1,"yaw":-0.6,"drop":0.035,"lean":-0.015,"step":0.05,"right":[-0.015,0.30,0.16],"left":[-0.26,0.12,0.04],"weapon":[-1.65,0.15]},
+        {"phase":"active","at":0.68,"yaw":0.35,"drop":0.05,"lean":0.075,"step":0.12,"right":[0.29,0.29,0.29],"left":[-0.22,0.08,-0.08],"weapon":[0.65,0.06]},
+        {"phase":"active","at":1,"yaw":0.6,"drop":0.055,"lean":0.045,"step":0.12,"right":[0.39,0.20,0.09],"left":[-0.22,0.04,0.0],"weapon":[1.5,-0.18]},
+        {"phase":"recovery","at":1,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]}
+      ]
+    },
+    {
+      "id": "attack-3", "label": "3타 · 전진 내려찍기", "comboIndex": 2,
+      "keys": [
+        {"phase":"windup","at":0,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]},
+        {"phase":"windup","at":1,"yaw":0.15,"drop":0.015,"lean":-0.04,"step":0.08,"right":[0.13,0.64,0.03],"left":[0.02,0.55,0.09],"weapon":[0.15,1.2]},
+        {"phase":"active","at":0.85,"yaw":-0.10,"drop":0.18,"lean":0.18,"step":0.29,"right":[0.09,0.12,0.30],"left":[-0.01,0.16,0.23],"weapon":[0,-0.98]},
+        {"phase":"active","at":1,"yaw":-0.10,"drop":0.18,"lean":0.18,"step":0.29,"right":[0.09,0.10,0.30],"left":[-0.01,0.15,0.23],"weapon":[0,-1.02]},
+        {"phase":"recovery","at":0.3,"yaw":-0.08,"drop":0.16,"lean":0.14,"step":0.25,"right":[0.11,0.12,0.26],"left":[-0.02,0.16,0.18],"weapon":[0,-1.1]},
+        {"phase":"recovery","at":1,"yaw":0,"drop":0,"lean":0,"step":0,"right":[0.215,-0.0438,0.0204],"left":[-0.215,-0.0438,0.0204],"weapon":[0,-1.45]}
+      ]
+    }
+  ]
+}

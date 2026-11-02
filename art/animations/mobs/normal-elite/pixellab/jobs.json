@@ -1,0 +1,50 @@
+{
+  "rat": {
+    "size": 96,
+    "scale": 0.72,
+    "move": {
+      "south": { "job": "4872111b-881d-4cb1-804e-3c0b7e7e3aa3", "frames": 9 },
+      "south-west": { "job": "fa42acb5-c0da-4c28-bf92-8aa0e42c3ed0", "frames": 9 },
+      "west": { "job": "6eb121c3-1fff-400d-aaf5-8ed268fb29ac", "frames": 9 },
+      "north-west": { "job": "fa4fd541-498a-490e-b108-c5f368adabc4", "frames": 9 },
+      "north": { "job": "537a689f-325a-4060-ac0d-9792aca62649", "frames": 9 },
+      "north-east": { "job": "6daece61-338f-4959-ad2f-9accc7b9a975", "frames": 9 },
+      "east": { "job": "7d47b6c2-c847-482f-8269-73386a328fd9", "frames": 9 },
+      "south-east": { "job": "982d4c64-3436-47fa-b81b-1bfb6d031ca7", "frames": 9 }
+    },
+    "attack": {
+      "south": { "job": "54e2fc6a-3e4a-4040-8b34-82f1178bec7f", "frames": 9 },
+      "south-west": { "job": "91b66c5f-6e5d-4cf0-acb3-1c4a5833def9", "frames": 9 },
+      "west": { "job": "abc79fd5-3630-4f47-b211-d542165538e4", "frames": 9 },
+      "north-west": { "job": "d547ab88-984a-4f6d-93d2-b560011b6bf7", "frames": 9 },
+      "north": { "job": "b1a3386b-289b-471b-b180-e34990e53078", "frames": 9 },
+      "north-east": { "job": "1ebf82a0-89b9-4373-bc27-39ca75f340c0", "frames": 9 },
+      "east": { "job": "1e778a56-a7ca-4c64-8c59-91542a64a725", "frames": 9 },
+      "south-east": { "job": "0adeb263-750a-4c10-9dd8-e135e61178ec", "frames": 9 }
+    }
+  },
+  "nutcracker": {
+    "size": 128,
+    "scale": 0.82,
+    "move": {
+      "south": { "job": "8ecac85a-c8cc-48a5-9aeb-c87dd9a9ce83", "frames": 9 },
+      "south-west": { "job": "07a1c943-27b2-470a-9ab2-47aed53e8954", "frames": 9 },
+      "west": { "job": "8f5557b6-62c7-4e4a-8c28-6e3139d3fdbd", "frames": 9 },
+      "north-west": { "job": "643720cf-9d1f-4e89-8d66-d1d16b3a45c9", "frames": 9 },
+      "north": { "job": "9b32bbc5-6793-4f4a-be83-aaf5a5653ade", "frames": 9 },
+      "north-east": { "job": "83087cf6-5bdf-402d-9c83-3a588fd815a8", "frames": 9 },
+      "east": { "job": "e926945c-9770-4e30-a61f-ad39f1655af3", "frames": 9 },
+      "south-east": { "job": "22524165-4cd8-452b-9fa9-259273969773", "frames": 9 }
+    },
+    "attack": {
+      "south": { "job": "b9ea495b-2e9e-491c-b3bb-502bd483fe28", "frames": 17 },
+      "south-west": { "job": "064cae79-da4a-484c-aceb-546b707145ed", "frames": 17 },
+      "west": { "job": "3491d9a0-ea7a-4e9c-b264-5b897aeb0030", "frames": 17 },
+      "north-west": { "job": "918cec9d-cc79-4c10-82db-2802140b8fde", "frames": 17 },
+      "north": { "job": "a58b5d86-5b62-4ddc-95d4-e11eb31f3384", "frames": 17 },
+      "north-east": { "job": "102dd991-cb10-486b-a936-e8018c89e625", "frames": 17 },
+      "east": { "job": "c40688b9-b6ab-4ad3-b4fb-1ef705c7a3eb", "frames": 17 },
+      "south-east": { "job": "77cbe85a-a62e-43a5-9fe9-f69eff1157e7", "frames": 17 }
+    }
+  }
+}

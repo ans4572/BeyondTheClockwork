@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "reviewedClips": 32,
+  "reviewedSourceFrames": 535,
+  "method": [
+    "짝수·홀수 프레임 확대 시트를 함께 비교하여 전체 프레임 확인",
+    "전기 서·남서의 경계 접촉은 원본 전체 프레임 시트로 추가 확인",
+    "몸체 잔상 초안 제외, 후면 방향 및 서리 왼손 별도 보정"
+  ],
+  "checks": [
+    "몸체 전체가 사라지거나 분해되는 프레임",
+    "양팔·손 및 양다리의 연결",
+    "오른손 렌치와 빈 왼손 시전 규칙",
+    "후면 방향 유지",
+    "준비·방출·후속·복귀 동작",
+    "캐릭터 신체의 캔버스 잘림"
+  ],
+  "naturalOcclusion": "후면에서 몸통·머리에 가려지는 손·팔의 정상적인 가림은 허용합니다. 모든 관절이 매 프레임 화면에 드러난다는 의미는 아닙니다.",
+  "limits": [
+    "전기 2방향의 방출 이펙트 끝은 캔버스 바깥으로 빠집니다. 신체 잘림은 아닙니다.",
+    "최종 게임 적용에서는 몸체 시전과 독립 투사체를 엔진의 조준·전투 데이터로 동기화해야 합니다."
+  ],
+  "items": [
+    {
+      "action": "heatSwing",
+      "direction": "south",
+      "jobId": "7b7529c8-52b9-4f3e-b635-5b09e67dbe94",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "south-west",
+      "jobId": "f7b45d4c-9397-4959-b5b8-c6c4ed65daf7",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "west",
+      "jobId": "4bed4c9d-3910-45a8-a429-12cc7fad4773",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north-west",
+      "jobId": "9ad7c6ec-8c1c-45c3-a78f-def6d89e298e",
+      "frameCount": 8,
+      "model": "skeleton-v3",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north",
+      "jobId": "26795936-153d-4135-8353-ec35fd04dd6b",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "north-east",
+      "jobId": "1b115ac9-ebc3-4663-8e05-60705e2c419f",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "east",
+      "jobId": "b19fc0b5-35db-4f17-9134-b59764785600",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "heatSwing",
+      "direction": "south-east",
+      "jobId": "5f80ff3a-9717-4df9-859a-17bcd5d82972",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south",
+      "jobId": "43887ab7-4800-40b6-ba97-40071af7198a",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south-west",
+      "jobId": "c8b3b89c-5f68-4816-bb5c-5932d68f1a01",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "west",
+      "jobId": "e0d323ba-2714-4808-8c25-2729d64d974f",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north-west",
+      "jobId": "b9fbb126-986a-43f5-ba5e-cdecc9a9c2c1",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north",
+      "jobId": "4d3fc720-b795-4a0c-98cc-c96687fdc156",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": {
+        "status": "effect_only_body_uncropped",
+        "frames": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "notes": "프레임 전체를 확인했습니다. 캐릭터·렌치·팔다리는 캔버스 안에 있고, 위로 날아가는 얼음 조각만 경계에 닿습니다."
+      }
+    },
+    {
+      "action": "frostBolt",
+      "direction": "north-east",
+      "jobId": "ff673523-1051-41df-8efb-07fd7edfce08",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "east",
+      "jobId": "f6867a54-56df-4c8d-ae95-aeca799777bc",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "frostBolt",
+      "direction": "south-east",
+      "jobId": "c4767054-2954-492f-830c-08506fc2a187",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south",
+      "jobId": "2938b96e-4e51-4f5e-9b9f-bd32002b450f",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south-west",
+      "jobId": "1076fb2a-e2c5-413d-9b13-767d18aff73f",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": {
+        "status": "effect_only_body_uncropped",
+        "frames": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "notes": "프레임 전체 시트에서 캐릭터·렌치·팔다리는 캔버스 안에 있으며, 발사된 전기 이펙트의 끝만 경계에 닿는 것을 확인했습니다."
+      }
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "west",
+      "jobId": "6905e01c-7540-4906-a3f8-2310598411c4",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": {
+        "status": "effect_only_body_uncropped",
+        "frames": [
+          12,
+          13
+        ],
+        "notes": "프레임 전체 시트에서 캐릭터·렌치·팔다리는 캔버스 안에 있으며, 발사된 전기 이펙트의 끝만 경계에 닿는 것을 확인했습니다."
+      }
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north-west",
+      "jobId": "11350a22-bda5-469b-9e53-c50d3f833a9f",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north",
+      "jobId": "bc74557c-9bea-41c6-a711-c76281544d7e",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "north-east",
+      "jobId": "a0d558f3-eb89-4f35-94b0-addff0ca07e2",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "east",
+      "jobId": "522bf089-4dd7-44a0-9834-fce32db968d5",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south-east",
+      "jobId": "daecd318-2d1a-405d-bc01-b6cd008c0542",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south",
+      "jobId": "e1324c61-9a61-4ed1-a5c5-95d388ed0fce",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south-west",
+      "jobId": "14ed29b5-6163-4181-aeea-5e17c1214862",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "west",
+      "jobId": "08180a30-c3eb-46f6-847f-1ca6e5ac4023",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north-west",
+      "jobId": "f4afbc04-aab0-4f0f-8822-97693e7327f3",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north",
+      "jobId": "94a50843-cf3e-4aac-b28c-fe4a11bdfbb6",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "north-east",
+      "jobId": "34f951d5-95af-4852-a958-db63818501c8",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "east",
+      "jobId": "e822c192-f2e1-4a88-9c53-00f7e542a865",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    },
+    {
+      "action": "pressureDash",
+      "direction": "south-east",
+      "jobId": "dcc1e4be-2f21-4a42-a885-363f5cabb222",
+      "frameCount": 17,
+      "model": "pixminimax",
+      "status": "body_and_motion_visually_reviewed",
+      "boundaryReview": null
+    }
+  ]
+}

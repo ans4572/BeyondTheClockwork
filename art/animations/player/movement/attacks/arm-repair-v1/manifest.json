@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 1,
+  "status": "localized_left_arm_repair",
+  "provider": "pixellab",
+  "generationsUsedForArmDonors": 12,
+  "generationBalanceBefore": 1861,
+  "generationBalanceAfter": 1849,
+  "methods": [
+    "pro_flash_masked_arm_donor",
+    "pixelart_workbench_exact_pixel_patch"
+  ],
+  "changedClips": 2,
+  "changedFrames": 19,
+  "addedPixels": 3784,
+  "allOriginalOpaquePixelsPreserved": true,
+  "allPixelsOutsideROIUnchanged": true,
+  "unchangedOtherClips": 22,
+  "frameCountAndTimingChanged": false,
+  "animationRegenerated": false,
+  "frames": [
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 3,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/003.png",
+      "file": "arm-repair-v1/frames/attack-1-south-003.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        120,
+        96,
+        27,
+        31
+      ],
+      "addedPixels": 148,
+      "diffBounds": [
+        134,
+        98,
+        146,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "0ca48c9c9fc8c14dd0d0110013bf41094308c537d5dcb15187cb0d2a7ae83a5b",
+      "outputSHA256": "93f69019a7e5877b2242b3d762327faa0b645df901cb9eae3cce3e45e05121f6"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 4,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/004.png",
+      "file": "arm-repair-v1/frames/attack-1-south-004.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        120,
+        96,
+        27,
+        31
+      ],
+      "addedPixels": 190,
+      "diffBounds": [
+        132,
+        96,
+        146,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "271a6dceed43e3ab3a12ac7f202db18cd6e2fc8ac083afb98469323813afd09d",
+      "outputSHA256": "d667a9bb6dafc2da921f564a1ed72213ee4414a4c245bde881e0b0a794367079"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 5,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/005.png",
+      "file": "arm-repair-v1/frames/attack-1-south-005.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        120,
+        96,
+        27,
+        31
+      ],
+      "addedPixels": 196,
+      "diffBounds": [
+        131,
+        96,
+        146,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "a67b9cc80d1af9b589f197e9f4c21ca58292978dde1ce4ac30efb4bf922f3382",
+      "outputSHA256": "09db4ece9985fd0007306220ec691f6223ad9077d73ff435f5451479a471cd5c"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 6,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/006.png",
+      "file": "arm-repair-v1/frames/attack-1-south-006.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        120,
+        96,
+        27,
+        31
+      ],
+      "addedPixels": 189,
+      "diffBounds": [
+        132,
+        96,
+        146,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "4f809789643c5c42935a24eb1083f89619a03d60f845d3b0a67393eb6bcaa9e8",
+      "outputSHA256": "c56e982c1b66047c78a71322b82180b873e8f65862d53804c5f765d06b4b2ffe"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 7,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/007.png",
+      "file": "arm-repair-v1/frames/attack-1-south-007.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        120,
+        96,
+        27,
+        31
+      ],
+      "addedPixels": 199,
+      "diffBounds": [
+        131,
+        99,
+        146,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "6d728b8cd6f782d51911d9ae58b131ffaeda019766e8841f122329a4abf0a591",
+      "outputSHA256": "f5cf8360e8cd35dbcb2d63599c2781d01bc58fdb5635d444c399057d937770e5"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 9,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/009.png",
+      "file": "arm-repair-v1/frames/attack-1-south-009.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        99,
+        95,
+        28,
+        31
+      ],
+      "addedPixels": 247,
+      "diffBounds": [
+        105,
+        95,
+        126,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "481423df2f92bc0909aea60bae1a7e47a32001ae0170e14005df7cfcf9330af4",
+      "outputSHA256": "72233fb67366632e842abbec892e0bcdb909982e0b6eba41bd42fd253ec407f9"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 10,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/010.png",
+      "file": "arm-repair-v1/frames/attack-1-south-010.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        99,
+        95,
+        28,
+        31
+      ],
+      "addedPixels": 223,
+      "diffBounds": [
+        107,
+        95,
+        126,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "ce383e801c8b2b7132717d12ec4eee6aed3a12703d2da7d3620c31c67dfea8c8",
+      "outputSHA256": "32c11bbc1b6ab77950d59bd9f4fa43ae5d7f2eb4a5d555e2d95779401b565ab8"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 11,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/011.png",
+      "file": "arm-repair-v1/frames/attack-1-south-011.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        99,
+        95,
+        28,
+        31
+      ],
+      "addedPixels": 196,
+      "diffBounds": [
+        108,
+        99,
+        126,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "8d743c2848cb40c5a0cd0cb68f625a46d49d679367d68db7242f017403e12dac",
+      "outputSHA256": "3fc81f41c1089926742e74957b09f78d05110ea0328724cd6f4d2117ecf331c2"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 12,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/012.png",
+      "file": "arm-repair-v1/frames/attack-1-south-012.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        99,
+        95,
+        28,
+        31
+      ],
+      "addedPixels": 160,
+      "diffBounds": [
+        115,
+        100,
+        126,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "c25dcb437555dec90678dde047ca1c3615e84d29910daa17c8f9f317c5cfdc98",
+      "outputSHA256": "b3db3c1535449cf2aaf4d3193822dc7cc45a54099708d928eced2416466dc977"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "frame": 13,
+      "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+      "sourceFile": "clips/attack-1-south-c10eb650/frames/013.png",
+      "file": "arm-repair-v1/frames/attack-1-south-013.png",
+      "pixelToolImageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+      "donorJobId": "7c3ccb42-cb90-4098-bebe-20085022831d",
+      "roi": [
+        99,
+        95,
+        28,
+        31
+      ],
+      "addedPixels": 173,
+      "diffBounds": [
+        111,
+        95,
+        126,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "d34a1b47155e681cfcde02662c287d00b86a9403e192077456875bb645f23d8f",
+      "outputSHA256": "b377c6769d5d4d7343d63170203ce4f4885ff3a6d0c6a1f8f890291f9c9fbd9c"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 1,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/001.png",
+      "file": "arm-repair-v1/frames/attack-2-south-001.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 216,
+      "diffBounds": [
+        118,
+        95,
+        132,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "ecf1a1bd517dcea52f64c94dd041a7a89608962038478e5e7dbf75165ea7e794",
+      "outputSHA256": "dd04b5cb5c544cb97eb7da5e9741a2405c13862992fc53167e3ae9841a3b3531"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 2,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/002.png",
+      "file": "arm-repair-v1/frames/attack-2-south-002.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 234,
+      "diffBounds": [
+        117,
+        95,
+        134,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "fbc61102f6168448ca4265041cbc6858a76f5bea9dcb1dc536abe903a0016318",
+      "outputSHA256": "ff80563bf033547d1ad20724e80b6fa9028311bc2077297ce533ceb1064a001b"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 3,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/003.png",
+      "file": "arm-repair-v1/frames/attack-2-south-003.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 231,
+      "diffBounds": [
+        117,
+        96,
+        134,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "66bb1a553374f42657de756b21ca0cbc97bbe323a2c09f9a61706322c67f9da0",
+      "outputSHA256": "0532eee4904adaf18aa7daa967c5bd8390bc92fec9cc51dac49c29fe519f9558"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 4,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/004.png",
+      "file": "arm-repair-v1/frames/attack-2-south-004.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 230,
+      "diffBounds": [
+        117,
+        96,
+        134,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "fa132ec20839d3e2f91594b6cafe23781cd057233e64de8e704d55511bd9bd75",
+      "outputSHA256": "33a757a544f1ecebb29ec8b7c15d029ccb792d1c33207ed4b577d07efa973c14"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 7,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/007.png",
+      "file": "arm-repair-v1/frames/attack-2-south-007.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 177,
+      "diffBounds": [
+        116,
+        95,
+        132,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "c952a760fd45289d0564a8679e28851c6f47e33ec81b18abdd98175fc9770f31",
+      "outputSHA256": "cacf19f86dc9d6a67cc1b29540c1f888704f737231bb430b69497954b651dbbd"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 8,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/008.png",
+      "file": "arm-repair-v1/frames/attack-2-south-008.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 167,
+      "diffBounds": [
+        117,
+        95,
+        130,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "0e9af024ac779175525e27b23dea2aa188bb66c6ebdb315c0e4c3669cdfb5795",
+      "outputSHA256": "80812a5c4deacf2cc41cfe0e1c1f2c569e414a103d620c94154090f49734cc37"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 9,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/009.png",
+      "file": "arm-repair-v1/frames/attack-2-south-009.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 183,
+      "diffBounds": [
+        118,
+        101,
+        131,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "b79eb4d22fd5ff2acf90b0680874ee20db6aecf16bd120e27b6fbc69a53d6d98",
+      "outputSHA256": "a280e97fe8bfc04b5a18d8df5154c1c48fd66d1a826ebf1bcd43fa5928000f84"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 10,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/010.png",
+      "file": "arm-repair-v1/frames/attack-2-south-010.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 223,
+      "diffBounds": [
+        117,
+        95,
+        132,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "9324784980a945f4990afda9e1027b6b5ebd1bca7c850771bea10fea887b3abc",
+      "outputSHA256": "3937c07638307f525fbaab25f33c79f18ebb4465530de8623d528fb0446e351a"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "frame": 11,
+      "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+      "sourceFile": "clips/attack-2-south-5afda580/frames/011.png",
+      "file": "arm-repair-v1/frames/attack-2-south-011.png",
+      "pixelToolImageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+      "donorJobId": "8f8bef56-81b6-4440-922c-57e756a448d0",
+      "roi": [
+        103,
+        95,
+        36,
+        32
+      ],
+      "addedPixels": 202,
+      "diffBounds": [
+        117,
+        95,
+        130,
+        119
+      ],
+      "opaquePixelChanges": 0,
+      "outsideROIChanges": 0,
+      "sourceSHA256": "db9b97c55f9af5ca102d8c21519751649f8e7bebf554d593495e9f2f4205b0ed",
+      "outputSHA256": "56693c10e5efefb9b4328475a9ba314601931f05f5ecff5e640adb0d298fb01d"
+    }
+  ],
+  "unchangedFrames": [
+    {
+      "action": "attack-1",
+      "frame": 0,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 1,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 2,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 8,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 14,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 15,
+      "unchanged": true
+    },
+    {
+      "action": "attack-1",
+      "frame": 16,
+      "unchanged": true
+    },
+    {
+      "action": "attack-2",
+      "frame": 0,
+      "unchanged": true
+    },
+    {
+      "action": "attack-2",
+      "frame": 5,
+      "unchanged": true
+    },
+    {
+      "action": "attack-2",
+      "frame": 6,
+      "unchanged": true
+    },
+    {
+      "action": "attack-2",
+      "frame": 12,
+      "unchanged": true
+    }
+  ]
+}

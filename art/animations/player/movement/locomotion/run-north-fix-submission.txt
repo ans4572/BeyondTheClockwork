@@ -1,0 +1,12 @@
+character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06
+animation: pixminimax custom (REAR VIEW throughout. Robot runs NORTH away from camera, in place, back always toward viewer. ONLY the plain rounded ivory BACK OF HELMET, red scarf knot/tails across back and rear clockwork torso are visible; never show front face, eyes, mouth or chest, never turn. Preserve exact rear silhouette and all original colors from input. ONE long turquoise wrench remains rigid in anatomical RIGHT hand (viewer RIGHT), upright beside body, left hand empty. Alternating brisk knee recovery and toe push-off, small airborne phase, slight forward lean AWAY from camera, scarf trailing toward viewer. Fixed ground position and camera. Full two-step continuous running cycle ends at its start phase. Transparent background, no effects.)
+directions: north (1 jobs)
+job_ids: north=4de3b651-c014-4488-96aa-847aa2a673fd
+group: f4e4a8c6-eb6a-4bd6-8c11-4fff0074b3e4
+frames: 13 (1 reference + 12 animated)
+canvas: north 120x120 (frames are stored at this size: the character plus room to move)
+cost: 2 generations (2/dir x 1)
+eta: ~2 min/direction
+
+hint: get_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06")
+add more directions to this group: animate_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06", action_description="REAR VIEW throughout. Robot runs NORTH away from camera, in place, back always toward viewer. ONLY the plain rounded ivory BACK OF HELMET, red scarf knot/tails across back and rear clockwork torso are visible; never show front face, eyes, mouth or chest, never turn. Preserve exact rear silhouette and all original colors from input. ONE long turquoise wrench remains rigid in anatomical RIGHT hand (viewer RIGHT), upright beside body, left hand empty. Alternating brisk knee recovery and toe push-off, small airborne phase, slight forward lean AWAY from camera, scarf trailing toward viewer. Fixed ground position and camera. Full two-step continuous running cycle ends at its start phase. Transparent background, no effects.", mode="pixminimax", animation_group_id="f4e4a8c6-eb6a-4bd6-8c11-4fff0074b3e4", directions=[...])

@@ -1,0 +1,40 @@
+[
+  {
+    "key": "attack-1-south-009",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 9,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/009.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-009.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 656,
+    "receipt": "{\n  \"background_job_id\": \"7c3ccb42-cb90-4098-bebe-20085022831d\",\n  \"image_id\": \"3cd0d515-de4d-52c7-a0ea-d11376104b0e\",\n  \"status\": \"processing\",\n  \"source_image_id\": \"3cd0d515-de4d-52c7-a0ea-d11376104b0e\",\n  \"job_id\": \"7c3ccb42-cb90-4098-bebe-20085022831d\",\n  \"description\": \"Restore ONLY this robot's missing anatomical LEFT arm, the EMPTY free arm on viewer RIGHT. Connect it naturally to the existing outer right-edge shoulder/upper-arm stub, a small bent elbow and a clearly separate dark curled empty mechanical hand below/outward from torso. Tin gray arm, brass elbow joint, pale green shoulder cap, dark slate glove, same crisp clustered pixel style and same tiny pixel scale. It counterbalances the wrench attack and does NOT hold a weapon. Single left arm only, no extra limbs. Keep the right wrench arm, torso, head, scarf, feet and attack exactly unchanged. Keep background transparent.\",\n  \"seed\": 123100,\n  \"image_size\": {\n    \"width\": 192,\n    \"height\": 192\n  },\n  \"output_count\": 1,\n  \"estimated_generations\": 6,\n  \"pricing_provisional\": true,\n  \"poll_tool\": \"get_image\",\n  \"download_path\": \"/mcp/images/7c3ccb42-cb90-4098-bebe-20085022831d/download\"\n}\nPoll get_image(job_id=\"7c3ccb42-cb90-4098-bebe-20085022831d\"). The source_image_id is usable after completion; it is an image ID, not a character/object ID. Actual usage is reported on completion. cancel_job(job_id=...) cancels unfinished work.",
+    "status": "processing",
+    "jobId": "7c3ccb42-cb90-4098-bebe-20085022831d"
+  },
+  {
+    "key": "attack-2-south-002",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 2,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/002.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-002.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 770,
+    "receipt": "{\n  \"background_job_id\": \"8f8bef56-81b6-4440-922c-57e756a448d0\",\n  \"image_id\": \"d32db69e-4831-5ada-8144-498467e893e7\",\n  \"status\": \"processing\",\n  \"source_image_id\": \"d32db69e-4831-5ada-8144-498467e893e7\",\n  \"job_id\": \"8f8bef56-81b6-4440-922c-57e756a448d0\",\n  \"description\": \"Restore ONLY this robot's missing anatomical LEFT arm, the EMPTY free arm on viewer RIGHT. Connect it naturally to the existing outer right-edge shoulder/upper-arm stub, a small bent elbow and a clearly separate dark curled empty mechanical hand below/outward from torso. Tin gray arm, brass elbow joint, pale green shoulder cap, dark slate glove, same crisp clustered pixel style and same tiny pixel scale. It counterbalances the wrench attack and does NOT hold a weapon. Single left arm only, no extra limbs. Keep the right wrench arm, torso, head, scarf, feet and attack exactly unchanged. Keep background transparent.\",\n  \"seed\": 123101,\n  \"image_size\": {\n    \"width\": 192,\n    \"height\": 192\n  },\n  \"output_count\": 1,\n  \"estimated_generations\": 6,\n  \"pricing_provisional\": true,\n  \"poll_tool\": \"get_image\",\n  \"download_path\": \"/mcp/images/8f8bef56-81b6-4440-922c-57e756a448d0/download\"\n}\nPoll get_image(job_id=\"8f8bef56-81b6-4440-922c-57e756a448d0\"). The source_image_id is usable after completion; it is an image ID, not a character/object ID. Actual usage is reported on completion. cancel_job(job_id=...) cancels unfinished work.",
+    "status": "processing",
+    "jobId": "8f8bef56-81b6-4440-922c-57e756a448d0"
+  }
+]

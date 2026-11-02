@@ -1,0 +1,76 @@
+/* Every panel is a sheet from the same office as the disposal form on the title screen. */
+:root {
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  color: #2b3345; background: #16202a; font-synthesis: none;
+  --ink: #2b3345; --label: #5d6476; --paper: #f6ecd2; --paper-low: #ece0c0; --red: #a92f2b; --gold: #c79a3e; --sage: #d7e4d6;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #16202a; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; cursor: crosshair; outline: none; }
+canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+.viewport { position: relative; background: #ddd6bc; aspect-ratio: 1.75; isolation: isolate; }
+
+/* #overlay, #toast and #hint are drawn on the same 1120x640 sheet as the HUD; main.js zooms them to fit the window. */
+#overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 14px; z-index: 3; }
+#overlay:not(:empty) { background: #16202a99; }
+
+.panel { pointer-events: auto; background: var(--paper); color: var(--ink); box-shadow: 6px 6px 0 #0e121a80; padding: 18px 22px; max-height: 100%; overflow: auto; width: min(520px, 100%); word-break: keep-all; }
+.panel.wide { width: min(760px, 100%); }
+.panel.compact { width: min(430px, 100%); }
+.panel.side { width: min(500px, 100%); }
+.panel h2 { margin: 0; line-height: 0; }
+.panel h2 canvas { width: auto; height: auto; max-width: 100%; cursor: inherit; }
+.panel-header { display: flex; justify-content: space-between; gap: 12px; align-items: end; }
+.panel > h2, .panel-header { padding-bottom: 6px; border-bottom: 3px solid var(--ink); margin-bottom: 10px; }
+.form-no { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--label); }
+.panel p { font-size: 13px; line-height: 1.6; margin: 8px 0; color: var(--ink); }
+.panel p.notice { font-size: 12px; color: var(--label); }
+.panel p.error { color: var(--red); }
+.panel .divider { height: 2px; background: var(--ink); opacity: .25; margin: 12px 0; }
+.actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.pause-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.file-input { display: none; }
+
+.panel button { border: 0; border-radius: 0; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); padding: 7px 14px; font-size: 13px; font-weight: 700; }
+.panel button:hover:not(:disabled) { background: #ffd257; }
+.panel button:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+.panel button:disabled { color: #8d8a7c; box-shadow: inset 0 0 0 2px #b8b19a; }
+.panel button.primary { background: var(--ink); color: var(--paper); }
+.panel button.primary:hover:not(:disabled) { background: var(--red); }
+.panel button.danger { color: var(--red); box-shadow: inset 0 0 0 2px var(--red); }
+.panel button.danger:disabled { color: #8d8a7c; box-shadow: inset 0 0 0 2px #b8b19a; }
+.panel button.quiet { background: none; box-shadow: none; text-decoration: underline; text-underline-offset: 3px; }
+
+.reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.reward-card { position: relative; display: flex; flex-direction: column; padding: 12px; background: var(--paper-low); border-top: 6px solid var(--accent, var(--ink)); text-align: left; }
+.reward-card .reward-icon { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; background: var(--paper); color: var(--accent, var(--ink)); font-size: 19px; }
+.reward-card .rarity { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; color: var(--label); }
+.reward-card .card-label { font-size: 12px; color: var(--label); }
+.reward-card h3 { font-size: 16px; margin: 2px 0 6px; }
+.reward-card p { font-size: 12px; line-height: 1.5; margin: 0 0 8px; }
+.reward-card .values { margin-top: auto; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.panel .reward-card .pick { width: 100%; margin-top: 10px; }
+.reward-card .replace { display: flex; gap: 5px; margin-top: 10px; }
+.panel .reward-card .replace button { flex: 1; padding: 6px 3px; font-size: 12px; }
+
+.settings-grid { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 10px 0; }
+.settings-grid label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.settings-grid input[type=checkbox] { accent-color: var(--ink); width: 15px; height: 15px; }
+.binding-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px 12px; }
+.binding { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
+.panel .binding button { min-width: 62px; padding: 4px 6px; font-size: 12px; }
+
+.codex-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.codex-entry { padding: 10px 12px; background: var(--paper-low); }
+.codex-entry h3 { font-size: 14px; margin: 0 0 4px; }
+.codex-entry p { font-size: 12px; margin: 4px 0; }
+.codex-entry small { font-size: 12px; color: var(--label); }
+
+.result-stats { display: flex; gap: 28px; padding: 8px 0; }
+.result-stats span { font-size: 12px; color: var(--label); }
+.result-stats b { display: block; font-size: 22px; line-height: 1.3; color: var(--ink); }
+.complete-seal { color: var(--gold); font-size: 34px; margin-bottom: 4px; }

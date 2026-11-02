@@ -1,0 +1,265 @@
+{
+  "kind": "effect",
+  "id": "magneticIceClamp",
+  "jobId": "e06af564-6a32-4f3c-80aa-413424a85ab5",
+  "model": "pixminimax",
+  "frameCount": 21,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "columns": 4,
+  "rows": 6,
+  "sheet": "effects/magneticIceClamp/sheet.png",
+  "files": [
+    "effects/magneticIceClamp/frames/000.png",
+    "effects/magneticIceClamp/frames/001.png",
+    "effects/magneticIceClamp/frames/002.png",
+    "effects/magneticIceClamp/frames/003.png",
+    "effects/magneticIceClamp/frames/004.png",
+    "effects/magneticIceClamp/frames/005.png",
+    "effects/magneticIceClamp/frames/006.png",
+    "effects/magneticIceClamp/frames/007.png",
+    "effects/magneticIceClamp/frames/008.png",
+    "effects/magneticIceClamp/frames/009.png",
+    "effects/magneticIceClamp/frames/010.png",
+    "effects/magneticIceClamp/frames/011.png",
+    "effects/magneticIceClamp/frames/012.png",
+    "effects/magneticIceClamp/frames/013.png",
+    "effects/magneticIceClamp/frames/014.png",
+    "effects/magneticIceClamp/frames/015.png",
+    "effects/magneticIceClamp/frames/016.png",
+    "effects/magneticIceClamp/frames/017.png",
+    "effects/magneticIceClamp/frames/018.png",
+    "effects/magneticIceClamp/frames/019.png",
+    "effects/magneticIceClamp/frames/020.png"
+  ],
+  "frameStats": [
+    {
+      "index": 0,
+      "pixels": 14248,
+      "bounds": [
+        28,
+        71,
+        219,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 1,
+      "pixels": 12343,
+      "bounds": [
+        28,
+        71,
+        219,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 2,
+      "pixels": 12000,
+      "bounds": [
+        28,
+        71,
+        219,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 3,
+      "pixels": 11263,
+      "bounds": [
+        56,
+        71,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 4,
+      "pixels": 11274,
+      "bounds": [
+        56,
+        71,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 5,
+      "pixels": 11718,
+      "bounds": [
+        56,
+        71,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 6,
+      "pixels": 11965,
+      "bounds": [
+        56,
+        58,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 7,
+      "pixels": 12153,
+      "bounds": [
+        56,
+        56,
+        199,
+        201
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 8,
+      "pixels": 12073,
+      "bounds": [
+        56,
+        66,
+        199,
+        201
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 9,
+      "pixels": 12046,
+      "bounds": [
+        56,
+        64,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 10,
+      "pixels": 12041,
+      "bounds": [
+        56,
+        71,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 11,
+      "pixels": 12093,
+      "bounds": [
+        56,
+        68,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 12,
+      "pixels": 12054,
+      "bounds": [
+        56,
+        60,
+        199,
+        200
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 13,
+      "pixels": 12047,
+      "bounds": [
+        56,
+        71,
+        199,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 14,
+      "pixels": 12136,
+      "bounds": [
+        50,
+        71,
+        204,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 15,
+      "pixels": 12004,
+      "bounds": [
+        43,
+        71,
+        210,
+        192
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 16,
+      "pixels": 5188,
+      "bounds": [
+        38,
+        77,
+        213,
+        197
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 17,
+      "pixels": 2570,
+      "bounds": [
+        36,
+        90,
+        215,
+        201
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 18,
+      "pixels": 735,
+      "bounds": [
+        34,
+        104,
+        216,
+        199
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 19,
+      "pixels": 328,
+      "bounds": [
+        55,
+        115,
+        201,
+        194
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 20,
+      "pixels": 0,
+      "bounds": null,
+      "boundary": 0
+    }
+  ],
+  "qaStatus": "awaiting_visual_review",
+  "qaNotes": []
+}

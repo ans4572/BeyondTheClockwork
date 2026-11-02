@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "source": "docs/design/clockwork-design.v1.json",
+  "contentVersion": "clockwork-design-0.3-magnetic-ice-clamp",
+  "units": {
+    "distance": "unityUnits",
+    "seconds": "seconds",
+    "referencePixelsPerUnit": 40,
+    "ratio": "0_to_1",
+    "percentagePoints": "0.01_equals_1pp"
+  },
+  "player": {
+    "maxHp": 100,
+    "speed": 3.5,
+    "maxEnergy": 100,
+    "energyPerBasicPhase": 8,
+    "hurtInvulnerability": 0.55,
+    "dodge": {
+      "distance": 3,
+      "duration": 0.18,
+      "invincibility": 0.16,
+      "cooldown": 0.75,
+      "charges": 1
+    },
+    "combo": [
+      {
+        "damage": 16,
+        "windup": 0.12,
+        "active": 0.15,
+        "recovery": 0.15,
+        "range": 1.65
+      },
+      {
+        "damage": 18,
+        "windup": 0.135,
+        "active": 0.165,
+        "recovery": 0.18,
+        "range": 1.85
+      },
+      {
+        "damage": 28,
+        "windup": 0.21,
+        "active": 0.21,
+        "recovery": 0.3,
+        "range": 2.2
+      }
+    ]
+  },
+  "caps": {
+    "permanentConditionalDamageBonus": 0.6,
+    "totalCooldownReduction": 0.35,
+    "minDodgeCooldown": 0.45,
+    "critChance": 0.2,
+    "critMultiplier": 1.5,
+    "shieldFractionMaxHp": 0.5,
+    "lightHealBasePerRoom": 12,
+    "erosionHealBasePerRoom": 8,
+    "bossSlow": 0.1,
+    "bossStaggerWindowSeconds": 1.5,
+    "bossStaggerReapplyLockSeconds": 8,
+    "runDamageBonus": 0.8,
+    "targetVulnerabilityBonus": 0.3
+  },
+  "balance": {
+    "damageFormula": "base * (1 + min(permanentApplicableSum, 0.60)) * (1 + min(runDamageBonus, 0.80)) * skillLevel * rarity * crit * targetVulnerability",
+    "skillMaxLevel": 5,
+    "skillLevelDamagePerLevel": 0.12,
+    "rarityDamage": {
+      "common": 1,
+      "rare": 1.15,
+      "special": 1.35
+    },
+    "baseRewardRarityWeights": {
+      "common": 0.8,
+      "rare": 0.18,
+      "special": 0.02
+    },
+    "fusionLevel": "minimum_of_two_slots",
+    "fusionRarity": "minimum_of_two_slots",
+    "fusionPermanentElementBonus": "mean_of_two_elements",
+    "fusionShieldWithTwoEligibleResearches": "larger_bonus_only",
+    "shieldPolicy": "replace_if_new_amount_greater_or_equal_no_extension_if_lower",
+    "basicStagger": [
+      10,
+      12,
+      25
+    ],
+    "skillStaggerPerCastCap": 20,
+    "earthImpactStagger": 35,
+    "fusionStaggerPerCastCap": 35,
+    "bossStaggerThreshold": {
+      "miniboss": 100,
+      "regionBoss": 150,
+      "finalBoss": 200
+    },
+    "statusApplyPerCastTargetCooldown": 0.25,
+    "temporaryUpgrades": [
+      {
+        "id": "basicDamage",
+        "perRank": 0.1,
+        "maxRank": 8
+      },
+      {
+        "id": "maxHp",
+        "perRank": 15,
+        "maxRank": 4
+      },
+      {
+        "id": "skillCooldownReduction",
+        "perRank": 0.05,
+        "maxRank": 4
+      },
+      {
+        "id": "dodgeCooldownReduction",
+        "perRank": 0.08,
+        "maxRank": 2
+      },
+      {
+        "id": "statusDamage",
+        "perRank": 0.15,
+        "maxRank": 4
+      }
+    ]
+  },
+  "elements": [
+    {
+      "id": "fire",
+      "name": "불",
+      "device": "과열 코일",
+      "role": "화상·지속 피해",
+      "status": "burn"
+    },
+    {
+      "id": "ice",
+      "name": "얼음",
+      "device": "냉각 밸브",
+      "role": "둔화·공간 제어",
+      "status": "chill"
+    },
+    {
+      "id": "lightning",
+      "name": "전기",
+      "device": "축전지",
+      "role": "연쇄·집중 폭발",
+      "status": "shock"
+    },
+    {
+      "id": "wind",
+      "name": "바람",
+      "device": "압축 송풍기",
+      "role": "기동·밀치기",
+      "status": "windPressure"
+    }
+  ],
+  "skills": [
+    {
+      "id": "heatSwing",
+      "element": "fire",
+      "name": "과열 휘두르기",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 36,
+      "totalDirectDamage": 36,
+      "range": 3,
+      "radius": 0,
+      "effect": "전방 100도 부채꼴; 화상 1중첩"
+    },
+    {
+      "id": "exhaustBurst",
+      "element": "fire",
+      "name": "배기 폭발",
+      "cooldown": 9,
+      "hits": 3,
+      "damagePerHit": 18,
+      "totalDirectDamage": 54,
+      "range": 0,
+      "radius": 2.5,
+      "effect": "0.25초 간격 3회 폭발; 화상; 시전 중 이동 가능"
+    },
+    {
+      "id": "frostBolt",
+      "element": "ice",
+      "name": "서리 볼트",
+      "cooldown": 6,
+      "hits": 3,
+      "damagePerHit": 14,
+      "totalDirectDamage": 42,
+      "range": 7,
+      "radius": 0,
+      "effect": "좁은 3발 확산탄; 근거리 동시 명중 가능; 둔화"
+    },
+    {
+      "id": "coolingField",
+      "element": "ice",
+      "name": "냉각 지대",
+      "cooldown": 11,
+      "hits": 5,
+      "damagePerHit": 8,
+      "totalDirectDamage": 40,
+      "range": 6,
+      "radius": 2.8,
+      "effect": "2.5초 장판; 0.5초마다 1회; 둔화"
+    },
+    {
+      "id": "conductiveSpanner",
+      "element": "lightning",
+      "name": "도전 스패너",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 32,
+      "totalDirectDamage": 32,
+      "range": 6,
+      "radius": 0,
+      "effect": "첫 대상 32, 다른 적 최대 2기에게 각 20; 감전; 같은 적 재연쇄 금지",
+      "secondaryDamage": 20,
+      "secondaryTargets": 2
+    },
+    {
+      "id": "capacitorStrike",
+      "element": "lightning",
+      "name": "축전 낙뢰",
+      "cooldown": 10,
+      "hits": 3,
+      "damagePerHit": 20,
+      "totalDirectDamage": 60,
+      "range": 7,
+      "radius": 1.4,
+      "effect": "0.5초 예고 후 0.35초 간격 3회; 감전"
+    },
+    {
+      "id": "pressureDash",
+      "element": "wind",
+      "name": "압축 돌진",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 28,
+      "totalDirectDamage": 28,
+      "range": 3.5,
+      "radius": 0.7,
+      "effect": "0.2초 전진 타격; 풍압; 무적 없음"
+    },
+    {
+      "id": "vortexIntake",
+      "element": "wind",
+      "name": "회오리 흡입",
+      "cooldown": 10,
+      "hits": 6,
+      "damagePerHit": 6,
+      "totalDirectDamage": 48,
+      "range": 5,
+      "radius": 3,
+      "effect": "0.25초 간격 6타 후 12 피해 마무리; 일반 적 약한 흡입; 풍압",
+      "finisherDamage": 12
+    }
+  ],
+  "fusions": [
+    {
+      "id": "steamShatter",
+      "pair": [
+        "fire",
+        "ice"
+      ],
+      "name": "증기 파쇄",
+      "cooldown": 18,
+      "energyCost": 60,
+      "hits": 4,
+      "damagePerHit": 24,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "고온·냉각을 번갈아 터뜨리는 원형 4연타; 화상과 둔화",
+      "pairKey": "fire+ice"
+    },
+    {
+      "id": "arcFurnace",
+      "pair": [
+        "fire",
+        "lightning"
+      ],
+      "name": "전호 용광로",
+      "cooldown": 20,
+      "energyCost": 65,
+      "hits": 4,
+      "damagePerHit": 30,
+      "totalDirectDamage": 120,
+      "radius": 2.4,
+      "effect": "지정 지점 4연쇄 폭발; 화상과 감전",
+      "pairKey": "fire+lightning"
+    },
+    {
+      "id": "fireCyclone",
+      "pair": [
+        "fire",
+        "wind"
+      ],
+      "name": "화염 회오리",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 8,
+      "damagePerHit": 14,
+      "totalDirectDamage": 112,
+      "radius": 3,
+      "effect": "전방 2.6에서 생성되어 전진하는 소형 불 회오리; 약한 흡입; 화상과 풍압",
+      "pairKey": "fire+wind",
+      "behavior": {
+        "shape": "moving",
+        "speed": 2.2,
+        "pull": 1.2,
+        "interval": 0.3,
+        "delay": 0,
+        "startDistance": 2.6
+      }
+    },
+    {
+      "id": "magneticIceClamp",
+      "pair": [
+        "ice",
+        "lightning"
+      ],
+      "name": "자성 빙쇄",
+      "cooldown": 20,
+      "energyCost": 65,
+      "hits": 3,
+      "damagePerHit": 32,
+      "totalDirectDamage": 96,
+      "radius": 2.2,
+      "effect": "지정 지점의 두 얼음 턱이 닫히며 중앙 방전·파쇄 3타; 둔화와 감전; 보스 강제 이동 없음",
+      "pairKey": "ice+lightning",
+      "legacyIds": [
+        "superconductRing"
+      ],
+      "range": 6,
+      "behavior": {
+        "shape": "clamp",
+        "range": 6,
+        "halfLength": 1.8,
+        "halfWidth": 1.25,
+        "jawOpenDistance": 2.1,
+        "jawClosedDistance": 0.7,
+        "riseMs": 300,
+        "closeMs": 120,
+        "interval": 0.18,
+        "delay": 0.6
+      }
+    },
+    {
+      "id": "frostCrosscut",
+      "pair": [
+        "ice",
+        "wind"
+      ],
+      "name": "빙풍 절단",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 2,
+      "damagePerHit": 50,
+      "totalDirectDamage": 100,
+      "radius": 0.45,
+      "effect": "빈 왼손에서 두 초승달 칼날을 한 번에 X자로 동시 방출; 둔화와 풍압",
+      "pairKey": "ice+wind",
+      "range": 5,
+      "legacyIds": [
+        "blizzardFan"
+      ],
+      "behavior": {
+        "shape": "crosscut",
+        "range": 5,
+        "startDistance": 0.32,
+        "spread": 1.6,
+        "halfWidth": 0.45,
+        "interval": 0,
+        "delay": 0.18,
+        "startSide": -0.2,
+        "splitDistance": 1.2
+      }
+    },
+    {
+      "id": "stormFloat",
+      "pair": [
+        "lightning",
+        "wind"
+      ],
+      "name": "폭뢰 부유구",
+      "cooldown": 18,
+      "energyCost": 60,
+      "hits": 1,
+      "damagePerHit": 108,
+      "totalDirectDamage": 108,
+      "radius": 3,
+      "effect": "지정 지점의 부유 구체가 0.85초 뒤 한 번 파열; 감전과 풍압; 일반 적만 0.65 밀침; 보스 이동 없음",
+      "pairKey": "lightning+wind",
+      "range": 6,
+      "legacyIds": [
+        "ionFan"
+      ],
+      "behavior": {
+        "shape": "orb",
+        "range": 6,
+        "interval": 0,
+        "delay": 0.85,
+        "knockback": 0.65,
+        "hoverHeight": 0.8
+      }
+    }
+  ],
+  "statuses": [
+    {
+      "id": "burn",
+      "duration": 4,
+      "damagePerSecond": 4,
+      "maxStacks": 3,
+      "tickInterval": 0.5
+    },
+    {
+      "id": "chill",
+      "duration": 3,
+      "slow": 0.25,
+      "freezeAtApplications": 3,
+      "normalFreezeDuration": 0.65,
+      "freezeReapplyLock": 4,
+      "bossFreezeStagger": 8
+    },
+    {
+      "id": "shock",
+      "duration": 3,
+      "dischargeDamage": 10,
+      "dischargeRadius": 1.5,
+      "maxTargets": 3,
+      "targetCooldown": 0.5
+    },
+    {
+      "id": "windPressure",
+      "duration": 4,
+      "staggerTakenBonus": 0.1
+    }
+  ],
+  "bosses": [
+    {
+      "id": "collectorRoco",
+      "name": "회수관 로코",
+      "kind": "miniboss",
+      "hp": 320,
+      "damage": 12,
+      "minimumTell": 0.7,
+      "region": "smileStreet",
+      "concept": "집게팔과 자석을 단 수거 인형"
+    },
+    {
+      "id": "captainBrass",
+      "name": "행진대장 브라스",
+      "kind": "regionBoss",
+      "hp": 1000,
+      "damage": 16,
+      "minimumTell": 0.8,
+      "region": "smileStreet",
+      "concept": "주민들의 걸음을 지휘하는 금관 병정"
+    }
+  ]
+}

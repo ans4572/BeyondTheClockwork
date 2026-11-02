@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "pixelLabGeneration": true,
+  "clips": 6,
+  "totalSourceFrames": 86,
+  "totalGeneratedFrames": 80,
+  "artApproval": "review_drafts_only",
+  "boundaryTouchesAreReviewFlagsNotAutoAcceptance": true,
+  "results": [
+    {
+      "id": "steamShatter",
+      "frameCount": 17,
+      "generatedFrameCount": 16,
+      "alpha": true,
+      "gifPages": 17,
+      "gifDurationMs": 2050,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "bf7f631a-c82c-4e94-a418-3dd0837eca3f"
+    },
+    {
+      "id": "arcFurnace",
+      "frameCount": 17,
+      "generatedFrameCount": 16,
+      "alpha": true,
+      "gifPages": 17,
+      "gifDurationMs": 2100,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "9c8ce0c1-54b9-4531-b1c1-ff6c9159a0a9"
+    },
+    {
+      "id": "fireCyclone",
+      "frameCount": 17,
+      "generatedFrameCount": 16,
+      "alpha": true,
+      "gifPages": 17,
+      "gifDurationMs": 2100,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "e3f128c6-03d9-4c62-872c-5801e21ff95d"
+    },
+    {
+      "id": "magneticIceClamp",
+      "frameCount": 9,
+      "generatedFrameCount": 8,
+      "alpha": true,
+      "gifPages": 9,
+      "gifDurationMs": 1300,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "2c07198d-aff1-42dc-a5c0-c61582e69367"
+    },
+    {
+      "id": "frostCrosscut",
+      "frameCount": 17,
+      "generatedFrameCount": 16,
+      "alpha": true,
+      "gifPages": 17,
+      "gifDurationMs": 1600,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "4a214ede-32fc-4049-a608-98cc78fb05a3"
+    },
+    {
+      "id": "stormFloat",
+      "frameCount": 9,
+      "generatedFrameCount": 8,
+      "alpha": true,
+      "gifPages": 9,
+      "gifDurationMs": 1300,
+      "boundaryTouchFrames": [],
+      "sourceJobId": "0e23fe1e-62f1-47a5-9b26-96c776500997"
+    }
+  ]
+}

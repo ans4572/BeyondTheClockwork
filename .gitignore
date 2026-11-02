@@ -1,0 +1,22 @@
+node_modules/
+.DS_Store
+artifacts/
+*.log
+
+# Concept sheets and packed review bundles stay local; art the game uses is tracked.
+art/dialog-concepts/
+art/hero-concepts-round4/
+art/hud-concepts/
+art/title-concepts/
+art/mob-concepts/
+art/status-icon-concepts/
+art/player-f2/fusion-concepts/
+art/player-f2/state-concepts/
+art/smile-street/boss-pose-concepts/
+art/smile-street/concepts/
+art/smile-street/map-concepts/*
+!art/smile-street/map-concepts/navigation-proposals.json
+art/**/background-wide-v*
+art/**/background-v1*
+art/**/*.zip
+art/**/concept.png

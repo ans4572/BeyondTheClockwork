@@ -1,0 +1,17 @@
+{
+  "args": {
+    "mode": "pro",
+    "size": 128,
+    "n_directions": 8,
+    "body_type": "humanoid",
+    "view": "low top-down",
+    "name": "F2 fusion casting reference · original fusion style",
+    "concept_image_url": "https://api.pixellab.ai/mcp/images/4a214ede-32fc-4049-a608-98cc78fb05a3/download?index=16",
+    "description": "EXACT same individual F2 patched clockwork robot from fusion reference, full-body game sprite filling 110px height at 128px native canvas. Keep slim articulated mechanical limbs, rounded ivory helmet with stitched olive patch, navy screen and cyan eyes, burgundy scarf, olive armor, brass joints. ONE LONG turquoise open-jaw wrench always in anatomical RIGHT hand ONLY, lowered outside torso. LEFT hand EMPTY and relaxed visibly outside left waist. BOTH complete arms and hands, BOTH legs and feet. Neutral planted feet. Eight real views including true BACK of helmet and scarf with no rear face. No spells, effects, floor or text. Rich crisp clustered pixel shading matching concept."
+  },
+  "receipt": "id: 3a519edd-a6cd-46fe-afee-ea0b84425520\nname: F2 fusion casting reference · original fusion style\nmode: pro (25 generations, 8 directions)\nbody: humanoid\nsize: 128x128px\nview: low top-down\nstatus: processing (~3-5 min)\n\nhint: get_character(character_id=\"3a519edd-a6cd-46fe-afee-ea0b84425520\")",
+  "balanceBefore": 1726,
+  "source": "../frostCrosscut-curved-v3/frames/016.png",
+  "status": "eight_direction_reference_ready",
+  "characterId": "3a519edd-a6cd-46fe-afee-ea0b84425520"
+}

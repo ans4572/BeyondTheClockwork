@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-02",
+  "method": "built-in image_gen",
+  "promptPolicy": "Executed each existing prompt with its listed reference image.",
+  "resized": false,
+  "cropped": false,
+  "appliedToGame": false,
+  "results": [
+    {
+      "room": "first-step-a",
+      "output": "art/smile-street/maps/first-step-a/background-large.png",
+      "prompt": "art/smile-street/maps/first-step-a/background-large.prompt.txt",
+      "reference": "art/smile-street/maps/first-step-a/background.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3191181
+    },
+    {
+      "room": "ribbon-alley-c",
+      "output": "art/smile-street/maps/ribbon-alley-c/background-large.png",
+      "prompt": "art/smile-street/maps/ribbon-alley-c/background-large.prompt.txt",
+      "reference": "art/smile-street/maps/ribbon-alley-c/background.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3188331
+    },
+    {
+      "room": "workshop-road-a",
+      "output": "art/smile-street/maps/workshop-road-a/background-large.png",
+      "prompt": "art/smile-street/maps/workshop-road-a/background-large.prompt.txt",
+      "reference": "art/smile-street/maps/workshop-road-a/background.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3276009
+    },
+    {
+      "room": "ribbon-alley-d",
+      "output": "art/smile-street/maps/ribbon-alley-d/background-large.png",
+      "prompt": "art/smile-street/maps/ribbon-alley-d/background-large.prompt.txt",
+      "reference": "art/smile-street/maps/ribbon-alley-d/background.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3443848
+    },
+    {
+      "room": "lost-and-found",
+      "output": "art/smile-street/maps/lost-and-found/background-large.png",
+      "prompt": "art/smile-street/maps/lost-and-found/background-large.prompt.txt",
+      "reference": "art/smile-street/maps/workshop-road-a/background.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3259530
+    }
+  ]
+}

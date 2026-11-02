@@ -1,0 +1,94 @@
+[
+  {
+    "kind": "effect-reference",
+    "id": "steamShatter",
+    "name": "증기 파쇄",
+    "jobId": "588c6b8e-938f-477b-8663-cc6651e83b6d",
+    "receipt": "id: 588c6b8e-938f-477b-8663-cc6651e83b6d\njob_id: 588c6b8e-938f-477b-8663-cc6651e83b6d\nmodel: pixen\nedit: Erase the blue rectangular robot face and EVERY robot remnant at center. Center opening must be transparent with a few soft steam wisps, never a screen or solid rectangular plate. Keep ONLY the existing surrounding orange fire spires, faceted cyan ice crystals and chunky white steam. Preserve lavish sharp pixel shading. No characters, limbs, equipment or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120101\nasset_id: 7eb04cc7-83fc-5a3f-be2c-589375525f74\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"588c6b8e-938f-477b-8663-cc6651e83b6d\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/588c6b8e-938f-477b-8663-cc6651e83b6d/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/55c5236c-85dd-4119-b076-caac50ebeab9/download",
+      "description": "Erase the blue rectangular robot face and EVERY robot remnant at center. Center opening must be transparent with a few soft steam wisps, never a screen or solid rectangular plate. Keep ONLY the existing surrounding orange fire spires, faceted cyan ice crystals and chunky white steam. Preserve lavish sharp pixel shading. No characters, limbs, equipment or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120101
+    },
+    "revision": "effect-only-cleanup-v2"
+  },
+  {
+    "kind": "effect-reference",
+    "id": "arcFurnace",
+    "name": "전호 용광로",
+    "jobId": "846f0fc6-5ba6-4359-987f-11c0eb976f33",
+    "receipt": "id: 846f0fc6-5ba6-4359-987f-11c0eb976f33\njob_id: 846f0fc6-5ba6-4359-987f-11c0eb976f33\nmodel: pixen\nedit: Keep ONLY ONE target eruption, centered: combine the existing gold lightning branches and orange-white flame into ONE compact thermal-electric column over ONE ground point. Remove the other flame column and all robot-shaped remnants. Detailed orange fire tongues intertwined with gold electric forks, crisp pixel clusters, transparent background. No characters, equipment, extra target points or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120102\nasset_id: 017d49e0-283a-5f6e-b0a4-f573d72b91c8\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"846f0fc6-5ba6-4359-987f-11c0eb976f33\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/846f0fc6-5ba6-4359-987f-11c0eb976f33/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/7182e72c-399c-4995-a082-66d5338d14b9/download",
+      "description": "Keep ONLY ONE target eruption, centered: combine the existing gold lightning branches and orange-white flame into ONE compact thermal-electric column over ONE ground point. Remove the other flame column and all robot-shaped remnants. Detailed orange fire tongues intertwined with gold electric forks, crisp pixel clusters, transparent background. No characters, equipment, extra target points or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120102
+    },
+    "revision": "effect-only-cleanup-v2"
+  },
+  {
+    "kind": "effect-reference",
+    "id": "fireCyclone",
+    "name": "화염 회오리",
+    "jobId": "19671462-32dc-466c-a650-c6a4668cfd8d",
+    "receipt": "id: 19671462-32dc-466c-a650-c6a4668cfd8d\njob_id: 19671462-32dc-466c-a650-c6a4668cfd8d\nmodel: pixen\nedit: Remove ONLY robot, wrench and body shadows. Retain and center the SAME one tall 3D FIRE TORNADO with thick orange-yellow spiral ribbons, narrow base, wide hollow crown and red embers. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120012\nasset_id: 460e4557-0e62-5710-8459-9bf92f0b3785\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"19671462-32dc-466c-a650-c6a4668cfd8d\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/19671462-32dc-466c-a650-c6a4668cfd8d/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/e3f128c6-03d9-4c62-872c-5801e21ff95d/download?index=8",
+      "description": "Remove ONLY robot, wrench and body shadows. Retain and center the SAME one tall 3D FIRE TORNADO with thick orange-yellow spiral ribbons, narrow base, wide hollow crown and red embers. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120012
+    }
+  },
+  {
+    "kind": "effect-reference",
+    "id": "magneticIceClamp",
+    "name": "자성 빙쇄",
+    "jobId": "e8facb18-200f-4483-a062-b4a543365279",
+    "receipt": "id: e8facb18-200f-4483-a062-b4a543365279\njob_id: e8facb18-200f-4483-a062-b4a543365279\nmodel: pixen\nedit: Remove ONLY robot, wrench and body shadows. Retain and center the SAME TWO opposed large angular cyan ICE JAWS with a gap between them and PURPLE-WHITE electricity bridging the gap, visible faceted crystal texture. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120013\nasset_id: e9817442-2e9e-5e86-9251-c39aa8817908\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"e8facb18-200f-4483-a062-b4a543365279\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/e8facb18-200f-4483-a062-b4a543365279/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/2c07198d-aff1-42dc-a5c0-c61582e69367/download?index=4",
+      "description": "Remove ONLY robot, wrench and body shadows. Retain and center the SAME TWO opposed large angular cyan ICE JAWS with a gap between them and PURPLE-WHITE electricity bridging the gap, visible faceted crystal texture. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120013
+    }
+  },
+  {
+    "kind": "effect-reference",
+    "id": "frostCrosscut",
+    "name": "빙풍 절단",
+    "jobId": "ec701750-9d2c-43c3-b0b6-623f256569c4",
+    "receipt": "id: ec701750-9d2c-43c3-b0b6-623f256569c4\njob_id: ec701750-9d2c-43c3-b0b6-623f256569c4\nmodel: pixen\nedit: Remove ONLY robot, wrench and body shadows. Retain and center the SAME one tall UPRIGHT VERTICAL X formed by TWO bowed cyan icy crescent blades crossing at their waists; four long curved needle-tapered points, never flat cut ends or straight bars. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120014\nasset_id: 34c5bac7-37ba-5969-ba4b-441a8dfcc825\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"ec701750-9d2c-43c3-b0b6-623f256569c4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/ec701750-9d2c-43c3-b0b6-623f256569c4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/4a214ede-32fc-4049-a608-98cc78fb05a3/download?index=8",
+      "description": "Remove ONLY robot, wrench and body shadows. Retain and center the SAME one tall UPRIGHT VERTICAL X formed by TWO bowed cyan icy crescent blades crossing at their waists; four long curved needle-tapered points, never flat cut ends or straight bars. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120014
+    }
+  },
+  {
+    "kind": "effect-reference",
+    "id": "stormFloat",
+    "name": "폭뢰 부유구",
+    "jobId": "1ec9eed8-169b-4d7e-8f4b-2a3511efc589",
+    "receipt": "id: 1ec9eed8-169b-4d7e-8f4b-2a3511efc589\njob_id: 1ec9eed8-169b-4d7e-8f4b-2a3511efc589\nmodel: pixen\nedit: Remove ONLY robot, wrench and body shadows. Retain and center the SAME one round transparent mint-green WIND ORB containing vivid violet and gold lightning filaments, wrapped by curved mint wind ribbons, a spherical shell with a clear electric core. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.\nsource: 256x256px\nsize: 256x256px\ntransparent: True\nseed: 120015\nasset_id: 7cb8627b-0f26-551b-a193-f84ca8fa5a03\nasset_status: pending (saved when generation completes)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"1ec9eed8-169b-4d7e-8f4b-2a3511efc589\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/1ec9eed8-169b-4d7e-8f4b-2a3511efc589/download (423 + Retry-After until ready; ?index=N for the Nth of several images)",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/0e23fe1e-62f1-47a5-9b26-96c776500997/download?index=4",
+      "description": "Remove ONLY robot, wrench and body shadows. Retain and center the SAME one round transparent mint-green WIND ORB containing vivid violet and gold lightning filaments, wrapped by curved mint wind ribbons, a spherical shell with a clear electric core. Transparent background. Keep its lavish pixel clusters, sharp highlights and layered colors. Effect only; no character, limbs, equipment, floor or text.",
+      "width": 256,
+      "height": 256,
+      "no_background": true,
+      "seed": 120015
+    }
+  }
+]

@@ -1,0 +1,428 @@
+{
+  "provider": "pixellab_layered_composite",
+  "files": [
+    "frames/000.png",
+    "frames/001.png",
+    "frames/002.png",
+    "frames/003.png",
+    "frames/004.png",
+    "frames/005.png",
+    "frames/006.png",
+    "frames/007.png",
+    "frames/008.png",
+    "frames/009.png",
+    "frames/010.png",
+    "frames/011.png",
+    "frames/012.png",
+    "frames/013.png",
+    "frames/014.png",
+    "frames/015.png",
+    "frames/016.png",
+    "frames/017.png",
+    "frames/018.png",
+    "frames/019.png",
+    "frames/020.png",
+    "frames/021.png",
+    "frames/022.png",
+    "frames/023.png",
+    "frames/024.png",
+    "frames/025.png",
+    "frames/026.png",
+    "frames/027.png",
+    "frames/028.png",
+    "frames/029.png",
+    "frames/030.png"
+  ],
+  "sourceBody": "expansion/bodies/forwardCast/south-west/frames.json",
+  "sourceEffect": "expansion/effects/fireCyclone/frames.json",
+  "frameLayers": [
+    {
+      "timeMs": 0,
+      "bodyFrame": 0,
+      "effectFrame": null,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 60,
+      "bodyFrame": 1,
+      "effectFrame": null,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 120,
+      "bodyFrame": 2,
+      "effectFrame": null,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 180,
+      "bodyFrame": 3,
+      "effectFrame": null,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 240,
+      "bodyFrame": 4,
+      "effectFrame": 0,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        74,
+        130
+      ]
+    },
+    {
+      "timeMs": 300,
+      "bodyFrame": 5,
+      "effectFrame": 0,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        73,
+        131
+      ]
+    },
+    {
+      "timeMs": 330,
+      "bodyFrame": 5,
+      "effectFrame": 1,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        72,
+        132
+      ]
+    },
+    {
+      "timeMs": 360,
+      "bodyFrame": 6,
+      "effectFrame": 1,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        72,
+        132
+      ]
+    },
+    {
+      "timeMs": 420,
+      "bodyFrame": 7,
+      "effectFrame": 2,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        70,
+        134
+      ]
+    },
+    {
+      "timeMs": 480,
+      "bodyFrame": 8,
+      "effectFrame": 2,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        69,
+        135
+      ]
+    },
+    {
+      "timeMs": 510,
+      "bodyFrame": 8,
+      "effectFrame": 3,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        69,
+        135
+      ]
+    },
+    {
+      "timeMs": 540,
+      "bodyFrame": 9,
+      "effectFrame": 3,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        68,
+        136
+      ]
+    },
+    {
+      "timeMs": 600,
+      "bodyFrame": 10,
+      "effectFrame": 4,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        67,
+        137
+      ]
+    },
+    {
+      "timeMs": 660,
+      "bodyFrame": 11,
+      "effectFrame": 4,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        66,
+        138
+      ]
+    },
+    {
+      "timeMs": 690,
+      "bodyFrame": 11,
+      "effectFrame": 5,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        65,
+        139
+      ]
+    },
+    {
+      "timeMs": 720,
+      "bodyFrame": 11,
+      "effectFrame": 5,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        65,
+        139
+      ]
+    },
+    {
+      "timeMs": 780,
+      "bodyFrame": 11,
+      "effectFrame": 6,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        64,
+        140
+      ]
+    },
+    {
+      "timeMs": 870,
+      "bodyFrame": 11,
+      "effectFrame": 7,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        62,
+        142
+      ]
+    },
+    {
+      "timeMs": 960,
+      "bodyFrame": 11,
+      "effectFrame": 8,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        60,
+        144
+      ]
+    },
+    {
+      "timeMs": 1050,
+      "bodyFrame": 11,
+      "effectFrame": 9,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        59,
+        145
+      ]
+    },
+    {
+      "timeMs": 1140,
+      "bodyFrame": 11,
+      "effectFrame": 10,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        57,
+        147
+      ]
+    },
+    {
+      "timeMs": 1230,
+      "bodyFrame": 11,
+      "effectFrame": 11,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        55,
+        149
+      ]
+    },
+    {
+      "timeMs": 1320,
+      "bodyFrame": 11,
+      "effectFrame": 12,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        53,
+        151
+      ]
+    },
+    {
+      "timeMs": 1410,
+      "bodyFrame": 11,
+      "effectFrame": 13,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        52,
+        152
+      ]
+    },
+    {
+      "timeMs": 1500,
+      "bodyFrame": 11,
+      "effectFrame": 14,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        50,
+        154
+      ]
+    },
+    {
+      "timeMs": 1590,
+      "bodyFrame": 11,
+      "effectFrame": 15,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        48,
+        156
+      ]
+    },
+    {
+      "timeMs": 1680,
+      "bodyFrame": 11,
+      "effectFrame": 16,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        47,
+        157
+      ]
+    },
+    {
+      "timeMs": 1770,
+      "bodyFrame": 11,
+      "effectFrame": 17,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        45,
+        159
+      ]
+    },
+    {
+      "timeMs": 1860,
+      "bodyFrame": 11,
+      "effectFrame": 18,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        43,
+        161
+      ]
+    },
+    {
+      "timeMs": 1950,
+      "bodyFrame": 11,
+      "effectFrame": 19,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": [
+        42,
+        162
+      ]
+    },
+    {
+      "timeMs": 2040,
+      "bodyFrame": 11,
+      "effectFrame": null,
+      "bodyAt": [
+        241,
+        109
+      ],
+      "effectAt": null
+    }
+  ]
+}

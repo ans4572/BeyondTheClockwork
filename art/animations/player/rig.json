@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "reference": "base.png",
+  "provider": "local articulated pixel renderer; approved F2 face texture",
+  "nativeSize": 96,
+  "pixelsPerUnit": 40,
+  "origin": [48, 73],
+  "cameraGroundScale": [0.8660254, 0.5],
+  "model": {
+    "hipHeight": 0.495,
+    "hipWidth": 0.19,
+    "upperLeg": 0.245,
+    "lowerLeg": 0.245,
+    "torsoWidth": 0.34,
+    "torsoDepth": 0.22,
+    "torsoHeight": 0.32,
+    "shoulderWidth": 0.43,
+    "upperArm": 0.19,
+    "lowerArm": 0.17,
+    "headRadii": [0.265, 0.245, 0.245],
+    "headHeightAboveHip": 0.685,
+    "faceWidth": 0.355,
+    "faceHeight": 0.305,
+    "footWidth": 0.14,
+    "footLength": 0.235,
+    "wrenchLength": 0.42
+  },
+  "gaits": {
+    "idle": { "stride": 0, "stanceFraction": 1, "lift": 0, "bob": 0.002, "lean": 0, "armSwing": 0.025, "cycleSeconds": 2.4 },
+    "walk": { "stride": 1.05, "stanceFraction": 0.62, "lift": 0.105, "bob": 0.013, "lean": 0.025, "armSwing": 0.48, "cycleSeconds": 0.8 },
+    "run": { "stride": 2.4, "stanceFraction": 0.28, "lift": 0.25, "bob": 0.036, "lean": 0.095, "armSwing": 0.76, "cycleSeconds": 0.48 }
+  },
+  "palette": {
+    "outline": "#22211c",
+    "ivory": "#eee0b1",
+    "ivoryShadow": "#c2a177",
+    "navy": "#0e1f3a",
+    "cyan": "#0dead9",
+    "metal": "#76847e",
+    "metalDark": "#505552",
+    "joint": "#363e45",
+    "cloth": "#9ba66c",
+    "clothDark": "#6a794d",
+    "scarf": "#b14e57",
+    "scarfDark": "#68232c",
+    "gold": "#d4b141",
+    "goldDark": "#967523",
+    "boot": "#4a5063",
+    "sole": "#976f50",
+    "wrench": "#65a797",
+    "red": "#ba1726"
+  }
+}

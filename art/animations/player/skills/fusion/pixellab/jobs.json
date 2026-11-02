@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "provider": "pixellab",
+  "model": "pixminimax",
+  "status": "six_representative_clips_downloaded",
+  "sourceConceptManifest": "/art/player-f2/fusion-concepts/manifest.json",
+  "direction": "south-east",
+  "additionalDirectionsGenerated": false,
+  "sourceConversion": {
+    "id": "steamShatter",
+    "jobId": "99c5ab3f-82f7-4cb9-927a-acaefa781807",
+    "assetId": "0d75bbe4-2238-5cf1-bd3c-55c36bada6b3",
+    "status": "complete",
+    "generations": 1
+  },
+  "jobs": [
+    {
+      "id": "steamShatter",
+      "jobId": "bf7f631a-c82c-4e94-a418-3dd0837eca3f",
+      "assetId": "0d477043-f702-51bc-8989-588b510f5213",
+      "status": "downloaded",
+      "requestedFrames": 16,
+      "seed": 84101,
+      "generations": 2,
+      "returnedFrames": 17
+    },
+    {
+      "id": "arcFurnace",
+      "status": "downloaded",
+      "requestedFrames": 16,
+      "seed": 84102,
+      "generations": 2,
+      "jobId": "9c8ce0c1-54b9-4531-b1c1-ff6c9159a0a9",
+      "assetId": "0501b305-8775-5d33-af0f-aab50086eec9",
+      "returnedFrames": 17
+    },
+    {
+      "id": "fireCyclone",
+      "status": "downloaded",
+      "requestedFrames": 16,
+      "seed": 84103,
+      "generations": 2,
+      "jobId": "e3f128c6-03d9-4c62-872c-5801e21ff95d",
+      "assetId": "6ce08063-2cd0-5a08-b59e-431e4bc450a5",
+      "returnedFrames": 17
+    },
+    {
+      "id": "magneticIceClamp",
+      "status": "downloaded",
+      "requestedFrames": 8,
+      "seed": 84104,
+      "generations": 1,
+      "jobId": "2c07198d-aff1-42dc-a5c0-c61582e69367",
+      "assetId": "3dffdc59-9bc3-5582-b4be-7261cbf8c59e",
+      "returnedFrames": 9
+    },
+    {
+      "id": "frostCrosscut",
+      "status": "downloaded",
+      "requestedFrames": 16,
+      "seed": 95130,
+      "generations": 2,
+      "jobId": "4a214ede-32fc-4049-a608-98cc78fb05a3",
+      "assetId": "ba9dbdae-9e4b-5839-9d50-440158309772",
+      "returnedFrames": 17,
+      "revision": "curved-v3"
+    },
+    {
+      "id": "stormFloat",
+      "status": "downloaded",
+      "requestedFrames": 8,
+      "seed": 84106,
+      "generations": 1,
+      "jobId": "0e23fe1e-62f1-47a5-9b26-96c776500997",
+      "assetId": "e411b8ad-36a5-58c2-b038-b858c81b17f5",
+      "returnedFrames": 9
+    }
+  ],
+  "generationConstraint": "Original six trial clips preserved; frostCrosscut regenerated after user subscription activation",
+  "gameplayChanged": false,
+  "appliedToGame": false,
+  "layerSeparation": false,
+  "approvedScope": "six representative direction clips first",
+  "bonusGenerationsConsumedByAnimation": 9,
+  "accountAfter": {
+    "subscription": "trial",
+    "creditsUSD": 0,
+    "generationsRemaining": 0
+  },
+  "history": [
+    {
+      "id": "frostCrosscut",
+      "status": "downloaded",
+      "requestedFrames": 8,
+      "seed": 84105,
+      "generations": 1,
+      "jobId": "150ca978-eb42-4539-9557-e86ddb51bb93",
+      "assetId": "ab740b99-d684-5eaf-987c-1d5a030d4a25",
+      "returnedFrames": 9,
+      "revision": "original-v2"
+    }
+  ],
+  "currentSubscription": "active"
+}

@@ -1,0 +1,165 @@
+{
+  "kind": "body",
+  "id": "forwardCast",
+  "family": "forwardCast",
+  "direction": "south",
+  "jobId": "2636378d-b2b9-4c3f-a9f4-908876b77a88",
+  "groupId": "e9a80811-3c77-443a-82ad-afca118cbd90",
+  "model": "skeleton-v3",
+  "frameCount": 12,
+  "frameWidth": 144,
+  "frameHeight": 144,
+  "columns": 4,
+  "rows": 3,
+  "sheet": "bodies/forwardCast/south/sheet.png",
+  "files": [
+    "bodies/forwardCast/south/frames/000.png",
+    "bodies/forwardCast/south/frames/001.png",
+    "bodies/forwardCast/south/frames/002.png",
+    "bodies/forwardCast/south/frames/003.png",
+    "bodies/forwardCast/south/frames/004.png",
+    "bodies/forwardCast/south/frames/005.png",
+    "bodies/forwardCast/south/frames/006.png",
+    "bodies/forwardCast/south/frames/007.png",
+    "bodies/forwardCast/south/frames/008.png",
+    "bodies/forwardCast/south/frames/009.png",
+    "bodies/forwardCast/south/frames/010.png",
+    "bodies/forwardCast/south/frames/011.png"
+  ],
+  "frameStats": [
+    {
+      "index": 0,
+      "pixels": 3186,
+      "bounds": [
+        30,
+        32,
+        101,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 1,
+      "pixels": 3173,
+      "bounds": [
+        30,
+        32,
+        102,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 2,
+      "pixels": 3175,
+      "bounds": [
+        30,
+        32,
+        103,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 3,
+      "pixels": 3147,
+      "bounds": [
+        30,
+        31,
+        102,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 4,
+      "pixels": 3132,
+      "bounds": [
+        30,
+        33,
+        103,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 5,
+      "pixels": 3023,
+      "bounds": [
+        30,
+        37,
+        103,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 6,
+      "pixels": 3030,
+      "bounds": [
+        30,
+        37,
+        102,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 7,
+      "pixels": 3111,
+      "bounds": [
+        30,
+        36,
+        103,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 8,
+      "pixels": 3132,
+      "bounds": [
+        30,
+        35,
+        103,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 9,
+      "pixels": 3159,
+      "bounds": [
+        30,
+        33,
+        101,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 10,
+      "pixels": 3153,
+      "bounds": [
+        30,
+        32,
+        99,
+        118
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 11,
+      "pixels": 3151,
+      "bounds": [
+        30,
+        32,
+        98,
+        118
+      ],
+      "boundary": 0
+    }
+  ],
+  "qaStatus": "awaiting_visual_review",
+  "qaNotes": []
+}

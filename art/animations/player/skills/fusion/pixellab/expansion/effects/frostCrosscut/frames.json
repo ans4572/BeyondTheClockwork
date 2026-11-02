@@ -1,0 +1,280 @@
+{
+  "kind": "effect",
+  "id": "frostCrosscut",
+  "jobId": "fc6645fc-22d0-4e2f-9538-428d8005377d",
+  "model": "pixminimax",
+  "frameCount": 21,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "columns": 4,
+  "rows": 6,
+  "sheet": "effects/frostCrosscut/sheet.png",
+  "files": [
+    "effects/frostCrosscut/frames/000.png",
+    "effects/frostCrosscut/frames/001.png",
+    "effects/frostCrosscut/frames/002.png",
+    "effects/frostCrosscut/frames/003.png",
+    "effects/frostCrosscut/frames/004.png",
+    "effects/frostCrosscut/frames/005.png",
+    "effects/frostCrosscut/frames/006.png",
+    "effects/frostCrosscut/frames/007.png",
+    "effects/frostCrosscut/frames/008.png",
+    "effects/frostCrosscut/frames/009.png",
+    "effects/frostCrosscut/frames/010.png",
+    "effects/frostCrosscut/frames/011.png",
+    "effects/frostCrosscut/frames/012.png",
+    "effects/frostCrosscut/frames/013.png",
+    "effects/frostCrosscut/frames/014.png",
+    "effects/frostCrosscut/frames/015.png",
+    "effects/frostCrosscut/frames/016.png",
+    "effects/frostCrosscut/frames/017.png",
+    "effects/frostCrosscut/frames/018.png",
+    "effects/frostCrosscut/frames/019.png",
+    "effects/frostCrosscut/frames/020.png"
+  ],
+  "playbackFrames": [
+    0,
+    1,
+    8,
+    9,
+    10,
+    18,
+    19,
+    20
+  ],
+  "frameStats": [
+    {
+      "index": 0,
+      "pixels": 3429,
+      "bounds": [
+        99,
+        49,
+        159,
+        205
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 1,
+      "pixels": 4126,
+      "bounds": [
+        89,
+        49,
+        167,
+        209
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 2,
+      "pixels": 7346,
+      "bounds": [
+        64,
+        40,
+        193,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 3,
+      "pixels": 7809,
+      "bounds": [
+        53,
+        40,
+        203,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 4,
+      "pixels": 7638,
+      "bounds": [
+        52,
+        39,
+        204,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 5,
+      "pixels": 7264,
+      "bounds": [
+        49,
+        39,
+        207,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 6,
+      "pixels": 6930,
+      "bounds": [
+        48,
+        39,
+        219,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 7,
+      "pixels": 5483,
+      "bounds": [
+        68,
+        39,
+        188,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 8,
+      "pixels": 3895,
+      "bounds": [
+        87,
+        41,
+        169,
+        214
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 9,
+      "pixels": 3373,
+      "bounds": [
+        99,
+        49,
+        159,
+        205
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 10,
+      "pixels": 4137,
+      "bounds": [
+        89,
+        49,
+        167,
+        210
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 11,
+      "pixels": 7370,
+      "bounds": [
+        64,
+        40,
+        193,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 12,
+      "pixels": 7753,
+      "bounds": [
+        54,
+        40,
+        203,
+        214
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 13,
+      "pixels": 7603,
+      "bounds": [
+        52,
+        39,
+        204,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 14,
+      "pixels": 7213,
+      "bounds": [
+        49,
+        39,
+        208,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 15,
+      "pixels": 16637,
+      "bounds": [
+        48,
+        39,
+        255,
+        215
+      ],
+      "boundary": 114
+    },
+    {
+      "index": 16,
+      "pixels": 14886,
+      "bounds": [
+        64,
+        39,
+        255,
+        215
+      ],
+      "boundary": 68
+    },
+    {
+      "index": 17,
+      "pixels": 5425,
+      "bounds": [
+        75,
+        39,
+        181,
+        215
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 18,
+      "pixels": 3425,
+      "bounds": [
+        91,
+        41,
+        168,
+        212
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 19,
+      "pixels": 691,
+      "bounds": [
+        114,
+        76,
+        144,
+        179
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 20,
+      "pixels": 39,
+      "bounds": [
+        126,
+        120,
+        131,
+        132
+      ],
+      "boundary": 0
+    }
+  ],
+  "qaStatus": "awaiting_visual_review",
+  "qaNotes": []
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "key": "attack-1-south-003",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 3,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/003.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-003.png",
+    "roi": [
+      120,
+      96,
+      27,
+      31
+    ],
+    "maskPixels": 617
+  },
+  {
+    "key": "attack-1-south-004",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 4,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/004.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-004.png",
+    "roi": [
+      120,
+      96,
+      27,
+      31
+    ],
+    "maskPixels": 696
+  },
+  {
+    "key": "attack-1-south-005",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 5,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/005.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-005.png",
+    "roi": [
+      120,
+      96,
+      27,
+      31
+    ],
+    "maskPixels": 708
+  },
+  {
+    "key": "attack-1-south-006",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 6,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/006.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-006.png",
+    "roi": [
+      120,
+      96,
+      27,
+      31
+    ],
+    "maskPixels": 708
+  },
+  {
+    "key": "attack-1-south-007",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 7,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/007.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-007.png",
+    "roi": [
+      120,
+      96,
+      27,
+      31
+    ],
+    "maskPixels": 707
+  },
+  {
+    "key": "attack-1-south-009",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 9,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/009.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-009.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 656
+  },
+  {
+    "key": "attack-1-south-010",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 10,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/010.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-010.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 692
+  },
+  {
+    "key": "attack-1-south-011",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 11,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/011.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-011.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 635
+  },
+  {
+    "key": "attack-1-south-012",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 12,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/012.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-012.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 539
+  },
+  {
+    "key": "attack-1-south-013",
+    "action": "attack-1",
+    "direction": "south",
+    "frame": 13,
+    "sourceJobId": "c10eb650-7886-44ff-8d8d-04374a01626a",
+    "sourceFile": "clips/attack-1-south-c10eb650/frames/013.png",
+    "maskFile": "arm-repair-v1/masks/attack-1-south-013.png",
+    "roi": [
+      99,
+      95,
+      28,
+      31
+    ],
+    "maskPixels": 530
+  },
+  {
+    "key": "attack-2-south-001",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 1,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/001.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-001.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 781
+  },
+  {
+    "key": "attack-2-south-002",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 2,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/002.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-002.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 770
+  },
+  {
+    "key": "attack-2-south-003",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 3,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/003.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-003.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 772
+  },
+  {
+    "key": "attack-2-south-004",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 4,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/004.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-004.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 771
+  },
+  {
+    "key": "attack-2-south-007",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 7,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/007.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-007.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 579
+  },
+  {
+    "key": "attack-2-south-008",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 8,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/008.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-008.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 569
+  },
+  {
+    "key": "attack-2-south-009",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 9,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/009.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-009.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 668
+  },
+  {
+    "key": "attack-2-south-010",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 10,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/010.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-010.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 771
+  },
+  {
+    "key": "attack-2-south-011",
+    "action": "attack-2",
+    "direction": "south",
+    "frame": 11,
+    "sourceJobId": "5afda580-d8e5-4afe-be7a-0f4c6cf8e518",
+    "sourceFile": "clips/attack-2-south-5afda580/frames/011.png",
+    "maskFile": "arm-repair-v1/masks/attack-2-south-011.png",
+    "roi": [
+      103,
+      95,
+      36,
+      32
+    ],
+    "maskPixels": 780
+  }
+]

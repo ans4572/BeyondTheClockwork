@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 1,
+  "provider": "pixellab",
+  "generationBalanceBefore": 1998,
+  "generationBalanceAfter": 1923,
+  "generationsUsedIncludingSupersededDrafts": 75,
+  "status": "24_clips_generated_for_art_review",
+  "preferredGroups": {
+    "idle": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+    "walk": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+    "run": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+  },
+  "overrideGroups": {
+    "163f3336-3a6d-48c3-94f8-e9db7159a379": "idle",
+    "4af2ccc4-6abf-42f6-abe9-eadaf0426779": "walk",
+    "f4e4a8c6-eb6a-4bd6-8c11-4fff0074b3e4": "run"
+  },
+  "westRotationEditJobId": "7673a3c0-f913-4e51-8af7-931cbf6720ec",
+  "westRotationUndoImageId": "cf6edab3-5991-403f-bde7-2831510cb35e",
+  "rejectedTemplateReason": "Movement templates omitted long wrench in several views; replaced by PixMiniMax custom clips. Pending template run jobs cancelled.",
+  "characterId": "3f7a0f77-b8f6-4cff-94f0-754fa6c56c06",
+  "approvedAppearance": "F2",
+  "source": "../../base.png",
+  "referenceEditJobId": "a99286d5-5b12-4fcf-aead-a8e215749c9e",
+  "referenceEditAssetId": "9bfc481e-c025-589d-ae28-6bed0688dfc2",
+  "referenceSize": [
+    96,
+    96
+  ],
+  "directions": [
+    "south",
+    "south-west",
+    "west",
+    "north-west",
+    "north",
+    "north-east",
+    "east",
+    "south-east"
+  ],
+  "actions": [
+    "idle",
+    "walk",
+    "run"
+  ],
+  "requestedClips": 24,
+  "handPolicy": {
+    "wrench": "anatomical_right",
+    "left": "empty"
+  },
+  "rootMotion": "in_place",
+  "gameplayChanged": false,
+  "appliedToGame": false,
+  "groups": {
+    "walk": "4763e090-6eb8-4282-9dc0-066abb07c854"
+  },
+  "jobs": [
+    {
+      "jobId": "ff0912b3-ce33-4f44-a4a8-77922196a80a",
+      "direction": "south",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "dfc9b2c8-fc60-4f57-91f4-45a4411a96c3",
+      "direction": "south-west",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "4703e90b-54cb-4acb-a37f-59c1ac61d7df",
+      "direction": "north-west",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "5d2cd925-474b-4f3a-8b0d-4d45408b3ba8",
+      "direction": "north",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "78712c85-6e13-4872-918e-d11a605feb1e",
+      "direction": "north-east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "b6e1a2f4-df25-4086-af4f-58e5da069f5c",
+      "direction": "east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "76324cce-b6c2-43c9-a28d-b4e0301a534b",
+      "direction": "south-east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e",
+      "gait": "idle",
+      "receipt": "custom-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "2ebc7328-9f54-46c9-a3fc-ead2f2195e69",
+      "direction": "north-west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-rest-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "79c4e8c0-4465-400e-93a3-647198ab9f1c",
+      "direction": "west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-rest-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "ec1c263f-bdc3-4adb-ad25-1e20ebf03cf0",
+      "direction": "south-east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-rest-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "45873c9d-47b9-4571-b83a-7f5c147362c3",
+      "direction": "south",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "fc8e3320-a579-4a88-a964-ed2e5ff38c93",
+      "direction": "south-west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "ab45e4e1-e926-4cdb-81f2-07d457a441cc",
+      "direction": "north-east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "8696cc0a-a725-473a-b06b-ace33808e9f8",
+      "direction": "east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5",
+      "gait": "run",
+      "receipt": "custom-run-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "16393795-9b5a-4be9-bebc-b4125b4fb18e",
+      "direction": "south-east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-south-east-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "51d622d2-051e-4cf2-8d68-6c2235bbf621",
+      "direction": "south",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "b6613dbb-49cf-412b-8caa-e618fc782130",
+      "direction": "south-west",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "8fc0a692-1209-4763-8167-75808c17354d",
+      "direction": "north-west",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "e015e9ed-9e52-434b-83a3-2cfd0d69e867",
+      "direction": "north",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "bfe20f23-a5dc-4e4e-8165-e20719cc1c3d",
+      "direction": "north-east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "495720fb-5acb-4a4a-8ee4-ee71ee433c88",
+      "direction": "east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e",
+      "gait": "walk",
+      "receipt": "custom-walk-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "4de3b651-c014-4488-96aa-847aa2a673fd",
+      "direction": "north",
+      "groupId": "f4e4a8c6-eb6a-4bd6-8c11-4fff0074b3e4",
+      "gait": "run",
+      "receipt": "run-north-fix-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "b507b5b6-b742-474a-a956-21093c59430b",
+      "direction": "west",
+      "groupId": "163f3336-3a6d-48c3-94f8-e9db7159a379",
+      "gait": "idle",
+      "receipt": "west-idle-submission.txt",
+      "status": "downloaded_selected"
+    },
+    {
+      "jobId": "413635a4-c098-48d0-8df9-27505a0ea8f5",
+      "direction": "west",
+      "groupId": "4af2ccc4-6abf-42f6-abe9-eadaf0426779",
+      "gait": "walk",
+      "receipt": "west-walk-submission.txt",
+      "status": "downloaded_selected"
+    }
+  ],
+  "selectedClipCount": 24,
+  "selectedGeneratedFrames": 256,
+  "selectedSourceFrames": 280,
+  "allEightDirections": true,
+  "selectedClips": [
+    {
+      "gait": "idle",
+      "direction": "south",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "south-west",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "west",
+      "groupId": "163f3336-3a6d-48c3-94f8-e9db7159a379"
+    },
+    {
+      "gait": "idle",
+      "direction": "north-west",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "north",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "north-east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "idle",
+      "direction": "south-east",
+      "groupId": "708a71c5-8d57-4117-b26c-653a5d22fc7e"
+    },
+    {
+      "gait": "walk",
+      "direction": "south",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "south-west",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "west",
+      "groupId": "4af2ccc4-6abf-42f6-abe9-eadaf0426779"
+    },
+    {
+      "gait": "walk",
+      "direction": "north-west",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "north",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "north-east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "walk",
+      "direction": "south-east",
+      "groupId": "f9070b59-ac32-449f-88d4-8dbd162d041e"
+    },
+    {
+      "gait": "run",
+      "direction": "south",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "south-west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "north-west",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "north",
+      "groupId": "f4e4a8c6-eb6a-4bd6-8c11-4fff0074b3e4"
+    },
+    {
+      "gait": "run",
+      "direction": "north-east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    },
+    {
+      "gait": "run",
+      "direction": "south-east",
+      "groupId": "a64fd735-e1e1-4b32-bdd2-806ab43648f5"
+    }
+  ]
+}

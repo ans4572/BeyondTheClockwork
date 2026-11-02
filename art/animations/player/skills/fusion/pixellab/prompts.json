@@ -1,0 +1,55 @@
+{
+  "provider": "pixellab",
+  "model": "pixminimax",
+  "direction": "south-east",
+  "view": "low top-down",
+  "no_background": true,
+  "enhance_prompt": false,
+  "items": [
+    {
+      "id": "steamShatter",
+      "description": "Fixed-camera quarter-view pixel art fusion. Keep the exact patched robot, ivory helmet, cyan screen face, red scarf, brass joints, green stitches. Feet fixed throughout. EMPTY anatomical LEFT palm pushes once to cast; RIGHT hand always holds ONE long turquoise wrench lowered. Then return the arm to idle while effects continue. A low ring anchored at the SAME feet erupts in FOUR distinct alternating FIRE/ICE pressure bursts: thick orange-white flame tongues, sharp faceted cyan ice shards, chunky white steam clouds, small debris. Build strong impacts then steam, sparks and crystals disperse completely. End neutral, no effects. Preserve detailed clustered pixel shading and crisp stepped silhouettes. Rich orange/cyan, restrained glow, keep face and feet visible. No thin wire circles, flat vector shapes, camera motion, zoom, walking, turning, mirrored hands, changed weapon, extra people or background. All effects inside canvas.",
+      "frames": 16,
+      "seed": 84101
+    },
+    {
+      "id": "arcFurnace",
+      "description": "Fixed-camera quarter-view pixel art. Preserve the exact ivory patched robot, cyan screen face, red scarf, brass joints and green stitches. Planted feet, no zoom, walking, turning or mirrored hands. Empty anatomical LEFT hand casts; RIGHT hand always holds ONE long turquoise wrench lowered. Detailed clustered shading, crisp contours, rich material texture and restrained glow. No background or extra people. Keep face, feet and all effects inside canvas. One left-palm gesture targets the SAME floor mark well ahead. At that fixed spot FOUR successive compact fire-and-electric eruptions: orange-white thermal tongues and chunky gold lightning lattice interlock, sparks and smoke rise and disperse. Each explosive pulse swells and contracts clearly. The caster quickly lowers the empty hand while distant eruptions continue. End with no flame or lightning, robot returns neutral. Not a literal furnace, sky lightning or continuous beam; do not explode around the caster.",
+      "frames": 16,
+      "seed": 84102
+    },
+    {
+      "id": "fireCyclone",
+      "description": "Fixed-camera quarter-view pixel art. Preserve the exact ivory patched robot, cyan screen face, red scarf, brass joints and green stitches. Planted feet, no zoom, walking, turning or mirrored hands. Empty anatomical LEFT hand casts; RIGHT hand always holds ONE long turquoise wrench lowered. Detailed clustered shading, crisp contours, rich material texture and restrained glow. No background or extra people. Keep face, feet and all effects inside canvas. The empty left palm pushes ONE compact 3D FIRE TORNADO forward. It forms a clear distance IN FRONT of the robot, never around or behind the body. Thick layered orange/yellow fire ribbons twist upward around a hollow core, with a narrow base and broad top. The entire vortex slowly travels forward away from the planted caster as embers spiral. A quick hand return while the vortex persists. Then the vortex unravels into wisps and embers and disappears. No ground spikes or flat wire rings.",
+      "frames": 16,
+      "seed": 84103
+    },
+    {
+      "id": "magneticIceClamp",
+      "description": "Fixed-camera quarter-view pixel art. Preserve the exact ivory patched robot, cyan screen face, red scarf, brass joints and green stitches. Planted feet, no zoom, walking, turning or mirrored hands. Empty anatomical LEFT hand casts; RIGHT hand always holds ONE long turquoise wrench lowered. Detailed clustered shading, crisp contours, rich material texture and restrained glow. No background or extra people. Keep face, feet and all effects inside canvas. One left-hand gesture raises TWO large angular ICE JAWS on opposite sides of ONE fixed point ahead. Faceted cyan blocks grow up, both jaws snap inward ONCE around the central gap, then THREE short purple-white electric pulses bridge between them. Keep the two opposed chunky ice jaws distinct and the target gap visible. Finally jaws crack into falling crystal chunks, electricity fades completely, caster returns neutral. No circular ring, cage around the robot or extra summoned weapon.",
+      "frames": 8,
+      "seed": 84104
+    },
+    {
+      "id": "frostCrosscut",
+      "description": "Locked quarter-view camera. Robot stays planted, unchanged ivory patched helmet, cyan face, red scarf; long wrench stays in RIGHT hand, EMPTY LEFT palm casts once. From that palm TWO flowing icy crescent BLADES release TOGETHER, cross at their waists into ONE upright vertical X, and fly forward together. Each blade is a broad BOWED curved ribbon, with a convex blue cutting edge and concave inner edge, thickest at its belly. All FOUR ends sweep gracefully into long needle-sharp curved points, diminishing continuously to a SINGLE PIXEL; the upper tips curl slightly outward and the lower tips trail backward. Keep a legible tall X silhouette made of two organic saber crescents, NEVER straight bars, parallel rods, rectangular ends or flat chopped caps. Blue-white faceted edges, cyan shaded bellies, a few tiny mint ice flecks. Both crescents appear simultaneously, then shrink and dissolve ahead. Clustered pixel shading, transparent background, all tips inside canvas.",
+      "frames": 16,
+      "seed": 95130,
+      "revision": "curved-v3"
+    },
+    {
+      "id": "stormFloat",
+      "description": "Fixed-camera quarter-view pixel art. Preserve the exact ivory patched robot, cyan screen face, red scarf, brass joints and green stitches. Planted feet, no zoom, walking, turning or mirrored hands. Empty anatomical LEFT hand casts; RIGHT hand always holds ONE long turquoise wrench lowered. Detailed clustered shading, crisp contours, rich material texture and restrained glow. No background or extra people. Keep face, feet and all effects inside canvas. The empty LEFT palm places ONE spherical storm orb at a FIXED point ahead and above the ground. A small compressed mint wind ball grows round, violet/gold electric filaments flicker INSIDE, wind ribbons orbit its surface. The robot lowers its hand while the orb remains stationary, briefly compresses, then ONE sharp electric-wind burst breaks its round shell outward. Fragments fade completely; end neutral. No fan spray, horizontal beam, tornado column or moving projectile.",
+      "frames": 8,
+      "seed": 84106
+    }
+  ],
+  "history": [
+    {
+      "id": "frostCrosscut",
+      "description": "Fixed-camera quarter-view pixel art. Preserve the exact ivory patched robot, cyan screen face, red scarf, brass joints and green stitches. Planted feet, no zoom, walking, turning or mirrored hands. Empty anatomical LEFT hand casts; RIGHT hand always holds ONE long turquoise wrench lowered. Detailed clustered shading, crisp contours, rich material texture and restrained glow. No background or extra people. Keep face, feet and all effects inside canvas. From the empty LEFT palm, TWO curved frost-wind crescent blades form and release SIMULTANEOUSLY as ONE tall UPRIGHT VERTICAL X pair. The crossed pair travels forward together, maintaining its X silhouette, MUCH TALLER THAN WIDE, standing in the air rather than lying flat on the floor. Bright faceted blue-white cutting edges, thin mint trails, tiny ice shards. One palm push only, never sequential sweeps. Two flowing crescents, not a rigid letter X or straight rods. Both dissolve ahead, return to neutral.",
+      "frames": 8,
+      "seed": 84105
+    }
+  ]
+}

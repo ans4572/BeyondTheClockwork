@@ -1,0 +1,14 @@
+[
+  {
+    "action": "heatSwing",
+    "name": "불 · 과열 휘두르기",
+    "direction": "east",
+    "requestedFrames": 16,
+    "jobId": "d597948a-44ca-4c5f-9531-6d34184e36b2",
+    "assetId": "365e5a3b-27fb-5d75-930b-94b55112d6a1",
+    "description": "Single skill cast: anticipation, release, follow-through, smooth return to input pose. Fixed facing and camera, centered full body. BOTH shoulder-upperarm-elbow-forearm-hand chains and BOTH legs/feet remain attached and readable EVERY frame; keep spare arm outside torso. Exactly one long wrench always in anatomical RIGHT hand, LEFT empty. No disappearing/extra limbs, morphing, spin, teleport or camera motion. Effects outside silhouette, never masking joints. Transparent background. Right-hand overheated wrench sweep: brace feet, bend knees, draw RIGHT wrench back, empty LEFT arm visibly bent outside ribs. Rotate hips and chest into ONE broad horizontal sweep toward facing. Small tapered orange-red flame crescent trails wrench HEAD only. Decelerate, lower wrench and settle to neutral; keep left shoulder, elbow, forearm and hand visible throughout.",
+    "seed": 106007,
+    "inputUrl": "https://api.pixellab.ai/mcp/images/9a2c97d9-b007-45ee-a0d6-5038cd91c6e9/download?index=0",
+    "receipt": "id: d597948a-44ca-4c5f-9531-6d34184e36b2\njob_id: d597948a-44ca-4c5f-9531-6d34184e36b2\ndescription: Single skill cast: anticipation, release, follow-through, smooth return to input pose. Fixed facing and camera, centered full body. BOTH shoulder-upperarm-elbow-forearm-hand chains and BOTH legs/feet remain attached and readable EVERY frame; keep spare arm outside torso. Exactly one long wrench always in anatomical RIGHT hand, LEFT empty. No disappearing/extra limbs, morphing, spin, teleport or camera motion. Effects outside silhouette, never masking joints. Transparent background. Right-hand overheated wrench sweep: brace feet, bend knees, draw RIGHT wrench back, empty LEFT arm visibly bent outside ribs. Rotate hips and chest into ONE broad horizontal sweep toward facing. Small tapered orange-red flame crescent trails wrench HEAD only. Decelerate, lower wrench and settle to neutral; keep left shoulder, elbow, forearm and hand visible throughout.\nframes: 16\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 106007\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d597948a-44ca-4c5f-9531-6d34184e36b2\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/d597948a-44ca-4c5f-9531-6d34184e36b2/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 365e5a3b-27fb-5d75-930b-94b55112d6a1\nasset_status: pending (saved to your gallery when generation completes)"
+  }
+]

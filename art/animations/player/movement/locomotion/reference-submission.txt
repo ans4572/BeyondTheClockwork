@@ -1,0 +1,15 @@
+id: a99286d5-5b12-4fcf-aead-a8e215749c9e
+job_id: a99286d5-5b12-4fcf-aead-a8e215749c9e
+model: pixen
+edit: Preserve this exact F2 robot identity, frontal south-facing neutral pose and pixel style: ivory round helmet, green stitched patch, navy cyan-eyed screen, red scarf, brass chest and joints. Lengthen ONLY its single turquoise open-ended wrench in its anatomical RIGHT hand (viewer left) to reach about half the robot's height. LEFT hand remains empty. Full body centered with margin, feet grounded, transparent background. Crisp detailed pixel clusters.
+source: 64x64px
+size: 96x96px
+transparent: True
+seed: 103101
+asset_id: 9bfc481e-c025-589d-ae28-6bed0688dfc2
+asset_status: pending (saved when generation completes)
+cost: 1 generation
+status: processing (~10-40s)
+
+hint: get_image(job_id="a99286d5-5b12-4fcf-aead-a8e215749c9e")
+without get_image: GET https://api.pixellab.ai/mcp/images/a99286d5-5b12-4fcf-aead-a8e215749c9e/download (423 + Retry-After until ready; ?index=N for the Nth of several images)

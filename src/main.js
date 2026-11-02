@@ -1,0 +1,472 @@
+import { loadData } from './engine/data.js';
+import { Game } from './engine/game.js';
+import { encodeSave, decodeSave, hasProgress, SAVE_KEY } from './engine/storage.js';
+import { statCost } from './engine/progression.js';
+import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
+import { SpriteLibrary } from './animation/sprite-library.js';
+import { DepthMask } from './render/depth-mask.js';
+import { TitleScreen, pixelText } from './ui/title-screen.js';
+import { HITS_TO_LEARN } from './engine/tutorial.js';
+import { DialogueBox } from './ui/dialogue.js';
+
+const $ = id => document.getElementById(id);
+const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
+const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
+const HOME_NAME = '웃음 마을';
+const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
+
+try {
+  const data = await loadData();
+  let saved = null, loadError = '', rawSave = '';
+  try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }
+  catch (error) { loadError = error.message; }
+  let saveBlocked = !!loadError, storageError = '';
+  const game = new Game(data, saved, state => {
+    if (saveBlocked) return;
+    try { localStorage.setItem(SAVE_KEY, encodeSave(state)); }
+    catch { storageError = '브라우저 저장 공간을 사용할 수 없습니다. 설정에서 저장 파일을 내보내세요.'; }
+  });
+  const renderer = new CanvasRenderer($('game'), game);
+  // The code doll stays on screen if the sheets are slow or missing.
+  SpriteLibrary.load().then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json').then(library => renderer.useMobSprites(library)).catch(error => console.warn(error));
+  SpriteLibrary.load('/art/animations/npc/game-clips.json').then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+  const fitHud = () => {
+    const scale = $('game').getBoundingClientRect().width / 1120;
+    $('hud').style.transform = `scale(${scale})`;
+    for (const id of ['overlay', 'toast', 'hint']) $(id).style.zoom = scale;
+  };
+  addEventListener('resize', fitHud); document.addEventListener('fullscreenchange', fitHud); fitHud();
+  const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
+  hudFace.imageSmoothingEnabled = false;
+  portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
+  portrait.src = '/art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
+  renderer.mapImages = new Map(); renderer.depthMasks = new Map();
+  const offscreen = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
+  const buildDepth = village => {
+    const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
+    if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
+  };
+  for (const background of new Set([...Object.values(data?.maps?.maps || {}), ...Object.values(data?.maps?.villages || {})].flatMap(map => [map.background, map.mask, ...(map.props || []).map(prop => prop.image)]).concat(data?.maps?.practice?.dummyImage, Object.values(STATUS_ICONS)).filter(Boolean))) {
+    const image = new Image();
+    image.onload = () => { renderer.mapImages.set(background, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(background)).forEach(buildDepth); };
+    image.onerror = () => console.warn(`맵 배경을 불러올 수 없습니다: ${background}`);
+    image.src = background;
+  }
+  const gameViewport = $('overlay').parentElement;
+  let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
+  let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
+  let audio = null, lastSoundId = null;
+
+  function bindings() { return { ...defaultBindings, ...game.s.profile.settings.bindings }; }
+  function clearInput() { held.clear(); mouseHeld = false; pending = {}; }
+  function pause(view = 'pause') { screen = view; game.s.paused = true; clearInput(); renderOverlay(true); }
+  // Panels sit inside the game frame, whose stacking would keep them under the title.
+  const placeOverlay = () => (onTitle ? document.body : gameViewport).append($('overlay'));
+  function openTitle() { onTitle = true; screen = 'title'; game.s.paused = true; document.body.classList.add('on-title'); placeOverlay(); clearInput(); renderOverlay(true); title.show({ canLoad: hasProgress(game.s) }); }
+  function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); placeOverlay(); title.hide(); }
+  /** The stamp and the opening sentences, then control of a waking body. */
+  async function playOpening(stamp) {
+    screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true); leaveTitle();
+    await title.opening(data.progression.intro.openingText, { stamp });
+    game.s.paused = false; game.beginIntro({ wake: !game.s.profile.settings.reducedMotion, lesson: true });
+    title.hide(); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
+  }
+  /** Runs a script, with any side question it offers, and resolves with the final choice. */
+  async function talk(name) {
+    const { scripts } = data.dialogue;
+    screen = 'talk'; clearInput(); $('hud').classList.add('talking'); renderOverlay(true);
+    let choice = await talkBox.play(scripts[name]);
+    while (scripts[choice]) { await talkBox.play(scripts[choice]); choice = await talkBox.play(scripts[name]); }
+    $('hud').classList.remove('talking'); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
+    return choice;
+  }
+  async function talkToNpc(npc) {
+    const choice = await talk(npc.character);
+    if (choice === 'open') game.talk();
+    if (choice === 'elements') game.openElements();
+    if (choice === 'practice' && !game.enterPractice()) game.notify('속성 2개를 고르면 시험할 수 있습니다.');
+    renderOverlay(true);
+  }
+  async function meetMoru() { await talk('registration'); game.register(); game.openElements(); renderOverlay(true); }
+  async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
+  function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
+  function resume() {
+    if (onTitle) { screen = 'title'; bindingTarget = null; renderOverlay(true); title.focus(); return; }
+    screen = null; game.s.paused = false; bindingTarget = null; clearInput(); renderOverlay(true); $('game').focus({ preventScroll: true }); }
+  function button(label, action, extra = '', classes = '') { return `<button class="${classes}" data-action="${action}" ${extra}>${label}</button>`; }
+  function panel(content, classes = '') { return `<section class="panel ${classes}">${content}</section>`; }
+  function openAudio() { if (game.s.profile.settings.sound) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); } }
+  function beep(frequency = 420, duration = 0.05, volume = 0.025) {
+    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = 'triangle'; osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
+    osc.connect(gain).connect(audio.destination); osc.start(); osc.stop(audio.currentTime + duration);
+  }
+  /** Two slow strokes of the town bell. */
+  function toll() {
+    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    for (const stroke of [0, 0.9]) for (const [frequency, volume] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) {
+      const osc = audio.createOscillator(), gain = audio.createGain(), at = audio.currentTime + stroke;
+      osc.frequency.value = frequency; gain.gain.setValueAtTime(volume, at); gain.gain.exponentialRampToValueAtTime(0.001, at + 1.6);
+      osc.connect(gain).connect(audio.destination); osc.start(at); osc.stop(at + 1.6);
+    }
+  }
+  function saveDownload(content = encodeSave(game.s), suffix = 'save') {
+    const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = `beyond-the-clockwork-${suffix}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function statValue(stat, rank) {
+    const value = rank * stat.perRank;
+    return stat.unit === 'percent' ? `+${Number((value * 100).toFixed(1))}%` : `+${value}`;
+  }
+  function statRow(stat) {
+    const rank = game.s.profile.stats[stat.id], maxed = rank >= stat.maxRank, cost = statCost(stat, rank), blocked = maxed || game.s.profile.freeGears < cost;
+    return `<div class="stat-row" title="${stat.description}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${stat.maxRank}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i></div><span class="stat-value">${statValue(stat, rank)}${maxed ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : `⚙ ${cost}`}</button></div>`;
+  }
+  function tuningPanel() {
+    return panel(`<div class="panel-header"><div><h2>몸을 조율한다.</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${data.slice.permanentStats.map(statRow).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div><p class="notice">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p>`, 'side');
+  }
+  function elementsPanel() {
+    const { loadout } = game.s.profile, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
+    const cards = data.combat.elements.map(element => {
+      const picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
+      return `<article class="reward-card ${picked ? 'picked' : ''}" style="--accent:${data.slice.presentation.colors[element.id]}"><h3>${element.name}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')}</article>`;
+    }).join('');
+    return panel(`<div class="panel-header"><div><h2>몸에 달 속성 2개</h2></div><strong>${loadout.length} / 2</strong></div><p>두 속성은 원정을 시작할 때 그대로 장착됩니다. 언제든 모루에게 바꿀 수 있습니다.</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${fusion.effect}` : '두 속성을 고르면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length === 2 ? '' : 'disabled')}</div>`, 'wide');
+  }
+  function describeReward(reward) {
+    if (reward.kind === 'element') {
+      const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
+      return { name: element.device, icon: { fire: '♨', ice: '❄', lightning: 'ϟ', wind: '≋' }[element.id], label: `${element.name} 속성 모듈`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
+    }
+    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: '⚒', label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개', rarity: '개조' }; }
+    if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element], rarity: '개조' }; }
+    if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element], rarity: '특성' }; }
+    if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); return { name: `${element.name} 기술 조율`, icon: '↑', label: '기술 단계', description: '이 슬롯의 기술 두 개가 함께 강해진다.', value: `Lv.${slot.level} → ${slot.level + 1} · 직접 피해 +12%p`, rarity: '조율' }; }
+    if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: '⚙', label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지`, rarity: '영구' };
+    const upgrade = data.combat.balance.temporaryUpgrades.find(u => u.id === reward.id), desc = data.slice.rewards[reward.id];
+    return { name: desc.name, icon: '✧', label: '출력 부품', description: desc.description, value: `${reward.id === 'maxHp' ? '+' + upgrade.perRank + ' HP' : '+' + Math.round(upgrade.perRank * 100) + '%'} · ${(game.s.run.upgrades[reward.id] || 0) + 1}/${upgrade.maxRank} 단계`, rarity: '원정' };
+  }
+  function rewardsPanel() {
+    return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>방 완료 보상은 이미 저장되었습니다. 아래 부품 중 하나를 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
+      const info = describeReward(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
+      return `<article class="reward-card" style="--accent:${info.color || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${info.rarity}</span>${info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 교체`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
+    }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
+  }
+  function settingsPanel() {
+    const settings = game.s.profile.settings, map = bindings();
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}${button('키 기본값', 'reset-bindings', '', 'quiet')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
+  }
+  function codexPanel() {
+    return panel(`<div class="panel-header"><div><h2>속성과 연결의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-list">${data.combat.elements.map(element => `<article class="codex-entry"><h3 style="color:${data.slice.presentation.colors[element.id]}">${element.name} · ${element.device}</h3>${data.combat.skills.filter(s => s.element === element.id).map(skill => `<p><strong>${skill.name}</strong> · ${skill.totalDirectDamage} 피해 / ${skill.cooldown}초<br>${skill.effect}</p>`).join('')}</article>`).join('')}</div><div class="divider"></div><div class="codex-list">${data.combat.fusions.map(f => `<article class="codex-entry"><h3>${f.name} ${game.s.profile.discoveredFusions.includes(f.id) ? '✓' : ''}</h3><p>${f.pair.map(id => data.combat.elements.find(e => e.id === id).name).join(' + ')} · ${f.totalDirectDamage} 피해<br>${f.effect}</p><small>축전 ${f.energyCost} · ${f.cooldown}초 / 두 슬롯 중 낮은 단계·등급 적용</small></article>`).join('')}</div><p class="notice">지금은 4속성 6융합까지 열려 있습니다.</p>`, 'wide');
+  }
+  /** Where the player stands right now, for the area half of the map. */
+  function currentArea() {
+    const s = game.s, hub = !s.run;
+    if (!['combat', 'reward', 'route', 'shop', 'unwind', 'hub', 'registration', 'complete'].includes(s.mode)) return null;
+    return (hub ? game.hubMap : game.map) || null;
+  }
+  function areaMap(area) {
+    if (!area) return '<div class="area-map empty"><span>이곳은 지도에 없는 공간입니다.</span></div>';
+    const [width, height] = area.size || [data.slice.arena.width, data.slice.arena.height], at = (x, y) => `left:${x / width * 100}%;top:${y / height * 100}%`;
+    const npcs = (area.npcs || []).filter(npc => npc.label).map(npc => `<i class="marker npc" style="${at(npc.x, npc.y)}"><b>${npc.label}</b></i>`).join('');
+    const exit = area.exit ? `<i class="marker exit" style="${at(...area.exit.at)}"><b>출구</b></i>` : '';
+    return `<div class="area-map" style="aspect-ratio:${width}/${height}"><img src="${area.background}" alt="">${npcs}${exit}<i class="marker you" style="${at(game.p.x, game.p.y)}"><b>나</b></i></div>`;
+  }
+  const stopIcon = (room, i) => (room.kind === 'shop' ? '⌂' : room.boss ? '✣' : i + 1);
+  function mapPanel() {
+    const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1, route = [data.maps.route.start, ...rooms.map(room => data.maps.route[room.id])];
+    // The town is where a run starts, so it sits before the first numbered stop.
+    const lines = route.slice(1).map(([x, y], i) => `<line class="${i <= node ? 'done' : ''}" x1="${route[i][0]}" y1="${route[i][1]}" x2="${x}" y2="${y}"/>`).join('');
+    const stop = (state, classes, icon, label, [x, y]) => `<div class="route-stop ${state} ${classes}" style="left:${x}%;top:${y}%"><span>${icon}</span><small>${label}</small></div>`;
+    const stops = stop(s.run ? 'done' : 'current', '', '⌂', '마을', route[0]) + rooms.map((room, i) => stop(i === node ? 'current' : i < node ? 'done' : '', room.boss ? 'boss' : '', stopIcon(room, i), room.short, route[i + 1])).join('');
+    const place = game.room?.name || HOME_NAME, note = !s.run ? '출발 전입니다. 남쪽 큰길이 웃음거리로 이어집니다.' : game.room.description;
+    return panel(`<div class="panel-header"><div><h2>웃음거리 지도</h2></div>${button('닫기', 'resume')}</div><div class="map-sheet"><div class="route-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${stops}</div><div class="area-side"><strong>${place}</strong>${areaMap(currentArea())}<p>${note}</p></div></div><p class="notice">⌂ 마을 · 숫자 전투방 · ✣ 보스 · ${keyName(bindings().map)} 키로 닫기</p>`, 'wide');
+  }
+  function renderOverlay(force = false) {
+    const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
+    const key = `${mode}:${s.run?.node}`;
+    if (!force && key === overlayKey) return;
+    overlayKey = key;
+    let html = '';
+    if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(loadError)}</p><p>기존 저장을 보존하고 있습니다. 먼저 원본을 내보내거나 다른 저장 파일을 불러올 수 있습니다.</p><div class="actions">${button('기존 저장 원본 내보내기', 'export-raw')}${button('파일 불러오기', 'import')}${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json">`, 'compact');
+    if (mode === 'confirmNew') html = panel(`<h2>저장을 새로 시작할까요?</h2><p>현재 브라우저의 진행을 새 게임으로 교체합니다. 파일로 내보낸 기록은 유지됩니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('새 게임 시작', 'new-game', '', 'danger')}</div>`, 'compact');
+    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
+    if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
+    if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : tuningPanel();
+    if (mode === 'reward') html = rewardsPanel();
+    if (mode === 'shop') html = panel(`<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
+      const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
+      const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
+      return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '강화 가능한 첫 슬롯의 기술 단계 +1', persistentGears: `영구 톱니 ${item.amount}개 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(sold ? '구매 완료' : '구매', 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+    }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
+    if (mode === 'unwind') html = panel(`<h2>통제축을 풀어 주세요.</h2><p>${game.room.boss === 'collectorRoco' ? '“올바른 장소는 내가 고를게.”' : '마을의 행진은 주민의 선택이 아니라 명령이었다.'}<br>동력은 남기고 명령 회로를 분리합니다.</p><div class="actions">${button(`${keyName(bindings().interact)} · 태엽 풀기`, 'unwind', '', 'primary')}${button('연출 건너뛰기', 'unwind', '', 'quiet')}</div><p class="notice">건너뛰어도 동일한 기록과 보상을 한 번만 받습니다.</p>`, 'compact');
+    if (mode === 'complete') html = panel(`<div class="complete-seal">✣</div><h2>처음으로, 행진이 멈췄다.</h2><p>웃음거리의 통제축을 풀었습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>시계탑의 본신호는 아직 남아 있습니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">리본정원 이후의 이야기는 아직 만들고 있습니다.</p>`, 'compact');
+    if (mode === 'returned') {
+      const result = s.result;
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 유효 귀환 보너스 <strong>⚙ +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
+    }
+    if (mode === 'pause') html = settingsPanel();
+    if (mode === 'codex') html = codexPanel();
+    if (mode === 'map') html = mapPanel();
+    if (html && storageError && mode !== 'pause') html = html.replace('</section>', `<p class="error">${escapeHTML(storageError)}</p></section>`);
+    $('overlay').innerHTML = html;
+    // Headings are cut to hard pixels like the title, so every sheet reads as the same form.
+    for (const heading of $('overlay').querySelectorAll('h2')) { heading.setAttribute('aria-label', heading.textContent); heading.replaceChildren(pixelText(heading.textContent, 15, '#2b3345')); }
+    if (html) { clearInput(); $('overlay').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); }
+  }
+
+  function lessonHint() {
+    const keys = bindings(), lesson = game.tutorial;
+    if (!screen && game.s.mode === 'route' && game.s.run.node === 0) return '노란 표시로 걸어 나가세요';
+    if (!screen && game.s.mode === 'practice') return '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다';
+    if (screen || !['intro', 'registration'].includes(game.s.mode) || game.wakeProgress !== null) return '';
+    return {
+      walk: `${['up', 'left', 'down', 'right'].map(key => keyName(keys[key])).join(' ')} 키로 노란 표시까지 걸어가세요`,
+      attack: `좌클릭으로 경비를 때리세요 ${lesson.state?.hits ?? 0} / ${HITS_TO_LEARN}`,
+      dodge: `경비 머리 위에 ! 가 뜨면 ${keyName(keys.dodge)} 키로 피하세요`,
+      door: '빛나는 문으로 걸어가세요',
+      moru: '노란 화살표를 따라 모루에게 걸어가세요'
+    }[lesson.step] || '';
+  }
+  function hudSlots() {
+    const keys = bindings(), skills = game.skillSlots;
+    return [
+      { key: '좌', icon: 'wrench' },
+      ...[0, 1, 2, 3].map(i => ({ key: keyName(keys['skill' + i]), skill: skills[i]?.skill, level: skills[i]?.slot.level })),
+      { key: '우', skill: game.fusion, fusion: true },
+      { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'dodge', dodge: true }
+    ];
+  }
+  function updateHUD() {
+    const s = game.s, p = game.p, maxEnergy = data.combat.player.maxEnergy, slots = hudSlots();
+    $('hp-fill').style.width = `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`;
+    $('hp-text').textContent = `${Math.ceil(p.hp)} / ${p.maxHp}`;
+    $('energy-fill').style.width = `calc(${p.energy / maxEnergy * 100}% - 4px)`;
+    $('energy-text').textContent = `축전 ${Math.floor(p.energy)}`;
+    $('gears').textContent = s.profile.freeGears;
+    $('coins').textContent = s.run?.coins || 0;
+    const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon]));
+    if ($('skills').dataset.key !== slotKey) {
+      $('skills').dataset.key = slotKey;
+      $('skills').innerHTML = slots.map(slot => {
+        const art = slot.icon || slot.skill?.id;
+        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="/art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level ? `<span class="lv">${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div></div>`;
+      }).join('');
+    }
+    [...$('skills').children].forEach((element, i) => {
+      const slot = slots[i], { skill } = slot, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : skill ? p.cooldowns[skill.id] || 0 : 0;
+      const total = slot.dodge ? data.combat.player.dodge.cooldown : skill?.cooldown || 1, remaining = Math.max(0, until - s.time);
+      element.querySelector('.cool').style.height = `${Math.min(1, remaining / total) * 100}%`;
+      element.querySelector('.left').textContent = remaining > 0 ? remaining.toFixed(1) : '';
+      element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
+    });
+    const resetting = game.s.practice?.resetCooldowns;
+    $('practice-reset').hidden = game.s.mode !== 'practice';
+    $('practice-reset').textContent = `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`;
+    $('practice-reset').classList.toggle('on', !!resetting);
+    const hint = lessonHint();
+    if ($('hint').textContent !== hint) $('hint').textContent = hint;
+    $('hint').hidden = !hint;
+    const notice = s.notices.at(-1);
+    $('toast').classList.toggle('visible', !!notice && game.onFoot);
+    $('toast').textContent = notice?.text || '';
+  }
+
+  async function action(target) {
+    const name = target.dataset.action, d = target.dataset;
+    openAudio();
+    if (name === 'debug-tutorial') { leaveTitle(); game.debugRestartTutorial(); resume(); }
+    if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room)); resume(); }
+    if (name === 'intro') game.beginIntro();
+    if (name === 'register') game.register();
+    if (name === 'close-panel') game.closePanel();
+    if (name === 'element') game.toggleElement(d.id);
+    if (name === 'practice') { game.closePanel(); game.enterPractice(); }
+    if (name === 'tune-buy') game.tune(d.row, 'buy');
+    if (name === 'refund') game.tune(null, 'refund');
+    if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
+    if (name === 'shop-buy') game.buyShop(d.id);
+    if (name === 'unwind') game.unwind();
+    if (name === 'return-complete') game.returnToHub('clear');
+    if (name === 'acknowledge') game.acknowledgeReturn();
+    if (name === 'abandon') { game.returnToHub(game.s.mode === 'complete' ? 'clear' : 'abandon'); resume(); }
+    if (name === 'resume') resume();
+    if (name === 'codex') pause('codex');
+    if (name === 'rebind') bindingTarget = d.key;
+    if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
+    if (name === 'export') { game.save(); saveDownload(); }
+    if (name === 'export-raw') saveDownload(rawSave, 'recovery');
+    if (name === 'import') { $('import-file').click(); return; }
+    if (name === 'confirm-new') screen = 'confirmNew';
+    if (name === 'cancel-new') { if (onTitle) { resume(); return; } screen = 'loadError'; }
+    if (name === 'new-game') { const fromTitle = onTitle; game.state = new Game(data).s; saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
+    renderOverlay(true); updateHUD();
+    if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
+  }
+  $('overlay').addEventListener('click', e => { const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target); });
+  $('overlay').addEventListener('change', async e => {
+    const setting = e.target.dataset.setting;
+    if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
+    if (e.target.id === 'import-file' && e.target.files[0]) {
+      try {
+        const state = decodeSave(await e.target.files[0].text(), data);
+        game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; resume(); renderOverlay(true); updateHUD();
+      } catch (error) { const p = document.createElement('p'); p.className = 'error'; p.textContent = '불러오기 실패: ' + error.message; $('overlay').querySelector('.panel').append(p); }
+    }
+  });
+  $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
+  $('fullscreen').addEventListener('click', () => { $('app').requestFullscreen?.().catch(() => {}); });
+
+  function interact() {
+    if (screen) return;
+    if (game.village) { if (game.s.panel) game.closePanel(); else if (game.nearbyNpc) talkToNpc(game.nearbyNpc); }
+    else if (game.s.mode === 'unwind') game.unwind();
+    else if (game.s.mode === 'returned') game.acknowledgeReturn();
+    else if (game.s.mode === 'complete') game.returnToHub('clear');
+    renderOverlay();
+  }
+  document.addEventListener('keydown', e => {
+    if (e.target.matches('input')) return;
+    if (bindingTarget) {
+      e.preventDefault();
+      if (e.code !== 'Escape' && !['MetaLeft', 'MetaRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'].includes(e.code)) {
+        const map = bindings(), old = map[bindingTarget], duplicate = Object.keys(map).find(key => map[key] === e.code && key !== bindingTarget);
+        game.s.profile.settings.bindings[bindingTarget] = e.code;
+        if (duplicate) game.s.profile.settings.bindings[duplicate] = old;
+        game.save();
+      }
+      bindingTarget = null; renderOverlay(true); return;
+    }
+    if (screen === 'cinematic') return;
+    if (screen === 'talk') {
+      const keys = bindings();
+      if (e.repeat) return;
+      if (e.code === 'Escape') { e.preventDefault(); talkBox.skip(); }
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); talkBox.move(e.code === 'ArrowUp' ? -1 : 1); }
+      if (['Space', 'Enter', keys.interact, keys.skill1].includes(e.code)) { e.preventDefault(); talkBox.advance(); }
+      return;
+    }
+    if (e.code === 'Escape') { e.preventDefault(); if (e.repeat || saveBlocked || screen === 'title') return; if (screen) resume(); else if (game.s.panel) { game.closePanel(); renderOverlay(); } else pause(); return; }
+    if (e.code === 'F9') { e.preventDefault(); if (e.repeat || saveBlocked) return; if (screen === 'debug') resume(); else pause('debug'); return; }
+    if (screen === 'title') return;
+    const map = bindings(), key = Object.keys(map).find(key => map[key] === e.code);
+    if (!key && e.code === 'KeyT' && !e.repeat && !screen) game.togglePracticeReset();
+    if (!key) return;
+    e.preventDefault();
+    if (e.repeat) return;
+    if (key === 'codex') { if (!saveBlocked) screen === 'codex' ? resume() : pause('codex'); return; }
+    if (key === 'map') { if (!saveBlocked) screen === 'map' ? resume() : pause('map'); return; }
+    if (screen) return;
+    if (key === 'interact' || (game.village && key === 'skill1')) { interact(); return; }
+    if (!game.onFoot) {
+      if (game.s.mode === 'reward' && /^Digit[123]$/.test(e.code)) game.chooseReward(Number(e.code.at(-1)) - 1);
+      return;
+    }
+    openAudio(); held.add(e.code);
+    if (key === 'dodge') pending.dodge = true;
+    if (key.startsWith('skill')) pending.skill = Number(key.at(-1));
+  });
+  document.addEventListener('keydown', e => {
+    if (screen || e.repeat || !/^Digit[123]$/.test(e.code) || game.s.mode !== 'reward') return;
+    const reward = game.s.run.rewardChoices[Number(e.code.at(-1)) - 1];
+    if (reward?.kind === 'element' && game.slots.length >= 2) return;
+    game.chooseReward(Number(e.code.at(-1)) - 1); renderOverlay(true);
+  });
+  document.addEventListener('keyup', e => held.delete(e.code));
+  function mousePosition(e) {
+    const rect = $('game').getBoundingClientRect(), scale = Math.min(rect.width / 1120, rect.height / 640);
+    pointer = { x: (e.clientX - rect.left - (rect.width - 1120 * scale) / 2) / scale / 40 + renderer.camera.x, y: (e.clientY - rect.top - (rect.height - 640 * scale) / 2) / scale / 40 + renderer.camera.y };
+    renderer.pointer = pointer;
+  }
+  $('game').addEventListener('pointermove', mousePosition);
+  $('game').addEventListener('pointerdown', e => { if (!game.active) return; e.preventDefault(); openAudio(); mousePosition(e); $('game').focus({ preventScroll: true }); if (e.button === 0) mouseHeld = true; if (e.button === 2) pending.fusion = true; });
+  document.addEventListener('pointerup', () => mouseHeld = false);
+  $('game').addEventListener('contextmenu', e => e.preventDefault());
+  window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } });
+  window.addEventListener('pagehide', () => game.save());
+  window.addEventListener('beforeunload', () => game.save());
+
+  function pollGamepad() {
+    const pad = navigator.getGamepads?.().find(p => p?.connected);
+    if (!pad) { gamepadLast = []; return null; }
+    const edge = index => pad.buttons[index]?.pressed && !gamepadLast[index];
+    if (screen === 'cinematic') { gamepadLast = pad.buttons.map(b => b.pressed); return null; }
+    if (screen === 'talk') {
+      if (edge(12) || edge(14)) talkBox.move(-1);
+      if (edge(13) || edge(15)) talkBox.move(1);
+      if (edge(0)) talkBox.advance();
+      if (edge(1)) talkBox.skip();
+      gamepadLast = pad.buttons.map(b => b.pressed); return null;
+    }
+    if (screen === 'title') {
+      if (edge(12) || edge(14)) title.move(-1);
+      if (edge(13) || edge(15)) title.move(1);
+      if (edge(0)) title.activate();
+      gamepadLast = pad.buttons.map(b => b.pressed); return null;
+    }
+    if (edge(9)) { if (screen) resume(); else pause(); }
+    if (edge(8) && !saveBlocked) { if (screen === 'map') resume(); else pause('map'); }
+    if (!screen && edge(0)) {
+      if (game.active) interact();
+      else if (game.s.mode === 'introDeath') game.beginIntro();
+      else if (game.s.mode === 'reward') { const focused = document.activeElement; if (focused?.matches('[data-action="reward"]')) focused.click(); }
+      else interact();
+    }
+    // D-pad navigation also reaches replacement choices and shop items.
+    if (!game.active && !screen && [12, 13, 14, 15].some(edge)) {
+      const buttons = [...$('overlay').querySelectorAll('button:not(:disabled)')], current = buttons.indexOf(document.activeElement);
+      const direction = edge(12) || edge(14) ? -1 : 1;
+      buttons[(current + direction + buttons.length) % buttons.length]?.focus();
+    }
+    const x = Math.abs(pad.axes[0]) > 0.18 ? pad.axes[0] : 0, y = Math.abs(pad.axes[1]) > 0.18 ? pad.axes[1] : 0;
+    if (Math.hypot(pad.axes[2] || 0, pad.axes[3] || 0) > 0.25) pointer = { x: game.p.x + pad.axes[2] * 7, y: game.p.y + pad.axes[3] * 7 };
+    const result = { x, y, basic: !!pad.buttons[5]?.pressed, dodge: edge(1), fusion: edge(7), skill: edge(2) ? 0 : edge(3) ? 1 : edge(4) ? 2 : edge(6) ? 3 : undefined };
+    gamepadLast = pad.buttons.map(b => b.pressed); return result;
+  }
+
+  let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1;
+  function frame(now) {
+    const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta;
+    if (game.s.mode === 'opening' && !screen) playOpening(false);
+    if (game.tutorial.readyToRegister && !screen) meetMoru();
+    const bellRinging = !!renderer.npcDirector?.stopped;
+    if (bellRinging && !bellWasRinging) toll();
+    bellWasRinging = bellRinging;
+    if (game.s.mode === 'registration' && game.tutorial.step === 'town' && bellRinging) game.tutorial.heardBell();
+    if (!screen && game.tutorial.takeCall()) moruCalls();
+    if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening');
+    const pad = pollGamepad(), map = bindings();
+    if (pad?.dodge) pending.dodge = true;
+    if (pad?.fusion) pending.fusion = true;
+    if (pad?.skill !== undefined) pending.skill = pad.skill;
+    while (accumulator >= 1 / 60) {
+      const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0), y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0), aim: pointer, basic: mouseHeld || pad?.basic, ...pending };
+      game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60;
+    }
+    if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
+    const charging = game.s.enemies.find(e => ['dash', 'shot'].includes(e.tell?.type) && e.tell.started > lastChargeAt);
+    if (charging) { lastChargeAt = charging.tell.started; beep(880, 0.1, 0.015); }
+    const soundEffect = game.s.effects.findLast(f => ['swing', 'hurt', 'scrap'].includes(f.type));
+    if (soundEffect && soundEffect.id !== lastSoundId) { lastSoundId = soundEffect.id; beep(soundEffect.type === 'hurt' ? 110 : soundEffect.type === 'scrap' ? 660 : 320, 0.06); }
+    renderer.talkKey = keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+  }
+  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion: () => game.s.profile.settings.reducedMotion });
+  $('dialogue').addEventListener('pointerdown', e => { if (!e.target.closest('button')) talkBox.advance(); });
+  const title = new TitleScreen($('title'), {
+    onNew: startNew,
+    onLoad: () => { openAudio(); leaveTitle(); resume(); },
+    onSettings: () => { screen = 'pause'; renderOverlay(true); },
+    onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; beep(70, 0.2, 0.09); game.s.paused = paused; },
+    reducedMotion: () => game.s.profile.settings.reducedMotion
+  });
+  if (!loadError) openTitle();
+  renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
+} catch (error) {
+  $('overlay').innerHTML = `<section class="panel compact"><h2>태엽이 연결되지 않았습니다.</h2><p class="error">${escapeHTML(error.message)}</p><p>프로젝트 폴더에서 <code>npm start</code>를 실행한 뒤 <a href="http://localhost:4173">localhost:4173</a>을 열어 주세요.</p></section>`;
+  console.error(error);
+}

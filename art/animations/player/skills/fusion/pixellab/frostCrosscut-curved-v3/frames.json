@@ -1,0 +1,27 @@
+{
+  "provider": "pixellab",
+  "model": "pixminimax",
+  "jobId": "4a214ede-32fc-4049-a608-98cc78fb05a3",
+  "assetId": "ba9dbdae-9e4b-5839-9d50-440158309772",
+  "direction": "south-east",
+  "noSyntheticInbetweenFrames": true,
+  "files": [
+    "frames/000.png",
+    "frames/001.png",
+    "frames/002.png",
+    "frames/003.png",
+    "frames/004.png",
+    "frames/005.png",
+    "frames/006.png",
+    "frames/007.png",
+    "frames/008.png",
+    "frames/009.png",
+    "frames/010.png",
+    "frames/011.png",
+    "frames/012.png",
+    "frames/013.png",
+    "frames/014.png",
+    "frames/015.png",
+    "frames/016.png"
+  ]
+}

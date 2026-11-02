@@ -1,0 +1,50 @@
+[
+  {
+    "action": "attack-2",
+    "direction": "north",
+    "jobId": "de5151af-4438-48a6-ba8f-c7607bc28353",
+    "assetId": "17a7ffbf-9acf-5405-9933-c56d6ddf4dc5",
+    "requestedFrames": 12,
+    "seed": 113500,
+    "description": "Strict REAR VIEW: plain ivory back of helmet and red scarf knot/back face camera; absolutely NO face, eyes or mouth. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.",
+    "receipt": "id: de5151af-4438-48a6-ba8f-c7607bc28353\njob_id: de5151af-4438-48a6-ba8f-c7607bc28353\ndescription: Strict REAR VIEW: plain ivory back of helmet and red scarf knot/back face camera; absolutely NO face, eyes or mouth. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.\nframes: 12\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 113500\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"de5151af-4438-48a6-ba8f-c7607bc28353\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/de5151af-4438-48a6-ba8f-c7607bc28353/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 17a7ffbf-9acf-5405-9933-c56d6ddf4dc5\nasset_status: pending (saved to your gallery when generation completes)",
+    "priority": 2,
+    "status": "processing"
+  },
+  {
+    "action": "attack-2",
+    "direction": "north-east",
+    "jobId": "85635111-225c-4416-8d89-3378bd0a1a79",
+    "assetId": "887872ea-ede1-5484-a2e4-14e687112809",
+    "requestedFrames": 12,
+    "seed": 113501,
+    "description": "Exact REAR THREE-QUARTER view as input: back of helmet and scarf/back visible. Never turn head or torso to show front face. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.",
+    "receipt": "id: 85635111-225c-4416-8d89-3378bd0a1a79\njob_id: 85635111-225c-4416-8d89-3378bd0a1a79\ndescription: Exact REAR THREE-QUARTER view as input: back of helmet and scarf/back visible. Never turn head or torso to show front face. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.\nframes: 12\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 113501\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"85635111-225c-4416-8d89-3378bd0a1a79\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/85635111-225c-4416-8d89-3378bd0a1a79/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 887872ea-ede1-5484-a2e4-14e687112809\nasset_status: pending (saved to your gallery when generation completes)",
+    "priority": 2,
+    "status": "processing"
+  },
+  {
+    "action": "attack-2",
+    "direction": "north-west",
+    "jobId": "7bb1424e-b0e9-478c-864b-a799b97beaf2",
+    "assetId": "e5e69154-b229-58a8-b660-aa6fd041993c",
+    "requestedFrames": 12,
+    "seed": 113502,
+    "description": "Exact REAR THREE-QUARTER view as input: back of helmet and scarf/back visible. Never turn head or torso to show front face. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.",
+    "receipt": "id: 7bb1424e-b0e9-478c-864b-a799b97beaf2\njob_id: 7bb1424e-b0e9-478c-864b-a799b97beaf2\ndescription: Exact REAR THREE-QUARTER view as input: back of helmet and scarf/back visible. Never turn head or torso to show front face. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.\nframes: 12\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 113502\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7bb1424e-b0e9-478c-864b-a799b97beaf2\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/7bb1424e-b0e9-478c-864b-a799b97beaf2/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e5e69154-b229-58a8-b660-aa6fd041993c\nasset_status: pending (saved to your gallery when generation completes)",
+    "priority": 2,
+    "status": "processing"
+  },
+  {
+    "action": "attack-2",
+    "direction": "south-east",
+    "jobId": "eb288ad1-9a21-4dc4-adec-a1f2545d507c",
+    "assetId": "010027a3-7cd2-5909-a806-0fdad33d7363",
+    "requestedFrames": 12,
+    "seed": 113503,
+    "description": "Exact south-east FRONT THREE-QUARTER view as input; same navy screen and cyan eyes. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.",
+    "receipt": "id: eb288ad1-9a21-4dc4-adec-a1f2545d507c\njob_id: eb288ad1-9a21-4dc4-adec-a1f2545d507c\ndescription: Exact south-east FRONT THREE-QUARTER view as input; same navy screen and cyan eyes. Keep reference HEAD orientation fixed while arms move; torso may twist at most 10 degrees, NO spin or turning to another direction. ONE long rigid turquoise wrench always in anatomical RIGHT hand. Empty LEFT hand counterbalances. Make ONE BACKHAND only: slowly bring right gripping hand toward own LEFT shoulder, then ONE quick waist-height sweep from own LEFT to RIGHT. Finish on right, lower wrench gently and return to starting guard WITHOUT another sweep. Feet near same root. NO motion trails, NO slash shapes, NO glow, NO particles, NO effects of any kind. Show actual wrench and body clearly in all frames, entire wrench inside frame. Static camera.\nframes: 12\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 113503\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"eb288ad1-9a21-4dc4-adec-a1f2545d507c\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/eb288ad1-9a21-4dc4-adec-a1f2545d507c/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 010027a3-7cd2-5909-a806-0fdad33d7363\nasset_status: pending (saved to your gallery when generation completes)",
+    "priority": 2,
+    "status": "processing"
+  }
+]

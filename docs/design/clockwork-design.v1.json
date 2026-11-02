@@ -1,0 +1,2022 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "clockwork-design-0.3-magnetic-ice-clamp",
+  "title": "태엽 밖으로",
+  "englishWorkingTitle": "Beyond the Clockwork",
+  "date": "2026-10-29",
+  "status": "proposal_only_not_runtime",
+  "units": {
+    "distance": "unityUnits",
+    "seconds": "seconds",
+    "referencePixelsPerUnit": 40,
+    "ratio": "0_to_1",
+    "percentagePoints": "0.01_equals_1pp"
+  },
+  "scope": {
+    "elementCount": 8,
+    "skillsPerElement": 2,
+    "individualSkillCount": 16,
+    "fusionCount": 28,
+    "equippedElements": 2,
+    "equippedFusionSkills": 1,
+    "activeElementSkillSlots": 5,
+    "coreUpgradeRows": 12,
+    "coreUpgradeChoices": 24,
+    "elementUpgradeNodes": 24
+  },
+  "player": {
+    "maxHp": 100,
+    "speed": 3.5,
+    "maxEnergy": 100,
+    "energyPerBasicPhase": 8,
+    "hurtInvulnerability": 0.55,
+    "dodge": {
+      "distance": 3,
+      "duration": 0.18,
+      "invincibility": 0.16,
+      "cooldown": 0.75,
+      "charges": 1
+    },
+    "combo": [
+      {
+        "damage": 16,
+        "windup": 0.12,
+        "active": 0.15,
+        "recovery": 0.15,
+        "range": 1.65
+      },
+      {
+        "damage": 18,
+        "windup": 0.135,
+        "active": 0.165,
+        "recovery": 0.18,
+        "range": 1.85
+      },
+      {
+        "damage": 28,
+        "windup": 0.21,
+        "active": 0.21,
+        "recovery": 0.3,
+        "range": 2.2
+      }
+    ]
+  },
+  "caps": {
+    "permanentConditionalDamageBonus": 0.6,
+    "totalCooldownReduction": 0.35,
+    "minDodgeCooldown": 0.45,
+    "critChance": 0.2,
+    "critMultiplier": 1.5,
+    "shieldFractionMaxHp": 0.5,
+    "lightHealBasePerRoom": 12,
+    "erosionHealBasePerRoom": 8,
+    "bossSlow": 0.1,
+    "bossStaggerWindowSeconds": 1.5,
+    "bossStaggerReapplyLockSeconds": 8,
+    "runDamageBonus": 0.8,
+    "targetVulnerabilityBonus": 0.3
+  },
+  "economy": {
+    "firstReturnBonus": 15,
+    "firstReturnBonusRequiresClearedCombat": true,
+    "persistentCurrency": "freeGears",
+    "runCurrency": "coins",
+    "unlockItem": "tuningSeal",
+    "finalBossPersistentReward": 100,
+    "sharedCoreTotal": 5480,
+    "elementTotal": 7200,
+    "runCoinRewards": {
+      "normal": 15,
+      "miniboss": 25,
+      "regionBoss": 40
+    },
+    "baseCoinsBeforeFinalBoss": 500,
+    "shop": [
+      {
+        "id": "heal",
+        "cost": 45,
+        "amount": 25,
+        "oncePerShop": true
+      },
+      {
+        "id": "skillLevel",
+        "cost": 70,
+        "amount": 1
+      },
+      {
+        "id": "element",
+        "cost": 90
+      },
+      {
+        "id": "wrenchMod",
+        "cost": 120
+      },
+      {
+        "id": "persistentGears",
+        "cost": 60,
+        "amount": 20,
+        "oncePerShop": true
+      }
+    ]
+  },
+  "progression": {
+    "respec": "free_full_refund_at_hub",
+    "pairedRank": "shared_between_two_choices",
+    "tier2Unlock": "reach_first_miniboss_or_clear_5_combat_rooms_total",
+    "tier3Unlock": "defeat_first_region_boss_or_clear_12_combat_rooms_total",
+    "extraElementsUnlock": "defeat_first_miniboss_or_clear_8_combat_rooms_total",
+    "coreRows": [
+      {
+        "id": "chassis",
+        "name": "몸체",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "tier": 1,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "chassis_a",
+            "name": "보강 외판",
+            "stat": "maxHp",
+            "perRank": 10,
+            "unit": "flat",
+            "maxEffect": 50,
+            "notes": ""
+          },
+          {
+            "id": "chassis_b",
+            "name": "경량 몸체",
+            "stat": "moveSpeed",
+            "perRank": 0.015,
+            "unit": "fraction",
+            "maxEffect": 0.075,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "타격",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "tier": 1,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "strike_a",
+            "name": "강철 타격축",
+            "stat": "basicDamage",
+            "perRank": 0.04,
+            "unit": "fraction",
+            "maxEffect": 0.2,
+            "notes": ""
+          },
+          {
+            "id": "strike_b",
+            "name": "후면 공략",
+            "stat": "rearDamage",
+            "perRank": 0.06,
+            "unit": "fraction",
+            "maxEffect": 0.3,
+            "notes": "후면 120도에서 적중한 공격·스킬에 적용"
+          }
+        ]
+      },
+      {
+        "id": "repair",
+        "name": "정비",
+        "maxRank": 3,
+        "costs": [
+          30,
+          70,
+          130
+        ],
+        "tier": 1,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "repair_a",
+            "name": "자동 정비",
+            "stat": "healPerCombatClear",
+            "perRank": 1,
+            "unit": "flat",
+            "maxEffect": 3,
+            "notes": "전투방 최초 완료 때만"
+          },
+          {
+            "id": "repair_b",
+            "name": "윤활 보급",
+            "stat": "healingReceived",
+            "perRank": 0.1,
+            "unit": "fraction",
+            "maxEffect": 0.3,
+            "notes": "방별 회복 예산을 늘리지는 않음"
+          }
+        ]
+      },
+      {
+        "id": "safety",
+        "name": "생존",
+        "maxRank": 2,
+        "costs": [
+          120,
+          300
+        ],
+        "tier": 1,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "safety_a",
+            "name": "예비 스프링",
+            "stat": "reviveCharges",
+            "perRank": 1,
+            "unit": "count",
+            "maxEffect": 2,
+            "notes": "1회당 최대 HP의 25%로 현장에서 복구; 원정당 1/2회"
+          },
+          {
+            "id": "safety_b",
+            "name": "초동 완충재",
+            "stat": "firstHitReduction",
+            "perRank": 0.1,
+            "unit": "fraction",
+            "maxEffect": 0.2,
+            "notes": "각 전투방 첫 유효 피격에만 적용"
+          }
+        ]
+      },
+      {
+        "id": "dodge",
+        "name": "기동",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "tier": 2,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "dodge_a",
+            "name": "윤활 회피축",
+            "stat": "dodgeCooldown",
+            "perRank": -0.04,
+            "unit": "seconds",
+            "maxEffect": -0.2,
+            "notes": ""
+          },
+          {
+            "id": "dodge_b",
+            "name": "확장 레일",
+            "stat": "dodgeDistance",
+            "perRank": 0.1,
+            "unit": "units",
+            "maxEffect": 0.5,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "circuit",
+        "name": "회로",
+        "maxRank": 5,
+        "costs": [
+          40,
+          65,
+          100,
+          145,
+          200
+        ],
+        "tier": 2,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "circuit_a",
+            "name": "복합 도선",
+            "stat": "elementDamage",
+            "perRank": 0.03,
+            "unit": "fraction",
+            "maxEffect": 0.15,
+            "notes": ""
+          },
+          {
+            "id": "circuit_b",
+            "name": "확장 축전통",
+            "stat": "maxEnergy",
+            "perRank": 4,
+            "unit": "flat",
+            "maxEffect": 20,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "charge",
+        "name": "축전",
+        "maxRank": 4,
+        "costs": [
+          45,
+          85,
+          140,
+          220
+        ],
+        "tier": 2,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "charge_a",
+            "name": "회수 톱니",
+            "stat": "energyPerBasicPhase",
+            "perRank": 1,
+            "unit": "flat",
+            "maxEffect": 4,
+            "notes": ""
+          },
+          {
+            "id": "charge_b",
+            "name": "안정 축전",
+            "stat": "energyRegenCombat",
+            "perRank": 0.5,
+            "unit": "perSecond",
+            "maxEffect": 2,
+            "notes": "살아 있는 적이 있는 전투 중에만"
+          }
+        ]
+      },
+      {
+        "id": "efficiency",
+        "name": "효율",
+        "maxRank": 4,
+        "costs": [
+          45,
+          85,
+          140,
+          220
+        ],
+        "tier": 2,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "efficiency_a",
+            "name": "고속 회로",
+            "stat": "activeSkillCooldownReduction",
+            "perRank": 0.015,
+            "unit": "fraction",
+            "maxEffect": 0.06,
+            "notes": ""
+          },
+          {
+            "id": "efficiency_b",
+            "name": "융합 접점",
+            "stat": "fusionEnergyDiscount",
+            "perRank": 2,
+            "unit": "flat",
+            "maxEffect": 8,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "supply",
+        "name": "보급",
+        "maxRank": 5,
+        "costs": [
+          30,
+          45,
+          65,
+          90,
+          120
+        ],
+        "tier": 3,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "supply_a",
+            "name": "출발 주머니",
+            "stat": "startingCoins",
+            "perRank": 10,
+            "unit": "flat",
+            "maxEffect": 50,
+            "notes": ""
+          },
+          {
+            "id": "supply_b",
+            "name": "교환표",
+            "stat": "shopDiscount",
+            "perRank": 0.02,
+            "unit": "fraction",
+            "maxEffect": 0.1,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "selection",
+        "name": "선택",
+        "maxRank": 2,
+        "costs": [
+          150,
+          350
+        ],
+        "tier": 3,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "selection_a",
+            "name": "행운 나사",
+            "stat": "rareChoiceChance",
+            "perRank": 0.05,
+            "unit": "percentagePoints",
+            "maxEffect": 0.1,
+            "notes": "기본 일반/희귀/특제 80/18/2에서 일반 확률을 이동"
+          },
+          {
+            "id": "selection_b",
+            "name": "재선별 장치",
+            "stat": "rewardRerolls",
+            "perRank": 1,
+            "unit": "count",
+            "maxEffect": 2,
+            "notes": "선택지 묶음 재추첨; 영구 재료와 보스 인장은 재추첨 불가"
+          }
+        ]
+      },
+      {
+        "id": "style",
+        "name": "전투 방식",
+        "maxRank": 5,
+        "costs": [
+          60,
+          100,
+          160,
+          240,
+          340
+        ],
+        "tier": 3,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "style_a",
+            "name": "상태 연결",
+            "stat": "twoStatusDamage",
+            "perRank": 0.04,
+            "unit": "fraction",
+            "maxEffect": 0.2,
+            "notes": "서로 다른 속성 상태 2종 이상이 있는 적"
+          },
+          {
+            "id": "style_b",
+            "name": "단일 집중",
+            "stat": "singleElementDamage",
+            "perRank": 0.05,
+            "unit": "fraction",
+            "maxEffect": 0.25,
+            "notes": "장착 속성이 정확히 1개일 때만; 융합 없음"
+          }
+        ]
+      },
+      {
+        "id": "precision",
+        "name": "정밀도",
+        "maxRank": 3,
+        "costs": [
+          100,
+          200,
+          350
+        ],
+        "tier": 3,
+        "selection": "one_of_two",
+        "sharedRank": true,
+        "choices": [
+          {
+            "id": "precision_a",
+            "name": "정밀 조립",
+            "stat": "critChance",
+            "perRank": 0.02,
+            "unit": "percentagePoints",
+            "maxEffect": 0.06,
+            "notes": ""
+          },
+          {
+            "id": "precision_b",
+            "name": "압력 조절",
+            "stat": "comboFinisherDamage",
+            "perRank": 0.08,
+            "unit": "fraction",
+            "maxEffect": 0.24,
+            "notes": ""
+          }
+        ]
+      }
+    ],
+    "elementUpgrades": [
+      {
+        "id": "fire_output",
+        "element": "fire",
+        "name": "불 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "fire_characteristic",
+        "element": "fire",
+        "name": "불 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "burnDuration",
+        "perRank": 0.2,
+        "unit": "seconds",
+        "maxEffect": 1,
+        "description": "화상 지속 시간"
+      },
+      {
+        "id": "fire_efficiency",
+        "element": "fire",
+        "name": "불 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "ice_output",
+        "element": "ice",
+        "name": "얼음 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "ice_characteristic",
+        "element": "ice",
+        "name": "얼음 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "slowStrength",
+        "perRank": 0.02,
+        "unit": "percentagePoints",
+        "maxEffect": 0.1,
+        "description": "둔화 강도"
+      },
+      {
+        "id": "ice_efficiency",
+        "element": "ice",
+        "name": "얼음 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "lightning_output",
+        "element": "lightning",
+        "name": "전기 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "lightning_characteristic",
+        "element": "lightning",
+        "name": "전기 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "shockRadius",
+        "perRank": 0.04,
+        "unit": "fraction",
+        "maxEffect": 0.2,
+        "description": "감전 방전 반경"
+      },
+      {
+        "id": "lightning_efficiency",
+        "element": "lightning",
+        "name": "전기 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "wind_output",
+        "element": "wind",
+        "name": "바람 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "wind_characteristic",
+        "element": "wind",
+        "name": "바람 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "knockback",
+        "perRank": 0.05,
+        "unit": "fraction",
+        "maxEffect": 0.25,
+        "description": "넉백 강도"
+      },
+      {
+        "id": "wind_efficiency",
+        "element": "wind",
+        "name": "바람 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "earth_output",
+        "element": "earth",
+        "name": "대지 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "earth_characteristic",
+        "element": "earth",
+        "name": "대지 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "earthShield",
+        "perRank": 2,
+        "unit": "flat",
+        "maxEffect": 10,
+        "description": "대지 보호막"
+      },
+      {
+        "id": "earth_efficiency",
+        "element": "earth",
+        "name": "대지 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "water_output",
+        "element": "water",
+        "name": "물 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "water_characteristic",
+        "element": "water",
+        "name": "물 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "wetDuration",
+        "perRank": 0.2,
+        "unit": "seconds",
+        "maxEffect": 1,
+        "description": "젖음 지속 시간"
+      },
+      {
+        "id": "water_efficiency",
+        "element": "water",
+        "name": "물 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "light_output",
+        "element": "light",
+        "name": "빛 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "light_characteristic",
+        "element": "light",
+        "name": "빛 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "lightShield",
+        "perRank": 2,
+        "unit": "flat",
+        "maxEffect": 10,
+        "description": "빛 보호막"
+      },
+      {
+        "id": "light_efficiency",
+        "element": "light",
+        "name": "빛 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      },
+      {
+        "id": "shadow_output",
+        "element": "shadow",
+        "name": "어둠 출력 조율",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementDamage",
+        "perRank": 0.03,
+        "unit": "fraction",
+        "maxEffect": 0.15
+      },
+      {
+        "id": "shadow_characteristic",
+        "element": "shadow",
+        "name": "어둠 특성 연마",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "erosionKillHeal",
+        "perRank": 0.2,
+        "unit": "flat",
+        "maxEffect": 1,
+        "description": "침식 적 처치 회복"
+      },
+      {
+        "id": "shadow_efficiency",
+        "element": "shadow",
+        "name": "어둠 효율 튜닝",
+        "maxRank": 5,
+        "costs": [
+          20,
+          35,
+          55,
+          80,
+          110
+        ],
+        "stat": "elementSkillCooldownReduction",
+        "perRank": 0.01,
+        "unit": "fraction",
+        "maxEffect": 0.05
+      }
+    ]
+  },
+  "elements": [
+    {
+      "id": "fire",
+      "name": "불",
+      "device": "과열 코일",
+      "role": "화상·지속 피해",
+      "status": "burn"
+    },
+    {
+      "id": "ice",
+      "name": "얼음",
+      "device": "냉각 밸브",
+      "role": "둔화·공간 제어",
+      "status": "chill"
+    },
+    {
+      "id": "lightning",
+      "name": "전기",
+      "device": "축전지",
+      "role": "연쇄·집중 폭발",
+      "status": "shock"
+    },
+    {
+      "id": "wind",
+      "name": "바람",
+      "device": "압축 송풍기",
+      "role": "기동·밀치기",
+      "status": "windPressure"
+    },
+    {
+      "id": "earth",
+      "name": "대지",
+      "device": "압력 피스톤",
+      "role": "충격·보호막",
+      "status": "crack"
+    },
+    {
+      "id": "water",
+      "name": "물",
+      "device": "순환 펌프",
+      "role": "범위 제어·약화",
+      "status": "wet"
+    },
+    {
+      "id": "light",
+      "name": "빛",
+      "device": "프리즘 전구",
+      "role": "관통·생존 보조",
+      "status": "reveal"
+    },
+    {
+      "id": "shadow",
+      "name": "어둠",
+      "device": "폐기 흡수관",
+      "role": "표식·처치 회복",
+      "status": "erosion"
+    }
+  ],
+  "skills": [
+    {
+      "id": "heatSwing",
+      "element": "fire",
+      "name": "과열 휘두르기",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 36,
+      "totalDirectDamage": 36,
+      "range": 3,
+      "radius": 0,
+      "effect": "전방 100도 부채꼴; 화상 1중첩"
+    },
+    {
+      "id": "exhaustBurst",
+      "element": "fire",
+      "name": "배기 폭발",
+      "cooldown": 9,
+      "hits": 3,
+      "damagePerHit": 18,
+      "totalDirectDamage": 54,
+      "range": 0,
+      "radius": 2.5,
+      "effect": "0.25초 간격 3회 폭발; 화상; 시전 중 이동 가능"
+    },
+    {
+      "id": "frostBolt",
+      "element": "ice",
+      "name": "서리 볼트",
+      "cooldown": 6,
+      "hits": 3,
+      "damagePerHit": 14,
+      "totalDirectDamage": 42,
+      "range": 7,
+      "radius": 0,
+      "effect": "좁은 3발 확산탄; 근거리 동시 명중 가능; 둔화"
+    },
+    {
+      "id": "coolingField",
+      "element": "ice",
+      "name": "냉각 지대",
+      "cooldown": 11,
+      "hits": 5,
+      "damagePerHit": 8,
+      "totalDirectDamage": 40,
+      "range": 6,
+      "radius": 2.8,
+      "effect": "2.5초 장판; 0.5초마다 1회; 둔화"
+    },
+    {
+      "id": "conductiveSpanner",
+      "element": "lightning",
+      "name": "도전 스패너",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 32,
+      "totalDirectDamage": 32,
+      "range": 6,
+      "radius": 0,
+      "effect": "첫 대상 32, 다른 적 최대 2기에게 각 20; 감전; 같은 적 재연쇄 금지",
+      "secondaryDamage": 20,
+      "secondaryTargets": 2
+    },
+    {
+      "id": "capacitorStrike",
+      "element": "lightning",
+      "name": "축전 낙뢰",
+      "cooldown": 10,
+      "hits": 3,
+      "damagePerHit": 20,
+      "totalDirectDamage": 60,
+      "range": 7,
+      "radius": 1.4,
+      "effect": "0.5초 예고 후 0.35초 간격 3회; 감전"
+    },
+    {
+      "id": "pressureDash",
+      "element": "wind",
+      "name": "압축 돌진",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 28,
+      "totalDirectDamage": 28,
+      "range": 3.5,
+      "radius": 0.7,
+      "effect": "0.2초 전진 타격; 풍압; 무적 없음"
+    },
+    {
+      "id": "vortexIntake",
+      "element": "wind",
+      "name": "회오리 흡입",
+      "cooldown": 10,
+      "hits": 6,
+      "damagePerHit": 6,
+      "totalDirectDamage": 48,
+      "range": 5,
+      "radius": 3,
+      "effect": "0.25초 간격 6타 후 12 피해 마무리; 일반 적 약한 흡입; 풍압",
+      "finisherDamage": 12
+    },
+    {
+      "id": "groundImpact",
+      "element": "earth",
+      "name": "지반 타격",
+      "cooldown": 8,
+      "hits": 1,
+      "damagePerHit": 48,
+      "totalDirectDamage": 48,
+      "range": 4,
+      "radius": 0.8,
+      "effect": "선형 충격파; 균열; 큰 경직"
+    },
+    {
+      "id": "stoneGuard",
+      "element": "earth",
+      "name": "철석 가드",
+      "cooldown": 14,
+      "hits": 0,
+      "damagePerHit": 0,
+      "totalDirectDamage": 0,
+      "range": 0,
+      "radius": 0,
+      "effect": "5초간 보호막 25; 재적용 시 남은 양과 새 양 중 큰 값",
+      "shield": 25,
+      "duration": 5
+    },
+    {
+      "id": "pressureSpray",
+      "element": "water",
+      "name": "고압 분사",
+      "cooldown": 6,
+      "hits": 5,
+      "damagePerHit": 8,
+      "totalDirectDamage": 40,
+      "range": 4,
+      "radius": 0,
+      "effect": "0.6초 분사 중 이동 속도 70%; 젖음"
+    },
+    {
+      "id": "backwash",
+      "element": "water",
+      "name": "역류 파동",
+      "cooldown": 10,
+      "hits": 1,
+      "damagePerHit": 40,
+      "totalDirectDamage": 40,
+      "range": 0,
+      "radius": 3,
+      "effect": "주변 적 밀치기; 젖음; 보스 강제 이동 없음"
+    },
+    {
+      "id": "prismPierce",
+      "element": "light",
+      "name": "프리즘 관통",
+      "cooldown": 6,
+      "hits": 1,
+      "damagePerHit": 46,
+      "totalDirectDamage": 46,
+      "range": 8,
+      "radius": 0.4,
+      "effect": "직선 관통; 현광 표식"
+    },
+    {
+      "id": "guardianBulb",
+      "element": "light",
+      "name": "수호 전구",
+      "cooldown": 16,
+      "hits": 0,
+      "damagePerHit": 0,
+      "totalDirectDamage": 0,
+      "range": 0,
+      "radius": 2,
+      "effect": "4초간 보호막 18, 생성 때 일반 탄환 소거 1회; HP 6 회복",
+      "shield": 18,
+      "duration": 4,
+      "heal": 6
+    },
+    {
+      "id": "shadowHook",
+      "element": "shadow",
+      "name": "그림자 갈고리",
+      "cooldown": 5,
+      "hits": 1,
+      "damagePerHit": 34,
+      "totalDirectDamage": 34,
+      "range": 6,
+      "radius": 0.5,
+      "effect": "일반 적을 조금 끌어당김; 침식; 보스 이동 없음"
+    },
+    {
+      "id": "inkRupture",
+      "element": "shadow",
+      "name": "먹빛 파열",
+      "cooldown": 10,
+      "hits": 1,
+      "damagePerHit": 38,
+      "totalDirectDamage": 38,
+      "range": 0,
+      "radius": 2.8,
+      "effect": "침식 적에게 추가 12 피해 후 침식 소모",
+      "markedBonus": 12
+    }
+  ],
+  "fusions": [
+    {
+      "id": "steamShatter",
+      "pair": [
+        "fire",
+        "ice"
+      ],
+      "name": "증기 파쇄",
+      "cooldown": 18,
+      "energyCost": 60,
+      "hits": 4,
+      "damagePerHit": 24,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "고온·냉각을 번갈아 터뜨리는 원형 4연타; 화상과 둔화",
+      "pairKey": "fire+ice"
+    },
+    {
+      "id": "arcFurnace",
+      "pair": [
+        "fire",
+        "lightning"
+      ],
+      "name": "전호 용광로",
+      "cooldown": 20,
+      "energyCost": 65,
+      "hits": 4,
+      "damagePerHit": 30,
+      "totalDirectDamage": 120,
+      "radius": 2.4,
+      "effect": "지정 지점 4연쇄 폭발; 화상과 감전",
+      "pairKey": "fire+lightning"
+    },
+    {
+      "id": "fireCyclone",
+      "pair": [
+        "fire",
+        "wind"
+      ],
+      "name": "화염 회오리",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 8,
+      "damagePerHit": 14,
+      "totalDirectDamage": 112,
+      "radius": 3,
+      "effect": "전방 2.6에서 생성되어 전진하는 소형 불 회오리; 약한 흡입; 화상과 풍압",
+      "pairKey": "fire+wind",
+      "behavior": {
+        "shape": "moving",
+        "speed": 2.2,
+        "pull": 1.2,
+        "interval": 0.3,
+        "delay": 0,
+        "startDistance": 2.6
+      }
+    },
+    {
+      "id": "furnaceHammer",
+      "pair": [
+        "fire",
+        "earth"
+      ],
+      "name": "용광 망치",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 1,
+      "damagePerHit": 108,
+      "totalDirectDamage": 108,
+      "radius": 3,
+      "effect": "전방 강한 내려찍기; 화상과 균열",
+      "pairKey": "earth+fire"
+    },
+    {
+      "id": "steamPiston",
+      "pair": [
+        "fire",
+        "water"
+      ],
+      "name": "증기 피스톤",
+      "cooldown": 18,
+      "energyCost": 60,
+      "hits": 2,
+      "damagePerHit": 52,
+      "totalDirectDamage": 104,
+      "radius": 2.6,
+      "effect": "전방으로 밀어내는 증기 2회; 화상과 젖음",
+      "pairKey": "fire+water"
+    },
+    {
+      "id": "solarGear",
+      "pair": [
+        "fire",
+        "light"
+      ],
+      "name": "태양 톱니",
+      "cooldown": 22,
+      "energyCost": 70,
+      "hits": 4,
+      "damagePerHit": 27,
+      "totalDirectDamage": 108,
+      "radius": 3.2,
+      "effect": "자신을 중심으로 퍼지는 빛나는 열 톱니; 화상과 현광",
+      "pairKey": "fire+light"
+    },
+    {
+      "id": "blackFlame",
+      "pair": [
+        "fire",
+        "shadow"
+      ],
+      "name": "검은 불씨",
+      "cooldown": 24,
+      "energyCost": 70,
+      "hits": 10,
+      "damagePerHit": 12,
+      "totalDirectDamage": 120,
+      "radius": 2.5,
+      "effect": "5초 동안 따라붙는 검은 불꽃; 화상과 침식",
+      "pairKey": "fire+shadow"
+    },
+    {
+      "id": "magneticIceClamp",
+      "pair": [
+        "ice",
+        "lightning"
+      ],
+      "name": "자성 빙쇄",
+      "cooldown": 20,
+      "energyCost": 65,
+      "hits": 3,
+      "damagePerHit": 32,
+      "totalDirectDamage": 96,
+      "radius": 2.2,
+      "effect": "지정 지점의 두 얼음 턱이 닫히며 중앙 방전·파쇄 3타; 둔화와 감전; 보스 강제 이동 없음",
+      "pairKey": "ice+lightning",
+      "legacyIds": [
+        "superconductRing"
+      ],
+      "range": 6,
+      "behavior": {
+        "shape": "clamp",
+        "range": 6,
+        "halfLength": 1.8,
+        "halfWidth": 1.25,
+        "jawOpenDistance": 2.1,
+        "jawClosedDistance": 0.7,
+        "riseMs": 300,
+        "closeMs": 120,
+        "interval": 0.18,
+        "delay": 0.6
+      }
+    },
+    {
+      "id": "frostCrosscut",
+      "pair": [
+        "ice",
+        "wind"
+      ],
+      "name": "빙풍 절단",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 2,
+      "damagePerHit": 50,
+      "totalDirectDamage": 100,
+      "radius": 0.45,
+      "effect": "빈 왼손에서 두 초승달 칼날을 한 번에 X자로 동시 방출; 둔화와 풍압",
+      "pairKey": "ice+wind",
+      "range": 5,
+      "legacyIds": [
+        "blizzardFan"
+      ],
+      "behavior": {
+        "shape": "crosscut",
+        "range": 5,
+        "startDistance": 0.32,
+        "spread": 1.6,
+        "halfWidth": 0.45,
+        "interval": 0,
+        "delay": 0.18,
+        "startSide": -0.2,
+        "splitDistance": 1.2
+      }
+    },
+    {
+      "id": "glacierPress",
+      "pair": [
+        "ice",
+        "earth"
+      ],
+      "name": "빙하 압착",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 4,
+      "damagePerHit": 24,
+      "totalDirectDamage": 96,
+      "radius": 2.8,
+      "effect": "얼음 기둥 4회 타격; 둔화와 균열",
+      "pairKey": "earth+ice"
+    },
+    {
+      "id": "frozenCurrent",
+      "pair": [
+        "ice",
+        "water"
+      ],
+      "name": "빙결 급류",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 2,
+      "damagePerHit": 48,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "물결 뒤 얼음 파열; 둔화와 젖음",
+      "pairKey": "ice+water"
+    },
+    {
+      "id": "frostPrism",
+      "pair": [
+        "ice",
+        "light"
+      ],
+      "name": "서리 프리즘",
+      "cooldown": 22,
+      "energyCost": 70,
+      "hits": 4,
+      "damagePerHit": 28,
+      "totalDirectDamage": 112,
+      "radius": 2.5,
+      "effect": "네 방향에서 교차하는 얼음 광선; 둔화와 현광",
+      "pairKey": "ice+light"
+    },
+    {
+      "id": "stillNight",
+      "pair": [
+        "ice",
+        "shadow"
+      ],
+      "name": "고요한 밤",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 1,
+      "damagePerHit": 96,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "원형 암빙 폭발; 둔화와 침식; 일반 적 짧은 빙결",
+      "pairKey": "ice+shadow"
+    },
+    {
+      "id": "stormFloat",
+      "pair": [
+        "lightning",
+        "wind"
+      ],
+      "name": "폭뢰 부유구",
+      "cooldown": 18,
+      "energyCost": 60,
+      "hits": 1,
+      "damagePerHit": 108,
+      "totalDirectDamage": 108,
+      "radius": 3,
+      "effect": "지정 지점의 부유 구체가 0.85초 뒤 한 번 파열; 감전과 풍압; 일반 적만 0.65 밀침; 보스 이동 없음",
+      "pairKey": "lightning+wind",
+      "range": 6,
+      "legacyIds": [
+        "ionFan"
+      ],
+      "behavior": {
+        "shape": "orb",
+        "range": 6,
+        "interval": 0,
+        "delay": 0.85,
+        "knockback": 0.65,
+        "hoverHeight": 0.8
+      }
+    },
+    {
+      "id": "magneticCrusher",
+      "pair": [
+        "lightning",
+        "earth"
+      ],
+      "name": "자력 분쇄",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 2,
+      "damagePerHit": 54,
+      "totalDirectDamage": 108,
+      "radius": 3,
+      "effect": "일반 적을 모은 뒤 두 번 압착; 감전과 균열",
+      "pairKey": "earth+lightning"
+    },
+    {
+      "id": "conductiveFlood",
+      "pair": [
+        "lightning",
+        "water"
+      ],
+      "name": "전도 범람",
+      "cooldown": 20,
+      "energyCost": 65,
+      "hits": 4,
+      "damagePerHit": 24,
+      "totalDirectDamage": 96,
+      "radius": 3.5,
+      "effect": "젖은 지면으로 전기 4회 확산; 감전과 젖음",
+      "pairKey": "lightning+water"
+    },
+    {
+      "id": "prismRail",
+      "pair": [
+        "lightning",
+        "light"
+      ],
+      "name": "프리즘 레일",
+      "cooldown": 24,
+      "energyCost": 70,
+      "hits": 6,
+      "damagePerHit": 20,
+      "totalDirectDamage": 120,
+      "radius": 0.8,
+      "effect": "직선 관통 광선 6타; 감전과 현광",
+      "pairKey": "light+lightning"
+    },
+    {
+      "id": "blackoutCircuit",
+      "pair": [
+        "lightning",
+        "shadow"
+      ],
+      "name": "정전 회로",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 4,
+      "damagePerHit": 24,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "검은 회로가 대상 주변에서 4회 방전; 감전과 침식",
+      "pairKey": "lightning+shadow"
+    },
+    {
+      "id": "sandGear",
+      "pair": [
+        "wind",
+        "earth"
+      ],
+      "name": "모래 톱니",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 8,
+      "damagePerHit": 12,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "회전하는 파편 고리; 풍압과 균열",
+      "pairKey": "earth+wind"
+    },
+    {
+      "id": "currentVortex",
+      "pair": [
+        "wind",
+        "water"
+      ],
+      "name": "해류 소용돌이",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 9,
+      "damagePerHit": 12,
+      "totalDirectDamage": 108,
+      "radius": 3,
+      "effect": "지정 지점 물 회오리; 풍압과 젖음",
+      "pairKey": "water+wind"
+    },
+    {
+      "id": "auroraTrail",
+      "pair": [
+        "wind",
+        "light"
+      ],
+      "name": "오로라 궤적",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 5,
+      "damagePerHit": 20,
+      "totalDirectDamage": 100,
+      "radius": 2.5,
+      "effect": "전방에 남기는 빛의 바람 5타; 풍압과 현광",
+      "pairKey": "light+wind"
+    },
+    {
+      "id": "shadowDrill",
+      "pair": [
+        "wind",
+        "shadow"
+      ],
+      "name": "그림자 천공",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 2,
+      "damagePerHit": 48,
+      "totalDirectDamage": 96,
+      "radius": 2,
+      "effect": "빠른 직선 왕복 타격; 풍압과 침식; 무적 없음",
+      "pairKey": "shadow+wind"
+    },
+    {
+      "id": "mudHammer",
+      "pair": [
+        "earth",
+        "water"
+      ],
+      "name": "진흙 해머",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 1,
+      "damagePerHit": 104,
+      "totalDirectDamage": 104,
+      "radius": 3,
+      "effect": "넓은 지면 충격; 균열과 젖음",
+      "pairKey": "earth+water"
+    },
+    {
+      "id": "crystalBastion",
+      "pair": [
+        "earth",
+        "light"
+      ],
+      "name": "수정 보루",
+      "cooldown": 24,
+      "energyCost": 70,
+      "hits": 1,
+      "damagePerHit": 72,
+      "totalDirectDamage": 72,
+      "radius": 3,
+      "effect": "주변 수정 폭발과 보호막 20; 균열과 현광",
+      "pairKey": "earth+light"
+    },
+    {
+      "id": "gravePress",
+      "pair": [
+        "earth",
+        "shadow"
+      ],
+      "name": "심연 압착",
+      "cooldown": 24,
+      "energyCost": 70,
+      "hits": 1,
+      "damagePerHit": 112,
+      "totalDirectDamage": 112,
+      "radius": 2.8,
+      "effect": "느린 예고 뒤 강한 압착; 균열과 침식",
+      "pairKey": "earth+shadow"
+    },
+    {
+      "id": "reflectedCurrent",
+      "pair": [
+        "water",
+        "light"
+      ],
+      "name": "반사 수류",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 1,
+      "damagePerHit": 80,
+      "totalDirectDamage": 80,
+      "radius": 3.2,
+      "effect": "관통 물결과 HP 8 회복; 젖음과 현광; 회복 예산 공유",
+      "pairKey": "light+water"
+    },
+    {
+      "id": "inkFlood",
+      "pair": [
+        "water",
+        "shadow"
+      ],
+      "name": "먹빛 범람",
+      "cooldown": 22,
+      "energyCost": 65,
+      "hits": 8,
+      "damagePerHit": 14,
+      "totalDirectDamage": 112,
+      "radius": 3,
+      "effect": "4초 장판; 젖음과 침식",
+      "pairKey": "shadow+water"
+    },
+    {
+      "id": "twilightBalance",
+      "pair": [
+        "light",
+        "shadow"
+      ],
+      "name": "황혼 평형",
+      "cooldown": 24,
+      "energyCost": 70,
+      "hits": 2,
+      "damagePerHit": 48,
+      "totalDirectDamage": 96,
+      "radius": 3,
+      "effect": "명암 두 차례 폭발과 보호막 12; 현광과 침식",
+      "pairKey": "light+shadow"
+    }
+  ],
+  "regions": [
+    {
+      "id": "smileStreet",
+      "name": "웃음거리",
+      "index": 1,
+      "normalReward": 8,
+      "miniReward": 20,
+      "bossReward": 40,
+      "miniboss": "collectorRoco",
+      "boss": "captainBrass",
+      "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"
+    },
+    {
+      "id": "ribbonGarden",
+      "name": "리본정원",
+      "index": 2,
+      "normalReward": 10,
+      "miniReward": 25,
+      "bossReward": 50,
+      "miniboss": "tailorPin",
+      "boss": "carouselMelody",
+      "theme": "꽃과 회전목마의 정원; 주민을 제자리에 묶는 끈"
+    },
+    {
+      "id": "silentFactory",
+      "name": "무음공장",
+      "index": 3,
+      "normalReward": 12,
+      "miniReward": 30,
+      "bossReward": 60,
+      "miniboss": "inspectorIris",
+      "boss": "directorPress",
+      "theme": "깔끔한 생산 라인과 폐기실; 자아를 불량으로 판정하는 체계"
+    },
+    {
+      "id": "centralTower",
+      "name": "중앙시계탑",
+      "index": 4,
+      "normalReward": 14,
+      "miniReward": 35,
+      "bossReward": 70,
+      "miniboss": "twinTickTock",
+      "boss": "bellguard",
+      "theme": "금빛 시계와 작동하는 감시망; 통제 신호의 발신지"
+    }
+  ],
+  "bosses": [
+    {
+      "id": "collectorRoco",
+      "name": "회수관 로코",
+      "kind": "miniboss",
+      "hp": 320,
+      "damage": 12,
+      "minimumTell": 0.7,
+      "region": "smileStreet",
+      "concept": "집게팔과 자석을 단 수거 인형"
+    },
+    {
+      "id": "captainBrass",
+      "name": "행진대장 브라스",
+      "kind": "regionBoss",
+      "hp": 1000,
+      "damage": 16,
+      "minimumTell": 0.8,
+      "region": "smileStreet",
+      "concept": "주민들의 걸음을 지휘하는 금관 병정"
+    },
+    {
+      "id": "tailorPin",
+      "name": "재봉사 핀",
+      "kind": "miniboss",
+      "hp": 560,
+      "damage": 16,
+      "minimumTell": 0.65,
+      "region": "ribbonGarden",
+      "concept": "리본과 바늘로 주민의 동선을 고정하는 재봉 인형"
+    },
+    {
+      "id": "carouselMelody",
+      "name": "회전목마 여왕 멜로디",
+      "kind": "regionBoss",
+      "hp": 1700,
+      "damage": 20,
+      "minimumTell": 0.75,
+      "region": "ribbonGarden",
+      "concept": "아름다운 회전목마의 중심에서 같은 춤을 강제하는 인형"
+    },
+    {
+      "id": "inspectorIris",
+      "name": "검수관 아이리스",
+      "kind": "miniboss",
+      "hp": 820,
+      "damage": 20,
+      "minimumTell": 0.65,
+      "region": "silentFactory",
+      "concept": "렌즈와 도장을 단 검수기"
+    },
+    {
+      "id": "directorPress",
+      "name": "총감독 프레스",
+      "kind": "regionBoss",
+      "hp": 2600,
+      "damage": 24,
+      "minimumTell": 0.8,
+      "region": "silentFactory",
+      "concept": "거대한 프레스와 정형 틀을 조종하는 생산 관리자"
+    },
+    {
+      "id": "twinTickTock",
+      "name": "시간지기 틱·톡",
+      "kind": "miniboss",
+      "hp": 1300,
+      "damage": 22,
+      "minimumTell": 0.7,
+      "region": "centralTower",
+      "concept": "공유 제어핵을 지닌 두 시계 인형; 표기 HP는 합계"
+    },
+    {
+      "id": "bellguard",
+      "name": "종루수호자 벨가드",
+      "kind": "regionBoss",
+      "hp": 3400,
+      "damage": 26,
+      "minimumTell": 0.85,
+      "region": "centralTower",
+      "concept": "통제 방송을 울리는 종과 중장갑 문지기"
+    },
+    {
+      "id": "orden",
+      "name": "대조율사 오르덴",
+      "kind": "finalBoss",
+      "hp": 6400,
+      "damage": 28,
+      "minimumTell": 0.85,
+      "region": "centralTower",
+      "concept": "완벽한 행복을 위해 선택권을 제거한 중앙 관리 인형"
+    }
+  ],
+  "references": [
+    {
+      "title": "PlayStation: Tips to survive your first Hades encounters",
+      "url": "https://www.playstation.com/en-us/games/hades/tips-and-tricks-to-survive-your-first-hades-encounters/"
+    },
+    {
+      "title": "Supergiant: The Welcome to Hell Update Patch Notes",
+      "url": "https://www.supergiantgames.com/blog/hades-welcome-to-hell-update-patch-notes/"
+    }
+  ],
+  "statuses": [
+    {
+      "id": "burn",
+      "duration": 4,
+      "damagePerSecond": 4,
+      "maxStacks": 3,
+      "tickInterval": 0.5
+    },
+    {
+      "id": "chill",
+      "duration": 3,
+      "slow": 0.25,
+      "freezeAtApplications": 3,
+      "normalFreezeDuration": 0.65,
+      "freezeReapplyLock": 4,
+      "bossFreezeStagger": 8
+    },
+    {
+      "id": "shock",
+      "duration": 3,
+      "dischargeDamage": 10,
+      "dischargeRadius": 1.5,
+      "maxTargets": 3,
+      "targetCooldown": 0.5
+    },
+    {
+      "id": "windPressure",
+      "duration": 4,
+      "staggerTakenBonus": 0.1
+    },
+    {
+      "id": "crack",
+      "duration": 4,
+      "basicDamageTakenBonus": 0.08
+    },
+    {
+      "id": "wet",
+      "duration": 4,
+      "outgoingDamageReduction": 0.1
+    },
+    {
+      "id": "reveal",
+      "duration": 4,
+      "incomingCritChanceBonus": 0.05
+    },
+    {
+      "id": "erosion",
+      "duration": 6,
+      "damagePerSecond": 2,
+      "maxStacks": 1,
+      "healPerKill": 1,
+      "tickInterval": 0.5
+    }
+  ],
+  "run": {
+    "regions": 4,
+    "nodesPerRegion": 7,
+    "finalBossExtraNodes": 1,
+    "totalNodes": 29,
+    "estimatedFullRunMinutes": [
+      30,
+      40
+    ],
+    "regionBossClearHeal": 30,
+    "persistentRewardGuaranteedPlusChoice": true,
+    "basePersistentFullClear": 606,
+    "fullRunRestartsAtFirstRegion": true,
+    "wrenchModsMax": 2,
+    "guaranteedModNodes": [
+      {
+        "region": 1,
+        "node": 4
+      },
+      {
+        "region": 3,
+        "node": 4
+      }
+    ],
+    "firstFusionTeaching": {
+      "forceRegion1Nodes1And2ToCombatUntilTwoElementsEquipped": true,
+      "singleElementBuildCanOptOut": true
+    }
+  },
+  "balance": {
+    "damageFormula": "base * (1 + min(permanentApplicableSum, 0.60)) * (1 + min(runDamageBonus, 0.80)) * skillLevel * rarity * crit * targetVulnerability",
+    "skillMaxLevel": 5,
+    "skillLevelDamagePerLevel": 0.12,
+    "rarityDamage": {
+      "common": 1,
+      "rare": 1.15,
+      "special": 1.35
+    },
+    "baseRewardRarityWeights": {
+      "common": 0.8,
+      "rare": 0.18,
+      "special": 0.02
+    },
+    "fusionLevel": "minimum_of_two_slots",
+    "fusionRarity": "minimum_of_two_slots",
+    "fusionPermanentElementBonus": "mean_of_two_elements",
+    "fusionShieldWithTwoEligibleResearches": "larger_bonus_only",
+    "shieldPolicy": "replace_if_new_amount_greater_or_equal_no_extension_if_lower",
+    "basicStagger": [
+      10,
+      12,
+      25
+    ],
+    "skillStaggerPerCastCap": 20,
+    "earthImpactStagger": 35,
+    "fusionStaggerPerCastCap": 35,
+    "bossStaggerThreshold": {
+      "miniboss": 100,
+      "regionBoss": 150,
+      "finalBoss": 200
+    },
+    "statusApplyPerCastTargetCooldown": 0.25,
+    "temporaryUpgrades": [
+      {
+        "id": "basicDamage",
+        "perRank": 0.1,
+        "maxRank": 8
+      },
+      {
+        "id": "maxHp",
+        "perRank": 15,
+        "maxRank": 4
+      },
+      {
+        "id": "skillCooldownReduction",
+        "perRank": 0.05,
+        "maxRank": 4
+      },
+      {
+        "id": "dodgeCooldownReduction",
+        "perRank": 0.08,
+        "maxRank": 2
+      },
+      {
+        "id": "statusDamage",
+        "perRank": 0.15,
+        "maxRank": 4
+      }
+    ]
+  },
+  "intro": {
+    "openingText": [
+      "이 마을에는 불행한 주민이 없습니다.",
+      "불행한 주민은 고장으로 분류되기 때문입니다.",
+      "당신은 오늘 폐기되었습니다."
+    ],
+    "targetSecondsToFirstCombat": 20,
+    "oneTimeEncounterReward": 8,
+    "registrationBeforeCanonicalRecovery": true
+  },
+  "updatedAt": "2026-10-30"
+}

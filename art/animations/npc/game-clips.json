@@ -1,0 +1,9267 @@
+{
+  "schemaVersion": 1,
+  "character": "npc",
+  "directions": [
+    "east",
+    "south-east",
+    "south",
+    "south-west",
+    "west",
+    "north-west",
+    "north",
+    "north-east"
+  ],
+  "actions": [
+    "C1-idle",
+    "C1-walk",
+    "C2-idle",
+    "C2-walk",
+    "C3-idle",
+    "C3-walk",
+    "C4-idle",
+    "C4-walk",
+    "R13-idle",
+    "R13-walk",
+    "R14-idle",
+    "R14-walk",
+    "R15-idle",
+    "R15-walk",
+    "R16-idle",
+    "R16-walk",
+    "R17-idle",
+    "R17-walk",
+    "R18-idle",
+    "R18-walk",
+    "R19-idle",
+    "R19-walk",
+    "R20-idle",
+    "R20-walk",
+    "R1-idle",
+    "R1-walk",
+    "R2-idle",
+    "R2-walk",
+    "R3-idle",
+    "R3-walk",
+    "R4-idle",
+    "R4-walk",
+    "R5-idle",
+    "R5-walk",
+    "R6-idle",
+    "R6-walk",
+    "R7-idle",
+    "R7-walk",
+    "R8-idle",
+    "R8-walk",
+    "R9-idle",
+    "R9-walk",
+    "R10-idle",
+    "R10-walk",
+    "R11-idle",
+    "R11-walk",
+    "R12-idle",
+    "R12-walk",
+    "moru-idle",
+    "bolt-idle",
+    "bolt-greeting"
+  ],
+  "clips": {
+    "C1-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "C1-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "C1-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "C1-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "C1-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "C1-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 76
+    },
+    "C1-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "C1-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "C1-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "C1-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "C1-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "C1-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "C1-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "C1-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        50,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "C1-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "C1-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "C2-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        88
+      ],
+      "bodyHeight": 78
+    },
+    "C2-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "C2-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "C2-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 79
+    },
+    "C2-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 77
+    },
+    "C2-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 79
+    },
+    "C2-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "C2-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "C2-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        88
+      ],
+      "bodyHeight": 77
+    },
+    "C2-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "C2-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "C2-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "C2-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "C2-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.1846153846153846,
+      "anchor": [
+        50,
+        81
+      ],
+      "bodyHeight": 65
+    },
+    "C2-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "C2-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 78
+    },
+    "C3-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "C3-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "C3-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "C3-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "C3-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "C3-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 76
+    },
+    "C3-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "C3-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "C3-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "C3-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "C3-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "C3-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "C3-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        51,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "C3-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "C3-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "C3-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "C4-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "C4-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "C4-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "C4-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "C4-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "C4-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "C4-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "C4-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 66
+    },
+    "C4-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "C4-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "C4-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "C4-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "C4-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 69
+    },
+    "C4-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 67
+    },
+    "C4-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "C4-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R13-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        90
+      ],
+      "bodyHeight": 79
+    },
+    "R13-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.1142857142857143,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 70
+    },
+    "R13-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        87
+      ],
+      "bodyHeight": 81
+    },
+    "R13-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 78
+    },
+    "R13-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        83
+      ],
+      "bodyHeight": 78
+    },
+    "R13-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        78
+      ],
+      "bodyHeight": 78
+    },
+    "R13-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        86
+      ],
+      "bodyHeight": 79
+    },
+    "R13-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 80
+    },
+    "R13-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        90
+      ],
+      "bodyHeight": 80
+    },
+    "R13-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.2,
+      "anchor": [
+        48,
+        78
+      ],
+      "bodyHeight": 65
+    },
+    "R13-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        87
+      ],
+      "bodyHeight": 80
+    },
+    "R13-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 80
+    },
+    "R13-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R13-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        78
+      ],
+      "bodyHeight": 72
+    },
+    "R13-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        87
+      ],
+      "bodyHeight": 77
+    },
+    "R13-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        84
+      ],
+      "bodyHeight": 81
+    },
+    "R14-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R14-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 69
+    },
+    "R14-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "R14-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R14-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R14-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        78
+      ],
+      "bodyHeight": 69
+    },
+    "R14-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "R14-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        80
+      ],
+      "bodyHeight": 70
+    },
+    "R14-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R14-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 70
+    },
+    "R14-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R14-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R14-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "R14-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R14-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R14-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R15-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R15-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R15-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R15-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R15-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 73
+    },
+    "R15-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        79
+      ],
+      "bodyHeight": 75
+    },
+    "R15-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R15-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 73
+    },
+    "R15-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R15-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        78
+      ],
+      "bodyHeight": 69
+    },
+    "R15-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 74
+    },
+    "R15-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 78
+    },
+    "R15-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R15-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R15-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R15-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R16-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        86
+      ],
+      "bodyHeight": 76
+    },
+    "R16-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 72
+    },
+    "R16-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "R16-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 73
+    },
+    "R16-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        82
+      ],
+      "bodyHeight": 74
+    },
+    "R16-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        79
+      ],
+      "bodyHeight": 74
+    },
+    "R16-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "R16-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 75
+    },
+    "R16-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        86
+      ],
+      "bodyHeight": 76
+    },
+    "R16-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 72
+    },
+    "R16-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R16-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 76
+    },
+    "R16-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 75
+    },
+    "R16-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        80
+      ],
+      "bodyHeight": 75
+    },
+    "R16-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R16-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 72
+    },
+    "R17-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 70
+    },
+    "R17-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R17-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R17-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R17-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R17-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R17-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R17-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 68
+    },
+    "R17-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        83
+      ],
+      "bodyHeight": 70
+    },
+    "R17-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R17-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R17-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R17-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 68
+    },
+    "R17-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        78
+      ],
+      "bodyHeight": 69
+    },
+    "R17-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R17-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R18-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        87
+      ],
+      "bodyHeight": 71
+    },
+    "R18-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        50,
+        81
+      ],
+      "bodyHeight": 70
+    },
+    "R18-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 71
+    },
+    "R18-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R18-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R18-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        76
+      ],
+      "bodyHeight": 68
+    },
+    "R18-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "R18-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "R18-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        87
+      ],
+      "bodyHeight": 78
+    },
+    "R18-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        45,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "R18-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R18-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        79
+      ],
+      "bodyHeight": 75
+    },
+    "R18-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R18-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 75
+    },
+    "R18-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        51,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R18-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.126984126984127,
+      "anchor": [
+        50,
+        76
+      ],
+      "bodyHeight": 63
+    },
+    "R19-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R19-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R19-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R19-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 77
+    },
+    "R19-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R19-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R19-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R19-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R19-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R19-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R19-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R19-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R19-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R19-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        50,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R19-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R19-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R20-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        87
+      ],
+      "bodyHeight": 81
+    },
+    "R20-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R20-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        85
+      ],
+      "bodyHeight": 82
+    },
+    "R20-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        83
+      ],
+      "bodyHeight": 83
+    },
+    "R20-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        83
+      ],
+      "bodyHeight": 81
+    },
+    "R20-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 82
+    },
+    "R20-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        85
+      ],
+      "bodyHeight": 82
+    },
+    "R20-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        88
+      ],
+      "bodyHeight": 88
+    },
+    "R20-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        87
+      ],
+      "bodyHeight": 81
+    },
+    "R20-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 78
+    },
+    "R20-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        84
+      ],
+      "bodyHeight": 79
+    },
+    "R20-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 80
+    },
+    "R20-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 79
+    },
+    "R20-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 76
+    },
+    "R20-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 80
+    },
+    "R20-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 75
+    },
+    "R1-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R1-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R1-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R1-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "R1-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R1-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 76
+    },
+    "R1-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R1-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R1-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R1-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R1-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R1-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R1-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R1-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        50,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "R1-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R1-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "R2-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R2-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R2-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R2-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "R2-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R2-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 76
+    },
+    "R2-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R2-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R2-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 73
+    },
+    "R2-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R2-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R2-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R2-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 73
+    },
+    "R2-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        50,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "R2-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R2-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "R3-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        88
+      ],
+      "bodyHeight": 78
+    },
+    "R3-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R3-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R3-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 79
+    },
+    "R3-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 77
+    },
+    "R3-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 79
+    },
+    "R3-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R3-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R3-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        88
+      ],
+      "bodyHeight": 77
+    },
+    "R3-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R3-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "R3-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R3-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R3-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.1846153846153846,
+      "anchor": [
+        50,
+        81
+      ],
+      "bodyHeight": 65
+    },
+    "R3-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "R3-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 78
+    },
+    "R4-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        88
+      ],
+      "bodyHeight": 78
+    },
+    "R4-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R4-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R4-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 79
+    },
+    "R4-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 77
+    },
+    "R4-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 79
+    },
+    "R4-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R4-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R4-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        88
+      ],
+      "bodyHeight": 77
+    },
+    "R4-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R4-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "R4-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R4-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R4-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.1846153846153846,
+      "anchor": [
+        50,
+        81
+      ],
+      "bodyHeight": 65
+    },
+    "R4-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "R4-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 78
+    },
+    "R5-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        88
+      ],
+      "bodyHeight": 78
+    },
+    "R5-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R5-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R5-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 79
+    },
+    "R5-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 77
+    },
+    "R5-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 79
+    },
+    "R5-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        87
+      ],
+      "bodyHeight": 79
+    },
+    "R5-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R5-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        88
+      ],
+      "bodyHeight": 77
+    },
+    "R5-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R5-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "R5-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 77
+    },
+    "R5-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 76
+    },
+    "R5-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1.1846153846153846,
+      "anchor": [
+        50,
+        81
+      ],
+      "bodyHeight": 65
+    },
+    "R5-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "R5-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 78
+    },
+    "R6-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R6-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R6-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "R6-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R6-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R6-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 76
+    },
+    "R6-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R6-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "R6-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R6-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R6-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R6-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R6-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        51,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R6-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "R6-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R6-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R7-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R7-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R7-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "R7-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R7-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R7-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 76
+    },
+    "R7-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R7-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "R7-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R7-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R7-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R7-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R7-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        51,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R7-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "R7-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R7-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R8-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R8-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "R8-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "R8-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        79
+      ],
+      "bodyHeight": 72
+    },
+    "R8-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 74
+    },
+    "R8-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 76
+    },
+    "R8-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "R8-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 75
+    },
+    "R8-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "R8-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "R8-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R8-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R8-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        51,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "R8-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 73
+    },
+    "R8-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "R8-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R9-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R9-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R9-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R9-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R9-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "R9-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R9-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R9-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 66
+    },
+    "R9-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R9-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R9-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R9-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R9-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 69
+    },
+    "R9-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 67
+    },
+    "R9-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R9-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R10-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R10-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R10-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R10-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R10-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "R10-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R10-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R10-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 66
+    },
+    "R10-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R10-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R10-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R10-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R10-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 69
+    },
+    "R10-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 67
+    },
+    "R10-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R10-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R11-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R11-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R11-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R11-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R11-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "R11-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R11-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R11-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 66
+    },
+    "R11-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R11-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R11-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R11-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R11-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 69
+    },
+    "R11-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 67
+    },
+    "R11-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R11-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "R12-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R12-walk/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 71
+    },
+    "R12-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 71
+    },
+    "R12-walk/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        46,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R12-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        42,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "R12-walk/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 72
+    },
+    "R12-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 72
+    },
+    "R12-walk/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 66
+    },
+    "R12-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        84
+      ],
+      "bodyHeight": 70
+    },
+    "R12-walk/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 69
+    },
+    "R12-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R12-walk/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        80
+      ],
+      "bodyHeight": 71
+    },
+    "R12-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        83
+      ],
+      "bodyHeight": 69
+    },
+    "R12-walk/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        79
+      ],
+      "bodyHeight": 67
+    },
+    "R12-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        82
+      ],
+      "bodyHeight": 70
+    },
+    "R12-walk/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 8,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 800,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        81
+      ],
+      "bodyHeight": 71
+    },
+    "moru-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 76
+    },
+    "moru-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        45,
+        85
+      ],
+      "bodyHeight": 77
+    },
+    "moru-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        41,
+        83
+      ],
+      "bodyHeight": 72
+    },
+    "moru-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "moru-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        86
+      ],
+      "bodyHeight": 76
+    },
+    "moru-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 74
+    },
+    "moru-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 71
+    },
+    "moru-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        85
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        86
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        81
+      ],
+      "bodyHeight": 73
+    },
+    "bolt-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "bolt-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 76
+    },
+    "bolt-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        45,
+        86
+      ],
+      "bodyHeight": 74
+    },
+    "bolt-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-west.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        48,
+        83
+      ],
+      "bodyHeight": 74
+    },
+    "bolt-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-east.png",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    },
+    "bolt-greeting/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "provider": "pixellab",
+      "frameWidth": 108,
+      "frameHeight": 108,
+      "columns": 13,
+      "frameCount": 13,
+      "frameDurationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "durationMs": 1300,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        91
+      ],
+      "bodyHeight": 75
+    }
+  }
+}

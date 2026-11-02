@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16202a">
+  <title>태엽 밖으로 · Beyond the Clockwork</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b5551'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-size='46' fill='%23f2c878'%3E⚙%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="/src/layout.css">
+</head>
+<body>
+  <main id="app">
+    <div class="viewport">
+      <canvas id="game" width="1120" height="640" tabindex="0" aria-label="WASD 이동, 마우스 조준, 좌클릭 공격, Space 회피"></canvas>
+      <div id="hud">
+        <div class="hud-tag hud-vitals"><canvas id="hud-face" width="56" height="56"></canvas><div class="hud-bars"><div class="hud-bar"><i id="hp-fill"></i><b id="hp-text"></b></div><div class="hud-bar energy"><i id="energy-fill"></i><b id="energy-text"></b></div></div></div>
+        <div class="hud-tag hud-wallet"><span title="자유 톱니">⚙ <b id="gears">0</b></span><span title="동전">◈ <b id="coins">0</b></span></div>
+        <button id="practice-reset" class="hud-tag" hidden></button>
+        <div class="hud-tools"><button id="fullscreen" class="hud-tag" aria-label="게임 전체화면">⛶</button></div>
+        <div id="skills"></div>
+        <div id="dialogue" hidden></div>
+      </div>
+      <div id="toast" role="status"></div><div id="hint" role="status" hidden></div><div id="overlay"></div>
+    </div>
+  </main>
+  <div id="title" hidden></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+id: 7673a3c0-f913-4e51-8af7-931cbf6720ec
+job_id: 7673a3c0-f913-4e51-8af7-931cbf6720ec
+model: pixen
+edit: Keep exact WEST-facing robot pose, face, armor, patch, scarf, pixel style and proportions. Add its ONE long turquoise open-ended wrench upright in anatomical RIGHT hand (the farther arm). Move that far forearm slightly forward so hand and full wrench remain clearly visible ahead of body toward screen LEFT. The NEAR LEFT hand stays empty and lowered. No second wrench, no turning or mirroring. Only clarify the far-hand grip and weapon visibility.
+source: 96x96px
+size: 96x96px
+transparent: True
+seed: 103102
+asset_id: 9890203b-b586-597a-8a3d-476aafce77a9
+asset_status: pending (saved when generation completes)
+cost: 1 generation
+status: processing (~10-40s)
+
+hint: get_image(job_id="7673a3c0-f913-4e51-8af7-931cbf6720ec")
+without get_image: GET https://api.pixellab.ai/mcp/images/7673a3c0-f913-4e51-8af7-931cbf6720ec/download (423 + Retry-After until ready; ?index=N for the Nth of several images)

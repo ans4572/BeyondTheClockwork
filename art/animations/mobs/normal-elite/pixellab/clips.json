@@ -1,0 +1,1494 @@
+{
+  "schemaVersion": 1,
+  "producer": "pixellab",
+  "clips": [
+    {
+      "enemy": "rat",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4424986017897092,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-south/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4424986017897092,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45363066343042074,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-south-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.45363066343042074,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.44480613425925924,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.44480613425925924,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4458231209150327,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-north-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4458231209150327,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.519500248015873,
+        0.75
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-north/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.519500248015873,
+        0.75
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5488741582491582,
+        0.7916666666666666
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-north-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5488741582491582,
+        0.7916666666666666
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5009057971014493,
+        0.8229166666666666
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5009057971014493,
+        0.8229166666666666
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45549687010954615,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "move",
+      "image": "clips/rat-move-south-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.45549687010954615,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "idle",
+      "image": "rotations/rat/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "rat",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4424986017897092,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-south/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45363066343042074,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-south-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.44480613425925924,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4458231209150327,
+        0.78125
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-north-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.519500248015873,
+        0.75
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-north/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5488741582491582,
+        0.7916666666666666
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-north-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5009057971014493,
+        0.8229166666666666
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "rat",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.45549687010954615,
+        0.8125
+      ],
+      "scale": 0.72,
+      "action": "attack",
+      "image": "clips/rat-attack-south-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        67,
+        66,
+        67,
+        67,
+        66,
+        67,
+        67,
+        66,
+        67
+      ],
+      "durationMs": 600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 500
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4602985594795539,
+        0.796875
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-south/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4602985594795539,
+        0.796875
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/south.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4894448138297872,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-south-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4894448138297872,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/south-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.47966056034482757,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.47966056034482757,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.48084900442477874,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-north-west/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.48084900442477874,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/north-west.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.49689421106557374,
+        0.8125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-north/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.49689421106557374,
+        0.8125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/north.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.5028645833333333,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-north-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.5028645833333333,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/north-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.46205357142857145,
+        0.8515625
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.46205357142857145,
+        0.8515625
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 2,
+      "anchor": [
+        0.4607077205882353,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "move",
+      "image": "clips/nutcracker-move-south-east/sheet.png",
+      "frameCount": 9,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 810,
+      "loop": true,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "rows": 1,
+      "anchor": [
+        0.4607077205882353,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "idle",
+      "image": "rotations/nutcracker/south-east.png",
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "attackEvents": []
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.4602985594795539,
+        0.796875
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-south/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.4894448138297872,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-south-west/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.47966056034482757,
+        0.84375
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-west/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-west",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.48084900442477874,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-north-west/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.49689421106557374,
+        0.8125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-north/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "north-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.5028645833333333,
+        0.828125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-north-east/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.46205357142857145,
+        0.8515625
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-east/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    },
+    {
+      "enemy": "nutcracker",
+      "direction": "south-east",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "rows": 3,
+      "anchor": [
+        0.4607077205882353,
+        0.8203125
+      ],
+      "scale": 0.82,
+      "action": "attack",
+      "image": "clips/nutcracker-attack-south-east/sheet.png",
+      "frameCount": 17,
+      "frameDurationsMs": [
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        152,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "attackEvents": [
+        {
+          "timeMs": 800
+        }
+      ]
+    }
+  ]
+}

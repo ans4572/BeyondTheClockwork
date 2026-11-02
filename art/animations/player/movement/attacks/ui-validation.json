@@ -1,0 +1,210 @@
+{
+  "selections": [
+    {
+      "action": "attack-1",
+      "direction": "south",
+      "title": "1타 · 횡타 · 남 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south-west",
+      "title": "1타 · 횡타 · 남서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "west",
+      "title": "1타 · 횡타 · 서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "north-west",
+      "title": "1타 · 횡타 · 북서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "north",
+      "title": "1타 · 횡타 · 북 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "north-east",
+      "title": "1타 · 횡타 · 북동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "east",
+      "title": "1타 · 횡타 · 동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-1",
+      "direction": "south-east",
+      "title": "1타 · 횡타 · 남동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south",
+      "title": "2타 · 반대 횡타 · 남 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south-west",
+      "title": "2타 · 반대 횡타 · 남서 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "west",
+      "title": "2타 · 반대 횡타 · 서 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "north-west",
+      "title": "2타 · 반대 횡타 · 북서 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "north",
+      "title": "2타 · 반대 횡타 · 북 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "north-east",
+      "title": "2타 · 반대 횡타 · 북동 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "east",
+      "title": "2타 · 반대 횡타 · 동 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-2",
+      "direction": "south-east",
+      "title": "2타 · 반대 횡타 · 남동 · PixelLab",
+      "info": "2타 · 반대 횡타 · 13프레임(입력 포함) · 192×192 · 검토 850ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "south",
+      "title": "3타 · 전진 내려찍기 · 남 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "south-west",
+      "title": "3타 · 전진 내려찍기 · 남서 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "west",
+      "title": "3타 · 전진 내려찍기 · 서 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "north-west",
+      "title": "3타 · 전진 내려찍기 · 북서 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "north",
+      "title": "3타 · 전진 내려찍기 · 북 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "north-east",
+      "title": "3타 · 전진 내려찍기 · 북동 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "east",
+      "title": "3타 · 전진 내려찍기 · 동 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "attack-3",
+      "direction": "south-east",
+      "title": "3타 · 전진 내려찍기 · 남동 · PixelLab",
+      "info": "3타 · 전진 내려찍기 · 21프레임(입력 포함) · 192×192 · 검토 1100ms"
+    },
+    {
+      "action": "combo",
+      "direction": "south",
+      "title": "렌치 3타 연속 · 남 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "south-west",
+      "title": "렌치 3타 연속 · 남서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "west",
+      "title": "렌치 3타 연속 · 서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "north-west",
+      "title": "렌치 3타 연속 · 북서 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "north",
+      "title": "렌치 3타 연속 · 북 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "north-east",
+      "title": "렌치 3타 연속 · 북동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "east",
+      "title": "렌치 3타 연속 · 동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    },
+    {
+      "action": "combo",
+      "direction": "south-east",
+      "title": "렌치 3타 연속 · 남동 · PixelLab",
+      "info": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 검토 800ms"
+    }
+  ],
+  "testedSelections": 32,
+  "planningSpeedInfo": "1타 · 횡타 · 17프레임(입력 포함) · 192×192 · 기획 280ms",
+  "controls": [
+    "actions",
+    "directions",
+    "combo",
+    "planning_speed",
+    "review_speed",
+    "playback_speed",
+    "next_frame",
+    "scrub"
+  ],
+  "error": "",
+  "logs": []
+}

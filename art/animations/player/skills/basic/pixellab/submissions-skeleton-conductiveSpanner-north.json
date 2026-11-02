@@ -1,0 +1,17 @@
+[
+  {
+    "action": "conductiveSpanner",
+    "name": "전기 · 도전 스패너",
+    "direction": "north",
+    "requestedFrames": 8,
+    "sourceFrameCount": 8,
+    "jobId": "23102120-c877-45ba-82bb-f4030b873d3d",
+    "sourceMode": "skeleton-v3",
+    "characterId": "3f7a0f77-b8f6-4cff-94f0-754fa6c56c06",
+    "groupId": "bcd5452d-7738-4834-a5ce-9da6df629e48",
+    "frameUrlTemplate": "https://backblaze.pixellab.ai/file/pixellab-characters/6c661d9f-cdf4-4c03-b3a4-d7885126a472/3f7a0f77-b8f6-4cff-94f0-754fa6c56c06/animations/c513a7cf-b451-44cd-b354-2ef89b933364/north/{i}.png?t=1793409417686",
+    "description": "discharges lightning from wrench",
+    "priority": 3,
+    "threeDimensionalBoneGuide": true
+  }
+]

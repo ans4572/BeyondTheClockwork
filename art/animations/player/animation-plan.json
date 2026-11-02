@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "character": "player-f2",
+  "reference": "base.png",
+  "stage": "selected_animation_catalog_ready",
+  "producer": "local articulated pixel rig using approved F2 face pixels",
+  "pixelLabGeneration": false,
+  "intent": "쿼터뷰 핵 앤 슬래시 로그라이크용 자연스러운 8방향 이동",
+  "camera": "three-quarter overhead, approximately 35 degrees; not a side-scroller",
+  "directions": [
+    "east",
+    "south-east",
+    "south",
+    "south-west",
+    "west",
+    "north-west",
+    "north",
+    "north-east"
+  ],
+  "appearanceConstraints": [
+    "F2의 아이보리 둥근 머리, 남색 화면과 청록색 눈 유지",
+    "녹색 천 패치는 방향을 따라 실제로 회전하며 좌우 반전으로 복제하지 않음",
+    "붉은 스카프, 황동 가슴 태엽과 주석 몸체 유지",
+    "오른손에 렌치 하나만 유지; 왼손은 빈 기계 손",
+    "등 뒤에서도 태엽과 천 수선 흔적이 일관됨"
+  ],
+  "movementConstraints": [
+    "발 디딤 → 체중 이동 → 밀어내기 → 회수의 연결",
+    "상하 바운스는 작게, 뒤쪽 스카프는 한 박자 늦게",
+    "허리를 약간 앞으로 기울이고 머리는 안정적으로 유지",
+    "몸통·어깨·오른손·렌치는 함께 움직이고 무기가 분리되지 않음",
+    "방향을 바꿔도 같은 보행 위상을 유지",
+    "루트 이동 없는 제자리 루프; 엔진이 이동을 처리",
+    "속도가 낮아지면 걸음도 느려지고 완전 정지에서는 발 위상이 멈춤",
+    "화면 전체 이동이나 카메라 패닝을 애니메이션에 굽지 않음"
+  ],
+  "playback": {
+    "strideLengthUnits": 2.4,
+    "accelerationResponseSeconds": 0.07,
+    "decelerationResponseSeconds": 0.045,
+    "directionHysteresisDegrees": 8,
+    "movingThreshold": 0.08,
+    "idleThreshold": 0.04,
+    "maxDeltaSeconds": 0.05,
+    "idleFramesPerSecond": 4
+  },
+  "review": [
+    "같은 외형",
+    "발 미끄러짐",
+    "좌우 손 일관성",
+    "루프 경계",
+    "방향 전환",
+    "정지 전환",
+    "투명 배경과 기준점"
+  ],
+  "animationsCreated": true,
+  "appliedToGame": false,
+  "attackAnimationsIncluded": true,
+  "attackAnimationManifest": "movement/attacks/manifest.json",
+  "stateAnimationManifest": "state-clips.json",
+  "selectedStateConcepts": {
+    "hit": "H1",
+    "death": "D1",
+    "dodge": "E2"
+  },
+  "castingPolicy": {
+    "weaponHand": "right",
+    "unarmedCastingHand": "left"
+  },
+  "completedSkillAnimationIds": [
+    "heatSwing",
+    "frostBolt",
+    "conductiveSpanner",
+    "pressureDash",
+    "exhaustBurst",
+    "coolingField",
+    "capacitorStrike",
+    "vortexIntake"
+  ],
+  "pixelLabMovementUpgrade": {
+    "manifest": "movement/locomotion/manifest.json",
+    "preview": "movement/locomotion/index.html",
+    "characterId": "3f7a0f77-b8f6-4cff-94f0-754fa6c56c06",
+    "status": "24_clips_generated_for_art_review",
+    "actions": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "directions": [
+      "south",
+      "south-west",
+      "west",
+      "north-west",
+      "north",
+      "north-east",
+      "east",
+      "south-east"
+    ],
+    "clipCount": 24,
+    "generatedFrames": 256,
+    "sourceFrames": 280,
+    "allEightDirections": true,
+    "appliedToGame": false
+  },
+  "pixelLabAttackUpgrade": {
+    "manifest": "movement/attacks/manifest.json",
+    "preview": "movement/attacks/index.html",
+    "status": "24_clips_generated_for_art_review",
+    "clipCount": 24,
+    "sourceFrames": 408,
+    "generatedFrames": 384,
+    "allEightDirections": true,
+    "weaponHand": "right",
+    "leftHandSupportAttack": 3,
+    "appliedToGame": false,
+    "localizedArmRepair": {
+      "manifest": "movement/attacks/arm-repair-v1/manifest.json",
+      "changedClips": 2,
+      "changedFrames": 19,
+      "allOriginalOpaquePixelsPreserved": true,
+      "allPixelsOutsideROIUnchanged": true,
+      "timingsChanged": false
+    }
+  }
+}

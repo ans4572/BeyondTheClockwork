@@ -1,0 +1,19 @@
+{
+  "name": "beyond-the-clockwork",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "dev": "node scripts/serve.mjs",
+    "data:sync": "node scripts/sync-data.mjs",
+    "data:check": "node scripts/sync-data.mjs --check",
+    "test": "node --test",
+    "playtest": "node scripts/playtest.mjs",
+    "check": "npm run data:check && npm run art:check && node --test",
+    "art:check": "node scripts/validate-animation-catalog.mjs && node scripts/validate-primary-skill-pixellab.mjs && node scripts/validate-fusion-expansion.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

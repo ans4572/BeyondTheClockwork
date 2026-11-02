@@ -1,0 +1,274 @@
+{
+  "provider": "pixellab_layered_composite",
+  "files": [
+    "frames/000.png",
+    "frames/001.png",
+    "frames/002.png",
+    "frames/003.png",
+    "frames/004.png",
+    "frames/005.png",
+    "frames/006.png",
+    "frames/007.png",
+    "frames/008.png",
+    "frames/009.png",
+    "frames/010.png",
+    "frames/011.png",
+    "frames/012.png",
+    "frames/013.png",
+    "frames/014.png",
+    "frames/015.png",
+    "frames/016.png",
+    "frames/017.png",
+    "frames/018.png",
+    "frames/019.png"
+  ],
+  "sourceBody": "expansion/bodies/forwardCast/west/frames.json",
+  "sourceEffect": "expansion/effects/frostCrosscut/frames.json",
+  "frameLayers": [
+    {
+      "timeMs": 0,
+      "bodyFrame": 0,
+      "effectFrame": null,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 60,
+      "bodyFrame": 1,
+      "effectFrame": null,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 120,
+      "bodyFrame": 2,
+      "effectFrame": null,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 180,
+      "bodyFrame": 3,
+      "effectFrame": null,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": null
+    },
+    {
+      "timeMs": 240,
+      "bodyFrame": 4,
+      "effectFrame": 0,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        167,
+        129
+      ]
+    },
+    {
+      "timeMs": 300,
+      "bodyFrame": 5,
+      "effectFrame": 0,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        159,
+        129
+      ]
+    },
+    {
+      "timeMs": 360,
+      "bodyFrame": 6,
+      "effectFrame": 0,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        151,
+        129
+      ]
+    },
+    {
+      "timeMs": 400,
+      "bodyFrame": 6,
+      "effectFrame": 1,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        145,
+        129
+      ]
+    },
+    {
+      "timeMs": 420,
+      "bodyFrame": 7,
+      "effectFrame": 1,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        142,
+        129
+      ]
+    },
+    {
+      "timeMs": 480,
+      "bodyFrame": 8,
+      "effectFrame": 1,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        134,
+        129
+      ]
+    },
+    {
+      "timeMs": 540,
+      "bodyFrame": 9,
+      "effectFrame": 8,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        126,
+        129
+      ]
+    },
+    {
+      "timeMs": 550,
+      "bodyFrame": 9,
+      "effectFrame": 8,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        125,
+        129
+      ]
+    },
+    {
+      "timeMs": 600,
+      "bodyFrame": 10,
+      "effectFrame": 8,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        118,
+        129
+      ]
+    },
+    {
+      "timeMs": 660,
+      "bodyFrame": 11,
+      "effectFrame": 9,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        110,
+        129
+      ]
+    },
+    {
+      "timeMs": 710,
+      "bodyFrame": 11,
+      "effectFrame": 9,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        103,
+        129
+      ]
+    },
+    {
+      "timeMs": 720,
+      "bodyFrame": 11,
+      "effectFrame": 9,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        102,
+        129
+      ]
+    },
+    {
+      "timeMs": 870,
+      "bodyFrame": 11,
+      "effectFrame": 10,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        81,
+        129
+      ]
+    },
+    {
+      "timeMs": 1030,
+      "bodyFrame": 11,
+      "effectFrame": 18,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        59,
+        129
+      ]
+    },
+    {
+      "timeMs": 1180,
+      "bodyFrame": 11,
+      "effectFrame": 19,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": [
+        39,
+        129
+      ]
+    },
+    {
+      "timeMs": 1340,
+      "bodyFrame": 11,
+      "effectFrame": null,
+      "bodyAt": [
+        264,
+        180
+      ],
+      "effectAt": null
+    }
+  ]
+}

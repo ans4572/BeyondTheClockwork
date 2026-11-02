@@ -1,0 +1,49 @@
+{
+  "clips": 32,
+  "directions": 8,
+  "skills": 4,
+  "sourceFrames": 535,
+  "generatedFrames": 504,
+  "nativeSkeletonSources": 8,
+  "gifs": 32,
+  "alpha": true,
+  "emptyFrames": 0,
+  "effectBoundaryTouches": [
+    {
+      "action": "frostBolt",
+      "direction": "north",
+      "frames": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "review": "effect_only_body_uncropped"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "south-west",
+      "frames": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "review": "effect_only_body_uncropped"
+    },
+    {
+      "action": "conductiveSpanner",
+      "direction": "west",
+      "frames": [
+        12,
+        13
+      ],
+      "review": "effect_only_body_uncropped"
+    }
+  ],
+  "frameCountAndGIFTiming": "verified",
+  "rightWrenchAndLeftFrostMetadata": "verified",
+  "anatomy": "See qa-review.json for visual review; file validation does not infer anatomy."
+}

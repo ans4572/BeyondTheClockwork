@@ -1,0 +1,17 @@
+[
+  {
+    "action": "pressureDash",
+    "name": "바람 · 압축 돌진",
+    "direction": "north-east",
+    "requestedFrames": 8,
+    "sourceFrameCount": 8,
+    "jobId": "52097eec-1d6f-432b-af49-f5411b515bba",
+    "sourceMode": "skeleton-v3",
+    "characterId": "3f7a0f77-b8f6-4cff-94f0-754fa6c56c06",
+    "groupId": "7dcc2e92-8f82-4f11-9975-532311fa5474",
+    "frameUrlTemplate": "https://backblaze.pixellab.ai/file/pixellab-characters/6c661d9f-cdf4-4c03-b3a4-d7885126a472/3f7a0f77-b8f6-4cff-94f0-754fa6c56c06/animations/e0e35106-b9fc-499b-9f5a-7283cd31af52/north-east/{i}.png?t=1793409625029",
+    "description": "wind powered wrench lunge",
+    "priority": 3,
+    "threeDimensionalBoneGuide": true
+  }
+]

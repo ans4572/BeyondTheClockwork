@@ -1,0 +1,157 @@
+{
+  "action": "pressureDash",
+  "name": "바람 · 압축 돌진",
+  "description": "wind powered wrench lunge",
+  "jobIds": {},
+  "receipt": "error: Maximum 8 concurrent background jobs allowed (Tier 1). You have 8 active jobs.",
+  "move": {
+    "name": "stab",
+    "energy": 0.8
+  },
+  "poses": [
+    {
+      "frame": 1,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 2,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 3,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 4,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 5,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 6,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 7,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 8,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    }
+  ]
+}

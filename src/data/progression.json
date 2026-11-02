@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "source": "docs/design/clockwork-design.v1.json",
+  "contentVersion": "clockwork-design-0.3-magnetic-ice-clamp",
+  "economy": {
+    "firstReturnBonus": 15,
+    "firstReturnBonusRequiresClearedCombat": true,
+    "persistentCurrency": "freeGears",
+    "runCurrency": "coins",
+    "unlockItem": "tuningSeal",
+    "finalBossPersistentReward": 100,
+    "sharedCoreTotal": 5480,
+    "elementTotal": 7200,
+    "runCoinRewards": {
+      "normal": 15,
+      "miniboss": 25,
+      "regionBoss": 40
+    },
+    "baseCoinsBeforeFinalBoss": 500,
+    "shop": [
+      {
+        "id": "heal",
+        "cost": 45,
+        "amount": 25,
+        "oncePerShop": true
+      },
+      {
+        "id": "skillLevel",
+        "cost": 70,
+        "amount": 1
+      },
+      {
+        "id": "element",
+        "cost": 90
+      },
+      {
+        "id": "wrenchMod",
+        "cost": 120
+      },
+      {
+        "id": "persistentGears",
+        "cost": 60,
+        "amount": 20,
+        "oncePerShop": true
+      }
+    ]
+  },
+  "intro": {
+    "openingText": [
+      "이 마을에는 불행한 주민이 없습니다.",
+      "불행한 주민은 고장으로 분류되기 때문입니다.",
+      "당신은 오늘 폐기되었습니다."
+    ],
+    "targetSecondsToFirstCombat": 20,
+    "oneTimeEncounterReward": 8,
+    "registrationBeforeCanonicalRecovery": true
+  },
+  "region": {
+    "id": "smileStreet",
+    "name": "웃음거리",
+    "index": 1,
+    "normalReward": 8,
+    "miniReward": 20,
+    "bossReward": 40,
+    "miniboss": "collectorRoco",
+    "boss": "captainBrass",
+    "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"
+  },
+  "run": {
+    "regions": 4,
+    "nodesPerRegion": 7,
+    "finalBossExtraNodes": 1,
+    "totalNodes": 29,
+    "estimatedFullRunMinutes": [
+      30,
+      40
+    ],
+    "regionBossClearHeal": 30,
+    "persistentRewardGuaranteedPlusChoice": true,
+    "basePersistentFullClear": 606,
+    "fullRunRestartsAtFirstRegion": true,
+    "wrenchModsMax": 2,
+    "guaranteedModNodes": [
+      {
+        "region": 1,
+        "node": 4
+      },
+      {
+        "region": 3,
+        "node": 4
+      }
+    ],
+    "firstFusionTeaching": {
+      "forceRegion1Nodes1And2ToCombatUntilTwoElementsEquipped": true,
+      "singleElementBuildCanOptOut": true
+    }
+  }
+}

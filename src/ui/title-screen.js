@@ -1,0 +1,161 @@
+const F2_SHEET = '/art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
+const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
+const STAGE = [1120, 640], SLAM_MS = 170, SETTLE_MS = 520, LINE_MS = 1100, LAST_LINE_MS = 1500;
+const STAMP_WAIT_MS = 700, STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_ZOOM = 3, TOOL_RISE = 780;
+const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
+
+/** Malgun Gothic cut down to hard pixels, so lettering sits in the same world as the sprites. */
+export function pixelText(text, size, fill, scale = 2) {
+  const probe = document.createElement('canvas').getContext('2d'), font = `900 ${size}px "Malgun Gothic", sans-serif`;
+  probe.font = font;
+  const pad = 3, w = Math.ceil(probe.measureText(text).width) + pad * 2, h = Math.ceil(size * 1.3) + pad * 2, raw = document.createElement('canvas');
+  raw.width = w; raw.height = h;
+  const x = raw.getContext('2d', { willReadFrequently: true }); x.font = font; x.textBaseline = 'top'; x.fillText(text, pad, pad);
+  const pixels = x.getImageData(0, 0, w, h).data, out = document.createElement('canvas');
+  out.width = w * scale; out.height = h * scale;
+  const o = out.getContext('2d'); o.fillStyle = fill;
+  for (let b = 0; b < h; b++) for (let a = 0; a < w; a++) if (pixels[(b * w + a) * 4 + 3] > 105) o.fillRect(a * scale, b * scale, scale, scale);
+  return out;
+}
+
+/** The red disposal stamp as hard pixels, turned before it is enlarged. */
+function stampImage(size) {
+  const word = pixelText('폐기', size, RED, 1), small = document.createElement('canvas');
+  small.width = Math.ceil(word.width * 1.35); small.height = Math.ceil(word.height * 1.75);
+  const s = small.getContext('2d', { willReadFrequently: true }); s.imageSmoothingEnabled = false;
+  s.translate(small.width / 2, small.height / 2); s.rotate(-0.2); s.strokeStyle = RED; s.lineWidth = 4;
+  s.strokeRect(-word.width / 2 - 5, -word.height / 2 - 3, word.width + 10, word.height + 6); s.drawImage(word, -word.width / 2, -word.height / 2);
+  const image = s.getImageData(0, 0, small.width, small.height);
+  for (let i = 3; i < image.data.length; i += 4) image.data[i] = image.data[i] > 127 ? 255 : 0;
+  s.putImageData(image, 0, 0);
+  return small;
+}
+
+/** The stamp itself, front on: rubber foot, wooden block, neck and round grip. */
+function toolImage() {
+  const tool = document.createElement('canvas'), c = tool.getContext('2d'), box = (x, y, w, h, color) => { c.fillStyle = color; c.fillRect(x, y, w, h); };
+  tool.width = 140; tool.height = 150;
+  box(4, 118, 132, 32, '#3a241c'); box(8, 122, 124, 20, '#c43c36'); box(8, 142, 124, 4, '#8f2a27');
+  box(14, 78, 112, 42, '#3a241c'); box(18, 82, 104, 36, '#a36f3d'); box(18, 82, 104, 7, '#c79a5e'); box(106, 89, 16, 29, '#7d5230');
+  box(56, 46, 28, 34, '#3a241c'); box(60, 46, 20, 32, '#8a5a34'); box(60, 46, 6, 32, '#a9784a');
+  box(40, 8, 60, 42, '#3a241c'); box(32, 16, 76, 26, '#3a241c'); box(44, 12, 52, 34, '#c43c36'); box(36, 20, 68, 18, '#c43c36'); box(46, 14, 26, 8, '#e0706a');
+  return tool;
+}
+
+/** Short pixel rays around the point of impact. */
+function burstImage() {
+  const burst = document.createElement('canvas'), c = burst.getContext('2d');
+  burst.width = 200; burst.height = 170; c.fillStyle = INK;
+  for (const [x, y, w, h] of [[4, 40, 18, 5], [0, 84, 22, 5], [4, 128, 18, 5], [178, 40, 18, 5], [178, 84, 22, 5], [178, 128, 18, 5], [38, 2, 5, 16], [100, 0, 5, 18], [160, 2, 5, 16], [38, 152, 5, 16], [100, 150, 5, 20], [160, 152, 5, 16]]) c.fillRect(x, y, w, h);
+  return burst;
+}
+
+function drawForm(c, f2) {
+  const rule = (x, y, w) => { c.fillStyle = INK; c.fillRect(x, y, w, 3); };
+  c.fillStyle = '#1f3a3680'; c.fillRect(66, 28, 1000, 600);
+  c.fillStyle = PAPER; c.fillRect(56, 16, 1000, 600);
+  c.drawImage(pixelText('태엽 밖으로', 28, INK, 4), 84, 36);
+  c.drawImage(pixelText('웃음거리 품질관리국 · 불량 판정서', 12, INK), 88, 176);
+  rule(88, 216, 936);
+  c.fillStyle = '#d7e4d6'; c.fillRect(100, 238, 320, 350);
+  c.drawImage(f2, 0, 0, 128, 128, 260 - 64 * 3, 580 - 105 * 3, 384, 384);
+  c.fillStyle = INK; for (const [x, y, w, h] of [[100, 238, 320, 4], [100, 584, 320, 4], [100, 238, 4, 350], [416, 238, 4, 350]]) c.fillRect(x, y, w, h);
+  c.fillStyle = '#c79a3e'; c.fillRect(240, 222, 44, 40); c.fillStyle = PAPER; c.fillRect(250, 232, 24, 20);
+  const field = (label, value, y) => { c.drawImage(pixelText(label, 12, LABEL), 472, y); c.drawImage(pixelText(value, 13, INK), 610, y - 2); rule(476, y + 44, 548); };
+  field('제품 번호', 'F2', 236); field('판정 사유', '스스로 생각함', 292);
+  c.drawImage(pixelText('처리 방법', 12, LABEL), 472, 356);
+}
+
+/** The disposal form the game opens on, and the short scene that follows it. Holds no game state. */
+export class TitleScreen {
+  constructor(root, { onNew, onLoad, onSettings, onThud, reducedMotion }) {
+    this.root = root; this.onThud = onThud; this.reducedMotion = reducedMotion; this.timers = [];
+    root.innerHTML = `<div class="title-stage"><canvas class="title-form" width="${STAGE[0]}" height="${STAGE[1]}"></canvas><canvas class="title-mark" hidden></canvas><nav aria-label="타이틀 메뉴"><button data-do="new">새로 시작하기</button><button data-do="load">게임 불러오기</button><button data-do="settings">환경설정</button></nav><div class="title-press"></div></div><canvas class="title-slam" hidden></canvas><div class="title-dark" hidden></div>`;
+    this.stage = root.querySelector('.title-stage'); this.dark = root.querySelector('.title-dark'); this.slamMark = root.querySelector('.title-slam'); this.mark = root.querySelector('.title-mark');
+    this.buttons = [...root.querySelectorAll('button')];
+    this.tool = toolImage(); this.burst = burstImage(); this.tool.hidden = this.burst.hidden = true;
+    this.tool.className = 'title-tool'; this.burst.className = 'title-burst';
+    root.querySelector('.title-press').append(this.burst, this.tool);
+    Object.assign(this.tool.style, { left: `${MARK_CENTER[0] - 140}px`, top: `${MARK_CENTER[1] + 70 - 300}px` });
+    Object.assign(this.burst.style, { left: `${MARK_CENTER[0] - 200}px`, top: `${MARK_CENTER[1] - 170}px` });
+    const actions = { new: onNew, load: onLoad, settings: onSettings };
+    this.buttons.forEach(button => {
+      button.addEventListener('click', () => actions[button.dataset.do]());
+      button.addEventListener('mouseenter', () => { if (!button.disabled) button.focus(); });
+    });
+    document.addEventListener('keydown', e => {
+      if (this.root.hidden || !this.dark.hidden) return;
+      const delta = { ArrowDown: 1, ArrowUp: -1 }[e.key];
+      if (delta) { e.preventDefault(); this.move(delta); }
+    });
+    addEventListener('resize', () => this.fit());
+    this.ready = load(F2_SHEET).then(f2 => {
+      const c = root.querySelector('.title-form').getContext('2d'); c.imageSmoothingEnabled = false; drawForm(c, f2);
+      const stamp = stampImage(20), mark = this.mark.getContext('2d');
+      this.mark.width = stamp.width; this.mark.height = stamp.height; mark.drawImage(stamp, 0, 0);
+      this.mark.style.width = `${stamp.width * MARK_ZOOM}px`; this.mark.style.left = `${MARK_CENTER[0] - stamp.width * MARK_ZOOM / 2}px`; this.mark.style.top = `${MARK_CENTER[1] - stamp.height * MARK_ZOOM / 2}px`;
+    });
+  }
+  fit() { const k = Math.min(innerWidth / STAGE[0], innerHeight / STAGE[1]); this.stage.style.transform = `translate(-50%, -50%) scale(${k})`; }
+  move(delta) {
+    const open = this.buttons.filter(button => !button.disabled), at = open.indexOf(document.activeElement);
+    open[(at + delta + open.length) % open.length]?.focus();
+  }
+  activate() { if (this.buttons.includes(document.activeElement)) document.activeElement.click(); }
+  focus() { const [fresh, resume] = this.buttons; (resume.disabled ? fresh : resume).focus({ preventScroll: true }); }
+  show({ canLoad }) {
+    this.root.hidden = false; this.dark.hidden = true; this.slamMark.hidden = true; this.fit();
+    this.buttons[1].disabled = !canLoad;
+    this.focus();
+    this.mark.hidden = true;
+    if (this.reducedMotion()) this.mark.hidden = false; else this.stampDown();
+  }
+  hide() { this.root.hidden = true; this.tool.hidden = this.burst.hidden = true; this.root.classList.remove('title-shake'); this.timers.forEach(clearTimeout); this.timers = []; }
+  later(ms, run) { this.timers.push(setTimeout(run, ms)); }
+  /** The stamp drops, bites the paper and lifts away, leaving the mark. */
+  stampDown() {
+    const { tool, burst } = this, down = STAMP_WAIT_MS + STAMP_DROP_MS, up = down + STAMP_PRESS_MS;
+    this.later(STAMP_WAIT_MS, () => {
+      tool.hidden = false;
+      tool.animate([{ transform: `translateY(-${TOOL_RISE}px)` }, { transform: 'none' }], { duration: STAMP_DROP_MS, easing: 'cubic-bezier(.6, 0, 1, .6)', fill: 'both' });
+    });
+    this.later(down, () => {
+      this.mark.hidden = false; burst.hidden = false; this.onThud(); this.root.classList.add('title-shake');
+      tool.animate([{ transform: 'scaleY(.93)' }, { transform: 'none' }], { duration: STAMP_PRESS_MS, easing: 'steps(3)', fill: 'both' });
+    });
+    this.later(down + BURST_MS, () => { burst.hidden = true; });
+    this.later(down + SHAKE_MS, () => this.root.classList.remove('title-shake'));
+    this.later(up, () => tool.animate([{ transform: 'none' }, { transform: `translateY(-${TOOL_RISE}px)` }], { duration: STAMP_LIFT_MS, easing: 'cubic-bezier(.3, 0, .8, .4)', fill: 'both' }));
+    this.later(up + STAMP_LIFT_MS, () => { tool.hidden = true; });
+  }
+  /** Resolves after `ms`, or at once when the player skips. */
+  wait(ms) { return new Promise(done => { if (this.skipped) done(); else { this.resume = done; this.timers.push(setTimeout(done, ms)); } }); }
+  /** The big stamp comes down on the form. */
+  async slam() {
+    if (this.reducedMotion()) return;
+    const stamp = stampImage(40), c = this.slamMark.getContext('2d');
+    this.slamMark.width = stamp.width; this.slamMark.height = stamp.height; c.drawImage(stamp, 0, 0);
+    this.slamMark.hidden = false;
+    await this.wait(SLAM_MS);
+    this.onThud(); this.root.classList.add('title-shake');
+    await this.wait(SETTLE_MS);
+    this.root.classList.remove('title-shake');
+  }
+  /** The three opening sentences on black. Any key or click skips the rest. */
+  async opening(lines, { stamp }) {
+    this.root.hidden = false; this.skipped = false;
+    const skip = e => { if (e.type === 'keydown' && e.repeat) return; e.preventDefault(); this.skipped = true; this.resume?.(); };
+    addEventListener('keydown', skip, true); addEventListener('pointerdown', skip, true);
+    if (stamp) await this.slam();
+    this.dark.hidden = false; this.dark.replaceChildren();
+    for (const [i, line] of lines.entries()) {
+      if (this.skipped) break;
+      const last = i === lines.length - 1, text = pixelText(line, 15, last ? '#e0564c' : '#f3e6c8', 3);
+      this.dark.append(text);
+      if (last) this.onThud();
+      await this.wait(last ? LAST_LINE_MS : LINE_MS);
+    }
+    removeEventListener('keydown', skip, true); removeEventListener('pointerdown', skip, true);
+    this.dark.replaceChildren(); this.slamMark.hidden = true;
+  }
+}

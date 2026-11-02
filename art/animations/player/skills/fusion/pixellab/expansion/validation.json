@@ -1,0 +1,16 @@
+{
+  "additionalClips": 42,
+  "existingRepresentativeClips": 6,
+  "totalClips": 48,
+  "sourceBodyLayers": 21,
+  "sourceBodyFrames": 252,
+  "sourceEffectLayers": 6,
+  "compositeFrames": 1365,
+  "protectedOpaqueBodyPixels": 3759967,
+  "allOpaqueBodyPixelsUnchanged": true,
+  "sheetsMatchEveryIndividualFrame": true,
+  "gifFrameCountsAndTiming": "verified",
+  "originalRepresentativeFilesUnchanged": 104,
+  "compositeBoundaryTouches": [],
+  "anatomy": "Visual body review is recorded separately; pixel preservation prevents VFX from erasing body pixels."
+}

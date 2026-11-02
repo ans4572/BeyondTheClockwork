@@ -1,0 +1,16 @@
+[
+  {
+    "action": "heatSwing",
+    "name": "불 · 과열 휘두르기",
+    "direction": "north",
+    "requestedFrames": 16,
+    "jobId": "26795936-153d-4135-8353-ec35fd04dd6b",
+    "assetId": "23722032-e9fa-5723-a79d-a080ff15eeb4",
+    "description": "Viewed FROM BEHIND for the entire animation. The round ivory BACK OF HELMET, burgundy scarf hanging down the SPINE, and green BACKPLATE stay oriented toward the viewer in every frame. The robot attacks AWAY from viewer toward the TOP of image. From its rear standing pose, bend knees, brace, lift right elbow to side, swing its right-hand wrench in a wide forward crescent above and beyond the shoulders. A small orange fire trail follows only wrench tip. Left elbow remains spread visibly to the side with empty left hand beside waist, both legs and arms physically attached and solid throughout. Head and hips keep their starting orientation. Settle back into the same rear standing pose. Entire body remains opaque, same proportions, no blur or spin, no extra or lost limbs, no camera movement. Transparent background.",
+    "subject_description": "Back view of a small clockwork robot with a round ivory rear helmet shell, olive green backplate, burgundy scarf down its spine, brass joints, two complete arms, two mechanical legs, a long turquoise wrench carried in its right hand",
+    "seed": 109001,
+    "inputUrl": "https://api.pixellab.ai/mcp/images/4c3ca73b-b4f1-4633-92d7-fe5ea9e05071/download?index=0",
+    "priority": 4,
+    "receipt": "id: 26795936-153d-4135-8353-ec35fd04dd6b\njob_id: 26795936-153d-4135-8353-ec35fd04dd6b\ndescription: Viewed FROM BEHIND for the entire animation. The round ivory BACK OF HELMET, burgundy scarf hanging down the SPINE, and green BACKPLATE stay oriented toward the viewer in every frame. The robot attacks AWAY from viewer toward the TOP of image. From its rear standing pose, bend knees, brace, lift right elbow to side, swing its right-hand wrench in a wide forward crescent above and beyond the shoulders. A small orange fire trail follows only wrench tip. Left elbow remains spread visibly to the side with empty left hand beside waist, both legs and arms physically attached and solid throughout. Head and hips keep their starting orientation. Settle back into the same rear standing pose. Entire body remains opaque, same proportions, no blur or spin, no extra or lost limbs, no camera movement. Transparent background.\nframes: 16\nsize: 192x192px\ntransparent: True\nlast_frame: yes (animating toward it)\nseed: 109001\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"26795936-153d-4135-8353-ec35fd04dd6b\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/26795936-153d-4135-8353-ec35fd04dd6b/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 23722032-e9fa-5723-a79d-a080ff15eeb4\nasset_status: pending (saved to your gallery when generation completes)"
+  }
+]

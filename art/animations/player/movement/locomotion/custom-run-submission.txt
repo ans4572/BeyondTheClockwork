@@ -1,0 +1,12 @@
+character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06
+animation: pixminimax custom (Seamless looping in-place RUN in the selected facing direction. Preserve exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH firmly connected to anatomical RIGHT hand in EVERY frame. Rigid unchanged weapon length about half body height, carried upright/slightly angled beside torso with restrained arm swing; empty LEFT arm pumps opposite legs. Never swap, lose, shorten or duplicate wrench. Athletic compact quick strides, clear alternating knee drive and toe push-off, brief airborne phase, slight forward torso lean, stable head, red scarf streams and lags. Complete one full two-step run cycle, visibly faster and more energetic than walking. No turning, whole-body travel, camera motion or ground effects. End phase matches start for seamless looping. Transparent background.)
+directions: south, south-west, north, north-east, east (5 jobs)
+job_ids: south=45873c9d-47b9-4571-b83a-7f5c147362c3, south-west=fc8e3320-a579-4a88-a964-ed2e5ff38c93, north=26308993-c086-4a7e-88e4-b056026b768d, north-east=ab45e4e1-e926-4cdb-81f2-07d457a441cc, east=8696cc0a-a725-473a-b06b-ace33808e9f8
+group: a64fd735-e1e1-4b32-bdd2-806ab43648f5
+frames: 13 (1 reference + 12 animated)
+canvas: south 120x120, south-west 124x124, north 120x120, north-east 120x120, east 124x124 (frames are stored at this size: the character plus room to move)
+cost: 10 generations (2/dir x 5)
+eta: ~2 min/direction
+
+hint: get_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06")
+add more directions to this group: animate_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06", action_description="Seamless looping in-place RUN in the selected facing direction. Preserve exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH firmly connected to anatomical RIGHT hand in EVERY frame. Rigid unchanged weapon length about half body height, carried upright/slightly angled beside torso with restrained arm swing; empty LEFT arm pumps opposite legs. Never swap, lose, shorten or duplicate wrench. Athletic compact quick strides, clear alternating knee drive and toe push-off, brief airborne phase, slight forward torso lean, stable head, red scarf streams and lags. Complete one full two-step run cycle, visibly faster and more energetic than walking. No turning, whole-body travel, camera motion or ground effects. End phase matches start for seamless looping. Transparent background.", mode="pixminimax", animation_group_id="a64fd735-e1e1-4b32-bdd2-806ab43648f5", directions=[...])

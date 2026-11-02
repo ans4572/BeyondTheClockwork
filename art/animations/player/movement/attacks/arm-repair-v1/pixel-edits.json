@@ -1,0 +1,14 @@
+[
+  {
+    "action": "attack-1",
+    "direction": "south",
+    "imageId": "be1096e8-ee87-43df-8a83-0388ea7643e7",
+    "frames": 17
+  },
+  {
+    "action": "attack-2",
+    "direction": "south",
+    "imageId": "ab9d4e3d-656e-4704-b1c1-996a5463cc9d",
+    "frames": 13
+  }
+]

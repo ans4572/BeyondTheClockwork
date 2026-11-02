@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "body-reference",
+    "receipt": "1 validation error for call[edit_image_pixen]\ndescription\n  String should have at most 500 characters [type=string_too_long, input_value='Isolate ONLY the SAME pa...ed crisp pixel shading.', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
+    "args": {
+      "image_url": "https://api.pixellab.ai/mcp/images/4a214ede-32fc-4049-a608-98cc78fb05a3/download?index=16",
+      "width": 128,
+      "height": 128,
+      "no_background": true,
+      "seed": 120001,
+      "description": "Isolate ONLY the SAME patched robot, turn to face SOUTH toward camera, full body centered at native 128px. Preserve thin articulated proportions, ivory patched helmet, navy cyan-eye screen, burgundy scarf, olive armor, brass joints. ONE long turquoise wrench in anatomical RIGHT hand lowered outside torso; EMPTY LEFT hand relaxed outside waist. BOTH complete arms and hands, BOTH legs and feet visible and attached. Neutral stance, no magic, no effects, no floor or text. Detailed crisp pixel shading."
+    }
+  }
+]

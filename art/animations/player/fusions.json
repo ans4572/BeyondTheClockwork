@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "producer": "local_articulated_pixel_rig",
+  "pixelLabGeneration": false,
+  "appliedToGame": false,
+  "sourceConcepts": "/art/player-f2/fusion-concepts/manifest.json",
+  "frameDurationMs": 40,
+  "previewLeadInMs": 160,
+  "bodySize": 96,
+  "bodyPixelsPerUnit": 40,
+  "bodyOrigin": [
+    48,
+    73
+  ],
+  "effectSize": [
+    320,
+    256
+  ],
+  "effectPixelsPerUnit": 20,
+  "effectBaseOrigin": [
+    160,
+    165
+  ],
+  "previewTargetDistance": 4,
+  "gameplayActionLockAddedMs": 0,
+  "castingPolicy": {
+    "weaponHand": "right",
+    "unarmedCastingHand": "left"
+  },
+  "effectsFollowGameRules": true,
+  "legacyAliases": {
+    "blizzardFan": "frostCrosscut",
+    "ionFan": "stormFloat",
+    "superconductRing": "magneticIceClamp"
+  },
+  "fusions": [
+    {
+      "id": "steamShatter",
+      "bodyReadyMs": 760,
+      "pulseVisualMs": 180,
+      "fadeMs": 260,
+      "pose": "burst"
+    },
+    {
+      "id": "arcFurnace",
+      "bodyReadyMs": 720,
+      "pulseVisualMs": 210,
+      "fadeMs": 280,
+      "pose": "point"
+    },
+    {
+      "id": "fireCyclone",
+      "bodyReadyMs": 680,
+      "pulseVisualMs": 190,
+      "fadeMs": 300,
+      "pose": "scoop"
+    },
+    {
+      "id": "magneticIceClamp",
+      "bodyReadyMs": 920,
+      "pulseVisualMs": 180,
+      "fadeMs": 300,
+      "pose": "clamp"
+    },
+    {
+      "id": "frostCrosscut",
+      "bodyReadyMs": 760,
+      "pulseVisualMs": 200,
+      "fadeMs": 240,
+      "pose": "crosscut",
+      "bladeHalfWidth": 0.85,
+      "bladeHalfHeight": 1.35,
+      "bladeLift": 0.85,
+      "bladeBow": 0.3
+    },
+    {
+      "id": "stormFloat",
+      "bodyReadyMs": 680,
+      "pulseVisualMs": 200,
+      "fadeMs": 280,
+      "pose": "orb"
+    }
+  ]
+}

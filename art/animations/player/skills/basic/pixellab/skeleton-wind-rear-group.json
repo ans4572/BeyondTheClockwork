@@ -1,0 +1,162 @@
+{
+  "action": "pressureDash",
+  "name": "바람 · 압축 돌진",
+  "description": "wind powered wrench lunge",
+  "groupId": "7dcc2e92-8f82-4f11-9975-532311fa5474",
+  "jobIds": {
+    "north-west": "d4126934-df9a-4c5c-be31-42bcb03fbd0b",
+    "north": "dc68f9eb-dcdb-4dcf-bac8-f975917ec454",
+    "north-east": "52097eec-1d6f-432b-af49-f5411b515bba"
+  },
+  "receipt": "character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\nanimation: wind powered wrench lunge\nmode: skeleton-v3 (custom motion)\ndirections: north-west, north, north-east (3 jobs)\n  north-west: job d4126934-df9a-4c5c-be31-42bcb03fbd0b\n  north: job dc68f9eb-dcdb-4dcf-bac8-f975917ec454\n  north-east: job 52097eec-1d6f-432b-af49-f5411b515bba\ngroup: 7dcc2e92-8f82-4f11-9975-532311fa5474\nframes: 8\ncost: 3 generations per direction\neta: about 3-5 min per direction\nadd more directions to this group (same motion, no poses needed): animate_character(character_id=\"3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\", mode=\"skeleton-v3\", action_description=\"wind powered wrench lunge\", animation_group_id=\"7dcc2e92-8f82-4f11-9975-532311fa5474\", directions=[...])\n\nhint: get_character(character_id=\"3f7a0f77-b8f6-4cff-94f0-754fa6c56c06\")",
+  "move": {
+    "name": "stab",
+    "energy": 0.8
+  },
+  "poses": [
+    {
+      "frame": 1,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 2,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 3,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 4,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 5,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 6,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 7,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    },
+    {
+      "frame": 8,
+      "left_hand": [
+        -0.21,
+        0.01,
+        0.12
+      ],
+      "left_elbow": [
+        -1,
+        -0.2,
+        -0.2
+      ],
+      "head": [
+        0,
+        0
+      ],
+      "turn": 0
+    }
+  ]
+}

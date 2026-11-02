@@ -1,0 +1,341 @@
+{
+  "kind": "effect",
+  "id": "steamShatter",
+  "jobId": "9ce60b49-622a-482a-a895-63dabf157d46",
+  "model": "pixminimax",
+  "frameCount": 25,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "columns": 4,
+  "rows": 7,
+  "sheet": "effects/steamShatter/sheet.png",
+  "files": [
+    "effects/steamShatter/repaired-frames/000.png",
+    "effects/steamShatter/repaired-frames/001.png",
+    "effects/steamShatter/repaired-frames/002.png",
+    "effects/steamShatter/repaired-frames/003.png",
+    "effects/steamShatter/repaired-frames/004.png",
+    "effects/steamShatter/repaired-frames/005.png",
+    "effects/steamShatter/repaired-frames/006.png",
+    "effects/steamShatter/repaired-frames/007.png",
+    "effects/steamShatter/repaired-frames/008.png",
+    "effects/steamShatter/repaired-frames/009.png",
+    "effects/steamShatter/repaired-frames/010.png",
+    "effects/steamShatter/repaired-frames/011.png",
+    "effects/steamShatter/repaired-frames/012.png",
+    "effects/steamShatter/repaired-frames/013.png",
+    "effects/steamShatter/repaired-frames/014.png",
+    "effects/steamShatter/repaired-frames/015.png",
+    "effects/steamShatter/repaired-frames/016.png",
+    "effects/steamShatter/repaired-frames/017.png",
+    "effects/steamShatter/repaired-frames/018.png",
+    "effects/steamShatter/repaired-frames/019.png",
+    "effects/steamShatter/repaired-frames/020.png",
+    "effects/steamShatter/repaired-frames/021.png",
+    "effects/steamShatter/repaired-frames/022.png",
+    "effects/steamShatter/repaired-frames/023.png",
+    "effects/steamShatter/repaired-frames/024.png"
+  ],
+  "sourceFiles": [
+    "effects/steamShatter/frames/000.png",
+    "effects/steamShatter/frames/001.png",
+    "effects/steamShatter/frames/002.png",
+    "effects/steamShatter/frames/003.png",
+    "effects/steamShatter/frames/004.png",
+    "effects/steamShatter/frames/005.png",
+    "effects/steamShatter/frames/006.png",
+    "effects/steamShatter/frames/007.png",
+    "effects/steamShatter/frames/008.png",
+    "effects/steamShatter/frames/009.png",
+    "effects/steamShatter/frames/010.png",
+    "effects/steamShatter/frames/011.png",
+    "effects/steamShatter/frames/012.png",
+    "effects/steamShatter/frames/013.png",
+    "effects/steamShatter/frames/014.png",
+    "effects/steamShatter/frames/015.png",
+    "effects/steamShatter/frames/016.png",
+    "effects/steamShatter/frames/017.png",
+    "effects/steamShatter/frames/018.png",
+    "effects/steamShatter/frames/019.png",
+    "effects/steamShatter/frames/020.png",
+    "effects/steamShatter/frames/021.png",
+    "effects/steamShatter/frames/022.png",
+    "effects/steamShatter/frames/023.png",
+    "effects/steamShatter/frames/024.png"
+  ],
+  "exactPixelRepair": "38a29d8a-e34b-4f1e-ba00-5e1a4e638492",
+  "frameStats": [
+    {
+      "index": 0,
+      "pixels": 14626,
+      "bounds": [
+        19,
+        41,
+        234,
+        221
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 1,
+      "pixels": 14754,
+      "bounds": [
+        16,
+        36,
+        232,
+        219
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 2,
+      "pixels": 14869,
+      "bounds": [
+        26,
+        58,
+        222,
+        220
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 3,
+      "pixels": 14897,
+      "bounds": [
+        23,
+        54,
+        226,
+        223
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 4,
+      "pixels": 14666,
+      "bounds": [
+        22,
+        65,
+        228,
+        214
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 5,
+      "pixels": 15413,
+      "bounds": [
+        24,
+        59,
+        228,
+        217
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 6,
+      "pixels": 14718,
+      "bounds": [
+        19,
+        49,
+        229,
+        214
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 7,
+      "pixels": 14339,
+      "bounds": [
+        21,
+        42,
+        230,
+        219
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 8,
+      "pixels": 14133,
+      "bounds": [
+        20,
+        36,
+        233,
+        216
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 9,
+      "pixels": 13845,
+      "bounds": [
+        20,
+        62,
+        232,
+        218
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 10,
+      "pixels": 13570,
+      "bounds": [
+        20,
+        58,
+        233,
+        221
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 11,
+      "pixels": 13561,
+      "bounds": [
+        28,
+        54,
+        227,
+        222
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 12,
+      "pixels": 14138,
+      "bounds": [
+        25,
+        57,
+        225,
+        213
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 13,
+      "pixels": 14385,
+      "bounds": [
+        22,
+        47,
+        230,
+        218
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 14,
+      "pixels": 14666,
+      "bounds": [
+        18,
+        39,
+        235,
+        221
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 15,
+      "pixels": 14801,
+      "bounds": [
+        17,
+        61,
+        232,
+        219
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 16,
+      "pixels": 15001,
+      "bounds": [
+        26,
+        58,
+        223,
+        221
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 17,
+      "pixels": 15294,
+      "bounds": [
+        23,
+        54,
+        226,
+        223
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 18,
+      "pixels": 14265,
+      "bounds": [
+        21,
+        65,
+        228,
+        214
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 19,
+      "pixels": 13327,
+      "bounds": [
+        21,
+        65,
+        228,
+        217
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 20,
+      "pixels": 6192,
+      "bounds": [
+        22,
+        63,
+        230,
+        219
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 21,
+      "pixels": 2424,
+      "bounds": [
+        0,
+        0,
+        231,
+        206
+      ],
+      "boundary": 5
+    },
+    {
+      "index": 22,
+      "pixels": 961,
+      "bounds": [
+        0,
+        0,
+        232,
+        206
+      ],
+      "boundary": 5
+    },
+    {
+      "index": 23,
+      "pixels": 167,
+      "bounds": [
+        20,
+        108,
+        222,
+        198
+      ],
+      "boundary": 0
+    },
+    {
+      "index": 24,
+      "pixels": 0,
+      "bounds": null,
+      "boundary": 0
+    }
+  ],
+  "qaStatus": "awaiting_visual_review",
+  "qaNotes": []
+}

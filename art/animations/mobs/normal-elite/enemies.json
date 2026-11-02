@@ -1,0 +1,35 @@
+{
+  "schemaVersion":1,
+  "producer":"local_articulated_pixel_rig",
+  "pixelLabGeneration":false,
+  "nativeSize":128,
+  "pixelsPerUnit":48,
+  "origin":[64,92],
+  "cameraGroundScale":[0.8660254,0.5],
+  "frameDurationMs":20,
+  "timingSource":"/src/data/slice.json#/enemies",
+  "model":{"hipHeight":0.43,"hipWidth":0.20,"upperLeg":0.22,"lowerLeg":0.22,"torsoWidth":0.38,"torsoDepth":0.23,"torsoHeight":0.34,"shoulderWidth":0.44,"upperArm":0.21,"lowerArm":0.19,"headAboveHip":0.59,"headRadii":[0.245,0.22,0.23],"footWidth":0.16,"footLength":0.22},
+  "defaults":{"yaw":0,"drop":0,"lean":0,"main":[-0.27,0.33,0.12],"free":[0.25,0.04,0.03],"weapon":[-0.15,1.12]},
+  "enemies":[
+    {"id":"guard","concept":"M1","name":"목각 경비","kind":"soldier","weaponHand":"left","weaponLength":0.43,"walk":{"stride":0.72,"stanceFraction":0.62,"lift":0.075,"bob":0.012,"cycleMs":640,"frameCount":16},"colors":{"wood":"#e2c28e","woodSide":"#ac8654","uniform":"#b95d54","navy":"#293c4e","gold":"#c4a04e","cream":"#eee0bb"},"attackKeys":[
+      {"event":"start","offsetMs":0},
+      {"event":"primary","offsetMs":-260,"yaw":-0.28,"drop":0.02,"main":[-0.28,0.46,0.03],"free":[0.25,0.11,0.02],"weapon":[-0.9,0.9]},
+      {"event":"primary","offsetMs":-100,"yaw":-0.50,"drop":0.04,"lean":-0.025,"main":[-0.32,0.48,0.0],"free":[0.24,0.14,0.05],"weapon":[-1.45,0.65]},
+      {"event":"primary","offsetMs":0,"yaw":0.30,"drop":0.06,"lean":0.075,"main":[0.02,0.27,0.28],"free":[0.23,0.08,-0.04],"weapon":[0.70,0.02]},
+      {"event":"primary","offsetMs":180,"yaw":0.43,"drop":0.05,"lean":0.05,"main":[0.08,0.19,0.17],"free":[0.23,0.04,-0.02],"weapon":[1.35,-0.18]},
+      {"event":"end","offsetMs":0}
+    ]},
+    {"id":"rabbit","concept":"M2","name":"스프링 토끼","kind":"spring_rabbit","walk":{"stride":0.62,"stanceFraction":0.52,"lift":0.08,"bob":0.025,"cycleMs":480,"frameCount":16},"colors":{"wood":"#eee0bb","woodSide":"#b8b093","uniform":"#9db99f","navy":"#293c4e","gold":"#c4a04e","cream":"#eee0bb"}},
+    {"id":"trumpet","concept":"M3","name":"나팔 사수","kind":"trumpeter","weaponHand":"both","walk":{"stride":0.65,"stanceFraction":0.64,"lift":0.06,"bob":0.009,"cycleMs":800,"frameCount":16},"colors":{"wood":"#e2c28e","woodSide":"#ac8654","uniform":"#ddd2b4","navy":"#293c4e","gold":"#c4a04e","cream":"#eee0bb"}},
+    {"id":"elite","concept":"M4","name":"정예 목각 경비","kind":"elite_soldier","weaponHand":"left","weaponLength":0.46,"model":{"torsoWidth":0.43,"shoulderWidth":0.50,"hipWidth":0.23,"footWidth":0.18},"walk":{"stride":0.72,"stanceFraction":0.64,"lift":0.065,"bob":0.012,"cycleMs":720,"frameCount":18},"colors":{"wood":"#e2c28e","woodSide":"#ac8654","uniform":"#984c63","navy":"#293c4e","gold":"#c4a04e","cream":"#eee0bb"},"attackKeys":[
+      {"event":"start","offsetMs":0},
+      {"event":"primary","offsetMs":-300,"yaw":-0.1,"drop":0.03,"main":[-0.17,0.60,0.03],"free":[0.23,0.18,0.10],"weapon":[-0.10,1.4]},
+      {"event":"primary","offsetMs":-100,"drop":0.025,"lean":-0.035,"main":[-0.15,0.61,0.03],"free":[0.20,0.23,0.13],"weapon":[0,1.4]},
+      {"event":"primary","offsetMs":0,"drop":0.16,"lean":0.15,"main":[-0.11,0.14,0.28],"free":[0.18,0.16,0.17],"weapon":[0,-0.90]},
+      {"event":"followup","offsetMs":-180,"drop":0.10,"lean":0.07,"main":[-0.13,0.21,0.23],"free":[0.21,0.13,0.10],"weapon":[0,-0.65]},
+      {"event":"followup","offsetMs":0,"drop":0.17,"lean":0.13,"main":[-0.11,0.13,0.28],"free":[0.18,0.15,0.15],"weapon":[0,-0.90]},
+      {"event":"followup","offsetMs":180,"drop":0.15,"lean":0.1,"main":[-0.12,0.16,0.26],"free":[0.20,0.13,0.12],"weapon":[0,-0.8]},
+      {"event":"end","offsetMs":0}
+    ]}
+  ]
+}

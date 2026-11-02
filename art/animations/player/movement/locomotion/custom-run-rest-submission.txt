@@ -1,0 +1,12 @@
+character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06
+animation: pixminimax custom (Seamless looping in-place RUN in the selected facing direction. Preserve exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH firmly connected to anatomical RIGHT hand in EVERY frame. Rigid unchanged weapon length about half body height, carried upright/slightly angled beside torso with restrained arm swing; empty LEFT arm pumps opposite legs. Never swap, lose, shorten or duplicate wrench. Athletic compact quick strides, clear alternating knee drive and toe push-off, brief airborne phase, slight forward torso lean, stable head, red scarf streams and lags. Complete one full two-step run cycle, visibly faster and more energetic than walking. No turning, whole-body travel, camera motion or ground effects. End phase matches start for seamless looping. Transparent background.)
+directions: north-west, west, south-east (3 jobs)
+job_ids: north-west=2ebc7328-9f54-46c9-a3fc-ead2f2195e69, west=79c4e8c0-4465-400e-93a3-647198ab9f1c, south-east=ec1c263f-bdc3-4adb-ad25-1e20ebf03cf0
+group: a64fd735-e1e1-4b32-bdd2-806ab43648f5
+frames: 13 (1 reference + 12 animated)
+canvas: north-west 120x120, west 124x124, south-east 124x124 (frames are stored at this size: the character plus room to move)
+cost: 6 generations (2/dir x 3)
+eta: ~2 min/direction
+
+hint: get_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06")
+add more directions to this group: animate_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06", action_description="Seamless looping in-place RUN in the selected facing direction. Preserve exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH firmly connected to anatomical RIGHT hand in EVERY frame. Rigid unchanged weapon length about half body height, carried upright/slightly angled beside torso with restrained arm swing; empty LEFT arm pumps opposite legs. Never swap, lose, shorten or duplicate wrench. Athletic compact quick strides, clear alternating knee drive and toe push-off, brief airborne phase, slight forward torso lean, stable head, red scarf streams and lags. Complete one full two-step run cycle, visibly faster and more energetic than walking. No turning, whole-body travel, camera motion or ground effects. End phase matches start for seamless looping. Transparent background.", mode="pixminimax", animation_group_id="a64fd735-e1e1-4b32-bdd2-806ab43648f5", directions=[...])

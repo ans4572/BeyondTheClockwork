@@ -1,0 +1,12 @@
+character: 3f7a0f77-b8f6-4cff-94f0-754fa6c56c06
+animation: pixminimax custom (Seamless looping in-place WALK in the selected facing direction. Keep the exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH visibly connected to its anatomical RIGHT hand in EVERY frame, rigid unchanged length about half body height. Right elbow bent, wrench held upright alongside torso with only gentle bob; empty LEFT arm counter-swings. Never swap hands, drop, shrink, duplicate or dissolve weapon. Alternate left/right heel contact, planted support, toe push-off and knee recovery with moderate even steps, small hip bob, stable helmet; red scarf follows softly. Both legs complete one full walk cycle. Keep same facing throughout, no turn, no camera motion or whole-body translation. End contact pose matches start; transparent background, no effects.)
+directions: south-east (1 jobs)
+job_ids: south-east=16393795-9b5a-4be9-bebc-b4125b4fb18e
+group: f9070b59-ac32-449f-88d4-8dbd162d041e
+frames: 13 (1 reference + 12 animated)
+canvas: south-east 124x124 (frames are stored at this size: the character plus room to move)
+cost: 2 generations (2/dir x 1)
+eta: ~2 min/direction
+
+hint: get_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06")
+add more directions to this group: animate_character(character_id="3f7a0f77-b8f6-4cff-94f0-754fa6c56c06", action_description="Seamless looping in-place WALK in the selected facing direction. Keep the exact patched robot and ONE LONG TURQUOISE OPEN-JAW WRENCH visibly connected to its anatomical RIGHT hand in EVERY frame, rigid unchanged length about half body height. Right elbow bent, wrench held upright alongside torso with only gentle bob; empty LEFT arm counter-swings. Never swap hands, drop, shrink, duplicate or dissolve weapon. Alternate left/right heel contact, planted support, toe push-off and knee recovery with moderate even steps, small hip bob, stable helmet; red scarf follows softly. Both legs complete one full walk cycle. Keep same facing throughout, no turn, no camera motion or whole-body translation. End contact pose matches start; transparent background, no effects.", mode="pixminimax", animation_group_id="f9070b59-ac32-449f-88d4-8dbd162d041e", directions=[...])
