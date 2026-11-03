@@ -28,6 +28,15 @@
 <body>
 <header><h1>효과음 목록 · 지금 게임에 들어 있는 소리</h1><p id="status">누르면 게임과 같은 음량·높낮이로 한 번 재생됩니다. 바꾸고 싶은 소리는 번호로 알려 주세요 (예: A3, D5).</p></header>
 <main id="list"></main>
+<script>
+// Phones keep this page for up to ten minutes. It asks the server for its own latest copy and, if that copy is newer,
+// reloads under a fresh address so the new list shows at once. Bump PAGE_VERSION whenever the list changes.
+const PAGE_VERSION = '2026-11-03-cards-short';
+fetch(`${location.pathname}?check=${Date.now()}`, { cache: 'no-store' }).then(r => r.text()).then(text => {
+  const latest = text.match(/PAGE_VERSION = '([^']+)'/)?.[1];
+  if (latest && latest !== PAGE_VERSION && !location.search.includes(latest)) location.replace(`${location.pathname}?v=${latest}`);
+}).catch(() => {});
+</script>
 <script type="module">
 // GitHub Pages lets phones keep scripts for ten minutes; a fresh query on every visit always loads the latest sounds.
 const { SFX, SoundBank } = await import(`./src/audio/sfx.js?t=${Date.now()}`);
