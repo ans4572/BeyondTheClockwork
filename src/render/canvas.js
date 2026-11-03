@@ -478,8 +478,10 @@ export class CanvasRenderer {
     const goal = s.mode === 'route' ? g.portal : yardExit ? { x: yardExit[0], y: yardExit[1] } : ['intro', 'registration'].includes(s.mode) ? g.tutorial.goal : null;
     // The portal the player came through stays marked until they have met the town.
     const portal = s.mode === 'registration' && g.village ? g.hubMap.arrival.portal : null;
-    for (const spot of [portal, goal]) if (spot) this.marker(spot);
-    this.minimapPlace = { map, mapImage, size, goal: goal || portal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
+    // Once registered, the way out of town to the street is the same yellow portal, not a sign.
+    const streetPortal = s.mode === 'hub' && g.village ? g.village.exit.portal : null;
+    for (const spot of [portal, goal, streetPortal]) if (spot) this.marker(spot);
+    this.minimapPlace = { map, mapImage, size, goal: goal || portal || streetPortal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
     for (const cast of s.casts) {
@@ -594,7 +596,6 @@ export class CanvasRenderer {
       if (near && !seen) this.pointTo(near, ENEMY_ARROW);
     }
     if (g.walking && mapImage) {
-      if (s.mode !== 'registration') this.nameplate(g.village.exit.label, g.village.exit.at[0] * 20, g.village.exit.at[1] * 20 + NAME_SIZE);
       const npc = g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
       // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
