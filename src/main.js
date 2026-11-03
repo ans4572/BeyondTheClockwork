@@ -223,6 +223,8 @@ try {
   function button(label, action, extra = '', classes = '') { return `<button class="${classes}" data-action="${action}" ${extra}>${label}</button>`; }
   function panel(content, classes = '') { return `<section class="panel ${classes}">${content}</section>`; }
   const sounds = new SoundBank(), music = new MusicPlayer();
+  // Sound files and the first two tracks download during loading; the first tap only has to switch them on.
+  sounds.prefetch(); music.preload(['title', 'town']);
   // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
   for (const type of ['pointerdown', 'keydown']) window.addEventListener(type, () => openAudio(), { capture: true });
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
@@ -676,7 +678,7 @@ try {
   document.addEventListener('pointerup', () => mouseHeld = false);
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } if (!document.hidden) audio?.resume().catch(() => {}); });
   window.addEventListener('pagehide', () => game.save());
   window.addEventListener('beforeunload', () => game.save());
 

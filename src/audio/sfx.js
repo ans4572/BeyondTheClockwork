@@ -83,10 +83,16 @@ export const SFX = {
 export class SoundBank {
   constructor() { this.buffers = new Map(); this.loading = null; }
   /** Fetches and decodes every take once, after the first user gesture has opened the audio context. */
+  /** Downloads every recording while the game is still loading; no tap is needed to fetch, only to decode. */
+  prefetch() {
+    this.bytes ??= new Map([...new Set(Object.values(SFX).filter(sound => sound.file).flatMap(({ file, takes }) => Array.from({ length: takes }, (_, i) => `${file}-${i}`)))].map(key =>
+      [key, fetch(assetUrl(`/art/audio/sfx/${key}.ogg`)).then(response => (response.ok ? response.arrayBuffer() : null)).catch(() => null)]));
+    return this.bytes;
+  }
   load(audio) {
-    this.loading ??= Promise.all([...new Set(Object.values(SFX).filter(sound => sound.file).flatMap(({ file, takes }) => Array.from({ length: takes }, (_, i) => `${file}-${i}`)))].map(async key => {
-      const response = await fetch(assetUrl(`/art/audio/sfx/${key}.ogg`));
-      if (response.ok) this.buffers.set(key, await audio.decodeAudioData(await response.arrayBuffer()));
+    this.loading ??= Promise.all([...this.prefetch()].map(async ([key, bytes]) => {
+      const data = await bytes;
+      if (data) this.buffers.set(key, await audio.decodeAudioData(data));
     })).catch(error => console.warn(error));
     return this.loading;
   }

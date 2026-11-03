@@ -30,9 +30,16 @@ export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex }) {
 
 export class MusicPlayer {
   constructor() { this.tracks = new Map(); this.current = null; }
+  /** Starts downloading tracks before the first tap, so the first music plays as soon as sound is allowed. */
+  preload(names) { for (const name of names) this.element(name).preload = 'auto'; }
+  element(name) {
+    this.elements ??= new Map();
+    if (!this.elements.has(name)) { const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element); }
+    return this.elements.get(name);
+  }
   track(audio, name) {
     if (!this.tracks.has(name)) {
-      const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata';
+      const element = this.element(name);
       const gain = audio.createGain(); gain.gain.value = 0;
       audio.createMediaElementSource(element).connect(gain).connect(audio.destination);
       this.tracks.set(name, { element, gain, stopTimer: null });
@@ -48,6 +55,7 @@ export class MusicPlayer {
     this.unlocked = true;
     for (const name of Object.keys(MUSIC)) {
       const track = this.track(audio, name);
+      if (name !== 'roco') track.element.preload = 'auto';
       if (name === this.current || !track.element.paused) continue;
       track.element.play().then(() => { if (name !== this.current) track.element.pause(); }).catch(() => { this.unlocked = false; });
     }
@@ -74,5 +82,8 @@ export class MusicPlayer {
     }
     // Volume changes (settings, the pause menu) glide rather than jump, once the fade-in is done.
     if (name && now >= (this.fadeUntil || 0)) this.tracks.get(name).gain.gain.setTargetAtTime(MUSIC[name].volume * volume, now, 0.15);
+    // A phone stops music when the app goes to the background; it picks up again by itself on return.
+    const playing = name && this.tracks.get(name);
+    if (playing?.element.paused && !this.retrying) { this.retrying = true; playing.element.play().catch(() => {}).finally(() => { this.retrying = false; }); }
   }
 }
