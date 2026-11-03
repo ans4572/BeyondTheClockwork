@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>태엽 밖으로 · 효과음 듣기</title>
+<style>
+  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --gold: #ffd257; --label: #5d6476; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 "Malgun Gothic", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 1; padding: 12px 16px; background: var(--ink); color: var(--paper); }
+  h1 { margin: 0; font-size: 18px; }
+  header p { margin: 2px 0 0; font-size: 12px; opacity: .8; }
+  main { max-width: 720px; margin: 0 auto; padding: 8px 12px 40px; }
+  h2 { margin: 20px 4px 8px; font-size: 15px; border-bottom: 3px solid var(--ink); padding-bottom: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 56px; padding: 10px 12px; border: 0; background: var(--low); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+  button b { font-size: 14px; }
+  button small { font-size: 11px; color: var(--label); }
+  button.playing { background: var(--gold); }
+  #status { font-size: 12px; }
+</style>
+</head>
+<body>
+<header><h1>효과음 듣기</h1><p id="status">버튼을 누르면 게임과 같은 음량·높낮이로 재생됩니다.</p></header>
+<main id="list"></main>
+<script type="module">
+import { SFX, SoundBank } from './src/audio/sfx.js';
+
+// Groups and plain names for every effect the game plays.
+const GROUPS = [
+  ['플레이어', { swing: '렌치 휘두르기 1·2타', swingHeavy: '렌치 3타', hit: '적중', heavy: '강타', crit: '치명타', hurt: '피격', dodge: '회피', down: '쓰러짐', charged: '축전 가득', mend: '체력 회복' }],
+  ['속성 기술', { heatSwing: '불 · 과열 휘두르기', exhaustBurst: '불 · 배기 폭발', frostBolt: '얼음 · 서리 볼트', coolingField: '얼음 · 냉각 지대', conductiveSpanner: '전기 · 도전 스패너', capacitorStrike: '전기 · 축전 낙뢰', pressureDash: '바람 · 압축 돌진', vortexIntake: '바람 · 회오리 흡입' }],
+  ['융합', { steamShatter: '불+얼음', arcFurnace: '불+전기', fireCyclone: '불+바람', magneticIceClamp: '얼음+전기', frostCrosscut: '얼음+바람', stormFloat: '전기+바람' }],
+  ['상태이상', { burn: '화상', freeze: '빙결', shock: '감전 방전', wind: '풍압' }],
+  ['일반 몹', { tell: '공격 예고', summon: '웨이브 소환', kill: '처치', guard: '경비 휘두르기', nutcracker: '호두까기 휘두르기', block: '호두까기 방패 막힘', burst: '태엽 쥐 자폭', rabbit: '토끼 돌진', trumpet: '나팔 발사', elite: '정예 충격파', musicbox: '오르골 탄막', pop: '깜짝 상자', spintop: '팽이 회전', drummer: '북치기 북', pikeman: '창병 찌르기' }],
+  ['진행 · 보상', { clear: '구간 클리어', portal: '포탈 이동', cards: '보상 카드 등장', cardsSpecial: '특별 카드 반짝', pick: '카드 선택', loot: '동전·톱니 획득', fail: '원정 실패', fanfare: '완주 팡파르' }],
+  ['UI', { click: '버튼', buy: '구매 성공', deny: '구매 실패', tune: '조율 단계 올리기', equip: '속성 장착' }]
+];
+const listed = new Set(GROUPS.flatMap(([, items]) => Object.keys(items)));
+const rest = Object.keys(SFX).filter(name => !listed.has(name));
+if (rest.length) GROUPS.push(['기타', Object.fromEntries(rest.map(name => [name, name]))]);
+
+document.getElementById('list').innerHTML = GROUPS.map(([title, items]) => `<h2>${title}</h2><div class="grid">${Object.entries(items).map(([name, label]) => `<button data-name="${name}"><b>${label}</b><small>${name} · ${SFX[name].takes}종</small></button>`).join('')}</div>`).join('');
+
+let audio = null;
+const bank = new SoundBank(), status = document.getElementById('status');
+document.getElementById('list').addEventListener('click', async e => {
+  const button = e.target.closest('button[data-name]');
+  if (!button) return;
+  // Phones only allow sound after a tap, so the audio context opens on the first one.
+  audio ??= new (window.AudioContext || window.webkitAudioContext)();
+  await audio.resume();
+  if (!bank.buffers.size) { status.textContent = '소리를 불러오는 중…'; await bank.load(audio); status.textContent = `${bank.buffers.size}개 불러옴 · 같은 버튼을 여러 번 누르면 다른 버전이 나옵니다.`; }
+  if (!bank.play(audio, button.dataset.name)) { status.textContent = '이 소리는 이 브라우저에서 재생하지 못했습니다.'; return; }
+  button.classList.add('playing'); setTimeout(() => button.classList.remove('playing'), 250);
+});
+</script>
+</body>
+</html>
