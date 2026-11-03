@@ -1993,7 +1993,7 @@
       {
         "id": "basicDamage",
         "perRank": 0.1,
-        "maxRank": 8
+        "maxRank": 4
       },
       {
         "id": "maxHp",
