@@ -4,11 +4,11 @@ const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, OPENING_SCALE = 
 const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
 const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
 
-// Galmuri11 Bold (OFL 1.1) is drawn on a 12px grid, so it is always rendered at 12px and enlarged by a whole number.
-export const PIXEL_FONT = '"Galmuri11 Bold"', PIXEL_EM = 12;
+// NeoDunggeunmo Pro (OFL 1.1) is drawn on a 16px grid, so it is always rendered at 16px and enlarged by a whole number.
+export const PIXEL_FONT = '"NeoDunggeunmo Pro"', PIXEL_EM = 16;
 /** Pixel lettering: the bitmap font at its own size, kept to hard pixels, enlarged to roughly size × scale. */
 export function pixelText(text, size, fill, scale = 2) {
-  const zoom = Math.max(1, Math.round(size * scale / 13));
+  const zoom = Math.max(1, Math.round(size * scale / PIXEL_EM));
   size = PIXEL_EM; scale = zoom;
   const probe = document.createElement('canvas').getContext('2d'), font = `${PIXEL_EM}px ${PIXEL_FONT}, "Malgun Gothic", sans-serif`;
   probe.font = font;
@@ -65,7 +65,8 @@ function drawForm(c, f2) {
   c.drawImage(f2, 0, 0, 128, 128, 260 - 64 * 3, 580 - 105 * 3, 384, 384);
   c.fillStyle = INK; for (const [x, y, w, h] of [[100, 238, 320, 4], [100, 584, 320, 4], [100, 238, 4, 350], [416, 238, 4, 350]]) c.fillRect(x, y, w, h);
   c.fillStyle = '#c79a3e'; c.fillRect(240, 222, 44, 40); c.fillStyle = PAPER; c.fillRect(250, 232, 24, 20);
-  const field = (label, value, y) => { c.drawImage(pixelText(label, 12, LABEL), 472, y); c.drawImage(pixelText(value, 13, INK), 610, y - 2); rule(476, y + 44, 548); };
+  // The value starts after its label, however wide the lettering runs.
+  const field = (label, value, y) => { const name = pixelText(label, 12, LABEL); c.drawImage(name, 472, y); c.drawImage(pixelText(value, 13, INK), Math.max(610, 472 + name.width + 18), y - 2); rule(476, y + 44, 548); };
   field('제품 번호', 'F2', 236); field('판정 사유', '스스로 생각함', 292);
   c.drawImage(pixelText('처리 방법', 12, LABEL), 472, 356);
 }

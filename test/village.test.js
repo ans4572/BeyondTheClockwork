@@ -24,10 +24,18 @@ test('the town and the night market are different maps, each spawn off its exit'
   }
 });
 
+/** Width and height from a PNG or WebP header (map backgrounds are WebP, masks PNG). */
+const imageSize = file => {
+  const b = fs.readFileSync(file);
+  if (b.toString('ascii', 1, 4) === 'PNG') return [b.readUInt32BE(16), b.readUInt32BE(20)];
+  const kind = b.toString('ascii', 12, 16);
+  if (kind === 'VP8 ') return [b.readUInt16LE(26) & 0x3fff, b.readUInt16LE(28) & 0x3fff];
+  if (kind === 'VP8L') { const v = b.readUInt32LE(21); return [(v & 0x3fff) + 1, ((v >> 14) & 0x3fff) + 1]; }
+  return [1 + b.readUIntLE(24, 3), 1 + b.readUIntLE(27, 3)];
+};
 test('each background and its foreground layer match the declared map size', () => {
   for (const place of places) for (const file of [place.background, place.mask]) {
-    const png = fs.readFileSync(new URL(`..${file}`, import.meta.url));
-    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], place.size.map(units => Math.round(units * 40)));
+    assert.deepEqual(imageSize(new URL(`..${file}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
   }
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
 });
@@ -195,7 +203,7 @@ test('the tutorial plays in the scrapyard and stays on its floor', () => {
 
 test('the scrapyard picture and mask are one screen in size', () => {
   const { background, mask } = maps.villages.scrapyard;
-  for (const file of [background, mask]) { const png = fs.readFileSync(new URL(`..${file}`, import.meta.url)); assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1120, 640]); }
+  for (const file of [background, mask]) assert.deepEqual(imageSize(new URL(`..${file}`, import.meta.url)), [1120, 640]);
 });
 
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };

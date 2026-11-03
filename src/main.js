@@ -48,10 +48,12 @@ try {
   });
   const renderer = new CanvasRenderer($('game'), game);
   let touch = null;
-  // The code doll stays on screen if the sheets are slow or missing.
-  SpriteLibrary.load().then(library => renderer.useSprites(library)).catch(error => console.warn(error));
-  SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json').then(library => renderer.useMobSprites(library)).catch(error => console.warn(error));
-  SpriteLibrary.load('/art/animations/npc/game-clips.json').then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+  // F2's sheets come first and the loading card waits for them, so the old code doll never stands in for the player.
+  // Enemies and townsfolk follow one set at a time instead of competing with F2 for the connection.
+  const playerSprites = SpriteLibrary.load().then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  playerSprites
+    .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
+    .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json')).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
@@ -79,10 +81,11 @@ try {
     const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
     if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
   };
-  // Map art runs to megabytes a file: the place underfoot downloads first and the rest follows a few at a time.
+  // Map art is loaded only where it is needed: the place underfoot and the one after it, never the whole region up front.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
-  const allPlaces = [...Object.values(data?.maps?.maps || {}), ...Object.values(data?.maps?.villages || {})];
-  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...allPlaces.flatMap(artOf)].filter(Boolean))];
+  const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
+  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
     while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
@@ -97,8 +100,10 @@ try {
     const place = game.village || game.map;
     if (place?.background === placeLoaded) return;
     placeLoaded = place?.background;
-    const next = game.room && placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]), wanted = [...artOf(place), ...artOf(next)];
-    imageQueue = [...wanted.filter(file => imageQueue.includes(file)), ...imageQueue.filter(file => !wanted.includes(file))];
+    // In town the next place is the first stop; on a run it is the stop after this one.
+    const next = game.s.run ? placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
+    const fresh = wanted.filter(file => !requested.has(file)); fresh.forEach(file => requested.add(file));
+    imageQueue = [...wanted.filter(file => imageQueue.includes(file)), ...fresh, ...imageQueue.filter(file => !wanted.includes(file))];
     fetchImages();
   }
   fetchImages();
@@ -701,7 +706,7 @@ try {
   if (!loadError) openTitle();
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame.
-  await title.ready.catch(() => {});
+  await Promise.all([title.ready.catch(() => {}), playerSprites]);
   finishBoot();
 } catch (error) {
   finishBoot();

@@ -1,5 +1,0 @@
-import {readFile,writeFile,mkdir} from 'node:fs/promises';import {createRequire} from 'node:module';import os from 'node:os';import path from 'node:path';
-const root='art/animations/player/movement/attacks',reference='art/animations/player/movement/locomotion',require=createRequire(import.meta.url),sharp=require(path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp'));
-const directions=['south','south-west','west','north-west','north','north-east','east','south-east'];await mkdir(root+'/inputs',{recursive:true});const inputs={};
-for(const direction of directions){const source=reference+'/rotations/'+direction+'.png',bytes=await sharp(source).extend({left:48,right:48,top:48,bottom:48,background:'#00000000'}).png().toBuffer();await writeFile(root+'/inputs/'+direction+'.png',bytes);inputs[direction]='data:image/png;base64,'+bytes.toString('base64');}
-if(process.argv.includes('--data'))console.log(JSON.stringify(inputs));else console.log('Prepared eight 192px canvases by padding native 96px rotations; no resampling.');

@@ -11,7 +11,7 @@
     "test": "node --test",
     "playtest": "node scripts/playtest.mjs",
     "check": "npm run data:check && npm run art:check && node --test",
-    "art:check": "node scripts/validate-animation-catalog.mjs && node scripts/validate-primary-skill-pixellab.mjs && node scripts/validate-fusion-expansion.mjs"
+    "art:check": "node scripts/check-assets.mjs"
   },
   "engines": {
     "node": ">=20"
