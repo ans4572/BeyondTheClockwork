@@ -6,6 +6,7 @@ import { nearestDirection } from '../animation/player-animator.js';
 import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
+import { Lighting } from './lighting.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
@@ -22,7 +23,9 @@ export class CanvasRenderer {
    * page enlarges with hard pixels, so the map and the bodies share one pixel grid; words go to `letters` at screen
    * resolution instead, because pixel lettering cannot be shrunk and stay readable.
    */
-  constructor(canvas, game, { view = null, letters = null } = {}) { this.view = view; this.letters = letters; this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
+  constructor(canvas, game, { view = null, letters = null } = {}) { this.view = view; this.letters = letters; this.mood = 'day';
+    // Light and shade are only drawn in the browser, where the frame is set on its pixel grid.
+    this.lighting = view ? new Lighting((w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h })) : null; this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
   /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
   kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
@@ -71,7 +74,8 @@ export class CanvasRenderer {
     const c = this.ctx, { frameWidth: w, frameHeight: h, columns, anchor, scale } = clip, sx = pose.frame % columns * w, sy = Math.floor(pose.frame / columns) * h;
     // One sheet pixel is one canvas pixel, half a unit of the renderer's 2x transform.
     const size = scale * resize * BODY_SCALE / 2, left = Math.round((x - anchor[0] * size) * 2) / 2, top = Math.round((y - anchor[1] * size) * 2) / 2;
-    c.fillStyle = '#57684e30'; c.beginPath(); c.ellipse(x, y, 11, 4, 0, 0, TAU); c.fill();
+    // A firm contact shadow grounds every body on the painted floor.
+    c.fillStyle = 'rgba(24, 20, 36, 0.34)'; c.beginPath(); c.ellipse(x, y, 13, 4.5, 0, 0, TAU); c.fill();
     if (flash) c.filter = flash === true ? 'brightness(1.9)' : flash;
     c.imageSmoothingEnabled = resize !== 1;
     for (const url of [clip.sheet, clip.effect]) if (url) c.drawImage(library.image(url), sx, sy, w, h, left, top, w * size, h * size);
@@ -595,6 +599,11 @@ export class CanvasRenderer {
     // A player lost behind scenery shows through it, after every body so nothing repaints over them.
     const ghost = ghostFor(playerHidden);
     if (ghost && playerPose) { c.globalAlpha = ghost; this.drawSprite(g.p.x * 20, g.p.y * 20, playerPose, this.sprites, false, PLAYER_SCALE); c.globalAlpha = 1; }
+    if (this.lighting && mapImage) {
+      const glow = { fire: 'rgba(255, 150, 70, 0.35)', lightning: 'rgba(255, 230, 120, 0.35)', ice: 'rgba(140, 210, 255, 0.28)' };
+      const lights = [{ x: g.p.x, y: g.p.y - 0.6, radius: 3.6 }, ...s.casts.map(cast => ({ x: cast.x, y: cast.y, radius: 2.4, color: glow[cast.elements?.[0]] }))];
+      this.lighting.draw(c, { mood: this.mood, image: mapImage, size, view: { x: this.camera.x, y: this.camera.y, w: SCREEN_UNITS[0], h: SCREEN_UNITS[1] }, lights, time: this.visualTime, still: s.profile.settings.reducedMotion });
+    }
     for (const { label, x, y } of this.labels) this.nameplate(label, x, y);
     if (goal && mapImage) this.pointTo(goal);
     // Enemies wait spread over the room; when none is in view, a red arrow points to the nearest.

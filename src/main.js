@@ -759,6 +759,9 @@ try {
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; if (performance.now() - landedAt > 40) pendingWhoosh = { at: performance.now() + WHOOSH_WAIT_MS, heavy: swing.phase === 2 }; }
     if (pendingWhoosh && performance.now() >= pendingWhoosh.at) { const { heavy } = pendingWhoosh; pendingWhoosh = null; sfx(heavy ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, heavy ? 600 : 900, 0.7)); }
     playMusic(); wipeIn();
+    // The hour of the place: bright street, the night market and everything after it at dusk, Brass's square at night.
+    const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
+    renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });
