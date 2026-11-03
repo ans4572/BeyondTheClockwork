@@ -30,11 +30,10 @@ import { SFX, SoundBank } from './src/audio/sfx.js';
 // Groups and plain names for every effect the game plays.
 const GROUPS = [
   ['플레이어', { swing: '렌치 휘두르기 1·2타', swingHeavy: '렌치 3타', hit: '적중', heavy: '강타', crit: '치명타', hurt: '피격', dodge: '회피', down: '쓰러짐', charged: '축전 가득', mend: '체력 회복' }],
-  ['속성 기술', { heatSwing: '불 · 과열 휘두르기', exhaustBurst: '불 · 배기 폭발', frostBolt: '얼음 · 서리 볼트', coolingField: '얼음 · 냉각 지대', conductiveSpanner: '전기 · 도전 스패너', capacitorStrike: '전기 · 축전 낙뢰', pressureDash: '바람 · 압축 돌진', vortexIntake: '바람 · 회오리 흡입' }],
-  ['융합', { steamShatter: '불+얼음', arcFurnace: '불+전기', fireCyclone: '불+바람', magneticIceClamp: '얼음+전기', frostCrosscut: '얼음+바람', stormFloat: '전기+바람' }],
-  ['상태이상', { burn: '화상', freeze: '빙결', shock: '감전 방전', wind: '풍압', frostHiss: '얼음 기술의 냉기' }],
+  ['속성 기술', { heatSwing: '불 · 과열 휘두르기', exhaustBurst: '불 · 배기 폭발', frostBolt: '얼음 · 서리 볼트', coolingField: '얼음 · 냉각 지대', conductiveSpanner: '전기 · 도전 스패너', capacitorStrike: '전기 · 축전 낙뢰', pressureDash: '바람 · 압축 돌진', vortexIntake: '바람 · 회오리 흡입', frostHiss: '얼음 기술의 냉기' }],
+  ['융합', { iceCrack: '얼음 융합의 얼음 깨짐', steamShatter: '불+얼음', arcFurnace: '불+전기', fireCyclone: '불+바람', magneticIceClamp: '얼음+전기', frostCrosscut: '얼음+바람', stormFloat: '전기+바람' }],
   ['일반 몹', { tell: '공격 예고', summon: '웨이브 소환', kill: '처치', guard: '경비 휘두르기', nutcracker: '호두까기 휘두르기', block: '호두까기 방패 막힘', burst: '태엽 쥐 자폭', rabbit: '토끼 돌진', trumpet: '나팔 발사', elite: '정예 충격파', musicbox: '오르골 탄막', pop: '깜짝 상자', spintop: '팽이 회전', drummer: '북치기 북', pikeman: '창병 찌르기' }],
-  ['진행 · 보상', { clear: '구간 클리어', portal: '포탈 이동', cards: '보상 카드 등장', cardsSpecial: '특별 카드 반짝', pick: '카드 선택', loot: '동전·톱니 획득', fail: '원정 실패', fanfare: '완주 팡파르' }],
+  ['진행 · 보상', { clear: '구간 클리어', portal: '포탈 이동', cards: '보상 카드 등장', cardsSpecial: '특별 카드 반짝', pick: '카드 선택', loot: '동전·톱니 획득', fail: '원정 실패' }],
   ['UI', { click: '버튼', buy: '구매 성공', deny: '구매 실패', tune: '조율 단계 올리기', equip: '속성 장착' }]
 ];
 const listed = new Set(GROUPS.flatMap(([, items]) => Object.keys(items)));

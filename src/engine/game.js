@@ -346,7 +346,6 @@ export class Game {
     enemy.statusApplied[key] = this.s.time + this.c.balance.statusApplyPerCastTargetCooldown;
     const info = this.c.statuses.find(s => s.id === status), ember = status === 'burn' ? this.trait('emberStacks') : null, lasts = info.duration + (ember?.extraDuration || 0);
     enemy.statuses[status] = this.s.time + lasts;
-    if (status === 'burn' || status === 'windPressure') this.sense({ kind: 'status', id: status === 'burn' ? 'burn' : 'wind' });
     if (status === 'burn') {
       enemy.burnStacks = enemy.burnStacks.filter(t => t > this.s.time);
       if (enemy.burnStacks.length < info.maxStacks + (ember?.extraStacks || 0)) enemy.burnStacks.push(this.s.time + lasts);
@@ -359,7 +358,7 @@ export class Game {
         enemy.chillCount = 0;
         if (enemy.boss) this.castStagger(enemy, info.bossFreezeStagger, cast);
         else if (this.s.time >= enemy.freezeLock) {
-          enemy.stunUntil = enemy.frozenUntil = this.s.time + info.normalFreezeDuration; this.sense({ kind: 'status', id: 'freeze' });
+          enemy.stunUntil = enemy.frozenUntil = this.s.time + info.normalFreezeDuration;
           enemy.freezeLock = this.s.time + info.freezeReapplyLock;
         }
       }
@@ -377,7 +376,6 @@ export class Game {
     const info = this.c.statuses.find(s => s.id === 'shock');
     if (enemy.statuses.shock <= this.s.time || !enemy.statuses.shock || this.s.time < enemy.shockReady) return;
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius + (this.trait('arcRange')?.radiusBonus || 0) && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
-    if (targets.length) this.sense({ kind: 'status', id: 'shock' });
     for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.25, 0.7); }
   }
   updateBasic(dt) {
@@ -1092,7 +1090,7 @@ export class Game {
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
     run.rewardChoices = []; this.sense({ kind: 'pick' });
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
-    if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; this.sense({ kind: 'fanfare' }); }
+    if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
     else this.s.mode = 'route';
     this.save(); return true;
   }

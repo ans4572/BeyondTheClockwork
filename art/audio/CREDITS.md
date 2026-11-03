@@ -19,7 +19,7 @@
 | down | Digital Audio | lowDown |
 | charged | Digital Audio | powerUp7 |
 | mend | Digital Audio | highUp |
-| frostBolt, coolingField, freeze | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _004 |
+| frostBolt, coolingField, iceCrack | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _004 |
 | rabbit | Digital Audio | phaseJump2 |
 | elite | Impact Sounds | impactPlate_heavy_000~002 |
 | trumpet | Sci-fi Sounds | laserRetro_000~004 |
@@ -29,9 +29,9 @@
 | portal | Digital Audio | zapThreeToneUp |
 | cards, pick, loot, buy | Casino Audio | card-fan-1~2, card-place-1~4, chips-stack-1~6, chips-handle-1~3 |
 | cardsSpecial, tune | Digital Audio | powerUp1, powerUp4 |
-| fail, fanfare | Music Jingles | jingles_NES15, jingles_NES12 |
+| fail | Music Jingles | jingles_NES15 |
 | click, equip | UI Audio | click1~5, switch1~2 |
 | deny | Interface Sounds | error_001~003 |
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 
-불·전기·바람 기술과 융합, 화상·감전·풍압, 얼음 기술의 냉기 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.
+불·전기·바람 기술과 융합, 얼음 기술의 냉기 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.

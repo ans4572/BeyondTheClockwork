@@ -73,15 +73,12 @@ export const ELEMENT_SOUNDS = {
   // Fire
   heatSwing: (a, o) => { roar(a, o, { dur: 0.4, cutoff: 900, attack: 0.05, peak: 0.9 }); gust(a, o, { dur: 0.35, from: 300, to: 1100, q: 0.8, peak: 0.5 }); crackle(a, o, { dur: 0.45, count: 8, peak: 0.5 }); },
   exhaustBurst: (a, o) => { thump(a, o, { from: 95, to: 35, dur: 0.5, peak: 0.9 }); roar(a, o, { dur: 0.75, cutoff: 650, attack: 0.01, peak: 1 }); crackle(a, o, { dur: 0.8, count: 14, peak: 0.45 }); },
-  burn: (a, o) => crackle(a, o, { dur: 0.22, count: 5, peak: 0.7 }),
   // Lightning
   conductiveSpanner: (a, o) => { snap(a, o, { peak: 0.6 }); buzz(a, o, { dur: 0.3, freq: 110, peak: 0.35 }); crackle(a, o, { dur: 0.3, count: 12, low: 3000, high: 7000, peak: 0.6 }); },
   capacitorStrike: (a, o) => { snap(a, o, { peak: 1 }); crackle(a, o, { dur: 0.25, count: 20, low: 2500, high: 7000, peak: 0.7 }); roar(a, o, { dur: 1.1, cutoff: 220, attack: 0.03, peak: 1 }); thump(a, o, { from: 70, to: 30, dur: 0.8, peak: 0.6 }); },
-  shock: (a, o) => { crackle(a, o, { dur: 0.15, count: 8, low: 3000, high: 7000, peak: 0.8 }); snap(a, o, { peak: 0.3 }); },
   // Wind
   pressureDash: (a, o) => { gust(a, o, { dur: 0.34, from: 450, to: 2000, q: 1.1, attack: 0.25, peak: 1 }); roar(a, o, { dur: 0.3, cutoff: 350, attack: 0.05, peak: 0.35 }); },
   vortexIntake: (a, o) => { swirl(a, o, { dur: 1.0, center: 650, depth: 350, rate: 6, peak: 1 }); roar(a, o, { dur: 1.0, cutoff: 260, attack: 0.3, peak: 0.45 }); },
-  wind: (a, o) => gust(a, o, { dur: 0.26, from: 600, to: 1300, q: 1, attack: 0.3, peak: 0.8 }),
   // Ice: a breath of frost under the glass recordings
   frostHiss: (a, o) => hiss(a, o, { dur: 0.6, cutoff: 4500, attack: 0.04, peak: 0.6 }),
   // Fusions

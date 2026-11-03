@@ -198,18 +198,14 @@ try {
     charged: () => sfx('charged'),
     mend: () => sfx('mend'),
     cast: hit => sfx(hit.id, () => { noise(0.05, 0.08, 2400); thump(200, 120, 0.06, 0.04); }),
-    status: hit => { if (game.s.time - (statusHeard[hit.id] ?? -1) < STATUS_GAP) return; statusHeard[hit.id] = game.s.time; sfx(hit.id); },
     mob: hit => sfx(hit.id),
     cards: hit => { sfx('cards'); if (hit.special) sfx('cardsSpecial'); },
     pick: () => sfx('pick'),
     loot: () => sfx('loot'),
     portal: () => sfx('portal'),
-    fail: () => sfx('fail'),
-    fanfare: () => sfx('fanfare')
+    fail: () => sfx('fail')
   };
   let hitstop = 0;
-  // Statuses land many times a second; each speaks at most this often.
-  const STATUS_GAP = 0.3, statusHeard = {};
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
   function feelHits() {
     const hits = game.feel.splice(0);

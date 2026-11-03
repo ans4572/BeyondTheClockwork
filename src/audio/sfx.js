@@ -34,17 +34,14 @@ export const SFX = {
   vortexIntake: { synth: 'vortexIntake', volume: 1.4 },
   frostHiss: { synth: 'frostHiss', volume: 0.35 },
   // Fusions, by fusion id
-  steamShatter: { synth: 'steamShatter', volume: 0.35, also: 'freeze' },
+  steamShatter: { synth: 'steamShatter', volume: 0.35, also: 'iceCrack' },
   arcFurnace: { synth: 'arcFurnace', volume: 0.35 },
   fireCyclone: { synth: 'fireCyclone', volume: 0.85 },
-  magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35, also: 'freeze' },
+  magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35, also: 'iceCrack' },
   frostCrosscut: { synth: 'frostCrosscut', volume: 0.6, also: 'frostBolt' },
   stormFloat: { synth: 'stormFloat', volume: 1.0 },
-  // Statuses
-  burn: { synth: 'burn', volume: 0.6 },
-  freeze: { file: 'freeze', takes: 1, volume: 0.35, rate: [1.15, 1.25] },
-  shock: { synth: 'shock', volume: 0.5 },
-  wind: { synth: 'wind', volume: 0.6 },
+  // The ice in ice fusions
+  iceCrack: { file: 'iceCrack', takes: 1, volume: 0.35, rate: [1.15, 1.25] },
   // Ordinary enemies' attacks, by enemy type
   guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.85, 0.95] },
   nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.7, 0.75] },
@@ -62,7 +59,6 @@ export const SFX = {
   pick: { file: 'pick', takes: 4, volume: 0.4, rate: [1, 1.05] },
   loot: { file: 'loot', takes: 6, volume: 0.35, rate: [1, 1.1] },
   fail: { file: 'fail', takes: 1, volume: 0.3, rate: [1, 1] },
-  fanfare: { file: 'fanfare', takes: 1, volume: 0.3, rate: [1, 1] },
   // Interface
   click: { file: 'click', takes: 5, volume: 0.2, rate: [1, 1.05] },
   buy: { file: 'buy', takes: 3, volume: 0.35, rate: [1, 1.05] },
