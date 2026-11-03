@@ -32,6 +32,11 @@ export class MusicPlayer {
   constructor() { this.tracks = new Map(); this.current = null; }
   /** Starts downloading tracks before the first tap, so the first music plays as soon as sound is allowed. */
   preload(names) { for (const name of names) this.element(name).preload = 'auto'; }
+  /** Resolves once a track has enough to start playing (or after `ms`, whichever is first). */
+  ready(name, ms) {
+    const element = this.element(name);
+    return new Promise(done => { if (element.readyState >= 3) return done(); element.addEventListener('canplay', done, { once: true }); setTimeout(done, ms); });
+  }
   element(name) {
     this.elements ??= new Map();
     if (!this.elements.has(name)) { const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element); }
@@ -55,7 +60,6 @@ export class MusicPlayer {
     this.unlocked = true;
     for (const name of Object.keys(MUSIC)) {
       const track = this.track(audio, name);
-      if (name !== 'roco') track.element.preload = 'auto';
       if (name === this.current || !track.element.paused) continue;
       track.element.play().then(() => { if (name !== this.current) track.element.pause(); }).catch(() => { this.unlocked = false; });
     }

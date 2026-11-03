@@ -224,7 +224,10 @@ try {
   function panel(content, classes = '') { return `<section class="panel ${classes}">${content}</section>`; }
   const sounds = new SoundBank(), music = new MusicPlayer();
   // Sound files and the first two tracks download during loading; the first tap only has to switch them on.
-  sounds.prefetch(); music.preload(['title', 'town']);
+  // The title song downloads alone first, so it can play the moment sound is allowed; the effects and the town
+  // and street songs follow once it can.
+  music.preload(['title']);
+  music.ready('title', 4000).then(() => { sounds.prefetch(); music.preload(['town', 'street']); });
   // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
   for (const type of ['pointerdown', 'keydown']) window.addEventListener(type, () => openAudio(), { capture: true });
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
