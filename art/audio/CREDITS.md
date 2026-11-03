@@ -1,4 +1,4 @@
-# 효과음 출처
+# 효과음·배경음악 출처
 
 `sfx/` 의 효과음은 모두 Kenney(www.kenney.nl)의 CC0 음원이다. 출처 표기 의무는 없다. 원본 라이선스: `sfx/kenney-License.txt`.
 
@@ -34,3 +34,16 @@
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 
 불·전기·바람 기술과 융합, 얼음 기술의 냉기, 원정 실패의 처지는 나팔 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.
+
+## 배경음악
+
+`bgm/` 의 곡은 모두 Abstraction의 Music Loop Bundle(https://tallbeard.itch.io/music-loop-bundle) 음원이다. CC0이며 출처 표기 의무는 없다. 원본 라이선스: `bgm/abstraction-LICENSE.txt`. 제작자는 NFT, AI·머신러닝, 수정 없는 재판매에 쓰는 것을 지지하지 않는다고 밝혔다(금지 조항은 아님). 게임으로 수익을 내면 소액 후원을 권한다.
+
+| 게임 이름 | 장면 | 원본 묶음 | 원본 파일 |
+|---|---|---|---|
+| title | 타이틀 화면, 오프닝·튜토리얼 | chiptune | Three Red Hearts Puzzle Pieces |
+| town | 웃음 마을(출발 광장), 뒷마당 | 2024-q3 | Interior Birdecorator Explore |
+| street | 웃음거리 02~05구간 | 2024-q4 | Sketchbook 2024-12-26 |
+| roco | 중간보스 로코 | 2025-q4 | Sketchbook 2025-11-13 |
+| dusk | 07 쉼터~12구간 | chiptune | Three Red Hearts Modern Bits |
+| brass | 최종 보스 브라스 | chiptune | Three Red Hearts Go (No Vocal) |

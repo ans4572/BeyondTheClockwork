@@ -1,5 +1,5 @@
 export function createProfile(data) {
-  return { freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, runs: 0, wins: 0, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], settings: { reducedMotion: false, damageNumbers: true, sound: true, bindings: {} } };
+  return { freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, runs: 0, wins: 0, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, bindings: {} } };
 }
 
 /** Price of the next level of a stat that is currently at `rank`. */

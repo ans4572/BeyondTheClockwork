@@ -29,7 +29,9 @@ export function decodeSave(raw, data) {
   for (const key of ['notices']) if (!Array.isArray(s[key])) fail('저장된 알림 상태가 올바르지 않습니다.');
   for (const key of ['bossRecords', 'blueprints', 'discoveredFusions', 'history']) if (!Array.isArray(s.profile[key])) fail('저장된 영구 기록이 올바르지 않습니다.');
   for (const key of ['runs', 'wins', 'combatClears']) if (!integerIn(s.profile[key], 0, Number.MAX_SAFE_INTEGER)) fail('저장된 진행 기록이 올바르지 않습니다.');
-  if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion'].every(key => typeof s.profile.settings[key] === 'boolean')) fail('저장된 설정이 올바르지 않습니다.');
+  // Saves from before background music get it switched on at the default volume.
+  if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; }
+  if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
   s.profile.loadout ??= [];
   s.profile.ownedElements ??= [...s.profile.loadout];
   if (!Array.isArray(s.profile.ownedElements) || s.profile.ownedElements.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 부품이 올바르지 않습니다.');

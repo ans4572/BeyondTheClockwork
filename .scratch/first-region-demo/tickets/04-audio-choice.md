@@ -1,7 +1,7 @@
 ---
 title: 음악과 효과음 범위 결정
 labels: [wayfinder:grilling]
-status: open
+status: closed
 assignee:
 ---
 
@@ -12,3 +12,7 @@ assignee:
 ## Blocked by
 
 - 03-audio-sources
+
+## Resolution
+
+배경음악 6곡(타이틀, 웃음 마을, 웃음거리 전반, 로코, 야시장 이후, 브라스)을 Abstraction Music Loop Bundle(CC0)에서 사용자가 직접 들어 보고 골랐다. 효과음은 Kenney(CC0)와 코드 합성음. 목록과 출처는 `art/audio/CREDITS.md`.

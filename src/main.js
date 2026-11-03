@@ -10,6 +10,7 @@ import { TitleScreen, pixelText } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
 import { worldMapSvg } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
+import { MusicPlayer, musicScene } from './audio/music.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 
@@ -151,8 +152,19 @@ try {
     screen = null; game.s.paused = false; bindingTarget = null; clearInput(); renderOverlay(true); $('game').focus({ preventScroll: true }); }
   function button(label, action, extra = '', classes = '') { return `<button class="${classes}" data-action="${action}" ${extra}>${label}</button>`; }
   function panel(content, classes = '') { return `<section class="panel ${classes}">${content}</section>`; }
-  const sounds = new SoundBank();
-  function openAudio() { if (game.s.profile.settings.sound) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); sounds.load(audio); } }
+  const sounds = new SoundBank(), music = new MusicPlayer();
+  // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
+  for (const type of ['pointerdown', 'keydown']) window.addEventListener(type, () => openAudio(), { capture: true });
+  // The rest stop splits the run: before it the street is bright, from it on the light is going.
+  const REST_INDEX = data.slice.rooms.findIndex(room => room.kind === 'shop');
+  /** The background track for what is on screen; silent when music is switched off. */
+  function playMusic() {
+    const s = game.s, settings = s.profile.settings, room = game.room;
+    const name = settings.music ? musicScene({ onTitle, mode: s.mode, roomKind: room?.kind, roomIndex: s.run ? s.run.node : undefined, restIndex: REST_INDEX }) : null;
+    // Menus over the game keep the music, a little quieter.
+    music.update(audio, name, settings.musicVolume * (s.paused && !onTitle ? 0.5 : 1));
+  }
+  function openAudio() { const { sound, music: musicOn } = game.s.profile.settings; if (sound || musicOn) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); sounds.load(audio); } }
   /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
   // Menu sounds still play while the game is paused behind the panel.
   const MENU_SOUNDS = new Set(['click', 'buy', 'deny', 'tune', 'equip']);
@@ -288,7 +300,7 @@ try {
   function settingsPanel() {
     const keysOpen = !!$('overlay').querySelector('details.keys[open]');
     const settings = game.s.profile.settings, map = bindings();
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
   }
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
   function codexPanel() {
@@ -463,9 +475,11 @@ try {
     if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
   }
   $('overlay').addEventListener('click', e => { const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target); });
+  $('overlay').addEventListener('input', e => { if (e.target.dataset.volume) game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; });
   $('overlay').addEventListener('change', async e => {
     const setting = e.target.dataset.setting;
     if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
+    if (e.target.dataset.volume) { game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; game.save(); return; }
     if (e.target.id === 'import-file' && e.target.files[0]) {
       try {
         const state = decodeSave(await e.target.files[0].text(), data);
@@ -637,6 +651,7 @@ try {
     // The swing itself is only air; what it hits is voiced by feelHits.
     const swing = game.s.effects.findLast(f => f.type === 'swing');
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; sfx(swing.phase === 2 ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7)); }
+    playMusic();
     renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
