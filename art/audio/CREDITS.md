@@ -7,10 +7,10 @@
 | swing | RPG Audio | knifeSlice2 (빗나간 렌치만) |
 | hit | Impact Sounds | impactPunch_medium_000 |
 | heavy | Impact Sounds | impactPunch_heavy_000 |
-| hurt | Impact Sounds | impactPunch_medium_000 |
+| hurt | Impact Sounds | impactMetal_light_000 |
 | kill | Impact Sounds | impactPlank_medium_000 |
 | block | Impact Sounds | impactMetal_medium_000 |
-| burst | Impact Sounds | impactMining_000 |
+| burst | Impact Sounds | impactSoft_medium_002 |
 | summon | RPG Audio | footstep04 |
 | pop | RPG Audio | metalClick |
 | tell | Interface Sounds | glass_001 |
@@ -20,10 +20,10 @@
 | mend | Music Jingles | jingles_PIZZI00 |
 | frostBolt, coolingField | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000 |
 | rabbit | RPG Audio | cloth2 |
-| elite | Impact Sounds | impactPlate_heavy_000 |
+| elite | Impact Sounds | impactWood_heavy_000 |
 | trumpet | Music Jingles | jingles_SAX00 |
-| musicbox | Interface Sounds | pluck_001 |
-| spintop | RPG Audio | creak2 |
+| musicbox | Impact Sounds | impactGlass_light_001 |
+| spintop | RPG Audio | cloth1 |
 | drummer | Impact Sounds | impactSoft_heavy_000 |
 | portal | RPG Audio | doorOpen_1 |
 | cards, pick, loot, buy | Casino Audio | card-fan-1, card-place-1, chips-stack-1, chips-handle-1 |
