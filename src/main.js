@@ -162,6 +162,26 @@ try {
     (game.s.profile.bossTalks ??= []).push(boss); game.save();
     game.s.paused = true; await talk(BOSS_TALKS[boss]); game.s.paused = false;
   }
+  // The slice's ending: Brass wakes and talks, the clock tower hears of it, then To be continued.
+  async function playEnding() {
+    const seen = (game.s.profile.bossTalks ??= []), first = !seen.includes('brassAfter');
+    seen.push('ending'); if (first) seen.push('brassAfter'); game.save();
+    if (first) await talk('brassAfter');
+    screen = 'talk'; renderOverlay(true);
+    const scene = $('scene');
+    scene.innerHTML = towerScene(); scene.hidden = false; scene.classList.remove('fade'); void scene.offsetWidth; scene.classList.add('fade');
+    await new Promise(done => setTimeout(done, game.s.profile.settings.reducedMotion ? 0 : 1400));
+    await talk('ordenScene');
+    scene.hidden = true; renderOverlay(true);
+  }
+  function towerScene() {
+    const ticks = Array.from({ length: 12 }, (_, i) => `<rect x="-5" y="-150" width="10" height="${i % 3 ? 18 : 30}" fill="#2b3345" transform="rotate(${i * 30})"/>`).join('');
+    const stars = Array.from({ length: 40 }, (_, i) => `<rect x="${(i * 197) % 1120}" y="${(i * 89) % 300}" width="${i % 5 ? 3 : 5}" height="${i % 5 ? 3 : 5}" fill="#f6ecd2" opacity="${0.3 + (i % 4) * 0.15}"/>`).join('');
+    return `<svg viewBox="0 0 1120 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1120" height="640" fill="#141b2b"/>${stars}`
+      + `<g transform="translate(560 290)"><circle r="196" fill="#0e121a"/><circle r="172" fill="#e8c26a"/><circle r="160" fill="#f6ecd2"/>${ticks}<rect x="-5" y="-110" width="10" height="114" fill="#2b3345" transform="rotate(-20)"/><rect x="-4" y="-140" width="8" height="144" fill="#a92f2b" transform="rotate(118)"/><circle r="12" fill="#2b3345"/></g>`
+      + `<path d="M0 640V470h120v-40h80v40h70V380h60v-30h40v30h60v260zM1120 640V450h-110v-50h-70v50h-80V360h-50v-30h-40v30h-70v280z" fill="#0e121a"/>`
+      + `<path d="M260 640V520h600v120z" fill="#0e121a"/><rect x="260" y="514" width="600" height="10" fill="#c79a3e"/></svg><b>중앙시계탑 · 꼭대기</b>`;
+  }
   async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
   function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
   function resume() {
@@ -370,8 +390,12 @@ try {
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
       return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
-    if (mode === 'unwind') html = panel(`<h2>통제축을 풀어 주세요.</h2><p>${game.room.boss === 'collectorRoco' ? '“올바른 장소는 내가 고를게.”' : '마을의 행진은 주민의 선택이 아니라 명령이었다.'}<br>동력은 남기고 명령 회로를 분리합니다.</p><div class="actions">${button(isTouch ? '태엽 풀기' : `${keyName(bindings().interact)} · 태엽 풀기`, 'unwind', '', 'primary')}</div>`, 'compact');
-    if (mode === 'complete') html = panel(`<div class="complete-seal">✣</div><h2>처음으로, 행진이 멈췄다.</h2><p>웃음거리의 통제축을 풀었습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>시계탑의 본신호는 아직 남아 있습니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">무음공장으로 가는 이야기는 아직 만들고 있습니다.</p>`, 'compact');
+    if (mode === 'unwind') {
+      const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감기' : '태엽 풀기';
+      html = panel((brass ? `<h2>브라스의 태엽을 감아 깨워 주세요.</h2><p>마을의 행진은 주민의 선택이 아니라 명령이었다.<br>명령 회로는 떼어 내고, 멈춘 태엽은 다시 감아 줍니다.</p>` : `<h2>통제축을 풀어 주세요.</h2><p>“올바른 장소는 내가 고를게.”<br>동력은 남기고 명령 회로를 분리합니다.</p>`)
+        + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
+    }
+    if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p><h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;
       html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 귀환 보너스 <strong>⚙ +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
@@ -670,7 +694,7 @@ try {
     if (!screen && game.tutorial.takeCall()) moruCalls();
     const boss = game.room?.boss;
     // After Brass, F2 says what the title means: the spring stays, but who winds it changes.
-    if (!screen && game.s.mode === 'complete' && !game.s.profile.bossTalks?.includes('brassAfter')) { (game.s.profile.bossTalks ??= []).push('brassAfter'); game.save(); talk('brassAfter'); }
+    if (!screen && game.s.mode === 'complete' && !game.s.profile.bossTalks?.includes('ending')) playEnding();
     if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0)) meetBoss(boss);
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening');
     const pad = pollGamepad(), map = bindings();

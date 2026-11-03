@@ -219,7 +219,7 @@ test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choi
   assert.deepEqual(resumed.s.run.rewardChoices, choices); resumed.offerRewards(); assert.deepEqual(resumed.s.run.rewardChoices, choices);
   assert.equal(resumed.finishCombat(), false); assert.equal(resumed.s.profile.freeGears, gears); pick(resumed); assert.equal(resumed.chooseReward(0), false);
 });
-test('twelve-stage completion pays exactly 132 base gears and records bosses only once', () => {
+test('twelve-stage completion pays exactly 132 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
   const g = hub(); g.startRun(123); const seen = [], last = data.slice.rooms.length - 1;
   assert.equal(g.s.mode, 'combat');
   for (let node = 0; node <= last; node++) {
@@ -228,7 +228,7 @@ test('twelve-stage completion pays exactly 132 base gears and records bosses onl
       const wasBoss = !!g.room.boss;
       completeRoom(g);
       if (wasBoss) assert.equal(g.unwind(), false);
-      pick(g, g.room.guaranteedMod ? 'mod' : undefined);
+      if (node < last) pick(g, g.room.guaranteedMod ? 'mod' : undefined);
     }
     if (node < last) assert.equal(g.nextNode(0), true);
   }

@@ -34,14 +34,17 @@ export class DialogueBox {
     this.lines = lines; this.at = 0;
     // With nobody else in the script it is a monologue, and the text takes the empty side.
     const other = lines.find(line => line.who !== this.playerId);
+    // A scene without the player puts its second speaker on the player's side.
+    this.right = lines.some(line => line.who === this.playerId) ? this.playerId : lines.find(line => line.who !== other.who)?.who ?? this.playerId;
     this.other.hidden = !other; this.root.classList.toggle('alone', !other);
+    this.root.classList.toggle('no-player', this.right !== this.playerId);
     if (other) this.other.src = faces[other.who];
-    this.player.src = faces[this.playerId];
+    this.player.src = faces[this.right];
     this.root.hidden = false;
     return new Promise(done => { this.done = done; this.show(); });
   }
   show() {
-    const line = this.lines[this.at], speaking = line.who === this.playerId;
+    const line = this.lines[this.at], speaking = line.who === this.right;
     this.root.classList.toggle('player-talks', speaking);
     this.other.classList.toggle('quiet', speaking); this.player.classList.toggle('quiet', !speaking);
     this.name.textContent = this.speakers[line.who].name;

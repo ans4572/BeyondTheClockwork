@@ -1181,7 +1181,10 @@ export class Game {
       this.s.profile.bossRecords.push(boss);
       if (boss === 'captainBrass') this.s.profile.blueprints.push('patrolBlueprint');
     }
-    this.offerRewards(); this.save(); return true;
+    // The last boss of the slice ends the run here: the story takes over instead of a reward pick.
+    if (this.s.run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
+    else this.offerRewards();
+    this.save(); return true;
   }
   rarity() {
     let roll = this.random();

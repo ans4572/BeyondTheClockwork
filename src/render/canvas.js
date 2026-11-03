@@ -535,7 +535,7 @@ export class CanvasRenderer {
     }
     if (s.mode === 'unwind') {
       const x = (this.camera.x + 18) * 20, y = (this.camera.y + 8.55) * 20;
-      this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4); this.text('G · 통제축 풀기', x, y + 30, '#5c7462', 10);
+      this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4); this.text(this.game.room?.boss === 'captainBrass' ? 'G · 태엽 감기' : 'G · 통제축 풀기', x, y + 30, '#5c7462', 10);
     }
     // A player lost behind scenery shows through it, after every body so nothing repaints over them.
     const ghost = ghostFor(playerHidden);
