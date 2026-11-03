@@ -66,6 +66,10 @@ try {
     fitCanvas();
     const scale = $('game').getBoundingClientRect().width / 1120;
     $('hud').style.transform = `scale(${scale})`; document.documentElement.style.setProperty('--hud-scale', scale);
+    // Touch tools sit just left of the minimap's top edge (it is 168px wide, 14px from the right, 12px down on the sheet).
+    const shown = $('game').getBoundingClientRect();
+    $('touch').style.setProperty('--tools-right', `${Math.round(document.documentElement.clientWidth - shown.left - (1120 - 182) * scale + 8)}px`);
+    $('touch').style.setProperty('--tools-top', `${Math.round(shown.top + 12 * scale)}px`);
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels would be unreadable at a phone's scale, and scroll instead of shrinking.
     $('overlay').style.zoom = isTouch ? Math.max(scale, TOUCH_PANEL_ZOOM) : scale;
@@ -678,7 +682,7 @@ try {
     const swing = game.s.effects.findLast(f => f.type === 'swing');
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; sfx(swing.phase === 2 ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7)); }
     playMusic();
-    renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });

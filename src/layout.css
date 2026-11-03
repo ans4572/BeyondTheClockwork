@@ -243,7 +243,9 @@ body.touch .hud-wallet { transform: scale(1.3); transform-origin: 100% 0; }
 #touch .touch-pad .touch-skill3 { right: 0; bottom: 92px; }
 #touch .touch-pad .touch-fusion { right: 152px; bottom: 4px; }
 .touch-tools { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: 62px; display: flex; gap: 6px; }
-#touch .touch-tools button { min-width: 52px; height: 44px; padding: 0 8px; }
+#touch .touch-tools button { width: 44px; height: 44px; display: grid; place-items: center; }
+#touch .touch-tools .tool-icon { width: 28px; height: 28px; }
+body.has-minimap .touch-tools { right: var(--tools-right, 200px); top: var(--tools-top, 12px); }
 body.touch .hud-tools { display: none; }
 body.touch .panel button { min-height: 44px; }
 body.touch .panel .stat-row button { min-height: 36px; }
