@@ -40,7 +40,7 @@ test('each background and its foreground layer match the declared map size', () 
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
 });
 
-test('each place leaves by exactly one exit, on the wide bottom street (the town's reaches up to its portal ring)', () => {
+test('each place leaves by exactly one exit, on the wide bottom street (reaching up to a portal ring where there is one)', () => {
   for (const { exit, size } of places) assert.ok(exit.polygon.every(([, y]) => y > size[1] - (exit.portal ? 3 : 2)), exit.label);
 });
 
