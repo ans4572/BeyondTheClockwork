@@ -8,10 +8,9 @@ const { ELEMENT_SOUNDS } = await import(`./elements.js${new URL(import.meta.url)
 export const SFX = {
   swing: { file: 'swing', takes: 1, volume: 0.22, rate: [1, 1.12] },
   swingHeavy: { file: 'swing', takes: 1, volume: 0.3, rate: [0.76, 0.84] },
-  dodge: { file: 'swing', takes: 1, volume: 0.22, rate: [0.5, 0.58] },
-  hit: { file: 'hit', takes: 5, volume: 0.45, rate: [0.95, 1.1] },
-  heavy: { file: 'heavy', takes: 5, volume: 0.55, rate: [0.9, 1] },
-  crit: { file: 'crit', takes: 5, volume: 0.3, rate: [1.15, 1.3] },
+  dodge: { synth: 'dash', volume: 0.5 },
+  hit: { file: 'hit', takes: 5, volume: 0.5, rate: [0.95, 1.08] },
+  heavy: { file: 'heavy', takes: 5, volume: 0.6, rate: [0.85, 0.95] },
   hurt: { file: 'hurt', takes: 5, volume: 0.55, rate: [0.9, 1] },
   kill: { file: 'kill', takes: 5, volume: 0.45, rate: [0.95, 1.1] },
   tell: { file: 'tell', takes: 6, volume: 0.16, rate: [1, 1] },
@@ -27,19 +26,19 @@ export const SFX = {
   // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice keeps the glass recordings.
   heatSwing: { synth: 'heatSwing', volume: 0.85 },
   exhaustBurst: { synth: 'exhaustBurst', volume: 0.4 },
-  frostBolt: { file: 'frostBolt', takes: 2, volume: 0.35, rate: [1.25, 1.4], also: 'frostHiss' },
-  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.75, 0.8], also: 'frostHiss' },
+  frostBolt: { file: 'frostBolt', takes: 2, volume: 0.35, rate: [1.25, 1.4] },
+  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.75, 0.8] },
   conductiveSpanner: { synth: 'conductiveSpanner', volume: 0.35 },
   capacitorStrike: { synth: 'capacitorStrike', volume: 0.4 },
   pressureDash: { synth: 'pressureDash', volume: 1.1 },
   vortexIntake: { synth: 'vortexIntake', volume: 1.4 },
   frostHiss: { synth: 'frostHiss', volume: 0.35 },
   // Fusions, by fusion id
-  steamShatter: { synth: 'steamShatter', volume: 0.35, also: 'iceCrack' },
+  steamShatter: { synth: 'steamShatter', volume: 0.35 },
   arcFurnace: { synth: 'arcFurnace', volume: 0.35 },
   fireCyclone: { synth: 'fireCyclone', volume: 0.85 },
-  magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35, also: 'iceCrack' },
-  frostCrosscut: { synth: 'frostCrosscut', volume: 0.6, also: 'frostBolt' },
+  magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35 },
+  frostCrosscut: { synth: 'frostCrosscut', volume: 0.6 },
   stormFloat: { synth: 'stormFloat', volume: 1.0 },
   // The ice in ice fusions
   iceCrack: { file: 'iceCrack', takes: 1, volume: 0.35, rate: [1.15, 1.25] },
@@ -80,7 +79,6 @@ export class SoundBank {
   /** Plays a named effect; returns false while its takes are not decoded yet, so the caller can fall back. */
   play(audio, name, gainScale = 1) {
     const sound = SFX[name];
-    if (sound?.also) this.play(audio, sound.also, gainScale);
     if (sound?.synth) { const out = audio.createGain(); out.gain.value = sound.volume * gainScale; out.connect(audio.destination); ELEMENT_SOUNDS[sound.synth](audio, out); return true; }
     const buffer = sound && this.buffers.get(`${sound.file}-${Math.floor(Math.random() * sound.takes)}`);
     if (!buffer) return false;

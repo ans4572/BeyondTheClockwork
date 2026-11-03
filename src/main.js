@@ -28,8 +28,8 @@ const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodge
 /** Parser errors arrive in English; players get one plain sentence instead. */
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const CRIT_STOP = 0.03, CRIT_SHAKE = 3;
+const FEEL = { hit: { stop: 0.045 }, heavy: { stop: 0.1, shake: 4 }, phase: { stop: 0.25, shake: 5 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const CRIT_STOP = 0.03, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
@@ -167,6 +167,7 @@ try {
   async function meetBoss(boss) {
     (game.s.profile.bossTalks ??= []).push(boss); game.save();
     game.s.paused = true; await talk(BOSS_TALKS[boss]); game.s.paused = false;
+    bossCard(boss);
   }
   // The slice's ending: Brass wakes and talks, the clock tower hears of it, then To be continued.
   async function playEnding() {
@@ -187,6 +188,18 @@ try {
       + `<g transform="translate(560 290)"><circle r="196" fill="#0e121a"/><circle r="172" fill="#e8c26a"/><circle r="160" fill="#f6ecd2"/>${ticks}<rect x="-5" y="-110" width="10" height="114" fill="#2b3345" transform="rotate(-20)"/><rect x="-4" y="-140" width="8" height="144" fill="#a92f2b" transform="rotate(118)"/><circle r="12" fill="#2b3345"/></g>`
       + `<path d="M0 640V470h120v-40h80v40h70V380h60v-30h40v30h60v260zM1120 640V450h-110v-50h-70v50h-80V360h-50v-30h-40v30h-70v280z" fill="#0e121a"/>`
       + `<path d="M260 640V520h600v120z" fill="#0e121a"/><rect x="260" y="514" width="600" height="10" fill="#c79a3e"/></svg><b>중앙시계탑 · 꼭대기</b>`;
+  }
+  /** The boss's name across the screen as the fight begins. */
+  function bossCard(boss) {
+    const info = data.combat.bosses.find(b => b.id === boss), card = $('boss-card');
+    if (!info || reducedMotion()) return;
+    const [title, ...name] = info.name.split(' ');
+    card.innerHTML = `<small>${title}</small><b>${name.join(' ')}</b>`; card.hidden = false;
+    card.classList.remove('show'); void card.offsetWidth; card.classList.add('show');
+    // The fight holds while the name is read, then starts as the card slides away.
+    game.s.paused = true;
+    setTimeout(() => { if (!screen) game.s.paused = false; }, BOSS_CARD_HOLD_MS);
+    setTimeout(() => { card.hidden = true; }, BOSS_CARD_MS);
   }
   async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
   function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
@@ -259,9 +272,12 @@ try {
     pick: () => sfx('pick'),
     loot: () => sfx('loot'),
     portal: () => sfx('portal'),
-    fail: () => sfx('fail')
+    fail: () => sfx('fail'),
+    phase: () => sfx('heavy')
   };
-  let hitstop = 0;
+  let hitstop = 0, slowUntil = 0, landedAt = 0, pendingWhoosh = null;
+  // Lowest to highest: when several things happen in one step, only the last of these that happened is heard.
+  const SOUND_RANK = ['dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'mob', 'block', 'hit', 'cast', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
   function feelHits() {
     const hits = game.feel.splice(0);
@@ -274,10 +290,14 @@ try {
       if (shake && !calm) renderer.kick(shake);
       if (hit.kind === 'hurt' && !calm) renderer.wince();
     }
-    // One sound per kind (per skill, enemy type or status where those differ) in a step.
-    const voiced = new Map(hits.map(hit => [`${hit.kind}:${hit.id ?? ''}`, hit]));
-    for (const hit of voiced.values()) HIT_SOUNDS[hit.kind]?.(hit);
-    if (hits.some(hit => hit.crit)) sfx('crit', () => thump(1400, 900, 0.08, 0.03, 'square'));
+    // The last enemy, and a boss above all, falls in slow motion.
+    const finisher = hits.find(hit => hit.kind === 'kill' && (hit.boss || hit.last));
+    if (finisher && !calm) slowUntil = performance.now() + (finisher.boss ? BOSS_SLOW_MS : LAST_SLOW_MS);
+    if (hits.some(hit => hit.kind === 'phase') && !calm) renderer.flash();
+    // One sound per moment: the most telling thing that happened in this step, and nothing layered under it.
+    const top = hits.reduce((best, hit) => (SOUND_RANK.indexOf(hit.kind) > SOUND_RANK.indexOf(best.kind) ? hit : best));
+    if (['hit', 'heavy'].includes(top.kind)) { landedAt = performance.now(); pendingWhoosh = null; }
+    HIT_SOUNDS[top.crit && top.kind === 'hit' ? 'heavy' : top.kind]?.(top);
   }
   /** Two slow strokes of the town bell. */
   function toll() {
@@ -692,7 +712,7 @@ try {
 
   let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1, lastBossTellAt = -1;
   function frame(now) {
-    const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta;
+    const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta * (now < slowUntil ? SLOW_RATE : 1);
     bringPlaceForward();
     if (game.s.mode === 'opening' && !screen) playOpening(false);
     if (game.tutorial.readyToRegister && !screen) meetMoru();
@@ -725,7 +745,9 @@ try {
     if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else beep(660, 0.25, 0.04); }
     // The swing itself is only air; what it hits is voiced by feelHits.
     const swing = game.s.effects.findLast(f => f.type === 'swing');
-    if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; sfx(swing.phase === 2 ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7)); }
+    // A swing is heard once: as the blow if it lands, as a soft whoosh only if it hits nothing.
+    if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; if (performance.now() - landedAt > 40) pendingWhoosh = { at: performance.now() + WHOOSH_WAIT_MS, heavy: swing.phase === 2 }; }
+    if (pendingWhoosh && performance.now() >= pendingWhoosh.at) { const { heavy } = pendingWhoosh; pendingWhoosh = null; sfx(heavy ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, heavy ? 600 : 900, 0.7)); }
     playMusic();
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }

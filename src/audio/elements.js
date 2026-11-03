@@ -89,6 +89,8 @@ export const ELEMENT_SOUNDS = {
   conductiveSpanner: (a, o) => { snap(a, o, { peak: 0.6 }); buzz(a, o, { dur: 0.3, freq: 110, peak: 0.35 }); crackle(a, o, { dur: 0.3, count: 12, low: 3000, high: 7000, peak: 0.6 }); },
   capacitorStrike: (a, o) => { snap(a, o, { peak: 1 }); crackle(a, o, { dur: 0.25, count: 20, low: 2500, high: 7000, peak: 0.7 }); roar(a, o, { dur: 1.1, cutoff: 220, attack: 0.03, peak: 1 }); thump(a, o, { from: 70, to: 30, dur: 0.8, peak: 0.6 }); },
   // Wind
+  // The dodge: a quick rush of air that falls in pitch, the usual dash 'whoosh', with no metal in it.
+  dash: (a, o) => { gust(a, o, { dur: 0.2, from: 2600, to: 520, q: 0.9, attack: 0.18, peak: 1 }); gust(a, o, { dur: 0.14, from: 5200, to: 1800, q: 1.4, attack: 0.1, peak: 0.35 }); },
   pressureDash: (a, o) => { gust(a, o, { dur: 0.34, from: 450, to: 2000, q: 1.1, attack: 0.25, peak: 1 }); roar(a, o, { dur: 0.3, cutoff: 350, attack: 0.05, peak: 0.35 }); },
   vortexIntake: (a, o) => { swirl(a, o, { dur: 1.0, center: 650, depth: 350, rate: 6, peak: 1 }); roar(a, o, { dur: 1.0, cutoff: 260, attack: 0.3, peak: 0.45 }); },
   // Ice: a breath of frost under the glass recordings

@@ -13,7 +13,7 @@ const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
-const BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
+const FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
@@ -26,6 +26,8 @@ export class CanvasRenderer {
   /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
   kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
+  /** A white flash over the whole frame, for a boss changing phase. */
+  flash() { this.flashUntil = performance.now() + FLASH_MS; }
   shakeOffset() {
     const left = this.shakeUntil - performance.now();
     if (left <= 0) return [0, 0];
@@ -534,7 +536,7 @@ export class CanvasRenderer {
     for (const fx of s.effects) {
       if (fx.type === 'number' && !s.profile.settings.damageNumbers) continue;
       if (spriteFx && ['crosscut', 'iceClamp'].includes(fx.type)) continue;
-      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark'].includes(fx.type)) continue;
+      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
       // Critical hits show in red, a little larger.
@@ -545,7 +547,10 @@ export class CanvasRenderer {
       if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
       if (fx.type === 'beam') this.line(x, y, fx.targetX * 20, fx.targetY * 20, fx.color, 4);
       if (fx.type === 'dodge' || fx.type === 'hurt' || fx.type === 'spark') this.gear(x, y - 10, fx.value * 10 * (1 + fraction), fx.color, fraction);
-      if (fx.type === 'scrap') for (let i = 0; i < 8; i++) { const a = i * TAU / 8; this.rect(x + Math.cos(a) * fraction * 22, y + Math.sin(a) * fraction * 22, 3, 3, fx.color); }
+      // Scrap flies up and out, then falls: bits of the body's colour and grey bolts.
+      if (fx.type === 'scrap') for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + i * 0.37, out = fraction * (18 + (i % 3) * 7), lift = fraction * 34 - fraction * fraction * 44; this.rect(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.55 - lift, i % 4 ? 3 : 4, i % 4 ? 3 : 2, i % 3 ? fx.color : '#8a8f9c'); }
+      // A blow lands: a flash and short rays along the swing, gone in a few frames.
+      if (fx.type === 'impact') { const r = fx.value * 10 * (0.6 + fraction); c.globalAlpha *= 1 - fraction; this.circle(x, y, r * 0.55 * (1 - fraction * 0.5), fx.color); for (let i = -2; i <= 2; i++) { const a = (fx.angle || 0) + i * 0.45; this.line(x + Math.cos(a) * r * 0.6, y + Math.sin(a) * r * 0.6, x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3, fx.color, 2); } }
       c.restore();
     }
     if (s.mode === 'unwind') {
@@ -581,6 +586,8 @@ export class CanvasRenderer {
     }
     const hurtLeft = this.hurtUntil - performance.now();
     if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    const flashLeft = (this.flashUntil || 0) - performance.now();
+    if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (this.view) {
       // Smooth shrinking averages each block of detail into one pixel; the page then enlarges it without blending.
       const v = this.view.getContext('2d'); v.imageSmoothingEnabled = true; v.imageSmoothingQuality = 'high';

@@ -323,7 +323,7 @@ export class Game {
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
       if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
-      if (!enemy.dummy) this.sense({ kind: 'kill' });
+      if (!enemy.dummy) this.sense({ kind: 'kill', boss: !!enemy.boss, last: !this.s.enemies.some(e => e !== enemy && e.hp > 0 && !e.dummy) });
     }
     return { crit, killed: enemy.hp <= 0 };
   }
@@ -333,6 +333,8 @@ export class Game {
   punch(enemy, attack, hit) {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
     this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit });
+    // A small burst of light where the wrench meets the body; the third blow throws a bigger one.
+    this.effect('impact', enemy.x, enemy.y - 0.7, heavy ? '#ffd257' : '#fff4d6', heavy ? 0.22 : 0.14, heavy ? 1.3 : 0.8, { angle: attack.angle });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
     if (!enemy.boss && !enemy.dummy && !enemy.stationary && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
   }
@@ -598,6 +600,7 @@ export class Game {
     // Brass's breaks fill the square, so he marches back to where he first stood before laying them out.
     if (rule.kind !== 'cans' && enemy.home) Object.assign(enemy, enemy.home);
     const b = enemy.breaking = { index, kind: rule.kind, started: now, until: now + rule.seconds, angle, failAt: null };
+    this.sense({ kind: 'phase' });
     if (rule.kind === 'cans') { Object.assign(b, { fed: 0, nextCan: now + 0.6, cans: [] }); this.notify('보호막! 날아오는 깡통을 렌치로 쳐서 로코 입에 되돌려 주세요.'); }
     if (rule.kind === 'drums') {
       // Four drums round the boss; they light in an order to copy, while a march lane keeps coming down on the player.

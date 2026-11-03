@@ -4,10 +4,9 @@
 
 | 게임 이름 | 원본 묶음 | 원본 파일 |
 |---|---|---|
-| swing | RPG Audio | knifeSlice2 |
-| hit | Impact Sounds | impactWood_medium_000~004 |
-| heavy | Impact Sounds | impactWood_heavy_000~004 |
-| crit | Impact Sounds | impactMetal_light_000~004 |
+| swing | RPG Audio | knifeSlice2 (빗나간 렌치만) |
+| hit | Impact Sounds | impactPunch_medium_000~004 |
+| heavy | Impact Sounds | impactPunch_heavy_000~004 |
 | hurt | Impact Sounds | impactPunch_medium_000~004 |
 | kill | Impact Sounds | impactPlank_medium_000~004 |
 | block | Impact Sounds | impactMetal_medium_000~004 |
