@@ -69,10 +69,12 @@ test('map data is validated, and a spawn outside the floor is rejected', () => {
 });
 
 test('entering the room spreads the first wave over reachable floor, away from the player and waiting', () => {
-  const g = run(), { spreadMinUnits } = data.slice.rules, flow = g.flowField; flow.update(g.p.x, g.p.y);
-  assert.deepEqual([g.p.x, g.p.y], [map.spawn.x, map.spawn.y]);
+  const g = run(), { spreadMinUnits } = data.slice.rules, flow = g.flowField, spawn = map.spawn;
+  // The player walks in from the map edge to the spawn point; the wave is placed around that point.
+  assert.ok(!g.s.entry || (g.s.entry.x === spawn.x && g.s.entry.y === spawn.y));
+  flow.update(spawn.x, spawn.y);
   for (const enemy of g.s.enemies) {
-    assert.ok(flow.reachable(enemy.x, enemy.y)); assert.ok(Math.hypot(enemy.x - g.p.x, enemy.y - g.p.y) >= spreadMinUnits); assert.equal(enemy.aggro, false);
+    assert.ok(flow.reachable(enemy.x, enemy.y)); assert.ok(Math.hypot(enemy.x - spawn.x, enemy.y - spawn.y) >= spreadMinUnits); assert.equal(enemy.aggro, false);
   }
   assert.deepEqual(g.obstacles, []);
 });

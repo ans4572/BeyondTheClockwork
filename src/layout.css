@@ -295,3 +295,14 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #boss-card b { font: clamp(26px, 4.4vw, 52px)/1.1 "NeoDunggeunmo Pro", monospace; letter-spacing: .04em; text-shadow: 3px 3px 0 #a92f2b; }
 #boss-card.show { animation: boss-card 1.7s ease-out both; }
 @keyframes boss-card { 0% { opacity: 0; transform: translateX(-12%); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(8%); } }
+
+/* Arriving in a new place: a dark band leaves the screen in the direction of travel. */
+#wipe { position: absolute; inset: 0; z-index: 3; background: #16202a; pointer-events: none; }
+#wipe[hidden] { display: none; }
+#wipe.go { animation: wipe-x .5s ease-in both; }
+#wipe.from-west.go { animation-name: wipe-east; } #wipe.from-east.go { animation-name: wipe-west; }
+#wipe.from-north.go { animation-name: wipe-south; } #wipe.from-south.go { animation-name: wipe-north; }
+@keyframes wipe-east { to { transform: translateX(100%); } }
+@keyframes wipe-west { to { transform: translateX(-100%); } }
+@keyframes wipe-south { to { transform: translateY(100%); } }
+@keyframes wipe-north { to { transform: translateY(-100%); } }

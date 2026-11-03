@@ -1,6 +1,8 @@
 import { createProfile, permanentStats, buyRank, refundAll } from './progression.js';
 import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf } from './map-geometry.js';
+// How far back from the spawn point the player starts, walking in from the map's edge.
+const ENTRY_UNITS = 3.5;
 import { Tutorial } from './tutorial.js';
 import { FlowField } from './flow-field.js';
 
@@ -213,12 +215,24 @@ export class Game {
     const room = this.room, plan = this.s.run.plan[this.s.run.node], map = this.map, spawn = map?.spawn || this.config.arena.spawn, spawns = map?.enemySpawns || this.config.spawns;
     this.p.x = spawn.x; this.p.y = spawn.y;
     this.s.mode = room.kind === 'shop' ? 'shop' : 'combat';
+    // The player walks in from the map's nearest edge, so each place reads as joined to the last one.
+    this.s.entry = null;
+    const area = this.village || map;
+    if (area?.walkable) {
+      const [w, h] = area.size, edges = [[-1, 0, spawn.x], [1, 0, w - spawn.x], [0, -1, spawn.y], [0, 1, h - spawn.y]].sort((a, b) => a[2] - b[2]);
+      const [ex, ey] = edges[0];
+      let back = 0;
+      for (let d = 0.25; d <= ENTRY_UNITS; d += 0.25) { if (!fitsMap(spawn.x + ex * d, spawn.y + ey * d, area.bodyRadius, area)) break; back = d; }
+      if (back >= 1) { this.p.x = spawn.x + ex * back; this.p.y = spawn.y + ey * back; this.s.entry = { x: spawn.x, y: spawn.y, side: ex < 0 ? 'west' : ex > 0 ? 'east' : ey < 0 ? 'north' : 'south', until: this.s.time + back / this.c.player.speed + 0.3 }; }
+    }
     if (room.boss) { this.spawnEnemy(room.boss, map?.bossSpawn || { x: 18, y: 8.5 }); this.notify(room.description); }
     else if (room.waves) {
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
       room.waves[0].forEach(type => this.spawnWaveEnemy(type, this.spreadSpot()));
       this.notify(roomTitle(room));
     }
+    // Nobody strikes while the player is still walking in.
+    if (this.s.entry) for (const e of this.s.enemies) e.ready = Math.max(e.ready || 0, this.s.entry.until + 0.4);
     this.save();
   }
   get obstacles() {
@@ -1078,6 +1092,13 @@ export class Game {
     dt = Math.min(dt, 1 / 30); this.s.time += dt; this.s.tick++;
     if (this.s.run) this.s.run.elapsed += dt;
     const p = this.p;
+    // Walking in from the edge: the body steers itself to the spawn point and the player's input waits.
+    const entry = this.s.entry;
+    if (entry) {
+      const dx = entry.x - p.x, dy = entry.y - p.y, gap = Math.hypot(dx, dy);
+      if (gap < 0.12 || this.s.time >= entry.until) this.s.entry = null;
+      else input = { x: dx / gap, y: dy / gap, aim: { x: entry.x + dx, y: entry.y + dy } };
+    }
     if (input.aim && distance(p, input.aim) > 0.1) p.angle = Math.atan2(input.aim.y - p.y, input.aim.x - p.x);
     let dx = input.x || 0, dy = input.y || 0;
     const length = Math.hypot(dx, dy);

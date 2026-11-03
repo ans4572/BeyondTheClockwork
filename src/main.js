@@ -205,6 +205,15 @@ try {
     setTimeout(() => { if (!screen) game.s.paused = false; }, BOSS_CARD_HOLD_MS);
     setTimeout(() => { card.hidden = true; }, BOSS_CARD_MS);
   }
+  /** A dark band slides off the screen toward where the player is heading, as a new place opens. */
+  let wipedEntry = null;
+  function wipeIn() {
+    const entry = game.s.entry;
+    if (!entry || entry === wipedEntry || reducedMotion()) return;
+    wipedEntry = entry;
+    const wipe = $('wipe'); wipe.className = `from-${entry.side}`; wipe.hidden = false; void wipe.offsetWidth; wipe.classList.add('go');
+    setTimeout(() => { wipe.hidden = true; }, 520);
+  }
   async function moruCalls() { await talk('firstBell'); await talk('moruCalls'); }
   function startNew() { openAudio(); if (hasProgress(game.s)) { screen = 'confirmNew'; renderOverlay(true); } else playOpening(true); }
   function resume() {
@@ -746,7 +755,7 @@ try {
     // A swing is heard once: as the blow if it lands, as a soft whoosh only if it hits nothing.
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; if (performance.now() - landedAt > 40) pendingWhoosh = { at: performance.now() + WHOOSH_WAIT_MS, heavy: swing.phase === 2 }; }
     if (pendingWhoosh && performance.now() >= pendingWhoosh.at) { const { heavy } = pendingWhoosh; pendingWhoosh = null; sfx(heavy ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, heavy ? 600 : 900, 0.7)); }
-    playMusic();
+    playMusic(); wipeIn();
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });
