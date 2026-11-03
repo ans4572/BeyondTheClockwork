@@ -32,8 +32,8 @@ test('intro death restarts its checkpoint without registration or canonical rewa
   assert.equal(g.s.profile.combatClears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
   assert.equal(g.register(), true); assert.equal(g.register(), false); assert.equal(g.s.profile.freeGears, 8);
 });
-test('stats level to twenty at a rising price, and refunds conserve currency', () => {
-  const g = hub(); g.s.profile.freeGears = 100000;
+test('stats level to twenty once chapter 1 is cleared at a rising price, and refunds conserve currency', () => {
+  const g = hub(); g.s.profile.freeGears = 100000; g.s.profile.bossRecords.push('captainBrass');
   for (let i = 0; i < 20; i++) assert.equal(g.tune('maxHp', 'buy'), true);
   assert.equal(g.tune('maxHp', 'buy'), false); assert.equal(g.s.profile.stats.maxHp, 20);
   assert.equal(g.s.profile.freeGears, 100000 - 1150); assert.equal(g.p.maxHp, 200); assert.equal(g.p.hp, 200);

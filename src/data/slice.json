@@ -1114,7 +1114,7 @@
       "description": "최대 체력이 늘어난다.",
       "perRank": 5,
       "unit": "flat",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1124,7 +1124,7 @@
       "description": "렌치와 기술의 직접 피해가 늘어난다.",
       "perRank": 0.03,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1134,7 +1134,7 @@
       "description": "렌치 3연타가 더 빨라진다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1144,7 +1144,7 @@
       "description": "더 빠르게 걷는다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1154,7 +1154,7 @@
       "description": "받는 피해가 줄어든다.",
       "perRank": 0.015,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1164,7 +1164,7 @@
       "description": "기술과 융합을 더 자주 쓴다.",
       "perRank": 0.015,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1174,7 +1174,7 @@
       "description": "공격이 치명타로 들어갈 확률이 기본 10%에서 늘어난다.",
       "perRank": 0.01,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1184,7 +1184,7 @@
       "description": "치명타의 피해 배율이 늘어난다.",
       "perRank": 0.025,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1194,7 +1194,7 @@
       "description": "회피를 더 자주 쓴다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1204,7 +1204,7 @@
       "description": "기본 공격으로 얻는 축전이 늘어난다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1214,7 +1214,7 @@
       "description": "화상, 둔화, 감전, 풍압이 강해진다.",
       "perRank": 0.025,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1224,7 +1224,7 @@
       "description": "전투 보상의 자유 톱니가 늘어난다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     },
@@ -1234,7 +1234,7 @@
       "description": "전투 보상의 동전이 늘어난다.",
       "perRank": 0.02,
       "unit": "percent",
-      "maxRank": 20,
+      "maxRank": 30,
       "baseCost": 10,
       "costStep": 5
     }
@@ -1371,5 +1371,11 @@
       "stunMultiplier": 3,
       "tier": "special"
     }
-  ]
+  ],
+  "statChapters": {
+    "ranksPerChapter": 10,
+    "chapterBosses": [
+      "captainBrass"
+    ]
+  }
 }

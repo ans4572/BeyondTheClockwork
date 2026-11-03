@@ -3,7 +3,7 @@ import { Game } from './engine/game.js';
 import { TOOL_ICONS } from './ui/tool-icons.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
-import { statCost } from './engine/progression.js';
+import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
 import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
@@ -291,8 +291,11 @@ try {
     return stat.unit === 'percent' ? `+${Number((value * 100).toFixed(1))}%` : `+${value}`;
   }
   function statRow(stat) {
-    const rank = game.s.profile.stats[stat.id], maxed = rank >= stat.maxRank, cost = statCost(stat, rank), blocked = maxed || game.s.profile.freeGears < cost;
-    return `<div class="stat-row" data-tip="${stat.name}: ${stat.description}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${stat.maxRank}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i></div><span class="stat-value">${statValue(stat, rank)}${maxed ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : `⚙ ${cost}`}</button></div>`;
+    // Levels past this chapter's cap show as a locked stretch of the bar until the chapter boss falls.
+    const rank = game.s.profile.stats[stat.id], cap = rankCap(data, game.s.profile, stat), maxed = rank >= stat.maxRank, capped = !maxed && rank >= cap;
+    const cost = statCost(stat, rank), blocked = maxed || capped || game.s.profile.freeGears < cost, nextChapter = cap / data.slice.statChapters.ranksPerChapter + 1;
+    const tip = `${stat.name}: ${stat.description}${cap < stat.maxRank ? ` 지금은 ${cap}단계까지 · ${nextChapter - 1}장을 마치면 ${cap + data.slice.statChapters.ranksPerChapter}단계까지 열림` : ''}`;
+    return `<div class="stat-row" data-tip="${tip}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${cap}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i>${cap < stat.maxRank ? `<b class="stat-locked" style="left:${cap / stat.maxRank * 100}%"></b>` : ''}</div><span class="stat-value">${statValue(stat, rank)}${maxed || capped ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : capped ? `🔒 ${nextChapter}장` : `⚙ ${cost}`}</button></div>`;
   }
   function statGroups() {
     const stats = data.slice.permanentStats, grouped = STAT_GROUPS.flatMap(([, ids]) => ids), rest = stats.filter(stat => !grouped.includes(stat.id));
