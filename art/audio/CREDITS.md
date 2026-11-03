@@ -25,7 +25,6 @@
 | musicbox | Impact Sounds | impactGlass_light_001 |
 | spintop | RPG Audio | cloth1 |
 | drummer | Impact Sounds | impactSoft_heavy_000 |
-| portal | RPG Audio | doorOpen_1 |
 | cards, pick, loot, buy | Casino Audio | card-fan-1, card-place-1, chips-stack-1, chips-handle-1 |
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |

@@ -93,6 +93,12 @@ export const ELEMENT_SOUNDS = {
   dash: (a, o) => { gust(a, o, { dur: 0.2, from: 2600, to: 520, q: 0.9, attack: 0.18, peak: 1 }); gust(a, o, { dur: 0.14, from: 5200, to: 1800, q: 1.4, attack: 0.1, peak: 0.35 }); },
   // Two slow strokes of the town bell: a fundamental with two fading overtones.
   bell: (a, o) => { for (const stroke of [0, 0.9]) for (const [freq, peak] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) { const osc = a.createOscillator(), g = a.createGain(), at = a.currentTime + stroke; osc.frequency.value = freq; g.gain.setValueAtTime(peak, at); g.gain.exponentialRampToValueAtTime(0.001, at + 1.6); osc.connect(g).connect(o); osc.start(at); osc.stop(at + 1.6); } },
+  // Stepping through a portal: air drawn in and swept upward ("whoom"), with a soft rising shimmer on top.
+  portal: (a, o) => {
+    gust(a, o, { dur: 0.7, from: 220, to: 2600, q: 0.8, attack: 0.55, peak: 1 });
+    gust(a, o, { dur: 0.5, from: 1800, to: 6000, q: 2.5, attack: 0.7, peak: 0.25, at: 0.15 });
+    for (const [at, freq] of [[0.18, 784], [0.3, 1047], [0.42, 1319]]) { const osc = a.createOscillator(), g = a.createGain(), t = a.currentTime + at; osc.type = 'sine'; osc.frequency.value = freq; g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5); osc.connect(g).connect(o); osc.start(t); osc.stop(t + 0.55); }
+  },
   pressureDash: (a, o) => { gust(a, o, { dur: 0.34, from: 450, to: 2000, q: 1.1, attack: 0.25, peak: 1 }); roar(a, o, { dur: 0.3, cutoff: 350, attack: 0.05, peak: 0.35 }); },
   vortexIntake: (a, o) => { swirl(a, o, { dur: 1.0, center: 650, depth: 350, rate: 6, peak: 1 }); roar(a, o, { dur: 1.0, cutoff: 260, attack: 0.3, peak: 0.45 }); },
   // Ice: a breath of frost under the glass recordings

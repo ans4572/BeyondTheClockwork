@@ -50,7 +50,7 @@ export const SFX = {
   drummer: { file: 'drummer', takes: 1, volume: 0.45, rate: [0.8, 0.8] },
   pikeman: { file: 'swing', takes: 1, volume: 0.18, rate: [1.45, 1.45] },
   // Progress and rewards
-  portal: { file: 'portal', takes: 1, volume: 0.3, rate: [1, 1], length: 0.7 },
+  portal: { synth: 'portal', volume: 0.6 },
   cards: { file: 'cards', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
   pick: { file: 'pick', takes: 1, volume: 0.4, rate: [1.02, 1.02] },
   loot: { file: 'loot', takes: 1, volume: 0.35, rate: [1.05, 1.05] },
