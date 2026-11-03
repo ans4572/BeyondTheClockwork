@@ -25,7 +25,9 @@
 | musicbox | Impact Sounds | impactGlass_light_001 |
 | spintop | RPG Audio | cloth1 |
 | drummer | Impact Sounds | impactSoft_heavy_000 |
-| cards, pick, loot, buy | Casino Audio | card-fan-1, card-place-1, chips-stack-1, chips-handle-1 |
+| pick, buy | Casino Audio | card-place-1, chips-handle-1 |
+| loot | RPG Audio | handleCoins |
+| cards | Music Jingles | jingles_SAX03 (후보: art/audio/candidates — SAX03, STEEL01, PIZZI03, HIT15, NES13) |
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |

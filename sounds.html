@@ -78,7 +78,7 @@ const GROUPS = [
   ]],
   ['F', '진행 · 보상', [
     ['clear', '구간 클리어', '방의 적을 모두 쓰러뜨렸을 때'],
-    ['loot', '보상 획득', '자유 톱니·동전을 받을 때'],
+    ['loot', '보상 획득 (동전)', '자유 톱니·동전을 받을 때'],
     ['cards', '보상 카드 등장', '보상 선택지가 나올 때'],
     ['pick', '보상 선택', '카드를 골랐을 때'],
     ['portal', '포탈 이동', '노란 표시로 다음 구간에 들어갈 때'],
@@ -108,6 +108,15 @@ if (missing.length) console.warn('목록에 없는 효과음:', missing);
 document.getElementById('list').innerHTML = GROUPS.map(([letter, title, items]) => `<h2>${letter} · ${title}</h2><ol>${items.map(([id, name, when], i) =>
   `<li><button data-id="${id}"><span class="no">${letter}${i + 1}</span><span class="name">${name}</span><span class="kind">${KIND(id)}</span><span class="when">${when}</span></button></li>`).join('')}</ol>`).join('');
 
+// Candidates still being chosen: plain recordings played as they are.
+const CANDIDATES = [['cards', 'F3 보상 카드 등장 · 후보', [['1', '색소폰 팡파레 (지금 게임에 들어 있음)'], ['2', '스틸드럼 팡파레'], ['3', '피치카토 팡파레'], ['4', '타악기 팡파레'], ['5', '8비트 팡파레']]]];
+document.getElementById('list').insertAdjacentHTML('afterbegin', CANDIDATES.map(([id, title, items]) => `<h2>${title}</h2><ol>${items.map(([n, name]) =>
+  `<li><button data-file="art/audio/candidates/${id}-${n}.ogg"><span class="no">${n}번</span><span class="name">${name}</span><span class="kind">후보</span><span class="when">마음에 드는 번호를 알려 주세요</span></button></li>`).join('')}</ol>`).join(''));
+document.getElementById('list').addEventListener('click', e => {
+  const button = e.target.closest('button[data-file]'); if (!button) return;
+  new Audio(`${button.dataset.file}?t=${Date.now()}`).play();
+  button.classList.add('playing'); setTimeout(() => button.classList.remove('playing'), 400);
+});
 let audio = null; const bank = new SoundBank();
 document.getElementById('list').addEventListener('click', async e => {
   const button = e.target.closest('button[data-id]'); if (!button) return;

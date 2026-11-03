@@ -51,9 +51,9 @@ export const SFX = {
   pikeman: { file: 'swing', takes: 1, volume: 0.18, rate: [1.45, 1.45] },
   // Progress and rewards
   portal: { synth: 'portal', volume: 0.6 },
-  cards: { file: 'cards', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
+  cards: { file: 'cards', takes: 1, volume: 0.4, rate: [1, 1] },
   pick: { file: 'pick', takes: 1, volume: 0.4, rate: [1.02, 1.02] },
-  loot: { file: 'loot', takes: 1, volume: 0.35, rate: [1.05, 1.05] },
+  loot: { file: 'loot', takes: 1, volume: 0.45, rate: [1, 1] },
   fail: { synth: 'sadHorn', volume: 0.25 },
   // The town's inspection bell, and a boss's alarm
   bell: { synth: 'bell', volume: 1 },
