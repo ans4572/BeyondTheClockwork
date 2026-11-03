@@ -391,8 +391,8 @@ try {
       return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
-      const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감기' : '태엽 풀기';
-      html = panel((brass ? `<h2>브라스의 태엽을 감아 깨워 주세요.</h2><p>마을의 행진은 주민의 선택이 아니라 명령이었다.<br>명령 회로는 떼어 내고, 멈춘 태엽은 다시 감아 줍니다.</p>` : `<h2>통제축을 풀어 주세요.</h2><p>“올바른 장소는 내가 고를게.”<br>동력은 남기고 명령 회로를 분리합니다.</p>`)
+      const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감아 깨우기' : '회로 뽑기';
+      html = panel((brass ? `<h2>일어나, 이번엔 네 박자로.</h2><p>멈춘 태엽을 한 바퀴씩 감아 줍니다.<br>머릿속에서 북을 치던 회로는 다시 넣지 않습니다.</p>` : `<h2>이제 무엇을 주울지는 네가 정해.</h2><p>로코의 집게에 꽂힌 명령 회로를 뽑아냅니다.<br>모으는 손은 남고, 고르는 명령만 사라집니다.</p>`)
         + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
     }
     if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p><h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
