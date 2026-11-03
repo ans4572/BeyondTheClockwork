@@ -218,9 +218,12 @@ export class Game {
     // The player walks in from the map's nearest edge, so each place reads as joined to the last one.
     this.s.entry = null;
     const area = this.village || map;
-    if (area?.walkable) {
+    // Fights only: in a place to walk around (the rest stop) the player simply arrives at the door.
+    if (area?.walkable && !this.village) {
+      // A room may say which side it is entered from (the side facing the exit just taken); otherwise the nearest edge.
       const [w, h] = area.size, edges = [[-1, 0, spawn.x], [1, 0, w - spawn.x], [0, -1, spawn.y], [0, 1, h - spawn.y]].sort((a, b) => a[2] - b[2]);
-      const [ex, ey] = edges[0];
+      const SIDES = { west: [-1, 0], east: [1, 0], north: [0, -1], south: [0, 1] };
+      const [ex, ey] = SIDES[map?.entrySide] || edges[0];
       let back = 0;
       for (let d = 0.25; d <= ENTRY_UNITS; d += 0.25) { if (!fitsMap(spawn.x + ex * d, spawn.y + ey * d, area.bodyRadius, area)) break; back = d; }
       if (back >= 1) { this.p.x = spawn.x + ex * back; this.p.y = spawn.y + ey * back; this.s.entry = { x: spawn.x, y: spawn.y, side: ex < 0 ? 'west' : ex > 0 ? 'east' : ey < 0 ? 'north' : 'south', until: this.s.time + back / this.c.player.speed + 0.3 }; }

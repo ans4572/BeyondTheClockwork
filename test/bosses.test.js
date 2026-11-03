@@ -104,7 +104,7 @@ test('death inside a magnet field leaves no hostile objects in the repaired hub'
 
 const onMaps = { ...data, maps: JSON.parse(await readFile(new URL('../src/data/maps.json', import.meta.url), 'utf8')) };
 const bossAt = (node, hpShare = 1) => {
-  const g = new Game(onMaps); g.s.mode = 'hub'; g.s.profile.registered = true; g.s.profile.loadout = ['fire', 'ice']; g.startRun(7); g.s.run.node = node; g.enterNode();
+  const g = new Game(onMaps); g.s.mode = 'hub'; g.s.profile.registered = true; g.s.profile.loadout = ['fire', 'ice']; g.startRun(7); g.s.run.node = node; g.enterNode(); g.s.entry = null; Object.assign(g.p, g.map.spawn);
   const boss = g.s.enemies[0]; boss.hp = boss.maxHp * hpShare; boss.ready = 1e9; g.p.hp = g.p.maxHp = 1e4; g.rollCrit = () => false; return [g, boss];
 };
 const until = (g, tell) => { g.s.time = tell.until; };
