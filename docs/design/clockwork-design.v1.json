@@ -2014,6 +2014,31 @@
         "id": "statusDamage",
         "perRank": 0.15,
         "maxRank": 4
+      },
+      {
+        "id": "moveSpeed",
+        "perRank": 0.08,
+        "maxRank": 3
+      },
+      {
+        "id": "critChance",
+        "perRank": 0.05,
+        "maxRank": 4
+      },
+      {
+        "id": "attackSpeed",
+        "perRank": 0.08,
+        "maxRank": 4
+      },
+      {
+        "id": "killHeal",
+        "perRank": 2,
+        "maxRank": 3
+      },
+      {
+        "id": "damageReduction",
+        "perRank": 0.08,
+        "maxRank": 2
       }
     ]
   },

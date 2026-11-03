@@ -13,7 +13,7 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
   while (tick++ < maxSeconds * 60 && !['complete', 'returned'].includes(game.s.mode)) {
     if (game.s.mode === 'reward') {
       const options = game.s.run.rewardChoices;
-      const preference = option => option.kind === 'element' ? (game.slots.length < 2 ? ({ fire: 100, ice: 90, lightning: 80, wind: 70 })[option.id] : -1) : option.kind === 'upgrade' ? ({ maxHp: 65, basicDamage: 60, skillCooldownReduction: 50, statusDamage: 40, dodgeCooldownReduction: 30 })[option.id] : option.kind === 'skillMod' ? 62 : option.kind === 'trait' ? 58 : option.kind === 'mod' ? 60 : option.kind === 'level' ? 55 : option.kind === 'heal' ? (game.p.hp < game.p.maxHp * 0.5 ? 90 : 20) : 0;
+      const preference = option => option.kind === 'element' ? (game.slots.length < 2 ? ({ fire: 100, ice: 90, lightning: 80, wind: 70 })[option.id] : -1) : option.kind === 'upgrade' ? ({ maxHp: 65, basicDamage: 60, damageReduction: 64, attackSpeed: 58, killHeal: 52, skillCooldownReduction: 50, critChance: 45, statusDamage: 40, moveSpeed: 32, dodgeCooldownReduction: 30 })[option.id] : option.kind === 'skillMod' ? 62 : option.kind === 'trait' ? 58 : option.kind === 'mod' ? 60 : option.kind === 'level' ? 55 : option.kind === 'heal' ? (game.p.hp < game.p.maxHp * 0.5 ? 90 : 20) : 0;
       const index = options.map((option, index) => ({ index, weight: preference(option) })).sort((a, b) => b.weight - a.weight)[0].index;
       game.chooseReward(index, 0); continue;
     }

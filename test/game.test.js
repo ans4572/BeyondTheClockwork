@@ -132,11 +132,11 @@ test('collision clamps dashes at obstacles and arena walls', () => {
   g.p.x = 26; g.p.y = 8; g.p.dodgeReady = 0; g.dodge(); step(g, 0.2);
   assert.ok(g.p.x <= data.slice.arena.bounds.right - data.slice.arena.playerRadius + 1e-8);
 });
-test('rewards never hand out elements to try or gears; a wrench-only run still gets three cards', () => {
+test('rewards never hand out elements to try; a wrench-only run still gets three cards', () => {
   for (const history of [[], [{ reason: 'defeat' }]]) {
     const g = hub(); g.s.profile.loadout = []; g.s.profile.history = history; g.startRun(44); completeRoom(g);
     assert.equal(g.s.run.rewardChoices.length, 3);
-    assert.ok(g.s.run.rewardChoices.every(r => !['element', 'gears'].includes(r.kind)));
+    assert.ok(g.s.run.rewardChoices.every(r => r.kind !== 'element'));
   }
 });
 test('fusion cost/cooldown and minimum slot level/rarity are respected', () => {

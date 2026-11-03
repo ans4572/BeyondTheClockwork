@@ -55,9 +55,9 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 1.12,
+    "waveDamageShare": 0.35,
     "introEnemyHp": 52,
-    "aggroUnits": 6,
+    "aggroUnits": 12,
     "aggroLinkUnits": 3.5,
     "spreadMinUnits": 8,
     "spreadGapUnits": 2.5,
@@ -88,7 +88,11 @@
         "description": "체력을 40 회복한다."
       }
     ],
-    "skillLevelTier": "common"
+    "skillLevelTier": "common",
+    "gearReward": {
+      "amount": 12,
+      "tier": "common"
+    }
   },
   "presentation": {
     "codex": {
@@ -139,7 +143,7 @@
   "enemies": {
     "rat": {
       "name": "태엽 쥐",
-      "hp": 40,
+      "hp": 80,
       "damage": 9,
       "speed": 3.2,
       "radius": 0.3,
@@ -152,7 +156,7 @@
     },
     "nutcracker": {
       "name": "방패 호두까기",
-      "hp": 300,
+      "hp": 600,
       "damage": 12,
       "speed": 1.5,
       "radius": 0.55,
@@ -178,7 +182,7 @@
     },
     "guard": {
       "name": "목각 경비",
-      "hp": 130,
+      "hp": 260,
       "damage": 8,
       "speed": 2.1,
       "radius": 0.4,
@@ -190,7 +194,7 @@
     },
     "rabbit": {
       "name": "스프링 토끼",
-      "hp": 113,
+      "hp": 226,
       "damage": 10,
       "speed": 2.9,
       "radius": 0.35,
@@ -204,8 +208,8 @@
     },
     "trumpet": {
       "name": "나팔 사수",
-      "hp": 150,
-      "damage": 10,
+      "hp": 300,
+      "damage": 6,
       "speed": 1.3,
       "radius": 0.4,
       "attackRange": 9,
@@ -217,7 +221,7 @@
     },
     "elite": {
       "name": "정예 목각 경비",
-      "hp": 200,
+      "hp": 400,
       "damage": 12,
       "speed": 2,
       "radius": 0.5,
@@ -231,8 +235,8 @@
     },
     "musicbox": {
       "name": "오르골 포탑",
-      "hp": 160,
-      "damage": 7,
+      "hp": 320,
+      "damage": 5,
       "speed": 0,
       "radius": 0.5,
       "attackRange": 8,
@@ -248,7 +252,7 @@
     },
     "jackbox": {
       "name": "깜짝 상자",
-      "hp": 110,
+      "hp": 220,
       "damage": 12,
       "speed": 3.4,
       "radius": 0.45,
@@ -261,7 +265,7 @@
     },
     "spintop": {
       "name": "팽이 병정",
-      "hp": 140,
+      "hp": 280,
       "damage": 9,
       "speed": 2,
       "radius": 0.45,
@@ -276,7 +280,7 @@
     },
     "drummer": {
       "name": "북치기 인형",
-      "hp": 120,
+      "hp": 240,
       "damage": 0,
       "speed": 1.6,
       "radius": 0.4,
@@ -292,7 +296,7 @@
     },
     "pikeman": {
       "name": "태엽 창병",
-      "hp": 150,
+      "hp": 300,
       "damage": 11,
       "speed": 1.9,
       "radius": 0.42,
@@ -987,6 +991,31 @@
       "name": "오래 타는 코일",
       "description": "화상이 주는 지속 피해가 강해진다.",
       "tier": "rare"
+    },
+    "moveSpeed": {
+      "name": "기름칠한 관절",
+      "description": "이동속도가 빨라진다.",
+      "tier": "common"
+    },
+    "critChance": {
+      "name": "날 세운 톱니",
+      "description": "치명타 확률이 오른다.",
+      "tier": "common"
+    },
+    "attackSpeed": {
+      "name": "빠른 태엽",
+      "description": "렌치를 더 빨리 휘두른다.",
+      "tier": "rare"
+    },
+    "killHeal": {
+      "name": "수리 회로",
+      "description": "적을 처치할 때마다 체력을 회복한다.",
+      "tier": "rare"
+    },
+    "damageReduction": {
+      "name": "강화 외장",
+      "description": "받는 피해가 줄어든다.",
+      "tier": "special"
     }
   },
   "permanentStats": [

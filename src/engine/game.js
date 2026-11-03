@@ -14,6 +14,8 @@ export function segmentDistance(p, a, b) {
   return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
 }
 
+// Run parts that add straight onto a permanent stat of the same name.
+const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
@@ -40,7 +42,12 @@ export class Game {
   get p() { return this.s.player; }
   get c() { return this.data.combat; }
   get config() { return this.data.slice; }
-  get stats() { return permanentStats(this.data, this.s.profile); }
+  /** Permanent tuning plus the run parts that raise the same stats. */
+  get stats() {
+    const stats = permanentStats(this.data, this.s.profile);
+    for (const id of RUN_STATS) stats[id] = (stats[id] || 0) + this.upgradeAmount(id);
+    return stats;
+  }
   get room() { return this.s.run ? this.config.rooms[this.s.run.node] : null; }
   /** Authored map of the current room; rooms without one keep the rectangular arena. */
   get map() {
@@ -305,6 +312,7 @@ export class Game {
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
+      if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'));
       if (!enemy.dummy) this.sense({ kind: 'kill' });
     }
     return { crit, killed: enemy.hp <= 0 };
@@ -1011,6 +1019,7 @@ export class Game {
     if (reward.kind === 'trait') return elementTraits.find(t => t.id === reward.id).tier;
     if (reward.kind === 'upgrade') return rewards[reward.id].tier;
     if (reward.kind === 'heal') return rules.healRewards.find(h => h.id === reward.id).tier;
+    if (reward.kind === 'gears') return rules.gearReward.tier;
     return reward.kind === 'level' ? rules.skillLevelTier : 'common';
   }
   /** Rolls a tier by weight, then a card of that tier; a tier with nothing left falls back to any card. */
@@ -1026,7 +1035,7 @@ export class Game {
     const parts = this.c.balance.temporaryUpgrades.filter(u => (run.upgrades[u.id] || 0) < u.maxRank && (u.id !== 'skillCooldownReduction' || elements.length) && (u.id !== 'statusDamage' || elements.includes('fire'))).map(u => ({ kind: 'upgrade', id: u.id }));
     const levels = this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean);
     const repairs = this.p.hp < this.p.maxHp ? this.config.rules.healRewards.map(h => ({ kind: 'heal', id: h.id })) : [];
-    return [...parts, ...levels, ...repairs];
+    return [...parts, ...levels, ...repairs, { kind: 'gears', amount: this.config.rules.gearReward.amount }];
   }
   offerRewards() {
     const run = this.s.run;
@@ -1064,6 +1073,7 @@ export class Game {
     if (reward.kind === 'skillMod') (run.skillMods ??= []).push(reward.id);
     if (reward.kind === 'trait') (run.traits ??= []).push(reward.id);
     if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
+    if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
     run.rewardChoices = [];
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
