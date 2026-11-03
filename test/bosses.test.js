@@ -38,6 +38,23 @@ test('Roco suction drags the player in and spits them out; stickers slow but nev
   assert.ok(slowed < (h.p.x - x1) * 0.7, 'a sticker underfoot slows'); assert.equal(h.p.hp, 100);
   assert.ok(data.slice.bossAI.collectorRoco.magnetRadius >= 3.5);
 });
+test('Roco stops at half health behind a shield; three cans batted back break it, running out of time heals him', () => {
+  const rule = data.slice.bossAI.collectorRoco.phaseBreak;
+  const [g, e] = boss('collectorRoco'); g.p.x = 17; g.p.y = 8; e.hp = e.maxHp * 0.52;
+  g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * rule.at); assert.ok(e.breaking);
+  g.hitEnemy(e, 50); assert.equal(e.hp, e.maxHp * rule.at, 'the shield takes nothing');
+  // Feed three cans straight back.
+  for (let i = 0; i < 3; i++) e.breaking.cans.push({ id: 'c' + i, x: e.x + 1.5, y: e.y, back: true, spin: 0 });
+  for (let i = 0; i < 30 && e.breaking; i++) g.update(1 / 60, {});
+  assert.equal(e.breaking, null); assert.ok(e.phaseBroken); assert.ok(e.vulnerableUntil > g.s.time);
+  const before = e.hp; g.hitEnemy(e, 10); assert.ok(before - e.hp > 10, 'takes more while stunned');
+  // A second Roco runs out of time: big hit, heals 5%, and the break comes back at half health.
+  const [h, r] = boss('collectorRoco'); h.p.x = 25; h.p.y = 8; r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999);
+  h.s.time = r.breaking.until; h.updatePhaseBreak(r, 1 / 60); h.s.time = r.breaking.failAt; const hp = h.p.hp; h.updatePhaseBreak(r, 1 / 60);
+  assert.equal(hp - h.p.hp, rule.failDamage); assert.equal(r.breaking, null); assert.ok(!r.phaseBroken);
+  assert.ok(Math.abs(r.hp - r.maxHp * (rule.at + rule.failHeal)) < 1e-6);
+  r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999); assert.ok(r.breaking, 'has to be broken again');
+});
 test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');
   e.hp = e.maxHp * 0.49; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');

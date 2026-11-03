@@ -102,6 +102,26 @@ export class CanvasRenderer {
     dot(g.p.x, g.p.y, 5, '#fff4d6');
     return true;
   }
+  /** Roco's phase break on the floor: the wide suction, the cans flying in (gold once batted back), and the burst warning. */
+  drawPhaseBreak(enemy) {
+    const c = this.ctx, g = this.game, rule = g.config.bossAI[enemy.type].phaseBreak, b = enemy.breaking, x = enemy.x * 20, y = enemy.y * 20, half = rule.degrees * Math.PI / 360;
+    c.save();
+    if (b.failAt !== null) {
+      const left = Math.max(0, (b.failAt - g.s.time) / rule.failWarn);
+      c.fillStyle = `rgba(169, 47, 43, ${0.12 + (1 - left) * 0.2})`; c.fillRect(this.camera.x * 20 - 40, this.camera.y * 20 - 40, 2000, 1200);
+      this.text('!!', x, y - 50, '#a92f2b', 18); c.restore(); return;
+    }
+    c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(x, y); c.arc(x, y, rule.range * 20, b.angle - half, b.angle + half); c.closePath(); c.stroke(); c.setLineDash([]);
+    for (let i = 0; i < 4; i++) { const r = (1 - ((g.s.time * 1.4 + i / 4) % 1)) * rule.range * 20; c.beginPath(); c.arc(x, y, Math.max(4, r), b.angle - half, b.angle + half); c.stroke(); }
+    c.strokeStyle = '#3f8fb0'; c.lineWidth = 2.5; c.setLineDash([8, 4]); c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.stroke(); c.setLineDash([]);
+    c.globalAlpha = 0.15; c.fillStyle = '#7fc7e0'; c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.fill(); c.globalAlpha = 1;
+    for (const can of b.cans) {
+      c.save(); c.translate(can.x * 20, can.y * 20 - 6); c.rotate(can.spin);
+      if (can.back) { c.fillStyle = '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
+      this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); c.restore();
+    }
+    c.restore();
+  }
   /** The yellow ring and arrow: a place to walk to, and the portal between the yard and the town. */
   marker({ x, y }) {
     const c = this.ctx, beat = this.game.s.profile.settings.reducedMotion ? 0 : Math.sin(this.visualTime * 4);
@@ -396,6 +416,7 @@ export class CanvasRenderer {
     for (const spot of [portal, goal]) if (spot) this.marker(spot);
     this.minimapPlace = { map, mapImage, size, goal: goal || portal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
+    for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
     for (const cast of s.casts) {
       if(cast.shape==='clamp'){
         const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;

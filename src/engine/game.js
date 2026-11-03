@@ -301,12 +301,16 @@ export class Game {
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     if (guarded) this.sense({ kind: 'block' });
-    const amount = base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    // A boss behind its phase-break shield takes nothing; one just broken out of it takes more.
+    if (enemy.breaking) { this.effect('spark', enemy.x, enemy.y - enemy.radius, '#7fc7e0', 0.2, 0.6); this.sense({ kind: 'block' }); return { crit: false, killed: false }; }
+    const opened = enemy.vulnerableUntil > this.s.time ? 1 + enemy.vulnerableBonus : 1;
+    const amount = opened * base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.3, 1, { targetX: this.p.x, targetY: this.p.y });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     const beaten = !options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1;
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.09;
+    this.checkPhaseBreak(enemy);
     this.tutorial.onHit(enemy, !!options.basic);
     this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
@@ -388,6 +392,7 @@ export class Game {
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
       if (!a.shown) { this.effect('swing', this.p.x, this.p.y, a.phase === 2 ? '#f0c369' : '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
+      this.batCans(a, range);
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
         if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) this.addEnergy(this.trait('staticCharge').energy);
@@ -576,6 +581,60 @@ export class Game {
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     enemy.state = 'tell';
+  }
+  /** A boss with a phase break stops at its threshold, raises a shield and starts the break instead of losing more. */
+  checkPhaseBreak(enemy) {
+    const rule = enemy.boss && this.config.bossAI[enemy.type]?.phaseBreak;
+    if (!rule || enemy.phaseBroken || enemy.breaking || enemy.hp > enemy.maxHp * rule.at) return;
+    enemy.hp = enemy.maxHp * rule.at; enemy.tell = null; enemy.spin = null; enemy.dash = null; enemy.alarmUntil = 0;
+    this.s.casts = this.s.casts.filter(c => !(c.owner === enemy.id));
+    const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
+    enemy.facing = angle;
+    enemy.breaking = { started: this.s.time, until: this.s.time + rule.seconds, angle, fed: 0, nextCan: this.s.time + 0.6, cans: [], failAt: null };
+    this.notify('보호막! 날아오는 깡통을 렌치로 쳐서 로코 입에 되돌려 주세요.');
+  }
+  /** Roco's break: a wide suction draws in tin cans; three batted back into its mouth overload the shield. */
+  updatePhaseBreak(enemy, dt) {
+    const rule = this.config.bossAI[enemy.type].phaseBreak, b = enemy.breaking, p = this.p, now = this.s.time;
+    if (b.failAt !== null) {
+      // Out of time: a burst from the whole body, then the shield drops, Roco patches itself and the break waits again.
+      if (now < b.failAt) return;
+      if (this.hurt(rule.failDamage)) this.effect('ring', enemy.x, enemy.y, '#a92f2b', 0.5, 9);
+      enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.maxHp * rule.failHeal);
+      enemy.breaking = null; enemy.ready = now + enemy.recovery;
+      this.notify('로코가 몸을 고쳤습니다. 다시 깎아서 보호막을 깨세요.'); return;
+    }
+    // The suction keeps pulling anyone in the cone up to Roco's mouth, never faster than walking.
+    if (!p.dodge && distance(p, enemy) > enemy.radius + 1 && inCone(enemy, p, b.angle, rule.range, rule.degrees)) { const a = Math.atan2(enemy.y - p.y, enemy.x - p.x); this.move(p, Math.cos(a) * rule.pull * dt, Math.sin(a) * rule.pull * dt); }
+    if (now >= b.nextCan) {
+      const a = b.angle + (this.random() - 0.5) * rule.degrees * Math.PI / 180;
+      b.cans.push({ id: this.id('can'), x: enemy.x + Math.cos(a) * rule.range, y: enemy.y + Math.sin(a) * rule.range, back: false, spin: 0 });
+      b.nextCan = now + rule.canEvery;
+    }
+    for (const can of b.cans) {
+      const target = can.back ? enemy : enemy, a = Math.atan2(target.y - can.y, target.x - can.x), speed = rule.canSpeed * (can.back ? 2.2 : 1);
+      can.x += Math.cos(a) * speed * dt; can.y += Math.sin(a) * speed * dt; can.spin += dt * 10;
+      if (!can.back && distance(can, p) < rule.canRadius + this.config.arena.playerRadius) { can.done = true; this.hurt(rule.canDamage); if (!this.active) return; continue; }
+      if (distance(can, enemy) < enemy.radius) {
+        can.done = true;
+        if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); }
+      }
+    }
+    b.cans = b.cans.filter(can => !can.done);
+    if (b.fed >= rule.cans) {
+      // Overloaded: the shield breaks, Roco stands stunned and open, and the second phase begins.
+      enemy.breaking = null; enemy.phaseBroken = true;
+      enemy.exposedUntil = now + rule.stunSeconds; enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = now + rule.stunSeconds;
+      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.6, 3); this.notify('과부하! 로코가 멈췄습니다.'); return;
+    }
+    if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; }
+  }
+  /** A wrench swing that meets a can sends it straight back at the boss that pulled it in. */
+  batCans(a, range) {
+    for (const enemy of this.s.enemies) for (const can of enemy.breaking?.cans || []) {
+      if (can.back || !inCone(this.p, can, a.angle, range + 0.3, this.config.rules.comboArcDegrees)) continue;
+      can.back = true; this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' });
+    }
   }
   /** What the boss will do next: its usual round, plus what it has unlocked by being hurt. */
   nextBossPattern(enemy) {
@@ -766,6 +825,7 @@ export class Game {
         this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * (this.statusPower + this.upgradeAmount('statusDamage')), { dot: true, color: '#efaa71' });
         enemy.burnTick += info.tickInterval;
       }
+      if (enemy.breaking) { this.updatePhaseBreak(enemy, dt); if (!this.active) return; continue; }
       if (enemy.hp <= 0 || enemy.held || enemy.exposedUntil > this.s.time || enemy.stunUntil > this.s.time || enemy.alarmUntil > this.s.time || enemy.bellUntil > this.s.time) continue;
       if (enemy.dash) {
         const d = enemy.dash, start = { x: enemy.x, y: enemy.y };

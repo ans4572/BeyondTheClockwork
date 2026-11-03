@@ -418,6 +418,9 @@ try {
         $('boss-marks').innerHTML = bossPhaseMarks(data.slice.bossAI[boss.type]).map(at => `<i style="left:calc(3px + (100% - 6px) * ${at})"></i>`).join('');
       }
       $('boss-fill').style.width = `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`;
+      const breaking = boss.breaking, rule = data.slice.bossAI[boss.type]?.phaseBreak;
+      $('boss-bar').classList.toggle('shielded', !!breaking);
+      $('boss-note').textContent = breaking ? (breaking.failAt !== null ? '과부하 실패 · 폭발!' : `보호막 · 깡통 ${breaking.fed}/${rule.cans} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '';
     }
     $('coins').textContent = s.run?.coins || 0;
     const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon]));

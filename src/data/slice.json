@@ -362,7 +362,24 @@
       "stickerSeconds": 2.5,
       "stickerSlow": 0.45,
       "stickerGap": 0.32,
-      "stickerWarn": 0.5
+      "stickerWarn": 0.5,
+      "phaseBreak": {
+        "at": 0.5,
+        "seconds": 15,
+        "cans": 3,
+        "canEvery": 1.1,
+        "canSpeed": 4.2,
+        "canDamage": 8,
+        "canRadius": 0.35,
+        "range": 7.5,
+        "degrees": 90,
+        "pull": 1.6,
+        "stunSeconds": 4,
+        "vulnerable": 0.5,
+        "failWarn": 1.2,
+        "failDamage": 40,
+        "failHeal": 0.05
+      }
     },
     "captainBrass": {
       "radius": 0.75,

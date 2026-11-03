@@ -32,6 +32,12 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
       const drop = boss.tell.drops.reduce((a, b) => distance(game.p, a) < distance(game.p, b) ? a : b), angle = Math.atan2(game.p.y - drop.y, game.p.x - drop.x) + 0.01;
       game.update(1 / 60, distance(game.p, drop) < 2 ? { x: Math.cos(angle), y: Math.sin(angle) } : {}); continue;
     }
+    if (boss?.breaking) {
+      const b = boss.breaking, spot = { x: boss.x + Math.cos(b.angle) * 2.2, y: boss.y + Math.sin(b.angle) * 2.2 };
+      const can = b.cans.filter(c => !c.back).sort((m, n) => distance(game.p, m) - distance(game.p, n))[0];
+      const go = Math.atan2(spot.y - game.p.y, spot.x - game.p.x), far = distance(game.p, spot) > 0.4;
+      game.update(1 / 60, { x: far ? Math.cos(go) : 0, y: far ? Math.sin(go) : 0, aim: can || boss, basic: !!can && distance(game.p, can) < 1.9 }); continue;
+    }
     const calm = !(boss?.alarmUntil > now), line = game.columnLine;
     if (line) {
       const { start, end } = game.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), ahead = (game.p.x - line.a[0]) * Math.cos(heading) + (game.p.y - line.a[1]) * Math.sin(heading);
