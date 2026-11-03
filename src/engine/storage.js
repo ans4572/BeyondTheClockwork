@@ -1,6 +1,20 @@
 export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 /** True once there is anything worth loading; a save still on the opening has none. */
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
+/** What the title's continue button says about a save: where it stands and when it was written, e.g. "원정 · 장난감 진열대 · 오늘 14:20". */
+export function saveSummary(state, savedAt, data, now = new Date()) {
+  const RUN_MODES = ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'];
+  const room = state.run && data.slice.rooms[state.run.node];
+  const place = room ? `원정 · ${room.name.replace(/ [A-Z]$/, '')}`
+    : state.mode === 'practice' ? '연습장'
+    : ['opening', 'intro', 'introDeath', 'registration'].includes(state.mode) ? '첫 장면'
+    : RUN_MODES.includes(state.mode) ? '원정' : '웃음 마을';
+  const at = savedAt ? new Date(savedAt) : null;
+  if (!at || Number.isNaN(at.getTime())) return place;
+  const clock = `${at.getHours()}:${String(at.getMinutes()).padStart(2, '0')}`;
+  const day = at.toDateString() === now.toDateString() ? '오늘' : `${at.getMonth() + 1}월 ${at.getDate()}일`;
+  return `${place} · ${day} ${clock}`;
+}
 export function encodeSave(state) { return JSON.stringify({ version: 1, savedAt: new Date().toISOString(), state }); }
 const LEGACY_ROW_COSTS = { chassis: [20, 35, 55, 80, 110], strike: [20, 35, 55, 80, 110], repair: [30, 70, 130], safety: [120, 300] };
 

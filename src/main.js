@@ -1,6 +1,7 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
-import { encodeSave, decodeSave, hasProgress, SAVE_KEY } from './engine/storage.js';
+import { TOOL_ICONS } from './ui/tool-icons.js';
+import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
@@ -123,7 +124,13 @@ try {
   function pause(view = 'pause') { screen = view; game.s.paused = true; clearInput(); renderOverlay(true); }
   // Panels sit inside the game frame, whose stacking would keep them under the title.
   const placeOverlay = () => (onTitle ? document.body : gameViewport).append($('overlay'));
-  function openTitle() { onTitle = true; screen = 'title'; game.s.paused = true; document.body.classList.add('on-title'); $('app').inert = true; placeOverlay(); clearInput(); renderOverlay(true); title.show({ canLoad: hasProgress(game.s) }); }
+  function openTitle() { onTitle = true; screen = 'title'; game.s.paused = true; document.body.classList.add('on-title'); $('app').inert = true; placeOverlay(); clearInput(); renderOverlay(true); title.show({ canLoad: hasProgress(game.s), detail: saveDetail() }); }
+  // The time comes from the save on disk, so the button shows what a reload would actually bring back.
+  function saveDetail() {
+    let savedAt = null;
+    try { savedAt = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch {}
+    return saveSummary(game.s, savedAt, data);
+  }
   function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); $('app').inert = false; $('title').inert = false; placeOverlay(); title.hide(); }
   /** The stamp and the opening sentences, then control of a waking body. */
   async function playOpening(stamp) {
@@ -521,6 +528,11 @@ try {
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
   $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
   $('fullscreen').addEventListener('click', () => { $('app').requestFullscreen?.().catch(() => {}); });
+  $('hud-map').addEventListener('click', () => { if (!saveBlocked && !screen) pause('map'); });
+  $('hud-menu').addEventListener('click', () => { if (!saveBlocked && !screen) pause(); });
+  for (const [id, icon] of [['fullscreen', 'fullscreen'], ['hud-map', 'map'], ['hud-menu', 'gear']]) $(id).insertAdjacentHTML('afterbegin', TOOL_ICONS[icon]);
+  // Drawn icons rather than ⚙ and ◈, which phones set at different sizes (or as colour emoji).
+  for (const span of document.querySelectorAll('.hud-wallet [data-icon]')) span.insertAdjacentHTML('afterbegin', TOOL_ICONS[span.dataset.icon]);
 
   function interact() {
     if (screen) return;

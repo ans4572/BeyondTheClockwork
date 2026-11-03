@@ -75,7 +75,7 @@ function drawForm(c, f2) {
 export class TitleScreen {
   constructor(root, { onNew, onLoad, onSettings, onThud, reducedMotion }) {
     this.root = root; this.onThud = onThud; this.reducedMotion = reducedMotion; this.timers = [];
-    root.innerHTML = `<div class="title-stage"><canvas class="title-form" width="${STAGE[0]}" height="${STAGE[1]}" role="img" aria-label="태엽 밖으로. 웃음거리 품질관리국 불량 판정서. 제품 번호 F2, 판정 사유 스스로 생각함."></canvas><canvas class="title-mark" hidden></canvas><nav aria-label="타이틀 메뉴"><button data-do="new">새로 시작하기</button><button data-do="load">이어하기</button><button data-do="settings">환경설정</button></nav><div class="title-press"></div></div><div class="title-dark" hidden></div>`;
+    root.innerHTML = `<div class="title-stage"><canvas class="title-form" width="${STAGE[0]}" height="${STAGE[1]}" role="img" aria-label="태엽 밖으로. 웃음거리 품질관리국 불량 판정서. 제품 번호 F2, 판정 사유 스스로 생각함."></canvas><canvas class="title-mark" hidden></canvas><nav aria-label="타이틀 메뉴"><button data-do="new">새로 시작하기</button><button data-do="load">이어하기<small class="save-note"></small></button><button data-do="settings">환경설정</button></nav><div class="title-press"></div></div><div class="title-dark" hidden></div>`;
     this.stage = root.querySelector('.title-stage'); this.dark = root.querySelector('.title-dark'); this.mark = root.querySelector('.title-mark');
     this.buttons = [...root.querySelectorAll('button')];
     this.tool = toolImage(); this.burst = burstImage(); this.tool.hidden = this.burst.hidden = true;
@@ -108,9 +108,10 @@ export class TitleScreen {
   }
   activate() { if (this.buttons.includes(document.activeElement)) document.activeElement.click(); }
   focus() { const [fresh, resume] = this.buttons; (resume.disabled ? fresh : resume).focus({ preventScroll: true }); }
-  show({ canLoad }) {
+  show({ canLoad, detail = '' }) {
     this.root.hidden = false; this.dark.hidden = true; this.stage.inert = false; this.fit();
     this.buttons[1].disabled = !canLoad;
+    this.root.querySelector('.save-note').textContent = canLoad && detail ? `(${detail})` : '(저장 없음)';
     this.focus();
     // Blank until the player's own click brings the stamp down; a body already at work has been judged.
     this.mark.hidden = !canLoad;
