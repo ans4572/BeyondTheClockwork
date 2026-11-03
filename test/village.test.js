@@ -362,7 +362,7 @@ test('the first trip leaves with the wrench alone; elements are bought one at a 
   const inside = () => { g.p.x = (polygon[0][0] + polygon[1][0]) / 2; g.p.y = (polygon[0][1] + polygon[2][1]) / 2; };
   assert.equal(g.toggleElement('fire'), false, 'an element not yet bought cannot be equipped');
   assert.equal(g.nextElementPrice, 0); assert.equal(g.buyElement('fire'), true); assert.equal(g.s.profile.freeGears, 0);
-  assert.equal(g.nextElementPrice, 80); assert.equal(g.buyElement('ice'), false, 'not enough gears');
+  assert.equal(g.nextElementPrice, 50); assert.equal(g.buyElement('ice'), false, 'not enough gears');
   g.s.profile.freeGears = 1000; for (const id of ['ice', 'wind']) assert.equal(g.buyElement(id), true);
   assert.equal(g.s.profile.freeGears, 1000 - 50 - 50); assert.deepEqual(g.s.profile.ownedElements, ['fire', 'ice', 'wind']);
   g.s.profile.loadout = [];
