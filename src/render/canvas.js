@@ -102,24 +102,44 @@ export class CanvasRenderer {
     dot(g.p.x, g.p.y, 5, '#fff4d6');
     return true;
   }
-  /** Roco's phase break on the floor: the wide suction, the cans flying in (gold once batted back), and the burst warning. */
+  /** A boss's phase break on the floor: the shield, then Roco's suction and cans, Brass's drums and lanes, or the soldier ring. */
   drawPhaseBreak(enemy) {
-    const c = this.ctx, g = this.game, rule = g.config.bossAI[enemy.type].phaseBreak, b = enemy.breaking, x = enemy.x * 20, y = enemy.y * 20, half = rule.degrees * Math.PI / 360;
+    const c = this.ctx, g = this.game, b = enemy.breaking, rule = g.config.bossAI[enemy.type].phaseBreaks[b.index], x = enemy.x * 20, y = enemy.y * 20, now = g.s.time;
     c.save();
     if (b.failAt !== null) {
-      const left = Math.max(0, (b.failAt - g.s.time) / rule.failWarn);
+      const left = Math.max(0, (b.failAt - now) / rule.failWarn);
       c.fillStyle = `rgba(169, 47, 43, ${0.12 + (1 - left) * 0.2})`; c.fillRect(this.camera.x * 20 - 40, this.camera.y * 20 - 40, 2000, 1200);
       this.text('!!', x, y - 50, '#a92f2b', 18); c.restore(); return;
     }
-    c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(x, y); c.arc(x, y, rule.range * 20, b.angle - half, b.angle + half); c.closePath(); c.stroke(); c.setLineDash([]);
-    for (let i = 0; i < 4; i++) { const r = (1 - ((g.s.time * 1.4 + i / 4) % 1)) * rule.range * 20; c.beginPath(); c.arc(x, y, Math.max(4, r), b.angle - half, b.angle + half); c.stroke(); }
+    if (b.kind === 'cans') {
+      const half = rule.degrees * Math.PI / 360;
+      c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(x, y); c.arc(x, y, rule.range * 20, b.angle - half, b.angle + half); c.closePath(); c.stroke(); c.setLineDash([]);
+      for (let i = 0; i < 4; i++) { const r = (1 - ((now * 1.4 + i / 4) % 1)) * rule.range * 20; c.beginPath(); c.arc(x, y, Math.max(4, r), b.angle - half, b.angle + half); c.stroke(); }
+      for (const can of b.cans) {
+        c.save(); c.translate(can.x * 20, can.y * 20 - 6); c.rotate(can.spin);
+        if (can.back) { c.fillStyle = '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
+        this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); c.restore();
+      }
+    }
+    if (b.kind === 'drums') {
+      for (const lane of b.lanes) { const left = Math.max(0, (lane.at - now) / rule.laneWarn); c.fillStyle = `rgba(190, 81, 95, ${0.1 + (1 - left) * 0.2})`; c.fillRect((lane.x - rule.laneWidth / 2) * 20, this.camera.y * 20 - 20, rule.laneWidth * 20, 900); }
+      for (const drum of b.drums) {
+        const dx = drum.x * 20, dy = drum.y * 20, lit = drum.flash > now;
+        if (lit || drum.done) { c.fillStyle = drum.done ? '#4f8a4a66' : '#ffd257aa'; c.beginPath(); c.ellipse(dx, dy - 4, 16, 12, 0, 0, TAU); c.fill(); }
+        this.rect(dx - 9, dy - 12, 18, 10, '#c43c36'); c.fillStyle = '#fff4d6'; c.beginPath(); c.ellipse(dx, dy - 12, 9, 3.5, 0, 0, TAU); c.fill();
+        c.strokeStyle = '#2b3345'; c.lineWidth = 1.2; c.strokeRect(dx - 9, dy - 12, 18, 10); c.beginPath(); c.ellipse(dx, dy - 12, 9, 3.5, 0, 0, TAU); c.stroke();
+      }
+    }
+    if (b.kind === 'flags') {
+      for (const s of b.soldiers) {
+        if (s.down) continue;
+        const sx = s.x * 20, sy = s.y * 20;
+        this.rect(sx - 4, sy - 13, 8, 10, s.flag ? '#c79a3e' : '#a92f2b'); this.rect(sx - 4, sy - 18, 8, 5, '#2b3345'); this.rect(sx - 4, sy - 3, 3, 4, '#2b3345'); this.rect(sx + 1, sy - 3, 3, 4, '#2b3345');
+        if (s.flag) { this.line(sx + 4, sy - 13, sx + 4, sy - 28, '#2b3345', 1.5); c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(sx + 4, sy - 28); c.lineTo(sx + 13, sy - 25); c.lineTo(sx + 4, sy - 22); c.fill(); }
+      }
+    }
     c.strokeStyle = '#3f8fb0'; c.lineWidth = 2.5; c.setLineDash([8, 4]); c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.stroke(); c.setLineDash([]);
     c.globalAlpha = 0.15; c.fillStyle = '#7fc7e0'; c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.fill(); c.globalAlpha = 1;
-    for (const can of b.cans) {
-      c.save(); c.translate(can.x * 20, can.y * 20 - 6); c.rotate(can.spin);
-      if (can.back) { c.fillStyle = '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
-      this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); c.restore();
-    }
     c.restore();
   }
   /** The yellow ring and arrow: a place to walk to, and the portal between the yard and the town. */
@@ -355,6 +375,9 @@ export class CanvasRenderer {
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.text('↓ 吸 ↓', tell.targetX * 20, tell.targetY * 20 + 3, '#b85863', 10); break;
       case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.text('‹ ‹ 吸', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '#b85863', 11); break;
       case 'stickers': this.text('불량 ×' + ai.stickerCount, x, y - 46, '#b85863', 11); break;
+      case 'stomp': ring(x, y, 1.2); this.text('쿵 ×' + ai.stompRings, x, y - 46, '#b85863', 11); break;
+      case 'charge': { const width = ai.chargeWidth * 20; c.translate(x, y); c.rotate(tell.angle); c.fillRect(0, -width, ai.chargeLength * 20, width * 2); c.strokeRect(0, -width, ai.chargeLength * 20, width * 2); this.text('» » »', ai.chargeLength * 10, 3, '#b85863', 11); break; }
+      case 'chargeHorn': sector(ai.hornRange, ai.hornDegrees); break;
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.text('!', x, y - 12, '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
@@ -429,6 +452,10 @@ export class CanvasRenderer {
         c.save(); c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; const half = cast.degrees * Math.PI / 360;
         for (let i = 0; i < 3; i++) { const r = (1 - ((cast.age * 1.6 + i / 3) % 1)) * cast.range * 20; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, Math.max(4, r), cast.angle - half, cast.angle + half); c.stroke(); }
         c.restore();
+      }
+      if (cast.shape === 'stompRing' && cast.age >= 0) {
+        // A shock ring spreading over the floor, thinning as it goes.
+        const r = cast.age * cast.speed * 20; c.save(); c.globalAlpha = Math.max(0.2, 1 - r / (cast.reach * 20)); c.strokeStyle = '#c46a2b'; c.lineWidth = 4; c.beginPath(); c.ellipse(cast.x * 20, cast.y * 20, r, r * 0.62, 0, 0, TAU); c.stroke(); c.restore();
       }
       if (cast.shape === 'stickerFall') {
         // Where the next sticker lands: a ring closing in until it hits.

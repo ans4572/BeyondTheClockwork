@@ -423,9 +423,9 @@ try {
         $('boss-marks').innerHTML = bossPhaseMarks(data.slice.bossAI[boss.type]).map(at => `<i style="left:calc(3px + (100% - 6px) * ${at})"></i>`).join('');
       }
       $('boss-fill').style.width = `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`;
-      const breaking = boss.breaking, rule = data.slice.bossAI[boss.type]?.phaseBreak;
+      const breaking = boss.breaking, rule = breaking && data.slice.bossAI[boss.type].phaseBreaks[breaking.index];
       $('boss-bar').classList.toggle('shielded', !!breaking);
-      $('boss-note').textContent = breaking ? (breaking.failAt !== null ? '과부하 실패 · 폭발!' : `보호막 · 깡통 ${breaking.fed}/${rule.cans} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '';
+      $('boss-note').textContent = breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}`} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '';
     }
     $('coins').textContent = s.run?.coins || 0;
     const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon]));

@@ -363,23 +363,26 @@
       "stickerSlow": 0.45,
       "stickerGap": 0.32,
       "stickerWarn": 0.5,
-      "phaseBreak": {
-        "at": 0.5,
-        "seconds": 15,
-        "cans": 3,
-        "canEvery": 1.1,
-        "canSpeed": 4.2,
-        "canDamage": 8,
-        "canRadius": 0.35,
-        "range": 7.5,
-        "degrees": 90,
-        "pull": 1.6,
-        "stunSeconds": 4,
-        "vulnerable": 0.5,
-        "failWarn": 1.2,
-        "failDamage": 40,
-        "failHeal": 0.05
-      }
+      "phaseBreaks": [
+        {
+          "at": 0.5,
+          "seconds": 15,
+          "cans": 3,
+          "canEvery": 1.1,
+          "canSpeed": 4.2,
+          "canDamage": 8,
+          "canRadius": 0.35,
+          "range": 7.5,
+          "degrees": 90,
+          "pull": 1.6,
+          "stunSeconds": 4,
+          "vulnerable": 0.5,
+          "failWarn": 1.2,
+          "failDamage": 40,
+          "failHeal": 0.05,
+          "kind": "cans"
+        }
+      ]
     },
     "captainBrass": {
       "radius": 0.75,
@@ -389,7 +392,9 @@
       "patterns": [
         "fan",
         "march",
-        "trumpetWave"
+        "stomp",
+        "trumpetWave",
+        "charge"
       ],
       "fanRange": 3.6,
       "fanDegrees": 110,
@@ -422,13 +427,64 @@
       "tellSeconds": {
         "bell": 0.9,
         "column": 1.2,
-        "carpet": 2.2
+        "carpet": 2.2,
+        "stomp": 0.9,
+        "charge": 0.9
       },
       "bellSeconds": 1.5,
       "columnSpeed": 4.5,
       "columnGapUnits": 3.5,
       "columnWidth": 0.5,
-      "carpetSafeWidth": 1.1
+      "carpetSafeWidth": 1.1,
+      "stompRings": 3,
+      "stompGap": 0.6,
+      "stompSpeed": 5.5,
+      "stompReach": 9,
+      "stompWidth": 0.45,
+      "chargeLength": 9,
+      "chargeSeconds": 0.65,
+      "chargeWidth": 0.9,
+      "hornDelay": 0.35,
+      "hornRange": 3.2,
+      "hornDegrees": 80,
+      "phaseBreaks": [
+        {
+          "kind": "drums",
+          "at": 0.66,
+          "drums": 4,
+          "spreadX": 5.5,
+          "spreadY": 3.2,
+          "showStep": 0.7,
+          "drumRadius": 0.6,
+          "laneEvery": 3.2,
+          "laneWarn": 1.0,
+          "laneWidth": 1.3,
+          "laneDamage": 12,
+          "seconds": 18,
+          "stunSeconds": 4,
+          "vulnerable": 0.5,
+          "failWarn": 1.2,
+          "failDamage": 40,
+          "failHeal": 0.05
+        },
+        {
+          "kind": "flags",
+          "at": 0.33,
+          "soldiers": 12,
+          "flags": 3,
+          "rx": 6.2,
+          "ry": 3.6,
+          "turn": 0.45,
+          "soldierRadius": 0.45,
+          "soldierDamage": 12,
+          "seconds": 18,
+          "stunSeconds": 4,
+          "vulnerable": 0.5,
+          "failWarn": 1.2,
+          "failDamage": 40,
+          "failHeal": 0.05
+        }
+      ]
     }
   },
   "skillBehavior": {

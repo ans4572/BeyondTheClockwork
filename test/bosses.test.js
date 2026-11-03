@@ -39,21 +39,44 @@ test('Roco suction drags the player in and spits them out; stickers slow but nev
   assert.ok(data.slice.bossAI.collectorRoco.magnetRadius >= 3.5);
 });
 test('Roco stops at half health behind a shield; three cans batted back break it, running out of time heals him', () => {
-  const rule = data.slice.bossAI.collectorRoco.phaseBreak;
+  const rule = data.slice.bossAI.collectorRoco.phaseBreaks[0];
   const [g, e] = boss('collectorRoco'); g.p.x = 17; g.p.y = 8; e.hp = e.maxHp * 0.52;
   g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * rule.at); assert.ok(e.breaking);
   g.hitEnemy(e, 50); assert.equal(e.hp, e.maxHp * rule.at, 'the shield takes nothing');
   // Feed three cans straight back.
   for (let i = 0; i < 3; i++) e.breaking.cans.push({ id: 'c' + i, x: e.x + 1.5, y: e.y, back: true, spin: 0 });
   for (let i = 0; i < 30 && e.breaking; i++) g.update(1 / 60, {});
-  assert.equal(e.breaking, null); assert.ok(e.phaseBroken); assert.ok(e.vulnerableUntil > g.s.time);
+  assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]); assert.ok(e.vulnerableUntil > g.s.time);
   const before = e.hp; g.hitEnemy(e, 10); assert.ok(before - e.hp > 10, 'takes more while stunned');
   // A second Roco runs out of time: big hit, heals 5%, and the break comes back at half health.
   const [h, r] = boss('collectorRoco'); h.p.x = 25; h.p.y = 8; r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999);
   h.s.time = r.breaking.until; h.updatePhaseBreak(r, 1 / 60); h.s.time = r.breaking.failAt; const hp = h.p.hp; h.updatePhaseBreak(r, 1 / 60);
-  assert.equal(hp - h.p.hp, rule.failDamage); assert.equal(r.breaking, null); assert.ok(!r.phaseBroken);
+  assert.equal(hp - h.p.hp, rule.failDamage); assert.equal(r.breaking, null); assert.deepEqual(r.breaksDone, []);
   assert.ok(Math.abs(r.hp - r.maxHp * (rule.at + rule.failHeal)) < 1e-6);
   r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999); assert.ok(r.breaking, 'has to be broken again');
+});
+test('Brass breaks twice: drums struck in the shown order at 66%, flag bearers knocked down at 33%', () => {
+  const [g, e] = boss('captainBrass'), [drums, flags] = data.slice.bossAI.captainBrass.phaseBreaks; g.p.x = 20; g.p.y = 8;
+  e.hp = e.maxHp * 0.7; g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * drums.at); assert.equal(e.breaking.kind, 'drums');
+  const b = e.breaking; b.phase = 'play';
+  g.strikeDrum(e, b.order[1]); assert.equal(b.phase, 'show', 'a wrong drum replays the order'); b.phase = 'play';
+  for (const i of b.order) g.strikeDrum(e, i);
+  g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]);
+  e.exposedUntil = 0; e.vulnerableUntil = 0; g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * flags.at); assert.equal(e.breaking.kind, 'flags');
+  g.p.x = 2; g.p.y = 2;
+  for (const s of e.breaking.soldiers.filter(x => x.flag)) s.down = true;
+  g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0, 1]);
+});
+test('Brass stomps out rings to dodge through, and charges along a line before a trumpet blast', () => {
+  const [g, e] = boss('captainBrass'), ai = data.slice.bossAI.captainBrass; g.p.x = 17; g.p.y = 8;
+  g.beginEnemyTell(e, 'stomp'); g.s.time = e.tell.until; g.executeEnemy(e); e.ready = 1e9;
+  assert.equal(g.s.casts.filter(c => c.shape === 'stompRing').length, ai.stompRings);
+  for (let i = 0; i < 60; i++) g.update(1 / 60, {});
+  assert.ok(g.p.hp < 100, 'a ring that reaches the player hurts');
+  const [h, r] = boss('captainBrass'); h.p.x = 17; h.p.y = 8;
+  h.beginEnemyTell(r, 'charge'); h.s.time = r.tell.until; h.executeEnemy(r); r.ready = 1e9;
+  for (let i = 0; i < 90; i++) h.update(1 / 60, {});
+  assert.ok(r.x > 15, 'ran along the line'); assert.ok(h.p.hp < 100);
 });
 test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');

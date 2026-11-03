@@ -17,7 +17,7 @@ export function segmentDistance(p, a, b) {
 // Run parts that add straight onto a permanent stat of the same name.
 const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
 // Boss fields that act on the player rather than on enemies.
-const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker'];
+const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker', 'stompRing'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
@@ -204,7 +204,7 @@ export class Game {
   }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
-    const enemy = { ...template, ...position, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
+    const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
     this.s.enemies.push(enemy); return enemy;
   }
   enterNode() {
@@ -392,7 +392,7 @@ export class Game {
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
       if (!a.shown) { this.effect('swing', this.p.x, this.p.y, a.phase === 2 ? '#f0c369' : '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
-      this.batCans(a, range);
+      this.breakSwing(a, range);
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
         if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) this.addEnergy(this.trait('staticCharge').energy);
@@ -582,29 +582,79 @@ export class Game {
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     enemy.state = 'tell';
   }
-  /** A boss with a phase break stops at its threshold, raises a shield and starts the break instead of losing more. */
+  /** A boss with phase breaks stops at each threshold, raises a shield and has to be broken out of it before losing more. */
   checkPhaseBreak(enemy) {
-    const rule = enemy.boss && this.config.bossAI[enemy.type]?.phaseBreak;
-    if (!rule || enemy.phaseBroken || enemy.breaking || enemy.hp > enemy.maxHp * rule.at) return;
-    enemy.hp = enemy.maxHp * rule.at; enemy.tell = null; enemy.spin = null; enemy.dash = null; enemy.alarmUntil = 0;
-    this.s.casts = this.s.casts.filter(c => !(c.owner === enemy.id));
+    const rules = enemy.boss && this.config.bossAI[enemy.type]?.phaseBreaks;
+    if (!rules || enemy.breaking) return;
+    enemy.breaksDone ??= [];
+    const index = rules.findIndex((rule, i) => !enemy.breaksDone.includes(i) && enemy.hp <= enemy.maxHp * rule.at);
+    if (index < 0) return;
+    const rule = rules[index], now = this.s.time;
+    enemy.hp = Math.max(enemy.hp, enemy.maxHp * rule.at); enemy.tell = null; enemy.spin = null; enemy.dash = null; enemy.followup = null; enemy.alarmUntil = 0; enemy.bellUntil = 0;
+    this.s.casts = this.s.casts.filter(c => c.owner !== enemy.id);
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
     enemy.facing = angle;
-    enemy.breaking = { started: this.s.time, until: this.s.time + rule.seconds, angle, fed: 0, nextCan: this.s.time + 0.6, cans: [], failAt: null };
-    this.notify('보호막! 날아오는 깡통을 렌치로 쳐서 로코 입에 되돌려 주세요.');
+    // Brass's breaks fill the square, so he marches back to where he first stood before laying them out.
+    if (rule.kind !== 'cans' && enemy.home) Object.assign(enemy, enemy.home);
+    const b = enemy.breaking = { index, kind: rule.kind, started: now, until: now + rule.seconds, angle, failAt: null };
+    if (rule.kind === 'cans') { Object.assign(b, { fed: 0, nextCan: now + 0.6, cans: [] }); this.notify('보호막! 날아오는 깡통을 렌치로 쳐서 로코 입에 되돌려 주세요.'); }
+    if (rule.kind === 'drums') {
+      // Four drums round the boss; they light in an order to copy, while a march lane keeps coming down on the player.
+      const spots = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => this.floorSpot(enemy, sx * rule.spreadX, sy * rule.spreadY));
+      const order = [0, 1, 2, 3]; for (let i = 3; i > 0; i--) { const j = Math.floor(this.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+      Object.assign(b, { drums: spots.map(s => ({ ...s, flash: 0, done: false })), order, phase: 'show', step: 0, stepAt: now + 0.6, next: 0, lanes: [], nextLane: now + 2 });
+      this.notify('보호막! 북이 빛나는 순서를 기억했다가 같은 순서로 두드리세요.');
+    }
+    if (rule.kind === 'flags') {
+      // A ring of soldiers marches round the boss; three carry flags, and knocking those three down breaks the shield.
+      const flags = new Set(); while (flags.size < rule.flags) flags.add(Math.floor(this.random() * rule.soldiers));
+      Object.assign(b, { turn: 0, soldiers: Array.from({ length: rule.soldiers }, (_, i) => ({ slot: i, flag: flags.has(i), down: false, x: enemy.x, y: enemy.y })) });
+      this.placeSoldiers(enemy, rule);
+      this.notify('보호막! 깃발을 든 병정 3기를 쓰러뜨리세요.');
+    }
   }
-  /** Roco's break: a wide suction draws in tin cans; three batted back into its mouth overload the shield. */
+  /** A spot near the boss that lies on the floor, pulled toward the boss until it does. */
+  floorSpot(enemy, dx, dy) {
+    const map = this.map, { bounds } = this.config.arena;
+    for (let k = 1; k > 0.2; k -= 0.1) {
+      const spot = { x: enemy.x + dx * k, y: enemy.y + dy * k };
+      if (map ? fitsMap(spot.x, spot.y, 0.6, map) : spot.x > bounds.left + 1 && spot.x < bounds.right - 1 && spot.y > bounds.top + 1 && spot.y < bounds.bottom - 1) return spot;
+    }
+    return { x: enemy.x + dx * 0.2, y: enemy.y + dy * 0.2 };
+  }
+  placeSoldiers(enemy, rule) {
+    const b = enemy.breaking;
+    for (const s of b.soldiers) { const a = b.turn + s.slot / rule.soldiers * Math.PI * 2; s.x = enemy.x + Math.cos(a) * rule.rx; s.y = enemy.y + Math.sin(a) * rule.ry; }
+  }
+  /** Each frame of a break: its own mechanics, then success, or the burst and heal when time runs out. */
   updatePhaseBreak(enemy, dt) {
-    const rule = this.config.bossAI[enemy.type].phaseBreak, b = enemy.breaking, p = this.p, now = this.s.time;
+    const rule = this.config.bossAI[enemy.type].phaseBreaks[enemy.breaking.index], b = enemy.breaking, p = this.p, now = this.s.time;
     if (b.failAt !== null) {
-      // Out of time: a burst from the whole body, then the shield drops, Roco patches itself and the break waits again.
+      // Out of time: a burst from the whole body, then the shield drops, the boss patches itself and the break waits again.
       if (now < b.failAt) return;
       if (this.hurt(rule.failDamage)) this.effect('ring', enemy.x, enemy.y, '#a92f2b', 0.5, 9);
       enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.maxHp * rule.failHeal);
       enemy.breaking = null; enemy.ready = now + enemy.recovery;
-      this.notify('로코가 몸을 고쳤습니다. 다시 깎아서 보호막을 깨세요.'); return;
+      this.notify(`${enemy.name}이(가) 몸을 고쳤습니다. 다시 깎아서 보호막을 깨세요.`); return;
     }
-    // The suction keeps pulling anyone in the cone up to Roco's mouth, never faster than walking.
+    if (b.kind === 'cans') { this.updateCans(enemy, rule, dt); if (!this.active) return; }
+    if (b.kind === 'drums') { this.updateDrums(enemy, rule); if (!this.active) return; }
+    if (b.kind === 'flags') {
+      b.turn += rule.turn * dt; this.placeSoldiers(enemy, rule);
+      if (b.soldiers.some(s => !s.down && distance(s, p) < rule.soldierRadius + this.config.arena.playerRadius)) { this.hurt(rule.soldierDamage); if (!this.active) return; }
+    }
+    const solved = b.kind === 'cans' ? b.fed >= rule.cans : b.kind === 'drums' ? b.next >= b.order.length : b.soldiers.filter(s => s.flag && s.down).length >= rule.flags;
+    if (solved) {
+      // The shield breaks: the boss stands stunned and open, and the next phase begins.
+      enemy.breaking = null; enemy.breaksDone.push(b.index);
+      enemy.exposedUntil = now + rule.stunSeconds; enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = now + rule.stunSeconds;
+      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.6, 3); this.notify(`보호막이 깨졌습니다! ${enemy.name}이(가) 멈췄습니다.`); return;
+    }
+    if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; b.lanes = []; }
+  }
+  /** Roco: a wide suction draws in tin cans; three batted back into its mouth overload the shield. */
+  updateCans(enemy, rule, dt) {
+    const b = enemy.breaking, p = this.p, now = this.s.time;
     if (!p.dodge && distance(p, enemy) > enemy.radius + 1 && inCone(enemy, p, b.angle, rule.range, rule.degrees)) { const a = Math.atan2(enemy.y - p.y, enemy.x - p.x); this.move(p, Math.cos(a) * rule.pull * dt, Math.sin(a) * rule.pull * dt); }
     if (now >= b.nextCan) {
       const a = b.angle + (this.random() - 0.5) * rule.degrees * Math.PI / 180;
@@ -612,28 +662,45 @@ export class Game {
       b.nextCan = now + rule.canEvery;
     }
     for (const can of b.cans) {
-      const target = can.back ? enemy : enemy, a = Math.atan2(target.y - can.y, target.x - can.x), speed = rule.canSpeed * (can.back ? 2.2 : 1);
+      const a = Math.atan2(enemy.y - can.y, enemy.x - can.x), speed = rule.canSpeed * (can.back ? 2.2 : 1);
       can.x += Math.cos(a) * speed * dt; can.y += Math.sin(a) * speed * dt; can.spin += dt * 10;
       if (!can.back && distance(can, p) < rule.canRadius + this.config.arena.playerRadius) { can.done = true; this.hurt(rule.canDamage); if (!this.active) return; continue; }
-      if (distance(can, enemy) < enemy.radius) {
-        can.done = true;
-        if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); }
-      }
+      if (distance(can, enemy) < enemy.radius) { can.done = true; if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); } }
     }
     b.cans = b.cans.filter(can => !can.done);
-    if (b.fed >= rule.cans) {
-      // Overloaded: the shield breaks, Roco stands stunned and open, and the second phase begins.
-      enemy.breaking = null; enemy.phaseBroken = true;
-      enemy.exposedUntil = now + rule.stunSeconds; enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = now + rule.stunSeconds;
-      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.6, 3); this.notify('과부하! 로코가 멈췄습니다.'); return;
-    }
-    if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; }
   }
-  /** A wrench swing that meets a can sends it straight back at the boss that pulled it in. */
-  batCans(a, range) {
-    for (const enemy of this.s.enemies) for (const can of enemy.breaking?.cans || []) {
-      if (can.back || !inCone(this.p, can, a.angle, range + 0.3, this.config.rules.comboArcDegrees)) continue;
-      can.back = true; this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' });
+  /** Brass's drums: watch the order they light in, then strike them in that order; a wrong drum replays the order. */
+  updateDrums(enemy, rule) {
+    const b = enemy.breaking, p = this.p, now = this.s.time;
+    if (b.phase === 'show' && now >= b.stepAt) {
+      if (b.step < b.order.length) { b.drums[b.order[b.step]].flash = now + rule.showStep * 0.8; b.step++; b.stepAt = now + rule.showStep; }
+      else { b.phase = 'play'; b.next = 0; }
+    }
+    // A march lane comes down through wherever the player stands, every few seconds.
+    if (now >= b.nextLane) { b.lanes.push({ x: p.x, at: now + rule.laneWarn }); b.nextLane = now + rule.laneEvery; }
+    for (const lane of b.lanes) if (!lane.done && now >= lane.at) {
+      lane.done = true; this.effect('beam', lane.x, enemy.y - 12, '#cf767a', 0.35, 1, { targetX: lane.x, targetY: enemy.y + 12 });
+      if (Math.abs(p.x - lane.x) < rule.laneWidth / 2 + this.config.arena.playerRadius) { this.hurt(rule.laneDamage); if (!this.active) return; }
+    }
+    b.lanes = b.lanes.filter(lane => !lane.done);
+  }
+  /** A drum struck while Brass waits for the order: the right one counts, a wrong one starts the showing again. */
+  strikeDrum(enemy, i) {
+    const b = enemy.breaking, now = this.s.time, rule = this.config.bossAI[enemy.type].phaseBreaks[b.index];
+    if (b.phase !== 'play' || b.drums[i].done) return;
+    if (b.order[b.next] === i) { b.drums[i].done = true; b.drums[i].flash = now + 0.3; b.next++; this.sense({ kind: 'hit' }); return; }
+    for (const drum of b.drums) drum.done = false;
+    Object.assign(b, { phase: 'show', step: 0, stepAt: now + 0.6, next: 0 }); this.effect('ring', b.drums[i].x, b.drums[i].y, '#a92f2b', 0.3, 1); this.notify('순서가 틀렸습니다. 다시 보세요.');
+    void rule;
+  }
+  /** A swing during a break: bats cans back, strikes drums, knocks down soldiers it meets. */
+  breakSwing(a, range) {
+    const reach = target => inCone(this.p, target, a.angle, range + 0.3, this.config.rules.comboArcDegrees);
+    for (const enemy of this.s.enemies) {
+      const b = enemy.breaking; if (!b) continue;
+      for (const can of b.cans || []) if (!can.back && reach(can)) { can.back = true; this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' }); }
+      if (b.drums && !a.drumStruck) { const i = b.drums.findIndex(drum => reach(drum)); if (i >= 0) { a.drumStruck = true; this.strikeDrum(enemy, i); } }
+      for (const s of b.soldiers || []) if (!s.down && reach(s)) { if (s.flag) { s.down = true; this.effect('scrap', s.x, s.y, '#ffd257', 0.5, 1); this.sense({ kind: 'kill' }); } else this.effect('spark', s.x, s.y, '#d8dde2', 0.2, 0.5); }
     }
   }
   /** What the boss will do next: its usual round, plus what it has unlocked by being hurt. */
@@ -765,6 +832,17 @@ export class Game {
       case 'stickers':
         this.s.casts.push({ id: this.id('stickers'), shape: 'stickerVolley', owner: enemy.id, x: enemy.x, y: enemy.y, age: 0, left: ai.stickerCount, next: 0, gap: ai.stickerGap, warn: ai.stickerWarn, radius: ai.stickerRadius, duration: ai.stickerSeconds, slow: ai.stickerSlow });
         enemy.ready = this.s.time + ai.stickerCount * ai.stickerGap + enemy.recovery; break;
+      // Stomp: rings of shock spread from Brass on the beat; dodge through each as it passes.
+      case 'stomp':
+        for (let i = 0; i < ai.stompRings; i++) this.s.casts.push({ id: this.id('stomp'), shape: 'stompRing', owner: enemy.id, x: enemy.x, y: enemy.y, age: -i * ai.stompGap, speed: ai.stompSpeed, reach: ai.stompReach, width: ai.stompWidth, enemyDamage: enemy.damage, passed: false });
+        enemy.ready = this.s.time + ai.stompRings * ai.stompGap + enemy.recovery; break;
+      // Charge: a straight run along the marked line, then a trumpet blast ahead where it stops.
+      case 'charge':
+        enemy.dashDistance = ai.chargeLength; enemy.dashDuration = ai.chargeSeconds; enemy.dash = { angle: tell.angle, elapsed: 0, then: 'chargeHorn' };
+        enemy.ready = this.s.time + ai.chargeSeconds + ai.hornDelay + 1 + enemy.recovery; break;
+      case 'chargeHorn':
+        if (inCone(tell, p, tell.angle, ai.hornRange, ai.hornDegrees)) damage();
+        this.effect('swing', tell.x, tell.y, '#e0a068', 0.3, ai.hornRange, { angle: tell.angle, phase: 2 }); break;
       case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.4, ai.overchargeRadius); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
@@ -832,7 +910,7 @@ export class Game {
         this.move(enemy, Math.cos(d.angle) * enemy.dashDistance / enemy.dashDuration * dt, Math.sin(d.angle) * enemy.dashDistance / enemy.dashDuration * dt);
         if (segmentDistance(this.p, start, enemy) <= enemy.radius + this.config.arena.playerRadius) this.hurt(enemy.damage);
         if (!this.active) return;
-        d.elapsed += dt; if (d.elapsed >= enemy.dashDuration) enemy.dash = null; continue;
+        d.elapsed += dt; if (d.elapsed >= enemy.dashDuration) { enemy.dash = null; if (d.then) enemy.followup = { type: d.then, at: this.s.time + this.config.bossAI[enemy.type].hornDelay }; } continue;
       }
       if (enemy.spin) { this.spinEnemy(enemy, dt); if (!this.active) return; continue; }
       if (enemy.tell) { if (this.s.time >= enemy.tell.until) this.executeEnemy(enemy); if (!this.active) return; continue; }
@@ -1027,6 +1105,12 @@ export class Game {
         cast.done = true;
         if (distance(p, cast) <= cast.spitRadius + this.config.arena.playerRadius) { const angle = Math.atan2(p.y - cast.y, p.x - cast.x); this.hurt(cast.enemyDamage); this.move(p, Math.cos(angle) * cast.spitPush, Math.sin(angle) * cast.spitPush); if (!this.active) return; }
       }
+    }
+    for (const cast of this.s.casts.filter(c => c.shape === 'stompRing')) {
+      cast.age += dt; if (cast.age < 0) continue;
+      const r = cast.age * cast.speed, d = distance(p, cast);
+      if (!cast.passed && Math.abs(d - r) < cast.width + this.config.arena.playerRadius) { cast.passed = true; this.hurt(cast.enemyDamage); if (!this.active) return; }
+      if (r > cast.reach) cast.done = true;
     }
     for (const cast of this.s.casts.filter(c => c.shape === 'stickerVolley')) {
       cast.age += dt;

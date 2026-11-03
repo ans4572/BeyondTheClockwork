@@ -33,11 +33,27 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
       game.update(1 / 60, distance(game.p, drop) < 2 ? { x: Math.cos(angle), y: Math.sin(angle) } : {}); continue;
     }
     if (boss?.breaking) {
-      const b = boss.breaking, spot = { x: boss.x + Math.cos(b.angle) * 2.2, y: boss.y + Math.sin(b.angle) * 2.2 };
-      const can = b.cans.filter(c => !c.back).sort((m, n) => distance(game.p, m) - distance(game.p, n))[0];
-      const go = Math.atan2(spot.y - game.p.y, spot.x - game.p.x), far = distance(game.p, spot) > 0.4;
-      game.update(1 / 60, { x: far ? Math.cos(go) : 0, y: far ? Math.sin(go) : 0, aim: can || boss, basic: !!can && distance(game.p, can) < 1.9 }); continue;
+      const b = boss.breaking, near = target => distance(game.p, target);
+      const walk = (target, stop) => { const go = Math.atan2(target.y - game.p.y, target.x - game.p.x), far = near(target) > stop; return { x: far ? Math.cos(go) : 0, y: far ? Math.sin(go) : 0 }; };
+      if (b.kind === 'cans') {
+        const spot = { x: boss.x + Math.cos(b.angle) * 2.2, y: boss.y + Math.sin(b.angle) * 2.2 }, can = b.cans.filter(c => !c.back).sort((m, n) => near(m) - near(n))[0];
+        game.update(1 / 60, { ...walk(spot, 0.4), aim: can || boss, basic: !!can && near(can) < 1.9 }); continue;
+      }
+      if (b.kind === 'drums') {
+        // Step out of a coming lane first; otherwise walk to the next drum in the order and strike it.
+        const lane = b.lanes.find(l => Math.abs(game.p.x - l.x) < 1.4);
+        if (lane) { game.update(1 / 60, { x: game.p.x < lane.x ? -1 : 1, y: 0 }); continue; }
+        const drum = b.phase === 'play' ? b.drums[b.order[b.next]] : null;
+        game.update(1 / 60, drum ? { ...walk(drum, 1.1), aim: drum, basic: near(drum) < 1.5 } : {}); continue;
+      }
+      if (b.kind === 'flags') {
+        const flag = b.soldiers.filter(s => s.flag && !s.down).sort((m, n) => near(m) - near(n))[0];
+        game.update(1 / 60, flag ? { ...walk(flag, 1.0), aim: flag, basic: near(flag) < 1.6 } : {}); continue;
+      }
     }
+    // Stomp rings: dodge through one that is about to reach the player.
+    const ring = game.s.casts.find(c => c.shape === 'stompRing' && c.age >= 0 && !c.passed && distance(game.p, c) - c.age * c.speed > 0 && distance(game.p, c) - c.age * c.speed < 0.9);
+    if (ring) { game.update(1 / 60, { dodge: true, x: Math.cos(Math.atan2(game.p.y - ring.y, game.p.x - ring.x)), y: Math.sin(Math.atan2(game.p.y - ring.y, game.p.x - ring.x)) }); continue; }
     const calm = !(boss?.alarmUntil > now), line = game.columnLine;
     if (line) {
       const { start, end } = game.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), ahead = (game.p.x - line.a[0]) * Math.cos(heading) + (game.p.y - line.a[1]) * Math.sin(heading);
@@ -59,7 +75,7 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     const windingUp = enemies.some(e => e.tell && e.tell.until - game.s.time < 0.6 && (e.boss || distance(game.p, e) < Math.max(4, (e.attackRange || 0) + (e.burstRadius || 0) + 1)));
     if (danger) {
       const type = danger.tell.type;
-      move = type === 'overcharge' || type === 'doubleWave' || type === 'eliteWave' || type === 'magnet' || type === 'suction' ? Math.atan2(game.p.y - danger.tell.y, game.p.x - danger.tell.x) : danger.tell.angle + Math.PI / 2;
+      move = type === 'overcharge' || type === 'doubleWave' || type === 'eliteWave' || type === 'magnet' || type === 'suction' || type === 'chargeHorn' ? Math.atan2(game.p.y - danger.tell.y, game.p.x - danger.tell.x) : danger.tell.angle + Math.PI / 2;
       if (type === 'march') move = Math.PI;
       // A swing or a burst is stepped back from, not sidestepped inside its reach.
       if (type === 'melee' || type === 'burst') move = Math.atan2(game.p.y - danger.y, game.p.x - danger.x);
