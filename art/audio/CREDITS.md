@@ -19,14 +19,8 @@
 | down | Digital Audio | lowDown |
 | charged | Digital Audio | powerUp7 |
 | mend | Digital Audio | highUp |
-| heatSwing, fireCyclone, burn | Sci-fi Sounds | thrusterFire_000, _002, _003 |
-| exhaustBurst, steamShatter | Sci-fi Sounds | lowFrequency_explosion_001, _000 |
-| frostBolt, coolingField, frostCrosscut, freeze | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _002, _004 |
-| conductiveSpanner, shock, stormFloat | Digital Audio | zap1, zap2 |
-| capacitorStrike, arcFurnace | Sci-fi Sounds | laserLarge_000, _001 |
-| pressureDash, vortexIntake, rabbit | Digital Audio | phaseJump1, phaseJump3, phaseJump2 |
-| magneticIceClamp | Digital Audio | zapThreeToneDown |
-| wind | RPG Audio | cloth3 |
+| frostBolt, coolingField, freeze | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _004 |
+| rabbit | Digital Audio | phaseJump2 |
 | elite | Impact Sounds | impactPlate_heavy_000~002 |
 | trumpet | Sci-fi Sounds | laserRetro_000~004 |
 | musicbox | Interface Sounds | pluck_001~002 |
@@ -39,3 +33,5 @@
 | click, equip | UI Audio | click1~5, switch1~2 |
 | deny | Interface Sounds | error_001~003 |
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
+
+불·전기·바람 기술과 융합, 화상·감전·풍압, 얼음 기술의 냉기 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.

@@ -1,6 +1,7 @@
 // Recorded sound effects (Kenney, CC0) played through Web Audio.
 // Each name has a few takes; one is picked at random and nudged in pitch so repeats do not sound stamped out.
 import { assetUrl } from '../animation/sprite-library.js';
+import { ELEMENT_SOUNDS } from './elements.js';
 
 /** file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade. */
 export const SFX = {
@@ -22,27 +23,28 @@ export const SFX = {
   down: { file: 'down', takes: 1, volume: 0.35, rate: [1, 1] },
   charged: { file: 'charged', takes: 1, volume: 0.22, rate: [1.1, 1.1] },
   mend: { file: 'mend', takes: 1, volume: 0.22, rate: [1, 1.05] },
-  // Element skills, by skill id
-  heatSwing: { file: 'heatSwing', takes: 1, volume: 0.3, rate: [1.1, 1.2], length: 0.4 },
-  exhaustBurst: { file: 'exhaustBurst', takes: 1, volume: 0.45, rate: [1, 1.05] },
-  frostBolt: { file: 'frostBolt', takes: 2, volume: 0.35, rate: [1.25, 1.4] },
-  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.75, 0.8] },
-  conductiveSpanner: { file: 'conductiveSpanner', takes: 1, volume: 0.25, rate: [1.2, 1.3], length: 0.4 },
-  capacitorStrike: { file: 'capacitorStrike', takes: 1, volume: 0.35, rate: [0.85, 0.9] },
-  pressureDash: { file: 'pressureDash', takes: 1, volume: 0.3, rate: [1, 1.1] },
-  vortexIntake: { file: 'vortexIntake', takes: 1, volume: 0.5, rate: [0.8, 0.85] },
+  // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice keeps the glass recordings.
+  heatSwing: { synth: 'heatSwing', volume: 0.85 },
+  exhaustBurst: { synth: 'exhaustBurst', volume: 0.4 },
+  frostBolt: { file: 'frostBolt', takes: 2, volume: 0.35, rate: [1.25, 1.4], also: 'frostHiss' },
+  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.75, 0.8], also: 'frostHiss' },
+  conductiveSpanner: { synth: 'conductiveSpanner', volume: 0.35 },
+  capacitorStrike: { synth: 'capacitorStrike', volume: 0.4 },
+  pressureDash: { synth: 'pressureDash', volume: 1.1 },
+  vortexIntake: { synth: 'vortexIntake', volume: 1.4 },
+  frostHiss: { synth: 'frostHiss', volume: 0.35 },
   // Fusions, by fusion id
-  steamShatter: { file: 'steamShatter', takes: 1, volume: 0.45, rate: [1, 1], length: 1.1 },
-  arcFurnace: { file: 'arcFurnace', takes: 1, volume: 0.4, rate: [0.7, 0.72] },
-  fireCyclone: { file: 'fireCyclone', takes: 1, volume: 0.35, rate: [0.8, 0.82], length: 0.8 },
-  magneticIceClamp: { file: 'magneticIceClamp', takes: 1, volume: 0.3, rate: [1, 1], length: 0.9 },
-  frostCrosscut: { file: 'frostCrosscut', takes: 1, volume: 0.45, rate: [0.6, 0.62] },
-  stormFloat: { file: 'stormFloat', takes: 1, volume: 0.28, rate: [1, 1], length: 0.9 },
+  steamShatter: { synth: 'steamShatter', volume: 0.35, also: 'freeze' },
+  arcFurnace: { synth: 'arcFurnace', volume: 0.35 },
+  fireCyclone: { synth: 'fireCyclone', volume: 0.85 },
+  magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35, also: 'freeze' },
+  frostCrosscut: { synth: 'frostCrosscut', volume: 0.6, also: 'frostBolt' },
+  stormFloat: { synth: 'stormFloat', volume: 1.0 },
   // Statuses
-  burn: { file: 'burn', takes: 1, volume: 0.14, rate: [1.4, 1.6], length: 0.22 },
+  burn: { synth: 'burn', volume: 0.6 },
   freeze: { file: 'freeze', takes: 1, volume: 0.35, rate: [1.15, 1.25] },
-  shock: { file: 'shock', takes: 1, volume: 0.18, rate: [1.5, 1.7], length: 0.25 },
-  wind: { file: 'wind', takes: 1, volume: 0.3, rate: [1.15, 1.3] },
+  shock: { synth: 'shock', volume: 0.5 },
+  wind: { synth: 'wind', volume: 0.6 },
   // Ordinary enemies' attacks, by enemy type
   guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.85, 0.95] },
   nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.7, 0.75] },
@@ -73,7 +75,7 @@ export class SoundBank {
   constructor() { this.buffers = new Map(); this.loading = null; }
   /** Fetches and decodes every take once, after the first user gesture has opened the audio context. */
   load(audio) {
-    this.loading ??= Promise.all([...new Set(Object.values(SFX).flatMap(({ file, takes }) => Array.from({ length: takes }, (_, i) => `${file}-${i}`)))].map(async key => {
+    this.loading ??= Promise.all([...new Set(Object.values(SFX).filter(sound => sound.file).flatMap(({ file, takes }) => Array.from({ length: takes }, (_, i) => `${file}-${i}`)))].map(async key => {
       const response = await fetch(assetUrl(`/art/audio/sfx/${key}.ogg`));
       if (response.ok) this.buffers.set(key, await audio.decodeAudioData(await response.arrayBuffer()));
     })).catch(error => console.warn(error));
@@ -81,7 +83,10 @@ export class SoundBank {
   }
   /** Plays a named effect; returns false while its takes are not decoded yet, so the caller can fall back. */
   play(audio, name, gainScale = 1) {
-    const sound = SFX[name], buffer = sound && this.buffers.get(`${sound.file}-${Math.floor(Math.random() * sound.takes)}`);
+    const sound = SFX[name];
+    if (sound?.also) this.play(audio, sound.also, gainScale);
+    if (sound?.synth) { const out = audio.createGain(); out.gain.value = sound.volume * gainScale; out.connect(audio.destination); ELEMENT_SOUNDS[sound.synth](audio, out); return true; }
+    const buffer = sound && this.buffers.get(`${sound.file}-${Math.floor(Math.random() * sound.takes)}`);
     if (!buffer) return false;
     const source = audio.createBufferSource(), gain = audio.createGain(), [low, high] = sound.rate;
     source.buffer = buffer; source.playbackRate.value = low + Math.random() * (high - low); gain.gain.value = sound.volume * gainScale;
