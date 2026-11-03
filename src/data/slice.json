@@ -345,7 +345,7 @@
         "alarm": 0.7,
         "crane": 1.1,
         "suction": 0.8,
-        "stickers": 0.9
+        "stickers": 0.7
       },
       "alarmSeconds": 2,
       "craneDrops": 4,
@@ -357,11 +357,12 @@
       "suctionPull": 2.4,
       "spitRadius": 1.7,
       "spitPush": 2.5,
-      "stickerCount": 3,
+      "stickerCount": 7,
       "stickerRadius": 0.9,
-      "stickerSpread": 3,
-      "stickerSeconds": 6,
-      "stickerSlow": 0.45
+      "stickerSeconds": 2.5,
+      "stickerSlow": 0.45,
+      "stickerGap": 0.32,
+      "stickerWarn": 0.5
     },
     "captainBrass": {
       "radius": 0.75,

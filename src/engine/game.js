@@ -17,7 +17,7 @@ export function segmentDistance(p, a, b) {
 // Run parts that add straight onto a permanent stat of the same name.
 const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
 // Boss fields that act on the player rather than on enemies.
-const HOSTILE_SHAPES = ['magnet', 'suction', 'sticker'];
+const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
@@ -574,7 +574,6 @@ export class Game {
     enemy.facing = angle;
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
-    if (type === 'stickers') enemy.tell.drops = this.stickerSpots(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     enemy.state = 'tell';
   }
@@ -601,15 +600,6 @@ export class Game {
       if (map ? fitsMap(spot.x, spot.y, 0.4, map) : spot.x > bounds.left && spot.x < bounds.right && spot.y > bounds.top && spot.y < bounds.bottom) drops.push(spot);
     }
     return drops;
-  }
-  /** Roco's 'defective' stickers: one where the player stands, the rest scattered close by, all on the floor. */
-  stickerSpots(enemy) {
-    const ai = this.config.bossAI[enemy.type], { x, y } = this.p, spots = [{ x, y }], map = this.map, { bounds } = this.config.arena;
-    for (let tries = 0; tries < 40 && spots.length < ai.stickerCount; tries++) {
-      const angle = this.random() * Math.PI * 2, reach = ai.stickerRadius * 2 + this.random() * ai.stickerSpread, spot = { x: x + Math.cos(angle) * reach, y: y + Math.sin(angle) * reach };
-      if (map ? fitsMap(spot.x, spot.y, 0.4, map) : spot.x > bounds.left && spot.x < bounds.right && spot.y > bounds.top && spot.y < bounds.bottom) spots.push(spot);
-    }
-    return spots;
   }
   /** The safe carpet is always one the player can reach in time. */
   safeCarpet(enemy, seconds) {
@@ -711,10 +701,11 @@ export class Game {
       case 'suction':
         this.s.casts.push({ id: this.id('suction'), shape: 'suction', owner: enemy.id, x: enemy.x, y: enemy.y, angle: tell.angle, range: ai.suctionRange, degrees: ai.suctionDegrees, age: 0, duration: ai.suctionSeconds, pull: ai.suctionPull, spitRadius: ai.spitRadius, spitPush: ai.spitPush, enemyDamage: enemy.damage });
         enemy.ready = this.s.time + ai.suctionSeconds + enemy.recovery; break;
-      // Stickers: 'defective' labels stuck to the floor; standing on one slows the player for as long as it lasts.
+      // Stickers: seven 'defective' labels thrown one after another at wherever the player is standing then.
+      // Each is marked before it lands; on the floor it slows the player, then peels off a moment later.
       case 'stickers':
-        for (const { x, y } of tell.drops) { this.s.casts.push({ id: this.id('sticker'), shape: 'sticker', x, y, radius: ai.stickerRadius, age: 0, duration: ai.stickerSeconds, slow: ai.stickerSlow, tilt: this.random() * 0.8 - 0.4 }); this.effect('scrap', x, y, '#e8dcb8', 0.3, 0.6); }
-        break;
+        this.s.casts.push({ id: this.id('stickers'), shape: 'stickerVolley', owner: enemy.id, x: enemy.x, y: enemy.y, age: 0, left: ai.stickerCount, next: 0, gap: ai.stickerGap, warn: ai.stickerWarn, radius: ai.stickerRadius, duration: ai.stickerSeconds, slow: ai.stickerSlow });
+        enemy.ready = this.s.time + ai.stickerCount * ai.stickerGap + enemy.recovery; break;
       case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.4, ai.overchargeRadius); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
@@ -976,6 +967,15 @@ export class Game {
         cast.done = true;
         if (distance(p, cast) <= cast.spitRadius + this.config.arena.playerRadius) { const angle = Math.atan2(p.y - cast.y, p.x - cast.x); this.hurt(cast.enemyDamage); this.move(p, Math.cos(angle) * cast.spitPush, Math.sin(angle) * cast.spitPush); if (!this.active) return; }
       }
+    }
+    for (const cast of this.s.casts.filter(c => c.shape === 'stickerVolley')) {
+      cast.age += dt;
+      while (cast.left > 0 && cast.age >= cast.next) { this.s.casts.push({ id: this.id('stickerFall'), shape: 'stickerFall', x: p.x, y: p.y, radius: cast.radius, age: 0, warn: cast.warn, duration: cast.duration, slow: cast.slow }); cast.left--; cast.next += cast.gap; }
+      if (cast.left <= 0) cast.done = true;
+    }
+    for (const cast of this.s.casts.filter(c => c.shape === 'stickerFall')) {
+      cast.age += dt;
+      if (cast.age >= cast.warn) { cast.done = true; this.s.casts.push({ id: this.id('sticker'), shape: 'sticker', x: cast.x, y: cast.y, radius: cast.radius, age: 0, duration: cast.duration, slow: cast.slow, tilt: this.random() * 0.8 - 0.4 }); this.effect('scrap', cast.x, cast.y, '#e8dcb8', 0.25, 0.5); }
     }
     for (const cast of this.s.casts.filter(c => c.shape === 'sticker')) { cast.age += dt; if (cast.age >= cast.duration) cast.done = true; }
     for (const cast of this.s.casts.filter(c => c.shape === 'magnet')) {

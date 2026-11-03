@@ -24,9 +24,14 @@ test('Roco suction drags the player in and spits them out; stickers slow but nev
   assert.ok(g.p.x < before - 0.5, 'pulled toward Roco');
   g.p.x = 15; for (let i = 0; i < 90; i++) g.update(1 / 60, {});
   assert.ok(g.p.hp < 100, 'spat out at the mouth'); assert.ok(Math.hypot(g.p.x - e.x, g.p.y - e.y) > data.slice.bossAI.collectorRoco.spitRadius, 'pushed back out');
-  const [h, r] = boss('collectorRoco'); h.p.x = 20; h.p.y = 8;
-  h.beginEnemyTell(r, 'stickers'); assert.equal(h.tell?.drops?.length ?? r.tell.drops.length, data.slice.bossAI.collectorRoco.stickerCount);
-  h.s.time = r.tell.until; h.executeEnemy(r); r.ready = 1e9;
+  const [h, r] = boss('collectorRoco'), ai = data.slice.bossAI.collectorRoco; h.p.x = 20; h.p.y = 8;
+  h.beginEnemyTell(r, 'stickers'); h.s.time = r.tell.until; h.executeEnemy(r); r.ready = 1e9; r.speed = 0;
+  // Seven stickers fall one after another on wherever the player stands, then peel off.
+  for (let i = 0; i < Math.ceil((ai.stickerCount * ai.stickerGap + ai.stickerWarn) * 60) + 2; i++) h.update(1 / 60, {});
+  assert.equal(h.s.casts.filter(c => c.shape === 'sticker').length, ai.stickerCount);
+  for (let i = 0; i < Math.ceil(ai.stickerSeconds * 60) + 2; i++) h.update(1 / 60, {});
+  assert.equal(h.s.casts.filter(c => c.shape.startsWith('sticker')).length, 0, 'all stickers gone');
+  h.s.casts.push({ id: 'test', shape: 'sticker', x: 20.5, y: 8, radius: ai.stickerRadius, age: 0, duration: 9, slow: ai.stickerSlow, tilt: 0 });
   const x0 = h.p.x; for (let i = 0; i < 30; i++) h.update(1 / 60, { x: 1 });
   const slowed = h.p.x - x0; h.s.casts = h.s.casts.filter(c => c.shape !== 'sticker');
   const x1 = h.p.x; for (let i = 0; i < 30; i++) h.update(1 / 60, { x: 1 });

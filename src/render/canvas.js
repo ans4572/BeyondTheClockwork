@@ -334,8 +334,7 @@ export class CanvasRenderer {
       case 'shot': this.line(x, y, tell.targetX * 20, tell.targetY * 20, '#b85863', 1); this.circle(x, y - 14, 1 + progress * 3, '#ffd257'); break;
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.text('↓ 吸 ↓', tell.targetX * 20, tell.targetY * 20 + 3, '#b85863', 10); break;
       case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.text('‹ ‹ 吸', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '#b85863', 11); break;
-      // Circles first: the '!' marks change the fill colour the next circle would use.
-      case 'stickers': { const fill = c.fillStyle; for (const drop of tell.drops || []) { c.fillStyle = fill; c.strokeStyle = '#b85863'; c.lineWidth = 1.5; c.setLineDash([4, 3]); ring(drop.x * 20, drop.y * 20, ai.stickerRadius); } for (const drop of tell.drops || []) this.text('!', drop.x * 20, drop.y * 20 + 4, '#b85863', 12); break; }
+      case 'stickers': this.text('불량 ×' + ai.stickerCount, x, y - 46, '#b85863', 11); break;
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.text('!', x, y - 12, '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
@@ -409,6 +408,12 @@ export class CanvasRenderer {
         c.save(); c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; const half = cast.degrees * Math.PI / 360;
         for (let i = 0; i < 3; i++) { const r = (1 - ((cast.age * 1.6 + i / 3) % 1)) * cast.range * 20; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, Math.max(4, r), cast.angle - half, cast.angle + half); c.stroke(); }
         c.restore();
+      }
+      if (cast.shape === 'stickerFall') {
+        // Where the next sticker lands: a ring closing in until it hits.
+        const x = cast.x * 20, y = cast.y * 20, left = 1 - Math.min(1, cast.age / cast.warn);
+        c.save(); c.strokeStyle = '#b85863'; c.lineWidth = 1.5; c.setLineDash([4, 3]); c.beginPath(); c.arc(x, y, cast.radius * 20, 0, TAU); c.stroke();
+        c.setLineDash([]); c.lineWidth = 2; c.beginPath(); c.arc(x, y, cast.radius * 20 * (0.25 + left * 0.75), 0, TAU); c.stroke(); c.restore();
       }
       if (cast.shape === 'sticker') {
         // A paper 'defective' label stuck to the floor, fading as it peels.
