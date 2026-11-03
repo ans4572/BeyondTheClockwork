@@ -16,6 +16,8 @@ export function segmentDistance(p, a, b) {
 
 // Run parts that add straight onto a permanent stat of the same name.
 const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
+// Boss fields that act on the player rather than on enemies.
+const HOSTILE_SHAPES = ['magnet', 'suction', 'sticker'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
 
@@ -572,6 +574,7 @@ export class Game {
     enemy.facing = angle;
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
+    if (type === 'stickers') enemy.tell.drops = this.stickerSpots(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     enemy.state = 'tell';
   }
@@ -598,6 +601,15 @@ export class Game {
       if (map ? fitsMap(spot.x, spot.y, 0.4, map) : spot.x > bounds.left && spot.x < bounds.right && spot.y > bounds.top && spot.y < bounds.bottom) drops.push(spot);
     }
     return drops;
+  }
+  /** Roco's 'defective' stickers: one where the player stands, the rest scattered close by, all on the floor. */
+  stickerSpots(enemy) {
+    const ai = this.config.bossAI[enemy.type], { x, y } = this.p, spots = [{ x, y }], map = this.map, { bounds } = this.config.arena;
+    for (let tries = 0; tries < 40 && spots.length < ai.stickerCount; tries++) {
+      const angle = this.random() * Math.PI * 2, reach = ai.stickerRadius * 2 + this.random() * ai.stickerSpread, spot = { x: x + Math.cos(angle) * reach, y: y + Math.sin(angle) * reach };
+      if (map ? fitsMap(spot.x, spot.y, 0.4, map) : spot.x > bounds.left && spot.x < bounds.right && spot.y > bounds.top && spot.y < bounds.bottom) spots.push(spot);
+    }
+    return spots;
   }
   /** The safe carpet is always one the player can reach in time. */
   safeCarpet(enemy, seconds) {
@@ -695,6 +707,14 @@ export class Game {
       }
       case 'magnet':
         this.s.casts.push({ id: this.id('magnet'), shape: 'magnet', x: tell.targetX, y: tell.targetY, radius: ai.magnetRadius, age: 0, duration: ai.magnetDuration, pull: ai.magnetPull, enemyDamage: enemy.damage, damageAt: ai.magnetDamageDelay, done: false }); break;
+      // Suction: a cone in front of Roco drags the player in, then spits whoever reached its mouth back out.
+      case 'suction':
+        this.s.casts.push({ id: this.id('suction'), shape: 'suction', owner: enemy.id, x: enemy.x, y: enemy.y, angle: tell.angle, range: ai.suctionRange, degrees: ai.suctionDegrees, age: 0, duration: ai.suctionSeconds, pull: ai.suctionPull, spitRadius: ai.spitRadius, spitPush: ai.spitPush, enemyDamage: enemy.damage });
+        enemy.ready = this.s.time + ai.suctionSeconds + enemy.recovery; break;
+      // Stickers: 'defective' labels stuck to the floor; standing on one slows the player for as long as it lasts.
+      case 'stickers':
+        for (const { x, y } of tell.drops) { this.s.casts.push({ id: this.id('sticker'), shape: 'sticker', x, y, radius: ai.stickerRadius, age: 0, duration: ai.stickerSeconds, slow: ai.stickerSlow, tilt: this.random() * 0.8 - 0.4 }); this.effect('scrap', x, y, '#e8dcb8', 0.3, 0.6); }
+        break;
       case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.4, ai.overchargeRadius); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
@@ -913,7 +933,7 @@ export class Game {
   /** The last enemy gets a moment to fall before anything covers the room. */
   holdClear() {
     this.s.projectiles = this.s.projectiles.filter(b => b.friendly); this.s.column = null;
-    this.s.casts = this.s.casts.filter(c => c.shape !== 'magnet');
+    this.s.casts = this.s.casts.filter(c => !HOSTILE_SHAPES.includes(c.shape));
     this.s.clearAt ??= this.s.time + CLEAR_HOLD_SECONDS;
     if (this.s.time >= this.s.clearAt) this.finishCombat();
   }
@@ -937,14 +957,27 @@ export class Game {
       if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration;
     // A wrench swing plants the feet: the player stands still until the swing and its recovery end.
     } else if (!p.attack && !this.s.casts.some(c => c.shape === 'dash')) {
-      const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0));
+      const stuck = this.s.casts.find(c => c.shape === 'sticker' && distance(p, c) < c.radius);
+      const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0)) * (stuck ? 1 - stuck.slow : 1);
       this.move(p, dx * speed * dt, dy * speed * dt);
     }
     if (input.basic) this.basicAttack();
     if (input.skill !== undefined) this.castSkill(input.skill, input.aim);
     if (input.fusion) this.castFusion(input.aim);
     this.updateBasic(dt);
-    // Hostile magnet fields use the same paused simulation clock but no friendly cast path.
+    // Hostile fields (magnet, suction, stickers) use the same paused simulation clock but no friendly cast path.
+    for (const cast of this.s.casts.filter(c => c.shape === 'suction')) {
+      cast.age += dt;
+      const owner = this.s.enemies.find(e => e.id === cast.owner && e.hp > 0);
+      if (!owner) { cast.done = true; continue; }
+      cast.x = owner.x; cast.y = owner.y;
+      if (inCone(cast, p, cast.angle, cast.range, cast.degrees) && !p.dodge) { const angle = Math.atan2(cast.y - p.y, cast.x - p.x); this.move(p, Math.cos(angle) * cast.pull * dt, Math.sin(angle) * cast.pull * dt); }
+      if (cast.age >= cast.duration) {
+        cast.done = true;
+        if (distance(p, cast) <= cast.spitRadius + this.config.arena.playerRadius) { const angle = Math.atan2(p.y - cast.y, p.x - cast.x); this.hurt(cast.enemyDamage); this.move(p, Math.cos(angle) * cast.spitPush, Math.sin(angle) * cast.spitPush); if (!this.active) return; }
+      }
+    }
+    for (const cast of this.s.casts.filter(c => c.shape === 'sticker')) { cast.age += dt; if (cast.age >= cast.duration) cast.done = true; }
     for (const cast of this.s.casts.filter(c => c.shape === 'magnet')) {
       cast.age += dt;
       if (distance(p, cast) < cast.radius) {
@@ -954,8 +987,8 @@ export class Game {
       }
       if (cast.age >= cast.duration) cast.done = true;
     }
-    const hostile = this.s.casts.filter(c => c.shape === 'magnet' && !c.done);
-    this.s.casts = this.s.casts.filter(c => c.shape !== 'magnet');
+    const hostile = this.s.casts.filter(c => HOSTILE_SHAPES.includes(c.shape) && !c.done);
+    this.s.casts = this.s.casts.filter(c => !HOSTILE_SHAPES.includes(c.shape));
     this.updateCasts(dt); this.s.casts.push(...hostile);
     this.updateEnemies(dt);
     if (!this.active) return;

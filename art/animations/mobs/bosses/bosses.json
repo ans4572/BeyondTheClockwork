@@ -226,6 +226,117 @@
               "at": "end"
             }
           ]
+        },
+        {
+          "id": "suction",
+          "name": "수거 흡입",
+          "conceptPoses": [
+            "R06",
+            "R07",
+            "R08"
+          ],
+          "keys": [
+            {
+              "at": "start"
+            },
+            {
+              "at": "primary",
+              "offsetMs": -180,
+              "drop": 0.035,
+              "rock": -0.03,
+              "extend": -0.14,
+              "jaw": 0.13,
+              "magnet": 0.7
+            },
+            {
+              "at": "primary",
+              "drop": 0.055,
+              "rock": 0.035,
+              "extend": -0.12,
+              "jaw": 0.1,
+              "magnet": 1
+            },
+            {
+              "at": "primary",
+              "offsetMs": 350,
+              "magnet": 0.8,
+              "extend": -0.1,
+              "drop": 0.025
+            },
+            {
+              "at": "end",
+              "offsetMs": -200,
+              "magnet": 0.1
+            },
+            {
+              "at": "end",
+              "offsetMs": -120
+            },
+            {
+              "at": "end"
+            }
+          ]
+        },
+        {
+          "id": "stickers",
+          "name": "딱지 던지기",
+          "conceptPoses": [
+            "R03",
+            "R04",
+            "R05"
+          ],
+          "keys": [
+            {
+              "at": "start"
+            },
+            {
+              "at": "primary",
+              "offsetMs": -230,
+              "drop": 0.025,
+              "rock": -0.045,
+              "lid": 0.35,
+              "extend": -0.13,
+              "jaw": 0.33
+            },
+            {
+              "at": "primary",
+              "offsetMs": -90,
+              "drop": 0.04,
+              "rock": -0.05,
+              "lid": 0.33,
+              "extend": -0.16,
+              "jaw": 0.35
+            },
+            {
+              "at": "primary",
+              "extend": 1,
+              "jaw": 0.26,
+              "rock": 0.06,
+              "drop": 0.04
+            },
+            {
+              "at": "primary",
+              "offsetMs": 160,
+              "extend": 0.98,
+              "jaw": 0.08,
+              "rock": 0.04
+            },
+            {
+              "at": "primary",
+              "offsetMs": 520,
+              "extend": 0.3,
+              "jaw": 0.12,
+              "armDrop": 0.1,
+              "lid": 0.32
+            },
+            {
+              "at": "end",
+              "offsetMs": -120
+            },
+            {
+              "at": "end"
+            }
+          ]
         }
       ]
     },

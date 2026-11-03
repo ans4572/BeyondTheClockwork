@@ -17,6 +17,22 @@ test('Roco minimum tells precede damage, claw is directional, magnet remains esc
   g.s.time += 1; g.beginEnemyTell(e, 'magnet'); g.s.time = e.tell.until; g.executeEnemy(e);
   const magnet = g.s.casts.find(c => c.shape === 'magnet'); assert.ok(magnet.pull < data.combat.player.speed); assert.equal(g.p.hp, 90);
 });
+test('Roco suction drags the player in and spits them out; stickers slow but never hurt', () => {
+  const [g, e] = boss('collectorRoco'); g.p.x = 18; g.p.y = 8;
+  g.beginEnemyTell(e, 'suction'); g.s.time = e.tell.until; g.executeEnemy(e);
+  const before = g.p.x; for (let i = 0; i < 30; i++) g.update(1 / 60, {});
+  assert.ok(g.p.x < before - 0.5, 'pulled toward Roco');
+  g.p.x = 15; for (let i = 0; i < 90; i++) g.update(1 / 60, {});
+  assert.ok(g.p.hp < 100, 'spat out at the mouth'); assert.ok(Math.hypot(g.p.x - e.x, g.p.y - e.y) > data.slice.bossAI.collectorRoco.spitRadius, 'pushed back out');
+  const [h, r] = boss('collectorRoco'); h.p.x = 20; h.p.y = 8;
+  h.beginEnemyTell(r, 'stickers'); assert.equal(h.tell?.drops?.length ?? r.tell.drops.length, data.slice.bossAI.collectorRoco.stickerCount);
+  h.s.time = r.tell.until; h.executeEnemy(r); r.ready = 1e9;
+  const x0 = h.p.x; for (let i = 0; i < 30; i++) h.update(1 / 60, { x: 1 });
+  const slowed = h.p.x - x0; h.s.casts = h.s.casts.filter(c => c.shape !== 'sticker');
+  const x1 = h.p.x; for (let i = 0; i < 30; i++) h.update(1 / 60, { x: 1 });
+  assert.ok(slowed < (h.p.x - x1) * 0.7, 'a sticker underfoot slows'); assert.equal(h.p.hp, 100);
+  assert.ok(data.slice.bossAI.collectorRoco.magnetRadius >= 3.5);
+});
 test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');
   e.hp = e.maxHp * 0.49; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');
@@ -50,7 +66,7 @@ const until = (g, tell) => { g.s.time = tell.until; };
 const roundOf = (g, boss, turns = 12) => Array.from({ length: turns }, () => g.nextBossPattern(boss));
 
 test('bosses unlock patterns as they are hurt', () => {
-  const [g, roco] = bossAt(4); assert.deepEqual([...new Set(roundOf(g, roco))].sort(), ['claw', 'magnet', 'overcharge']);
+  const [g, roco] = bossAt(4); assert.deepEqual([...new Set(roundOf(g, roco))].sort(), ['claw', 'magnet', 'overcharge', 'stickers', 'suction']);
   roco.hp = roco.maxHp * 0.5; assert.ok(new Set(roundOf(g, roco)).has('alarm')); assert.ok(!new Set(roundOf(g, roco)).has('crane'));
   roco.hp = roco.maxHp * 0.2; assert.ok(new Set(roundOf(g, roco)).has('crane'));
   const [h, brass] = bossAt(11); assert.ok(new Set(roundOf(h, brass)).has('bell')); assert.ok(!new Set(roundOf(h, brass)).has('column'));

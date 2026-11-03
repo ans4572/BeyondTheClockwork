@@ -333,6 +333,9 @@ export class CanvasRenderer {
       }
       case 'shot': this.line(x, y, tell.targetX * 20, tell.targetY * 20, '#b85863', 1); this.circle(x, y - 14, 1 + progress * 3, '#ffd257'); break;
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.text('↓ 吸 ↓', tell.targetX * 20, tell.targetY * 20 + 3, '#b85863', 10); break;
+      case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.text('‹ ‹ 吸', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '#b85863', 11); break;
+      // Circles first: the '!' marks change the fill colour the next circle would use.
+      case 'stickers': { const fill = c.fillStyle; for (const drop of tell.drops || []) { c.fillStyle = fill; c.strokeStyle = '#b85863'; c.lineWidth = 1.5; c.setLineDash([4, 3]); ring(drop.x * 20, drop.y * 20, ai.stickerRadius); } for (const drop of tell.drops || []) this.text('!', drop.x * 20, drop.y * 20 + 4, '#b85863', 12); break; }
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.text('!', x, y - 12, '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
@@ -401,6 +404,18 @@ export class CanvasRenderer {
         if(!spriteFx)for(const side of [-1,1]){const points=[-1,1].map(u=>({x:cast.x+Math.cos(cast.angle)*u*cast.halfLength-Math.sin(cast.angle)*side*gap,y:cast.y+Math.sin(cast.angle)*u*cast.halfLength+Math.cos(cast.angle)*side*gap}));this.line(points[0].x*20,points[0].y*20,points[1].x*20,points[1].y*20,'#7fc9df',5);}
       }
       if(cast.shape === 'orb' && !spriteFx){ const x=cast.x*20,y=cast.y*20-16; this.circle(x,y,9,'#a4c7b1');this.circle(x,y,5,'#dfca6a');this.line(x-5,y,x+4,y+3,'#fff1a2',2); }
+      if (cast.shape === 'suction') {
+        // The air rushing in: arcs that close toward Roco's mouth.
+        c.save(); c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; const half = cast.degrees * Math.PI / 360;
+        for (let i = 0; i < 3; i++) { const r = (1 - ((cast.age * 1.6 + i / 3) % 1)) * cast.range * 20; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, Math.max(4, r), cast.angle - half, cast.angle + half); c.stroke(); }
+        c.restore();
+      }
+      if (cast.shape === 'sticker') {
+        // A paper 'defective' label stuck to the floor, fading as it peels.
+        const x = cast.x * 20, y = cast.y * 20, fade = Math.min(1, (cast.duration - cast.age) / 0.6);
+        c.save(); c.globalAlpha = 0.22 * fade; this.circle(x, y, cast.radius * 20, '#b85863'); c.globalAlpha = fade;
+        c.translate(x, y); c.rotate(cast.tilt); this.rect(-11, -7, 22, 14, '#f3e6c8'); c.strokeStyle = '#a92f2b'; c.lineWidth = 1.5; c.strokeRect(-11, -7, 22, 14); this.text('불량', 0, 3, '#a92f2b', 8); c.restore();
+      }
       if (cast.shape === 'magnet') {
         c.save(); c.globalAlpha = 0.18; this.circle(cast.x * 20, cast.y * 20, cast.radius * 20, '#8c638f'); c.restore();
         for (let i = 0; i < 3; i++) { c.strokeStyle = '#9d74a1'; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, ((cast.age + i * 0.5) % 1.5) / 1.5 * cast.radius * 20, 0, TAU); c.stroke(); }

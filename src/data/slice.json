@@ -319,11 +319,13 @@
       "patterns": [
         "claw",
         "magnet",
-        "overcharge"
+        "suction",
+        "overcharge",
+        "stickers"
       ],
       "clawLength": 7,
       "clawWidth": 0.65,
-      "magnetRadius": 2.6,
+      "magnetRadius": 3.6,
       "magnetPull": 1.2,
       "magnetDuration": 2,
       "magnetDamageDelay": 1,
@@ -341,12 +343,25 @@
       ],
       "tellSeconds": {
         "alarm": 0.7,
-        "crane": 1.1
+        "crane": 1.1,
+        "suction": 0.8,
+        "stickers": 0.9
       },
       "alarmSeconds": 2,
       "craneDrops": 4,
       "craneRadius": 1.3,
-      "craneSpread": 4.5
+      "craneSpread": 4.5,
+      "suctionRange": 5.5,
+      "suctionDegrees": 80,
+      "suctionSeconds": 1.4,
+      "suctionPull": 2.4,
+      "spitRadius": 1.7,
+      "spitPush": 2.5,
+      "stickerCount": 3,
+      "stickerRadius": 0.9,
+      "stickerSpread": 3,
+      "stickerSeconds": 6,
+      "stickerSlow": 0.45
     },
     "captainBrass": {
       "radius": 0.75,
