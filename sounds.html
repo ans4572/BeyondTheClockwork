@@ -31,7 +31,7 @@
 <script>
 // Phones keep this page for up to ten minutes. It asks the server for its own latest copy and, if that copy is newer,
 // reloads under a fresh address so the new list shows at once. Bump PAGE_VERSION whenever the list changes.
-const PAGE_VERSION = '2026-11-03-boss';
+const PAGE_VERSION = '2026-11-04-boss-picked';
 fetch(`${location.pathname}?check=${Date.now()}`, { cache: 'no-store' }).then(r => r.text()).then(text => {
   const latest = text.match(/PAGE_VERSION = '([^']+)'/)?.[1];
   if (latest && latest !== PAGE_VERSION && !location.search.includes(latest)) location.replace(`${location.pathname}?v=${latest}`);
@@ -82,8 +82,12 @@ const GROUPS = [
     ['kill', '처치', '적을 쓰러뜨렸을 때']
   ]],
   ['E', '보스 · 마을', [
-    ['alarm', '경보', '로코의 경보 패턴'],
-    ['bell', '종소리', '마을 표정 검사 종, 브라스의 정지의 종']
+    ['alarm', '로코 · 경보', '로코의 경보 패턴'],
+    ['boss-claw', '로코 · 집게 내려찍기', '집게가 떨어질 때'], ['boss-magnet', '로코 · 자석', '끌어당길 때'], ['boss-suction', '로코 · 수거 흡입', '빨아들일 때'],
+    ['boss-overcharge', '로코 · 과충전 폭발', '터질 때'], ['boss-stickers', '로코 · 불량 딱지', '딱지를 던질 때'], ['boss-crane', '로코 · 크레인 낙하', '상자가 떨어질 때'],
+    ['bell', '브라스 · 정지의 종 (마을 종과 같음)', '마을 표정 검사 종, 브라스의 정지의 종'],
+    ['boss-fan', '브라스 · 지휘봉 2연타', '휘두를 때'], ['boss-march', '브라스 · 세 줄 행진', '행진이 지나갈 때'], ['boss-stomp', '브라스 · 박자 발구르기', '발을 구를 때'],
+    ['boss-trumpetWave', '브라스 · 나팔 파동', '탄을 뿌릴 때'], ['boss-charge', '브라스 · 나팔 돌진', '돌진할 때'], ['boss-column', '브라스 · 병정 대열', '대열이 지나갈 때'], ['boss-carpet', '브라스 · 안전 카펫', '카펫이 행진할 때']
   ]],
   ['F', '진행 · 보상', [
     ['clear', '구간 클리어', '방의 적을 모두 쓰러뜨렸을 때'],
@@ -111,7 +115,7 @@ for (const [, , items] of GROUPS) for (const item of items) {
 const KIND = id => SFX[id]?.synth ? '코드로 만든 소리' : '녹음';
 
 const listed = new Set(GROUPS.flatMap(([, , items]) => items.map(([id]) => id)));
-const missing = Object.keys(SFX).filter(id => !listed.has(id) && !id.startsWith('boss-'));
+const missing = Object.keys(SFX).filter(id => !listed.has(id));
 if (missing.length) console.warn('목록에 없는 효과음:', missing);
 
 document.getElementById('list').innerHTML = GROUPS.map(([letter, title, items]) => `<h2>${letter} · ${title}</h2><ol>${items.map(([id, name, when], i) =>
@@ -121,10 +125,6 @@ document.getElementById('list').innerHTML = GROUPS.map(([letter, title, items]) 
 const CANDIDATES = [['cards', 'F3 보상 카드 등장 · 후보', [['1', '타악기 "짠" · 0.3초'], ['2', '피치카토 상승 · 0.5초'], ['3', '색소폰 짧은 두 음 · 0.4초'], ['4', '8비트 "띠링" · 0.4초'], ['5', '종 "딩" · 0.3초'], ['6', '맑은 확인음 · 0.3초 (지금 게임에 들어 있음)']]]];
 document.getElementById('list').insertAdjacentHTML('afterbegin', CANDIDATES.map(([id, title, items]) => `<h2>${title}</h2><ol>${items.map(([n, name]) =>
   `<li><button data-file="art/audio/candidates/${id}-${n}.ogg"><span class="no">${n}번</span><span class="name">${name}</span><span class="kind">후보</span><span class="when">마음에 드는 번호를 알려 주세요</span></button></li>`).join('')}</ol>`).join(''));
-// Boss attacks: two recorded takes each; take 1 is in the game until one is chosen.
-const BOSS_CANDIDATES = [["로코", [["claw", "집게 내려찍기", ["묵직한 금속 쾅", "집게 철컥"]], ["magnet", "자석 끌어당기기", ["금속 웅 울림", "낮은 종 웅"]], ["suction", "수거 흡입", ["천이 쓸려 들어감", "짧은 휙"]], ["overcharge", "과충전 폭발", ["금속판 쾅", "바위 부서짐"]], ["stickers", "불량 딱지 던지기", ["종이 탁", "카드 착"]], ["crane", "크레인 낙하", ["나무 상자 쿵", "금속 쿵"]]]], ["브라스", [["fan", "지휘봉 부채꼴 2연타", ["바람 가르는 휙", "칼집 스르륵"]], ["march", "세 줄 행진", ["돌길 발소리", "북 둥"]], ["stomp", "박자 발구르기", ["묵직한 쿵", "퍽 쿵"]], ["trumpetWave", "나팔 파동", ["색소폰 짧은 빰", "타악기 짠"]], ["charge", "나팔 돌진", ["색소폰 빠라밤", "나무 발소리"]], ["column", "병정 대열", ["나무 발소리", "나무 탁"]], ["carpet", "안전 카펫", ["천 넘기는 소리", "천 펄럭"]]]]];
-document.getElementById('list').insertAdjacentHTML('afterbegin', BOSS_CANDIDATES.map(([boss, items], b) => `<h2>H${b + 1} · ${boss} 공격 소리 · 후보</h2><ol>${items.map(([id, name, labels], i) =>
-  labels.map((label, k) => `<li><button data-file="art/audio/candidates/boss/${id}-${k + 1}.ogg"><span class="no">${String.fromCharCode(97 + i)}${k + 1}</span><span class="name">${name} · ${label}</span><span class="kind">${k ? '후보' : '게임에 들어 있음'}</span><span class="when">${boss}가 이 공격을 할 때</span></button></li>`).join('')).join('')}</ol>`).join(''));
 document.getElementById('list').addEventListener('click', e => {
   const button = e.target.closest('button[data-file]'); if (!button) return;
   new Audio(`${button.dataset.file}?t=${Date.now()}`).play();
