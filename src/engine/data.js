@@ -18,7 +18,7 @@ export function validateData(data) {
   for (const skill of c.skills) assert(s.skillBehavior[skill.id] && skill.cooldown > 0, `기술 실행 규칙: ${skill.id}`);
   assert(s.rooms.length === 12 && s.rooms[0].kind === 'normal' && s.rooms[5].kind === 'shop', '12구간 구조');
   assert(s.permanentStats.length >= 4, '영구 스탯');
-  assert(s.statChapters?.ranksPerChapter > 0 && Array.isArray(s.statChapters.chapterBosses), '챕터별 스탯 한도');
+  assert(s.statChapters?.ranksPerChapter > 0, '챕터별 스탯 한도');
   for (const [room, place] of Object.entries(maps?.maps || {})) {
     assert(s.rooms.some(r => r.id === room), `맵의 방 없음: ${room}`);
     const map = placeOf(maps, place);

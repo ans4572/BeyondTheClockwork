@@ -1,15 +1,18 @@
 export function createProfile(data) {
-  return { freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, runs: 0, wins: 0, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, bindings: {} } };
+  return { freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, runs: 0, wins: 0, chapter: 1, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, bindings: {} } };
 }
 
 /** Price of the next level of a stat that is currently at `rank`. */
 export const statCost = (stat, rank) => stat.baseCost + stat.costStep * rank;
 
-/** The highest level any stat can reach now: one chapter's worth of levels, plus one more for each chapter boss beaten. */
+/** The highest level any stat can reach now: ten levels for each chapter the player has entered. */
 export function rankCap(data, profile, stat) {
-  const { ranksPerChapter, chapterBosses } = data.slice.statChapters;
-  const cleared = chapterBosses.filter(boss => profile.bossRecords.includes(boss)).length;
-  return Math.min(stat.maxRank, ranksPerChapter * (cleared + 1));
+  return Math.min(stat.maxRank, data.slice.statChapters.ranksPerChapter * (profile.chapter || 1));
+}
+
+/** Call when the player first sets foot in a chapter; it opens that chapter's stat levels. */
+export function enterChapter(profile, chapter) {
+  profile.chapter = Math.max(profile.chapter || 1, chapter);
 }
 
 export function permanentStats(data, profile) {

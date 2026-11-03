@@ -1373,9 +1373,6 @@
     }
   ],
   "statChapters": {
-    "ranksPerChapter": 10,
-    "chapterBosses": [
-      "captainBrass"
-    ]
+    "ranksPerChapter": 10
   }
 }

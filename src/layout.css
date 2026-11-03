@@ -16,7 +16,7 @@
   background: linear-gradient(var(--paper) 30%, #f6ecd200) top, linear-gradient(#f6ecd200, var(--paper) 70%) bottom, radial-gradient(farthest-side at 50% 0, #2b334538, #2b334500) top, radial-gradient(farthest-side at 50% 100%, #2b334538, #2b334500) bottom;
   background-repeat: no-repeat; background-size: 100% 24px, 100% 24px, 100% 10px, 100% 10px; background-attachment: local, local, scroll, scroll; }
 .stat-group { margin: 8px 0 2px; font-size: 12px; color: var(--label); }
-.panel p.stat-hint { min-height: 2.6em; margin: 4px 0 0; }
+.panel p.stat-hint { min-height: 2.6em; margin: 4px 0 0; white-space: pre-line; }
 .stat-row { display: grid; grid-template-columns: 104px 42px 1fr 100px 58px; gap: 8px; align-items: center; padding: 2px 2px; border-bottom: 1px solid #2b334533; }
 .stat-row strong { font-size: 13px; white-space: nowrap; }
 .stat-level { font-size: 11px; color: var(--label); text-align: right; white-space: nowrap; }
