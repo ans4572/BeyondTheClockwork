@@ -31,7 +31,7 @@
 <script>
 // Phones keep this page for up to ten minutes. It asks the server for its own latest copy and, if that copy is newer,
 // reloads under a fresh address so the new list shows at once. Bump PAGE_VERSION whenever the list changes.
-const PAGE_VERSION = '2026-11-03-cards-short';
+const PAGE_VERSION = '2026-11-03-cards-6';
 fetch(`${location.pathname}?check=${Date.now()}`, { cache: 'no-store' }).then(r => r.text()).then(text => {
   const latest = text.match(/PAGE_VERSION = '([^']+)'/)?.[1];
   if (latest && latest !== PAGE_VERSION && !location.search.includes(latest)) location.replace(`${location.pathname}?v=${latest}`);
@@ -118,7 +118,7 @@ document.getElementById('list').innerHTML = GROUPS.map(([letter, title, items]) 
   `<li><button data-id="${id}"><span class="no">${letter}${i + 1}</span><span class="name">${name}</span><span class="kind">${KIND(id)}</span><span class="when">${when}</span></button></li>`).join('')}</ol>`).join('');
 
 // Candidates still being chosen: plain recordings played as they are.
-const CANDIDATES = [['cards', 'F3 보상 카드 등장 · 후보', [['1', '타악기 "짠" · 0.3초 (지금 게임에 들어 있음)'], ['2', '피치카토 상승 · 0.5초'], ['3', '색소폰 짧은 두 음 · 0.4초'], ['4', '8비트 "띠링" · 0.4초'], ['5', '종 "딩" · 0.3초'], ['6', '맑은 확인음 · 0.3초']]]];
+const CANDIDATES = [['cards', 'F3 보상 카드 등장 · 후보', [['1', '타악기 "짠" · 0.3초'], ['2', '피치카토 상승 · 0.5초'], ['3', '색소폰 짧은 두 음 · 0.4초'], ['4', '8비트 "띠링" · 0.4초'], ['5', '종 "딩" · 0.3초'], ['6', '맑은 확인음 · 0.3초 (지금 게임에 들어 있음)']]]];
 document.getElementById('list').insertAdjacentHTML('afterbegin', CANDIDATES.map(([id, title, items]) => `<h2>${title}</h2><ol>${items.map(([n, name]) =>
   `<li><button data-file="art/audio/candidates/${id}-${n}.ogg"><span class="no">${n}번</span><span class="name">${name}</span><span class="kind">후보</span><span class="when">마음에 드는 번호를 알려 주세요</span></button></li>`).join('')}</ol>`).join(''));
 document.getElementById('list').addEventListener('click', e => {

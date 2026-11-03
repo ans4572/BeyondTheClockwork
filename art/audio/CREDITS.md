@@ -27,7 +27,7 @@
 | drummer | Impact Sounds | impactSoft_heavy_000 |
 | pick, buy | Casino Audio | card-place-1, chips-handle-1 |
 | loot | RPG Audio | handleCoins |
-| cards | Music Jingles | jingles_HIT00 (후보: art/audio/candidates — HIT00, PIZZI00, SAX09, NES02, impactBell_heavy_004, confirmation_001) |
+| cards | Interface Sounds | confirmation_001 |
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |

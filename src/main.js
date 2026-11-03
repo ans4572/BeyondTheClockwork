@@ -225,7 +225,7 @@ try {
     // Menus over the game keep the music, a little quieter.
     music.update(audio, name, settings.musicVolume * (s.paused && !onTitle ? 0.5 : 1));
   }
-  function openAudio() { const { sound, music: musicOn } = game.s.profile.settings; if (sound || musicOn) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); sounds.load(audio); } }
+  function openAudio() { const { sound, music: musicOn } = game.s.profile.settings; if (sound || musicOn) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); music.unlock(audio); sounds.load(audio); } }
   /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
   // Menu sounds still play while the game is paused behind the panel.
   const MENU_SOUNDS = new Set(['click', 'buy', 'deny', 'tune', 'equip']);

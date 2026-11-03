@@ -32,12 +32,25 @@ export class MusicPlayer {
   constructor() { this.tracks = new Map(); this.current = null; }
   track(audio, name) {
     if (!this.tracks.has(name)) {
-      const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'auto';
+      const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata';
       const gain = audio.createGain(); gain.gain.value = 0;
       audio.createMediaElementSource(element).connect(gain).connect(audio.destination);
       this.tracks.set(name, { element, gain, stopTimer: null });
     }
     return this.tracks.get(name);
+  }
+  /**
+   * Phones let a music element start only inside a tap. Called from the first tap, this starts and stops every track
+   * once (silently, gain 0), so later tracks such as a battle's can begin when the player walks through a portal.
+   */
+  unlock(audio) {
+    if (this.unlocked) return;
+    this.unlocked = true;
+    for (const name of Object.keys(MUSIC)) {
+      const track = this.track(audio, name);
+      if (name === this.current || !track.element.paused) continue;
+      track.element.play().then(() => { if (name !== this.current) track.element.pause(); }).catch(() => { this.unlocked = false; });
+    }
   }
   /** Call every frame with the wanted track (or null) and the overall music volume (0..1). */
   update(audio, name, volume) {
