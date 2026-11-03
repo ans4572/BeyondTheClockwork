@@ -479,6 +479,20 @@ export class CanvasRenderer {
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
     for (const cast of s.casts) {
+      // Shards broken off a frost bolt: small spinning ice chips.
+      if (cast.shape === 'projectile') for (const bit of cast.projectiles) if (bit.shard && !bit.done) { const x = bit.x * 20, y = bit.y * 20 - 8, r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore(); }
+      if (cast.shape === 'patch') {
+        // A fire patch from the ember trail: a low flickering flame on the floor, fading as its pulses run out.
+        const x = cast.x * 20, y = cast.y * 20, life = 1 - cast.pulse / cast.hits, flick = Math.sin(this.visualTime * 18 + cast.x * 7) * 1.5;
+        c.save(); c.globalAlpha = 0.35 + 0.5 * life; c.fillStyle = '#e8742f'; c.beginPath(); c.ellipse(x, y, cast.radius * 16, cast.radius * 7, 0, 0, TAU); c.fill();
+        c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(x - 5, y); c.quadraticCurveTo(x - 3, y - 9 - flick, x, y - 14 - flick); c.quadraticCurveTo(x + 3, y - 9 + flick, x + 5, y); c.fill(); c.restore();
+      }
+      if (cast.shape === 'charge') {
+        // A charge left on an enemy: a ring that closes in as the burst comes.
+        const left = Math.max(0, cast.next - cast.age), share = left / (cast.delayed?.delay || 3) || left / 3, x = cast.x * 20, y = cast.y * 20 - 10;
+        c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke();
+        c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); c.restore();
+      }
       if(cast.shape==='clamp'){
         const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
         for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4];this.line(a.x*20,a.y*20,b.x*20,b.y*20,'#94bdc8',1);}

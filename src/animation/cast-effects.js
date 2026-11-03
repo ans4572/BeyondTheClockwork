@@ -20,7 +20,8 @@ export class CastEffects {
     if (s.paused) return this.visible;
     if (!['combat', 'intro'].includes(s.mode)) { this.active.clear(); return this.visible = []; }
     for (const cast of s.casts) {
-      const effect = this.effects[cast.skillId];
+      // Patches and charges a mod leaves behind are drawn by the renderer, not as the skill's own sheet.
+      const effect = !cast.derived && this.effects[cast.skillId];
       if (!effect) continue;
       const startedAt = this.active.get(cast.id)?.startedAt ?? s.time - cast.age;
       this.active.set(cast.id, { effect, startedAt, source: { ...cast }, lengthMs: Math.max(effect.durationMs, castLengthMs(cast) - effect.releaseMs) });

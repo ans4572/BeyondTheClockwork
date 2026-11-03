@@ -489,6 +489,11 @@ export class Game {
       if (mod.id === 'overcurrent') cast.secondaryTargets += mod.extraTargets;
       if (mod.id === 'homingStrike') cast.homing = mod.homingRange;
       if (mod.id === 'driftingVortex') cast.drift = mod.speed;
+      if (mod.id === 'emberTrail') cast.emberTrail = mod;
+      if (mod.id === 'exhaustTrail') { cast.leaveBehind = true; cast.interval = mod.interval; }
+      if (mod.id === 'frostShards') cast.shards = mod;
+      if (mod.id === 'delayedDischarge') cast.delayed = mod;
+      if (mod.id === 'piercingDash') cast.pierceDash = mod;
     }
   }
   makeCast(skill, behavior, slot, target = this.p, fusion) {
@@ -506,6 +511,13 @@ export class Game {
       for (let i = 0; i < skill.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (skill.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
     }
     this.s.casts.push(cast);
+    if (cast.emberTrail) {
+      const t = cast.emberTrail;
+      for (let i = 0; i < t.spots; i++) {
+        const a = angle + (i - (t.spots - 1) / 2) * 0.6, r = cast.range * 0.7;
+        this.s.casts.push({ ...cast, id: this.id('cast'), derived: true, emberTrail: null, shape: 'patch', x: this.p.x + Math.cos(a) * r, y: this.p.y + Math.sin(a) * r, radius: t.radius, hits: t.pulses, interval: t.interval, next: 0.15, damage: cast.damage * t.damageShare, finisher: 0, felt: true, staggerUsed: {}, hit: [], statusAt: {} });
+      }
+    }
     this.p.lastCast = { id: cast.id, skillId: skill.id, at: this.s.time, angle };
   }
   castHit(cast, enemy, damage = cast.damage) {
@@ -527,19 +539,27 @@ export class Game {
           this.move(bullet, Math.cos(bullet.angle) * step, Math.sin(bullet.angle) * step, cast.width);
           bullet.travelled += step;
           const target = this.s.enemies.filter(e => e.hp > 0 && !bullet.pierced?.includes(e.id) && segmentDistance(e, before, bullet) <= e.radius + cast.width).sort((a, b) => distance(before, a) - distance(before, b))[0];
-          if (target) { this.castHit(cast, target); if (cast.pierce) (bullet.pierced ??= []).push(target.id); else bullet.done = true; }
-          if (distance(before, bullet) < step * 0.5 || bullet.travelled >= cast.range) bullet.done = true;
+          if (target) {
+            this.castHit(cast, target, cast.damage * (bullet.share || 1));
+            if (cast.pierce) (bullet.pierced ??= []).push(target.id); else bullet.done = true;
+            if (cast.shards && !bullet.shard) for (let i = 0; i < cast.shards.shards; i++) cast.projectiles.push({ x: target.x, y: target.y, angle: bullet.angle + (i - (cast.shards.shards - 1) / 2) * 0.9, travelled: 0, done: false, shard: true, share: cast.shards.damageShare, reach: cast.shards.range, pierced: [target.id] });
+          }
+          if (distance(before, bullet) < step * 0.5 || bullet.travelled >= (bullet.reach || cast.range)) bullet.done = true;
         }
         cast.done = cast.projectiles.every(p => p.done); continue;
       }
       if (cast.shape === 'dash') {
         const before = { x: this.p.x, y: this.p.y };
         this.move(this.p, Math.cos(cast.angle) * cast.range / cast.duration * dt, Math.sin(cast.angle) * cast.range / cast.duration * dt);
-        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (!enemy.boss) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
+        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (!enemy.boss && !cast.pierceDash) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
         this.effect('dodge', this.p.x, this.p.y, cast.color, 0.2, cast.radius);
-        cast.done = cast.age >= cast.duration; continue;
+        cast.done = cast.age >= cast.duration;
+        if (cast.done && cast.pierceDash) for (const id of cast.hit) { const e = this.s.enemies.find(x => x.id === id && x.hp > 0 && !x.boss); if (e) this.move(e, -Math.cos(cast.angle) * cast.pierceDash.pull * 2, -Math.sin(cast.angle) * cast.pierceDash.pull * 2); }
+        continue;
       }
-      if (cast.shape === 'self' || cast.shape === 'cone') { cast.x = this.p.x; cast.y = this.p.y; }
+      if (cast.leaveBehind) { if (cast.age + 1e-7 >= cast.next) { cast.x = cast.trailX ?? cast.startX; cast.y = cast.trailY ?? cast.startY; cast.trailX = this.p.x; cast.trailY = this.p.y; } }
+      else if (cast.shape === 'self' || cast.shape === 'cone') { cast.x = this.p.x; cast.y = this.p.y; }
+      if (cast.follow) { const target = this.s.enemies.find(e => e.id === cast.follow && e.hp > 0); if (target) { cast.x = target.x; cast.y = target.y; } }
       if (cast.shape === 'moving') this.move(cast, Math.cos(cast.angle) * cast.speed * dt, Math.sin(cast.angle) * cast.speed * dt, 0.2);
       if (cast.drift) this.move(cast, Math.cos(cast.angle) * cast.drift * dt, Math.sin(cast.angle) * cast.drift * dt, 0.2);
       if (cast.pull) for (const enemy of this.s.enemies) if (!enemy.boss && enemy.hp > 0 && distance(cast, enemy) < cast.radius) { const a = Math.atan2(cast.y - enemy.y, cast.x - enemy.x); this.move(enemy, Math.cos(a) * cast.pull * dt, Math.sin(a) * cast.pull * dt); }
@@ -555,7 +575,11 @@ export class Game {
           const first = this.s.enemies.filter(e => e.hp > 0 && inCone(this.p, e, cast.angle, cast.range, cast.acquisitionArc)).sort((a, b) => distance(this.p, a) - distance(this.p, b))[0];
           if (first) {
             this.castHit(cast, first);
-            for (const e of this.s.enemies.filter(e => e.hp > 0 && e.id !== first.id && distance(first, e) <= cast.chainRange).slice(0, cast.secondaryTargets)) this.castHit(cast, e, cast.secondaryDamage);
+            if (cast.delayed) {
+              const m = cast.delayed;
+              this.s.casts.push({ ...cast, id: this.id('cast'), derived: true, delayed: null, shape: 'charge', follow: first.id, x: first.x, y: first.y, radius: m.radius, hits: 1, interval: 0, age: 0, pulse: 0, next: m.delay, damage: cast.damage * m.damageShare, finisher: 0, felt: false, staggerUsed: {}, hit: [], statusAt: {} });
+              this.effect('friendlyTell', first.x, first.y, cast.color, m.delay, m.radius);
+            } else for (const e of this.s.enemies.filter(e => e.hp > 0 && e.id !== first.id && distance(first, e) <= cast.chainRange).slice(0, cast.secondaryTargets)) this.castHit(cast, e, cast.secondaryDamage);
             this.effect('beam', this.p.x, this.p.y, cast.color, 0.3, 1, { targetX: first.x, targetY: first.y });
           }
         } else {
@@ -1230,7 +1254,7 @@ export class Game {
   buildRewards() {
     const run = this.s.run, elements = this.slots.map(slot => slot.element), skills = this.c.skills.filter(s => elements.includes(s.element)).map(s => s.id);
     return [
-      ...this.config.skillMods.filter(m => skills.includes(m.skill) && !run.skillMods?.includes(m.id)).map(m => ({ kind: 'skillMod', id: m.id })),
+      ...this.config.skillMods.filter(m => skills.includes(m.skill) && !run.skillMods?.some(id => this.config.skillMods.find(o => o.id === id)?.skill === m.skill)).map(m => ({ kind: 'skillMod', id: m.id })),
       ...this.config.elementTraits.filter(t => elements.includes(t.element) && !run.traits?.includes(t.id)).map(t => ({ kind: 'trait', id: t.id }))
     ];
   }

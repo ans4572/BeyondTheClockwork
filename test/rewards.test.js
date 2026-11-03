@@ -14,8 +14,8 @@ const dummy = (g, x = 9, y = 8, type = 'guard') => { const e = g.spawnEnemy(type
 const cast = (g, id, target = { x: 11, y: 8 }) => { const skill = data.combat.skills.find(s => s.id === id); g.makeCast(skill, data.slice.skillBehavior[id], g.slots[0] || { level: 1, rarity: 'common' }, target, false); return g.s.casts.at(-1); };
 const swing = (g, phase) => { g.p.combo = phase; g.p.comboExpires = g.s.time + 9; g.basicAttack(); step(g, 0.6); };
 
-test('every skill has one mod, and every element has two traits', () => {
-  for (const skill of data.combat.skills) assert.equal(data.slice.skillMods.filter(m => m.skill === skill.id).length, 1, skill.id);
+test('every skill has one or two mods, and every element has two traits', () => {
+  for (const skill of data.combat.skills) assert.ok([1, 2].includes(data.slice.skillMods.filter(m => m.skill === skill.id).length), skill.id);
   for (const element of data.combat.elements) assert.equal(data.slice.elementTraits.filter(t => t.element === element.id).length, 2, element.id);
   assert.equal(data.slice.mods.length, 8);
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);
@@ -211,4 +211,32 @@ test('the light grip shortens only the third recovery', () => {
   const { recoveryReduction } = data.slice.mods.find(m => m.id === 'quickThird');
   assert.ok(Math.abs(recovery([], 2) - recovery(['quickThird'], 2) - recoveryReduction) < 1e-9);
   assert.equal(recovery([], 1), recovery(['quickThird'], 1));
+});
+
+// Mods that change how a skill works, not just its numbers.
+test('ember trail leaves three fire patches that keep burning where the swing went', () => {
+  const g = arena(); g.s.run.skillMods = ['emberTrail']; const e = dummy(g, 9.4, 8);
+  cast(g, 'heatSwing'); assert.equal(g.s.casts.filter(c => c.shape === 'patch').length, 3);
+  const after = () => e.hp; step(g, 0.2); const once = after(); step(g, 1.6); assert.ok(after() < once, 'the patches keep hurting');
+});
+test('exhaust trail bursts where the player stood, not where they are', () => {
+  const g = arena(); g.s.run.skillMods = ['exhaustTrail']; const e = dummy(g, 8, 8); e.radius = 0.4;
+  cast(g, 'exhaustBurst'); g.p.x = 14; const hp = e.hp; step(g, 0.05); assert.ok(e.hp < hp, 'the first burst goes off at the start');
+});
+test('frost shards break off a hit bolt and reach an enemy beside it', () => {
+  const g = arena(['ice', 'fire']); g.s.run.skillMods = ['frostShards']; const front = dummy(g, 10, 8), side = dummy(g, 10.9, 9.4);
+  cast(g, 'frostBolt'); step(g, 0.6); assert.ok(front.hp < front.maxHp); assert.ok(side.hp < side.maxHp, 'a shard reaches the side');
+});
+test('delayed discharge strikes one enemy now and bursts on everyone near it three seconds later', () => {
+  const g = arena(['lightning', 'fire']); g.s.run.skillMods = ['delayedDischarge']; const first = dummy(g, 9.5, 8), near = dummy(g, 10.5, 8.6);
+  cast(g, 'conductiveSpanner'); step(g, 0.3); assert.ok(first.hp < first.maxHp); assert.equal(near.hp, near.maxHp, 'no instant chain');
+  step(g, 3); assert.ok(near.hp < near.maxHp, 'the charge bursts');
+});
+test('piercing dash goes through enemies and leaves them behind the player', () => {
+  const g = arena(['wind', 'fire']); g.s.run.skillMods = ['piercingDash']; const e = dummy(g, 9.2, 8);
+  cast(g, 'pressureDash', { x: 20, y: 8 }); step(g, 0.4); assert.ok(e.hp < e.maxHp); assert.ok(e.x < g.p.x, 'pulled behind the player');
+});
+test('a run takes only one mod per skill', () => {
+  const g = arena(); g.s.run.skillMods = ['overload'];
+  assert.ok(!g.buildRewards().some(r => r.kind === 'skillMod' && data.slice.skillMods.find(m => m.id === r.id).skill === 'heatSwing'));
 });
