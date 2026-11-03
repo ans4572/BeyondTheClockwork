@@ -25,7 +25,7 @@ const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodge
 /** Parser errors arrive in English; players get one plain sentence instead. */
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } };
+const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
 const CRIT_STOP = 0.03, CRIT_SHAKE = 3;
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
@@ -154,7 +154,9 @@ try {
   const sounds = new SoundBank();
   function openAudio() { if (game.s.profile.settings.sound) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); sounds.load(audio); } }
   /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
-  function sfx(name, fallback) { if (!audio || !game.s.profile.settings.sound || game.s.paused) return; if (!sounds.play(audio, name)) fallback?.(); }
+  // Menu sounds still play while the game is paused behind the panel.
+  const MENU_SOUNDS = new Set(['click', 'buy', 'deny', 'tune', 'equip']);
+  function sfx(name, fallback) { if (!audio || !game.s.profile.settings.sound || (game.s.paused && !MENU_SOUNDS.has(name))) return; if (!sounds.play(audio, name)) fallback?.(); }
   function beep(frequency = 420, duration = 0.05, volume = 0.025) {
     if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
     const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = 'triangle'; osc.frequency.value = frequency;
@@ -191,22 +193,38 @@ try {
     pop: () => sfx('pop'),
     dodge: () => sfx('dodge', () => noise(0.12, 0.05, 700, 0.6)),
     summon: () => sfx('summon'),
-    clear: () => sfx('clear')
+    clear: () => sfx('clear'),
+    down: () => sfx('down'),
+    charged: () => sfx('charged'),
+    mend: () => sfx('mend'),
+    cast: hit => sfx(hit.id, () => { noise(0.05, 0.08, 2400); thump(200, 120, 0.06, 0.04); }),
+    status: hit => { if (game.s.time - (statusHeard[hit.id] ?? -1) < STATUS_GAP) return; statusHeard[hit.id] = game.s.time; sfx(hit.id); },
+    mob: hit => sfx(hit.id),
+    cards: hit => { sfx('cards'); if (hit.special) sfx('cardsSpecial'); },
+    pick: () => sfx('pick'),
+    loot: () => sfx('loot'),
+    portal: () => sfx('portal'),
+    fail: () => sfx('fail'),
+    fanfare: () => sfx('fanfare')
   };
   let hitstop = 0;
+  // Statuses land many times a second; each speaks at most this often.
+  const STATUS_GAP = 0.3, statusHeard = {};
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
   function feelHits() {
     const hits = game.feel.splice(0);
     if (!hits.length) return;
     const calm = reducedMotion();
     for (const hit of hits) {
-      const kind = FEEL[hit.kind];
+      const kind = FEEL[hit.kind] || NO_FEEL;
       hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0));
       const shake = Math.max(kind.shake || 0, hit.crit ? CRIT_SHAKE : 0);
       if (shake && !calm) renderer.kick(shake);
       if (hit.kind === 'hurt' && !calm) renderer.wince();
     }
-    for (const kind of new Set(hits.map(hit => hit.kind))) HIT_SOUNDS[kind]();
+    // One sound per kind (per skill, enemy type or status where those differ) in a step.
+    const voiced = new Map(hits.map(hit => [`${hit.kind}:${hit.id ?? ''}`, hit]));
+    for (const hit of voiced.values()) HIT_SOUNDS[hit.kind]?.(hit);
     if (hits.some(hit => hit.crit)) sfx('crit', () => thump(1400, 900, 0.08, 0.03, 'square'));
   }
   /** Two slow strokes of the town bell. */
@@ -417,13 +435,14 @@ try {
     if (name === 'intro') game.beginIntro();
     if (name === 'register') game.register();
     if (name === 'close-panel') game.closePanel();
-    if (name === 'element') game.toggleElement(d.id);
-    if (name === 'buy-element') game.buyElement(d.id);
+    let bought = null;
+    if (name === 'element') { game.toggleElement(d.id); sfx('equip'); }
+    if (name === 'buy-element') bought = game.buyElement(d.id);
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
-    if (name === 'tune-buy') game.tune(d.row, 'buy');
+    if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
-    if (name === 'shop-buy') game.buyShop(d.id);
+    if (name === 'shop-buy') bought = game.buyShop(d.id);
     if (name === 'unwind') game.unwind();
     if (name === 'return-complete') game.returnToHub('clear');
     if (name === 'acknowledge') game.acknowledgeReturn();
@@ -438,6 +457,8 @@ try {
     if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
     if (name === 'export') { game.save(); saveDownload(); }
     if (name === 'export-raw') saveDownload(rawSave, 'recovery');
+    // Purchases answer with coins or a refusal; picking a reward and equipping have their own sounds; every other button clicks.
+    if (bought !== null) sfx(bought ? 'buy' : 'deny'); else if (!['reward', 'element'].includes(name)) sfx('click');
     if (name === 'import') { $('import-file').click(); return; }
     if (name === 'confirm-new') screen = 'confirmNew';
     if (name === 'cancel-new') { if (onTitle) { resume(); return; } screen = 'loadError'; }

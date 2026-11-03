@@ -16,3 +16,26 @@
 | pop | Digital Audio | pepSound1~5 |
 | tell | Interface Sounds | glass_001~006 |
 | clear | Digital Audio | threeTone1 |
+| down | Digital Audio | lowDown |
+| charged | Digital Audio | powerUp7 |
+| mend | Digital Audio | highUp |
+| heatSwing, fireCyclone, burn | Sci-fi Sounds | thrusterFire_000, _002, _003 |
+| exhaustBurst, steamShatter | Sci-fi Sounds | lowFrequency_explosion_001, _000 |
+| frostBolt, coolingField, frostCrosscut, freeze | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _002, _004 |
+| conductiveSpanner, shock, stormFloat | Digital Audio | zap1, zap2 |
+| capacitorStrike, arcFurnace | Sci-fi Sounds | laserLarge_000, _001 |
+| pressureDash, vortexIntake, rabbit | Digital Audio | phaseJump1, phaseJump3, phaseJump2 |
+| magneticIceClamp | Digital Audio | zapThreeToneDown |
+| wind | RPG Audio | cloth3 |
+| elite | Impact Sounds | impactPlate_heavy_000~002 |
+| trumpet | Sci-fi Sounds | laserRetro_000~004 |
+| musicbox | Interface Sounds | pluck_001~002 |
+| spintop | Sci-fi Sounds | engineCircular_000 |
+| drummer | Impact Sounds | impactSoft_heavy_000~004 |
+| portal | Digital Audio | zapThreeToneUp |
+| cards, pick, loot, buy | Casino Audio | card-fan-1~2, card-place-1~4, chips-stack-1~6, chips-handle-1~3 |
+| cardsSpecial, tune | Digital Audio | powerUp1, powerUp4 |
+| fail, fanfare | Music Jingles | jingles_NES15, jingles_NES12 |
+| click, equip | UI Audio | click1~5, switch1~2 |
+| deny | Interface Sounds | error_001~003 |
+| guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |

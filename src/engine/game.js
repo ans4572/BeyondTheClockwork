@@ -240,8 +240,9 @@ export class Game {
   upgradeAmount(id) {
     return (this.s.run?.upgrades[id] || 0) * (this.c.balance.temporaryUpgrades.find(u => u.id === id)?.perRank || 0);
   }
-  heal(amount) {
+  heal(amount, quiet = false) {
     const actual = Math.min(this.p.maxHp - this.p.hp, amount);
+    if (actual > 0 && !quiet) this.sense({ kind: 'mend' });
     this.p.hp += actual; return actual;
   }
   dodge() {
@@ -314,7 +315,7 @@ export class Game {
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
-      if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'));
+      if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
       if (!enemy.dummy) this.sense({ kind: 'kill' });
     }
     return { crit, killed: enemy.hp <= 0 };
@@ -345,6 +346,7 @@ export class Game {
     enemy.statusApplied[key] = this.s.time + this.c.balance.statusApplyPerCastTargetCooldown;
     const info = this.c.statuses.find(s => s.id === status), ember = status === 'burn' ? this.trait('emberStacks') : null, lasts = info.duration + (ember?.extraDuration || 0);
     enemy.statuses[status] = this.s.time + lasts;
+    if (status === 'burn' || status === 'windPressure') this.sense({ kind: 'status', id: status === 'burn' ? 'burn' : 'wind' });
     if (status === 'burn') {
       enemy.burnStacks = enemy.burnStacks.filter(t => t > this.s.time);
       if (enemy.burnStacks.length < info.maxStacks + (ember?.extraStacks || 0)) enemy.burnStacks.push(this.s.time + lasts);
@@ -357,7 +359,7 @@ export class Game {
         enemy.chillCount = 0;
         if (enemy.boss) this.castStagger(enemy, info.bossFreezeStagger, cast);
         else if (this.s.time >= enemy.freezeLock) {
-          enemy.stunUntil = enemy.frozenUntil = this.s.time + info.normalFreezeDuration;
+          enemy.stunUntil = enemy.frozenUntil = this.s.time + info.normalFreezeDuration; this.sense({ kind: 'status', id: 'freeze' });
           enemy.freezeLock = this.s.time + info.freezeReapplyLock;
         }
       }
@@ -375,6 +377,7 @@ export class Game {
     const info = this.c.statuses.find(s => s.id === 'shock');
     if (enemy.statuses.shock <= this.s.time || !enemy.statuses.shock || this.s.time < enemy.shockReady) return;
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius + (this.trait('arcRange')?.radiusBonus || 0) && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
+    if (targets.length) this.sense({ kind: 'status', id: 'shock' });
     for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.25, 0.7); }
   }
   updateBasic(dt) {
@@ -412,7 +415,11 @@ export class Game {
   wrenchMod(id) { return this.s.run?.mods.includes(id) ? this.config.mods.find(m => m.id === id) : null; }
   skillMod(id) { return this.s.run?.skillMods?.includes(id) ? this.config.skillMods.find(m => m.id === id) : null; }
   trait(id) { return this.s.run?.traits?.includes(id) ? this.config.elementTraits.find(t => t.id === id) : null; }
-  addEnergy(amount) { this.p.energy = Math.min(this.c.player.maxEnergy, this.p.energy + amount); }
+  addEnergy(amount) {
+    const before = this.p.energy, cost = this.fusion?.energyCost;
+    this.p.energy = Math.min(this.c.player.maxEnergy, this.p.energy + amount);
+    if (cost && before < cost && this.p.energy >= cost) this.sense({ kind: 'charged' });
+  }
   refundCooldowns(seconds) { for (const id of Object.keys(this.p.cooldowns)) this.p.cooldowns[id] = Math.max(0, this.p.cooldowns[id] - seconds); }
   get windBonus() { return this.c.statuses.find(s => s.id === 'windPressure').staggerTakenBonus * this.statusPower + (this.trait('galeHold')?.staggerBonus || 0); }
   get fusion() {
@@ -435,7 +442,7 @@ export class Game {
       const dash = this.skillMod('doubleDash');
       if (dash && entry.skill.id === dash.skill) this.p.dashRecastUntil = this.s.time + dash.window;
     }
-    this.makeCast(entry.skill, this.config.skillBehavior[entry.skill.id], entry.slot, target, false); return true;
+    this.makeCast(entry.skill, this.config.skillBehavior[entry.skill.id], entry.slot, target, false); this.sense({ kind: 'cast', id: entry.skill.id }); return true;
   }
   castFusion(target) {
     const fusion = this.fusion;
@@ -444,7 +451,7 @@ export class Game {
     this.p.fusionReady = this.s.time + fusion.cooldown * this.cooldownFactor;
     const rarityKeys = Object.keys(this.c.balance.rarityDamage);
     const slot = { level: Math.min(...this.slots.map(s => s.level)), rarity: rarityKeys[Math.min(...this.slots.map(s => rarityKeys.indexOf(s.rarity)))] };
-    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.notify(fusion.name);
+    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.notify(fusion.name); this.sense({ kind: 'cast', id: fusion.id });
     if (!this.s.profile.discoveredFusions.includes(fusion.id)) this.s.profile.discoveredFusions.push(fusion.id);
     return true;
   }
@@ -551,6 +558,7 @@ export class Game {
     this.effect('hurt', this.p.x, this.p.y, '#e67d73', 0.25, 0.8);
     this.sense({ kind: 'hurt' });
     if (this.p.hp <= 0) {
+      this.sense({ kind: 'down' });
       if (this.tutorial.step) this.tutorial.rise();
       else if (this.s.mode === 'intro') { this.s.mode = 'introDeath'; this.clearCombat(); this.save(); }
       else this.returnToHub('defeat');
@@ -639,6 +647,7 @@ export class Game {
     const tell = enemy.tell; enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + enemy.recovery;
     const p = this.p, ai = this.config.bossAI[enemy.type];
     const damage = () => this.hurt(enemy.damage);
+    if (!enemy.boss) this.sense({ kind: 'mob', id: enemy.type });
     switch (tell.type) {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
@@ -977,6 +986,7 @@ export class Game {
       run.coins += Math.round(this.data.progression.economy.runCoinRewards[this.room.kind === 'normal' ? 'normal' : this.room.kind] * (1 + (this.stats.coinGain || 0)));
       run.clears.push(this.room.id); this.s.profile.combatClears++;
       if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
+      this.sense({ kind: 'loot' });
     }
     this.clearCombat();
     if (this.room.boss) this.s.mode = 'unwind'; else this.offerRewards();
@@ -1055,6 +1065,7 @@ export class Game {
         while (choices.length < 3 && pool.length) choices.push(pool.splice(pool.indexOf(this.drawByTier(pool)), 1)[0]);
       }
       run.rewardChoices = choices.slice(0, 3);
+      this.sense({ kind: 'cards', special: run.rewardChoices.some(reward => this.rewardTier(reward) === 'special') });
     }
     this.s.mode = 'reward';
   }
@@ -1079,16 +1090,16 @@ export class Game {
     if (reward.kind === 'trait') (run.traits ??= []).push(reward.id);
     if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
-    run.rewardChoices = [];
+    run.rewardChoices = []; this.sense({ kind: 'pick' });
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
-    if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
+    if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; this.sense({ kind: 'fanfare' }); }
     else this.s.mode = 'route';
     this.save(); return true;
   }
   nextNode(branch = 0) {
     if (this.s.mode !== 'route' && this.s.mode !== 'shop') return false;
     if (![0, 1].includes(branch)) return false;
-    this.s.run.node++; this.s.run.branches.push(branch);
+    this.s.run.node++; this.s.run.branches.push(branch); this.sense({ kind: 'portal' });
     // Both alternatives are authored encounters at the same depth.
     const plan = this.s.run.plan[this.s.run.node], room = this.room;
     if (room.variants) plan.variant = (plan.variant + branch) % room.variants.length;
@@ -1112,6 +1123,7 @@ export class Game {
     const run = this.s.run, profile = this.s.profile, economy = this.data.progression.economy;
     let bonus = 0;
     if (run.clears.length && !profile.firstReturnClaimed) { bonus = economy.firstReturnBonus; profile.freeGears += bonus; profile.firstReturnClaimed = true; }
+    if (reason === 'defeat') this.sense({ kind: 'fail' });
     this.s.result = { reason, node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
