@@ -11,15 +11,17 @@ export const MUSIC = {
   dusk: { volume: 0.5 },
   brass: { volume: 0.5 }
 };
-const FADE_SECONDS = 1;
+// Songs cross-fade over a second; a song that ends into silence stops almost at once.
+const FADE_SECONDS = 1, STOP_SECONDS = 0.25;
 
 /**
  * Which track belongs to what is on screen, or null for silence.
  * The run's first half (before the night-market rest stop) is bright; from the rest stop on it is dusk.
  */
 export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex }) {
-  if (onTitle || ['opening', 'intro'].includes(mode)) return 'title';
-  if (['returned', 'introDeath'].includes(mode)) return null;
+  if (onTitle) return 'title';
+  // Once the title is left the song stops: the stamp, the scrapyard and the first lesson are quiet.
+  if (['opening', 'intro', 'returned', 'introDeath'].includes(mode)) return null;
   if (['hub', 'registration', 'practice'].includes(mode)) return 'town';
   if (mode === 'complete') return 'title';
   if (roomKind === 'miniboss') return 'roco';
@@ -31,15 +33,31 @@ export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex }) {
 export class MusicPlayer {
   constructor() { this.tracks = new Map(); this.current = null; }
   /** Starts downloading tracks before the first tap, so the first music plays as soon as sound is allowed. */
-  preload(names) { for (const name of names) this.element(name).preload = 'auto'; }
+  preload(names) {
+    // Phones ignore preload on music before the first tap, but a plain download is allowed: fetch the whole file
+    // and hand it to the player, so it is already on the device when sound is switched on.
+    this.files ??= new Map();
+    for (const name of names) {
+      if (this.files.has(name)) continue;
+      // The player is made from the downloaded file if it is ready by then; a song never changes source once made.
+      this.files.set(name, fetch(assetUrl(`/art/audio/bgm/${name}.ogg`)).then(r => (r.ok ? r.blob() : null)).then(blob => {
+        const url = blob ? URL.createObjectURL(blob) : assetUrl(`/art/audio/bgm/${name}.ogg`);
+        (this.local ??= new Map()).set(name, url);
+        // A player made while the file was still coming has no source yet: give it the file and start it if wanted.
+        const element = this.elements?.get(name);
+        if (element && !element.getAttribute('src')) { element.src = url; if (this.current === name) element.play().catch(() => {}); }
+      }).catch(() => {}));
+    }
+  }
   /** Resolves once a track has enough to start playing (or after `ms`, whichever is first). */
   ready(name, ms) {
-    const element = this.element(name);
-    return new Promise(done => { if (element.readyState >= 3) return done(); element.addEventListener('canplay', done, { once: true }); setTimeout(done, ms); });
+    return Promise.race([this.files?.get(name) || Promise.resolve(), new Promise(done => setTimeout(done, ms))]);
   }
   element(name) {
     this.elements ??= new Map();
-    if (!this.elements.has(name)) { const element = new Audio(assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element); }
+    if (!this.elements.has(name)) {
+      // While its download is under way a song waits for it instead of streaming the same file a second time.
+      const pending = this.files?.has(name) && !this.local?.get(name), element = pending ? new Audio() : new Audio(this.local?.get(name) || assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element); }
     return this.elements.get(name);
   }
   track(audio, name) {
@@ -71,8 +89,8 @@ export class MusicPlayer {
     if (name !== this.current) {
       if (this.current) {
         const old = this.tracks.get(this.current);
-        old.gain.gain.cancelScheduledValues(now); old.gain.gain.setValueAtTime(old.gain.gain.value, now); old.gain.gain.linearRampToValueAtTime(0, now + FADE_SECONDS);
-        old.stopTimer = setTimeout(() => old.element.pause(), FADE_SECONDS * 1000 + 50);
+        old.gain.gain.cancelScheduledValues(now); old.gain.gain.setValueAtTime(old.gain.gain.value, now); const out = name ? FADE_SECONDS : STOP_SECONDS; old.gain.gain.linearRampToValueAtTime(0, now + out);
+        old.stopTimer = setTimeout(() => old.element.pause(), out * 1000 + 50);
       }
       this.current = name;
       if (name) {

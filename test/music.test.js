@@ -11,7 +11,8 @@ const inRoom = (i, mode = 'combat') => musicScene({ onTitle: false, mode, roomKi
 
 test('each part of the game has its track: title, town, bright street, Roco, dusk, Brass', () => {
   assert.equal(musicScene({ onTitle: true, mode: 'hub' }), 'title');
-  assert.equal(musicScene({ onTitle: false, mode: 'opening' }), 'title');
+  assert.equal(musicScene({ onTitle: false, mode: 'opening' }), null);
+  assert.equal(musicScene({ onTitle: false, mode: 'intro' }), null);
   assert.equal(musicScene({ onTitle: false, mode: 'hub' }), 'town');
   assert.equal(musicScene({ onTitle: false, mode: 'returned' }), null);
   rooms.forEach((room, i) => {
