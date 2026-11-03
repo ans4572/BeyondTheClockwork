@@ -1,0 +1,12 @@
+# Not part of the game: kept out of the Cloudflare upload.
+.git
+.github
+node_modules
+test
+scripts
+docs
+.scratch
+*.md
+wrangler.toml
+package.json
+package-lock.json

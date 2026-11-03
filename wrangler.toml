@@ -1,4 +1,7 @@
-# Cloudflare Pages: the game is static files served from the repository root, with no build step.
-name = "beyond-the-clockwork"
-pages_build_output_dir = "."
+# Cloudflare Workers (static assets): the game is plain files served from the repository root, with no build step.
+name = "beyondtheclockwork"
 compatibility_date = "2026-11-01"
+
+[assets]
+directory = "."
+not_found_handling = "404-page"
