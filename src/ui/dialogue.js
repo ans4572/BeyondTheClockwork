@@ -20,7 +20,7 @@ function portrait({ sheet, cell, crop = [0, 0, cell, cell], zoom = ZOOM }) {
 export class DialogueBox {
   constructor(root, { speakers, player }, { reducedMotion, skipLabel }) {
     this.root = root; this.speakers = speakers; this.playerId = player; this.reducedMotion = reducedMotion;
-    root.innerHTML = `<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▶</div></div>`;
+    root.innerHTML = `<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▸</div></div>`;
     [this.other, this.player] = root.querySelectorAll('img');
     this.name = root.querySelector('.talk-name'); this.text = root.querySelector('.talk-text'); this.next = root.querySelector('.talk-next');
     // The whole line is laid out from the first letter; the unread part waits invisible, so words never jump to the next line mid-type.
@@ -66,7 +66,7 @@ export class DialogueBox {
     list.className = 'talk-choices';
     for (const { id, label } of line.choices) {
       const choice = document.createElement('button');
-      choice.textContent = `▶ ${label}`;
+      choice.textContent = `▸ ${label}`;
       choice.addEventListener('click', () => this.finish(id));
       choice.addEventListener('mouseenter', () => choice.focus());
       list.append(choice);

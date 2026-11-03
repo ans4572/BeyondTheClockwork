@@ -1,4 +1,5 @@
 import { createProfile, permanentStats, buyRank, refundAll } from './progression.js';
+import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf } from './map-geometry.js';
 import { Tutorial } from './tutorial.js';
 import { FlowField } from './flow-field.js';
@@ -216,7 +217,7 @@ export class Game {
     else if (room.waves) {
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
       room.waves[0].forEach(type => this.spawnWaveEnemy(type, this.spreadSpot()));
-      this.notify(room.name);
+      this.notify(roomTitle(room));
     }
     this.save();
   }

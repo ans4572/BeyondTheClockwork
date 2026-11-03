@@ -10,7 +10,7 @@ export const PIXEL_FONT = '"NeoDunggeunmo Pro"', PIXEL_EM = 16;
 export function pixelText(text, size, fill, scale = 2) {
   const zoom = Math.max(1, Math.round(size * scale / PIXEL_EM));
   size = PIXEL_EM; scale = zoom;
-  const probe = document.createElement('canvas').getContext('2d'), font = `${PIXEL_EM}px ${PIXEL_FONT}, "Malgun Gothic", sans-serif`;
+  const probe = document.createElement('canvas').getContext('2d'), font = `${PIXEL_EM}px ${PIXEL_FONT}, "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
   probe.font = font;
   const pad = 3, w = Math.ceil(probe.measureText(text).width) + pad * 2, h = Math.ceil(size * 1.3) + pad * 2, raw = document.createElement('canvas');
   raw.width = w; raw.height = h;

@@ -1,8 +1,10 @@
 /* NeoDunggeunmo Pro by Eunbin Jeong (Dalgona.), SIL OFL 1.1 (art/fonts/NeoDunggeunmoPro-OFL.txt): the pixel lettering on the title and panel headings. */
 @font-face { font-family: 'NeoDunggeunmo Pro'; src: url('../art/fonts/NeoDunggeunmoPro.woff2') format('woff2'); font-display: block; }
+/* Galmuri11 Bold by Lee Minseo, SIL OFL 1.1 (art/fonts/Galmuri-OFL.txt): every other word in the game, the same on every device. */
+@font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 100 900; font-display: block; }
 /* Every panel is a sheet from the same office as the disposal form on the title screen. */
 :root {
-  font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   color: #2b3345; background: #16202a; font-synthesis: none;
   --ink: #2b3345; --label: #5d6476; --paper: #f6ecd2; --paper-low: #ece0c0; --red: #a92f2b; --gold: #c79a3e; --sage: #d7e4d6;
 }
@@ -53,7 +55,8 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 .reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .reward-card { position: relative; display: flex; flex-direction: column; padding: 12px; background: var(--paper-low); border-top: 6px solid var(--accent, var(--ink)); text-align: left; }
-.reward-card .reward-icon { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; background: var(--paper); color: var(--accent, var(--ink)); font-size: 19px; }
+.reward-card .reward-icon { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; background: var(--paper); }
+.reward-card .reward-icon .ico { width: 24px; height: 24px; vertical-align: 0; }
 /* Element parts are drawn at 32px and shown at whole multiples so every pixel stays square. */
 .reward-card .element-icon { width: 64px; height: 64px; margin: -4px 0 0 -4px; image-rendering: pixelated; }
 .codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 0; image-rendering: pixelated; }
@@ -72,8 +75,14 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 .settings-grid { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 10px 0; }
 .settings-grid label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-.settings-grid input[type=checkbox] { accent-color: var(--ink); width: 15px; height: 15px; }
-.settings-grid input[type=range] { accent-color: var(--ink); width: 120px; }
+.settings-grid input[type=checkbox] { appearance: none; width: 18px; height: 18px; margin: 0; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); cursor: pointer; }
+.settings-grid input[type=checkbox]:checked { background: var(--gold); box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 5px var(--paper); }
+.settings-grid input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.settings-grid input[type=range] { appearance: none; width: 140px; height: 18px; margin: 0; background: none; cursor: pointer; }
+.settings-grid input[type=range]::-webkit-slider-runnable-track { height: 8px; background: #d8ccb0; box-shadow: inset 0 0 0 2px var(--ink); }
+.settings-grid input[type=range]::-moz-range-track { height: 8px; background: #d8ccb0; box-shadow: inset 0 0 0 2px var(--ink); }
+.settings-grid input[type=range]::-webkit-slider-thumb { appearance: none; width: 12px; height: 18px; margin-top: -5px; border: 0; background: var(--gold); box-shadow: inset 0 0 0 2px var(--ink); }
+.settings-grid input[type=range]::-moz-range-thumb { width: 12px; height: 18px; border: 0; border-radius: 0; background: var(--gold); box-shadow: inset 0 0 0 2px var(--ink); }
 .binding-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px 12px; }
 .binding { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
 .panel .binding button { min-width: 62px; padding: 4px 6px; font-size: 12px; }
@@ -104,3 +113,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .result-stats span { font-size: 12px; color: var(--label); }
 .result-stats b { display: block; font-size: 22px; line-height: 1.3; color: var(--ink); }
 .complete-seal { color: var(--gold); font-size: 34px; margin-bottom: 4px; }
+
+/* A pixel icon inside a line of text, one letter tall. */
+.ico { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -.2em; image-rendering: pixelated; }
+.actions.leave { justify-content: flex-end; }
+.atlas-legend { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.atlas-legend b { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; border-radius: 50%; background: #9a9486; color: var(--paper); font-size: .85em; }

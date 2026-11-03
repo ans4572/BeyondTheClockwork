@@ -1,3 +1,4 @@
+import { iconAt } from './tool-icons.js';
 // The world map: one floating island holding Smile Street, the Silent Factory and the Central Clock Tower.
 // Areas read by their ground (paved town, grey works, stone summit); stops are small numbered nodes on the road.
 // Everything is SVG built from code. The factory and the tower are drawn now and stay locked until those regions exist.
@@ -83,10 +84,10 @@ function drawScenery() {
     ${scatter({ cx: 360, cy: 330, rx: 330, ry: 190 }, [...avoid, [330, 410, 240]], 40, 4)}${scatter({ cx: 470, cy: 150, rx: 170, ry: 80 }, avoid.filter(a => a[2] < 100), 8, 8, 'pine')}`;
 }
 const labels = () => `${banner(150, 270, '웃음거리')}${banner(860, 205, '무음공장', 'dark')}${soon(860, 231, '브라스 다음 · 준비 중')}${banner(300, 120, '중앙시계탑', 'blue')}${soon(300, 146, '무음공장 다음 · 준비 중')}
-  <g class="plate" transform="translate(806 498)"><path d="M0 0 h176 l-10 22 l10 22 h-176 l10 -22 z"/><text x="88" y="21">태엽 섬</text><text class="sub" x="88" y="37">CLOCKWORK ISLE</text></g>`;
+  <g class="plate" transform="translate(806 498)"><path d="M0 0 h176 l-10 22 l10 22 h-176 l10 -22 z"/><text x="88" y="21">태엽 섬</text><text class="sub" x="88" y="37">Clockwork Isle</text></g>`;
 
 const road = (pts, cls = '') => `<path class="road-edge ${cls}" d="${smooth(pts)}"/><path class="road ${cls}" d="${smooth(pts)}"/>`;
-const locked = pts => pts.map(([x, y], i) => { const boss = i === pts.length - 1; return `<g class="node locked ${boss ? 'boss' : ''}"><circle cx="${x}" cy="${y}" r="${boss ? 11 : 8}"/><text x="${x}" y="${y + 3.6}">${boss ? '✣' : '?'}</text></g>`; }).join('');
+const locked = pts => pts.map(([x, y], i) => { const boss = i === pts.length - 1; return `<g class="node locked ${boss ? 'boss' : ''}"><circle cx="${x}" cy="${y}" r="${boss ? 11 : 8}"/>${boss ? iconAt('crown', x, y, 12) : `<text x="${x}" y="${y + 3.6}">?</text>`}</g>`; }).join('');
 
 /** Stops: { id, icon, label, state: 'done'|'current'|'ahead', kind: ''|'boss'|'shop'|'town' }. */
 export function worldMapSvg(stops, picked) {
@@ -96,7 +97,7 @@ export function worldMapSvg(stops, picked) {
     const r = stop.kind === 'boss' ? 11 : 9, on = stop.id === picked;
     const name = on ? `<g class="name"><rect x="${x - stop.label.length * 7 - 8}" y="${y + r + 4}" width="${stop.label.length * 14 + 16}" height="20" rx="3"/><text x="${x}" y="${y + r + 18.5}">${stop.label}</text></g>` : '';
     return `<g class="node ${stop.state} ${stop.kind} ${on ? 'picked' : ''}" data-action="map-stop" data-id="${stop.id}" role="button" aria-label="${stop.label}">
-      <circle class="hit" cx="${x}" cy="${y}" r="18"/><circle cx="${x}" cy="${y}" r="${r}"/><text x="${x}" y="${y + 3.6}">${stop.icon}</text>${name}
+      <circle class="hit" cx="${x}" cy="${y}" r="18"/><circle cx="${x}" cy="${y}" r="${r}"/>${typeof stop.icon === 'number' ? `<text x="${x}" y="${y + 3.6}">${stop.icon}</text>` : iconAt(stop.icon, x, y, 12)}${name}
       ${stop.state === 'current' ? `<g class="you"><path d="M${x} ${y - 14} l-8 -12 h16 z"/><text x="${x}" y="${y - 30}">나</text></g>` : ''}</g>`;
   };
   const toFactory = [points[12], ...FACTORY], toTower = [FACTORY.at(-1), ...TOWER];

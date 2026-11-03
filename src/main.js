@@ -1,6 +1,7 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
-import { TOOL_ICONS } from './ui/tool-icons.js';
+import { TOOL_ICONS, ico } from './ui/tool-icons.js';
+import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
@@ -37,7 +38,7 @@ const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arro
 
 try {
   // The pixel lettering font must be ready before the first heading or the title is drawn from it.
-  const [, data] = await Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽').catch(() => {}), loadData()]);
+  const [, data] = await Promise.all([Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽'), document.fonts.load('700 12px Galmuri11', '태엽')]).catch(() => {}), loadData()]);
   let saved = null, loadError = '', rawSave = '';
   try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }
   catch (error) { loadError = error.message; }
@@ -295,14 +296,14 @@ try {
     const rank = game.s.profile.stats[stat.id], cap = rankCap(data, game.s.profile, stat), maxed = rank >= stat.maxRank, capped = !maxed && rank >= cap;
     const cost = statCost(stat, rank), blocked = maxed || capped || game.s.profile.freeGears < cost, nextChapter = cap / data.slice.statChapters.ranksPerChapter + 1;
     const tip = `${stat.name}: ${stat.description}${cap < stat.maxRank ? `\n지금은 ${cap}단계까지 · ${nextChapter}장에 들어가면 ${cap + data.slice.statChapters.ranksPerChapter}단계까지 열림` : ''}`;
-    return `<div class="stat-row" data-tip="${tip}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${cap}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i>${cap < stat.maxRank ? `<b class="stat-locked" style="left:${cap / stat.maxRank * 100}%"></b>` : ''}</div><span class="stat-value">${statValue(stat, rank)}${maxed || capped ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : capped ? `🔒 ${nextChapter}장` : `⚙ ${cost}`}</button></div>`;
+    return `<div class="stat-row" data-tip="${tip}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${cap}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i>${cap < stat.maxRank ? `<b class="stat-locked" style="left:${cap / stat.maxRank * 100}%"></b>` : ''}</div><span class="stat-value">${statValue(stat, rank)}${maxed || capped ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : capped ? `${ico('lock')} ${nextChapter}장` : `${ico('gear')} ${cost}`}</button></div>`;
   }
   function statGroups() {
     const stats = data.slice.permanentStats, grouped = STAT_GROUPS.flatMap(([, ids]) => ids), rest = stats.filter(stat => !grouped.includes(stat.id));
     return [...STAT_GROUPS, ...(rest.length ? [['기타', rest.map(stat => stat.id)]] : [])].map(([name, ids]) => `<h3 class="stat-group">${name}</h3>${ids.map(id => stats.find(stat => stat.id === id)).filter(Boolean).map(statRow).join('')}`).join('');
   }
   function tuningPanel() {
-    return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div><strong>⚙ ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
+    return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div><strong>${ico('gear')} ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
   /** Moru's parts shelf: owned elements are equipped (two at most), the rest are bought with gears one at a time. */
   function elementsPanel() {
@@ -311,11 +312,11 @@ try {
       const owned = ownedElements.includes(element.id), picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
       const action = owned ? button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')
         : price === null ? button(ownedElements.length ? '모두 보유' : '첫 귀환 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
-        : button(price === 0 ? '무료로 달기' : `⚙ ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
+        : button(price === 0 ? '무료로 달기' : `${ico('gear')} ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
       return `<article class="reward-card ${picked ? 'picked' : ''} ${owned ? '' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${action}</article>`;
     }).join('');
     const note = !ownedElements.length ? (history.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.' : '첫 원정은 렌치만으로 나갑니다. 돌아오면 모루가 첫 속성 부품을 무료로 달아 줍니다.')
-      : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ⚙ ${price}입니다.` : ''}`;
+      : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
     return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><strong>장착 ${loadout.length} / 2</strong></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
   }
   function describeReward(reward) {
@@ -323,14 +324,14 @@ try {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
       return { name: element.device, art: element.id, label: game.s.profile.ownedElements.includes(element.id) ? `${element.name} 속성 모듈` : `${element.name} 속성 모듈 · 이번 원정 체험`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
-    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: '⚒', label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
+    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: ico('wrench'), label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element] }; }
     if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element] }; }
-    if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); return { name: `${element.name} 기술 조율`, icon: '↑', label: '기술 단계', description: '이 슬롯의 기술 두 개가 함께 강해진다.', value: `Lv.${slot.level} → ${slot.level + 1} (최대 ${data.combat.balance.skillMaxLevel}) · 직접 피해 +12%p` }; }
-    if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: '⚙', label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
-    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: '✚', label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
+    if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); return { name: `${element.name} 기술 조율`, icon: ico('up'), label: '기술 단계', description: '이 슬롯의 기술 두 개가 함께 강해진다.', value: `Lv.${slot.level} → ${slot.level + 1} (최대 ${data.combat.balance.skillMaxLevel}) · 직접 피해 +12%p` }; }
+    if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: ico('gear'), label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
+    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('heal'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
     const upgrade = data.combat.balance.temporaryUpgrades.find(u => u.id === reward.id), desc = data.slice.rewards[reward.id];
-    return { name: desc.name, icon: '✧', label: '출력 부품', description: desc.description, value: `${reward.id === 'maxHp' ? '+' + upgrade.perRank + ' HP' : reward.id === 'killHeal' ? '처치마다 +' + upgrade.perRank + ' HP' : reward.id === 'damageReduction' ? '받는 피해 −' + Math.round(upgrade.perRank * 100) + '%' : '+' + Math.round(upgrade.perRank * 100) + '%'} · ${(game.s.run.upgrades[reward.id] || 0) + 1}/${upgrade.maxRank} 단계` };
+    return { name: desc.name, icon: ico('spark'), label: '출력 부품', description: desc.description, value: `${reward.id === 'maxHp' ? '+' + upgrade.perRank + ' HP' : reward.id === 'killHeal' ? '처치마다 +' + upgrade.perRank + ' HP' : reward.id === 'damageReduction' ? '받는 피해 −' + Math.round(upgrade.perRank * 100) + '%' : '+' + Math.round(upgrade.perRank * 100) + '%'} · ${(game.s.run.upgrades[reward.id] || 0) + 1}/${upgrade.maxRank} 단계` };
   }
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
@@ -341,7 +342,7 @@ try {
   function settingsPanel() {
     const keysOpen = !!$('overlay').querySelector('details.keys[open]');
     const settings = game.s.profile.settings, map = bindings();
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`, 'wide');
   }
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
   function codexPanel() {
@@ -356,7 +357,7 @@ try {
     const how = isTouch ? '융합 버튼' : '우클릭';
     return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'resume')}</div><div class="codex-tabs">${tab('elements', '속성 4')}${tab('fusions', '융합 6')}</div><div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? `<p class="notice">장착한 두 속성의 융합 하나를 ${how}으로 씁니다. 축전은 렌치로 때리면 찹니다.</p>` : legend}`, 'wide');
   }
-  const stopIcon = (room, i) => (room.kind === 'shop' ? '◈' : room.boss ? '✣' : i + 1);
+  const stopIcon = (room, i) => (room.kind === 'shop' ? ico('coin') : room.boss ? ico('crown') : i + 1);
   /** Who waits in a stop, named once each, so the map can say what an area is like before walking in. */
   function stopFoes(room) {
     if (room.boss) return [data.combat.bosses.find(b => b.id === room.boss)?.name || room.short];
@@ -366,13 +367,13 @@ try {
   function mapPanel() {
     const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1;
     const picked = mapPick ?? (s.run ? rooms[node]?.id : 'town');
-    const stops = [{ id: 'town', icon: '⌂', label: HOME_NAME, state: s.run ? 'done' : 'current', kind: 'town' },
-      ...rooms.map((room, i) => ({ id: room.id, icon: stopIcon(room, i), label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
+    const stops = [{ id: 'town', icon: 'home', label: HOME_NAME, state: s.run ? 'done' : 'current', kind: 'town' },
+      ...rooms.map((room, i) => ({ id: room.id, icon: room.kind === 'shop' ? 'coin' : room.boss ? 'crown' : i + 1, label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
     const index = rooms.findIndex(room => room.id === picked), room = rooms[index];
     const detail = room
-      ? `<strong>${stopIcon(room, index)} · ${room.name}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
-      : `<strong>⌂ · ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice">번호를 누르면 설명이 보입니다 · ◈ 쉼터 · ✣ 보스 · ? 준비 중${isTouch ? '' : ` · ${keyName(bindings().map)} 키로 닫기`}</p>`, 'atlas-panel');
+      ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
+      : `<strong>${ico('home')} ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice atlas-legend"><span>번호를 누르면 설명이 보입니다</span><span>${ico('coin')} 쉼터</span><span>${ico('crown')} 보스</span><span><b>?</b> 준비 중</span>${isTouch ? '' : `<span>${keyName(bindings().map)} 키로 닫기</span>`}</p>`, 'atlas-panel');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
@@ -391,7 +392,7 @@ try {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
-      return `<article class="reward-card"><span class="reward-icon">${{ heal: '✚', skillLevel: '↑', persistentGears: '⚙' }[id]}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">◈ ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'heal', skillLevel: 'up', persistentGears: 'gear' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
       const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감아 깨우기' : '회로 뽑기';
@@ -401,7 +402,7 @@ try {
     if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p><h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;
-      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 귀환 보너스 <strong>⚙ +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
@@ -721,9 +722,9 @@ try {
     const swing = game.s.effects.findLast(f => f.type === 'swing');
     if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; sfx(swing.phase === 2 ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7)); }
     playMusic();
-    renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
-  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
+  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
     onNew: startNew,

@@ -1,3 +1,4 @@
+import { roomTitle } from './room-title.js';
 export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 /** True once there is anything worth loading; a save still on the opening has none. */
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
@@ -5,7 +6,7 @@ export const hasProgress = state => !!state.profile.registered || state.profile.
 export function saveSummary(state, savedAt, data, now = new Date()) {
   const RUN_MODES = ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'];
   const room = state.run && data.slice.rooms[state.run.node];
-  const place = room ? `원정 · ${room.name.replace(/ [A-Z]$/, '')}`
+  const place = room ? `원정 · ${roomTitle(room)}`
     : state.mode === 'practice' ? '연습장'
     : ['opening', 'intro', 'introDeath', 'registration'].includes(state.mode) ? '첫 장면'
     : RUN_MODES.includes(state.mode) ? '원정' : '웃음 마을';

@@ -76,7 +76,7 @@ export class CanvasRenderer {
       const image = this.mapImages?.get(STATUS_ICONS[badge.id]);
       if (image) c.drawImage(image, x, y, BADGE_SIZE, BADGE_SIZE);
       // Stacks read as a small ×N beside the icon, outlined so it stays legible over any floor.
-      if (badge.count > 1) { c.font = `700 ${COUNT_SIZE}px "Malgun Gothic", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
+      if (badge.count > 1) { c.font = `700 ${COUNT_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
       x += width(badge);
     }
   }
@@ -169,7 +169,7 @@ export class CanvasRenderer {
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
   nameplate(label, x, bottom, fill = '#fff4d6') {
     const c = this.ctx;
-    c.save(); c.font = `700 ${NAME_SIZE}px "Malgun Gothic", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    c.save(); c.font = `700 ${NAME_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     c.lineJoin = 'round'; c.lineWidth = 2.5; c.strokeStyle = '#2b3345'; c.strokeText(label, x, bottom);
     c.fillStyle = fill; c.fillText(label, x, bottom); c.restore();
   }
@@ -184,7 +184,7 @@ export class CanvasRenderer {
   rect(x, y, w, h, color) { const c = this.ctx; c.fillStyle = color; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
   line(x1, y1, x2, y2, color, width = 1) { const c = this.ctx; c.strokeStyle = color; c.lineWidth = width; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
   circle(x, y, r, color) { const c = this.ctx; c.fillStyle = color; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); }
-  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ctx; c.font = `600 ${size}px "Malgun Gothic", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
+  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ctx; c.font = `600 ${size}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
   gear(x, y, radius, color, rotation = 0) {
     const c = this.ctx; c.save(); c.translate(x, y); c.rotate(rotation);
     for (let i = 0; i < 8; i++) { c.rotate(Math.PI / 4); this.rect(-radius * 0.2, -radius * 1.2, radius * 0.4, radius * 0.55, color); }

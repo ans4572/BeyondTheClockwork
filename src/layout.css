@@ -68,7 +68,7 @@
 .world-map .node.locked { cursor: default; }
 .world-map .node .hit { fill: transparent; stroke: none; }
 .world-map .node circle:not(.hit) { fill: #fff4d6; stroke: var(--ink); stroke-width: 2.5; }
-.world-map .node text { font: 700 9.5px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.world-map .node text { font: 700 9.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
 .world-map .node.done circle:not(.hit) { fill: var(--ink); } .world-map .node.done > text { fill: #fff4d6; }
 .world-map .node.boss circle:not(.hit) { stroke: var(--red); } .world-map .node.boss > text { fill: var(--red); }
 .world-map .node.done.boss circle:not(.hit) { fill: var(--red); } .world-map .node.done.boss > text { fill: #fff4d6; }
@@ -78,28 +78,28 @@
 .world-map .name rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 2.5; } .world-map .name text { font-size: 12.5px; }
 .world-map .you { animation: atlas-bob 1.2s ease-in-out infinite; }
 .world-map .you path { fill: #c43c36; stroke: #fff4d6; stroke-width: 2; }
-.world-map .you text { font: 700 13px "Malgun Gothic", sans-serif; fill: #c43c36; stroke: #fff4d6; stroke-width: 4; paint-order: stroke; text-anchor: middle; }
+.world-map .you text { font: 700 13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #c43c36; stroke: #fff4d6; stroke-width: 4; paint-order: stroke; text-anchor: middle; }
 @keyframes atlas-bob { 50% { transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .world-map .you { animation: none; } }
 .world-map .banner rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
-.world-map .banner text { font: 700 16px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.world-map .banner text { font: 700 16px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
 .world-map .banner.dark rect { fill: #4a4d58; } .world-map .banner.blue rect { fill: #4f6fa1; } .world-map .banner.dark text, .world-map .banner.blue text { fill: #f6ecd2; }
-.world-map .soon { font: 700 10.5px "Malgun Gothic", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
+.world-map .soon { font: 700 10.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
 .world-map .plate path { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
-.world-map .plate text { font: 700 18px "Malgun Gothic", sans-serif; fill: var(--ink); text-anchor: middle; }
+.world-map .plate text { font: 700 18px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
 .world-map .plate text.sub { font-size: 9px; letter-spacing: 2px; fill: var(--label); }
 .panel p.atlas-detail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; min-height: 40px; margin: 8px 0 0; }
 .panel.atlas-panel p.notice { margin: 2px 0 0; }
 .atlas-detail strong { font-size: 14px; }
 .atlas-detail em { font-style: normal; font-size: 12px; color: var(--red); }
 
-#title { position: fixed; inset: 0; z-index: 20; overflow: hidden; background: repeating-linear-gradient(0deg, #3d6a63 0 24px, #35605a 24px 26px); font-family: "Malgun Gothic", sans-serif; }
+#title { position: fixed; inset: 0; z-index: 20; overflow: hidden; background: repeating-linear-gradient(0deg, #3d6a63 0 24px, #35605a 24px 26px); font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #title[hidden], #title [hidden] { display: none; }
 .title-stage { position: absolute; left: 50%; top: 50%; width: 1120px; height: 640px; transform: translate(-50%, -50%); }
 #title canvas { width: auto; height: auto; max-width: none; image-rendering: pixelated; }
 .title-stage canvas { position: absolute; left: 0; top: 0; }
 .title-stage nav { position: absolute; left: 492px; top: 408px; display: grid; gap: 2px; width: 520px; }
-.title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Malgun Gothic", sans-serif; cursor: pointer; }
+.title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
 .title-stage button::before { content: ""; width: 20px; height: 20px; flex: none; box-shadow: inset 0 0 0 3px currentColor; }
 .title-stage button:focus { outline: none; }
 .title-stage button:hover:not(:disabled), .title-stage button:focus { color: #a92f2b; }
@@ -128,7 +128,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #toast.below-boss { top: calc(var(--hud-scale, 1) * 62px); }
 
 /* Paper tags from the disposal form, laid out on a fixed 1120x640 sheet that scales with the window. */
-#hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Malgun Gothic", sans-serif; color: #2b3345; }
+#hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #2b3345; }
 #hud button { pointer-events: auto; cursor: pointer; border: 0; font: inherit; color: inherit; }
 .hud-tag { background: #f6ecd2; color: #2b3345; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .hud-vitals { position: absolute; left: 14px; top: 12px; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; }
@@ -169,11 +169,11 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 /* Not enough charge yet: the skill shows but reads as unavailable. */
 .slot.short img, #touch button.short img { opacity: .35; filter: grayscale(1); }
 .slot img { width: 30px; height: 30px; image-rendering: pixelated; }
-.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 10px/12px "Malgun Gothic", sans-serif; text-align: center; }
+.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 10px/12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
 .slot .lv { position: absolute; right: 4px; bottom: 0; font-size: 10px; line-height: 12px; }
 .slot .cool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #0e121ab8; }
 .slot .left { position: absolute; right: 2px; bottom: 0; color: #fff4d6; font-size: 11px; line-height: 13px; text-shadow: 1px 1px 0 #0e121a; }
-#hud .hud-bar b { font: 700 12px "Malgun Gothic", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
+#hud .hud-bar b { font: 700 12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
 .slot kbd { z-index: 1; }
 
 #practice-reset { position: absolute; left: 14px; top: 96px; padding: 5px 14px; font-size: 13px; }
@@ -184,7 +184,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
 #hud.talking > :not(#dialogue) { display: none; }
-#dialogue { position: absolute; inset: 0; pointer-events: auto; font: 700 18px/1.55 "Malgun Gothic", sans-serif; }
+#dialogue { position: absolute; inset: 0; pointer-events: auto; font: 700 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #dialogue[hidden] { display: none; }
 .talk-box { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: #f6ecd2; box-shadow: 0 -4px 0 #2b3345, 0 -8px 0 #c79a3e; }
 .talk-who { position: absolute; z-index: 1; image-rendering: pixelated; transition: filter .12s, transform .12s; }
@@ -237,7 +237,7 @@ body.touch .hud-minimap:not([hidden]) ~ .hud-wallet .tool-icon { width: 26px; he
 .touch-stick { position: absolute; left: -52px; top: -52px; width: 104px; height: 104px; border-radius: 50%; background: #16202a55; box-shadow: inset 0 0 0 3px #f6ecd2aa; pointer-events: none; }
 .touch-stick[hidden] { display: none; }
 .touch-stick i { position: absolute; left: 28px; top: 28px; width: 48px; height: 48px; border-radius: 50%; background: #f6ecd2cc; }
-#touch button { position: relative; overflow: hidden; pointer-events: auto; touch-action: none; border: 0; padding: 0; color: #2b3345; background: #f6ecd2d9; box-shadow: inset 0 0 0 2px #2b3345; font: 700 13px "Malgun Gothic", sans-serif; }
+#touch button { position: relative; overflow: hidden; pointer-events: auto; touch-action: none; border: 0; padding: 0; color: #2b3345; background: #f6ecd2d9; box-shadow: inset 0 0 0 2px #2b3345; font: 700 13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #touch .touch-pad button.empty { visibility: hidden; }
 #touch button.ready { background: #ffd257; }
 #touch button img { width: 62%; height: 62%; margin-top: 19%; image-rendering: pixelated; pointer-events: none; }
@@ -263,17 +263,17 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #touch .touch-talk { position: absolute; right: calc(236px + env(safe-area-inset-right)); bottom: 20px; width: 84px; height: 48px; background: #ffd257; }
 #touch .touch-talk[hidden] { display: none; }
 @media (orientation: portrait) {
-  body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Malgun Gothic", sans-serif; }
+  body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 }
 
 /* The ending's cut to the clock tower: a still backdrop under the dialogue. */
 #scene { position: absolute; inset: 0; z-index: 1; background: #141b2b; }
 #scene[hidden] { display: none; }
 #scene svg { width: 100%; height: 100%; display: block; }
-#scene b { position: absolute; left: 3%; top: 5%; padding: .3em .9em; background: #f6ecd2; color: #2b3345; font: 700 clamp(12px, 2vw, 22px) "Malgun Gothic", sans-serif; }
+#scene b { position: absolute; left: 3%; top: 5%; padding: .3em .9em; background: #f6ecd2; color: #2b3345; font: 700 clamp(12px, 2vw, 22px) "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #scene.fade { animation: scene-in 1.2s ease-out both; }
 @keyframes scene-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #scene.fade { animation: none; } }
-.ending .tbc { margin: 0 0 6px; font: italic 700 34px/1.2 Georgia, "Times New Roman", serif; color: #a92f2b; }
+.ending .tbc { margin: 0 0 10px; font: 32px/1.1 "NeoDunggeunmo Pro", monospace; color: #a92f2b; }
 /* With no player in the scene, the right speaker stands like the left one. */
 .no-player .talk-who.player { right: 8px; bottom: -33px; }
