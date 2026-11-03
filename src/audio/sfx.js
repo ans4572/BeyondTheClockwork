@@ -1,33 +1,33 @@
 // Recorded sound effects (Kenney, CC0) played through Web Audio.
-// Each name has a few takes; one is picked at random and nudged in pitch so repeats do not sound stamped out.
+// Each name is one recording at one pitch, so the same action always sounds the same.
 import { assetUrl } from '../animation/sprite-library.js';
 // Loaded with the same query as this file, so a page that busts the cache for this module gets fresh recipes too.
 const { ELEMENT_SOUNDS } = await import(`./elements.js${new URL(import.meta.url).search}`);
 
 /** file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade. */
 export const SFX = {
-  swing: { file: 'swing', takes: 1, volume: 0.22, rate: [1, 1.12] },
-  swingHeavy: { file: 'swing', takes: 1, volume: 0.3, rate: [0.76, 0.84] },
+  swing: { file: 'swing', takes: 1, volume: 0.22, rate: [1.06, 1.06] },
+  swingHeavy: { file: 'swing', takes: 1, volume: 0.3, rate: [0.8, 0.8] },
   dodge: { synth: 'dash', volume: 0.5 },
-  hit: { file: 'hit', takes: 5, volume: 0.5, rate: [0.95, 1.08] },
-  heavy: { file: 'heavy', takes: 5, volume: 0.6, rate: [0.85, 0.95] },
-  hurt: { file: 'hurt', takes: 5, volume: 0.55, rate: [0.9, 1] },
-  kill: { file: 'kill', takes: 5, volume: 0.45, rate: [0.95, 1.1] },
-  tell: { file: 'tell', takes: 6, volume: 0.16, rate: [1, 1] },
-  block: { file: 'block', takes: 5, volume: 0.45, rate: [1, 1.15] },
-  burst: { file: 'burst', takes: 5, volume: 0.4, rate: [0.95, 1.05] },
-  pop: { file: 'pop', takes: 5, volume: 0.3, rate: [1, 1.1] },
-  summon: { file: 'summon', takes: 5, volume: 0.24, rate: [1, 1.1] },
+  hit: { file: 'hit', takes: 1, volume: 0.5, rate: [1.02, 1.02] },
+  heavy: { file: 'heavy', takes: 1, volume: 0.6, rate: [0.9, 0.9] },
+  hurt: { file: 'hurt', takes: 1, volume: 0.55, rate: [0.95, 0.95] },
+  kill: { file: 'kill', takes: 1, volume: 0.45, rate: [1.02, 1.02] },
+  tell: { file: 'tell', takes: 1, volume: 0.16, rate: [1, 1] },
+  block: { file: 'block', takes: 1, volume: 0.45, rate: [1.07, 1.07] },
+  burst: { file: 'burst', takes: 1, volume: 0.4, rate: [1, 1] },
+  pop: { file: 'pop', takes: 1, volume: 0.3, rate: [1.05, 1.05] },
+  summon: { file: 'summon', takes: 1, volume: 0.24, rate: [1.05, 1.05] },
   clear: { file: 'clear', takes: 1, volume: 0.32, rate: [1, 1] },
   // Player
   down: { file: 'down', takes: 1, volume: 0.35, rate: [1, 1] },
   charged: { file: 'charged', takes: 1, volume: 0.22, rate: [1.1, 1.1] },
-  mend: { file: 'mend', takes: 1, volume: 0.22, rate: [1, 1.05] },
+  mend: { file: 'mend', takes: 1, volume: 0.22, rate: [1.02, 1.02] },
   // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice keeps the glass recordings.
   heatSwing: { synth: 'heatSwing', volume: 0.85 },
   exhaustBurst: { synth: 'exhaustBurst', volume: 0.4 },
-  frostBolt: { file: 'frostBolt', takes: 2, volume: 0.35, rate: [1.25, 1.4] },
-  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.75, 0.8] },
+  frostBolt: { file: 'frostBolt', takes: 1, volume: 0.35, rate: [1.32, 1.32] },
+  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.78, 0.78] },
   conductiveSpanner: { synth: 'conductiveSpanner', volume: 0.35 },
   capacitorStrike: { synth: 'capacitorStrike', volume: 0.4 },
   pressureDash: { synth: 'pressureDash', volume: 1.1 },
@@ -41,29 +41,29 @@ export const SFX = {
   frostCrosscut: { synth: 'frostCrosscut', volume: 0.6 },
   stormFloat: { synth: 'stormFloat', volume: 1.0 },
   // The ice in ice fusions
-  iceCrack: { file: 'iceCrack', takes: 1, volume: 0.35, rate: [1.15, 1.25] },
+  iceCrack: { file: 'iceCrack', takes: 1, volume: 0.35, rate: [1.2, 1.2] },
   // Ordinary enemies' attacks, by enemy type
-  guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.85, 0.95] },
-  nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.7, 0.75] },
-  elite: { file: 'elite', takes: 3, volume: 0.35, rate: [0.9, 1] },
-  rabbit: { file: 'rabbit', takes: 1, volume: 0.25, rate: [1, 1.15] },
-  trumpet: { file: 'trumpet', takes: 5, volume: 0.16, rate: [0.75, 0.85] },
-  musicbox: { file: 'musicbox', takes: 2, volume: 0.22, rate: [0.8, 1.6] },
-  spintop: { file: 'spintop', takes: 1, volume: 0.16, rate: [1.2, 1.3], length: 1.4 },
-  drummer: { file: 'drummer', takes: 5, volume: 0.45, rate: [0.75, 0.85] },
-  pikeman: { file: 'swing', takes: 1, volume: 0.18, rate: [1.4, 1.5] },
+  guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.9, 0.9] },
+  nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.72, 0.72] },
+  elite: { file: 'elite', takes: 1, volume: 0.35, rate: [0.95, 0.95] },
+  rabbit: { file: 'rabbit', takes: 1, volume: 0.25, rate: [1.07, 1.07] },
+  trumpet: { file: 'trumpet', takes: 1, volume: 0.16, rate: [0.8, 0.8] },
+  musicbox: { file: 'musicbox', takes: 1, volume: 0.22, rate: [1.2, 1.2] },
+  spintop: { file: 'spintop', takes: 1, volume: 0.16, rate: [1.25, 1.25], length: 1.4 },
+  drummer: { file: 'drummer', takes: 1, volume: 0.45, rate: [0.8, 0.8] },
+  pikeman: { file: 'swing', takes: 1, volume: 0.18, rate: [1.45, 1.45] },
   // Progress and rewards
   portal: { file: 'portal', takes: 1, volume: 0.22, rate: [1, 1], length: 0.8 },
-  cards: { file: 'cards', takes: 2, volume: 0.35, rate: [1, 1.05] },
-  pick: { file: 'pick', takes: 4, volume: 0.4, rate: [1, 1.05] },
-  loot: { file: 'loot', takes: 6, volume: 0.35, rate: [1, 1.1] },
+  cards: { file: 'cards', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
+  pick: { file: 'pick', takes: 1, volume: 0.4, rate: [1.02, 1.02] },
+  loot: { file: 'loot', takes: 1, volume: 0.35, rate: [1.05, 1.05] },
   fail: { synth: 'sadHorn', volume: 0.25 },
   // Interface
-  click: { file: 'click', takes: 5, volume: 0.2, rate: [1, 1.05] },
-  buy: { file: 'buy', takes: 3, volume: 0.35, rate: [1, 1.05] },
-  deny: { file: 'deny', takes: 3, volume: 0.2, rate: [1, 1] },
+  click: { file: 'click', takes: 1, volume: 0.2, rate: [1.02, 1.02] },
+  buy: { file: 'buy', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
+  deny: { file: 'deny', takes: 1, volume: 0.2, rate: [1, 1] },
   tune: { file: 'tune', takes: 1, volume: 0.22, rate: [1, 1] },
-  equip: { file: 'equip', takes: 2, volume: 0.3, rate: [1, 1.05] }
+  equip: { file: 'equip', takes: 1, volume: 0.3, rate: [1.02, 1.02] }
 };
 
 export class SoundBank {

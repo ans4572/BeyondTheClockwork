@@ -5,31 +5,31 @@
 | 게임 이름 | 원본 묶음 | 원본 파일 |
 |---|---|---|
 | swing | RPG Audio | knifeSlice2 (빗나간 렌치만) |
-| hit | Impact Sounds | impactPunch_medium_000~004 |
-| heavy | Impact Sounds | impactPunch_heavy_000~004 |
-| hurt | Impact Sounds | impactPunch_medium_000~004 |
-| kill | Impact Sounds | impactPlank_medium_000~004 |
-| block | Impact Sounds | impactMetal_medium_000~004 |
-| burst | Sci-fi Sounds | explosionCrunch_000~004 |
-| summon | Sci-fi Sounds | forceField_000~004 |
-| pop | Digital Audio | pepSound1~5 |
-| tell | Interface Sounds | glass_001~006 |
+| hit | Impact Sounds | impactPunch_medium_000 |
+| heavy | Impact Sounds | impactPunch_heavy_000 |
+| hurt | Impact Sounds | impactPunch_medium_000 |
+| kill | Impact Sounds | impactPlank_medium_000 |
+| block | Impact Sounds | impactMetal_medium_000 |
+| burst | Sci-fi Sounds | explosionCrunch_000 |
+| summon | Sci-fi Sounds | forceField_000 |
+| pop | Digital Audio | pepSound1 |
+| tell | Interface Sounds | glass_001 |
 | clear | Digital Audio | threeTone1 |
 | down | Digital Audio | lowDown |
 | charged | Digital Audio | powerUp7 |
 | mend | Digital Audio | highUp |
-| frostBolt, coolingField, iceCrack | Impact Sounds | impactGlass_medium_000~001, impactGlass_heavy_000, _004 |
+| frostBolt, coolingField, iceCrack | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000, _004 |
 | rabbit | Digital Audio | phaseJump2 |
-| elite | Impact Sounds | impactPlate_heavy_000~002 |
-| trumpet | Sci-fi Sounds | laserRetro_000~004 |
-| musicbox | Interface Sounds | pluck_001~002 |
+| elite | Impact Sounds | impactPlate_heavy_000 |
+| trumpet | Sci-fi Sounds | laserRetro_000 |
+| musicbox | Interface Sounds | pluck_001 |
 | spintop | Sci-fi Sounds | engineCircular_000 |
-| drummer | Impact Sounds | impactSoft_heavy_000~004 |
+| drummer | Impact Sounds | impactSoft_heavy_000 |
 | portal | Digital Audio | zapThreeToneUp |
-| cards, pick, loot, buy | Casino Audio | card-fan-1~2, card-place-1~4, chips-stack-1~6, chips-handle-1~3 |
+| cards, pick, loot, buy | Casino Audio | card-fan-1, card-place-1, chips-stack-1, chips-handle-1 |
 | tune | Digital Audio | powerUp4 |
-| click, equip | UI Audio | click1~5, switch1~2 |
-| deny | Interface Sounds | error_001~003 |
+| click, equip | UI Audio | click1, switch1 |
+| deny | Interface Sounds | error_001 |
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 
 불·전기·바람 기술과 융합, 얼음 기술의 냉기, 원정 실패의 처지는 나팔 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.
