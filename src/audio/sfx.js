@@ -32,7 +32,6 @@ export const SFX = {
   capacitorStrike: { synth: 'capacitorStrike', volume: 0.4 },
   pressureDash: { synth: 'pressureDash', volume: 1.1 },
   vortexIntake: { synth: 'vortexIntake', volume: 1.4 },
-  frostHiss: { synth: 'frostHiss', volume: 0.35 },
   // Fusions, by fusion id
   steamShatter: { synth: 'steamShatter', volume: 0.35 },
   arcFurnace: { synth: 'arcFurnace', volume: 0.35 },
@@ -40,8 +39,6 @@ export const SFX = {
   magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.35 },
   frostCrosscut: { synth: 'frostCrosscut', volume: 0.6 },
   stormFloat: { synth: 'stormFloat', volume: 1.0 },
-  // The ice in ice fusions
-  iceCrack: { file: 'iceCrack', takes: 1, volume: 0.35, rate: [1.2, 1.2] },
   // Ordinary enemies' attacks, by enemy type
   guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.9, 0.9] },
   nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.72, 0.72] },
@@ -58,6 +55,9 @@ export const SFX = {
   pick: { file: 'pick', takes: 1, volume: 0.4, rate: [1.02, 1.02] },
   loot: { file: 'loot', takes: 1, volume: 0.35, rate: [1.05, 1.05] },
   fail: { synth: 'sadHorn', volume: 0.25 },
+  // The town's inspection bell, and a boss's alarm
+  bell: { synth: 'bell', volume: 1 },
+  alarm: { synth: 'alarm', volume: 1 },
   // Interface
   click: { file: 'click', takes: 1, volume: 0.2, rate: [1.02, 1.02] },
   buy: { file: 'buy', takes: 1, volume: 0.35, rate: [1.02, 1.02] },

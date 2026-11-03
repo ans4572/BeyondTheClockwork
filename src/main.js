@@ -304,14 +304,8 @@ try {
     HIT_SOUNDS[top.crit && top.kind === 'hit' ? 'heavy' : top.kind]?.(top);
   }
   /** Two slow strokes of the town bell. */
-  function toll() {
-    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
-    for (const stroke of [0, 0.9]) for (const [frequency, volume] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) {
-      const osc = audio.createOscillator(), gain = audio.createGain(), at = audio.currentTime + stroke;
-      osc.frequency.value = frequency; gain.gain.setValueAtTime(volume, at); gain.gain.exponentialRampToValueAtTime(0.001, at + 1.6);
-      osc.connect(gain).connect(audio.destination); osc.start(at); osc.stop(at + 1.6);
-    }
-  }
+  function toll() { sfx('bell'); }
+
   function saveDownload(content = encodeSave(game.s), suffix = 'save') {
     const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
     const link = document.createElement('a'); link.href = url; link.download = `beyond-the-clockwork-${suffix}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -746,7 +740,7 @@ try {
     const charging = game.s.enemies.find(e => !e.boss && e.hp > 0 && e.tell && e.tell.started > lastChargeAt);
     if (charging) { lastChargeAt = Math.max(...game.s.enemies.filter(e => !e.boss && e.tell).map(e => e.tell.started)); sfx('tell', () => beep(880, 0.1, 0.015)); }
     const bossTell = game.s.enemies.find(e => ['bell', 'alarm'].includes(e.tell?.type) && e.tell.started > lastBossTellAt);
-    if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else beep(660, 0.25, 0.04); }
+    if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else sfx('alarm'); }
     // The swing itself is only air; what it hits is voiced by feelHits.
     const swing = game.s.effects.findLast(f => f.type === 'swing');
     // A swing is heard once: as the blow if it lands, as a soft whoosh only if it hits nothing.

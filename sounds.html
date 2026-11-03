@@ -3,57 +3,120 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>태엽 밖으로 · 효과음 듣기</title>
+<title>태엽 밖으로 · 효과음 목록</title>
 <style>
-  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --gold: #ffd257; --label: #5d6476; }
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; }
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; }
+  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --gold: #ffd257; --label: #5d6476; --red: #a92f2b; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 "Malgun Gothic", system-ui, sans-serif; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 "Galmuri11", "Malgun Gothic", system-ui, sans-serif; }
   header { position: sticky; top: 0; z-index: 1; padding: 12px 16px; background: var(--ink); color: var(--paper); }
-  h1 { margin: 0; font-size: 18px; }
-  header p { margin: 2px 0 0; font-size: 12px; opacity: .8; }
-  main { max-width: 720px; margin: 0 auto; padding: 8px 12px 40px; }
-  h2 { margin: 20px 4px 8px; font-size: 15px; border-bottom: 3px solid var(--ink); padding-bottom: 4px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-  button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 56px; padding: 10px 12px; border: 0; background: var(--low); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
-  button b { font-size: 14px; }
-  button small { font-size: 11px; color: var(--label); }
+  h1 { margin: 0; font-size: 18px; font-weight: 700; }
+  header p { margin: 2px 0 0; font-size: 12px; opacity: .85; }
+  main { max-width: 760px; margin: 0 auto; padding: 8px 12px 48px; }
+  h2 { margin: 22px 4px 8px; font-size: 15px; font-weight: 700; border-bottom: 3px solid var(--ink); padding-bottom: 4px; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  li button { display: grid; grid-template-columns: 52px 1fr auto; gap: 2px 12px; align-items: center; width: 100%; min-height: 56px; padding: 8px 12px; border: 0; background: var(--low); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+  li button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .no { grid-row: span 2; font-size: 18px; font-weight: 700; color: var(--red); }
+  .name { font-weight: 700; }
+  .kind { grid-row: span 2; font-size: 11px; padding: 1px 6px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--label); color: var(--label); white-space: nowrap; }
+  .when { font-size: 12px; color: var(--label); }
   button.playing { background: var(--gold); }
-  #status { font-size: 12px; }
 </style>
 </head>
 <body>
-<header><h1>효과음 듣기</h1><p id="status">버튼을 누르면 게임과 같은 음량·높낮이로 재생됩니다.</p></header>
+<header><h1>효과음 목록 · 지금 게임에 들어 있는 소리</h1><p id="status">누르면 게임과 같은 음량·높낮이로 한 번 재생됩니다. 바꾸고 싶은 소리는 번호로 알려 주세요 (예: A3, D5).</p></header>
 <main id="list"></main>
 <script type="module">
 // GitHub Pages lets phones keep scripts for ten minutes; a fresh query on every visit always loads the latest sounds.
 const { SFX, SoundBank } = await import(`./src/audio/sfx.js?t=${Date.now()}`);
 
-// Groups and plain names for every effect the game plays.
+// Every sound the game plays, in groups; each gets a number like A1 so it can be named in a request.
 const GROUPS = [
-  ['플레이어', { swing: '렌치 휘두르기 1·2타', swingHeavy: '렌치 3타', hit: '적중', heavy: '강타', crit: '치명타', hurt: '피격', dodge: '회피', down: '쓰러짐', charged: '축전 가득', mend: '체력 회복' }],
-  ['속성 기술', { heatSwing: '불 · 과열 휘두르기', exhaustBurst: '불 · 배기 폭발', frostBolt: '얼음 · 서리 볼트', coolingField: '얼음 · 냉각 지대', conductiveSpanner: '전기 · 도전 스패너', capacitorStrike: '전기 · 축전 낙뢰', pressureDash: '바람 · 압축 돌진', vortexIntake: '바람 · 회오리 흡입', frostHiss: '얼음 기술의 냉기' }],
-  ['융합', { iceCrack: '얼음 융합의 얼음 깨짐', steamShatter: '불+얼음', arcFurnace: '불+전기', fireCyclone: '불+바람', magneticIceClamp: '얼음+전기', frostCrosscut: '얼음+바람', stormFloat: '전기+바람' }],
-  ['일반 몹', { tell: '공격 예고', summon: '웨이브 소환', kill: '처치', guard: '경비 휘두르기', nutcracker: '호두까기 휘두르기', block: '호두까기 방패 막힘', burst: '태엽 쥐 자폭', rabbit: '토끼 돌진', trumpet: '나팔 발사', elite: '정예 충격파', musicbox: '오르골 탄막', pop: '깜짝 상자', spintop: '팽이 회전', drummer: '북치기 북', pikeman: '창병 찌르기' }],
-  ['진행 · 보상', { clear: '구간 클리어', portal: '포탈 이동', cards: '보상 카드 등장', pick: '카드 선택', loot: '동전·톱니 획득', fail: '원정 실패' }],
-  ['UI', { click: '버튼', buy: '구매 성공', deny: '구매 실패', tune: '조율 단계 올리기', equip: '속성 장착' }]
+  ['A', '플레이어', [
+    ['swing', '렌치 헛스윙 (1·2타)', '렌치가 아무것도 맞히지 못했을 때'],
+    ['swingHeavy', '렌치 헛스윙 (3타)', '3타째가 빗나갔을 때'],
+    ['hit', '렌치 적중', '1·2타가 적에게 맞았을 때'],
+    ['heavy', '렌치 강타', '3타 적중, 치명타, 보스 페이즈 전환'],
+    ['dodge', '회피 (대시)', '회피를 쓸 때'],
+    ['hurt', '피격', '내가 맞았을 때'],
+    ['down', '쓰러짐', '체력이 0이 되었을 때'],
+    ['charged', '축전 가득', '융합을 쓸 수 있게 되었을 때'],
+    ['mend', '체력 회복', '처치 회복 등으로 체력이 찰 때']
+  ]],
+  ['B', '속성 기술', [
+    ['heatSwing', '불 · 과열 휘두르기'], ['exhaustBurst', '불 · 배기 폭발'],
+    ['frostBolt', '얼음 · 서리 볼트'], ['coolingField', '얼음 · 냉각 지대'],
+    ['conductiveSpanner', '전기 · 도전 스패너'], ['capacitorStrike', '전기 · 축전 낙뢰'],
+    ['pressureDash', '바람 · 압축 돌진'], ['vortexIntake', '바람 · 회오리 흡입']
+  ].map(([id, name]) => [id, name, '이 기술을 쓸 때'])],
+  ['C', '융합', [
+    ['steamShatter', '불+얼음 · 증기 파쇄'], ['arcFurnace', '불+전기 · 아크 용광로'], ['fireCyclone', '불+바람 · 화염 회오리'],
+    ['magneticIceClamp', '얼음+전기 · 자기 얼음 집게'], ['frostCrosscut', '얼음+바람 · 서리 교차 베기'], ['stormFloat', '전기+바람 · 폭풍 부유체']
+  ].map(([id, name]) => [id, name, '이 융합을 쓸 때'])],
+  ['D', '적', [
+    ['tell', '공격 예고', '일반 몹이 공격 준비를 시작할 때 (모든 몹 공통)'],
+    ['guard', '경비 · 휘두르기', '목각 경비가 공격할 때'],
+    ['nutcracker', '호두까기 · 휘두르기', '방패 호두까기가 공격할 때'],
+    ['block', '방패 막힘', '호두까기 방패에 막혔을 때'],
+    ['elite', '정예 경비 · 충격파', '정예 목각 경비가 공격할 때'],
+    ['burst', '태엽 쥐 · 자폭', '태엽 쥐가 터질 때'],
+    ['rabbit', '스프링 토끼 · 돌진', '토끼가 돌진할 때'],
+    ['trumpet', '나팔 사수 · 발사', '나팔 사수가 쏠 때'],
+    ['musicbox', '오르골 포탑 · 발사', '오르골이 탄을 뿌릴 때'],
+    ['spintop', '팽이 병정 · 회전', '팽이가 돌 때'],
+    ['drummer', '북치기 · 북소리', '북치기 인형이 칠 때'],
+    ['pikeman', '창병 · 찌르기', '태엽 창병이 찌를 때'],
+    ['pop', '깜짝 상자 · 튀어나옴', '깜짝 상자가 튀어나올 때'],
+    ['summon', '웨이브 등장', '다음 무리가 나타날 때'],
+    ['kill', '처치', '적을 쓰러뜨렸을 때']
+  ]],
+  ['E', '보스 · 마을', [
+    ['alarm', '경보', '로코의 경보 패턴'],
+    ['bell', '종소리', '마을 표정 검사 종, 브라스의 정지의 종']
+  ]],
+  ['F', '진행 · 보상', [
+    ['clear', '구간 클리어', '방의 적을 모두 쓰러뜨렸을 때'],
+    ['loot', '보상 획득', '자유 톱니·동전을 받을 때'],
+    ['cards', '보상 카드 등장', '보상 선택지가 나올 때'],
+    ['pick', '보상 선택', '카드를 골랐을 때'],
+    ['portal', '포탈 이동', '노란 표시로 다음 구간에 들어갈 때'],
+    ['fail', '원정 실패', '파훼 패턴 실패, 원정 실패']
+  ]],
+  ['G', '메뉴', [
+    ['click', '버튼 누름', '메뉴 버튼을 누를 때'],
+    ['buy', '구매', '상점·조율판에서 살 때'],
+    ['deny', '불가', '살 수 없을 때'],
+    ['tune', '조율', '스탯을 올릴 때'],
+    ['equip', '장착', '속성 부품을 장착할 때']
+  ]]
 ];
-const listed = new Set(GROUPS.flatMap(([, items]) => Object.keys(items)));
-const rest = Object.keys(SFX).filter(name => !listed.has(name));
-if (rest.length) GROUPS.push(['기타', Object.fromEntries(rest.map(name => [name, name]))]);
+// Skill and fusion names come from the game data, so the list never drifts from what the game calls them.
+const combat = await (await fetch(`./src/data/combat.json?t=${Date.now()}`)).json(), ELEMENT = Object.fromEntries(combat.elements.map(e => [e.id, e.name]));
+for (const [, , items] of GROUPS) for (const item of items) {
+  const skill = combat.skills.find(s => s.id === item[0]), fusion = combat.fusions.find(f => f.id === item[0]);
+  if (skill) item[1] = `${ELEMENT[skill.element]} · ${skill.name}`;
+  if (fusion) item[1] = `${fusion.pair.map(id => ELEMENT[id]).join('+')} · ${fusion.name}`;
+}
+const KIND = id => SFX[id]?.synth ? '코드로 만든 소리' : '녹음';
 
-document.getElementById('list').innerHTML = GROUPS.map(([title, items]) => `<h2>${title}</h2><div class="grid">${Object.entries(items).map(([name, label]) => `<button data-name="${name}"><b>${label}</b><small>${name} · ${SFX[name].synth ? '합성음' : SFX[name].takes + '종'}</small></button>`).join('')}</div>`).join('');
+const listed = new Set(GROUPS.flatMap(([, , items]) => items.map(([id]) => id)));
+const missing = Object.keys(SFX).filter(id => !listed.has(id));
+if (missing.length) console.warn('목록에 없는 효과음:', missing);
 
-let audio = null;
-const bank = new SoundBank(), status = document.getElementById('status');
+document.getElementById('list').innerHTML = GROUPS.map(([letter, title, items]) => `<h2>${letter} · ${title}</h2><ol>${items.map(([id, name, when], i) =>
+  `<li><button data-id="${id}"><span class="no">${letter}${i + 1}</span><span class="name">${name}</span><span class="kind">${KIND(id)}</span><span class="when">${when}</span></button></li>`).join('')}</ol>`).join('');
+
+let audio = null; const bank = new SoundBank();
 document.getElementById('list').addEventListener('click', async e => {
-  const button = e.target.closest('button[data-name]');
-  if (!button) return;
-  // Phones only allow sound after a tap, so the audio context opens on the first one.
-  audio ??= new (window.AudioContext || window.webkitAudioContext)();
-  await audio.resume();
-  if (!bank.buffers.size) { status.textContent = '소리를 불러오는 중…'; await bank.load(audio); status.textContent = `${bank.buffers.size}개 불러옴 · 같은 버튼을 여러 번 누르면 다른 버전이 나옵니다.`; }
-  if (!bank.play(audio, button.dataset.name)) { status.textContent = '이 소리는 이 브라우저에서 재생하지 못했습니다.'; return; }
-  button.classList.add('playing'); setTimeout(() => button.classList.remove('playing'), 250);
+  const button = e.target.closest('button[data-id]'); if (!button) return;
+  audio ??= new AudioContext(); await audio.resume();
+  document.getElementById('status').textContent = '소리를 불러오는 중…';
+  await bank.load(audio);
+  document.getElementById('status').textContent = '누르면 게임과 같은 음량·높낮이로 한 번 재생됩니다. 바꾸고 싶은 소리는 번호로 알려 주세요 (예: A3, D5).';
+  bank.play(audio, button.dataset.id);
+  button.classList.add('playing'); setTimeout(() => button.classList.remove('playing'), 400);
 });
 </script>
 </body>

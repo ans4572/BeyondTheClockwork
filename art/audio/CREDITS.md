@@ -18,7 +18,7 @@
 | down | Digital Audio | lowDown |
 | charged | Digital Audio | powerUp7 |
 | mend | Digital Audio | highUp |
-| frostBolt, coolingField, iceCrack | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000, _004 |
+| frostBolt, coolingField | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000 |
 | rabbit | Digital Audio | phaseJump2 |
 | elite | Impact Sounds | impactPlate_heavy_000 |
 | trumpet | Sci-fi Sounds | laserRetro_000 |
