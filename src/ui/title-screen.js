@@ -4,9 +4,13 @@ const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, OPENING_SCALE = 
 const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
 const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
 
-/** Malgun Gothic cut down to hard pixels, so lettering sits in the same world as the sprites. */
+// Galmuri11 Bold (OFL 1.1) is drawn on a 12px grid, so it is always rendered at 12px and enlarged by a whole number.
+export const PIXEL_FONT = '"Galmuri11 Bold"', PIXEL_EM = 12;
+/** Pixel lettering: the bitmap font at its own size, kept to hard pixels, enlarged to roughly size × scale. */
 export function pixelText(text, size, fill, scale = 2) {
-  const probe = document.createElement('canvas').getContext('2d'), font = `900 ${size}px "Malgun Gothic", sans-serif`;
+  const zoom = Math.max(1, Math.round(size * scale / 13));
+  size = PIXEL_EM; scale = zoom;
+  const probe = document.createElement('canvas').getContext('2d'), font = `${PIXEL_EM}px ${PIXEL_FONT}, "Malgun Gothic", sans-serif`;
   probe.font = font;
   const pad = 3, w = Math.ceil(probe.measureText(text).width) + pad * 2, h = Math.ceil(size * 1.3) + pad * 2, raw = document.createElement('canvas');
   raw.width = w; raw.height = h;

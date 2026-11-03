@@ -6,7 +6,7 @@ import { statCost } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
 import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
-import { TitleScreen, pixelText } from './ui/title-screen.js';
+import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
 import { worldMapSvg } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
@@ -34,6 +34,8 @@ const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
 
 try {
+  // The pixel lettering font must be ready before the first heading or the title is drawn from it.
+  await document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽').catch(() => {});
   const data = await loadData();
   let saved = null, loadError = '', rawSave = '';
   try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }

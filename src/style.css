@@ -1,3 +1,5 @@
+/* Galmuri11 Bold by Lee Minseo, SIL OFL 1.1 (art/fonts/Galmuri-OFL.md): the pixel lettering on the title and panel headings. */
+@font-face { font-family: 'Galmuri11 Bold'; src: url('../art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-display: block; }
 /* Every panel is a sheet from the same office as the disposal form on the title screen. */
 :root {
   font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
