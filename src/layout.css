@@ -121,6 +121,8 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .viewport { position: relative; width: min(100vw, calc(100svh * 1.75)); aspect-ratio: 1.75; isolation: isolate; overflow: hidden; }
 #toast { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); max-width: 56%; padding: 6px 14px; background: var(--paper); color: var(--ink); font-size: 13px; font-weight: 700; text-align: center; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 6; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 #toast.visible { opacity: 1; }
+/* With a boss bar across the top, notices drop just below it. */
+#toast.below-boss { top: calc(var(--hud-scale, 1) * 62px); }
 
 /* Paper tags from the disposal form, laid out on a fixed 1120x640 sheet that scales with the window. */
 #hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Malgun Gothic", sans-serif; color: #2b3345; }
@@ -136,6 +138,13 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px #2b3345, 4px 4px 0 3px #0e121a55; }
 .hud-minimap:not([hidden]) ~ .hud-wallet { top: 136px; }
 .hud-minimap:not([hidden]) ~ .hud-tools { top: 180px; }
+/* The boss bar: name above, health below, a black line where each new phase begins. */
+.hud-boss { position: absolute; left: 50%; top: 14px; width: 440px; transform: translateX(-50%); text-align: center; }
+.hud-boss[hidden] { display: none; }
+.hud-boss b { display: block; margin-bottom: 3px; font-size: 14px; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345, 2px 2px 0 #2b3345; }
+.boss-track { position: relative; height: 16px; background: #d8ccb0; box-shadow: inset 0 0 0 3px #2b3345, 3px 3px 0 #0e121a55; }
+.boss-track i { position: absolute; left: 3px; top: 3px; bottom: 3px; background: #a92f2b; transition: width .15s; }
+.boss-track span i { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1px; background: #2b3345; left: 0; transition: none; }
 .hud-wallet { position: absolute; right: 14px; top: 12px; display: flex; gap: 16px; padding: 8px 14px; }
 .hud-tools { position: absolute; right: 14px; top: 56px; display: flex; gap: 6px; }
 .hud-tools button { padding: 3px 10px; font-size: 12px; }

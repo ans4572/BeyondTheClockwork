@@ -456,8 +456,8 @@ export class CanvasRenderer {
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
       if (!actor.player && actor.hp > 0) {
         const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
-        this.rect(actor.x * 20 - width / 2, yy, width, 3, '#869282'); this.rect(actor.x * 20 - width / 2, yy, width * Math.max(0, actor.hp / actor.maxHp), 3, actor.boss ? '#bf787b' : '#b38578');
-        if (actor.boss) { this.text(actor.name, actor.x * 20, yy - 5, '#52645c', 8); const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
+        if (!actor.boss) { this.rect(actor.x * 20 - width / 2, yy, width, 3, '#869282'); this.rect(actor.x * 20 - width / 2, yy, width * Math.max(0, actor.hp / actor.maxHp), 3, '#b38578'); }
+        if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
         this.drawStatuses(actor, actor.boss ? yy + 11 : yy - 13);
       }

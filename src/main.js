@@ -63,7 +63,7 @@ try {
   const fitHud = () => {
     fitCanvas();
     const scale = $('game').getBoundingClientRect().width / 1120;
-    $('hud').style.transform = `scale(${scale})`;
+    $('hud').style.transform = `scale(${scale})`; document.documentElement.style.setProperty('--hud-scale', scale);
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels would be unreadable at a phone's scale, and scroll instead of shrinking.
     $('overlay').style.zoom = isTouch ? Math.max(scale, TOUCH_PANEL_ZOOM) : scale;
@@ -396,6 +396,11 @@ try {
       { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'dodge', dodge: true }
     ];
   }
+  /** Health fractions where a boss changes phase: where its later patterns unlock, and where Brass adds a march lane. */
+  function bossPhaseMarks(ai) {
+    const marks = (ai.phasePatterns || []).map(p => p.below).concat(ai.phaseTwoHpFraction ?? []);
+    return [...new Set(marks.filter(at => at > 0 && at < 1))].sort((a, b) => b - a);
+  }
   function updateHUD() {
     const s = game.s, p = game.p, maxEnergy = data.combat.player.maxEnergy, slots = hudSlots();
     $('hp-fill').style.width = `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`;
@@ -403,6 +408,17 @@ try {
     $('energy-fill').style.width = `calc(${p.energy / maxEnergy * 100}% - 4px)`;
     $('energy-text').textContent = `축전 ${Math.floor(p.energy)}`;
     $('gears').textContent = s.profile.freeGears;
+    // The boss bar: shown while a boss is in the room, marked where each of its phases begins.
+    const boss = s.enemies.find(e => e.boss && e.hp > 0);
+    $('boss-bar').hidden = !boss; $('toast').classList.toggle('below-boss', !!boss);
+    if (boss) {
+      if ($('boss-bar').dataset.id !== boss.type) {
+        $('boss-bar').dataset.id = boss.type;
+        $('boss-name').textContent = data.combat.bosses.find(b => b.id === boss.type)?.name || boss.name;
+        $('boss-marks').innerHTML = bossPhaseMarks(data.slice.bossAI[boss.type]).map(at => `<i style="left:calc(3px + (100% - 6px) * ${at})"></i>`).join('');
+      }
+      $('boss-fill').style.width = `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`;
+    }
     $('coins').textContent = s.run?.coins || 0;
     const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon]));
     if ($('skills').dataset.key !== slotKey) {

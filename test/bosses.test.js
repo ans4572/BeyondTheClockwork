@@ -72,10 +72,13 @@ const roundOf = (g, boss, turns = 12) => Array.from({ length: turns }, () => g.n
 
 test('bosses unlock patterns as they are hurt', () => {
   const [g, roco] = bossAt(4); assert.deepEqual([...new Set(roundOf(g, roco))].sort(), ['claw', 'magnet', 'overcharge', 'stickers', 'suction']);
-  roco.hp = roco.maxHp * 0.5; assert.ok(new Set(roundOf(g, roco)).has('alarm')); assert.ok(!new Set(roundOf(g, roco)).has('crane'));
-  roco.hp = roco.maxHp * 0.2; assert.ok(new Set(roundOf(g, roco)).has('crane'));
+  // Roco has two phases: alarm and crane both join at half health.
+  roco.hp = roco.maxHp * 0.55; assert.ok(!new Set(roundOf(g, roco)).has('alarm'));
+  roco.hp = roco.maxHp * 0.5; assert.ok(new Set(roundOf(g, roco)).has('alarm')); assert.ok(new Set(roundOf(g, roco)).has('crane'));
   const [h, brass] = bossAt(11); assert.ok(new Set(roundOf(h, brass)).has('bell')); assert.ok(!new Set(roundOf(h, brass)).has('column'));
-  brass.hp = brass.maxHp * 0.4; const late = new Set(roundOf(h, brass)); assert.ok(late.has('column') && late.has('carpet'));
+  // Brass has three: the column joins below 66%, the safe carpet below 33%.
+  brass.hp = brass.maxHp * 0.5; const middle = new Set(roundOf(h, brass)); assert.ok(middle.has('column') && !middle.has('carpet'));
+  brass.hp = brass.maxHp * 0.3; const late = new Set(roundOf(h, brass)); assert.ok(late.has('column') && late.has('carpet'));
 });
 
 test('hitting Roco during the alarm costs the player, and waiting does not', () => {

@@ -334,11 +334,11 @@
       "phasePatterns": [
         {
           "pattern": "alarm",
-          "below": 0.6
+          "below": 0.5
         },
         {
           "pattern": "crane",
-          "below": 0.3
+          "below": 0.5
         }
       ],
       "tellSeconds": {
@@ -384,7 +384,7 @@
         19
       ],
       "phaseTwoLane": 25,
-      "phaseTwoHpFraction": 0.5,
+      "phaseTwoHpFraction": 0.66,
       "waveSpeed": 5.5,
       "waveCount": 9,
       "waveGapDegrees": 65,
@@ -395,11 +395,11 @@
         },
         {
           "pattern": "column",
-          "below": 0.5
+          "below": 0.66
         },
         {
           "pattern": "carpet",
-          "below": 0.5
+          "below": 0.33
         }
       ],
       "tellSeconds": {
