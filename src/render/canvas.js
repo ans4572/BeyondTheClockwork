@@ -28,34 +28,34 @@ export class CanvasRenderer {
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
    * The wrench's slash: a crescent that sweeps across in the swing's direction, thick at its leading edge and thinning
-   * to a tail, with a bright edge, a few speed lines and a glint at the tip. The third blow is wider and gold, and
-   * sends a short shock arc out in front.
+   * to a tail, with a bright edge, a few speed lines and a glint at the tip. The third blow is a little wider and
+   * sends a short shock arc out in front; all three share the wrench's teal.
    */
   drawSwing(fx, x, y, fraction) {
     const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20 * 0.92, span = heavy ? 1.15 : 1;
     const dir = phase === 1 ? -1 : 1, grow = Math.min(1, fraction / SWING_SWEEP), fade = fraction < SWING_SWEEP ? 1 : 1 - (fraction - SWING_SWEEP) / (1 - SWING_SWEEP);
-    const start = fx.angle - dir * span, sweep = dir * 2 * span * grow, steps = 14, thick = R * (heavy ? 0.36 : 0.28);
+    const start = fx.angle - dir * span, sweep = dir * 2 * span * grow, steps = 14, thick = R * (heavy ? 0.2 : 0.16);
     const at = (angle, r) => [x + Math.cos(angle) * r, y + Math.sin(angle) * r];
     c.save(); c.globalAlpha = fade;
     // Body: outer edge from tail to head, inner edge back, thickest at the head.
     c.beginPath();
     for (let i = 0; i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R)); }
     for (let i = steps; i >= 0; i--) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - thick * (0.25 + 0.75 * Math.pow(t, 0.8)))); }
-    c.closePath(); c.fillStyle = heavy ? '#ffc94a' : '#7fe0d4'; c.globalAlpha = fade * 0.85; c.fill();
+    c.closePath(); c.fillStyle = '#7fe0d4'; c.globalAlpha = fade * 0.85; c.fill();
     // A thin ink outline keeps the slash readable on pale floors.
     c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.globalAlpha = fade * 0.45; c.stroke();
     // Bright leading band along the outer edge, over the newest half of the sweep.
-    c.globalAlpha = fade; c.strokeStyle = '#ffffff'; c.lineWidth = heavy ? 3.5 : 2.5; c.lineCap = 'round'; c.beginPath();
+    c.globalAlpha = fade; c.strokeStyle = '#ffffff'; c.lineWidth = heavy ? 2.5 : 2; c.lineCap = 'round'; c.beginPath();
     for (let i = Math.floor(steps / 2); i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - 1)); }
     c.stroke();
     // Speed lines trailing the head.
     const head = start + sweep;
-    c.strokeStyle = heavy ? '#e8a020' : '#3fb8a8'; c.lineWidth = 2;
+    c.strokeStyle = '#3fb8a8'; c.lineWidth = 1.5;
     for (const [r, back] of [[R * 0.62, 0.35], [R * 0.8, 0.5], [R * 1.1, 0.28]]) { c.beginPath(); c.moveTo(...at(head - dir * back, r)); c.lineTo(...at(head - dir * 0.08, r)); c.stroke(); }
     // A four-point glint at the tip while it is still moving.
     if (grow < 1 || fraction < SWING_SWEEP + 0.15) { const [gx, gy] = at(head, R - thick * 0.4), g = heavy ? 7 : 5; c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(gx, gy - g); c.lineTo(gx + 1.5, gy - 1.5); c.lineTo(gx + g, gy); c.lineTo(gx + 1.5, gy + 1.5); c.lineTo(gx, gy + g); c.lineTo(gx - 1.5, gy + 1.5); c.lineTo(gx - g, gy); c.lineTo(gx - 1.5, gy - 1.5); c.closePath(); c.fill(); }
     // The third blow's shock: a thin arc pushed out ahead once the slash lands.
-    if (heavy && fraction > SWING_SWEEP * 0.8) { const k = (fraction - SWING_SWEEP * 0.8) / (1 - SWING_SWEEP * 0.8); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, R * (1.05 + k * 0.35), fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
+    if (heavy && fraction > SWING_SWEEP * 0.8) { const k = (fraction - SWING_SWEEP * 0.8) / (1 - SWING_SWEEP * 0.8); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#7fe0d4'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, R * (1.05 + k * 0.35), fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
     c.restore();
   }
   /** A white flash over the whole frame, for a boss changing phase. */

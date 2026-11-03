@@ -394,7 +394,7 @@ export class Game {
     a.elapsed += dt * (1 + (this.stats.attackSpeed || 0) + haste);
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
-      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, a.phase === 2 ? '#f0c369' : '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
+      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
       this.breakSwing(a, range);
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
