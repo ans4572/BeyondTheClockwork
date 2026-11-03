@@ -184,14 +184,14 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
 #hud.talking > :not(#dialogue) { display: none; }
-#dialogue { position: absolute; inset: 0; pointer-events: auto; font: 700 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#dialogue { position: absolute; inset: 0; pointer-events: auto; font: 400 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #dialogue[hidden] { display: none; }
 .talk-box { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: #f6ecd2; box-shadow: 0 -4px 0 #2b3345, 0 -8px 0 #c79a3e; }
 .talk-who { position: absolute; z-index: 1; image-rendering: pixelated; transition: filter .12s, transform .12s; }
 .talk-who.other { left: 8px; bottom: -33px; }
 .talk-who.player { right: -44px; bottom: -69px; }
 .talk-who.quiet { filter: brightness(.55) saturate(.7); transform: translateY(14px); }
-.talk-name { position: absolute; left: 310px; top: -18px; padding: 2px 16px; background: #2b3345; color: #f6ecd2; font-size: 17px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.talk-name { position: absolute; left: 310px; top: -18px; padding: 2px 16px; background: #2b3345; color: #f6ecd2; font-size: 17px; font-weight: 700; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .player-talks .talk-name { left: auto; right: 310px; }
 .talk-unread { visibility: hidden; }
 .talk-text { position: absolute; left: 310px; right: 310px; top: 24px; color: #2b3345; word-break: keep-all; }
@@ -202,7 +202,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .talk-skip { position: absolute; left: 310px; bottom: 13px; color: #5d6476; font-size: 13px; font-weight: 400; }
 .alone .talk-skip { left: 120px; }
 .talk-choices { display: grid; gap: 2px; margin-top: 6px; }
-#hud .talk-choices button { padding: 0 8px 0 4px; border: 0; background: none; text-align: left; justify-self: start; }
+#hud .talk-choices button { font-weight: 700; padding: 0 8px 0 4px; border: 0; background: none; text-align: left; justify-self: start; }
 #hud .talk-choices button:focus { outline: none; color: #a92f2b; background: #ffd25766; }
 
 /* Touch: thumbs on a phone held sideways. These sit in screen pixels, outside the scaled sheet. */

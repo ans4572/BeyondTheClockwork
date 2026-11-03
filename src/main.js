@@ -38,7 +38,7 @@ const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arro
 
 try {
   // The pixel lettering font must be ready before the first heading or the title is drawn from it.
-  const [, data] = await Promise.all([Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽'), document.fonts.load('700 12px Galmuri11', '태엽')]).catch(() => {}), loadData()]);
+  const [, data] = await Promise.all([Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽'), document.fonts.load('700 12px Galmuri11', '태엽'), document.fonts.load('12px Galmuri11', '태엽')]).catch(() => {}), loadData()]);
   let saved = null, loadError = '', rawSave = '';
   try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }
   catch (error) { loadError = error.message; }
