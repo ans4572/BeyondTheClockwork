@@ -322,7 +322,7 @@ try {
     }).join('');
     const note = !ownedElements.length ? (history.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.' : '첫 원정은 렌치만으로 나갑니다. 돌아오면 모루가 첫 속성 부품을 무료로 달아 줍니다.')
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
-    return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><strong>장착 ${loadout.length} / 2</strong></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
   }
   function describeReward(reward) {
     if (reward.kind === 'element') {
@@ -472,12 +472,12 @@ try {
       $('boss-note').textContent = breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}`} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '';
     }
     $('coins').textContent = s.run?.coins || 0;
-    const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon]));
+    const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon, skill?.energyCost]));
     if ($('skills').dataset.key !== slotKey) {
       $('skills').dataset.key = slotKey;
       $('skills').innerHTML = slots.map(slot => {
         const art = slot.icon || slot.skill?.id;
-        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level ? `<span class="lv">${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div></div>`;
+        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
       }).join('');
     }
     [...$('skills').children].forEach((element, i) => {
@@ -495,7 +495,7 @@ try {
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : skill ? p.cooldowns[skill.id] || 0 : 0;
       const total = slot.dodge ? data.combat.player.dodge.cooldown : skill?.cooldown || 1, remaining = Math.max(0, until - s.time);
-      return { art: slot.icon || skill?.id, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost };
+      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
     if ($('hint').textContent !== hint) $('hint').textContent = hint;

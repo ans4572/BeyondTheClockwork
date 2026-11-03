@@ -98,6 +98,6 @@ test('renderer crops the current frame, and draws the doll without sprites', () 
   const draw = calls.find(call => call[0] === 'drawImage'), clip = library.clip('attack-1', 'south'), frame = frameAtProgress(clip, 0.5);
   assert.equal(draw[1].fake, true);
   assert.deepEqual(draw.slice(2, 6), [frame % clip.columns * 192, Math.floor(frame / clip.columns) * 192, 192, 192]);
-  assert.deepEqual(draw.slice(8).map(size => Math.round(size * 100) / 100), [84.48, 84.48]);
+  assert.deepEqual(draw.slice(8).map(size => Math.round(size * 100) / 100), [94.62, 94.62]);
   assert.equal((draw[6] * 2) % 1, 0);
 });

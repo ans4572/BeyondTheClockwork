@@ -12,7 +12,8 @@ const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
-const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
+// Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
+const BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
@@ -48,7 +49,7 @@ export class CanvasRenderer {
     if (!image) return false;
     const c = this.ctx, { frameWidth: w, frameHeight: h, columns, anchor, scale } = clip, sx = pose.frame % columns * w, sy = Math.floor(pose.frame / columns) * h;
     // One sheet pixel is one canvas pixel, half a unit of the renderer's 2x transform.
-    const size = scale * resize / 2, left = Math.round((x - anchor[0] * size) * 2) / 2, top = Math.round((y - anchor[1] * size) * 2) / 2;
+    const size = scale * resize * BODY_SCALE / 2, left = Math.round((x - anchor[0] * size) * 2) / 2, top = Math.round((y - anchor[1] * size) * 2) / 2;
     c.fillStyle = '#57684e30'; c.beginPath(); c.ellipse(x, y, 11, 4, 0, 0, TAU); c.fill();
     if (flash) c.filter = flash === true ? 'brightness(1.9)' : flash;
     c.imageSmoothingEnabled = resize !== 1;
@@ -169,7 +170,7 @@ export class CanvasRenderer {
     if (!this.drawSprite(x * 20, y * 20, pose, this.npcSprites)) return;
     this.coverBody(mask, x, y);
     if (!label) return;
-    this.labels.push({ label, x: x * 20, y: y * 20 - clip.bodyHeight * clip.scale / 2 - NAME_GAP });
+    this.labels.push({ label, x: x * 20, y: y * 20 - clip.bodyHeight * clip.scale * BODY_SCALE / 2 - NAME_GAP });
   }
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
   nameplate(label, x, bottom, fill = '#fff4d6') {
@@ -517,7 +518,7 @@ export class CanvasRenderer {
       c.globalAlpha = 1;
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
       if (!actor.player && actor.hp > 0) {
-        const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
+        const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) * BODY_SCALE / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
         if (!actor.boss) { this.rect(actor.x * 20 - width / 2, yy, width, 3, '#869282'); this.rect(actor.x * 20 - width / 2, yy, width * Math.max(0, actor.hp / actor.maxHp), 3, '#b38578'); }
         if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
@@ -526,7 +527,7 @@ export class CanvasRenderer {
     }
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.tell && !e.boss)) {
       const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction);
-      this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight / 2 + 21 : 54));
+      this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54));
     }
     this.drawColumn(); this.drawBossState();
     for (const bullet of s.projectiles) { this.circle(bullet.x * 20, bullet.y * 20, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bullet.x * 20, bullet.y * 20, 2, '#f7e6b0'); }
@@ -567,7 +568,7 @@ export class CanvasRenderer {
       const npc = g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
       // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
-      if (clip && !this.talking) this.nameplate(`${this.talkKey} 말 걸기`, npc.x * 20, npc.y * 20 - clip.bodyHeight * clip.scale / 2 - NAME_GAP - (npc.label ? NAME_SIZE + 3 : 0), ACTION_GOLD);
+      if (clip && !this.talking) this.nameplate(`${this.talkKey} 말 걸기`, npc.x * 20, npc.y * 20 - clip.bodyHeight * clip.scale * BODY_SCALE / 2 - NAME_GAP - (npc.label ? NAME_SIZE + 3 : 0), ACTION_GOLD);
     }
     if (g.wakeProgress !== null) {
       // Eyes opening: two dark lids part, then the world holds until the player is up.

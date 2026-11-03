@@ -170,9 +170,9 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .slot.short img, #touch button.short img { opacity: .35; filter: grayscale(1); }
 .slot img { width: 30px; height: 30px; image-rendering: pixelated; }
 .slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 10px/12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
-.slot .lv { position: absolute; right: 4px; bottom: 0; font-size: 10px; line-height: 12px; }
+.slot .lv { position: absolute; right: 2px; top: 0; font-size: 9px; line-height: 11px; }
 .slot .cool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #0e121ab8; }
-.slot .left { position: absolute; right: 2px; bottom: 0; color: #fff4d6; font-size: 11px; line-height: 13px; text-shadow: 1px 1px 0 #0e121a; }
+.slot .left { position: absolute; inset: 0; display: grid; place-items: center; color: #fff4d6; font-size: 13px; text-shadow: 1px 1px 0 #0e121a, -1px -1px 0 #0e121a; }
 #hud .hud-bar b { font: 700 12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
 .slot kbd { z-index: 1; }
 
@@ -280,3 +280,10 @@ body.touch .panel .stat-row button { min-height: 36px; }
 
 /* Words drawn in the world sit on their own sharp layer over the pixel-grid frame. */
 #letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
+
+/* The charge a skill spends, small in the slot's bottom-right corner; red while there is not enough. */
+.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 9px/11px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
+.slot.short .cost, #touch .short .cost { color: #ff8a80; }
+#touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 11px; line-height: 13px; }
+#touch .cost:empty { display: none; }
+.header-stats { display: flex; gap: 14px; align-items: center; }

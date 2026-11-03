@@ -161,7 +161,7 @@ test('wind traits: dodging past applies pressure, and gale holds enemies longer'
 });
 
 test('long wrench reaches further', () => {
-  const reach = mods => { const g = arena(); g.s.run.mods = mods; const e = dummy(g, 9.95 + 0.4); e.radius = 0.4; swing(g, 0); return e.hp < e.maxHp; };
+  const reach = mods => { const g = arena(); g.s.run.mods = mods; const e = dummy(g, 9.95 + 0.7); e.radius = 0.4; swing(g, 0); return e.hp < e.maxHp; };
   assert.equal(reach([]), false); assert.equal(reach(['longWrench']), true);
 });
 
