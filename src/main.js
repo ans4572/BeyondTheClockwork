@@ -48,7 +48,9 @@ try {
     try { localStorage.setItem(SAVE_KEY, encodeSave(state)); }
     catch { storageError = '브라우저 저장 공간을 사용할 수 없습니다. 설정에서 저장 파일을 내보내세요.'; }
   });
-  const renderer = new CanvasRenderer($('game'), game);
+  // The game is drawn in full detail off screen, then set on a 640-pixel grid (see CanvasRenderer).
+  const detail = document.createElement('canvas');
+  const renderer = new CanvasRenderer(detail, game, { view: $('game'), letters: $('letters') });
   let touch = null;
   // F2's sheets come first and the loading card waits for them, so the old code doll never stands in for the player.
   // Enemies and townsfolk follow one set at a time instead of competing with F2 for the connection.
@@ -59,10 +61,13 @@ try {
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
+  const PIXEL_GRID = [640, 366];
   const MAX_BACKING_WIDTH = 2560;
   const fitCanvas = () => {
     const shown = $('game').getBoundingClientRect().width, width = Math.max(1120, Math.min(MAX_BACKING_WIDTH, Math.round(shown * Math.min(devicePixelRatio || 1, 2))));
-    if ($('game').width !== width) { $('game').width = width; $('game').height = Math.round(width * 640 / 1120); }
+    // Twice the pixel grid is enough detail to average from; the words keep the screen's own resolution.
+    if (detail.width !== PIXEL_GRID[0] * 2) { detail.width = PIXEL_GRID[0] * 2; detail.height = PIXEL_GRID[1] * 2; }
+    if ($('letters').width !== width) { $('letters').width = width; $('letters').height = Math.round(width * 640 / 1120); }
   };
   const fitHud = () => {
     fitCanvas();

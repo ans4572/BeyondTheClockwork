@@ -16,7 +16,12 @@ const PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
-  constructor(canvas, game) { this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
+  /**
+   * `canvas` is drawn at full detail. With `view` and `letters`, each frame is then shrunk onto `view`, a small canvas the
+   * page enlarges with hard pixels, so the map and the bodies share one pixel grid; words go to `letters` at screen
+   * resolution instead, because pixel lettering cannot be shrunk and stay readable.
+   */
+  constructor(canvas, game, { view = null, letters = null } = {}) { this.view = view; this.letters = letters; this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
   /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
   kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
@@ -76,7 +81,7 @@ export class CanvasRenderer {
       const image = this.mapImages?.get(STATUS_ICONS[badge.id]);
       if (image) c.drawImage(image, x, y, BADGE_SIZE, BADGE_SIZE);
       // Stacks read as a small ×N beside the icon, outlined so it stays legible over any floor.
-      if (badge.count > 1) { c.font = `700 ${COUNT_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
+      if (badge.count > 1) { const c = this.ink(); c.font = `700 ${COUNT_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
       x += width(badge);
     }
   }
@@ -168,10 +173,10 @@ export class CanvasRenderer {
   }
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
   nameplate(label, x, bottom, fill = '#fff4d6') {
-    const c = this.ctx;
+    const c = this.ink();
     c.save(); c.font = `700 ${NAME_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     c.lineJoin = 'round'; c.lineWidth = 2.5; c.strokeStyle = '#2b3345'; c.strokeText(label, x, bottom);
-    c.fillStyle = fill; c.fillText(label, x, bottom); c.restore();
+    c.fillStyle = fill; c.fillText(label, x, bottom); c.restore(); if (c !== this.ctx) c.globalAlpha = 1;
   }
   tag(label, x, top) {
     this.rect(x - label.length * 3.5 - 4, top - 1, label.length * 7 + 8, 11, '#fff8e8');
@@ -184,7 +189,15 @@ export class CanvasRenderer {
   rect(x, y, w, h, color) { const c = this.ctx; c.fillStyle = color; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
   line(x1, y1, x2, y2, color, width = 1) { const c = this.ctx; c.strokeStyle = color; c.lineWidth = width; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
   circle(x, y, r, color) { const c = this.ctx; c.fillStyle = color; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); }
-  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ctx; c.font = `600 ${size}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
+  /** Where words go: the letters layer, placed exactly where the frame's current transform would put them. */
+  ink() {
+    const t = this.letters?.getContext('2d');
+    if (!t) return this.ctx;
+    const m = this.ctx.getTransform(), r = this.letters.width / this.canvas.width;
+    t.setTransform(m.a * r, m.b * r, m.c * r, m.d * r, m.e * r, m.f * r); t.globalAlpha = this.ctx.globalAlpha;
+    return t;
+  }
+  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ink(); c.font = `600 ${size}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
   gear(x, y, radius, color, rotation = 0) {
     const c = this.ctx; c.save(); c.translate(x, y); c.rotate(rotation);
     for (let i = 0; i < 8; i++) { c.rotate(Math.PI / 4); this.rect(-radius * 0.2, -radius * 1.2, radius * 0.4, radius * 0.55, color); }
@@ -427,6 +440,7 @@ export class CanvasRenderer {
     const [shakeX, shakeY] = this.shakeOffset();
     // The canvas is backed at screen resolution; k maps the 1120x640 layout onto it, so nothing is stretched twice.
     const k = this.backing, zoom = 2 * CAMERA_ZOOM * k;
+    if (this.letters) { const t = this.letters.getContext('2d'); t.setTransform(1, 0, 0, 1, 0, 0); t.clearRect(0, 0, this.letters.width, this.letters.height); }
     c.setTransform(zoom, 0, 0, zoom, Math.round((-this.camera.x * PIXELS_PER_UNIT + shakeX) * k), Math.round((-this.camera.y * PIXELS_PER_UNIT + shakeY) * k));
     // Painted backgrounds are resampled smoothly; sprites below stay on hard pixels.
     if (mapImage) { c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); } else this.scenery(hub);
@@ -566,5 +580,10 @@ export class CanvasRenderer {
     }
     const hurtLeft = this.hurtUntil - performance.now();
     if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    if (this.view) {
+      // Smooth shrinking averages each block of detail into one pixel; the page then enlarges it without blending.
+      const v = this.view.getContext('2d'); v.imageSmoothingEnabled = true; v.imageSmoothingQuality = 'high';
+      v.drawImage(this.canvas, 0, 0, this.view.width, this.view.height);
+    }
   }
 }

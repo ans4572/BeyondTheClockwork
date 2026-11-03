@@ -277,3 +277,6 @@ body.touch .panel .stat-row button { min-height: 36px; }
 .ending .tbc { margin: 0 0 10px; font: 32px/1.1 "NeoDunggeunmo Pro", monospace; color: #a92f2b; }
 /* With no player in the scene, the right speaker stands like the left one. */
 .no-player .talk-who.player { right: 8px; bottom: -33px; }
+
+/* Words drawn in the world sit on their own sharp layer over the pixel-grid frame. */
+#letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
