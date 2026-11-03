@@ -13,7 +13,7 @@ const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
-const FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
+const SWING_SWEEP = 0.45, FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
@@ -26,6 +26,38 @@ export class CanvasRenderer {
   /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
   kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
+  /**
+   * The wrench's slash: a crescent that sweeps across in the swing's direction, thick at its leading edge and thinning
+   * to a tail, with a bright edge, a few speed lines and a glint at the tip. The third blow is wider and gold, and
+   * sends a short shock arc out in front.
+   */
+  drawSwing(fx, x, y, fraction) {
+    const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20 * 0.92, span = heavy ? 1.15 : 1;
+    const dir = phase === 1 ? -1 : 1, grow = Math.min(1, fraction / SWING_SWEEP), fade = fraction < SWING_SWEEP ? 1 : 1 - (fraction - SWING_SWEEP) / (1 - SWING_SWEEP);
+    const start = fx.angle - dir * span, sweep = dir * 2 * span * grow, steps = 14, thick = R * (heavy ? 0.36 : 0.28);
+    const at = (angle, r) => [x + Math.cos(angle) * r, y + Math.sin(angle) * r];
+    c.save(); c.globalAlpha = fade;
+    // Body: outer edge from tail to head, inner edge back, thickest at the head.
+    c.beginPath();
+    for (let i = 0; i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R)); }
+    for (let i = steps; i >= 0; i--) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - thick * (0.25 + 0.75 * Math.pow(t, 0.8)))); }
+    c.closePath(); c.fillStyle = heavy ? '#ffc94a' : '#7fe0d4'; c.globalAlpha = fade * 0.85; c.fill();
+    // A thin ink outline keeps the slash readable on pale floors.
+    c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.globalAlpha = fade * 0.45; c.stroke();
+    // Bright leading band along the outer edge, over the newest half of the sweep.
+    c.globalAlpha = fade; c.strokeStyle = '#ffffff'; c.lineWidth = heavy ? 3.5 : 2.5; c.lineCap = 'round'; c.beginPath();
+    for (let i = Math.floor(steps / 2); i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - 1)); }
+    c.stroke();
+    // Speed lines trailing the head.
+    const head = start + sweep;
+    c.strokeStyle = heavy ? '#e8a020' : '#3fb8a8'; c.lineWidth = 2;
+    for (const [r, back] of [[R * 0.62, 0.35], [R * 0.8, 0.5], [R * 1.1, 0.28]]) { c.beginPath(); c.moveTo(...at(head - dir * back, r)); c.lineTo(...at(head - dir * 0.08, r)); c.stroke(); }
+    // A four-point glint at the tip while it is still moving.
+    if (grow < 1 || fraction < SWING_SWEEP + 0.15) { const [gx, gy] = at(head, R - thick * 0.4), g = heavy ? 7 : 5; c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(gx, gy - g); c.lineTo(gx + 1.5, gy - 1.5); c.lineTo(gx + g, gy); c.lineTo(gx + 1.5, gy + 1.5); c.lineTo(gx, gy + g); c.lineTo(gx - 1.5, gy + 1.5); c.lineTo(gx - g, gy); c.lineTo(gx - 1.5, gy - 1.5); c.closePath(); c.fill(); }
+    // The third blow's shock: a thin arc pushed out ahead once the slash lands.
+    if (heavy && fraction > SWING_SWEEP * 0.8) { const k = (fraction - SWING_SWEEP * 0.8) / (1 - SWING_SWEEP * 0.8); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, R * (1.05 + k * 0.35), fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
+    c.restore();
+  }
   /** A white flash over the whole frame, for a boss changing phase. */
   flash() { this.flashUntil = performance.now() + FLASH_MS; }
   shakeOffset() {
@@ -542,7 +574,7 @@ export class CanvasRenderer {
       // Critical hits show in red, a little larger.
       if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
-      if (fx.type === 'swing') { c.lineWidth = 5; c.beginPath(); c.arc(x, y, fx.value * 20 * 0.8, fx.angle - 0.8, fx.angle + 0.8); c.stroke(); }
+      if (fx.type === 'swing') this.drawSwing(fx, x, y, fraction);
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }
       if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
       if (fx.type === 'beam') this.line(x, y, fx.targetX * 20, fx.targetY * 20, fx.color, 4);
