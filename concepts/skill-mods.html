@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기술 개조 시안 · 작동 방식을 바꾸는 카드</title>
+<style>
+  @font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; }
+  @font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; }
+  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --label: #5d6476; --red: #a92f2b; --gold: #c79a3e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #2b3345; color: var(--ink); font: 14px/1.55 "Galmuri11", "Malgun Gothic", sans-serif; }
+  header { max-width: 1120px; margin: 0 auto; padding: 22px 16px 6px; color: var(--paper); }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  header p { margin: 4px 0; color: #d8cfb6; font-size: 13px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 8px 16px 48px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+  article { position: relative; background: var(--paper); padding: 14px 16px 12px; box-shadow: 5px 5px 0 #0e121a80; }
+  .top { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+  .top img { width: 52px; height: 52px; padding: 6px; image-rendering: pixelated; background: #fff8e8; box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 5px var(--accent); }
+  .no { position: absolute; top: 10px; right: 12px; font-weight: 700; color: var(--red); font-size: 16px; }
+  .skill { font-size: 12px; color: var(--label); }
+  h2 { margin: 0; font-size: 17px; }
+  .row { display: grid; grid-template-columns: 54px 1fr; gap: 2px 8px; font-size: 13px; margin-top: 6px; }
+  .row b { color: var(--label); font-weight: 700; }
+  .after { font-weight: 700; }
+  .tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11.5px; font-weight: 700; padding: 1px 7px; background: var(--ink); color: var(--paper); }
+  .tag.cost { background: var(--gold); }
+  .tag.pick { background: var(--red); }
+  section.note { grid-column: 1 / -1; background: #3b4458; color: var(--paper); padding: 12px 16px; font-size: 13px; }
+  section.note b { color: #ffd257; }
+</style>
+</head>
+<body>
+<header>
+  <h1>기술 개조 시안 · 작동 방식을 바꾸는 카드 10장</h1>
+  <p>지금의 기술 개조는 대부분 수치형입니다(대기시간 −2초, 연쇄 +2 등). 아래 카드는 기술이 <b>어떻게 동작하는지</b>를 바꿉니다. 기존 개조 8장은 그대로 두고, 기술마다 1~2장을 더하는 안입니다.</p>
+  <p>번호로 고르거나(예: 1, 4, 7, 9) "전부"라고 답해 주세요. 빨간 꼬리표는 추천입니다.</p>
+</header>
+<main id="cards"></main>
+<script>
+const COLORS = { fire: '#e8742f', ice: '#7fc7e0', lightning: '#e0b048', wind: '#8fc79a' };
+const CARDS = [
+  ['heatSwing', 'fire', '불꽃 궤적', '앞쪽을 넓게 휘둘러 맞은 적에게 불을 붙임.', '휘두른 자리에 불길 줄이 2초 남아, 지나가는 적에게도 화상을 건다.', '모양 변화 · 바닥', '약 40분', true],
+  ['heatSwing', 'fire', '되감아 휘두르기', '한 번 휘두름.', '곧바로 반대 방향으로 한 번 더 휘두른다(2연타). 대신 한 번의 피해는 60%.', '타격 수 변화', '약 30분', false],
+  ['exhaustBurst', 'fire', '배기 흔적', '내 주변이 세 번 연달아 터짐.', '내 몸이 아니라 내가 지나온 자리 3곳에서 차례로 터진다. 도망치며 뒤에 폭발을 깔 수 있다.', '위치 변화', '약 40분', true],
+  ['frostBolt', 'ice', '튕기는 얼음', '얼음 조각 세 개를 앞으로 쏨.', '조각이 벽이나 장애물에 닿으면 한 번 튕겨 나간다.', '궤적 변화', '약 50분', false],
+  ['frostBolt', 'ice', '서리 파편', '맞으면 사라짐.', '적에게 맞은 조각이 작은 파편 3개로 깨져 옆의 적에게 튄다(파편 피해 30%).', '연쇄 추가', '약 40분', true],
+  ['coolingField', 'ice', '빙판 길', '노린 곳에 둥근 냉기 바닥.', '바닥이 조준 방향으로 길게 깔리고, 그 위에서 내 이동속도가 30% 빨라진다.', '모양 변화 · 이동', '약 50분', false],
+  ['conductiveSpanner', 'lightning', '지연 방전', '맞으면 근처 적 둘에게 바로 튐.', '바로 튀지 않고 맞은 적에게 전하를 남긴다. 3초 뒤 크게 한 번 방전해 주변을 모두 때린다(시한폭탄).', '타이밍 변화', '약 40분', true],
+  ['capacitorStrike', 'lightning', '피뢰침', '번개가 세 번 떨어지고 끝.', '번개 자리에 피뢰침이 4초 남아 근처 적에게 1초마다 작은 번개를 떨어뜨린다.', '설치형으로 변화', '약 50분', false],
+  ['pressureDash', 'wind', '꿰뚫는 돌진', '부딪힌 적을 앞으로 밀어냄.', '적을 밀지 않고 꿰뚫고 지나가며 베고, 지나친 적을 내 뒤쪽으로 끌어당긴다.', '밀기 → 관통', '약 40분', true],
+  ['vortexIntake', 'wind', '역회오리', '적을 끌어모은 뒤 한 번 더 때림.', '마지막에 모은 적을 바깥으로 튕겨 낸다. 벽에 부딪힌 적은 피해를 한 번 더 받는다.', '끌기 → 튕기기', '약 40분', false]
+];
+document.getElementById('cards').innerHTML = CARDS.map(([skill, el, name, now, after, kind, cost, pick], i) => `<article style="--accent:${COLORS[el]}">
+  <span class="no">${i + 1}</span>
+  <div class="top"><img src="../art/ui/skill-icons/${skill}.png" alt=""><div><div class="skill" data-skill="${skill}"></div><h2>${name}</h2></div></div>
+  <div class="row"><b>지금</b><span>${now}</span><b>바뀌면</b><span class="after">${after}</span></div>
+  <div class="tags"><span class="tag">${kind}</span><span class="tag cost">구현 ${cost}</span>${pick ? '<span class="tag pick">추천</span>' : ''}</div>
+</article>`).join('') + `<section class="note"><b>정리</b> · 추천 5장(1·3·5·7·9)은 기술마다 손맛이 가장 크게 달라지는 것들입니다. 10장 전부는 약 7시간, 추천 5장은 약 3시간 30분. 등급은 기존 개조처럼 "희귀"로 두고, 같은 기술의 개조는 한 원정에 1장만 고를 수 있게 하는 안을 권합니다(빌드가 갈림).</section>`;
+// Skill names from the game data, so they match what the game calls them.
+fetch(`../src/data/combat.json?t=${Date.now()}`).then(r => r.json()).then(data => {
+  const element = Object.fromEntries(data.elements.map(e => [e.id, e.name]));
+  for (const node of document.querySelectorAll('[data-skill]')) { const s = data.skills.find(k => k.id === node.dataset.skill); if (s) node.textContent = `${element[s.element]} · ${s.name}`; }
+});
+</script>
+</body>
+</html>
