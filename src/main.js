@@ -199,7 +199,7 @@ try {
     mend: () => sfx('mend'),
     cast: hit => sfx(hit.id, () => { noise(0.05, 0.08, 2400); thump(200, 120, 0.06, 0.04); }),
     mob: hit => sfx(hit.id),
-    cards: hit => { sfx('cards'); if (hit.special) sfx('cardsSpecial'); },
+    cards: () => sfx('cards'),
     pick: () => sfx('pick'),
     loot: () => sfx('loot'),
     portal: () => sfx('portal'),

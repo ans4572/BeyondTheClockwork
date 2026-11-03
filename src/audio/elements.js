@@ -1,5 +1,5 @@
 // Element sounds built from filtered noise and simple tones, so wind sounds like moving air and fire like flame,
-// not like a game-console chirp. Each recipe draws into `out` (a gain node) starting now; all levels are relative.
+// not like a game-console chirp; also the failed-run horn. Each recipe draws into `out` (a gain node) starting now; all levels are relative.
 
 let whiteNoise = null;
 function noise(audio) {
@@ -69,7 +69,19 @@ function buzz(audio, out, { dur, freq, peak = 1 }) {
   osc.connect(filter).connect(gain).connect(out); osc.start(); flutter.start(); osc.stop(start + dur + 0.05); flutter.stop(start + dur + 0.05);
 }
 
+/** A toy horn note: a buzzy tone through a soft filter, with a wobble that deepens on long notes. */
+function horn(audio, out, { at, freq, dur, bend = 1, wobble = 0, peak = 1 }) {
+  const start = audio.currentTime + at, osc = audio.createOscillator(), filter = audio.createBiquadFilter(), gain = audio.createGain();
+  osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, start); osc.frequency.exponentialRampToValueAtTime(freq * bend, start + dur);
+  filter.type = 'lowpass'; filter.frequency.setValueAtTime(1400, start); filter.frequency.exponentialRampToValueAtTime(500, start + dur); filter.Q.value = 2;
+  if (wobble) { const lfo = audio.createOscillator(), depth = audio.createGain(); lfo.frequency.value = 6; depth.gain.setValueAtTime(0, start); depth.gain.linearRampToValueAtTime(freq * wobble, start + dur * 0.4); lfo.connect(depth).connect(osc.frequency); lfo.start(start); lfo.stop(start + dur + 0.05); }
+  const end = envelope(gain.gain, start, 0.03, dur * 0.7, dur * 0.3, peak);
+  osc.connect(filter).connect(gain).connect(out); osc.start(start); osc.stop(end + 0.05);
+}
+
 export const ELEMENT_SOUNDS = {
+  // A failed run: the "wah, wah, wah, waaah" of a deflating toy horn, each note lower, the last one sagging and wobbling.
+  sadHorn: (a, o) => { horn(a, o, { at: 0, freq: 233, dur: 0.38, bend: 0.97, peak: 0.8 }); horn(a, o, { at: 0.42, freq: 220, dur: 0.38, bend: 0.97, peak: 0.8 }); horn(a, o, { at: 0.84, freq: 208, dur: 0.38, bend: 0.97, peak: 0.8 }); horn(a, o, { at: 1.26, freq: 196, dur: 1.2, bend: 0.85, wobble: 0.03, peak: 0.9 }); },
   // Fire
   heatSwing: (a, o) => { roar(a, o, { dur: 0.4, cutoff: 900, attack: 0.05, peak: 0.9 }); gust(a, o, { dur: 0.35, from: 300, to: 1100, q: 0.8, peak: 0.5 }); crackle(a, o, { dur: 0.45, count: 8, peak: 0.5 }); },
   exhaustBurst: (a, o) => { thump(a, o, { from: 95, to: 35, dur: 0.5, peak: 0.9 }); roar(a, o, { dur: 0.75, cutoff: 650, attack: 0.01, peak: 1 }); crackle(a, o, { dur: 0.8, count: 14, peak: 0.45 }); },

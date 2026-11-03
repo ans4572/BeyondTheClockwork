@@ -1063,7 +1063,7 @@ export class Game {
         while (choices.length < 3 && pool.length) choices.push(pool.splice(pool.indexOf(this.drawByTier(pool)), 1)[0]);
       }
       run.rewardChoices = choices.slice(0, 3);
-      this.sense({ kind: 'cards', special: run.rewardChoices.some(reward => this.rewardTier(reward) === 'special') });
+      this.sense({ kind: 'cards' });
     }
     this.s.mode = 'reward';
   }

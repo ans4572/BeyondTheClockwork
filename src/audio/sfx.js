@@ -55,10 +55,9 @@ export const SFX = {
   // Progress and rewards
   portal: { file: 'portal', takes: 1, volume: 0.22, rate: [1, 1], length: 0.8 },
   cards: { file: 'cards', takes: 2, volume: 0.35, rate: [1, 1.05] },
-  cardsSpecial: { file: 'cardsSpecial', takes: 1, volume: 0.22, rate: [1, 1], length: 0.9 },
   pick: { file: 'pick', takes: 4, volume: 0.4, rate: [1, 1.05] },
   loot: { file: 'loot', takes: 6, volume: 0.35, rate: [1, 1.1] },
-  fail: { file: 'fail', takes: 1, volume: 0.3, rate: [1, 1] },
+  fail: { synth: 'sadHorn', volume: 0.25 },
   // Interface
   click: { file: 'click', takes: 5, volume: 0.2, rate: [1, 1.05] },
   buy: { file: 'buy', takes: 3, volume: 0.35, rate: [1, 1.05] },
