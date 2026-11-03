@@ -93,8 +93,6 @@ export const ELEMENT_SOUNDS = {
   dash: (a, o) => { gust(a, o, { dur: 0.2, from: 2600, to: 520, q: 0.9, attack: 0.18, peak: 1 }); gust(a, o, { dur: 0.14, from: 5200, to: 1800, q: 1.4, attack: 0.1, peak: 0.35 }); },
   // Two slow strokes of the town bell: a fundamental with two fading overtones.
   bell: (a, o) => { for (const stroke of [0, 0.9]) for (const [freq, peak] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) { const osc = a.createOscillator(), g = a.createGain(), at = a.currentTime + stroke; osc.frequency.value = freq; g.gain.setValueAtTime(peak, at); g.gain.exponentialRampToValueAtTime(0.001, at + 1.6); osc.connect(g).connect(o); osc.start(at); osc.stop(at + 1.6); } },
-  // A boss's alarm: one short square-wave beep.
-  alarm: (a, o) => { const osc = a.createOscillator(), g = a.createGain(), at = a.currentTime; osc.type = 'square'; osc.frequency.value = 660; g.gain.setValueAtTime(0.04, at); g.gain.exponentialRampToValueAtTime(0.001, at + 0.25); osc.connect(g).connect(o); osc.start(at); osc.stop(at + 0.26); },
   pressureDash: (a, o) => { gust(a, o, { dur: 0.34, from: 450, to: 2000, q: 1.1, attack: 0.25, peak: 1 }); roar(a, o, { dur: 0.3, cutoff: 350, attack: 0.05, peak: 0.35 }); },
   vortexIntake: (a, o) => { swirl(a, o, { dur: 1.0, center: 650, depth: 350, rate: 6, peak: 1 }); roar(a, o, { dur: 1.0, cutoff: 260, attack: 0.3, peak: 0.45 }); },
   // Ice: a breath of frost under the glass recordings

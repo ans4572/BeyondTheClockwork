@@ -10,26 +10,27 @@
 | hurt | Impact Sounds | impactPunch_medium_000 |
 | kill | Impact Sounds | impactPlank_medium_000 |
 | block | Impact Sounds | impactMetal_medium_000 |
-| burst | Sci-fi Sounds | explosionCrunch_000 |
-| summon | Sci-fi Sounds | forceField_000 |
-| pop | Digital Audio | pepSound1 |
+| burst | Impact Sounds | impactMining_000 |
+| summon | RPG Audio | footstep04 |
+| pop | RPG Audio | metalClick |
 | tell | Interface Sounds | glass_001 |
-| clear | Digital Audio | threeTone1 |
-| down | Digital Audio | lowDown |
-| charged | Digital Audio | powerUp7 |
-| mend | Digital Audio | highUp |
+| clear | Music Jingles | jingles_STEEL09 |
+| down | RPG Audio | dropLeather |
+| charged | Impact Sounds | impactBell_heavy_004 |
+| mend | Music Jingles | jingles_PIZZI00 |
 | frostBolt, coolingField | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000 |
-| rabbit | Digital Audio | phaseJump2 |
+| rabbit | RPG Audio | cloth2 |
 | elite | Impact Sounds | impactPlate_heavy_000 |
-| trumpet | Sci-fi Sounds | laserRetro_000 |
+| trumpet | Music Jingles | jingles_SAX00 |
 | musicbox | Interface Sounds | pluck_001 |
-| spintop | Sci-fi Sounds | engineCircular_000 |
+| spintop | RPG Audio | creak2 |
 | drummer | Impact Sounds | impactSoft_heavy_000 |
-| portal | Digital Audio | zapThreeToneUp |
+| portal | RPG Audio | doorOpen_1 |
 | cards, pick, loot, buy | Casino Audio | card-fan-1, card-place-1, chips-stack-1, chips-handle-1 |
-| tune | Digital Audio | powerUp4 |
+| tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |
+| alarm | Impact Sounds | impactBell_heavy_002 |
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 
 불·전기·바람 기술과 융합, 얼음 기술의 냉기, 원정 실패의 처지는 나팔 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.
