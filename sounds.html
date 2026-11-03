@@ -25,7 +25,8 @@
 <header><h1>효과음 듣기</h1><p id="status">버튼을 누르면 게임과 같은 음량·높낮이로 재생됩니다.</p></header>
 <main id="list"></main>
 <script type="module">
-import { SFX, SoundBank } from './src/audio/sfx.js';
+// GitHub Pages lets phones keep scripts for ten minutes; a fresh query on every visit always loads the latest sounds.
+const { SFX, SoundBank } = await import(`./src/audio/sfx.js?t=${Date.now()}`);
 
 // Groups and plain names for every effect the game plays.
 const GROUPS = [

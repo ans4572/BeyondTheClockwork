@@ -1,7 +1,8 @@
 // Recorded sound effects (Kenney, CC0) played through Web Audio.
 // Each name has a few takes; one is picked at random and nudged in pitch so repeats do not sound stamped out.
 import { assetUrl } from '../animation/sprite-library.js';
-import { ELEMENT_SOUNDS } from './elements.js';
+// Loaded with the same query as this file, so a page that busts the cache for this module gets fresh recipes too.
+const { ELEMENT_SOUNDS } = await import(`./elements.js${new URL(import.meta.url).search}`);
 
 /** file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade. */
 export const SFX = {
