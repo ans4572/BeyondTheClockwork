@@ -633,7 +633,7 @@ export class CanvasRenderer {
     if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (this.view) {
       // Smooth shrinking averages each block of detail into one pixel; the page then enlarges it without blending.
-      const v = this.view.getContext('2d'); v.imageSmoothingEnabled = true; v.imageSmoothingQuality = 'high';
+      const v = this.view.getContext('2d'); v.imageSmoothingEnabled = false;
       v.drawImage(this.canvas, 0, 0, this.view.width, this.view.height);
     }
   }

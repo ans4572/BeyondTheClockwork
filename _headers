@@ -1,0 +1,10 @@
+# Cloudflare Pages headers.
+# Code and data are checked on every visit (cheap 304 when unchanged), so a deploy shows at once.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Art, fonts and sound change rarely and are large: keep them a day, refresh in the background after that.
+/art/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

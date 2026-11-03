@@ -1,0 +1,4 @@
+# Cloudflare Pages: the game is static files served from the repository root, with no build step.
+name = "beyond-the-clockwork"
+pages_build_output_dir = "."
+compatibility_date = "2026-11-01"

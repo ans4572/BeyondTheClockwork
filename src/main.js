@@ -65,12 +65,13 @@ try {
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
-  const PIXEL_GRID = [640, 366];
   const MAX_BACKING_WIDTH = 2560;
   const fitCanvas = () => {
     const shown = $('game').getBoundingClientRect().width, width = Math.max(1120, Math.min(MAX_BACKING_WIDTH, Math.round(shown * Math.min(devicePixelRatio || 1, 2))));
-    // Twice the pixel grid is enough detail to average from; the words keep the screen's own resolution.
-    if (detail.width !== PIXEL_GRID[0] * 2) { detail.width = PIXEL_GRID[0] * 2; detail.height = PIXEL_GRID[1] * 2; }
+    // The frame is drawn at the screen's own resolution and copied 1:1, so painted maps stay sharp on every device.
+    const height = Math.round(width * 640 / 1120);
+    if (detail.width !== width) { detail.width = width; detail.height = height; }
+    if ($('game').width !== width) { $('game').width = width; $('game').height = height; }
     if ($('letters').width !== width) { $('letters').width = width; $('letters').height = Math.round(width * 640 / 1120); }
   };
   const fitHud = () => {
