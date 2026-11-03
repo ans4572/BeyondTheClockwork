@@ -28,7 +28,7 @@ export class CanvasRenderer {
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
    * The wrench's slash: a crescent that sweeps across in the swing's direction, thick at its leading edge and thinning
-   * to a tail, with a bright edge, a few speed lines and a glint at the tip. The third blow is a little wider and
+   * to a tail, with a bright edge, and a few speed lines. The third blow is a little wider and
    * sends a short shock arc out in front; all three share the wrench's teal.
    */
   drawSwing(fx, x, y, fraction) {
@@ -52,8 +52,6 @@ export class CanvasRenderer {
     const head = start + sweep;
     c.strokeStyle = '#3fb8a8'; c.lineWidth = 1.5;
     for (const [r, back] of [[R * 0.62, 0.35], [R * 0.8, 0.5], [R * 1.1, 0.28]]) { c.beginPath(); c.moveTo(...at(head - dir * back, r)); c.lineTo(...at(head - dir * 0.08, r)); c.stroke(); }
-    // A four-point glint at the tip while it is still moving.
-    if (grow < 1 || fraction < SWING_SWEEP + 0.15) { const [gx, gy] = at(head, R - thick * 0.4), g = heavy ? 7 : 5; c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(gx, gy - g); c.lineTo(gx + 1.5, gy - 1.5); c.lineTo(gx + g, gy); c.lineTo(gx + 1.5, gy + 1.5); c.lineTo(gx, gy + g); c.lineTo(gx - 1.5, gy + 1.5); c.lineTo(gx - g, gy); c.lineTo(gx - 1.5, gy - 1.5); c.closePath(); c.fill(); }
     // The third blow's shock: a thin arc pushed out ahead once the slash lands.
     if (heavy && fraction > SWING_SWEEP * 0.8) { const k = (fraction - SWING_SWEEP * 0.8) / (1 - SWING_SWEEP * 0.8); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#7fe0d4'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, R * (1.05 + k * 0.35), fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
     c.restore();
