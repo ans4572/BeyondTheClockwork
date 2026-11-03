@@ -28,6 +28,7 @@ const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" s
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
 const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
 const CRIT_STOP = 0.03, CRIT_SHAKE = 3;
+function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
@@ -35,8 +36,7 @@ const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arro
 
 try {
   // The pixel lettering font must be ready before the first heading or the title is drawn from it.
-  await document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽').catch(() => {});
-  const data = await loadData();
+  const [, data] = await Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽').catch(() => {}), loadData()]);
   let saved = null, loadError = '', rawSave = '';
   try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }
   catch (error) { loadError = error.message; }
@@ -700,7 +700,11 @@ try {
   }
   if (!loadError) openTitle();
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
+  // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame.
+  await title.ready.catch(() => {});
+  finishBoot();
 } catch (error) {
+  finishBoot();
   // Anyone with the link can land here, so the local-server advice is for this machine only.
   const local = ['localhost', '127.0.0.1'].includes(location.hostname), reload = '<div class="actions"><button class="primary" onclick="location.reload()">다시 불러오기</button></div>';
   $('overlay').innerHTML = `<section class="panel compact"><h2>게임을 불러오지 못했습니다</h2>${local ? `<p class="error">${escapeHTML(error.message)}</p><p>프로젝트 폴더에서 <code>npm start</code>를 실행한 뒤 <a href="http://localhost:4173">localhost:4173</a>을 열어 주세요.</p>` : '<p>인터넷 연결을 확인한 뒤 다시 불러와 주세요. 진행 기록은 이 브라우저에 그대로 남아 있습니다.</p>'}${reload}</section>`;
