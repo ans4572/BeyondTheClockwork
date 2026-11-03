@@ -64,7 +64,7 @@
   },
   "balance": {
     "damageFormula": "base * (1 + min(permanentApplicableSum, 0.60)) * (1 + min(runDamageBonus, 0.80)) * skillLevel * rarity * crit * targetVulnerability",
-    "skillMaxLevel": 5,
+    "skillMaxLevel": 4,
     "skillLevelDamagePerLevel": 0.12,
     "rarityDamage": {
       "common": 1,

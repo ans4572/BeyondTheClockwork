@@ -21,14 +21,14 @@ test('every skill has one mod, and every element has two traits', () => {
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);
 });
 
-test('rewards after the opening always include the equipped build and nothing for other elements', () => {
+test('rewards always include the equipped build, nothing for other elements, and no element trials or gears', () => {
   for (let seed = 1; seed < 40; seed++) {
     const g = arena(); g.s.rng = seed; g.s.run.clears = ['a', 'b', 'c']; g.s.run.node = 3; g.s.run.rewardChoices = [];
     g.offerRewards();
     const choices = g.s.run.rewardChoices;
     assert.equal(choices.length, 3); assert.equal(new Set(choices.map(c => `${c.kind}:${c.id}`)).size, 3);
     assert.ok(choices.some(c => ['skillMod', 'trait'].includes(c.kind)));
-    assert.ok(choices.every(c => c.kind !== 'upgrade' && c.kind !== 'gears'));
+    assert.ok(choices.every(c => c.kind !== 'element' && c.kind !== 'gears'));
     for (const c of choices) {
       if (c.kind === 'skillMod') assert.ok(['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField'].includes(data.slice.skillMods.find(m => m.id === c.id).skill));
       if (c.kind === 'trait') assert.ok(['fire', 'ice'].includes(data.slice.elementTraits.find(t => t.id === c.id).element));
@@ -36,13 +36,28 @@ test('rewards after the opening always include the equipped build and nothing fo
   }
 });
 
-test('owned rewards leave the pool, and gears fill in only when it runs dry', () => {
+test('owned rewards leave the pool; parts fill in, and repairs only come while the body is damaged', () => {
   const g = arena(); g.s.run.clears = ['a', 'b', 'c']; g.s.run.node = 3;
   g.s.run.skillMods = data.slice.skillMods.map(m => m.id); g.s.run.traits = data.slice.elementTraits.map(t => t.id);
-  g.s.run.slots.forEach(slot => { slot.level = 5; });
+  g.s.run.slots.forEach(slot => { slot.level = data.combat.balance.skillMaxLevel; });
   g.offerRewards();
-  assert.ok(g.s.run.rewardChoices.every(c => c.kind === 'element' || c.kind === 'gears'));
-  assert.ok(g.s.run.rewardChoices.some(c => c.kind === 'gears'));
+  assert.equal(g.s.run.rewardChoices.length, 3); assert.ok(g.s.run.rewardChoices.every(c => c.kind === 'upgrade'));
+  g.p.hp = 20; assert.ok(g.partRewards().some(c => c.kind === 'heal')); g.p.hp = g.p.maxHp; assert.ok(!g.partRewards().some(c => c.kind === 'heal'));
+});
+
+test('a repair card heals by its amount, and a skill reaches at most three levels above its start', () => {
+  const g = arena(); g.p.hp = 10; g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'heal', id: 'patch' }]; assert.equal(g.chooseReward(0), true); assert.equal(g.p.hp, 10 + data.slice.rules.healRewards[0].amount);
+  assert.equal(data.combat.balance.skillMaxLevel, 4);
+  for (let i = 0; i < 5; i++) { g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'level', id: 0 }]; g.chooseReward(0); }
+  assert.equal(g.slots[0].level, 4); assert.ok(!g.partRewards().some(c => c.kind === 'level' && c.id === 0));
+});
+
+test('every card has a tier, and cards are drawn by tier weight', () => {
+  const g = arena(), tiers = { common: 0, rare: 0, special: 0 };
+  const all = [...data.slice.mods.map(m => ({ kind: 'mod', id: m.id })), ...data.slice.skillMods.map(m => ({ kind: 'skillMod', id: m.id })), ...data.slice.elementTraits.map(t => ({ kind: 'trait', id: t.id })), ...Object.keys(data.slice.rewards).map(id => ({ kind: 'upgrade', id })), ...data.slice.rules.healRewards.map(h => ({ kind: 'heal', id: h.id })), { kind: 'level', id: 0 }];
+  for (const card of all) assert.ok(['common', 'rare', 'special'].includes(g.rewardTier(card)), `${card.kind}:${card.id}`);
+  for (let i = 0; i < 2000; i++) tiers[g.rewardTier(g.drawByTier(all))]++;
+  assert.ok(tiers.common > tiers.rare && tiers.rare > tiers.special && tiers.special > 0);
 });
 
 test('both wrench rooms offer three random mods without repeats', () => {

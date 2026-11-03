@@ -57,6 +57,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 0; image-rendering: pixelated; }
 .reward-card.unowned .element-icon { filter: grayscale(.7); opacity: .7; }
 .reward-card .rarity { position: absolute; top: 12px; right: 12px; font-size: 12px; font-weight: 700; color: var(--label); }
+.reward-card.tier-rare .rarity { color: #fff4d6; background: #3f6fb0; padding: 1px 7px; }
+.reward-card.tier-special .rarity { color: #2b3345; background: #ffd257; padding: 1px 7px; box-shadow: inset 0 0 0 2px #2b3345; }
+.reward-card.tier-special { box-shadow: inset 0 0 0 2px #c79a3e; }
 .reward-card .card-label { font-size: 12px; color: var(--label); }
 .reward-card h3 { font-size: 16px; margin: 2px 0 6px; }
 .reward-card p { font-size: 12px; line-height: 1.5; margin: 0 0 8px; }

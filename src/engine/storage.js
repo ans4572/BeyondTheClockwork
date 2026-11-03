@@ -44,6 +44,7 @@ export function decodeSave(raw, data) {
   if (runModes.includes(s.mode) !== !!s.run) fail('저장된 원정과 화면 상태가 일치하지 않습니다.');
   if (s.run) {
     const run = s.run;
+    for (const slot of Array.isArray(run.slots) ? run.slots : []) if (Number.isInteger(slot?.level)) slot.level = Math.min(slot.level, data.combat.balance.skillMaxLevel);
     if (!integerIn(run.node, 0, data.slice.rooms.length - 1) || !Array.isArray(run.slots) || run.slots.length > 2) fail('저장된 원정이 올바르지 않습니다.');
     if (new Set(run.slots.map(slot => slot.element)).size !== run.slots.length || run.slots.some(slot => !data.slice.elements.includes(slot.element) || !integerIn(slot.level, 1, data.combat.balance.skillMaxLevel) || !Object.hasOwn(data.combat.balance.rarityDamage, slot.rarity))) fail('저장된 속성 슬롯이 올바르지 않습니다.');
     if (!Array.isArray(run.plan) || run.plan.length !== data.slice.rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (data.slice.rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');

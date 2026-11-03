@@ -132,13 +132,12 @@ test('collision clamps dashes at obstacles and arena walls', () => {
   g.p.x = 26; g.p.y = 8; g.p.dodgeReady = 0; g.dodge(); step(g, 0.2);
   assert.ok(g.p.x <= data.slice.arena.bounds.right - data.slice.arena.playerRadius + 1e-8);
 });
-test('the first expedition offers no element cards; after a return the first two rewards are elements to try', () => {
-  const first = hub(); first.s.profile.loadout = []; first.startRun(44); completeRoom(first);
-  assert.ok(first.s.run.rewardChoices.every(r => r.kind !== 'element'));
-  const g = hub(); g.s.profile.loadout = []; g.s.profile.history = [{ reason: 'defeat' }]; g.startRun(44); completeRoom(g);
-  assert.ok(g.s.run.rewardChoices.every(r => r.kind === 'element')); pick(g); g.nextNode(); completeRoom(g);
-  assert.ok(g.s.run.rewardChoices.every(r => r.kind === 'element' && r.id !== g.slots[0].element)); pick(g);
-  assert.equal(g.skillSlots.length, 4); assert.ok(g.fusion); assert.equal(new Set(g.slots.map(s => s.element)).size, 2);
+test('rewards never hand out elements to try or gears; a wrench-only run still gets three cards', () => {
+  for (const history of [[], [{ reason: 'defeat' }]]) {
+    const g = hub(); g.s.profile.loadout = []; g.s.profile.history = history; g.startRun(44); completeRoom(g);
+    assert.equal(g.s.run.rewardChoices.length, 3);
+    assert.ok(g.s.run.rewardChoices.every(r => !['element', 'gears'].includes(r.kind)));
+  }
 });
 test('fusion cost/cooldown and minimum slot level/rarity are respected', () => {
   const g = arena(); inert(g, 'captainBrass');

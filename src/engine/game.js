@@ -1003,27 +1003,42 @@ export class Game {
       ...this.config.elementTraits.filter(t => elements.includes(t.element) && !run.traits?.includes(t.id)).map(t => ({ kind: 'trait', id: t.id }))
     ];
   }
+  /** Every reward card has a tier: common, rare or special. */
+  rewardTier(reward) {
+    const { rules, mods, skillMods, elementTraits, rewards } = this.config;
+    if (reward.kind === 'mod') return mods.find(m => m.id === reward.id).tier;
+    if (reward.kind === 'skillMod') return skillMods.find(m => m.id === reward.id).tier;
+    if (reward.kind === 'trait') return elementTraits.find(t => t.id === reward.id).tier;
+    if (reward.kind === 'upgrade') return rewards[reward.id].tier;
+    if (reward.kind === 'heal') return rules.healRewards.find(h => h.id === reward.id).tier;
+    return reward.kind === 'level' ? rules.skillLevelTier : 'common';
+  }
+  /** Rolls a tier by weight, then a card of that tier; a tier with nothing left falls back to any card. */
+  drawByTier(pool) {
+    let roll = this.random(), tier = 'common';
+    for (const [key, weight] of Object.entries(this.config.rules.rewardTierWeights)) { roll -= weight; if (roll <= 0) { tier = key; break; } }
+    const same = pool.filter(reward => this.rewardTier(reward) === tier);
+    return this.sample(same.length ? same : pool, 1)[0];
+  }
+  /** Run parts not yet maxed, skill levels below the cap, and repairs while the body is damaged. */
+  partRewards() {
+    const run = this.s.run, elements = this.slots.map(s => s.element);
+    const parts = this.c.balance.temporaryUpgrades.filter(u => (run.upgrades[u.id] || 0) < u.maxRank && (u.id !== 'skillCooldownReduction' || elements.length) && (u.id !== 'statusDamage' || elements.includes('fire'))).map(u => ({ kind: 'upgrade', id: u.id }));
+    const levels = this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean);
+    const repairs = this.p.hp < this.p.maxHp ? this.config.rules.healRewards.map(h => ({ kind: 'heal', id: h.id })) : [];
+    return [...parts, ...levels, ...repairs];
+  }
   offerRewards() {
     const run = this.s.run;
     if (!run.rewardChoices.length) {
       let choices = [];
-      if (this.room.guaranteedMod && run.mods.length < this.data.progression.run.wrenchModsMax) choices = this.sample(this.config.mods.filter(m => !run.mods.includes(m.id)).map(m => ({ kind: 'mod', id: m.id })), 3);
-      // The first expedition is the wrench alone; after that, an element not yet bought can be tried for one run.
-      else if (this.slots.length < 2 && run.clears.length <= 2 && this.s.profile.history.length) {
-        choices = this.c.elements.filter(e => !this.slots.some(s => s.element === e.id)).map(e => ({ kind: 'element', id: e.id, rarity: 'common' }));
-        // Rotate rather than silently exclude the fourth element on every fresh save.
-        const offset = Math.floor(this.random() * choices.length); choices = choices.slice(offset).concat(choices.slice(0, offset));
-      } else {
-        // One card always grows the equipped build; the rest also cover levels and element swaps.
+      if (this.room.guaranteedMod && run.mods.length < this.data.progression.run.wrenchModsMax) { const pool = this.config.mods.filter(m => !run.mods.includes(m.id)).map(m => ({ kind: 'mod', id: m.id })); while (choices.length < 3 && pool.length) choices.push(pool.splice(pool.indexOf(this.drawByTier(pool)), 1)[0]); }
+      else {
+        // One card always grows the equipped build; the rest come from parts, levels and repairs, drawn by tier.
         const build = this.buildRewards();
         choices = this.sample(build, 1);
-        const pool = [
-          ...build.filter(reward => reward !== choices[0]),
-          ...(this.s.profile.history.length ? this.c.elements.filter(e => !this.slots.some(s => s.element === e.id)).map(e => ({ kind: 'element', id: e.id, rarity: this.rarity() })) : []),
-          ...this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean)
-        ];
-        choices.push(...this.sample(pool, 3 - choices.length));
-        if (choices.length < 3) choices.push({ kind: 'gears', amount: this.config.rules.rewardExtraGears });
+        const pool = [...build.filter(reward => reward !== choices[0]), ...this.partRewards()];
+        while (choices.length < 3 && pool.length) choices.push(pool.splice(pool.indexOf(this.drawByTier(pool)), 1)[0]);
       }
       run.rewardChoices = choices.slice(0, 3);
     }
@@ -1048,7 +1063,7 @@ export class Game {
     if (reward.kind === 'mod') { if (run.mods.length >= this.data.progression.run.wrenchModsMax || run.mods.includes(reward.id)) return false; run.mods.push(reward.id); }
     if (reward.kind === 'skillMod') (run.skillMods ??= []).push(reward.id);
     if (reward.kind === 'trait') (run.traits ??= []).push(reward.id);
-    if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
+    if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
     run.rewardChoices = [];
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
