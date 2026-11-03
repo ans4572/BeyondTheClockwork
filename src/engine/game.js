@@ -257,6 +257,7 @@ export class Game {
     this.p.dodge = { elapsed: 0, angle: this.p.moveAngle, x: this.p.x, y: this.p.y };
     this.p.dodgeReady = this.s.time + Math.max(this.c.caps.minDodgeCooldown, d.cooldown * (1 - (this.stats.dodgeCooldown || 0)) * (1 - this.upgradeAmount('dodgeCooldownReduction')));
     this.p.invulnerableUntil = Math.max(this.p.invulnerableUntil, this.s.time + d.invincibility);
+    this.sense({ kind: 'dodge' });
     if (this.active) this.tutorial.onDodge();
     const strike = this.wrenchMod('dashStrike');
     if (strike) this.p.strikeUntil = this.s.time + strike.window;
@@ -296,6 +297,7 @@ export class Game {
     if (!enemy.aggro) this.rouse(enemy);
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
+    if (guarded) this.sense({ kind: 'block' });
     const amount = base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.3, 1, { targetX: this.p.x, targetY: this.p.y });
@@ -640,7 +642,7 @@ export class Game {
     switch (tell.type) {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
-        enemy.hp = 0; this.effect('scrap', enemy.x, enemy.y, enemy.color, 0.6, 1); this.effect('ring', enemy.x, enemy.y, '#e8914e', 0.3, enemy.burstRadius);
+        enemy.hp = 0; this.effect('scrap', enemy.x, enemy.y, enemy.color, 0.6, 1); this.effect('ring', enemy.x, enemy.y, '#e8914e', 0.3, enemy.burstRadius); this.sense({ kind: 'burst' });
         if (distance(tell, p) < enemy.burstRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
       case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed); break;
@@ -656,7 +658,7 @@ export class Game {
       case 'ambush': {
         const spot = { x: tell.targetX, y: tell.targetY };
         if (!this.map?.walkable || fitsMap(spot.x, spot.y, enemy.radius, this.map)) Object.assign(enemy, spot);
-        enemy.hidden = false;
+        enemy.hidden = false; this.sense({ kind: 'pop' });
         this.effect('ring', spot.x, spot.y, '#e8914e', 0.3, enemy.popRadius);
         if (distance(spot, p) < enemy.popRadius) damage(); break;
       }
@@ -888,7 +890,9 @@ export class Game {
   tickWaves() {
     const { run } = this.s;
     if (this.s.mode !== 'combat' || !this.room?.waves) return;
+    const waiting = run.arrivals.length;
     run.arrivals = run.arrivals.filter(({ type, x, y, at }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }); return false; });
+    if (run.arrivals.length < waiting) this.sense({ kind: 'summon' });
     const living = this.s.enemies.filter(e => e.hp > 0).length;
     if (!run.arrivals.length && run.wave < this.room.waves.length - 1 && living <= this.config.rules.waveCallsAtLiving) this.callWave();
   }
@@ -963,6 +967,7 @@ export class Game {
       if (this.tutorial.step) this.tutorial.guardBeaten(); else this.reachWorkshop();
       this.save(); return true;
     }
+    this.sense({ kind: 'clear' });
     const run = this.s.run, key = `${run.id}:${this.room.id}`;
     if (!this.s.profile.rewards.includes(key)) {
       const region = this.data.progression.region;

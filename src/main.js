@@ -9,6 +9,7 @@ import { DepthMask } from './render/depth-mask.js';
 import { TitleScreen, pixelText } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
 import { worldMapSvg } from './ui/world-map.js';
+import { SoundBank } from './audio/sfx.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 
@@ -24,7 +25,7 @@ const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodge
 /** Parser errors arrive in English; players get one plain sentence instead. */
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 } };
+const FEEL = { hit: { stop: 0.04 }, heavy: { stop: 0.08, shake: 3 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } };
 const CRIT_STOP = 0.03, CRIT_SHAKE = 3;
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
@@ -150,7 +151,10 @@ try {
     screen = null; game.s.paused = false; bindingTarget = null; clearInput(); renderOverlay(true); $('game').focus({ preventScroll: true }); }
   function button(label, action, extra = '', classes = '') { return `<button class="${classes}" data-action="${action}" ${extra}>${label}</button>`; }
   function panel(content, classes = '') { return `<section class="panel ${classes}">${content}</section>`; }
-  function openAudio() { if (game.s.profile.settings.sound) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); } }
+  const sounds = new SoundBank();
+  function openAudio() { if (game.s.profile.settings.sound) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); sounds.load(audio); } }
+  /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
+  function sfx(name, fallback) { if (!audio || !game.s.profile.settings.sound || game.s.paused) return; if (!sounds.play(audio, name)) fallback?.(); }
   function beep(frequency = 420, duration = 0.05, volume = 0.025) {
     if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
     const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = 'triangle'; osc.frequency.value = frequency;
@@ -176,12 +180,18 @@ try {
     osc.connect(gain).connect(audio.destination); osc.start(); osc.stop(audio.currentTime + duration);
   }
   const HIT_SOUNDS = {
-    hit: () => { noise(0.05, 0.12, 1800); thump(170, 90, 0.07, 0.07); },
-    heavy: () => { noise(0.08, 0.16, 1100); thump(120, 50, 0.14, 0.11); },
+    hit: () => sfx('hit', () => { noise(0.05, 0.12, 1800); thump(170, 90, 0.07, 0.07); }),
+    heavy: () => sfx('heavy', () => { noise(0.08, 0.16, 1100); thump(120, 50, 0.14, 0.11); }),
     skill: () => { noise(0.05, 0.08, 2400); thump(200, 120, 0.06, 0.04); },
     fusion: () => { noise(0.12, 0.12, 900); thump(110, 45, 0.18, 0.1); },
-    kill: () => { noise(0.14, 0.14, 700, 0.8); thump(520, 160, 0.12, 0.05, 'square'); },
-    hurt: () => { thump(150, 70, 0.16, 0.1, 'sawtooth'); noise(0.06, 0.08, 500); }
+    kill: () => sfx('kill', () => { noise(0.14, 0.14, 700, 0.8); thump(520, 160, 0.12, 0.05, 'square'); }),
+    hurt: () => sfx('hurt', () => { thump(150, 70, 0.16, 0.1, 'sawtooth'); noise(0.06, 0.08, 500); }),
+    block: () => sfx('block', () => thump(900, 700, 0.08, 0.04, 'square')),
+    burst: () => sfx('burst', () => { noise(0.2, 0.16, 500, 0.7); thump(110, 40, 0.2, 0.1); }),
+    pop: () => sfx('pop'),
+    dodge: () => sfx('dodge', () => noise(0.12, 0.05, 700, 0.6)),
+    summon: () => sfx('summon'),
+    clear: () => sfx('clear')
   };
   let hitstop = 0;
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
@@ -197,7 +207,7 @@ try {
       if (hit.kind === 'hurt' && !calm) renderer.wince();
     }
     for (const kind of new Set(hits.map(hit => hit.kind))) HIT_SOUNDS[kind]();
-    if (hits.some(hit => hit.crit)) thump(1400, 900, 0.08, 0.03, 'square');
+    if (hits.some(hit => hit.crit)) sfx('crit', () => thump(1400, 900, 0.08, 0.03, 'square'));
   }
   /** Two slow strokes of the town bell. */
   function toll() {
@@ -602,13 +612,14 @@ try {
       game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
     }
     if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
-    const charging = game.s.enemies.find(e => ['dash', 'shot'].includes(e.tell?.type) && e.tell.started > lastChargeAt);
-    if (charging) { lastChargeAt = charging.tell.started; beep(880, 0.1, 0.015); }
+    // Every ordinary enemy's wind-up gets the same short ping, once per tell.
+    const charging = game.s.enemies.find(e => !e.boss && e.hp > 0 && e.tell && e.tell.started > lastChargeAt);
+    if (charging) { lastChargeAt = Math.max(...game.s.enemies.filter(e => !e.boss && e.tell).map(e => e.tell.started)); sfx('tell', () => beep(880, 0.1, 0.015)); }
     const bossTell = game.s.enemies.find(e => ['bell', 'alarm'].includes(e.tell?.type) && e.tell.started > lastBossTellAt);
     if (bossTell) { lastBossTellAt = bossTell.tell.started; if (bossTell.tell.type === 'bell') toll(); else beep(660, 0.25, 0.04); }
     // The swing itself is only air; what it hits is voiced by feelHits.
     const swing = game.s.effects.findLast(f => f.type === 'swing');
-    if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7); }
+    if (swing && swing.id !== lastSoundId) { lastSoundId = swing.id; sfx(swing.phase === 2 ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, swing.phase === 2 ? 600 : 900, 0.7)); }
     renderer.talkKey = isTouch ? '▶' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▶▶' : 'Esc 건너뛰기' });
