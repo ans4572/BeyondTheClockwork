@@ -13,7 +13,7 @@ const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
-const SWING_SWEEP = 0.45, FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
+const FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
@@ -27,33 +27,28 @@ export class CanvasRenderer {
   kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
-   * The wrench's slash: a crescent that sweeps across in the swing's direction, thick at its leading edge and thinning
-   * to a tail, with a bright edge, and a few speed lines. The third blow is a little wider and
-   * sends a short shock arc out in front; all three share the wrench's teal.
+   * The wrench's slash as pixel smears: three hard-edged wedges along the swing (start, middle, end), each held for a
+   * moment and dimmed once, no soft fade. The second blow sweeps the other way; the third is wider and adds a shock arc.
    */
   drawSwing(fx, x, y, fraction) {
-    const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20 * 0.92, span = heavy ? 1.15 : 1;
-    const dir = phase === 1 ? -1 : 1, grow = Math.min(1, fraction / SWING_SWEEP), fade = fraction < SWING_SWEEP ? 1 : 1 - (fraction - SWING_SWEEP) / (1 - SWING_SWEEP);
-    const start = fx.angle - dir * span, sweep = dir * 2 * span * grow, steps = 14, thick = R * (heavy ? 0.2 : 0.16);
-    const at = (angle, r) => [x + Math.cos(angle) * r, y + Math.sin(angle) * r];
-    c.save(); c.globalAlpha = fade;
-    // Body: outer edge from tail to head, inner edge back, thickest at the head.
-    c.beginPath();
-    for (let i = 0; i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R)); }
-    for (let i = steps; i >= 0; i--) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - thick * (0.25 + 0.75 * Math.pow(t, 0.8)))); }
-    c.closePath(); c.fillStyle = '#7fe0d4'; c.globalAlpha = fade * 0.85; c.fill();
-    // A thin ink outline keeps the slash readable on pale floors.
-    c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.globalAlpha = fade * 0.45; c.stroke();
-    // Bright leading band along the outer edge, over the newest half of the sweep.
-    c.globalAlpha = fade; c.strokeStyle = '#ffffff'; c.lineWidth = heavy ? 2.5 : 2; c.lineCap = 'round'; c.beginPath();
-    for (let i = Math.floor(steps / 2); i <= steps; i++) { const t = i / steps; c.lineTo(...at(start + sweep * t, R - 1)); }
-    c.stroke();
-    // Speed lines trailing the head.
-    const head = start + sweep;
-    c.strokeStyle = '#3fb8a8'; c.lineWidth = 1.5;
-    for (const [r, back] of [[R * 0.62, 0.35], [R * 0.8, 0.5], [R * 1.1, 0.28]]) { c.beginPath(); c.moveTo(...at(head - dir * back, r)); c.lineTo(...at(head - dir * 0.08, r)); c.stroke(); }
-    // The third blow's shock: a thin arc pushed out ahead once the slash lands.
-    if (heavy && fraction > SWING_SWEEP * 0.8) { const k = (fraction - SWING_SWEEP * 0.8) / (1 - SWING_SWEEP * 0.8); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#7fe0d4'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, R * (1.05 + k * 0.35), fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
+    const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20 * 0.92, dir = phase === 1 ? -1 : 1;
+    const half = heavy ? 0.4 : 0.32, inner = R * 0.5, spread = heavy ? 0.85 : 0.75;
+    c.save();
+    [-spread, 0, spread].forEach((k, i) => {
+      const on = fraction * 3.2 - i;
+      if (on < 0 || on > 1.3) return;
+      const mid = fx.angle + dir * k, late = on > 0.9;
+      c.globalAlpha = late ? 0.55 : 1; c.fillStyle = late ? '#3fb8a8' : '#7fe0d4';
+      // A solid wedge: a point near the body opening out to the swing's outer edge.
+      const at = (a, r) => [x + Math.cos(a) * r, y + Math.sin(a) * r];
+      c.beginPath(); c.moveTo(...at(mid, inner));
+      for (let a = mid - half; a <= mid + half + 1e-6; a += half / 6) c.lineTo(...at(a, R));
+      c.closePath(); c.fill();
+      c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.globalAlpha *= 0.5; c.stroke(); c.globalAlpha = late ? 0.55 : 1;
+      if (!late) { c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.beginPath(); for (let a = mid - half; a <= mid + half + 1e-6; a += half / 6) c.lineTo(...at(a, R - 1)); c.stroke(); }
+    });
+    // The third blow's shock: a thin stepped arc pushed out ahead once the slash lands.
+    if (heavy && fraction > 0.55) { const k = (fraction - 0.55) / 0.45, r = R * (1.05 + k * 0.35); c.globalAlpha = (1 - k) * 0.8; c.strokeStyle = '#7fe0d4'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, r, fx.angle - 0.6, fx.angle + 0.6); c.stroke(); }
     c.restore();
   }
   /** A white flash over the whole frame, for a boss changing phase. */

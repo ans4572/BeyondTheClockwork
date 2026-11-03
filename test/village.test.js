@@ -364,7 +364,7 @@ test('the first trip leaves with the wrench alone; elements are bought one at a 
   assert.equal(g.nextElementPrice, 0); assert.equal(g.buyElement('fire'), true); assert.equal(g.s.profile.freeGears, 0);
   assert.equal(g.nextElementPrice, 80); assert.equal(g.buyElement('ice'), false, 'not enough gears');
   g.s.profile.freeGears = 1000; for (const id of ['ice', 'wind']) assert.equal(g.buyElement(id), true);
-  assert.equal(g.s.profile.freeGears, 1000 - 80 - 120); assert.deepEqual(g.s.profile.ownedElements, ['fire', 'ice', 'wind']);
+  assert.equal(g.s.profile.freeGears, 1000 - 50 - 50); assert.deepEqual(g.s.profile.ownedElements, ['fire', 'ice', 'wind']);
   g.s.profile.loadout = [];
   for (const id of ['fire', 'ice', 'wind']) g.toggleElement(id);
   assert.deepEqual(g.s.profile.loadout, ['ice', 'wind']);

@@ -63,9 +63,9 @@
     "spreadGapUnits": 2.5,
     "elementPrices": [
       0,
-      80,
-      120,
-      160
+      50,
+      50,
+      50
     ],
     "rewardTierWeights": {
       "common": 0.6,
