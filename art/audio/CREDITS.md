@@ -31,6 +31,19 @@
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |
+| boss-claw | Kenney | impactMetal_heavy_000 (후보 2: metalLatch) |
+| boss-magnet | Kenney | metalPot1 (후보 2: impactBell_heavy_000) |
+| boss-suction | Kenney | clothBelt (후보 2: cloth4) |
+| boss-overcharge | Kenney | impactPlate_heavy_001 (후보 2: impactMining_002) |
+| boss-stickers | Kenney | bookPlace1 (후보 2: card-place-2) |
+| boss-crane | Kenney | impactWood_heavy_002 (후보 2: impactMetal_heavy_002) |
+| boss-fan | Kenney | knifeSlice (후보 2: drawKnife1) |
+| boss-march | Kenney | footstep_concrete_000 (후보 2: impactSoft_medium_000) |
+| boss-stomp | Kenney | impactSoft_heavy_001 (후보 2: impactPunch_heavy_001) |
+| boss-trumpetWave | Kenney | jingles_SAX04 (후보 2: jingles_HIT07) |
+| boss-charge | Kenney | jingles_SAX08 (후보 2: footstep_wood_000) |
+| boss-column | Kenney | footstep_wood_002 (후보 2: impactWood_medium_001) |
+| boss-carpet | Kenney | bookFlip1 (후보 2: cloth3) |
 | alarm | Impact Sounds | impactBell_heavy_002 |
 | guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 

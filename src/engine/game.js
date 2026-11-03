@@ -795,6 +795,8 @@ export class Game {
     const p = this.p, ai = this.config.bossAI[enemy.type];
     const damage = () => this.hurt(enemy.damage);
     if (!enemy.boss) this.sense({ kind: 'mob', id: enemy.type });
+    // Each boss pattern has its own sound when it lands (the bell and alarm already ring at their warning).
+    else if (tell?.type) this.sense({ kind: 'boss', id: tell.type });
     switch (tell.type) {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':

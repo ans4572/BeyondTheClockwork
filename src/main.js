@@ -286,11 +286,12 @@ try {
     loot: () => sfx('loot'),
     portal: () => sfx('portal'),
     fail: () => sfx('fail'),
-    phase: () => sfx('heavy')
+    phase: () => sfx('heavy'),
+    boss: hit => sfx(`boss-${hit.id}`)
   };
   let hitstop = 0, slowUntil = 0, landedAt = 0, pendingWhoosh = null;
   // Lowest to highest: when several things happen in one step, only the last of these that happened is heard.
-  const SOUND_RANK = ['dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'mob', 'block', 'hit', 'cast', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
+  const SOUND_RANK = ['dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'mob', 'block', 'hit', 'boss', 'cast', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
   function feelHits() {
     const hits = game.feel.splice(0);
