@@ -30,3 +30,19 @@ npx wrangler deploy
 - `.assetsignore`: 테스트·스크립트·문서 등 게임에 필요 없는 파일은 올리지 않음.
 - 파일 수 약 1,300개, 가장 큰 파일 2.6MB — Cloudflare Pages 제한(파일 2만 개, 파일당 25MB) 안입니다.
 - 모든 경로가 상대 경로라 GitHub Pages(`/BeyondTheClockwork/`)와 Cloudflare(루트) 양쪽에서 그대로 동작합니다.
+
+## 기기 이동 코드 (Worker + KV)
+
+설정의 "다른 기기로 옮기기"는 `worker/index.js`가 처리합니다. `/api/*`만 Worker가 받고, 나머지 경로는 그대로 정적 파일입니다.
+
+- `POST /api/transfer` 저장을 받아 8글자 코드 발급(5분 보관, 주소당 시간당 10개)
+- `GET /api/transfer/:code` 저장 돌려주기 · `DELETE /api/transfer/:code` 불러온 뒤 삭제
+- GitHub Pages·로컬(127.0.0.1:4173)에서 실행한 게임도 Cloudflare 주소의 API를 씁니다(CORS 허용).
+
+처음 한 번 필요한 설정:
+
+1. Cloudflare 대시보드 → Storage & Databases → Workers KV → Create → 이름 `beyondtheclockwork-transfer`
+2. 만들어진 Namespace ID를 `wrangler.toml`의 `[[kv_namespaces]] id`에 넣기 (비밀값 아님, 현재 설정 완료)
+3. 커밋·푸시 → 자동 배포. Workers Builds의 Deploy command는 `npx wrangler deploy` 그대로.
+
+확인: `https://beyondtheclockwork.ans4572.workers.dev/api/transfer/AAAA-AAAA` 가 `{"error":"missing"}`을 돌려주면 정상입니다.
