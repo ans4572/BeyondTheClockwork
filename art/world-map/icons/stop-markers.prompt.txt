@@ -1,0 +1,30 @@
+Use case: stylized-concept.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+REFERENCES
+- WORLD MAP: art\world-map\clockwork-island.webp
+  These markers sit ON this painting along Smile Street's road, so they must look painted by the same hand: soft painterly toy-town rendering, warm cream, rose pink, mint, navy and polished brass, gentle top-left light, a thin dark navy outline, no hard pixel stair-steps.
+- ROAD CLOSE-UP: art\world-map\smile-street-road-reference.png (the road they stand on, for scale and palette).
+- MATCHING MARKERS: art\world-map\icons\boss-marker-v1.png (the boss marker already made; these must look like the same family, only plainer and smaller).
+
+Create a SET of world map stop markers, each saved as its own PNG with a TRANSPARENT background (alpha), square 512x512, centred, slight three-quarter top-down view like the props on the map. Every marker must read clearly when shrunk to 28x28 pixels: one bold silhouette, few large shapes.
+
+1) TOWN MARKER - SAVE: art\world-map\icons\town-marker-v1.png
+   Moru's repair shop as a tiny badge: a round cream enamel medallion with a brass rim, showing a small navy anvil with a little wind-up key above it.
+
+2) STOP MARKER, AHEAD (not reached yet) - SAVE: art\world-map\icons\stop-ahead-v1.png
+   A small round brass stop plate on a short post, its face plain cream enamel and EMPTY (the game writes the stop number on it), a thin brass rim with tiny gear teeth.
+
+3) STOP MARKER, DONE (already passed) - SAVE: art\world-map\icons\stop-done-v1.png
+   The same plate, its face deep navy enamel, EMPTY, with a small brass check-tick pin in one corner of the rim.
+
+4) STOP MARKER, CURRENT (where the player is) - SAVE: art\world-map\icons\stop-current-v1.png
+   The same plate, its face warm golden yellow enamel, EMPTY, with a soft warm glow around the rim and two tiny sparkles.
+
+RULES
+- The plate faces of 2, 3 and 4 stay completely EMPTY and flat in the middle: no numbers, letters or symbols; the game prints the number there.
+- 2, 3 and 4 are the SAME shape and size, only the enamel colour and the small detail change.
+- No text, letters, numbers, UI frame, watermark, characters, ground or shadow plate.
+
+When saved, list every SAVE path with its actual pixel size.

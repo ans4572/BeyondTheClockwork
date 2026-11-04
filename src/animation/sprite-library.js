@@ -1,6 +1,7 @@
 const browserImage = url => new Promise((resolve, reject) => {
   const image = new Image();
-  image.onload = () => resolve(image);
+  // Decoded up front, so the first frame that shows a new sheet (a skill, a mob's attack) does not stall on it.
+  image.onload = () => image.decode().catch(() => {}).then(() => resolve(image));
   image.onerror = () => reject(new Error(`스프라이트를 불러올 수 없습니다: ${url}`));
   image.src = assetUrl(url);
 });
@@ -27,7 +28,8 @@ export class SpriteLibrary {
    * waited for: they keep arriving after the library is returned, and `image` answers null until each one is in.
    */
   static async load(url = '/art/animations/player/game-clips.json', loadImage = browserImage, later = () => false) {
-    const response = await fetch(assetUrl(url));
+    // Always ask the server whether the clip list changed (a cheap 304 when not): a stale list points at old art.
+    const response = await fetch(assetUrl(url), { cache: 'no-cache' });
     if (!response.ok) throw new Error(`game-clips.json을 불러올 수 없습니다 (${response.status})`);
     const data = await response.json();
     const sheetsOf = clips => clips.flatMap(([, clip]) => [clip.sheet, clip.effect]).filter(Boolean);

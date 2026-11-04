@@ -1,6 +1,16 @@
 // Effect sheets made with PixelLab's effect workbench (art/fx/<name>.png, with the exported .json beside it).
 // w x h per frame, `cols` frames to a row, `anchor` = the effect's origin inside a frame (where it is placed).
 export const FX = {
+  drumBeat: { sheet: 'art/fx/drum-beat.png', w: 128, h: 80, cols: 4, frames: 12, anchor: [64, 48] },
+  drumBuff: { sheet: 'art/fx/drum-buff.png', w: 56, h: 72, cols: 4, frames: 12, anchor: [28, 60] },
+  rocoSticker: { sheet: 'art/fx/roco-sticker.png', w: 60, h: 70, cols: 4, frames: 12, anchor: [30, 57] },
+  rocoCan: { sheet: 'art/fx/roco-can.png', w: 16, h: 18, cols: 2, frames: 4, anchor: [8, 9] },
+  crate: { sheet: 'art/fx/crate.png', w: 20, h: 18, cols: 1, frames: 1, anchor: [10, 16] },
+  crateCrash: { sheet: 'art/fx/crate-crash.png', w: 70, h: 32, cols: 3, frames: 9, anchor: [35, 16] },
+  magnetField: { sheet: 'art/fx/magnet-field.png', w: 100, h: 42, cols: 4, frames: 12, anchor: [50, 20] },
+  stompRing: { sheet: 'art/fx/stomp-ring.png', w: 120, h: 50, cols: 3, frames: 8, anchor: [60, 25] },
+  // A seamless PixelLab carpet tile (img2img over a chevron sketch); the renderer scrolls it along the lane.
+  marchLane: { sheet: 'art/fx/march-carpet.png', w: 64, h: 32, cols: 1, frames: 1, anchor: [0, 16] },
   chargeArcs: { sheet: 'art/fx/charge-arcs.png', w: 27, h: 30, cols: 4, frames: 12, anchor: [13, 16] },
   chargedMotes: { sheet: 'art/fx/charged-motes.png', w: 34, h: 20, cols: 5, frames: 24, anchor: [17, 10] },
   conductiveSpanner: { sheet: 'art/fx/conductive-spanner.png', w: 37, h: 27, cols: 4, frames: 12, anchor: [25, 14] },

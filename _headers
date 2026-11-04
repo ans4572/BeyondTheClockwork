@@ -10,9 +10,10 @@
 /concepts/*
   Cache-Control: public, max-age=0, must-revalidate
 
-# Art, fonts and sound change rarely and are large: keep them a day, refresh in the background after that.
+# Art, fonts and sound: also checked on every visit. They are still redrawn often, and a day-old copy kept showing
+# replaced mobs and maps; an unchanged file costs only a 304. Loaded images stay in the page's memory meanwhile.
 /art/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=0, must-revalidate
 
 /*
   X-Content-Type-Options: nosniff

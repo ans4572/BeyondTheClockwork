@@ -23,10 +23,11 @@ async function buildForeground(village) {
     const hue = (max === r ? ((g - b) / delta + 6) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4) * 60;
     return walkable ? hue < 70 || hue > 150 : hues.some(([from, to]) => hue >= from && hue <= to);
   };
-  // Solid props keep their stone even where it matches the paving; everything walkable seeds the fill.
+  // Solid props keep their stone even where it matches the paving, and so do `scenery` outlines (parts of a prop that
+  // stand over walkable floor, like a stall's roof); everything walkable seeds the fill.
   const floor = new Uint8Array(width * height), kept = new Uint8Array(width * height), inside = new Uint8Array(width * height), queue = [];
   for (let y = 0; y < height; y += 2) for (let x = 0; x < width; x += 2) {
-    const ux = x / perUnit, uy = y / perUnit, solid = village.solids.some(polygon => pointInPolygon(ux, uy, polygon));
+    const ux = x / perUnit, uy = y / perUnit, solid = [...village.solids, ...(village.scenery || [])].some(polygon => pointInPolygon(ux, uy, polygon));
     if (solid) for (const p of [y * width + x, y * width + x + 1, (y + 1) * width + x, (y + 1) * width + x + 1]) kept[p] = 1;
     else if (pointInPolygon(ux, uy, village.walkable)) { queue.push(y * width + x); for (const p of [y * width + x, y * width + x + 1, (y + 1) * width + x, (y + 1) * width + x + 1]) inside[p] = 1; }
   }

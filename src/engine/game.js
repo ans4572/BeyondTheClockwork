@@ -889,7 +889,7 @@ export class Game {
       // Drummer: no damage of its own; nearby soldiers move faster and shrug off hits for a while.
       case 'beat':
         for (const ally of this.s.enemies) if (ally !== enemy && !ally.boss && ally.hp > 0 && distance(ally, enemy) <= enemy.beatRadius) { ally.beatUntil = this.s.time + enemy.beatSeconds; ally.aggro = true; }
-        this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.5, enemy.beatRadius); break;
+        this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.85, enemy.beatRadius, { look: 'drumBeat' }); break;
       // Pikeman: a long thrust, then a shorter one re-aimed at where the player went.
       case 'thrust': case 'thrust2': {
         const length = tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength, end = { x: tell.x + Math.cos(tell.angle) * length, y: tell.y + Math.sin(tell.angle) * length };
@@ -944,7 +944,7 @@ export class Game {
       case 'alarm': enemy.alarmUntil = this.s.time + ai.alarmSeconds; enemy.ready = enemy.alarmUntil + enemy.recovery; break;
       case 'crane':
         if (tell.drops.some(drop => distance(drop, p) <= ai.craneRadius + this.config.arena.playerRadius)) damage();
-        for (const { x, y } of tell.drops) { this.effect('ring', x, y, '#c9a66b', 0.3, ai.craneRadius); this.effect('scrap', x, y, '#c9a66b', 0.5, 1); }
+        for (const { x, y } of tell.drops) { this.effect('ring', x, y, '#c9a66b', 0.7, ai.craneRadius, { look: 'crateCrash' }); this.effect('scrap', x, y, '#c9a66b', 0.5, 1); }
         break;
       case 'bell':
         enemy.bellUntil = this.s.time + ai.bellSeconds; enemy.ready = enemy.bellUntil + enemy.recovery;

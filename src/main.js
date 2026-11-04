@@ -11,14 +11,14 @@ import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
-import { worldMapSvg, WORLD_MAP_ART } from './ui/world-map.js';
+import { worldMapSvg, WORLD_MAP_ART, WORLD_MAP_MARKERS } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
 import { MusicPlayer, musicScene } from './audio/music.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
-import { progressMark, syncPlan, readLink, writeLink } from './engine/sync.js';
+import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -28,6 +28,8 @@ const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(s
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
 const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
 const HOME_NAME = '웃음 마을';
+/** The F9 room jumper works only on this computer's dev server, never on the deployed sites. */
+const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
@@ -46,13 +48,14 @@ const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/elem
   ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake',
     'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat', 'dodge', 'wrench'].map(id => `art/ui/skill-icons/${id}.png`),
   // The map's painting, so the map opens whole the first time.
-  WORLD_MAP_ART];
+  WORLD_MAP_ART, ...WORLD_MAP_MARKERS];
 /** The decoded icons are held here so the browser keeps them ready. */
 const keptIcons = [];
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-const FEEL = { hit: { stop: 0.06, shake: 1.5 }, heavy: { stop: 0.12, shake: 5 }, phase: { stop: 0.25, shake: 5 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const MULTI_STOP = 0.02, MULTI_STOP_CAP = 0.06, CRIT_STOP = 0.03, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
+// Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck.
+const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015 }, fusion: { stop: 0.03, shake: 2 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0.03, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
@@ -67,6 +70,7 @@ try {
   let saved = null, loadError = '';
   try { const raw = localStorage.getItem(SAVE_KEY) || ''; if (raw) saved = decodeSave(raw, data); }
   catch (error) { loadError = error.message; }
+  if (saved) mergePlayTime(saved, readPlayTime(localStorage));
   let saveBlocked = !!loadError, storageError = '';
   const game = new Game(data, saved, state => {
     if (saveBlocked) return;
@@ -136,7 +140,8 @@ try {
     while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
-      image.onload = () => { renderer.mapImages.set(file, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); };
+      // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
+      image.onload = () => image.decode().catch(() => {}).then(() => { renderer.mapImages.set(file, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
       image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
       image.src = assetUrl(file);
     }
@@ -157,7 +162,7 @@ try {
   // Moving the save to another device: the code this device made, what the player typed, and a save waiting to be accepted.
   let transfer = { code: null, expiresAt: null, typed: '', busy: '', error: '', incoming: null };
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
-  let link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
+  let lastPlayWrite = 0, lastPlayUpload = -Infinity, link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
   let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null, settingsTab = 'general';
   // The in-game setting, or the same wish made once for every app on the device.
@@ -659,13 +664,14 @@ try {
    * place there; later it is skipped when nothing changed since the last upload, unless asked for by hand.
    */
   async function syncUpload(byHand = false) {
-    if (syncBusy || !game.s.profile.registered || (link && !byHand && progressMark(game.s) === link.mark)) return;
+    const played = game.s.profile.playSeconds || 0;
+    if (syncBusy || !game.s.profile.registered || (link && !byHand && progressMark(game.s) === link.mark && played - (link.played || 0) < PLAY_UPLOAD_SECONDS)) return;
     syncBusy = true; syncNote = ''; if (screen === 'pause') renderOverlay(true);
     try {
       game.save();
       const save = encodeSave(game.s), at = new Date().toISOString();
-      if (link) { const { rev } = await pushSync(link.key, save, link.rev); link = { ...link, rev, mark: progressMark(game.s), at }; }
-      else { const { key, rev } = await startSync(save); link = { key, rev, mark: progressMark(game.s), at }; }
+      if (link) { const { rev } = await pushSync(link.key, save, link.rev); link = { ...link, rev, mark: progressMark(game.s), at, played }; }
+      else { const { key, rev } = await startSync(save); link = { key, rev, mark: progressMark(game.s), at, played }; }
       writeLink(localStorage, link);
     } catch (error) {
       if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); syncBusy = false; return syncUpload(byHand); }
@@ -676,6 +682,7 @@ try {
   }
   /** Takes another device's save as this one's. */
   function takeRemote(state, remote) {
+    mergePlayTime(state, game.s.profile.playSeconds);
     game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; syncMode = state.mode;
     link = { ...link, rev: remote.rev, mark: progressMark(state), at: remote.at }; writeLink(localStorage, link);
   }
@@ -711,6 +718,7 @@ try {
     if (name === 'transfer-cancel') { transfer.incoming = null; screen = 'pause'; renderOverlay(true); }
     if (name === 'transfer-apply' && transfer.incoming) {
       const { code, state, syncKey } = transfer.incoming;
+      mergePlayTime(state, game.s.profile.playSeconds);
       game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; forgetCode(code); syncMode = state.mode;
       // The code came from a synced device: join it, counting from its newest upload so this copy is not pulled over it.
       if (syncKey) {
@@ -724,6 +732,7 @@ try {
   async function action(target) {
     const name = target.dataset.action, d = target.dataset;
     openAudio();
+    if (name.startsWith('debug-') && !DEBUG_ALLOWED) return;
     if (name === 'debug-tutorial') { leaveTitle(); game.debugRestartTutorial(); resume(); }
     if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room)); resume(); }
     if (name === 'intro') game.beginIntro();
@@ -764,7 +773,7 @@ try {
     if (bought !== null) sfx(bought ? 'buy' : 'deny'); else if (!['reward', 'element'].includes(name)) sfx('click');
     if (name === 'confirm-new') screen = 'confirmNew';
     if (name === 'cancel-new') { if (onTitle) { resume(); return; } screen = 'loadError'; }
-    if (name === 'new-game') { const fromTitle = onTitle; game.state = new Game(data).s; saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
+    if (name === 'new-game') { const fromTitle = onTitle; game.state = new Game(data).s; writePlayTime(localStorage, 0); saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
     renderOverlay(true); updateHUD();
     if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
   }
@@ -831,7 +840,7 @@ try {
     const sheet = $('overlay').querySelector('.panel');
     if (sheet && sheetKeys(e, sheet)) return;
     if (e.code === 'Escape') { e.preventDefault(); if (e.repeat || saveBlocked || screen === 'title') return; if (screen) resume(); else if (game.s.panel) { game.closePanel(); renderOverlay(); } else pause(); return; }
-    if (e.code === 'F9') { e.preventDefault(); if (e.repeat || saveBlocked) return; if (screen === 'debug') resume(); else pause('debug'); return; }
+    if (e.code === 'F9' && DEBUG_ALLOWED) { e.preventDefault(); if (e.repeat || saveBlocked) return; if (screen === 'debug') resume(); else pause('debug'); return; }
     if (screen === 'title') return;
     const map = bindings(), key = Object.keys(map).find(key => map[key] === e.code);
     if (!key && e.code === 'KeyT' && !e.repeat && !screen) game.togglePracticeReset();
@@ -867,8 +876,8 @@ try {
   document.addEventListener('pointerup', () => mouseHeld = false);
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } if (!document.hidden) audio?.resume().catch(() => {}); });
-  window.addEventListener('pagehide', () => game.save());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) writePlayTime(localStorage, game.s.profile.playSeconds || 0); if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } if (!document.hidden) audio?.resume().catch(() => {}); });
+  window.addEventListener('pagehide', () => { writePlayTime(localStorage, game.s.profile.playSeconds || 0); game.save(); });
   window.addEventListener('beforeunload', () => game.save());
 
   function pollGamepad() {
@@ -915,6 +924,10 @@ try {
     bringPlaceForward();
     // Play time leaves out the title, the settings / pause menu and a hidden tab.
     if (!onTitle && screen !== 'pause' && !document.hidden) game.addPlayTime(delta);
+    // The device keeps the play clock every few seconds; the village sends it to the server every five minutes of play.
+    const played = game.s.profile.playSeconds || 0;
+    if (played - lastPlayWrite >= 5) { writePlayTime(localStorage, played); lastPlayWrite = played; }
+    if (game.s.mode === 'hub' && played - (link?.played || 0) >= PLAY_UPLOAD_SECONDS && now - lastPlayUpload > 60000) { lastPlayUpload = now; syncUpload(); }
     // Back in the village: the moment progress is uploaded for the other devices.
     if (game.s.mode !== syncMode) { if (game.s.mode === 'hub' && syncMode && syncMode !== 'hub') syncUpload(); syncMode = game.s.mode; }
     if (game.s.mode === 'opening' && !screen) playOpening(false);

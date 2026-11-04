@@ -47,8 +47,8 @@ export class Lighting {
     // Darkness with holes where light falls: drawn on its own layer so lights can cut it.
     if (m.dark > 0) {
       const W = Math.ceil(vw * 10), H = Math.ceil(vh * 10);
-      if (!this.shade || this.shade.width !== W || this.shade.height !== H) this.shade = this.createCanvas(W, H);
-      const s = this.shade.getContext('2d');
+      if (!this.shade || this.shade.width !== W || this.shade.height !== H) { this.shade = this.createCanvas(W, H); this.shadeContext = this.shade.getContext('2d'); }
+      const s = this.shadeContext;
       s.globalCompositeOperation = 'source-over'; s.clearRect(0, 0, W, H); s.fillStyle = `rgba(10, 12, 30, ${m.dark})`; s.fillRect(0, 0, W, H);
       s.globalCompositeOperation = 'destination-out';
       const hole = (x, y, r, k) => { const px = (x - vx) * 10, py = (y - vy) * 10, g = s.createRadialGradient(px, py, 0, px, py, r * 10); g.addColorStop(0, `rgba(0,0,0,${k})`); g.addColorStop(1, 'rgba(0,0,0,0)'); s.fillStyle = g; s.fillRect(px - r * 10, py - r * 10, r * 20, r * 20); };

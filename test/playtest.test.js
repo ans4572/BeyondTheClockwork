@@ -15,8 +15,8 @@ test('a skilled bot falls early with the wrench alone, and at rank 16 gets past 
     assert.ok(bare.node >= 1 && bare.node <= 9, `Seed ${seed} wrench-only stopped at node ${bare.node}`);
     assert.notEqual(playtest(seed, 3000, { loadout: ['fire', 'ice'], stats: keyStats(8) }).mode, 'complete', `Seed ${seed} cleared at rank 8`);
     const strong = playtest(seed, 3000, { loadout: ['fire', 'ice'], stats: keyStats(16) });
-    assert.ok(strong.mode === 'complete' || strong.node >= 7, `Seed ${seed} at rank 16 stopped at node ${strong.node}`);
-    if (strong.mode === 'complete') cleared++;
+    if (strong.mode === 'complete' || strong.node >= 7) cleared++;
   }
-  assert.ok(cleared >= 0);
+  // 2026-11-05: bosses 1500 / 2500, mobs 10% faster and 1.5x damage; one seed in three may now stop rank 16 early.
+  assert.ok(cleared >= 2, `only ${cleared} of 3 seeds got past Roco at rank 16`);
 });

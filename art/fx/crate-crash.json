@@ -1,0 +1,261 @@
+{
+ "frames": [
+  {
+   "filename": "btc-crate-crash 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 1.png",
+   "frame": {
+    "x": 70,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 2.png",
+   "frame": {
+    "x": 140,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 3.png",
+   "frame": {
+    "x": 0,
+    "y": 32,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 4.png",
+   "frame": {
+    "x": 70,
+    "y": 32,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 5.png",
+   "frame": {
+    "x": 140,
+    "y": 32,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 6.png",
+   "frame": {
+    "x": 0,
+    "y": 64,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 7.png",
+   "frame": {
+    "x": 70,
+    "y": 64,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  },
+  {
+   "filename": "btc-crate-crash 8.png",
+   "frame": {
+    "x": 140,
+    "y": 64,
+    "w": 70,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 70,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 70,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 77
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-crate-crash.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 210,
+   "h": 96
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 35,
+   "y": 16
+  },
+  "frameTags": [
+   {
+    "name": "btc-crate-crash",
+    "from": 0,
+    "to": 8,
+    "direction": "forward"
+   }
+  ]
+ }
+}

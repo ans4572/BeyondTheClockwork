@@ -1,10 +1,14 @@
-import { iconAt } from './tool-icons.js';
 // The world map: the painted Clockwork Island (art/world-map/clockwork-island.webp) with the route drawn over it.
 // Smile Street's stops sit on the painted walks between Moru's shop and the shops' square (see SMILE_STOPS). The Silent Factory and the Central
 // Clock Tower are painted too; until those regions exist they are greyed under a veil with locked `?` stops.
 // Every position below is in pixels of the painting (1672 x 941) and scaled to the SVG.
 
 export const WORLD_MAP_ART = 'art/world-map/clockwork-island.webp';
+/** Painted stop markers (made to match the island painting); each stands on its stop with its foot on the road. */
+const MARKER = name => `art/world-map/icons/${name}.webp`;
+export const WORLD_MAP_MARKERS = ['town', 'market', 'boss', 'stop-ahead', 'stop-done', 'stop-current'].map(MARKER);
+/** Marker height in map units, and where the plate's face sits (share of the height from the top) for the stop number. */
+const MARKER_SIZE = { stop: 40, town: 48, market: 50, boss: 54 }, FACE_AT = 0.39;
 const ART_W = 1672, ART_H = 941, W = 1000, H = Math.round(W * ART_H / ART_W), K = W / ART_W;
 const px = ([x, y]) => [x * K, y * K];
 const f = n => n.toFixed(1);
@@ -33,7 +37,11 @@ const VEILS = {
 const path = (pts, close = false) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${f(x)},${f(y)}`).join('') + (close ? 'Z' : '');
 const banner = (x, y, text, tone = '') => `<g class="banner ${tone}"><rect x="${x - text.length * 9 - 14}" y="${y - 15}" width="${text.length * 18 + 28}" height="28" rx="4"/><text x="${x}" y="${y + 5}">${text}</text></g>`;
 const soon = (x, y, text) => `<text class="soon" x="${x}" y="${y}">${text}</text>`;
-const locked = pts => `<path class="road-dash" d="${path(pts)}"/>` + pts.map(([x, y], i) => { const boss = i === pts.length - 1; return `<g class="node locked ${boss ? 'boss' : ''}"><circle cx="${f(x)}" cy="${f(y)}" r="${boss ? 11 : 8}"/>${boss ? iconAt('crown', x, y, 12) : `<text x="${f(x)}" y="${f(y + 3.6)}">?</text>`}</g>`; }).join('');
+// Stops of regions not open yet: the same painted markers, greyed, a `?` on each plate.
+const locked = pts => `<path class="road-dash" d="${path(pts)}"/>` + pts.map(([x, y], i) => {
+  const boss = i === pts.length - 1, size = (boss ? MARKER_SIZE.boss : MARKER_SIZE.stop) * 0.85, top = y - size * 0.86;
+  return `<g class="node locked ${boss ? 'boss' : ''}"><image class="marker" href="${MARKER(boss ? 'boss' : 'stop-ahead')}" x="${f(x - size / 2)}" y="${f(top)}" width="${f(size)}" height="${f(size)}"/>${boss ? '' : `<text class="num" x="${f(x)}" y="${f(top + size * FACE_AT + 4.5)}">?</text>`}</g>`;
+}).join('');
 
 let scenery = null;
 /** The painting, with the regions not yet open shown again in grey through their outlines. */
@@ -50,11 +58,15 @@ export function worldMapSvg(stops, picked) {
   scenery ??= drawScenery();
   const points = stops.map(stop => ATLAS_SPOTS[stop.id]), reached = Math.max(0, stops.findIndex(stop => stop.state === 'current'));
   const node = (stop, [x, y]) => {
-    const r = stop.kind === 'boss' ? 11 : 9, on = stop.id === picked;
-    const name = on ? `<g class="name"><rect x="${f(x - stop.label.length * 7 - 8)}" y="${f(y + r + 4)}" width="${stop.label.length * 14 + 16}" height="20" rx="3"/><text x="${f(x)}" y="${f(y + r + 18.5)}">${stop.label}</text></g>` : '';
+    const on = stop.id === picked, kind = ['boss', 'shop', 'town'].includes(stop.kind) ? stop.kind : 'stop';
+    const size = MARKER_SIZE[kind === 'shop' ? 'market' : kind], art = kind === 'stop' ? `stop-${stop.state}` : kind === 'shop' ? 'market' : kind;
+    // The marker's foot stands on the stop point; the number goes on the plate's face.
+    const top = y - size * 0.86, r = size * 0.14;
+    const face = typeof stop.icon === 'number' && kind === 'stop' ? `<text class="num" x="${f(x)}" y="${f(top + size * FACE_AT + 5.5)}">${stop.icon}</text>` : '';
+    const name = on ? `<g class="name"><rect x="${f(x - stop.label.length * 7 - 8)}" y="${f(y + 4)}" width="${stop.label.length * 14 + 16}" height="20" rx="3"/><text x="${f(x)}" y="${f(y + 18.5)}">${stop.label}</text></g>` : '';
     return `<g class="node ${stop.state} ${stop.kind} ${on ? 'picked' : ''}" data-action="map-stop" data-id="${stop.id}" role="button" aria-label="${stop.label}">
-      <circle class="hit" cx="${f(x)}" cy="${f(y)}" r="18"/><circle cx="${f(x)}" cy="${f(y)}" r="${r}"/>${typeof stop.icon === 'number' ? `<text x="${f(x)}" y="${f(y + 3.6)}">${stop.icon}</text>` : iconAt(stop.icon, x, y, 12)}${name}
-      ${stop.state === 'current' ? `<g class="you"><path d="M${f(x)} ${f(y - 14)} l-8 -12 h16 z"/><text x="${f(x)}" y="${f(y - 30)}">나</text></g>` : ''}</g>`;
+      <circle class="hit" cx="${f(x)}" cy="${f(y - size * 0.4)}" r="${f(size * 0.6)}"/><image class="marker" href="${MARKER(art)}" x="${f(x - size / 2)}" y="${f(top)}" width="${size}" height="${size}"/>${face}${name}
+      ${stop.state === 'current' ? `<g class="you"><path d="M${f(x)} ${f(top - 2)} l-8 -12 h16 z"/><text x="${f(x)}" y="${f(top - 18)}">나</text></g>` : ''}</g>`;
   };
   return `<svg class="world-map" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="태엽 섬 지도">${scenery}
     <path class="road-trail" d="${path(points)}"/>${reached ? `<path class="road-walked" d="${path(points.slice(0, reached + 1))}"/>` : ''}

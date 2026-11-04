@@ -29,3 +29,6 @@ _workspace/
 art/**/background-compact-v*.png
 art/world-map/clockwork-island-v*.png
 tmp/
+# Full-size painted map markers; the game uses the small .webp beside them.
+art/world-map/icons/*-v*.png
+art/smile-street/maps/scrapyard/background-v2.png

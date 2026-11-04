@@ -1,0 +1,35 @@
+Use case: stylized-concept.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create ONE static production game environment background for Beyond the Clockwork: THE SCRAPYARD, the small dumping pit behind Moru's repair shop where broken wind-up toys are thrown away. This is the TUTORIAL map: the player wakes up here as a discarded robot, learns to move, swing a wrench at one wooden guard, and climbs out to the village. Generate it, then save it as a PNG at the SAVE path, unchanged, with no resizing. Overwrite nothing else.
+
+REFERENCES
+- WORLD MAP: art\world-map\clockwork-island.webp
+  The scrapyard is painted there at the upper left, just behind Moru's repair shop: a sunken pit of purple-grey rock and packed earth, a big copper pipe coming out of the cliff and dumping into a steel chute with yellow-and-black hazard stripes, heaps of broken gears and a cracked grey ball, a rope fence on brass posts, a wire net. Take the place, its props and its mood from there.
+- CURRENT MAP: art\smile-street\maps\scrapyard\background-v1.png
+  The tutorial's current scene. Keep its rendering style, camera and the way the open floor works; redesign the place to match the world map.
+- QUALITY TARGET: art\smile-street\maps\first-step-a\background-compact-v1.png
+  Match this street map's rendering quality, pixel density and object scale: same size doors, crates, lanterns and paving stones in pixels.
+SAVE: art\smile-street\maps\scrapyard\background-v2.png
+
+OUTPUT SIZE: EXACTLY 1792x1024 pixels (landscape 7:4), opaque full-bleed, drawn natively so one picture pixel is one screen pixel. If the tool cannot return 1792x1024, return 1536x1024 instead and say so. Never upscale.
+
+RENDERING
+Polished richly detailed pixel-art toy-town materials, navy and brass trim, the SAME quarter-view isometric camera as the quality target. Crisp hard pixel edges, no depth blur, no smoothing.
+Light: late afternoon, a little dim and dusty down in the pit, warm light spilling from the town above at the top right; calm, slightly sad, never scary.
+
+FLOOR
+One connected open floor of packed earth with broken old paving slabs, filling about 64% of the width and 52% of the height, centred slightly low (roughly x18%-82%, y30%-82%). Calm and low in contrast so characters read clearly. No thin props, loose clutter or small objects on it.
+
+LAYOUT (the tutorial runs left to right)
+- LEFT third: where the player wakes up. A soft heap of discarded toys and torn ribbons against the LEFT wall, the floor in front of it open.
+- CENTRE: open floor where the player practises walking and meets ONE wooden guard toy (the guard is not painted).
+- TOP edge: the purple-grey rock wall of the pit with the big COPPER PIPE coming out of it and the STEEL CHUTE with hazard stripes below it, broken gear heaps, the cracked grey ball, crates of broken toys.
+- BOTTOM edge: a low rope fence on brass posts and the near rim of the pit, with heaps of junk in the foreground (scenery, never floor).
+- EXIT at the UPPER RIGHT: a short wide stone ramp or stairs climbing out of the pit toward the town, ending at a small green wooden door under a striped awning with a warm lantern (the back door of Moru's repair shop). The ramp is continuous broad paving, at least 3 tiles wide, no barrier.
+- Every other part of the edge is solid rock wall, fence or junk heaps: no other way out.
+
+No UI, labels, readable text, letters, numbers, watermarks, people, toy residents, Moru, enemies, the guard, the player, baked-in characters, arrows, grids, debug overlays or animation. Signs use pictograms only. Natural paving joints, no tactical grid. One cohesive detailed scene, not a contact sheet.
+
+When saved, give the SAVE path with its actual pixel size.

@@ -70,7 +70,9 @@ export class DepthMask {
     const w = Math.min(width, Math.ceil((x + halfWidth) * perUnit)) - left, h = Math.min(height, feet + 2) - top;
     if (w <= 0 || h <= 0) return 0;
     if (!this.scratch || this.scratch.width < w || this.scratch.height < h) { this.scratch = this.createCanvas(Math.max(w, 256), Math.max(h, 256)); this.scratchContext = this.scratch.getContext('2d'); }
-    const patch = this.scratchContext.createImageData(w, h);
+    // One reusable buffer per patch size: a fresh ImageData for every body every frame kept the garbage collector busy.
+    if (this.patch?.width !== w || this.patch.height !== h) this.patch = this.scratchContext.createImageData(w, h); else this.patch.data.fill(0);
+    const patch = this.patch;
     const bodyLeft = (x - BODY_HALF_UNITS) * perUnit, bodyRight = (x + BODY_HALF_UNITS) * perUnit, bodyTop = (y - BODY_UNITS) * perUnit;
     let found = false, inBody = 0, hidden = 0;
     for (let row = 0; row < h; row++) for (let col = 0; col < w; col++) {
@@ -83,7 +85,6 @@ export class DepthMask {
       found = true;
     }
     if (!found) return 0;
-    this.scratchContext.clearRect(0, 0, this.scratch.width, this.scratch.height);
     this.scratchContext.putImageData(patch, 0, 0);
     const scale = 20 / perUnit;
     // Matches the smooth background it patches, so no seam shows around a covered body.

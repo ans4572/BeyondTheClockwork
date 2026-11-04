@@ -12,10 +12,10 @@ function boss(type) {
 test('Roco minimum tells precede damage, claw is directional, magnet remains escapable', () => {
   const [g, e] = boss('collectorRoco'); g.p.x = 18; g.p.y = 8;
   g.beginEnemyTell(e, 'claw'); assert.ok(e.tell.until - e.tell.started >= 0.7); assert.equal(g.p.hp, 100);
-  g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 90);
-  g.s.time += 1; g.p.y = 11; g.beginEnemyTell(e, 'claw'); g.p.y = 5; g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 90);
+  g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
+  g.s.time += 1; g.p.y = 11; g.beginEnemyTell(e, 'claw'); g.p.y = 5; g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
   g.s.time += 1; g.beginEnemyTell(e, 'magnet'); g.s.time = e.tell.until; g.executeEnemy(e);
-  const magnet = g.s.casts.find(c => c.shape === 'magnet'); assert.ok(magnet.pull < data.combat.player.speed); assert.equal(g.p.hp, 90);
+  const magnet = g.s.casts.find(c => c.shape === 'magnet'); assert.ok(magnet.pull < data.combat.player.speed); assert.equal(g.p.hp, 100 - e.damage);
 });
 test('Roco suction drags the player in and spits them out; stickers slow but never hurt', () => {
   const [g, e] = boss('collectorRoco'); g.p.x = 18; g.p.y = 8;
@@ -81,8 +81,8 @@ test('Brass stomps out rings to dodge through, and charges along a line before a
 test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');
   e.hp = e.maxHp * 0.49; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');
-  assert.ok(e.tell.until - e.tell.started >= 0.8); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 88);
-  g.s.time += 1; g.p.x = 15; g.beginEnemyTell(e, 'march'); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 88);
+  assert.ok(e.tell.until - e.tell.started >= 0.8); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
+  g.s.time += 1; g.p.x = 15; g.beginEnemyTell(e, 'march'); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
 });
 test('Brass fan followup is separately telegraphed and trumpet wave preserves the shown gap', () => {
   const [g, e] = boss('captainBrass'); g.p.x = 18; g.p.y = 8;

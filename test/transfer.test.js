@@ -102,3 +102,14 @@ test('total play time adds up, survives a save, and starts at zero for an older 
   const old = JSON.parse(encodeSave(g.s)); delete old.state.profile.playSeconds;
   assert.equal(decodeSave(JSON.stringify(old), data).profile.playSeconds, 0);
 });
+
+test('play time is not progress, is kept per device, and never winds back when a save comes in', async () => {
+  const { progressMark, mergePlayTime, readPlayTime, writePlayTime } = await import('../src/engine/sync.js');
+  const g = new Game(data), before = progressMark(g.s);
+  g.addPlayTime(500); assert.equal(progressMark(g.s), before);
+  const store = new Map(), storage = { getItem: k => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) };
+  writePlayTime(storage, 812.7); assert.equal(readPlayTime(storage), 812);
+  const incoming = new Game(data).s; incoming.profile.playSeconds = 300;
+  assert.equal(mergePlayTime(incoming, readPlayTime(storage)).profile.playSeconds, 812);
+  incoming.profile.playSeconds = 2000; assert.equal(mergePlayTime(incoming, 812).profile.playSeconds, 2000);
+});

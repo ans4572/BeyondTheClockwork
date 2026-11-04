@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-magnet-field 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 1.png",
+   "frame": {
+    "x": 100,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 2.png",
+   "frame": {
+    "x": 200,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 3.png",
+   "frame": {
+    "x": 300,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 4.png",
+   "frame": {
+    "x": 0,
+    "y": 42,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 5.png",
+   "frame": {
+    "x": 100,
+    "y": 42,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 6.png",
+   "frame": {
+    "x": 200,
+    "y": 42,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 7.png",
+   "frame": {
+    "x": 300,
+    "y": 42,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 8.png",
+   "frame": {
+    "x": 0,
+    "y": 84,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 9.png",
+   "frame": {
+    "x": 100,
+    "y": 84,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 10.png",
+   "frame": {
+    "x": 200,
+    "y": 84,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-magnet-field 11.png",
+   "frame": {
+    "x": 300,
+    "y": 84,
+    "w": 100,
+    "h": 42
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 42
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 42
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.47619047619047616
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-magnet-field.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 400,
+   "h": 126
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 50,
+   "y": 20
+  },
+  "frameTags": [
+   {
+    "name": "btc-magnet-field",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

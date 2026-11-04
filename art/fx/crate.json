@@ -1,0 +1,53 @@
+{
+ "frames": [
+  {
+   "filename": "btc-crate 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 20,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 20,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 20,
+    "h": 18
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8888888888888888
+   },
+   "duration": 125
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-crate.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 20,
+   "h": 18
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 10,
+   "y": 16
+  },
+  "frameTags": [
+   {
+    "name": "btc-crate",
+    "from": 0,
+    "to": 0,
+    "direction": "forward"
+   }
+  ]
+ }
+}

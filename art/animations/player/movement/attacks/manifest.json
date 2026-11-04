@@ -95,7 +95,7 @@
         "range": 1.65
       },
       "timingMode": "art_review_only_not_damage_alignment",
-      "sheet": "clips/attack-1-south-c10eb650/sheet.png",
+      "sheet": "clips/attack-1-south-c10eb650/sheet-v2.png",
       "gif": "clips/attack-1-south-c10eb650/preview.gif",
       "files": [
         "clips/attack-1-south-c10eb650/frames/000.png",
@@ -980,7 +980,7 @@
         "range": 1.85
       },
       "timingMode": "art_review_only_not_damage_alignment",
-      "sheet": "clips/attack-2-south-5afda580/sheet.png",
+      "sheet": "clips/attack-2-south-5afda580/sheet-v2.png",
       "gif": "clips/attack-2-south-5afda580/preview.gif",
       "files": [
         "clips/attack-2-south-5afda580/frames/000.png",

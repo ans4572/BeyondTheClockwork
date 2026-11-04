@@ -54,12 +54,13 @@ body.touch .panel.atlas-panel .panel-header h2 { display: none; }
 .world-map .node .hit { fill: transparent; stroke: none; }
 .world-map .node circle:not(.hit) { fill: #fff4d6; stroke: var(--ink); stroke-width: 2.5; }
 .world-map .node text { font: 700 9.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
-.world-map .node.done circle:not(.hit) { fill: var(--ink); } .world-map .node.done > text { fill: #fff4d6; }
-.world-map .node.boss circle:not(.hit) { stroke: var(--red); } .world-map .node.boss > text { fill: var(--red); }
-.world-map .node.done.boss circle:not(.hit) { fill: var(--red); } .world-map .node.done.boss > text { fill: #fff4d6; }
-.world-map .node.current circle:not(.hit) { fill: #ffd257; stroke-width: 3; } .world-map .node.current > text { fill: var(--ink); }
-.world-map .node:hover circle:not(.hit), .world-map .node.picked circle:not(.hit) { stroke: var(--red); stroke-width: 4; }
-.world-map .node.locked circle:not(.hit) { fill: #d6d2c6; stroke: #6e6457; stroke-width: 2.5; } .world-map .node.locked > text { fill: #6e6457; }
+.world-map .node .marker { filter: drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); transition: transform .12s; transform-box: fill-box; transform-origin: 50% 100%; }
+.world-map .node .num { font-size: 15px; }
+.world-map .node.done .num { fill: #fff4d6; }
+/* A boss already beaten stays on the map, dimmed. */
+.world-map .node.done.boss .marker { filter: saturate(.4) brightness(.85) drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); }
+.world-map .node:hover .marker, .world-map .node.picked .marker { transform: scale(1.15); filter: drop-shadow(0 0 3px #fff4d6) drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); }
+.world-map .node.locked .marker { filter: grayscale(1) brightness(.9) opacity(.8); } .world-map .node.locked > text { fill: #6e6457; }
 .world-map .name rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 2.5; } .world-map .name text { font-size: 12.5px; }
 .world-map .you { animation: atlas-bob 1.2s ease-in-out infinite; }
 .world-map .you path { fill: #c43c36; stroke: #fff4d6; stroke-width: 2; }

@@ -203,7 +203,7 @@ test('the tutorial plays in the scrapyard and stays on its floor', () => {
   assert.equal(yard.background, maps.villages.scrapyard.background);
   assert.deepEqual([g.p.x, g.p.y], [maps.intro.spawn.x, maps.intro.spawn.y]);
   assert.deepEqual([g.s.enemies[0].x, g.s.enemies[0].y], [maps.intro.enemySpawns[0].x, maps.intro.enemySpawns[0].y]);
-  assert.deepEqual(g.bounds, { left: 0, right: 28, top: 0, bottom: 16 });
+  assert.deepEqual(g.bounds, { left: 0, right: 38.4, top: 0, bottom: 25.6 });
   for (let step = 0; step < 3000; step++) {
     const a = (step / 40 | 0) * 2.4;
     g.move(g.p, Math.cos(a) * 0.09, Math.sin(a) * 0.09);
@@ -211,10 +211,10 @@ test('the tutorial plays in the scrapyard and stays on its floor', () => {
   }
 });
 
-test('the scrapyard picture and mask are one screen in size', () => {
-  const { background, mask } = maps.villages.scrapyard;
-  assert.deepEqual(imageSize(new URL(`..${mask}`, import.meta.url)), [1120, 640]);
-  assert.deepEqual(imageSize(new URL(`..${background}`, import.meta.url)), [2240, 1280]);
+test('the scrapyard picture is drawn one picture pixel per screen pixel, with its mask at map size', () => {
+  const { background, mask, size } = maps.villages.scrapyard;
+  assert.deepEqual(imageSize(new URL(`..${mask}`, import.meta.url)), size.map(units => Math.round(units * 40)));
+  assert.deepEqual(imageSize(new URL(`..${background}`, import.meta.url)), size.map(units => Math.round(units * 80)));
 });
 
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };
@@ -261,7 +261,8 @@ test('beating the guard opens the door, and walking to it registers the player o
   guard.hp = 0; step(g, 0.05);
   assert.equal(g.tutorial.step, 'door'); assert.equal(g.s.mode, 'intro'); assert.equal(g.s.profile.freeGears, 10); assert.equal(g.s.enemies.length, 0);
   const { spawn, exit: { at } } = maps.intro;
-  for (const [x, y] of [[20, 9], [24, 8], at]) for (let i = 0; i < 400 && g.s.mode === 'intro' && Math.hypot(x - g.p.x, y - g.p.y) > 0.3; i++) g.update(1 / 60, { x: x - g.p.x, y: y - g.p.y });
+  // Across the pit floor, up the stairs at the upper right, to the shop's back door.
+  for (const [x, y] of [[26, 14], [32, 11], [35.8, 8.4], at]) for (let i = 0; i < 400 && g.s.mode === 'intro' && Math.hypot(x - g.p.x, y - g.p.y) > 0.3; i++) g.update(1 / 60, { x: x - g.p.x, y: y - g.p.y });
   assert.equal(g.s.mode, 'registration'); assert.equal(g.tutorial.step, 'town'); assert.ok(spawn);
 });
 

@@ -1133,7 +1133,7 @@
       "bodyHeight": 87
     },
     "attack-1/south": {
-      "sheet": "/art/animations/player/movement/attacks/clips/attack-1-south-c10eb650/sheet.png",
+      "sheet": "/art/animations/player/movement/attacks/clips/attack-1-south-c10eb650/sheet-v2.png",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -1411,7 +1411,7 @@
       "bodyHeight": 84
     },
     "attack-2/south": {
-      "sheet": "/art/animations/player/movement/attacks/clips/attack-2-south-5afda580/sheet.png",
+      "sheet": "/art/animations/player/movement/attacks/clips/attack-2-south-5afda580/sheet-v2.png",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
