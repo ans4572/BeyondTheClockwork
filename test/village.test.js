@@ -424,3 +424,10 @@ test('an enemy pressed against a cart works its way around it', () => {
   for (let i = 0; i < 1200 && Math.hypot(guard.x - g.p.x, guard.y - g.p.y) > 1.5; i++) { g.p.hp = g.p.maxHp; g.update(1 / 60, {}); }
   assert.ok(Math.hypot(guard.x - g.p.x, guard.y - g.p.y) <= 1.5, `stopped at ${guard.x},${guard.y}`);
 });
+
+test('sparks and shots left from a fight do not hang in the village', () => {
+  const g = atHub();
+  g.effect('ring', g.p.x, g.p.y, '#e8742f', 0.5, 3); g.s.casts.push({ id: 'old', shape: 'moving', x: 1, y: 1 }); g.s.projectiles.push({ x: 1, y: 1 });
+  g.update(1 / 60, {});
+  assert.deepEqual([g.s.effects.length, g.s.casts.length, g.s.projectiles.length], [0, 0, 0]);
+});

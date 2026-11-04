@@ -8,6 +8,8 @@ import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/m
 import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
 import { FX, NOTE_ART } from './fx-sprites.js';
+/** The music box's notes are drawn a little under their art size so a volley reads as shots, not as clutter. */
+const NOTE_SCALE = 0.8;
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 /** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
 export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
@@ -229,6 +231,18 @@ export class CanvasRenderer {
     const reach = Math.min((halfW - 1.5) / (Math.abs(dx) || 1e-6), (halfH - 2) / (Math.abs(dy) || 1e-6));
     c.save(); c.translate((centerX + dx * reach) * 20, (centerY + dy * reach) * 20); c.rotate(Math.atan2(dy, dx));
     c.fillStyle = fill; c.strokeStyle = '#3b2f1c'; c.lineWidth = 2; c.beginPath(); c.moveTo(13, 0); c.lineTo(-9, -11); c.lineTo(-4, 0); c.lineTo(-9, 11); c.closePath(); c.stroke(); c.fill(); c.restore();
+  }
+  /**
+   * Where a placed skill will land: a soft disc on the floor in the skill's colour, a dashed rim, and an inner ring that
+   * closes in on the rim as the moment of impact comes, so the timing reads as well as the place.
+   */
+  drawLandingMark(fx, x, y, fraction) {
+    const c = this.ctx, r = fx.value * 20, flat = 0.55;
+    c.save(); c.translate(x, y); c.scale(1, flat);
+    c.globalAlpha = 0.16 + 0.14 * fraction; c.fillStyle = fx.color; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
+    c.globalAlpha = 0.85; c.strokeStyle = fx.color; c.lineWidth = 2; c.setLineDash([6, 5]); c.lineDashOffset = -this.visualTime * 18; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.stroke();
+    c.setLineDash([]); c.globalAlpha = 0.5 + 0.5 * fraction; c.strokeStyle = '#fff4d6'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, Math.max(2, r * fraction), 0, TAU); c.stroke();
+    c.restore();
   }
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
   coverBody(mask, x, y, halfWidth = 1.3, tall = 2.9) { return mask?.cover(this.ctx, x, y, halfWidth, tall) || 0; }
@@ -600,7 +614,8 @@ export class CanvasRenderer {
       }
       if(cast.shape==='clamp'){
         const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
-        for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4];this.line(a.x*20,a.y*20,b.x*20,b.y*20,'#94bdc8',1);}
+        // Only the plain fallback outlines the jaws' box; with the picture the jaws themselves show where they close.
+        if(!spriteFx)for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4];this.line(a.x*20,a.y*20,b.x*20,b.y*20,'#94bdc8',1);}
         if(!spriteFx)for(const side of [-1,1]){const points=[-1,1].map(u=>({x:cast.x+Math.cos(cast.angle)*u*cast.halfLength-Math.sin(cast.angle)*side*gap,y:cast.y+Math.sin(cast.angle)*u*cast.halfLength+Math.cos(cast.angle)*side*gap}));this.line(points[0].x*20,points[0].y*20,points[1].x*20,points[1].y*20,'#7fc9df',5);}
       }
       if(cast.shape === 'orb' && !spriteFx){ const x=cast.x*20,y=cast.y*20-16; this.circle(x,y,9,'#a4c7b1');this.circle(x,y,5,'#dfca6a');this.line(x-5,y,x+4,y+3,'#fff1a2',2); }
@@ -683,8 +698,9 @@ export class CanvasRenderer {
       // An enemy's shot is a note with a gold tail; one batted back stays a plain pellet.
       if (note && !bullet.friendly) {
         const back = bullet.angle + Math.PI, bob = Math.sin(this.visualTime * 14 + bullet.x) * 1.5;
-        for (let i = 1; i <= 4; i++) { c.globalAlpha = 0.45 - i * 0.09; this.circle(bx + Math.cos(back) * i * 4, by - 6 + Math.sin(back) * i * 4, 3 - i * 0.4, '#ffd257'); }
-        c.globalAlpha = 1; c.drawImage(note, Math.round(bx - 8), Math.round(by - 20 + bob), 16, 19);
+        const k = NOTE_SCALE, w = Math.round(16 * k), h = Math.round(19 * k);
+        for (let i = 1; i <= 4; i++) { c.globalAlpha = 0.45 - i * 0.09; this.circle(bx + Math.cos(back) * i * 4 * k, by - 6 * k + Math.sin(back) * i * 4 * k, (3 - i * 0.4) * k, '#ffd257'); }
+        c.globalAlpha = 1; c.drawImage(note, Math.round(bx - w / 2), Math.round(by - 20 * k + bob), w, h);
         continue;
       }
       this.circle(bx, by, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bx, by, 2, '#f7e6b0');
@@ -697,8 +713,11 @@ export class CanvasRenderer {
     for (const fx of s.effects) {
       if (fx.type === 'number' && !s.profile.settings.damageNumbers) continue;
       if (spriteFx && ['crosscut', 'iceClamp'].includes(fx.type)) continue;
+      // A skill with its own animated picture (every fusion, and the element skills that have one) needs no plain ring on each pulse.
+      if (spriteFx && fx.type === 'ring' && fx.skill && this.castEffects.effects?.[fx.skill]) continue;
       if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
+      if (fx.type === 'friendlyTell') { this.drawLandingMark(fx, x, y, fraction); continue; }
       // Blows and skills with a picture of their own play it; the plain shapes below are the fallback.
       if (fx.look && this.drawLook(fx, x, y, fraction)) continue;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;

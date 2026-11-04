@@ -1,0 +1,23 @@
+Use case: stylized-concept.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+REFERENCES
+- WORLD MAP: art\world-map\clockwork-island.webp
+  The icon sits ON this painting as a map marker, so it must look painted by the same hand: soft painterly toy-town rendering, warm cream, rose pink, mint, navy and polished brass, gentle top-left light, a thin dark navy outline, no hard pixel stair-steps.
+- ROAD CLOSE-UP: art\world-map\smile-street-road-reference.png (the stretch of road the marker stands on, for scale and palette).
+SAVE: art\world-map\icons\boss-marker-v1.png
+
+Create ONE world map marker for a BOSS stop on Smile Street. It must look clearly more important and more dangerous than a normal stop, while still belonging to this cute toy town.
+- A round BRASS GEAR MEDALLION, about the size of a small drum, standing upright on a short brass stand, its teeth bold and chunky.
+- In its centre, a deep crimson enamel disc with a stern WIND-UP KEY CROWN on it: a small golden crown whose points are wind-up key bows.
+- Two little navy-and-gold pennants on thin poles crossed behind the medallion, like a parade warning.
+- A soft red glow around the medallion's rim, as if it hums with menace.
+
+FORMAT
+- ONE icon, centred, square 1024x1024, TRANSPARENT background (PNG with alpha). No ground, no shadow plate, no scenery around it.
+- It must read clearly when shrunk to 40x40 pixels: one bold silhouette, few large shapes, strong contrast against cream and pink paving.
+- Slight three-quarter top-down view, like the props on the world map.
+- No text, letters, numbers, UI frame, watermark or characters.
+
+When saved, give the SAVE path with its actual pixel size.

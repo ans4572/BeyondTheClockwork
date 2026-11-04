@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
 import { placeOf } from '../src/engine/map-geometry.js';
-import { NpcDirector, BELL_EVERY_SECONDS, BELL_HOLD_SECONDS, FIRST_BELL_SECONDS, LANE_UNITS } from '../src/animation/npc-director.js';
+import { NpcDirector, BELL_EVERY_SECONDS, BELL_HOLD_SECONDS, FIRST_BELL_SECONDS, LANE_UNITS, FRONT_FACING_NORTH, walkDirection } from '../src/animation/npc-director.js';
 import { SpriteLibrary } from '../src/animation/sprite-library.js';
 
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
@@ -233,4 +233,13 @@ test('a newcomer hears the bell early, then the town keeps its long gap', () => 
   play(BELL_HOLD_SECONDS + 0.2, null); assert.equal(d.stopped, false);
   play(BELL_EVERY_SECONDS - 1, null); assert.equal(d.stopped, false);
   play(1.2, null); assert.equal(d.stopped, true);
+});
+
+test('residents whose north walk shows the face turn their back when walking away from the camera', () => {
+  for (const character of FRONT_FACING_NORTH) {
+    assert.equal(walkDirection(character, 0.01, -1), 'north-east');
+    assert.equal(walkDirection(character, -0.01, -1), 'north-west');
+  }
+  assert.equal(walkDirection('R1', 0, -1), 'north');
+  assert.equal(walkDirection('R3', 1, 0), 'east');
 });

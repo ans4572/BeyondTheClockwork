@@ -49,6 +49,8 @@ export function decodeSave(raw, data) {
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
   // Saves from before chapters start in chapter 1.
   if (!Number.isInteger(s.profile.chapter) || s.profile.chapter < 1) s.profile.chapter = 1;
+  // Older saves start their play clock at zero; a broken value is reset rather than refusing the save.
+  if (!Number.isFinite(s.profile.playSeconds) || s.profile.playSeconds < 0) s.profile.playSeconds = 0;
   s.profile.loadout ??= [];
   s.profile.ownedElements ??= [...s.profile.loadout];
   if (!Array.isArray(s.profile.ownedElements) || s.profile.ownedElements.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 부품이 올바르지 않습니다.');

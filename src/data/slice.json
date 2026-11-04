@@ -54,7 +54,7 @@
     "waveWarnSeconds": 0.8,
     "waveMinUnits": 6,
     "waveMaxUnits": 13,
-    "waveDamageShare": 0.35,
+    "waveDamageShare": 0.525,
     "introEnemyHp": 52,
     "aggroUnits": 12,
     "aggroLinkUnits": 3.5,
@@ -1082,7 +1082,7 @@
     },
     "skillCooldownReduction": {
       "name": "고속 배선",
-      "description": "속성 기술과 융합의 재사용 대기 시간이 줄어든다.",
+      "description": "속성 기술과 융합 스킬의 대기시간이 줄어든다.",
       "tier": "rare"
     },
     "dodgeCooldownReduction": {
@@ -1174,8 +1174,8 @@
     },
     {
       "id": "cooldownReduction",
-      "name": "기술 대기시간",
-      "description": "기술과 융합을 더 자주 쓴다.",
+      "name": "스킬 대기시간 감소",
+      "description": "속성 기술과 융합 스킬의 대기시간이 줄어들어 더 자주 쓴다.",
       "perRank": 0.015,
       "unit": "percent",
       "maxRank": 30,
@@ -1204,8 +1204,8 @@
     },
     {
       "id": "dodgeCooldown",
-      "name": "회피 대기시간",
-      "description": "회피를 더 자주 쓴다.",
+      "name": "회피 대기시간 감소",
+      "description": "회피의 대기시간이 줄어들어 더 자주 쓴다.",
       "perRank": 0.02,
       "unit": "percent",
       "maxRank": 30,
@@ -1420,7 +1420,7 @@
       "id": "coldReap",
       "element": "ice",
       "name": "냉각 회수",
-      "description": "둔화 걸린 적을 처치하면 기술 대기시간이 1초 줄어든다.",
+      "description": "둔화 걸린 적을 처치하면 스킬 대기시간이 1초 줄어든다.",
       "cooldownRefund": 1,
       "tier": "special"
     },

@@ -307,3 +307,4 @@ body.cramped .actions.reroll { margin-top: 6px; }
 .panel.result .result-build { display: flex; align-items: center; gap: 6px; font-weight: 700; }
 .panel.result .inline-element { width: 28px; height: 28px; image-rendering: pixelated; }
 .panel.result .result-next { margin-top: 10px; padding: 8px 10px; background: #ece0c0; font-weight: 700; }
+.settings .play-time { margin: 10px 0 0; font-weight: 700; } .settings .play-time strong { margin-left: 6px; }

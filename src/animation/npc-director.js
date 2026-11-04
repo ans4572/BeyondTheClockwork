@@ -16,6 +16,13 @@ const PATIENCE_SECONDS = 0.8, PASSING_SECONDS = 2.5;
 const SETTLE_SECONDS = 0.4;
 // Each resident keeps to their own side of the street, so a crowd does not stack on one line.
 export const LANE_UNITS = 0.35;
+/** Residents whose generated 'north' walk shows their face: walking away from the camera they use the back three-quarter view instead. */
+export const FRONT_FACING_NORTH = new Set(['C2', 'C3', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R18']);
+export function walkDirection(character, dx, dy) {
+  const direction = nearestDirection(Math.atan2(dy, dx));
+  if (direction !== 'north' || !FRONT_FACING_NORTH.has(character)) return direction;
+  return dx >= 0 ? 'north-east' : 'north-west';
+}
 
 /** Where `other` is from a walker's point of view: along their heading, and to their right. */
 const relative = ({ x, y, dx, dy }, other) => ({ ahead: (other.x - x) * dx + (other.y - y) * dy, right: (other.y - y) * dx - (other.x - x) * dy });
@@ -123,7 +130,7 @@ export class NpcDirector {
     // Residents always draw from their walk clips: the idle stills are a different drawing of a different size.
     const action = `${character}-walk`;
     if (reducedMotion) return { x, y, pose: { action, direction: 'south', frame: 0 } };
-    const direction = nearestDirection(Math.atan2(dy, dx));
+    const direction = walkDirection(character, dx, dy);
     if (stopped) return { x, y, pose: { action, direction, frame: resident.frame } };
     if (!resident.waiting) { const walk = this.library.clip(action, direction); resident.frame = frameAtProgress(walk, (this.walked * 1000 % walk.durationMs) / walk.durationMs); }
     return { x, y, pose: { action, direction, frame: resident.frame } };

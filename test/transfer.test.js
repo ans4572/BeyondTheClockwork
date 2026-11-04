@@ -93,3 +93,12 @@ test('the sync link is kept apart from the save and survives a broken entry', ()
   m.set(SYNC_STORE_KEY, '{broken'); assert.equal(readLink(storage), null);
   writeLink(storage, null); assert.equal(m.has(SYNC_STORE_KEY), false);
 });
+
+test('total play time adds up, survives a save, and starts at zero for an older save', () => {
+  const g = new Game(data);
+  g.addPlayTime(90); g.addPlayTime(-5); g.addPlayTime(30.5);
+  assert.equal(g.s.profile.playSeconds, 120.5);
+  assert.equal(decodeSave(encodeSave(g.s), data).profile.playSeconds, 120.5);
+  const old = JSON.parse(encodeSave(g.s)); delete old.state.profile.playSeconds;
+  assert.equal(decodeSave(JSON.stringify(old), data).profile.playSeconds, 0);
+});

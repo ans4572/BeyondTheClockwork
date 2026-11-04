@@ -86,6 +86,8 @@ export class Game {
     return this.s.rng / 4294967296;
   }
   save() { this.onSave(this.s); }
+  /** Time spent in the game itself (not the title screen or a hidden tab), kept for the whole account. */
+  addPlayTime(seconds) { if (seconds > 0) this.s.profile.playSeconds = (this.s.profile.playSeconds || 0) + seconds; }
   notify(text) { this.s.notices.push({ id: this.id('notice'), text, until: this.s.time + 3 }); }
   resetPlayer() {
     const stats = this.stats, spawn = this.config.arena.spawn;
@@ -534,7 +536,7 @@ export class Game {
     cast.x = clamp(cast.x, bounds.left, bounds.right); cast.y = clamp(cast.y, bounds.top, bounds.bottom);
     if (cast.shape === 'self' || cast.shape === 'moving' || cast.shape === 'cone' || cast.shape === 'dash' || cast.shape === 'crosscut') { cast.x = this.p.x; cast.y = this.p.y; }
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
-    if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius);
+    if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId });
     if (cast.shape === 'projectile') {
       for (let i = 0; i < skill.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (skill.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
     }
@@ -619,7 +621,7 @@ export class Game {
           if (cast.finalKnockback && cast.pulse === cast.hits - 1) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && distance(cast, enemy) <= cast.radius + enemy.radius) { const a = Math.atan2(enemy.y - cast.y, enemy.x - cast.x); this.move(enemy, Math.cos(a) * cast.finalKnockback, Math.sin(a) * cast.finalKnockback); }
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && (cast.shape === 'cone' ? inCone(cast, enemy, cast.angle, cast.range, cast.arc) : distance(cast, enemy) <= cast.radius + enemy.radius)) { this.castHit(cast, enemy); if(cast.shape==='orb' && cast.knockback && !enemy.boss){const a=Math.atan2(enemy.y-cast.y,enemy.x-cast.x);this.move(enemy,Math.cos(a)*cast.knockback,Math.sin(a)*cast.knockback);} }
           const look = cast.skillId === 'heatSwing' ? 'heatSwing' : cast.shape === 'charge' ? 'zapBig' : cast.finalKnockback && cast.pulse === cast.hits - 1 ? 'quake' : undefined;
-          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, look ? 0.7 : Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc, look });
+          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, look ? 0.7 : Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc, look, skill: cast.skillId });
         }
         cast.pulse++; cast.next += cast.interval;
       }
@@ -1040,6 +1042,9 @@ export class Game {
   }
   /** Village time: only feet move, and stepping into the exit leaves for the next place. */
   walk(dt, input) {
+    // Nothing fights in a village, and its clock stands still, so a spark or shot carried in from the last fight would hang
+    // in the air for good: a place to walk around starts every step clean.
+    if (this.s.effects.length || this.s.casts.length || this.s.projectiles.length) { this.s.effects = []; this.s.casts = []; this.s.projectiles = []; }
     this.stepFeet(dt, input, this.village.bodyRadius);
     const { p } = this;
     this.tutorial.tick();

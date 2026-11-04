@@ -22,6 +22,8 @@ import { progressMark, syncPlan, readLink, writeLink } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+/** Total play time as hours and minutes: "12시간 5분", "5분", or "1분 미만". */
+const formatPlayTime = seconds => { const minutes = Math.floor(seconds / 60), hours = Math.floor(minutes / 60); return hours ? `${hours}시간 ${minutes % 60}분` : minutes ? `${minutes}분` : '1분 미만'; };
 const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
 const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
@@ -29,12 +31,14 @@ const HOME_NAME = '웃음 마을';
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
-const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['기술 재사용 시간', '−'], dodgeCooldownReduction: ['회피 대기 시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
+const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['스킬 대기시간', '−'], dodgeCooldownReduction: ['회피 대기 시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
 const PERK_ICONS = { piggyBank: 'coin', overheatEngine: 'flame', glassSpring: 'target' };
 const PART_ICONS = { basicDamage: 'wrench', maxHp: 'heart', skillCooldownReduction: 'clock', dodgeCooldownReduction: 'boot', statusDamage: 'flame', moveSpeed: 'boot', critChance: 'target', attackSpeed: 'haste', killHeal: 'heal', damageReduction: 'shield' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
+/** Tuning stats that shorten a wait: their value is shown as a cut. */
+const SHORTER_WAITS = new Set(['cooldownReduction', 'dodgeCooldown']);
 const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
 /** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
@@ -386,8 +390,9 @@ try {
   function toll() { sfx('bell'); }
 
   function statValue(stat, rank) {
-    const value = rank * stat.perRank;
-    return stat.unit === 'percent' ? `+${Number((value * 100).toFixed(1))}%` : `+${value}`;
+    // A wait that gets shorter reads as a minus, so "−3%" never looks like a longer cooldown.
+    const value = rank * stat.perRank, sign = SHORTER_WAITS.has(stat.id) && value ? '−' : '+';
+    return stat.unit === 'percent' ? `${sign}${Number((value * 100).toFixed(1))}%` : `${sign}${value}`;
   }
   function statRow(stat) {
     // Levels past this chapter's cap show as a locked stretch of the bar until the chapter boss falls.
@@ -472,7 +477,7 @@ try {
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
-    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div><p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
     const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     const body = settingsTab === 'keys' ? keys : settingsTab === 'devices' ? transferBlock() : general;
     return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
@@ -630,7 +635,8 @@ try {
       put(element.querySelector('.cool'), 'height', `${Math.min(1, remaining / total) * 100}%`);
       put(element.querySelector('.left'), 'text', remaining > 0 ? remaining.toFixed(1) : '');
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
-      element.classList.toggle('short', !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost);
+      // A skill or the fusion without enough charge greys out the same way.
+      element.classList.toggle('short', !!skill?.energyCost && p.energy < skill.energyCost);
     });
     const resetting = game.s.practice?.resetCooldowns;
     put($('practice-reset'), 'hidden', game.s.mode !== 'practice');
@@ -638,7 +644,7 @@ try {
     $('practice-reset').classList.toggle('on', !!resetting);
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, { remaining, total } = slotCooldown(slot);
-      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost };
+      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
     put($('hint'), 'text', hint);
@@ -907,6 +913,8 @@ try {
   function frame(now) {
     const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta * (now < slowUntil ? SLOW_RATE : 1);
     bringPlaceForward();
+    // Play time leaves out the title, the settings / pause menu and a hidden tab.
+    if (!onTitle && screen !== 'pause' && !document.hidden) game.addPlayTime(delta);
     // Back in the village: the moment progress is uploaded for the other devices.
     if (game.s.mode !== syncMode) { if (game.s.mode === 'hub' && syncMode && syncMode !== 'hub') syncUpload(); syncMode = game.s.mode; }
     if (game.s.mode === 'opening' && !screen) playOpening(false);
