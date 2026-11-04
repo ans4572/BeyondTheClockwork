@@ -1,28 +1,32 @@
-// Recorded sound effects (Kenney, CC0) played through Web Audio.
+// Sound effects played through Web Audio: recordings (Kenney, CC0) and sounds built in code.
 // Each name is one recording at one pitch, so the same action always sounds the same.
 import { assetUrl } from '../animation/sprite-library.js';
 // Loaded with the same query as this file, so a page that busts the cache for this module gets fresh recipes too.
 const { ELEMENT_SOUNDS } = await import(`./elements.js${new URL(import.meta.url).search}`);
+const { CODED_SOUNDS } = await import(`./coded.js${new URL(import.meta.url).search}`);
 
-/** file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade. */
+/**
+ * file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade.
+ * synth names a recipe in elements.js; code names a picked candidate in coded.js as [sound, candidate index].
+ */
 export const SFX = {
-  swing: { file: 'swing', takes: 1, volume: 0.22, rate: [1.06, 1.06] },
-  swingHeavy: { file: 'swing', takes: 1, volume: 0.3, rate: [0.8, 0.8] },
-  dodge: { synth: 'dash', volume: 0.5 },
-  hit: { file: 'hit', takes: 1, volume: 0.5, rate: [1.02, 1.02] },
-  heavy: { file: 'heavy', takes: 1, volume: 0.6, rate: [0.9, 0.9] },
-  hurt: { file: 'hurt', takes: 1, volume: 0.5, rate: [1, 1] },
-  kill: { file: 'kill', takes: 1, volume: 0.45, rate: [1.02, 1.02] },
-  tell: { file: 'tell', takes: 1, volume: 0.16, rate: [1, 1] },
-  block: { file: 'block', takes: 1, volume: 0.45, rate: [1.07, 1.07] },
-  burst: { file: 'burst', takes: 1, volume: 0.55, rate: [0.9, 0.9] },
-  pop: { file: 'pop', takes: 1, volume: 0.4, rate: [1, 1] },
-  summon: { file: 'summon', takes: 1, volume: 0.4, rate: [0.9, 0.9] },
-  clear: { file: 'clear', takes: 1, volume: 0.35, rate: [1, 1] },
+  swing: { code: ['swing', 0], volume: 0.72 },
+  swingHeavy: { code: ['swingHeavy', 0], volume: 0.94 },
+  dodge: { code: ['dodge', 1], volume: 0.82 },
+  hit: { code: ['hit', 2], volume: 0.65 },
+  heavy: { code: ['heavy', 2], volume: 0.4 },
+  hurt: { code: ['hurt', 1], volume: 0.4 },
+  kill: { code: ['kill', 0], volume: 0.44 },
+  tell: { code: ['tell', 1], volume: 2.25 },
+  block: { code: ['block', 1], volume: 0.45 },
+  burst: { code: ['burst', 0], volume: 0.42 },
+  pop: { code: ['pop', 0], volume: 0.09 },
+  summon: { code: ['summon', 1], volume: 0.24 },
+  clear: { code: ['clear', 0], volume: 0.63 },
   // Player
-  down: { file: 'down', takes: 1, volume: 0.5, rate: [0.8, 0.8] },
-  charged: { file: 'charged', takes: 1, volume: 0.35, rate: [1, 1] },
-  mend: { file: 'mend', takes: 1, volume: 0.3, rate: [1, 1] },
+  down: { code: ['down', 0], volume: 0.36 },
+  charged: { code: ['charged', 0], volume: 0.42 },
+  mend: { code: ['mend', 1], volume: 0.6 },
   // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice keeps the glass recordings.
   heatSwing: { synth: 'heatSwing', volume: 0.85 },
   exhaustBurst: { synth: 'exhaustBurst', volume: 0.4 },
@@ -40,38 +44,38 @@ export const SFX = {
   frostCrosscut: { synth: 'frostCrosscut', volume: 0.6 },
   stormFloat: { synth: 'stormFloat', volume: 1.0 },
   // Ordinary enemies' attacks, by enemy type
-  guard: { file: 'swing', takes: 1, volume: 0.12, rate: [0.9, 0.9] },
-  nutcracker: { file: 'swing', takes: 1, volume: 0.16, rate: [0.72, 0.72] },
-  elite: { file: 'elite', takes: 1, volume: 0.45, rate: [1, 1] },
-  rabbit: { file: 'rabbit', takes: 1, volume: 0.45, rate: [1, 1] },
-  trumpet: { file: 'trumpet', takes: 1, volume: 0.22, rate: [1, 1] },
-  musicbox: { file: 'musicbox', takes: 1, volume: 0.3, rate: [1, 1] },
-  spintop: { file: 'spintop', takes: 1, volume: 0.4, rate: [0.85, 0.85] },
-  drummer: { file: 'drummer', takes: 1, volume: 0.45, rate: [0.8, 0.8] },
-  pikeman: { file: 'swing', takes: 1, volume: 0.18, rate: [1.45, 1.45] },
+  guard: { code: ['guard', 1], volume: 0.5 },
+  nutcracker: { code: ['nutcracker', 0], volume: 0.7 },
+  elite: { code: ['elite', 1], volume: 0.32 },
+  rabbit: { code: ['rabbit', 1], volume: 0.3 },
+  trumpet: { code: ['trumpet', 0], volume: 0.19 },
+  musicbox: { code: ['musicbox', 1], volume: 0.28 },
+  spintop: { code: ['spintop', 0], volume: 0.72 },
+  drummer: { code: ['drummer', 0], volume: 0.54 },
+  pikeman: { code: ['pikeman', 0], volume: 0.68 },
   // Progress and rewards
   portal: { synth: 'portal', volume: 0.6 },
-  cards: { file: 'cards', takes: 1, volume: 0.4, rate: [1, 1] },
-  pick: { file: 'pick', takes: 1, volume: 0.4, rate: [1.02, 1.02] },
-  loot: { file: 'loot', takes: 1, volume: 0.45, rate: [1, 1] },
+  cards: { code: ['cards', 0], volume: 1.19 },
+  pick: { code: ['pick', 0], volume: 0.62 },
+  loot: { code: ['loot', 1], volume: 0.43 },
   fail: { synth: 'sadHorn', volume: 0.25 },
   // Bosses' attacks, by pattern (boss-<pattern>)
-  'boss-claw': { file: 'boss-claw', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-magnet': { file: 'boss-magnet', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-suction': { file: 'boss-suction', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-overcharge': { file: 'boss-overcharge', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-stickers': { file: 'boss-stickers', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-crane': { file: 'boss-crane', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-fan': { file: 'boss-fan', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-march': { file: 'boss-march', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-stomp': { file: 'boss-stomp', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-trumpetWave': { file: 'boss-trumpetWave', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-charge': { file: 'boss-charge', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-column': { file: 'boss-column', takes: 1, volume: 0.45, rate: [1, 1] },
-  'boss-carpet': { file: 'boss-carpet', takes: 1, volume: 0.45, rate: [1, 1] },
+  'boss-claw': { code: ['boss-claw', 1], volume: 0.21 },
+  'boss-magnet': { code: ['boss-magnet', 0], volume: 0.34 },
+  'boss-suction': { code: ['boss-suction', 1], volume: 0.14 },
+  'boss-overcharge': { code: ['boss-overcharge', 0], volume: 0.28 },
+  'boss-stickers': { code: ['boss-stickers', 1], volume: 0.54 },
+  'boss-crane': { code: ['boss-crane', 0], volume: 0.32 },
+  'boss-fan': { code: ['boss-fan', 0], volume: 0.08 },
+  'boss-march': { code: ['boss-march', 0], volume: 0.48 },
+  'boss-stomp': { code: ['boss-stomp', 0], volume: 0.39 },
+  'boss-trumpetWave': { code: ['boss-trumpetWave', 1], volume: 0.33 },
+  'boss-charge': { code: ['boss-charge', 0], volume: 0.42 },
+  'boss-column': { code: ['boss-column', 0], volume: 0.47 },
+  'boss-carpet': { code: ['boss-carpet', 0], volume: 0.19 },
   // The town's inspection bell, and a boss's alarm
   bell: { synth: 'bell', volume: 1 },
-  alarm: { file: 'alarm', takes: 1, volume: 0.35, rate: [1.3, 1.3], length: 0.5 },
+  alarm: { code: ['alarm', 0], volume: 0.7 },
   // Interface
   click: { file: 'click', takes: 1, volume: 0.2, rate: [1.02, 1.02] },
   buy: { file: 'buy', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
@@ -99,7 +103,11 @@ export class SoundBank {
   /** Plays a named effect; returns false while its takes are not decoded yet, so the caller can fall back. */
   play(audio, name, gainScale = 1) {
     const sound = SFX[name];
-    if (sound?.synth) { const out = audio.createGain(); out.gain.value = sound.volume * gainScale; out.connect(audio.destination); ELEMENT_SOUNDS[sound.synth](audio, out); return true; }
+    if (sound?.synth || sound?.code) {
+      const out = audio.createGain(); out.gain.value = sound.volume * gainScale; out.connect(audio.destination);
+      if (sound.synth) ELEMENT_SOUNDS[sound.synth](audio, out); else CODED_SOUNDS[sound.code[0]][sound.code[1]][1](audio, out);
+      return true;
+    }
     const buffer = sound && this.buffers.get(`${sound.file}-${Math.floor(Math.random() * sound.takes)}`);
     if (!buffer) return false;
     const source = audio.createBufferSource(), gain = audio.createGain(), [low, high] = sound.rate;

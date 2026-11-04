@@ -341,6 +341,7 @@ export class Game {
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
       if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
       if (!enemy.dummy) this.sense({ kind: 'kill', boss: !!enemy.boss, last: !this.s.enemies.some(e => e !== enemy && e.hp > 0 && !e.dummy) });
+      if (!enemy.dummy) this.payKill(enemy);
     }
     return { crit, killed: enemy.hp <= 0 };
   }
@@ -825,8 +826,12 @@ export class Game {
     switch (tell.type) {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
-        enemy.hp = 0; this.effect('scrap', enemy.x, enemy.y, enemy.color, 0.6, 1); this.effect('ring', enemy.x, enemy.y, '#e8914e', 0.3, enemy.burstRadius); this.sense({ kind: 'burst' });
-        if (distance(tell, p) < enemy.burstRadius) damage(); break;
+        // The rat goes off where its warning ring was drawn, and the ring counts the player's body, not only its centre.
+        enemy.hp = 0; this.effect('scrap', tell.x, tell.y, enemy.color, 0.6, 1); this.effect('ring', tell.x, tell.y, '#e8914e', 0.3, enemy.burstRadius); this.sense({ kind: 'burst' });
+        // A rat that bursts still counts as beaten: its share of the room's loot and any heal-on-kill.
+        if (this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
+        this.payKill(enemy);
+        if (distance(tell, p) < enemy.burstRadius + this.config.arena.playerRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
       case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed); break;
       // Music box: a ring of shots, turned a little each volley so the gaps move.
@@ -1198,6 +1203,28 @@ export class Game {
     this.tutorial.tick(); this.tickPractice(); this.tickWaves();
     if (this.active && this.s.enemies.length && this.s.enemies.every(e => e.hp <= 0) && !this.wavesLeft) { if (this.s.mode === 'combat') this.holdClear(); else this.finishCombat(); }
   }
+  /** What clearing the current room is worth in all: free gears kept for good, and coins for this run. */
+  roomLoot() {
+    const region = this.data.progression.region, kind = this.room.kind;
+    const gears = kind === 'miniboss' ? region.miniReward : kind === 'regionBoss' ? region.bossReward : region.normalReward;
+    const coins = this.data.progression.economy.runCoinRewards[kind === 'normal' ? 'normal' : kind];
+    return { gears: Math.round(gears * (1 + (this.stats.gearGain || 0))), coins: Math.round(coins * (1 + (this.stats.coinGain || 0))) };
+  }
+  /**
+   * The room's loot is paid out a share per enemy as each one falls, rather than all at the end; the clear pays whatever
+   * is left, so the room is worth the same in all. Kills past the room's planned enemies pay nothing more.
+   */
+  payKill(enemy) {
+    const run = this.s.run, room = this.room;
+    if (this.s.mode !== 'combat' || !run || !room || room.kind === 'shop' || this.s.profile.rewards.includes(`${run.id}:${room.id}`)) return;
+    const loot = run.loot?.room === room.id ? run.loot : (run.loot = { room: room.id, kills: 0, gears: 0, coins: 0 });
+    const planned = room.waves ? room.waves.flat().length : 1, total = this.roomLoot();
+    loot.kills = Math.min(planned, loot.kills + 1);
+    const gears = Math.round(total.gears * loot.kills / planned) - loot.gears, coins = Math.round(total.coins * loot.kills / planned) - loot.coins;
+    this.giveLoot(gears, coins); loot.gears += gears; loot.coins += coins;
+    if (gears || coins) this.effect('gain', enemy.x, enemy.y - enemy.radius - 0.4, '#ffd257', 0.9, coins, { gears });
+  }
+  giveLoot(gears, coins) { this.s.profile.freeGears += gears; this.s.run.baseGears += gears; this.s.run.coins += coins; }
   finishCombat() {
     if (!this.active) return false;
     if (this.s.mode === 'intro') {
@@ -1209,11 +1236,9 @@ export class Game {
     this.sense({ kind: 'clear' });
     const run = this.s.run, key = `${run.id}:${this.room.id}`;
     if (!this.s.profile.rewards.includes(key)) {
-      const region = this.data.progression.region;
-      const reward = this.room.kind === 'miniboss' ? region.miniReward : this.room.kind === 'regionBoss' ? region.bossReward : region.normalReward;
-      const gears = Math.round(reward * (1 + (this.stats.gearGain || 0)));
-      this.s.profile.freeGears += gears; run.baseGears += gears; this.s.profile.rewards.push(key);
-      run.coins += Math.round(this.data.progression.economy.runCoinRewards[this.room.kind === 'normal' ? 'normal' : this.room.kind] * (1 + (this.stats.coinGain || 0)));
+      // Whatever the kills have not paid yet.
+      const total = this.roomLoot(), paid = run.loot?.room === this.room.id ? run.loot : { gears: 0, coins: 0 };
+      this.giveLoot(Math.max(0, total.gears - paid.gears), Math.max(0, total.coins - paid.coins)); this.s.profile.rewards.push(key); run.loot = null;
       run.clears.push(this.room.id); this.s.profile.combatClears++;
       if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
       this.sense({ kind: 'loot' });

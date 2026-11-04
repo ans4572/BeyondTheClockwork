@@ -28,9 +28,9 @@ test('the scrapyard lesson costs no health, and finishing it grants no canonical
   const g = new Game(data); g.beginIntro(); g.hurt(1000);
   assert.equal(g.s.mode, 'intro'); assert.equal(g.p.hp, g.p.maxHp); assert.equal(g.s.profile.registered, false); assert.equal(g.s.profile.firstReturnClaimed, false);
   g.beginIntro(); assert.equal(g.p.hp, 100); assert.equal(g.s.profile.freeGears, 0);
-  completeRoom(g); assert.equal(g.s.mode, 'registration'); assert.equal(g.s.profile.freeGears, 8);
+  completeRoom(g); assert.equal(g.s.mode, 'registration'); assert.equal(g.s.profile.freeGears, 10);
   assert.equal(g.s.profile.combatClears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
-  assert.equal(g.register(), true); assert.equal(g.register(), false); assert.equal(g.s.profile.freeGears, 8);
+  assert.equal(g.register(), true); assert.equal(g.register(), false); assert.equal(g.s.profile.freeGears, 10);
 });
 test('stats level to twenty in chapter 2 at a rising price, and refunds conserve currency', () => {
   const g = hub(); g.s.profile.freeGears = 100000; g.s.profile.chapter = 2;
@@ -80,7 +80,7 @@ test('the new economy, dodge, energy and status stats each do their job', () => 
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
-  assert.equal(j.s.run.baseGears, 11); assert.equal(j.s.run.coins, 21);
+  assert.equal(j.s.run.baseGears, 14); assert.equal(j.s.run.coins, 21);
   assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.5) < 1e-9);
   const b = arena(), burned = inert(b); burned.hp = burned.maxHp = 1000; b.s.profile.stats.statusPower = 20; burned.burnStacks = [b.s.time + 4]; burned.burnTick = b.s.time; b.updateEnemies(1 / 60);
   assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.5)) < 1e-9);
@@ -206,8 +206,8 @@ test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', ()
 });
 test('first return without a cleared combat gives no bonus; valid return gives it once', () => {
   const g = hub(); g.startRun(4); g.returnToHub(); assert.equal(g.s.profile.freeGears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
-  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 23);
-  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 31);
+  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 25);
+  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 35);
 });
 test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choices', () => {
   const g = arena(); inert(g); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }]; g.castSkill(0, { x: 10, y: 8 }); step(g, 0.05);
@@ -219,7 +219,7 @@ test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choi
   assert.deepEqual(resumed.s.run.rewardChoices, choices); resumed.offerRewards(); assert.deepEqual(resumed.s.run.rewardChoices, choices);
   assert.equal(resumed.finishCombat(), false); assert.equal(resumed.s.profile.freeGears, gears); pick(resumed); assert.equal(resumed.chooseReward(0), false);
 });
-test('twelve-stage completion pays exactly 132 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
+test('twelve-stage completion pays exactly 180 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
   const g = hub(); g.startRun(123); const seen = [], last = data.slice.rooms.length - 1;
   assert.equal(g.s.mode, 'combat');
   for (let node = 0; node <= last; node++) {
@@ -232,7 +232,7 @@ test('twelve-stage completion pays exactly 132 base gears and records bosses onl
     }
     if (node < last) assert.equal(g.nextNode(0), true);
   }
-  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 132);
+  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 180);
   assert.equal(g.s.profile.combatClears, 11); assert.equal(g.s.profile.bossRecords.length, 2); assert.deepEqual(g.s.profile.blueprints, ['patrolBlueprint']);
   assert.equal(g.s.profile.wins, 1); g.returnToHub('clear'); assert.equal(g.s.profile.firstReturnClaimed, true); assert.equal(g.s.run, null); assert.equal(g.p.energy, 0); assert.equal(g.skillSlots.length, 0);
 });
@@ -397,4 +397,33 @@ test('a run saved before waves existed can finish the room it is in', () => {
   const resumed = new Game(data, g.s);
   for (const e of resumed.s.enemies) e.hp = 0;
   step(resumed, 1.2); assert.equal(resumed.s.mode, 'reward');
+});
+
+test('each fallen enemy pays its share of the room at once, and the clear pays only what is left', () => {
+  const g = hub(); g.startRun(4711);
+  const room = g.room, planned = room.waves.flat().length, total = g.roomLoot(), gears0 = g.s.profile.freeGears;
+  const first = g.s.enemies.find(e => e.hp > 0);
+  g.hitEnemy(first, 1e6);
+  assert.equal(g.s.run.coins, Math.round(total.coins / planned));
+  assert.equal(g.s.profile.freeGears - gears0, Math.round(total.gears / planned));
+  assert.ok(g.s.effects.some(fx => fx.type === 'gain'));
+  // Everything else falls, the waves are spent, and the room is cleared: the totals match a room paid at the end.
+  g.s.run.wave = room.waves.length - 1; g.s.run.arrivals = [];
+  for (const e of g.s.enemies) if (e.hp > 0) g.hitEnemy(e, 1e6);
+  g.finishCombat();
+  assert.equal(g.s.run.coins, total.coins);
+  assert.equal(g.s.profile.freeGears - gears0, total.gears);
+});
+
+test('a bursting rat reaches the player\'s body at the ring\'s edge and still pays its share of the room', () => {
+  const g = hub(); g.startRun(4711);
+  for (const e of g.s.enemies) if (e.type !== 'rat') e.hp = 0;
+  const rat = g.spawnEnemy('rat', { x: g.p.x + 1, y: g.p.y }), coins = g.s.run.coins;
+  g.beginEnemyTell(rat, 'burst');
+  // The centre is just outside the ring; the body is not.
+  g.p.x = rat.x + rat.burstRadius + g.config.arena.playerRadius * 0.5; g.p.invulnerableUntil = 0;
+  const hp = g.p.hp; g.executeEnemy(rat);
+  assert.equal(rat.hp, 0);
+  assert.ok(g.p.hp < hp);
+  assert.ok(g.s.run.coins > coins || g.s.run.loot?.kills === 1);
 });

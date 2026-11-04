@@ -31,12 +31,14 @@ npx wrangler deploy
 - 파일 수 약 1,300개, 가장 큰 파일 2.6MB — Cloudflare Pages 제한(파일 2만 개, 파일당 25MB) 안입니다.
 - 모든 경로가 상대 경로라 GitHub Pages(`/BeyondTheClockwork/`)와 Cloudflare(루트) 양쪽에서 그대로 동작합니다.
 
-## 기기 이동 코드 (Worker + KV)
+## 기기 이동 코드 · 자동 동기화 (Worker + KV)
 
 설정의 "다른 기기로 옮기기"는 `worker/index.js`가 처리합니다. `/api/*`만 Worker가 받고, 나머지 경로는 그대로 정적 파일입니다.
 
 - `POST /api/transfer` 저장을 받아 8글자 코드 발급(5분 보관, 주소당 시간당 10개)
 - `GET /api/transfer/:code` 저장 돌려주기 · `DELETE /api/transfer/:code` 불러온 뒤 삭제
+- `POST /api/sync` 자동 동기화 시작(16글자 키 발급) · `GET /api/sync/:key` 최신 진행 · `PUT /api/sync/:key` 올리기(`baseRev`가 다르면 409로 거절)
+- 동기화 저장은 마지막으로 올린 뒤 180일 보관. 게임은 마을로 돌아올 때만, 진행이 바뀌었을 때만 올립니다(KV 쓰기 절약).
 - GitHub Pages·로컬(127.0.0.1:4173)에서 실행한 게임도 Cloudflare 주소의 API를 씁니다(CORS 허용).
 
 처음 한 번 필요한 설정:

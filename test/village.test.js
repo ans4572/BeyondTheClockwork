@@ -250,7 +250,7 @@ test('a hit during the lesson costs no health and keeps the player where they ar
 test('beating the guard opens the door, and walking to it registers the player once', () => {
   const g = lesson(); toGuard(g); const guard = threeHits(g); g.tutorial.startFight(guard);
   guard.hp = 0; step(g, 0.05);
-  assert.equal(g.tutorial.step, 'door'); assert.equal(g.s.mode, 'intro'); assert.equal(g.s.profile.freeGears, 8); assert.equal(g.s.enemies.length, 0);
+  assert.equal(g.tutorial.step, 'door'); assert.equal(g.s.mode, 'intro'); assert.equal(g.s.profile.freeGears, 10); assert.equal(g.s.enemies.length, 0);
   const { spawn, exit: { at } } = maps.intro;
   for (const [x, y] of [[20, 9], [24, 8], at]) for (let i = 0; i < 400 && g.s.mode === 'intro' && Math.hypot(x - g.p.x, y - g.p.y) > 0.3; i++) g.update(1 / 60, { x: x - g.p.x, y: y - g.p.y });
   assert.equal(g.s.mode, 'registration'); assert.equal(g.tutorial.step, 'town'); assert.ok(spawn);

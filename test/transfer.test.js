@@ -6,7 +6,8 @@ import { validateData } from '../src/engine/data.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { makeCode, normalizeCode, formatCode, looksLikeSave, CODE_ALPHABET } from '../src/engine/transfer-code.js';
 import { api, CODES_PER_HOUR } from '../worker/index.js';
-import { sendSave, fetchSave, forgetCode } from '../src/ui/device-transfer.js';
+import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from '../src/ui/device-transfer.js';
+import { progressMark, syncPlan, readLink, writeLink, SYNC_STORE_KEY } from '../src/engine/sync.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
 /** Cloudflare KV as a Map, enough for the worker. */
@@ -54,4 +55,41 @@ test('a wrong code, a broken save and too many codes each get a plain answer', a
   await assert.rejects(sendSave(save, viaWorker(env), ''), /한 시간 뒤/);
   await sendSave(save, viaWorker(env, '5.6.7.8'), '');
   await assert.rejects(sendSave(save, async () => { throw new TypeError('offline'); }, ''), /인터넷/);
+});
+
+test('linked devices: one uploads on returning to the village, the other takes it on opening, and a race is refused', async () => {
+  const env = { TRANSFER: kv() }, pc = new Game(data);
+  pc.s.profile.registered = true; pc.s.mode = 'hub';
+  const { key, rev } = await startSync(encodeSave(pc.s), viaWorker(env), '');
+  assert.equal(rev, 1);
+  // The code that links the phone carries the key.
+  const { code } = await sendSave(encodeSave(pc.s), viaWorker(env), '', key);
+  const got = await fetchSave(code, viaWorker(env), '');
+  assert.equal(got.syncKey, key);
+  const phone = decodeSave(got.save, data), phoneLink = { key, rev: (await pullSync(key, viaWorker(env), '')).rev, mark: progressMark(phone) };
+  // The PC plays on and uploads; the phone, untouched, takes it.
+  pc.s.profile.freeGears = 40;
+  const pcLink = { key, rev, mark: progressMark(pc.s) };
+  assert.equal(syncPlan(pc.s, pcLink, { rev }), 'keep');
+  pcLink.rev = (await pushSync(key, encodeSave(pc.s), pcLink.rev, viaWorker(env), '')).rev;
+  const remote = await pullSync(key, viaWorker(env), '');
+  assert.equal(syncPlan(phone, phoneLink, remote), 'take');
+  assert.equal(decodeSave(remote.save, data).profile.freeGears, 40);
+  // Had the phone moved on too, the player chooses; an upload over a stale revision is refused.
+  phone.profile.freeGears = 5;
+  assert.equal(syncPlan(phone, phoneLink, remote), 'ask');
+  await assert.rejects(pushSync(key, encodeSave(phone), phoneLink.rev, viaWorker(env), ''), error => error.reason === 'conflict');
+  // Settings alone are not progress.
+  const settled = { ...pcLink, mark: progressMark(pc.s) }; pc.s.profile.settings.sound = !pc.s.profile.settings.sound;
+  assert.equal(progressMark(pc.s), settled.mark);
+  await assert.rejects(pullSync('AAAAAAAAAAAAAAAA', viaWorker(env), ''), error => error.reason === 'unlinked');
+});
+
+test('the sync link is kept apart from the save and survives a broken entry', () => {
+  const m = new Map(), storage = { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: k => m.delete(k) };
+  assert.equal(readLink(storage), null);
+  writeLink(storage, { key: 'K'.repeat(16), rev: 3, mark: 'x' });
+  assert.equal(readLink(storage).rev, 3);
+  m.set(SYNC_STORE_KEY, '{broken'); assert.equal(readLink(storage), null);
+  writeLink(storage, null); assert.equal(m.has(SYNC_STORE_KEY), false);
 });

@@ -581,6 +581,8 @@ export class CanvasRenderer {
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
       // Critical hits show in red, a little larger.
       if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
+      // Loot from a kill rises in gold: coins, then free gears.
+      if (fx.type === 'gain') this.text([fx.value ? `+${fx.value} 동전` : '', fx.gears ? `+${fx.gears} 톱니` : ''].filter(Boolean).join(' · '), x, y - fraction * 16 - 10, fx.color, NUMBER_SIZE);
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
       if (fx.type === 'swing') this.drawSwing(fx, x, y, fraction);
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }

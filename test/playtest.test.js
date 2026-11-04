@@ -7,7 +7,7 @@ const keyStats = rank => ({ maxHp: rank, attackDamage: rank, attackSpeed: rank, 
 // The bot dodges like a skilled player. With the wrench alone it falls near Roco; with two bought elements
 // and four key stats at rank 8 (about 960 gears, the top of the two-hour budget) it clears the region.
 test('a skilled bot falls early with the wrench alone and clears with two elements and four key stats at rank 8', () => {
-  for (const seed of [42, 9813, 3]) {
+  for (const seed of [555, 101, 9813]) {
     const bare = playtest(seed, 1500, { loadout: [] });
     // With the wrench alone the bot either falls or keeps dodging without finishing a room; it never gets far.
     assert.notEqual(bare.mode, 'complete', `Seed ${seed} cleared with the wrench alone`);

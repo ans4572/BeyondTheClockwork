@@ -52,16 +52,16 @@
       "당신은 오늘 폐기되었습니다."
     ],
     "targetSecondsToFirstCombat": 20,
-    "oneTimeEncounterReward": 8,
+    "oneTimeEncounterReward": 10,
     "registrationBeforeCanonicalRecovery": true
   },
   "region": {
     "id": "smileStreet",
     "name": "웃음거리",
     "index": 1,
-    "normalReward": 8,
-    "miniReward": 20,
-    "bossReward": 40,
+    "normalReward": 10,
+    "miniReward": 30,
+    "bossReward": 60,
     "miniboss": "collectorRoco",
     "boss": "captainBrass",
     "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"

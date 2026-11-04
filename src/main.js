@@ -16,7 +16,8 @@ import { MusicPlayer, musicScene } from './audio/music.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
-import { sendSave, fetchSave, forgetCode } from './ui/device-transfer.js';
+import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
+import { progressMark, syncPlan, readLink, writeLink } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -38,21 +39,21 @@ const FEEL = { hit: { stop: 0.045 }, heavy: { stop: 0.1, shake: 4 }, phase: { st
 const CRIT_STOP = 0.03, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
-const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 파일이 잘렸거나 다른 게임의 파일일 수 있습니다.');
+const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
 
 try {
   // The pixel lettering font must be ready before the first heading or the title is drawn from it.
   const [, data] = await Promise.all([Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽'), document.fonts.load('700 12px Galmuri11', '태엽'), document.fonts.load('12px Galmuri11', '태엽')]).catch(() => {}), loadData()]);
-  let saved = null, loadError = '', rawSave = '';
-  try { rawSave = localStorage.getItem(SAVE_KEY) || ''; if (rawSave) saved = decodeSave(rawSave, data); }
+  let saved = null, loadError = '';
+  try { const raw = localStorage.getItem(SAVE_KEY) || ''; if (raw) saved = decodeSave(raw, data); }
   catch (error) { loadError = error.message; }
   let saveBlocked = !!loadError, storageError = '';
   const game = new Game(data, saved, state => {
     if (saveBlocked) return;
     try { localStorage.setItem(SAVE_KEY, encodeSave(state)); }
-    catch { storageError = '브라우저 저장 공간을 사용할 수 없습니다. 설정에서 저장 파일을 내보내세요.'; }
+    catch { storageError = '브라우저 저장 공간을 사용할 수 없습니다. 설정의 이동 코드로 다른 기기에 옮겨 두세요.'; }
   });
   // The game is drawn in full detail off screen, then set on a 640-pixel grid (see CanvasRenderer).
   const detail = document.createElement('canvas');
@@ -129,6 +130,8 @@ try {
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
   // Moving the save to another device: the code this device made, what the player typed, and a save waiting to be accepted.
   let transfer = { code: null, expiresAt: null, typed: '', busy: '', error: '', incoming: null };
+  // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
+  let link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
   let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null;
   // The in-game setting, or the same wish made once for every app on the device.
@@ -326,10 +329,6 @@ try {
   /** Two slow strokes of the town bell. */
   function toll() { sfx('bell'); }
 
-  function saveDownload(content = encodeSave(game.s), suffix = 'save') {
-    const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
-    const link = document.createElement('a'); link.href = url; link.download = `beyond-the-clockwork-${suffix}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
   function statValue(stat, rank) {
     const value = rank * stat.perRank;
     return stat.unit === 'percent' ? `+${Number((value * 100).toFixed(1))}%` : `+${value}`;
@@ -382,16 +381,22 @@ try {
       return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
     }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
-  /** 다른 기기로 옮기기: make a code here, or type one made on another device. */
+  /** When this device last wrote its save, for the summaries shown before one save replaces another. */
+  function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
+  /** 다른 기기와 연동: sync on or off, and transfer codes made here or typed from another device. */
   function transferBlock() {
     const t = transfer, until = t.expiresAt ? new Date(t.expiresAt) : null;
     const made = t.code ? `<p class="transfer-code" aria-label="이동 코드">${formatCode(t.code)}</p><p class="notice">다른 기기에서 환경설정 → 이 코드를 입력하세요. ${until ? `${until.getHours()}:${String(until.getMinutes()).padStart(2, '0')}까지(5분)` : '5분 동안'} 쓸 수 있고, 한 번 불러오면 사라집니다.</p><div class="actions">${button('코드 복사', 'transfer-copy')}</div>` : '';
-    return `<div class="divider"></div><span class="form-no">다른 기기로 옮기기</span><p class="notice">로그인 없이 8글자 코드로 진행을 옮깁니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
+    const clock = at => { const d = at && new Date(at); return d && !Number.isNaN(d.getTime()) ? `${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}` : '아직 없음'; };
+    const sync = link
+      ? `<p class="notice"><b>자동 동기화 켜짐</b> · 마지막 연동 ${clock(link.at)}<br>마을로 돌아올 때 진행을 올리고, 게임을 열 때 다른 기기의 최신 진행을 받아옵니다.</p><div class="actions">${button(syncBusy ? '올리는 중…' : '지금 올리기', 'sync-now', syncBusy ? 'disabled' : '')}${button('동기화 끄기', 'sync-off', '', 'quiet')}</div>`
+      : `<p class="notice">자동 동기화를 켜면 마을로 돌아올 때마다 진행이 서버에 올라가고, 다른 기기에서 게임을 열 때 이어집니다.</p><div class="actions">${button(syncBusy ? '켜는 중…' : '자동 동기화 켜기', 'sync-on', syncBusy ? 'disabled' : '')}</div>`;
+    return `<div class="divider"></div><span class="form-no">다른 기기와 연동</span>${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">${link ? '다른 기기를 연결하려면 이동 코드를 만들어 그 기기에서 입력하세요. 받은 기기도 자동 동기화됩니다.' : '한 번만 옮기려면 이동 코드를 쓰세요. 받는 기기의 저장은 덮어씌워집니다.'}</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
   }
   function settingsPanel() {
     const keysOpen = !!$('overlay').querySelector('details.keys[open]');
     const settings = game.s.profile.settings, map = bindings();
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details><div class="divider"></div><div class="actions">${button('저장 파일 내보내기', 'export')}${button('저장 파일 불러오기', 'import')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json"><p class="notice">같은 브라우저에 자동 저장됩니다. 이사하기 전에는 파일로 보관하세요.</p>${transferBlock()}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`, 'wide');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details>${transferBlock()}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`, 'wide');
   }
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
   function codexPanel() {
@@ -420,9 +425,9 @@ try {
       ...rooms.map((room, i) => ({ id: room.id, icon: room.kind === 'shop' ? 'coin' : room.boss ? 'crown' : i + 1, label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
     const index = rooms.findIndex(room => room.id === picked), room = rooms[index];
     const detail = room
-      ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong><span>${room.description}</span>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
-      : `<strong>${ico('home')} ${HOME_NAME}</strong><span>모루의 수리점이 있는 광장입니다. 남쪽 큰길이 웃음거리로 이어집니다.</span><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p><p class="notice atlas-legend"><span>번호를 누르면 설명이 보입니다</span><span>${ico('coin')} 쉼터</span><span>${ico('crown')} 보스</span><span><b>?</b> 준비 중</span>${isTouch ? '' : `<span>${keyName(bindings().map)} 키로 닫기</span>`}</p>`, 'atlas-panel');
+      ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
+      : `<strong>${ico('home')} ${HOME_NAME}</strong><em>원정 출발지</em>`;
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
   }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
@@ -430,9 +435,10 @@ try {
     if (!force && key === overlayKey) return;
     overlayKey = key;
     let html = '';
-    if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>기존 저장을 보존하고 있습니다. 먼저 원본을 내보내거나 다른 저장 파일을 불러올 수 있습니다.</p><div class="actions">${button('기존 저장 원본 내보내기', 'export-raw')}${button('파일 불러오기', 'import')}${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div><input class="file-input" id="import-file" type="file" accept="application/json,.json">`, 'compact');
-    if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다. 파일로 내보낸 저장은 그대로 남습니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
-    if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, (() => { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } })(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다. 필요하면 먼저 저장 파일로 내보내세요.</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
+    if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>새 게임으로 바꾸기 전까지 기존 저장은 그대로 둡니다.</p><div class="actions">${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div>`, 'compact');
+    if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
+    if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 자동 동기화됩니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
+    if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
@@ -550,20 +556,67 @@ try {
     $('toast').textContent = notice?.text || '';
   }
 
+  /** Uploads this device's progress. Skipped when nothing changed since the last upload, unless asked for by hand. */
+  async function syncUpload(byHand = false) {
+    if (!link || syncBusy || (!byHand && progressMark(game.s) === link.mark)) return;
+    syncBusy = true; syncNote = ''; if (screen === 'pause') renderOverlay(true);
+    try {
+      game.save();
+      const { rev } = await pushSync(link.key, encodeSave(game.s), link.rev);
+      link = { ...link, rev, mark: progressMark(game.s), at: new Date().toISOString() }; writeLink(localStorage, link);
+    } catch (error) { syncNote = error.message; if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } }
+    syncBusy = false; if (screen === 'pause') renderOverlay(true);
+  }
+  /** Takes another device's save as this one's. */
+  function takeRemote(state, remote) {
+    game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; syncMode = state.mode;
+    link = { ...link, rev: remote.rev, mark: progressMark(state), at: remote.at }; writeLink(localStorage, link);
+  }
+  /** On opening the game: bring in newer progress from another device, or ask when both devices moved on. */
+  async function syncCheck() {
+    if (!link) return;
+    let remote;
+    try { remote = await pullSync(link.key); } catch (error) { if (error.reason === 'unlinked') { syncNote = error.message; link = null; writeLink(localStorage, null); } return; }
+    // Once the player has left the title, the choice waits for the next opening.
+    if (!onTitle || screen !== 'title') return;
+    const plan = syncPlan(game.s, link, remote);
+    if (plan === 'keep') return;
+    let state; try { state = decodeSave(remote.save, data); } catch { return; }
+    if (plan === 'take') { takeRemote(state, remote); openTitle(); return; }
+    syncConflict = { state, remote }; screen = 'syncConflict'; renderOverlay(true);
+  }
+  async function syncAction(name) {
+    if (name === 'sync-on' && !syncBusy) {
+      syncBusy = true; syncNote = ''; renderOverlay(true);
+      try { game.save(); const { key, rev } = await startSync(encodeSave(game.s)); link = { key, rev, mark: progressMark(game.s), at: new Date().toISOString() }; writeLink(localStorage, link); }
+      catch (error) { syncNote = error.message; }
+      syncBusy = false; renderOverlay(true);
+    }
+    if (name === 'sync-now') await syncUpload(true);
+    if (name === 'sync-off') { link = null; writeLink(localStorage, null); syncNote = ''; renderOverlay(true); }
+    if (name === 'sync-take' && syncConflict) { takeRemote(syncConflict.state, syncConflict.remote); syncConflict = null; openTitle(); }
+    // Keeping this device's progress: upload it over the other device's.
+    if (name === 'sync-keep' && syncConflict) { link = { ...link, rev: syncConflict.remote.rev }; writeLink(localStorage, link); syncConflict = null; openTitle(); syncUpload(true); }
+  }
   async function transferAction(name) {
     const input = $('transfer-input'); if (input) transfer.typed = input.value;
     const busy = async (kind, work) => { transfer.busy = kind; transfer.error = ''; renderOverlay(true); try { await work(); } catch (error) { transfer.error = error.message; } transfer.busy = ''; renderOverlay(true); };
-    if (name === 'transfer-send') await busy('send', async () => { game.save(); Object.assign(transfer, await sendSave(encodeSave(game.s))); });
+    if (name === 'transfer-send') await busy('send', async () => { game.save(); Object.assign(transfer, await sendSave(encodeSave(game.s), undefined, undefined, link?.key)); });
     if (name === 'transfer-copy') { try { await navigator.clipboard.writeText(formatCode(transfer.code)); transfer.error = ''; } catch { transfer.error = '복사하지 못했어요. 코드를 직접 적어 주세요.'; } renderOverlay(true); }
     if (name === 'transfer-fetch') await busy('fetch', async () => {
-      const { code, save } = await fetchSave(transfer.typed);
+      const { code, save, syncKey } = await fetchSave(transfer.typed);
       let state; try { state = decodeSave(save, data); } catch (error) { throw new Error('불러오기 실패: ' + saveProblem(error.message)); }
-      transfer.incoming = { code, state, savedAt: JSON.parse(save).savedAt }; screen = 'confirmTransfer';
+      transfer.incoming = { code, state, syncKey, savedAt: JSON.parse(save).savedAt }; screen = 'confirmTransfer';
     });
     if (name === 'transfer-cancel') { transfer.incoming = null; screen = 'pause'; renderOverlay(true); }
     if (name === 'transfer-apply' && transfer.incoming) {
-      const { code, state } = transfer.incoming;
-      game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; forgetCode(code);
+      const { code, state, syncKey } = transfer.incoming;
+      game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; forgetCode(code); syncMode = state.mode;
+      // The code came from a synced device: join it, counting from its newest upload so this copy is not pulled over it.
+      if (syncKey) {
+        link = { key: syncKey, rev: 0, mark: progressMark(state), at: new Date().toISOString() }; writeLink(localStorage, link);
+        pullSync(syncKey).then(remote => { if (link?.key === syncKey) { link.rev = remote.rev; writeLink(localStorage, link); } }).catch(() => {});
+      }
       transfer = { code: null, expiresAt: null, typed: '', busy: '', error: '', incoming: null };
       resume(); renderOverlay(true); updateHUD();
     }
@@ -596,12 +649,10 @@ try {
     if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
-    if (name === 'export') { game.save(); saveDownload(); }
-    if (name === 'export-raw') saveDownload(rawSave, 'recovery');
     if (name.startsWith('transfer-')) { sfx('click'); await transferAction(name); return; }
+    if (name.startsWith('sync-')) { sfx('click'); await syncAction(name); return; }
     // Purchases answer with coins or a refusal; picking a reward and equipping have their own sounds; every other button clicks.
     if (bought !== null) sfx(bought ? 'buy' : 'deny'); else if (!['reward', 'element'].includes(name)) sfx('click');
-    if (name === 'import') { $('import-file').click(); return; }
     if (name === 'confirm-new') screen = 'confirmNew';
     if (name === 'cancel-new') { if (onTitle) { resume(); return; } screen = 'loadError'; }
     if (name === 'new-game') { const fromTitle = onTitle; game.state = new Game(data).s; saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
@@ -610,16 +661,10 @@ try {
   }
   $('overlay').addEventListener('click', e => { const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target); });
   $('overlay').addEventListener('input', e => { if (e.target.dataset.volume) game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; });
-  $('overlay').addEventListener('change', async e => {
+  $('overlay').addEventListener('change', e => {
     const setting = e.target.dataset.setting;
     if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
     if (e.target.dataset.volume) { game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; game.save(); return; }
-    if (e.target.id === 'import-file' && e.target.files[0]) {
-      try {
-        const state = decodeSave(await e.target.files[0].text(), data);
-        game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; resume(); renderOverlay(true); updateHUD();
-      } catch (error) { const p = document.createElement('p'); p.className = 'error'; p.textContent = '불러오기 실패: ' + saveProblem(error.message); $('overlay').querySelector('.panel').append(p); }
-    }
   });
   // The row under the pointer or the keyboard explains itself in the line below the list.
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
@@ -759,6 +804,8 @@ try {
   function frame(now) {
     const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta * (now < slowUntil ? SLOW_RATE : 1);
     bringPlaceForward();
+    // Back in the village: the moment progress is uploaded for the other devices.
+    if (game.s.mode !== syncMode) { if (game.s.mode === 'hub' && syncMode && syncMode !== 'hub') syncUpload(); syncMode = game.s.mode; }
     if (game.s.mode === 'opening' && !screen) playOpening(false);
     if (game.tutorial.readyToRegister && !screen) meetMoru();
     const bellRinging = !!renderer.npcDirector?.stopped;
@@ -822,7 +869,7 @@ try {
     });
     document.addEventListener('pointerdown', openAudio, { once: true });
   }
-  if (!loadError) openTitle();
+  if (!loadError) { openTitle(); syncCheck(); }
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame.
   await Promise.all([title.ready.catch(() => {}), playerSprites]);

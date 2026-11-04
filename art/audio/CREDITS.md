@@ -1,53 +1,16 @@
 # 효과음·배경음악 출처
 
-`sfx/` 의 효과음은 모두 Kenney(www.kenney.nl)의 CC0 음원이다. 출처 표기 의무는 없다. 원본 라이선스: `sfx/kenney-License.txt`.
+`sfx/` 에 남은 녹음은 모두 Kenney(www.kenney.nl)의 CC0 음원이다. 출처 표기 의무는 없다. 원본 라이선스: `sfx/kenney-License.txt`.
 
 | 게임 이름 | 원본 묶음 | 원본 파일 |
 |---|---|---|
-| swing | RPG Audio | knifeSlice2 (빗나간 렌치만) |
-| hit | Impact Sounds | impactPunch_medium_000 |
-| heavy | Impact Sounds | impactPunch_heavy_000 |
-| hurt | Impact Sounds | impactMetal_light_000 |
-| kill | Impact Sounds | impactPlank_medium_000 |
-| block | Impact Sounds | impactMetal_medium_000 |
-| burst | Impact Sounds | impactSoft_medium_002 |
-| summon | RPG Audio | footstep04 |
-| pop | RPG Audio | metalClick |
-| tell | Interface Sounds | glass_001 |
-| clear | Music Jingles | jingles_STEEL09 |
-| down | RPG Audio | dropLeather |
-| charged | Impact Sounds | impactBell_heavy_004 |
-| mend | Music Jingles | jingles_PIZZI00 |
 | frostBolt, coolingField | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000 |
-| rabbit | RPG Audio | cloth2 |
-| elite | Impact Sounds | impactWood_heavy_000 |
-| trumpet | Music Jingles | jingles_SAX00 |
-| musicbox | Impact Sounds | impactGlass_light_001 |
-| spintop | RPG Audio | cloth1 |
-| drummer | Impact Sounds | impactSoft_heavy_000 |
-| pick, buy | Casino Audio | card-place-1, chips-handle-1 |
-| loot | RPG Audio | handleCoins |
-| cards | Interface Sounds | confirmation_001 |
+| buy | Casino Audio | chips-handle-1 |
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |
-| boss-claw | Kenney | metalLatch |
-| boss-magnet | Kenney | impactBell_heavy_000 |
-| boss-suction | Kenney | cloth4 |
-| boss-overcharge | Kenney | impactPlate_heavy_001 |
-| boss-stickers | Kenney | card-place-2 |
-| boss-crane | Kenney | impactWood_heavy_002 |
-| boss-fan | Kenney | drawKnife1 |
-| boss-march | Kenney | impactSoft_medium_000 |
-| boss-stomp | Kenney | impactSoft_heavy_001 |
-| boss-trumpetWave | Kenney | jingles_SAX04 |
-| boss-charge | Kenney | jingles_SAX08 |
-| boss-column | Kenney | footstep_wood_002 |
-| boss-carpet | Kenney | cloth3 |
-| alarm | Impact Sounds | impactBell_heavy_002 |
-| guard, nutcracker, pikeman | RPG Audio | knifeSlice2 (속도만 다르게) |
 
-불·전기·바람 기술과 융합, 얼음 기술의 냉기, 원정 실패의 처지는 나팔 소리는 녹음 파일 없이 `src/audio/elements.js`에서 잡음과 음을 합성해 만든다.
+그 밖의 효과음은 녹음 파일 없이 코드로 합성한다. 플레이어(렌치·회피·피격 등), 적·보스 공격, 클리어·보상 소리는 `src/audio/coded.js`, 불·전기·바람 기술과 융합, 마을 종, 원정 실패 나팔은 `src/audio/elements.js`.
 
 ## 배경음악
 

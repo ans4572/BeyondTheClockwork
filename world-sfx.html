@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>태엽 밖으로 · 적 · 보스 · 진행 효과음 비교 (녹음 vs 코드)</title>
+<style>
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; }
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; }
+  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --gold: #ffd257; --label: #5d6476; --red: #a92f2b; --teal: #2f8a80; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 "Galmuri11", "Malgun Gothic", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 1; padding: 12px 16px; background: var(--ink); color: var(--paper); }
+  h1 { margin: 0; font-size: 18px; }
+  header p { margin: 2px 0 0; font-size: 12px; opacity: .85; }
+  main { max-width: 900px; margin: 0 auto; padding: 8px 12px 48px; }
+  h2 { margin: 24px 4px 8px; font-size: 15px; border-bottom: 3px solid var(--ink); padding-bottom: 4px; }
+  .row { display: grid; grid-template-columns: 210px repeat(3, 1fr); gap: 6px; margin-bottom: 6px; align-items: stretch; }
+  .head { font-size: 12px; color: var(--label); font-weight: 700; padding: 0 4px; }
+  .what { padding: 6px 8px; }
+  .what b { display: block; } .what small { color: var(--label); font-size: 11px; }
+  .no { color: var(--red); font-weight: 700; margin-right: 4px; }
+  button { min-height: 52px; padding: 6px 8px; border: 0; background: var(--low); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; }
+  button small { display: block; font-weight: 400; font-size: 11px; color: var(--label); }
+  button.now { background: #e3e6ec; }
+  button.code { box-shadow: inset 0 0 0 2px var(--teal); }
+  button.playing { background: var(--gold); }
+  button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  @media (max-width: 700px) { .row { grid-template-columns: 1fr 1fr 1fr; } .what { grid-column: 1 / -1; } .head { display: none; } }
+</style>
+</head>
+<body>
+<header><h1>적 · 보스 · 진행 효과음 · 지금(녹음) vs 코드로 만든 후보</h1><p id="status">버튼을 누르면 재생됩니다. 후보는 지금 소리와 같은 크기로 맞춰 재생돼요. 고른 번호를 알려 주세요 (예: D2-①, E5-②, F1-①).</p></header>
+<main id="list"></main>
+<script type="module">
+const bust = `?t=${Date.now()}`;
+const [{ SFX, SoundBank }, { WORLD_CANDIDATES }] = await Promise.all([import(`./src/audio/sfx.js${bust}`), import(`./src/audio/coded.js${bust}`)]);
+
+// Same numbers as sounds.html (the town bell, E8, is already made in code and is left out).
+const GROUPS = [
+  ['D · 적', [
+    ['D1', 'tell', '공격 예고', '일반 몹이 공격 준비를 시작할 때'], ['D2', 'guard', '경비 · 휘두르기', '목각 경비가 공격할 때'],
+    ['D3', 'nutcracker', '호두까기 · 휘두르기', '방패 호두까기가 공격할 때'], ['D4', 'block', '방패 막힘', '호두까기 방패에 막혔을 때'],
+    ['D5', 'elite', '정예 경비 · 충격파', '정예 목각 경비가 공격할 때'], ['D6', 'burst', '태엽 쥐 · 자폭', '태엽 쥐가 터질 때'],
+    ['D7', 'rabbit', '스프링 토끼 · 돌진', '토끼가 돌진할 때'], ['D8', 'trumpet', '나팔 사수 · 발사', '나팔 사수가 쏠 때'],
+    ['D9', 'musicbox', '오르골 포탑 · 발사', '오르골이 탄을 뿌릴 때'], ['D10', 'spintop', '팽이 병정 · 회전', '팽이가 돌 때'],
+    ['D11', 'drummer', '북치기 · 북소리', '북치기 인형이 칠 때'], ['D12', 'pikeman', '창병 · 찌르기', '태엽 창병이 찌를 때'],
+    ['D13', 'pop', '깜짝 상자 · 튀어나옴', '깜짝 상자가 튀어나올 때'], ['D14', 'summon', '웨이브 등장', '다음 무리가 나타날 때'],
+    ['D15', 'kill', '처치', '적을 쓰러뜨렸을 때']
+  ]],
+  ['E · 보스', [
+    ['E1', 'alarm', '로코 · 경보', '로코의 경보 패턴'], ['E2', 'boss-claw', '로코 · 집게 내려찍기', '집게가 떨어질 때'],
+    ['E3', 'boss-magnet', '로코 · 자석', '끌어당길 때'], ['E4', 'boss-suction', '로코 · 수거 흡입', '빨아들일 때'],
+    ['E5', 'boss-overcharge', '로코 · 과충전 폭발', '터질 때'], ['E6', 'boss-stickers', '로코 · 불량 딱지', '딱지를 던질 때'],
+    ['E7', 'boss-crane', '로코 · 크레인 낙하', '상자가 떨어질 때'], ['E9', 'boss-fan', '브라스 · 지휘봉 2연타', '휘두를 때'],
+    ['E10', 'boss-march', '브라스 · 세 줄 행진', '행진이 지나갈 때'], ['E11', 'boss-stomp', '브라스 · 박자 발구르기', '발을 구를 때'],
+    ['E12', 'boss-trumpetWave', '브라스 · 나팔 파동', '탄을 뿌릴 때'], ['E13', 'boss-charge', '브라스 · 나팔 돌진', '돌진할 때'],
+    ['E14', 'boss-column', '브라스 · 병정 대열', '대열이 지나갈 때'], ['E15', 'boss-carpet', '브라스 · 초록 카펫', '카펫 패턴']
+  ]],
+  ['F · 진행 · 보상', [
+    ['F1', 'clear', '구간 클리어', '방의 적을 모두 쓰러뜨렸을 때'], ['F2', 'loot', '보상 획득 (동전)', '자유 톱니·동전을 받을 때'],
+    ['F3', 'cards', '보상 카드 등장', '보상 선택지가 나올 때'], ['F4', 'pick', '보상 선택', '카드를 골랐을 때']
+  ]]
+];
+
+let audio = null, bank = null, ready = null;
+const gains = new Map(), status = document.getElementById('status');
+/** Loudest 30 ms stretch (and the highest sample) of a sound rendered off screen, so candidates play as loud as the recording they would replace. */
+async function loudness(schedule) {
+  const ctx = new OfflineAudioContext(1, 44100 * 1.6, 44100);
+  schedule(ctx);
+  const data = (await ctx.startRendering()).getChannelData(0), win = 1323;
+  let best = 0, peak = 0;
+  for (let i = 0; i + win < data.length; i += 441) { let sum = 0; for (let j = i; j < i + win; j++) sum += data[j] * data[j]; best = Math.max(best, sum / win); }
+  for (const v of data) peak = Math.max(peak, Math.abs(v));
+  return { rms: Math.sqrt(best), peak };
+}
+const viaGain = recipe => ctx => { const g = ctx.createGain(); g.connect(ctx.destination); recipe(ctx, g); };
+function start() {
+  ready ??= (async () => {
+    audio = new (window.AudioContext || window.webkitAudioContext)(); bank = new SoundBank();
+    status.textContent = '소리를 불러오고 크기를 맞추는 중…';
+    await bank.load(audio);
+    for (const [, rows] of GROUPS) for (const [, name] of rows) {
+      const target = await loudness(ctx => bank.play(ctx, name));
+      for (const [i, [, recipe]] of WORLD_CANDIDATES[name].entries()) { const own = await loudness(viaGain(recipe)); gains.set(`${name}:${i}`, own.rms > 0 && target.rms > 0 ? Math.min(target.rms / own.rms, 0.9 / own.peak) : 0.5); }
+    }
+    status.textContent = '준비 완료. 후보는 지금 소리와 같은 크기로 맞춰 재생됩니다. 고른 번호를 알려 주세요 (예: D2-①, E5-②).';
+  })();
+  return ready;
+}
+const playNow = name => bank.play(audio, name);
+function playCode(name, i) { const g = audio.createGain(); g.gain.value = gains.get(`${name}:${i}`) ?? 0.5; g.connect(audio.destination); WORLD_CANDIDATES[name][i][1](audio, g); }
+const MARKS = ['①', '②'], list = document.getElementById('list');
+const button = (label, sub, cls, onPlay) => {
+  const b = document.createElement('button'); b.className = cls; b.innerHTML = `${label}${sub ? `<small>${sub}</small>` : ''}`;
+  b.addEventListener('click', async () => { await start(); await audio.resume(); onPlay(); b.classList.add('playing'); setTimeout(() => b.classList.remove('playing'), 450); });
+  return b;
+};
+for (const [title, rows] of GROUPS) {
+  const h = document.createElement('h2'); h.textContent = title; list.append(h);
+  const head = document.createElement('div'); head.className = 'row'; head.innerHTML = '<span class="head">소리</span><span class="head">지금</span><span class="head">코드 ①</span><span class="head">코드 ②</span>'; list.append(head);
+  for (const [no, name, label, when] of rows) {
+    const r = document.createElement('div'); r.className = 'row';
+    const what = document.createElement('div'); what.className = 'what'; what.innerHTML = `<b><span class="no">${no}</span>${label}</b><small>${when}</small>`; r.append(what);
+    r.append(button('지금', SFX[name]?.file ? '녹음' : '코드', 'now', () => playNow(name)));
+    WORLD_CANDIDATES[name].forEach(([cand], i) => r.append(button(`${no}-${MARKS[i]}`, cand, 'code', () => playCode(name, i))));
+    list.append(r);
+  }
+}
+</script>
+</body>
+</html>
