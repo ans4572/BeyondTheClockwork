@@ -70,9 +70,6 @@ body.touch .panel.atlas-panel .panel-header h2 { display: none; }
 .world-map .banner text { font: 700 16px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
 .world-map .banner.dark rect { fill: #4a4d58; } .world-map .banner.blue rect { fill: #4f6fa1; } .world-map .banner.dark text, .world-map .banner.blue text { fill: #f6ecd2; }
 .world-map .soon { font: 700 10.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
-.world-map .plate path { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
-.world-map .plate text { font: 700 18px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
-.world-map .plate text.sub { font-size: 9px; letter-spacing: 2px; fill: var(--label); }
 .panel p.atlas-detail { flex: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 8px 0 0; }
 .atlas-detail strong { font-size: 14px; }
 .atlas-detail em { font-style: normal; font-size: 12px; color: var(--red); }
@@ -123,8 +120,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-bar.energy i { background: #c79a3e; }
 .hud-bar b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; line-height: 1; }
 .hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px #2b3345, 4px 4px 0 3px #0e121a55; }
-.hud-minimap:not([hidden]) ~ .hud-wallet { top: 136px; }
-.hud-minimap:not([hidden]) ~ .hud-tools { top: 12px; right: 190px; }
+.hud-minimap:not([hidden]) ~ .hud-tools { top: 12px; right: 196px; }
 /* The boss bar: name above, health below, a black line where each new phase begins. */
 .hud-boss { position: absolute; left: 50%; top: 14px; width: 440px; transform: translateX(-50%); text-align: center; }
 .hud-boss[hidden] { display: none; }
@@ -135,26 +131,25 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-boss.shielded .boss-track { box-shadow: inset 0 0 0 3px #3f8fb0, 0 0 0 2px #7fc7e0, 3px 3px 0 #0e121a55; }
 .hud-boss.shielded .boss-track i:first-child { background: #7fa6b8; }
 .hud-boss small { display: block; min-height: 16px; margin-top: 3px; font-size: 12px; font-weight: 700; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
-.hud-wallet { position: absolute; right: 14px; top: 12px; display: flex; gap: 16px; padding: 8px 14px; }
+/* Gears and coins sit under the health panel, so everything the fight uses is together top left. */
+.hud-wallet { position: absolute; left: 14px; top: 98px; display: flex; gap: 18px; padding: 6px 14px; }
 .hud-wallet span { display: flex; align-items: center; gap: 6px; font-size: 16px; line-height: 1; }
 .hud-wallet .tool-icon { width: 20px; height: 20px; flex: none; }
-/* Under the minimap the wallet takes the minimap's width, so the two read as one block. */
-.hud-minimap:not([hidden]) ~ .hud-wallet { width: 168px; box-sizing: border-box; justify-content: space-evenly; padding: 8px 6px; }
 .hud-tools { position: absolute; right: 14px; top: 56px; display: flex; gap: 6px; }
 .hud-tools button { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 0; pointer-events: auto; cursor: pointer; }
 .hud-tools .tool-icon { width: 24px; height: 24px; }
 .hud-tools button:hover { background: #ffd257; }
 .hud-tools kbd { font: inherit; opacity: .65; }
-#skills { position: absolute; left: 50%; bottom: 8px; display: flex; gap: 3px; transform: translateX(-50%); }
+#skills { position: absolute; left: 50%; bottom: 8px; display: flex; gap: 4px; transform: translateX(-50%); }
 #skills[hidden] { display: none; }
-.slot { position: relative; display: grid; place-items: center; width: 40px; height: 40px; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+.slot { position: relative; display: grid; place-items: center; width: 48px; height: 48px; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
 .slot.ready { background: #ffd257; }
 .slot.empty { opacity: .85; }
 /* Not enough charge yet: the skill shows but reads as unavailable. */
 .slot.short img, #touch button.short img { opacity: .35; filter: grayscale(1); }
-.slot img { width: 30px; height: 30px; image-rendering: pixelated; }
-.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 10px/12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
-.slot .lv { position: absolute; right: 2px; top: 0; font-size: 9px; line-height: 11px; }
+.slot img { width: 36px; height: 36px; image-rendering: pixelated; }
+.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 11px/13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
+.slot .lv { position: absolute; right: 2px; top: 0; font-size: 10px; line-height: 12px; }
 .slot .cool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #0e121ab8; }
 .slot .left { position: absolute; inset: 0; display: grid; place-items: center; color: #fff4d6; font-size: 13px; text-shadow: 1px 1px 0 #0e121a, -1px -1px 0 #0e121a; }
 #hud .hud-bar b { font: 700 12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
@@ -266,7 +261,7 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
 
 /* The charge a skill spends, small in the slot's bottom-right corner; red while there is not enough. */
-.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 9px/11px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
+.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 10px/12px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
 .slot.short .cost, #touch .short .cost { color: #ff8a80; }
 #touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 11px; line-height: 13px; }
 #touch .cost:empty { display: none; }
@@ -292,16 +287,6 @@ body.touch .panel .stat-row button { min-height: 36px; }
 @keyframes wipe-north { to { transform: translateY(-100%); } }
 
 /* ---- UI pass (2026-11-04) ---- */
-/* 2. Everything the fight uses sits together top left: health, charge, then gears and coins under them. */
-.hud-wallet, .hud-minimap:not([hidden]) ~ .hud-wallet { left: 14px; right: auto; top: 98px; width: auto; justify-content: flex-start; gap: 18px; padding: 6px 14px; }
-.hud-minimap:not([hidden]) ~ .hud-tools { right: 196px; }
-/* 1. Bigger skill slots; small labels never below 10px on the sheet. */
-.slot { width: 48px; height: 48px; }
-.slot img { width: 36px; height: 36px; }
-.slot kbd { font-size: 11px; line-height: 13px; }
-.slot .lv { font-size: 10px; line-height: 12px; }
-.slot .cost, #touch .cost { font-size: 10px; line-height: 12px; }
-#skills { gap: 4px; }
 /* On a short screen panels keep their size and lose their side notes instead of scrolling. */
 body.cramped .panel { padding: 10px 16px; overflow: hidden; }
 body.cramped .panel h2 { font-size: 22px; margin-bottom: 4px; }

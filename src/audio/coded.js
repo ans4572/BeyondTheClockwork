@@ -1,4 +1,4 @@
-// Sounds built in code (Web Audio): candidates compared on player-sfx.html and world-sfx.html; sfx.js plays the picked ones.
+// Sounds built in code (Web Audio): two or three candidates per sound; sfx.js names the one the game plays.
 // Each recipe draws into `out` (a gain node) from now on; levels are relative and the comparison page matches loudness.
 // The wrench is meant to land like a melee weapon in an action game: a low thump for weight, a short bright click for
 // contact, a burst of mid noise for the body, and for the metal versions a quick inharmonic ring.
@@ -173,7 +173,7 @@ function boom(a, o, { from = 110, to = 32, dur = 0.35, peak = 1, at = 0 } = {}) 
 }
 const COIN = [1, 2.4, 3.9];
 
-/** Enemies, bosses and progress: two coded candidates each, compared on world-sfx.html against the recordings. */
+/** Enemies, bosses and progress: two coded candidates each; the chosen one is named in sfx.js. */
 export const WORLD_CANDIDATES = {
   tell: [
     ['띵 예고', (a, o) => tone(a, o, { type: 'triangle', from: 620, to: 930, dur: 0.09, peak: 0.5 })],
@@ -315,7 +315,7 @@ function crackle(audio, out, { count, dur, freq = 6000, peak = 0.35, at = 0 }) {
   for (let i = 0; i < count; i++) hiss(audio, out, { type: 'highpass', freq: freq * (0.8 + Math.random() * 0.5), dur: 0.006 + Math.random() * 0.01, peak: peak * (0.5 + Math.random() * 0.5), at: at + Math.random() * dur });
 }
 
-/** The ice skills, still on recordings: three coded candidates each, compared on ice-sfx.html. */
+/** The ice skills: three coded candidates each; sfx.js names the one in use. */
 export const ICE_CANDIDATES = {
   frostBolt: [
     ['얼음 화살 쉭 + 챙', (a, o) => { whoosh(a, o, { from: 2000, to: 5200, dur: 0.12, q: 1.4, peak: 0.6 }); ring(a, o, { base: 2600, dur: 0.3, peak: 0.35, at: 0.06, partials: GLASS }); }],

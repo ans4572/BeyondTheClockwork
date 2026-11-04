@@ -581,28 +581,42 @@ try {
     const marks = (ai.phasePatterns || []).map(p => p.below).concat(ai.phaseTwoHpFraction ?? []);
     return [...new Set(marks.filter(at => at > 0 && at < 1))].sort((a, b) => b - a);
   }
+  /** Writes to the HUD only when a value has changed, so a still frame touches nothing on the page. */
+  const written = new WeakMap();
+  function put(element, what, value) {
+    let last = written.get(element);
+    if (!last) written.set(element, last = {});
+    if (last[what] === value) return;
+    last[what] = value;
+    if (what === 'text') element.textContent = value; else if (what === 'hidden') element.hidden = value; else element.style[what] = value;
+  }
+  /** Seconds left on a slot's cooldown, and its full length. */
+  function slotCooldown(slot) {
+    const p = game.p, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : slot.skill ? p.cooldowns[slot.skill.id] || 0 : 0;
+    return { remaining: Math.max(0, until - game.s.time), total: slot.dodge ? data.combat.player.dodge.cooldown : slot.skill?.cooldown || 1 };
+  }
   function updateHUD() {
     const s = game.s, p = game.p, maxEnergy = data.combat.player.maxEnergy, slots = hudSlots();
-    $('hp-fill').style.width = `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`;
-    $('hp-text').textContent = `${Math.ceil(p.hp)} / ${p.maxHp}`;
-    $('energy-fill').style.width = `calc(${p.energy / maxEnergy * 100}% - 4px)`;
-    $('energy-text').textContent = `축전 ${Math.floor(p.energy)}`;
-    $('gears').textContent = s.profile.freeGears;
+    put($('hp-fill'), 'width', `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`);
+    put($('hp-text'), 'text', `${Math.ceil(p.hp)} / ${p.maxHp}`);
+    put($('energy-fill'), 'width', `calc(${p.energy / maxEnergy * 100}% - 4px)`);
+    put($('energy-text'), 'text', `축전 ${Math.floor(p.energy)}`);
+    put($('gears'), 'text', s.profile.freeGears);
     // The boss bar: shown while a boss is in the room, marked where each of its phases begins.
     const boss = s.enemies.find(e => e.boss && e.hp > 0);
-    $('boss-bar').hidden = !boss; $('toast').classList.toggle('below-boss', !!boss);
+    put($('boss-bar'), 'hidden', !boss); $('toast').classList.toggle('below-boss', !!boss);
     if (boss) {
       if ($('boss-bar').dataset.id !== boss.type) {
         $('boss-bar').dataset.id = boss.type;
-        $('boss-name').textContent = data.combat.bosses.find(b => b.id === boss.type)?.name || boss.name;
+        put($('boss-name'), 'text', data.combat.bosses.find(b => b.id === boss.type)?.name || boss.name);
         $('boss-marks').innerHTML = bossPhaseMarks(data.slice.bossAI[boss.type]).map(at => `<i style="left:calc(3px + (100% - 6px) * ${at})"></i>`).join('');
       }
-      $('boss-fill').style.width = `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`;
+      put($('boss-fill'), 'width', `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`);
       const breaking = boss.breaking, rule = breaking && data.slice.bossAI[boss.type].phaseBreaks[breaking.index];
       $('boss-bar').classList.toggle('shielded', !!breaking);
-      $('boss-note').textContent = breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}`} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '';
+      put($('boss-note'), 'text', breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}`} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '');
     }
-    $('coins').textContent = s.run?.coins || 0;
+    put($('coins'), 'text', s.run?.coins || 0);
     const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon, skill?.energyCost]));
     if ($('skills').dataset.key !== slotKey) {
       $('skills').dataset.key = slotKey;
@@ -612,28 +626,26 @@ try {
       }).join('');
     }
     [...$('skills').children].forEach((element, i) => {
-      const slot = slots[i], { skill } = slot, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : skill ? p.cooldowns[skill.id] || 0 : 0;
-      const total = slot.dodge ? data.combat.player.dodge.cooldown : skill?.cooldown || 1, remaining = Math.max(0, until - s.time);
-      element.querySelector('.cool').style.height = `${Math.min(1, remaining / total) * 100}%`;
-      element.querySelector('.left').textContent = remaining > 0 ? remaining.toFixed(1) : '';
+      const slot = slots[i], { skill } = slot, { remaining, total } = slotCooldown(slot);
+      put(element.querySelector('.cool'), 'height', `${Math.min(1, remaining / total) * 100}%`);
+      put(element.querySelector('.left'), 'text', remaining > 0 ? remaining.toFixed(1) : '');
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
       element.classList.toggle('short', !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost);
     });
     const resetting = game.s.practice?.resetCooldowns;
-    $('practice-reset').hidden = game.s.mode !== 'practice';
-    $('practice-reset').textContent = `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`;
+    put($('practice-reset'), 'hidden', game.s.mode !== 'practice');
+    put($('practice-reset'), 'text', `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`);
     $('practice-reset').classList.toggle('on', !!resetting);
     if (isTouch) touch.update(slots.map(slot => {
-      const { skill } = slot, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : skill ? p.cooldowns[skill.id] || 0 : 0;
-      const total = slot.dodge ? data.combat.player.dodge.cooldown : skill?.cooldown || 1, remaining = Math.max(0, until - s.time);
+      const { skill } = slot, { remaining, total } = slotCooldown(slot);
       return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !slot.fusion && !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
-    if ($('hint').textContent !== hint) $('hint').textContent = hint;
-    $('hint').hidden = !hint;
+    put($('hint'), 'text', hint);
+    put($('hint'), 'hidden', !hint);
     const notice = s.notices.at(-1);
     $('toast').classList.toggle('visible', !!notice && game.onFoot);
-    $('toast').textContent = notice?.text || '';
+    put($('toast'), 'text', notice?.text || '');
   }
 
   /**
