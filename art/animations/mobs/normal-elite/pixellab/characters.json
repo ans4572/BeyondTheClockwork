@@ -1,0 +1,156 @@
+{
+  "guard": {
+    "id": "9bf3092e-1185-4b13-8a56-a003d3d870d2",
+    "move": {
+      "south-west": "8cfbb18a-3840-463f-8acc-c9fb09fbcea4",
+      "south": "4cad7999-d8a9-40dc-880a-cc4da9145dc0",
+      "north": "8be00164-9d44-48d1-9053-bc493d5db607",
+      "north-west": "04469bbe-1b2d-4807-a661-ea7296db4720",
+      "north-east": "026cc474-731f-49cf-a1d9-0b6e52310725",
+      "east": "7e3c4fe4-52e4-4c87-aae0-c5cedb93eca3",
+      "west": "e132c470-a9e9-4870-89df-bec50aa616df",
+      "south-east": "5bdd1e88-a813-4f65-b7d7-341d6ef542ec"
+    },
+    "attack": {
+      "east": "1d198f6a-b046-4623-b1d0-7359a915a9b7",
+      "west": "f19dbd81-9072-47bd-a56d-583b2b968edf",
+      "north-west": "81c4d6d5-a5c2-4f3f-96d3-a3eafa7a7299",
+      "north": "9a95721f-8812-4aa8-8fe9-58068c03fe51",
+      "south-east": "18b6fb5f-84ee-4324-8f43-92f75a03d0a9",
+      "south-west": "6b9721fe-7814-4003-b385-2f7b05e3f661",
+      "north-east": "6fdd0511-98d4-47fb-9324-bd95048d4782",
+      "south": "77b4bd31-59f1-4d21-bcfc-69f114b1d6a8"
+    },
+    "drop": {
+      "east": [
+        4
+      ],
+      "south-east": [
+        4
+      ],
+      "south": [
+        5
+      ],
+      "south-west": [
+        3
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        4
+      ],
+      "north": [
+        5
+      ],
+      "north-east": [
+        4
+      ]
+    }
+  },
+  "elite": {
+    "id": "ba0fb8b7-6f70-4aab-b06c-3db121d191ed",
+    "move": {
+      "south-east": "eede0ad1-f1a3-4fa9-8a34-00ad77c746c5",
+      "south": "6026b408-1779-4d05-973b-bc00c6146ada",
+      "south-west": "d0ef4dc8-4dc3-4304-8c2e-d27c92c8dd9c",
+      "north-west": "bd1ab189-ef3e-48bb-8fb6-369b92ef7363",
+      "north": "6a941af9-697d-4851-8329-252a91c470e9",
+      "north-east": "059a68a2-71a0-48ef-9b4f-55f54498b361",
+      "west": "e6a2447a-a261-4eb1-b1ca-71fb958572ed",
+      "east": "fa63afbe-64f6-4114-b666-894c5b8985c8"
+    },
+    "attack": {
+      "south-east": "9077e746-a81c-46ff-85bd-5c2393aef02d",
+      "north-west": "cc2ac6d7-05c4-40c3-92f5-5824e6df52d1",
+      "north": "e7ab4bf2-b4bc-4a52-95d3-da0e9cd751ea",
+      "east": "9a7c90d9-06b8-4c71-a3fb-5e8f0d2fe24d",
+      "north-east": "96cc436f-3847-45ac-ad62-12d4851cd8c6",
+      "south-west": "4e2dfcc2-1917-440e-ad0c-3e51fdbc6a23",
+      "west": "6be56ed2-056d-46e6-8348-7209c75f2574",
+      "south": "c71a8277-8036-4e8b-92e0-38f8a1ee8faa"
+    },
+    "drop": {
+      "east": [
+        4
+      ],
+      "south-east": [
+        4,
+        5
+      ],
+      "south": [
+        6,
+        7
+      ],
+      "south-west": [
+        4,
+        5
+      ],
+      "west": [
+        5,
+        6
+      ],
+      "north-west": [
+        4
+      ],
+      "north": [
+        5,
+        6
+      ],
+      "north-east": [
+        5
+      ]
+    }
+  },
+  "trumpet": {
+    "id": "45e7483d-941f-4061-8b07-0dc37ce7366b",
+    "move": {
+      "east": "009db862-555d-4677-809f-c6fe2ef5d9ec",
+      "north-west": "3780cd6f-6194-4db0-aa04-7ed26da4e1c9",
+      "south-east": "a20c27bd-2137-4774-8539-4cc24a56dc1d",
+      "north-east": "18621745-5c0c-4bd5-817b-c4864ac7efaf",
+      "west": "8d7dc409-479d-427e-a5e8-9c9d1eb4c5f1",
+      "north": "bbbf1199-0067-4fae-b117-cd470bb57cd5",
+      "south-west": "d4dcabe4-d782-42f5-af1b-e5a8e7c580bf",
+      "south": "0476a926-e411-462f-96ca-8e926ee122a6"
+    },
+    "attack": {
+      "south-east": "6490bbdd-d433-4979-a4ef-00923c7d7838",
+      "north": "c8c46184-c094-4ef1-80a0-22fdad1ded78",
+      "north-east": "c4a72ef1-1931-48e8-b8fc-5b268c97a7a1",
+      "north-west": "dceb2934-5ddc-44f6-a6b8-09d51b77f6ad",
+      "south-west": "532b94a6-e419-44d8-aa4c-115176621534",
+      "east": "7c6e0745-68a8-4a11-9d62-f45d0edbb50a",
+      "west": "cb20fbf5-ea22-4508-b2fb-04f9e429ed34",
+      "south": "b67355f5-58f1-431f-9aeb-fd288de4cb05"
+    },
+    "drop": {
+      "south-east": [
+        5
+      ]
+    }
+  },
+  "rabbit": {
+    "id": "25b59713-bae2-442e-ba09-486fbd91c9bb",
+    "move": {
+      "south-east": "d5160790-5fc1-4c59-a450-0f893c03dbf5",
+      "east": "5f731d08-c7d3-4cbe-bf15-fc81f072d749",
+      "north-east": "0a7246b3-00a2-46f8-9861-42512c3aac12",
+      "north": "3a7d0012-5c56-4499-98e4-afcd5d984340",
+      "west": "432dc03a-c40b-421e-8981-a750e3cb4a56",
+      "south-west": "055ee0ee-78c5-4a30-bdf8-5e665f75e6cb",
+      "north-west": "86e02cb3-2018-4fdc-89ae-c15f158ede88",
+      "south": "4625f015-3e4c-4364-9ad2-1e0f11fe8082"
+    },
+    "attack": {
+      "south-east": "2b7a176a-0273-40c4-ba7d-dd3fa36fd21b",
+      "west": "413a98a6-d2c4-4825-bddc-feaa9d24988c",
+      "east": "63497f04-e461-4250-b7c0-19c71648d7f3",
+      "north": "d3eecb1e-a64d-488b-a848-29aaac729987",
+      "north-east": "db84308a-3117-4493-b047-102e1a2771fa",
+      "north-west": "1b951782-8240-4750-aed9-4fbe516f0fc0",
+      "south-west": "6cbff801-3b2d-46d2-9271-aa65b887617f",
+      "south": "e473f89b-774f-40e9-b1d0-d99e892740db"
+    }
+  }
+}

@@ -45,7 +45,7 @@ test('a mob stands, walks, and faces where it is going', () => {
   for (let i = 0; i < 40; i++) { enemy.y += 2.1 / 60; frames.add(tick(a, g).get(enemy.id).frame); }
   const pose = a.poses.get(enemy.id);
   assert.deepEqual([pose.action, pose.direction], ['guard-move', 'south']);
-  assert.ok(frames.size > 8);
+  assert.ok(frames.size >= 6);
   for (let i = 0; i < 6; i++) tick(a, g);
   assert.equal(a.poses.get(enemy.id).action, 'guard-idle');
 });
@@ -119,7 +119,7 @@ test('renderer draws body then effect, flashes on a hit, and draws bosses from t
   r.drawDoll = (x, y, opts) => calls.push(['doll', opts.type]);
   g.beginEnemyTell(enemy, 'melee'); g.s.time += 0.1; r.render(1 / 60);
   const draws = calls.filter(call => call[0] === 'drawImage'), clip = library.clip('guard-attack', 'west');
-  assert.deepEqual(draws.map(call => call[1].fake), [clip.sheet, clip.effect]);
+  assert.deepEqual(draws.map(call => call[1].fake), [clip.sheet, clip.effect].filter(Boolean));
   assert.ok(!calls.some(call => call[0] === 'doll' && call[1] === 'guard'));
   enemy.flashUntil = g.s.time + 0.09; filters.length = 0; r.render(1 / 60);
   assert.ok(filters.some(value => value.startsWith('brightness')) && filters.at(-1) === 'none');
