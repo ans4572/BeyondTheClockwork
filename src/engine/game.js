@@ -411,7 +411,7 @@ export class Game {
     a.elapsed += dt * (1 + (this.stats.attackSpeed || 0) + haste);
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
-      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase }); a.shown = true; }
+      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase, arc: this.config.rules.comboArcDegrees }); a.shown = true; }
       this.breakSwing(a, range);
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
@@ -586,7 +586,7 @@ export class Game {
           if (cast.homing) { const near = this.s.enemies.filter(e => e.hp > 0 && distance(cast, e) <= cast.homing).sort((a, b) => distance(cast, a) - distance(cast, b))[0]; if (near) { cast.x = near.x; cast.y = near.y; } }
           if (cast.finalKnockback && cast.pulse === cast.hits - 1) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && distance(cast, enemy) <= cast.radius + enemy.radius) { const a = Math.atan2(enemy.y - cast.y, enemy.x - cast.x); this.move(enemy, Math.cos(a) * cast.finalKnockback, Math.sin(a) * cast.finalKnockback); }
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && (cast.shape === 'cone' ? inCone(cast, enemy, cast.angle, cast.range, cast.arc) : distance(cast, enemy) <= cast.radius + enemy.radius)) { this.castHit(cast, enemy); if(cast.shape==='orb' && cast.knockback && !enemy.boss){const a=Math.atan2(enemy.y-cast.y,enemy.x-cast.x);this.move(enemy,Math.cos(a)*cast.knockback,Math.sin(a)*cast.knockback);} }
-          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1 });
+          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc });
         }
         cast.pulse++; cast.next += cast.interval;
       }
@@ -599,7 +599,8 @@ export class Game {
   }
   hurt(amount) {
     if (!this.active || this.s.time + 1e-7 < this.p.invulnerableUntil) return false;
-    amount *= 1 - (this.stats.damageReduction || 0);
+    // The first lesson in the scrapyard teaches the dodge: a hit still flashes and stuns, but costs no health.
+    amount *= this.s.mode === 'intro' ? 0 : 1 - (this.stats.damageReduction || 0);
     this.p.hp = Math.max(0, this.p.hp - amount);
     if (this.s.run) this.s.run.damageTaken += amount;
     this.p.invulnerableUntil = this.s.time + this.c.player.hurtInvulnerability;
@@ -889,12 +890,12 @@ export class Game {
         enemy.ready = this.s.time + ai.chargeSeconds + ai.hornDelay + 1 + enemy.recovery; break;
       case 'chargeHorn':
         if (inCone(tell, p, tell.angle, ai.hornRange, ai.hornDegrees)) damage();
-        this.effect('swing', tell.x, tell.y, '#e0a068', 0.3, ai.hornRange, { angle: tell.angle, phase: 2 }); break;
+        this.effect('swing', tell.x, tell.y, '#e0a068', 0.3, ai.hornRange, { angle: tell.angle, phase: 2, arc: ai.hornDegrees }); break;
       case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.4, ai.overchargeRadius); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
         if (inCone(tell, p, tell.angle, ai.fanRange, ai.fanDegrees)) damage();
-        this.effect('swing', tell.x, tell.y, '#dc817b', 0.25, ai.fanRange, { angle: tell.angle, phase: 2 });
+        this.effect('swing', tell.x, tell.y, '#dc817b', 0.25, ai.fanRange, { angle: tell.angle, phase: 2, arc: ai.fanDegrees });
         if (tell.type === 'fan') enemy.followup = { type: 'fanSecond', at: this.s.time + ai.followupDelay }; break;
       case 'march': {
         const lanes = this.marchLanes(enemy);

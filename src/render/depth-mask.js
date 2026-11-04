@@ -1,7 +1,7 @@
 import { pointInPolygon } from '../engine/map-geometry.js';
 
 // Small gaps in a column, such as a railing, still belong to the object around them.
-const GAP_PIXELS = 6, SLIVER_PIXELS = 5;
+const GAP_PIXELS = 6, SLIVER_PIXELS = 5, DEPTH_MAX_WIDTH = 1920;
 const BODY_HALF_UNITS = 0.35, BODY_UNITS = 1.7, GHOST_FROM = 0.35, GHOST_TO = 0.75, GHOST_ALPHA = 0.6;
 
 /** How strongly the player shows through scenery that hides this share of their body. */
@@ -51,7 +51,8 @@ export function raiseDepths(depths, width, height, perUnit, polygon, baseY) {
 export class DepthMask {
   /** `overhead` regions hang above their true ground line, so their depth is set by hand. */
   constructor(image, maskImage, { size, overhead = [] }, createCanvas) {
-    const [width, height] = [image.width, image.height], read = picture => {
+    // Read at most 1920 px wide: sharper 2x map art needs no finer depth, and phones keep the memory.
+    const shrink = Math.min(1, DEPTH_MAX_WIDTH / image.width), [width, height] = [Math.round(image.width * shrink), Math.round(image.height * shrink)], read = picture => {
       const context = createCanvas(width, height).getContext('2d', { willReadFrequently: true });
       context.drawImage(picture, 0, 0, width, height);
       return context.getImageData(0, 0, width, height).data;

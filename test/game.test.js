@@ -24,9 +24,9 @@ test('source data retains the full 8 elements / 28 fusions while runtime selects
   assert.deepEqual(data.combat.player, source.player);
   const keys = new Set(source.fusions.map(f => [...f.pair].sort().join('+'))); assert.equal(keys.size, 28);
 });
-test('intro death restarts its checkpoint without registration or canonical rewards', () => {
+test('the scrapyard lesson costs no health, and finishing it grants no canonical rewards', () => {
   const g = new Game(data); g.beginIntro(); g.hurt(1000);
-  assert.equal(g.s.mode, 'introDeath'); assert.equal(g.s.profile.registered, false); assert.equal(g.s.profile.firstReturnClaimed, false);
+  assert.equal(g.s.mode, 'intro'); assert.equal(g.p.hp, g.p.maxHp); assert.equal(g.s.profile.registered, false); assert.equal(g.s.profile.firstReturnClaimed, false);
   g.beginIntro(); assert.equal(g.p.hp, 100); assert.equal(g.s.profile.freeGears, 0);
   completeRoom(g); assert.equal(g.s.mode, 'registration'); assert.equal(g.s.profile.freeGears, 8);
   assert.equal(g.s.profile.combatClears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);

@@ -44,7 +44,7 @@
         "windup": 0.12,
         "active": 0.15,
         "recovery": 0.15,
-        "range": 1.95
+        "range": 2.15
       },
       {
         "damage": 18,

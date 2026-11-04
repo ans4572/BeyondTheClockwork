@@ -33,9 +33,10 @@ const imageSize = file => {
   if (kind === 'VP8L') { const v = b.readUInt32LE(21); return [(v & 0x3fff) + 1, ((v >> 14) & 0x3fff) + 1]; }
   return [1 + b.readUIntLE(24, 3), 1 + b.readUIntLE(27, 3)];
 };
-test('each background and its foreground layer match the declared map size', () => {
-  for (const place of places) for (const file of [place.background, place.mask]) {
-    assert.deepEqual(imageSize(new URL(`..${file}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
+test('each mask matches the declared map size, and each background is drawn at twice that for sharp screens', () => {
+  for (const place of places) {
+    assert.deepEqual(imageSize(new URL(`..${place.mask}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
+    assert.deepEqual(imageSize(new URL(`..${place.background}`, import.meta.url)), place.size.map(units => Math.round(units * 80)));
   }
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
 });
@@ -203,7 +204,8 @@ test('the tutorial plays in the scrapyard and stays on its floor', () => {
 
 test('the scrapyard picture and mask are one screen in size', () => {
   const { background, mask } = maps.villages.scrapyard;
-  for (const file of [background, mask]) assert.deepEqual(imageSize(new URL(`..${file}`, import.meta.url)), [1120, 640]);
+  assert.deepEqual(imageSize(new URL(`..${mask}`, import.meta.url)), [1120, 640]);
+  assert.deepEqual(imageSize(new URL(`..${background}`, import.meta.url)), [2240, 1280]);
 });
 
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };
@@ -238,11 +240,11 @@ test('someone who dodged early skips the dodge step', () => {
   assert.equal(g.tutorial.step, 'fight');
 });
 
-test('falling during the lesson continues the same step with no retry screen', () => {
-  const g = lesson(); toGuard(g); const guard = threeHits(g);
-  g.p.invulnerableUntil = 0; g.hurt(10000);
+test('a hit during the lesson costs no health and keeps the player where they are', () => {
+  const g = lesson(); toGuard(g); threeHits(g); const at = [g.p.x, g.p.y];
+  g.p.invulnerableUntil = 0; assert.equal(g.hurt(10000), true);
   assert.equal(g.s.mode, 'intro'); assert.equal(g.tutorial.step, 'dodge'); assert.equal(g.p.hp, g.p.maxHp);
-  assert.deepEqual([g.p.x, g.p.y, guard.x], [maps.intro.spawn.x, maps.intro.spawn.y, maps.intro.enemySpawns[0].x]);
+  assert.deepEqual([g.p.x, g.p.y], at);
 });
 
 test('beating the guard opens the door, and walking to it registers the player once', () => {

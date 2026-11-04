@@ -31,11 +31,12 @@ export class CanvasRenderer {
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
    * The wrench's slash: one thin crescent drawn along the swing, up to 3 px at its head and thinning to the tail, with a
-   * one-pixel ink shadow so it reads on pale floors. The second blow sweeps the other way; the third is a little longer.
+   * one-pixel ink shadow so it reads on pale floors. The second blow sweeps the other way.
+   * It is drawn exactly where the blow lands: the crescent sits on the hit range and spans the hit cone (`fx.arc` degrees).
    */
   drawSwing(fx, x, y, fraction) {
-    const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20 * 0.92, dir = phase === 1 ? -1 : 1;
-    const span = heavy ? 1.15 : 1, grow = Math.min(1, fraction / SWING_SWEEP), fade = fraction < SWING_SWEEP ? 1 : 1 - (fraction - SWING_SWEEP) / (1 - SWING_SWEEP);
+    const c = this.ctx, phase = fx.phase || 0, heavy = phase === 2, R = fx.value * 20, dir = phase === 1 ? -1 : 1;
+    const span = fx.arc ? fx.arc * Math.PI / 360 : 1, grow = Math.min(1, fraction / SWING_SWEEP), fade = fraction < SWING_SWEEP ? 1 : 1 - (fraction - SWING_SWEEP) / (1 - SWING_SWEEP);
     const start = fx.angle - dir * span, sweep = dir * 2 * span * grow, steps = 18, widest = heavy ? 3.5 : 3;
     c.save(); c.lineCap = 'butt';
     for (let i = 0; i < steps; i++) {
