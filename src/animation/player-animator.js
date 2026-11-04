@@ -52,7 +52,8 @@ export class PlayerAnimator {
     const direction = nearestDirection(last.angle), clip = this.library.clip(action, direction), elapsed = (s.time - last.at) * 1000;
     if (!clip || elapsed >= clip.durationMs) return null;
     const dashing = s.casts.some(c => c.id === last.id && c.shape === 'dash');
-    if (this.locomotion.moving && !dashing && elapsed > CAST_SETTLE_MS) return null;
+    // Walking away ends a cast pose; the wrench's own lunge (feet planted, body carried) does not.
+    if (this.locomotion.moving && !dashing && !p.attack && elapsed > CAST_SETTLE_MS) return null;
     this.facing = direction;
     return { action, direction, frame: frameAtProgress(clip, elapsed / clip.durationMs) };
   }

@@ -104,15 +104,16 @@ test('one swing hits multiple targets once but charges only once per phase', () 
 test('standing still never regenerates charge', () => {
   const g = arena(); inert(g, 'guard', { x: 20, y: 12 }); step(g, 10); assert.equal(g.p.energy, 0);
 });
-test('basic windup can be dodge cancelled; active frames cannot be duplicated', () => {
+test('a dodge cancels the wrench at any point; a blow that already landed is not repeated', () => {
   const g = arena(); const e = inert(g); g.basicAttack(); step(g, 0.033);
-  assert.equal(g.dodge(), true); step(g, 0.3); assert.equal(e.hp, e.maxHp); assert.equal(g.p.energy, 0);
+  assert.equal(g.dodge(), true); assert.equal(g.p.attack, null); step(g, 0.3); assert.equal(e.hp, e.maxHp); assert.equal(g.p.energy, 0);
+  // Mid-swing, after the blow has landed: the dodge still comes out, and the hit is not dealt again.
   g.p.x = 8; g.p.y = 8; g.p.dodgeReady = 0; g.basicAttack(); step(g, 0.18);
-  assert.equal(g.dodge(), false); assert.equal(g.p.energy, 8); step(g, 0.75); assert.equal(g.p.energy, 8);
+  const hp = e.hp; assert.equal(g.dodge(), true); assert.equal(g.p.attack, null); assert.equal(g.p.energy, 8); step(g, 0.75); assert.equal(g.p.energy, 8); assert.equal(e.hp, hp);
 });
-test('third recovery can be cancelled only in its last 0.1 seconds', () => {
-  const g = arena(); inert(g); g.p.combo = 2; g.p.comboExpires = 10; g.basicAttack(); step(g, 0.55);
-  assert.equal(g.dodge(), false); step(g, 0.1); assert.equal(g.dodge(), true);
+test('the third blow can be dodged out of at any time, not only at the end of its recovery', () => {
+  const g = arena(); inert(g); g.p.combo = 2; g.p.comboExpires = 10; g.basicAttack(); step(g, 0.3);
+  assert.equal(g.dodge(), true); assert.equal(g.p.attack, null);
 });
 test('diagonal movement has the same speed as cardinal movement', () => {
   const g = arena(), h = arena(); inert(g, 'guard', { x: 25, y: 14 }); inert(h, 'guard', { x: 25, y: 14 });
@@ -406,7 +407,6 @@ test('each fallen enemy pays its share of the room at once, and the clear pays o
   g.hitEnemy(first, 1e6);
   assert.equal(g.s.run.coins, Math.round(total.coins / planned));
   assert.equal(g.s.profile.freeGears - gears0, Math.round(total.gears / planned));
-  assert.ok(g.s.effects.some(fx => fx.type === 'gain'));
   // Everything else falls, the waves are spent, and the room is cleared: the totals match a room paid at the end.
   g.s.run.wave = room.waves.length - 1; g.s.run.arrivals = [];
   for (const e of g.s.enemies) if (e.hp > 0) g.hitEnemy(e, 1e6);

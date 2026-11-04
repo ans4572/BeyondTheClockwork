@@ -33,10 +33,16 @@ const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
 const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
+/** Every small picture the menus show: element parts, skill slots and status marks. Loaded right after the title. */
+const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/element-icons/${id}.png`),
+  ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake',
+    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat', 'dodge', 'wrench'].map(id => `art/ui/skill-icons/${id}.png`)];
+/** The decoded icons are held here so the browser keeps them ready. */
+const keptIcons = [];
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-const FEEL = { hit: { stop: 0.045 }, heavy: { stop: 0.1, shake: 4 }, phase: { stop: 0.25, shake: 5 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const CRIT_STOP = 0.03, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
+const FEEL = { hit: { stop: 0.06, shake: 1.5 }, heavy: { stop: 0.12, shake: 5 }, phase: { stop: 0.25, shake: 5 }, skill: { stop: 0.03 }, fusion: { stop: 0.06, shake: 2 }, kill: { stop: 0.1, shake: 4 }, hurt: { stop: 0.06, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const MULTI_STOP = 0.02, MULTI_STOP_CAP = 0.06, CRIT_STOP = 0.03, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
@@ -61,7 +67,11 @@ try {
   let touch = null;
   // F2's sheets come first and the loading card waits for them, so the old code doll never stands in for the player.
   // Enemies and townsfolk follow one set at a time instead of competing with F2 for the connection.
-  const playerSprites = SpriteLibrary.load().then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  // Walking, the wrench, dodging and falling are waited for; skill poses and cast effects follow in the background,
+  // since no skill can be used before elements are equipped in town.
+  const PLAYER_LATER = action => !['idle', 'walk', 'run', 'attack-1', 'attack-2', 'attack-3', 'hit', 'death', 'dodge'].includes(action);
+  let playerReady = false;
+  const playerSprites = SpriteLibrary.load(undefined, undefined, PLAYER_LATER).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
     .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json')).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
@@ -107,6 +117,8 @@ try {
   const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
+    // Places are drawn only after the title, so their art waits for the title and then for F2's own sheets.
+    if (!document.body.classList.contains('booted') || !playerReady) return;
     while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
@@ -235,7 +247,7 @@ try {
   // The title song downloads alone first, so it can play the moment sound is allowed; the effects and the town
   // and street songs follow once it can.
   music.preload(['title']);
-  music.ready('title', 4000).then(() => { sounds.prefetch(); music.preload(['town', 'street']); });
+  music.ready('title', 4000).then(() => playerSprites).then(() => { sounds.prefetch(); music.preload(['town', 'street']); fetchImages(); });
   // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
   for (const type of ['pointerdown', 'keydown', 'click', 'touchend']) window.addEventListener(type, () => openAudio(), { capture: true });
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
@@ -332,11 +344,15 @@ try {
     const hits = game.feel.splice(0);
     if (!hits.length) return;
     const calm = reducedMotion();
+    // Catching several enemies in one swing holds the frame a little longer for each.
+    const struck = hits.filter(hit => hit.kind === 'hit' || hit.kind === 'heavy').length, crowd = Math.min(MULTI_STOP_CAP, MULTI_STOP * Math.max(0, struck - 1));
     for (const hit of hits) {
       const kind = FEEL[hit.kind] || NO_FEEL;
-      hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0));
+      hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0) + (hit.angle !== undefined ? crowd : 0));
       const shake = Math.max(kind.shake || 0, hit.crit ? CRIT_SHAKE : 0);
-      if (shake && !calm) renderer.kick(shake);
+      // A wrench blow pushes the view the way it was swung; everything else shakes.
+      if (shake && !calm) renderer.kick(shake, hit.angle);
+      if (hit.crit && !calm) renderer.critPulse();
       if (hit.kind === 'hurt' && !calm) renderer.wince();
     }
     // The last enemy, and a boss above all, falls in slow motion.
@@ -871,8 +887,9 @@ try {
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
-    onNew: startNew,
-    onLoad: () => { openAudio(); leaveTitle(); resume(); },
+    // The player's sheets keep loading behind the title; leaving it waits for them, so F2 is never drawn without them.
+    onNew: () => { openAudio(); playerSprites.then(startNew); },
+    onLoad: () => { openAudio(); playerSprites.then(() => { leaveTitle(); resume(); }); },
     onSettings: () => { screen = 'pause'; renderOverlay(true); },
     onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; beep(70, 0.2, 0.09); game.s.paused = paused; },
     reducedMotion
@@ -893,10 +910,15 @@ try {
   }
   if (!loadError) { openTitle(); syncCheck(); }
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
-  // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame.
-  await Promise.all([title.ready.catch(() => {}), playerSprites]);
+  // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame. Only the title waits:
+  // the player's skill sheets, place art and the other songs come after, so they do not slow the first screen.
+  await title.ready.catch(() => {});
   await startSound();
   finishBoot();
+  fetchImages();
+  // Menu icons are tiny but shown all at once (element and skill panels): fetch and decode them now so a panel never
+  // opens with pictures arriving one by one.
+  for (const file of UI_ICONS) { const image = new Image(); image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
 } catch (error) {
   finishBoot();
   // Anyone with the link can land here, so the local-server advice is for this machine only.

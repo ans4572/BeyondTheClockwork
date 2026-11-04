@@ -23,6 +23,8 @@ const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
 const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker', 'stompRing'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
+/** How far each blow carries the body forward (units), and how close an enemy in front stops it. */
+const LUNGE = [0.25, 0.25, 0.5], LUNGE_STOP = 1.2;
 
 export class Game {
   constructor(data, savedState = null, onSave = () => {}) {
@@ -267,13 +269,8 @@ export class Game {
   }
   dodge() {
     if (!this.onFoot || this.s.time < this.p.dodgeReady || this.p.dodge) return false;
-    const attack = this.p.attack;
-    if (attack) {
-      const phase = this.c.player.combo[attack.phase];
-      const canCancel = attack.elapsed < phase.windup || (attack.phase === 2 && attack.elapsed >= phase.windup + phase.active + attack.recovery - this.config.rules.lastRecoveryDodgeCancel);
-      if (!canCancel) return false;
-      this.p.attack = null;
-    }
+    // A dodge always cuts the wrench short, at any point of any blow: the swing simply stops where it is.
+    this.p.attack = null;
     const d = this.c.player.dodge;
     this.p.dodge = { elapsed: 0, angle: this.p.moveAngle, x: this.p.x, y: this.p.y };
     this.p.dodgeReady = this.s.time + Math.max(this.c.caps.minDodgeCooldown, d.cooldown * (1 - (this.stats.dodgeCooldown || 0)) * (1 - this.upgradeAmount('dodgeCooldownReduction')));
@@ -350,7 +347,9 @@ export class Game {
   /** A wrench blow lands: the body jolts and light enemies give ground. */
   punch(enemy, attack, hit) {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
-    this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit });
+    this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit, angle: attack.angle });
+    // The third blow lands with a ring and a puff of dust where it first strikes.
+    if (heavy && !attack.waveShown) { attack.waveShown = true; this.effect('ring', enemy.x, enemy.y, '#fff4d6', 0.28, 1.2); this.effect('dust', enemy.x, enemy.y + enemy.radius * 0.6, '#b49f78', 0.45, 1); }
     // A small burst of light where the wrench meets the body; the third blow throws a bigger one.
     this.effect('impact', enemy.x, enemy.y - 0.7, heavy ? '#ffd257' : '#fff4d6', heavy ? 0.22 : 0.14, heavy ? 1.3 : 0.8, { angle: attack.angle });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
@@ -411,6 +410,11 @@ export class Game {
     const haste = this.s.time < (this.p.hasteUntil || 0) ? this.wrenchMod('scrapHarvest')?.speedBonus || 0 : 0;
     a.elapsed += dt * (1 + (this.stats.attackSpeed || 0) + haste);
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
+    // The wind-up carries the body forward into the blow, unless an enemy is already right in front.
+    if (a.elapsed < info.windup && !this.s.enemies.some(e => e.hp > 0 && inCone(this.p, e, a.angle, LUNGE_STOP, this.config.rules.comboArcDegrees))) {
+      const step = LUNGE[a.phase] * Math.min(dt * (1 + (this.stats.attackSpeed || 0) + haste), info.windup - (a.elapsed - dt)) / info.windup;
+      if (step > 0) this.move(this.p, Math.cos(a.angle) * step, Math.sin(a.angle) * step);
+    }
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
       if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase, arc: this.config.rules.comboArcDegrees }); a.shown = true; }
       this.breakSwing(a, range);
@@ -1222,7 +1226,8 @@ export class Game {
     loot.kills = Math.min(planned, loot.kills + 1);
     const gears = Math.round(total.gears * loot.kills / planned) - loot.gears, coins = Math.round(total.coins * loot.kills / planned) - loot.coins;
     this.giveLoot(gears, coins); loot.gears += gears; loot.coins += coins;
-    if (gears || coins) this.effect('gain', enemy.x, enemy.y - enemy.radius - 0.4, '#ffd257', 0.9, coins, { gears });
+    // What the kill paid flies to the player: a coin or a little gear for each piece, a few at most.
+    if (gears || coins) this.effect('loot', enemy.x, enemy.y - 0.3, '#ffd257', 0.6, Math.min(4, Math.max(1, coins + gears)), { gears: Math.min(2, gears) });
   }
   giveLoot(gears, coins) { this.s.profile.freeGears += gears; this.s.run.baseGears += gears; this.s.run.coins += coins; }
   finishCombat() {

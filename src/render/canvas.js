@@ -14,7 +14,7 @@ const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
-const SWING_SWEEP = 0.45, FLASH_MS = 260, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
+const SWING_SWEEP = 0.45, FLASH_MS = 260, CRIT_PULSE_MS = 120, CRIT_ZOOM = 0.03, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
 export class CanvasRenderer {
@@ -27,7 +27,9 @@ export class CanvasRenderer {
     // Light and shade are only drawn in the browser, where the frame is set on its pixel grid.
     this.lighting = view ? new Lighting((w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h })) : null; this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
   /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
-  kick(size) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; } }
+  kick(size, angle) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; this.shakeAngle = angle; } }
+  /** A critical hit: the view leans in a few percent and a gold light passes over it. */
+  critPulse() { this.pulseUntil = performance.now() + CRIT_PULSE_MS; }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
    * The wrench's slash: one thin crescent drawn along the swing, up to 3 px at its head and thinning to the tail, with a
@@ -55,6 +57,8 @@ export class CanvasRenderer {
     const left = this.shakeUntil - performance.now();
     if (left <= 0) return [0, 0];
     const size = this.shakeSize * left / SHAKE_MS;
+    // A directed kick moves the view along the blow, with only a little wobble across it.
+    if (this.shakeAngle !== undefined) { const along = size, wobble = (Math.random() * 2 - 1) * size * 0.25; return [Math.round(Math.cos(this.shakeAngle) * along - Math.sin(this.shakeAngle) * wobble), Math.round(Math.sin(this.shakeAngle) * along + Math.cos(this.shakeAngle) * wobble)]; }
     return [Math.round((Math.random() * 2 - 1) * size), Math.round((Math.random() * 2 - 1) * size)];
   }
   /** Clips the map background to a polygon and repaints it, so scenery covers what stands behind it. */
@@ -79,7 +83,7 @@ export class CanvasRenderer {
     c.fillStyle = 'rgba(24, 20, 36, 0.34)'; c.beginPath(); c.ellipse(x, y, 13, 4.5, 0, 0, TAU); c.fill();
     if (flash) c.filter = flash === true ? 'brightness(1.9)' : flash;
     c.imageSmoothingEnabled = resize !== 1;
-    for (const url of [clip.sheet, clip.effect]) if (url) c.drawImage(library.image(url), sx, sy, w, h, left, top, w * size, h * size);
+    for (const url of [clip.sheet, clip.effect]) if (url && library.image(url)) c.drawImage(library.image(url), sx, sy, w, h, left, top, w * size, h * size);
     if (flash) c.filter = 'none';
     c.imageSmoothingEnabled = false;
     return true;
@@ -211,7 +215,9 @@ export class CanvasRenderer {
   }
   drawCastEffect({ effect, frame, x, y, lift }) {
     const { frameWidth: w, frameHeight: h, columns, anchor, scale = 1 } = effect, size = scale / 2, left = Math.round((x * 20 - anchor[0] * size) * 2) / 2, top = Math.round(((y - lift) * 20 - anchor[1] * size) * 2) / 2;
-    this.ctx.drawImage(this.sprites.image(effect.sheet), frame % columns * w, Math.floor(frame / columns) * h, w, h, left, top, w * size, h * size);
+    const image = this.sprites.image(effect.sheet);
+    if (!image) return;
+    this.ctx.drawImage(image, frame % columns * w, Math.floor(frame / columns) * h, w, h, left, top, w * size, h * size);
   }
   rect(x, y, w, h, color) { const c = this.ctx; c.fillStyle = color; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
   line(x1, y1, x2, y2, color, width = 1) { const c = this.ctx; c.strokeStyle = color; c.lineWidth = width; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
@@ -466,9 +472,12 @@ export class CanvasRenderer {
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
     const [shakeX, shakeY] = this.shakeOffset();
     // The canvas is backed at screen resolution; k maps the 1120x640 layout onto it, so nothing is stretched twice.
-    const k = this.backing, zoom = 2 * CAMERA_ZOOM * k;
+    const pulseLeft = Math.max(0, (this.pulseUntil || 0) - performance.now()) / CRIT_PULSE_MS, lean = 1 + CRIT_ZOOM * pulseLeft;
+    const k = this.backing, zoom = 2 * CAMERA_ZOOM * k * lean;
     if (this.letters) { const t = this.letters.getContext('2d'); t.setTransform(1, 0, 0, 1, 0, 0); t.clearRect(0, 0, this.letters.width, this.letters.height); }
-    c.setTransform(zoom, 0, 0, zoom, Math.round((-this.camera.x * PIXELS_PER_UNIT + shakeX) * k), Math.round((-this.camera.y * PIXELS_PER_UNIT + shakeY) * k));
+    // A crit leans in toward the middle of the screen.
+    const centreX = pulseLeft ? this.canvas.width / 2 * (1 - lean) : 0, centreY = pulseLeft ? this.canvas.height / 2 * (1 - lean) : 0;
+    c.setTransform(zoom, 0, 0, zoom, Math.round((-this.camera.x * PIXELS_PER_UNIT + shakeX) * k * lean + centreX), Math.round((-this.camera.y * PIXELS_PER_UNIT + shakeY) * k * lean + centreY));
     // Painted backgrounds are resampled smoothly; sprites below stay on hard pixels.
     if (mapImage) { c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(mapImage, 0, 0, size[0] * 20, size[1] * 20); } else this.scenery(hub);
     c.imageSmoothingEnabled = false;
@@ -576,13 +585,11 @@ export class CanvasRenderer {
     for (const fx of s.effects) {
       if (fx.type === 'number' && !s.profile.settings.damageNumbers) continue;
       if (spriteFx && ['crosscut', 'iceClamp'].includes(fx.type)) continue;
-      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact'].includes(fx.type)) continue;
+      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
       // Critical hits show in red, a little larger.
       if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
-      // Loot from a kill rises in gold: coins, then free gears.
-      if (fx.type === 'gain') this.text([fx.value ? `+${fx.value} 동전` : '', fx.gears ? `+${fx.gears} 톱니` : ''].filter(Boolean).join(' · '), x, y - fraction * 16 - 10, fx.color, NUMBER_SIZE);
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
       if (fx.type === 'swing') this.drawSwing(fx, x, y, fraction);
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }
@@ -592,6 +599,16 @@ export class CanvasRenderer {
       // Scrap flies up and out, then falls: bits of the body's colour and grey bolts.
       if (fx.type === 'scrap') for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + i * 0.37, out = fraction * (18 + (i % 3) * 7), lift = fraction * 34 - fraction * fraction * 44; this.rect(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.55 - lift, i % 4 ? 3 : 4, i % 4 ? 3 : 2, i % 3 ? fx.color : '#8a8f9c'); }
       // A blow lands: a flash and short rays along the swing, gone in a few frames.
+      // Dust thrown out low along the floor by the third blow.
+      if (fx.type === 'dust') for (let i = 0; i < 7; i++) { const a = i * TAU / 7 + 0.4, out = 6 + fraction * 22, r = 5 * (1 - fraction) + 1.5; c.globalAlpha = 0.75 * (1 - fraction); this.circle(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.4, r, fx.color); }
+      // A kill's pay pops out of the body, then flies into the player: coins in gold, gears in brass.
+      if (fx.type === 'loot') for (let i = 0; i < fx.value; i++) {
+        const t = Math.max(0, Math.min(1, (fraction - i * 0.08) / 0.7)), pop = Math.min(1, t / 0.3), home = Math.max(0, (t - 0.3) / 0.7), ease = home * home * (3 - 2 * home);
+        const sx = x + Math.cos(i * 2.1) * 10 * pop, sy = y - 12 * pop + Math.sin(i * 2.1) * 4, px = g.p.x * 20, py = g.p.y * 20 - 14;
+        const lx = sx + (px - sx) * ease, ly = sy + (py - sy) * ease;
+        c.globalAlpha = t >= 1 ? 0 : 1;
+        if (i < fx.gears) { this.circle(lx, ly, 3.5, '#a07a3c'); this.circle(lx, ly, 1.5, '#5c4630'); } else { this.circle(lx, ly, 3, '#c79a3e'); this.circle(lx, ly, 2, '#ffd257'); }
+      }
       if (fx.type === 'impact') { const r = fx.value * 10 * (0.6 + fraction); c.globalAlpha *= 1 - fraction; this.circle(x, y, r * 0.55 * (1 - fraction * 0.5), fx.color); for (let i = -2; i <= 2; i++) { const a = (fx.angle || 0) + i * 0.45; this.line(x + Math.cos(a) * r * 0.6, y + Math.sin(a) * r * 0.6, x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3, fx.color, 2); } }
       c.restore();
     }
@@ -632,6 +649,7 @@ export class CanvasRenderer {
     }
     const hurtLeft = this.hurtUntil - performance.now();
     if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    if (pulseLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.16 * pulseLeft; c.fillStyle = '#ffd257'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     const flashLeft = (this.flashUntil || 0) - performance.now();
     if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (this.view) {

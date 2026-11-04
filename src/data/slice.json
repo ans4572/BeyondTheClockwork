@@ -33,7 +33,6 @@
   "rules": {
     "comboReset": 0.7,
     "comboArcDegrees": 115,
-    "lastRecoveryDodgeCancel": 0.1,
     "rearSectorDegrees": 120,
     "reviveHpFraction": 0.25,
     "normalHitStun": 0.12,
