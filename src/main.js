@@ -253,11 +253,12 @@ try {
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
   const REST_INDEX = data.slice.rooms.findIndex(room => room.kind === 'shop');
   /** The background track for what is on screen; silent when music is switched off. */
-  function playMusic() {
+  /** `now` starts the wanted song even before the sound context reports it is running: used inside the first tap. */
+  function playMusic(now = false) {
     const s = game.s, settings = s.profile.settings, room = game.room;
     const name = settings.music ? musicScene({ onTitle, mode: s.mode, roomKind: room?.kind, roomIndex: s.run ? s.run.node : undefined, restIndex: REST_INDEX }) : null;
     // Menus over the game keep the music, a little quieter.
-    music.update(audio, name, settings.musicVolume * (s.paused && !onTitle ? 0.5 : 1));
+    music.update(audio, name, settings.musicVolume * (s.paused && !onTitle ? 0.5 : 1), now);
   }
   /**
    * Browsers let a page make sound only after a tap or a key on it (a desktop visitor who has played here before is
@@ -273,9 +274,12 @@ try {
       const boot = $('boot');
       if (!boot) return;
       boot.classList.add('tap'); boot.querySelector('span').textContent = isTouch ? '화면을 눌러 시작' : '클릭하거나 아무 키나 눌러 시작';
+      // iPhones let sound start only when the finger lifts (touchend / click), not when it lands, so the card waits for
+      // that; and the title song is started right inside the tap, since a phone may refuse a song started a frame later.
+      const GATE = ['click', 'touchend', 'keydown'];
       await new Promise(done => {
-        const go = e => { if (e.type === 'keydown') { e.preventDefault(); e.stopImmediatePropagation(); } for (const type of ['pointerdown', 'keydown']) removeEventListener(type, go, true); openAudio(); done(); };
-        for (const type of ['pointerdown', 'keydown']) addEventListener(type, go, true);
+        const go = e => { if (e.type === 'keydown') { e.preventDefault(); e.stopImmediatePropagation(); } for (const type of GATE) removeEventListener(type, go, true); openAudio(); playMusic(true); done(); };
+        for (const type of GATE) addEventListener(type, go, true);
       });
     }
     // The title song is usually downloaded by now; wait a moment for it rather than open the title in silence.

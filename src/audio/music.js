@@ -82,9 +82,12 @@ export class MusicPlayer {
       track.element.play().then(() => { if (name !== this.current) track.element.pause(); }).catch(() => { this.unlocked = false; });
     }
   }
-  /** Call every frame with the wanted track (or null) and the overall music volume (0..1). */
-  update(audio, name, volume) {
-    if (!audio || audio.state !== 'running') return;
+  /**
+   * Call every frame with the wanted track (or null) and the overall music volume (0..1). `force` starts it even while
+   * the context is still waking up, for the call made inside the tap that unlocks sound.
+   */
+  update(audio, name, volume, force = false) {
+    if (!audio || (audio.state !== 'running' && !force)) return;
     const now = audio.currentTime;
     if (name !== this.current) {
       if (this.current) {
