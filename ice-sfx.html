@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>태엽 밖으로 · 얼음 기술 효과음 비교 (녹음 vs 코드)</title>
+<style>
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; }
+  @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; }
+  :root { --ink: #2b3345; --paper: #f6ecd2; --low: #ece0c0; --gold: #ffd257; --label: #5d6476; --red: #a92f2b; --teal: #2f8a80; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 "Galmuri11", "Malgun Gothic", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 1; padding: 12px 16px; background: var(--ink); color: var(--paper); }
+  h1 { margin: 0; font-size: 18px; }
+  header p { margin: 2px 0 0; font-size: 12px; opacity: .85; }
+  main { max-width: 900px; margin: 0 auto; padding: 8px 12px 48px; }
+  h2 { margin: 24px 4px 8px; font-size: 15px; border-bottom: 3px solid var(--ink); padding-bottom: 4px; }
+  .row { display: grid; grid-template-columns: 210px repeat(4, 1fr); gap: 6px; margin-bottom: 6px; align-items: stretch; }
+  .head { font-size: 12px; color: var(--label); font-weight: 700; padding: 0 4px; }
+  .what { padding: 6px 8px; }
+  .what b { display: block; } .what small { color: var(--label); font-size: 11px; }
+  .no { color: var(--red); font-weight: 700; margin-right: 4px; }
+  button { min-height: 52px; padding: 6px 8px; border: 0; background: var(--low); box-shadow: inset 0 0 0 2px var(--ink); color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; }
+  button small { display: block; font-weight: 400; font-size: 11px; color: var(--label); }
+  button.now { background: #e3e6ec; }
+  button.code { box-shadow: inset 0 0 0 2px var(--teal); }
+  button.playing { background: var(--gold); }
+  button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  @media (max-width: 700px) { .row { grid-template-columns: 1fr 1fr; } .what { grid-column: 1 / -1; } .head { display: none; } }
+</style>
+</head>
+<body>
+<header><h1>얼음 기술 효과음 · 지금(녹음) vs 코드로 만든 후보</h1><p id="status">버튼을 누르면 재생됩니다. 후보는 지금 소리와 같은 크기로 맞춰 재생돼요. 고른 번호를 알려 주세요 (예: B3-②, B4-①).</p></header>
+<main id="list"></main>
+<script type="module">
+const bust = `?t=${Date.now()}`;
+const [{ SFX, SoundBank }, { ICE_CANDIDATES }] = await Promise.all([import(`./src/audio/sfx.js${bust}`), import(`./src/audio/coded.js${bust}`)]);
+
+// Same numbers as sounds.html's group B.
+const GROUPS = [
+  ['B · 얼음 기술', [
+    ['B3', 'frostBolt', '얼음 · 서리 볼트', '서리 볼트를 쓸 때'], ['B4', 'coolingField', '얼음 · 냉각 지대', '냉각 지대를 쓸 때']
+  ]]
+];
+
+let audio = null, bank = null, ready = null;
+const gains = new Map(), status = document.getElementById('status');
+/** Loudest 30 ms stretch (and the highest sample) of a sound rendered off screen, so candidates play as loud as the recording they would replace. */
+async function loudness(schedule) {
+  const ctx = new OfflineAudioContext(1, 44100 * 1.6, 44100);
+  schedule(ctx);
+  const data = (await ctx.startRendering()).getChannelData(0), win = 1323;
+  let best = 0, peak = 0;
+  for (let i = 0; i + win < data.length; i += 441) { let sum = 0; for (let j = i; j < i + win; j++) sum += data[j] * data[j]; best = Math.max(best, sum / win); }
+  for (const v of data) peak = Math.max(peak, Math.abs(v));
+  return { rms: Math.sqrt(best), peak };
+}
+const viaGain = recipe => ctx => { const g = ctx.createGain(); g.connect(ctx.destination); recipe(ctx, g); };
+function start() {
+  ready ??= (async () => {
+    audio = new (window.AudioContext || window.webkitAudioContext)(); bank = new SoundBank();
+    status.textContent = '소리를 불러오고 크기를 맞추는 중…';
+    await bank.load(audio);
+    for (const [, rows] of GROUPS) for (const [, name] of rows) {
+      const target = await loudness(ctx => bank.play(ctx, name));
+      for (const [i, [, recipe]] of ICE_CANDIDATES[name].entries()) { const own = await loudness(viaGain(recipe)); gains.set(`${name}:${i}`, own.rms > 0 && target.rms > 0 ? Math.min(target.rms / own.rms, 0.9 / own.peak) : 0.5); }
+    }
+    status.textContent = '준비 완료. 후보는 지금 소리와 같은 크기로 맞춰 재생됩니다. 고른 번호를 알려 주세요 (예: B3-②, B4-①).';
+  })();
+  return ready;
+}
+const playNow = name => bank.play(audio, name);
+function playCode(name, i) { const g = audio.createGain(); g.gain.value = gains.get(`${name}:${i}`) ?? 0.5; g.connect(audio.destination); ICE_CANDIDATES[name][i][1](audio, g); }
+const MARKS = ['①', '②', '③'], list = document.getElementById('list');
+const button = (label, sub, cls, onPlay) => {
+  const b = document.createElement('button'); b.className = cls; b.innerHTML = `${label}${sub ? `<small>${sub}</small>` : ''}`;
+  b.addEventListener('click', async () => { await start(); await audio.resume(); onPlay(); b.classList.add('playing'); setTimeout(() => b.classList.remove('playing'), 450); });
+  return b;
+};
+for (const [title, rows] of GROUPS) {
+  const h = document.createElement('h2'); h.textContent = title; list.append(h);
+  const head = document.createElement('div'); head.className = 'row'; head.innerHTML = '<span class="head">소리</span><span class="head">지금</span><span class="head">코드 ①</span><span class="head">코드 ②</span><span class="head">코드 ③</span>'; list.append(head);
+  for (const [no, name, label, when] of rows) {
+    const r = document.createElement('div'); r.className = 'row';
+    const what = document.createElement('div'); what.className = 'what'; what.innerHTML = `<b><span class="no">${no}</span>${label}</b><small>${when}</small>`; r.append(what);
+    r.append(button('지금', SFX[name]?.file ? '녹음' : '코드', 'now', () => playNow(name)));
+    ICE_CANDIDATES[name].forEach(([cand], i) => r.append(button(`${no}-${MARKS[i]}`, cand, 'code', () => playCode(name, i))));
+    list.append(r);
+  }
+}
+</script>
+</body>
+</html>

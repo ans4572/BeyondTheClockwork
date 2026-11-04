@@ -237,7 +237,7 @@ try {
   music.preload(['title']);
   music.ready('title', 4000).then(() => { sounds.prefetch(); music.preload(['town', 'street']); });
   // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
-  for (const type of ['pointerdown', 'keydown']) window.addEventListener(type, () => openAudio(), { capture: true });
+  for (const type of ['pointerdown', 'keydown', 'click', 'touchend']) window.addEventListener(type, () => openAudio(), { capture: true });
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
   const REST_INDEX = data.slice.rooms.findIndex(room => room.kind === 'shop');
   /** The background track for what is on screen; silent when music is switched off. */
@@ -246,6 +246,28 @@ try {
     const name = settings.music ? musicScene({ onTitle, mode: s.mode, roomKind: room?.kind, roomIndex: s.run ? s.run.node : undefined, restIndex: REST_INDEX }) : null;
     // Menus over the game keep the music, a little quieter.
     music.update(audio, name, settings.musicVolume * (s.paused && !onTitle ? 0.5 : 1));
+  }
+  /**
+   * Browsers let a page make sound only after a tap or a key on it (a desktop visitor who has played here before is
+   * often let through at once). Sound is tried right away; if it is held back, the loading card asks for one tap, so
+   * the title always opens with its song already playing instead of waiting for a click on the title itself.
+   */
+  async function startSound() {
+    const { sound, music: musicOn } = game.s.profile.settings;
+    if (!sound && !musicOn) return;
+    openAudio();
+    await Promise.race([audio.resume().catch(() => {}), new Promise(done => setTimeout(done, 300))]);
+    if (audio.state !== 'running') {
+      const boot = $('boot');
+      if (!boot) return;
+      boot.classList.add('tap'); boot.querySelector('span').textContent = isTouch ? '화면을 눌러 시작' : '클릭하거나 아무 키나 눌러 시작';
+      await new Promise(done => {
+        const go = e => { if (e.type === 'keydown') { e.preventDefault(); e.stopImmediatePropagation(); } for (const type of ['pointerdown', 'keydown']) removeEventListener(type, go, true); openAudio(); done(); };
+        for (const type of ['pointerdown', 'keydown']) addEventListener(type, go, true);
+      });
+    }
+    // The title song is usually downloaded by now; wait a moment for it rather than open the title in silence.
+    await music.ready('title', 1500);
   }
   function openAudio() { const { sound, music: musicOn } = game.s.profile.settings; if (sound || musicOn) { audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume().catch(() => {}); music.unlock(audio); sounds.load(audio); } }
   /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
@@ -383,15 +405,13 @@ try {
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
   function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
-  /** 다른 기기와 연동: sync on or off, and transfer codes made here or typed from another device. */
+  /** 다른 기기와 연동: when this device last saved to the server, and codes that link another device to it. */
   function transferBlock() {
     const t = transfer, until = t.expiresAt ? new Date(t.expiresAt) : null;
     const made = t.code ? `<p class="transfer-code" aria-label="이동 코드">${formatCode(t.code)}</p><p class="notice">다른 기기에서 환경설정 → 이 코드를 입력하세요. ${until ? `${until.getHours()}:${String(until.getMinutes()).padStart(2, '0')}까지(5분)` : '5분 동안'} 쓸 수 있고, 한 번 불러오면 사라집니다.</p><div class="actions">${button('코드 복사', 'transfer-copy')}</div>` : '';
     const clock = at => { const d = at && new Date(at); return d && !Number.isNaN(d.getTime()) ? `${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}` : '아직 없음'; };
-    const sync = link
-      ? `<p class="notice"><b>자동 동기화 켜짐</b> · 마지막 연동 ${clock(link.at)}<br>마을로 돌아올 때 진행을 올리고, 게임을 열 때 다른 기기의 최신 진행을 받아옵니다.</p><div class="actions">${button(syncBusy ? '올리는 중…' : '지금 올리기', 'sync-now', syncBusy ? 'disabled' : '')}${button('동기화 끄기', 'sync-off', '', 'quiet')}</div>`
-      : `<p class="notice">자동 동기화를 켜면 마을로 돌아올 때마다 진행이 서버에 올라가고, 다른 기기에서 게임을 열 때 이어집니다.</p><div class="actions">${button(syncBusy ? '켜는 중…' : '자동 동기화 켜기', 'sync-on', syncBusy ? 'disabled' : '')}</div>`;
-    return `<div class="divider"></div><span class="form-no">다른 기기와 연동</span>${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">${link ? '다른 기기를 연결하려면 이동 코드를 만들어 그 기기에서 입력하세요. 받은 기기도 자동 동기화됩니다.' : '한 번만 옮기려면 이동 코드를 쓰세요. 받는 기기의 저장은 덮어씌워집니다.'}</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
+    const sync = `<p class="notice">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}원정을 마치고 마을에 들어갈 때마다 진행이 서버에 저장되고, 연결된 기기에서 게임을 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
+    return `<div class="divider"></div><span class="form-no">다른 기기와 연동</span>${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">다른 기기를 연결하려면 이동 코드를 만들어 그 기기에서 입력하세요. 처음 한 번만 하면 그 뒤로는 저절로 이어집니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
   }
   function settingsPanel() {
     const keysOpen = !!$('overlay').querySelector('details.keys[open]');
@@ -437,7 +457,7 @@ try {
     let html = '';
     if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>새 게임으로 바꾸기 전까지 기존 저장은 그대로 둡니다.</p><div class="actions">${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div>`, 'compact');
     if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
-    if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 자동 동기화됩니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
+    if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 연결되어 그 뒤로는 저절로 이어집니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
     if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
@@ -556,15 +576,24 @@ try {
     $('toast').textContent = notice?.text || '';
   }
 
-  /** Uploads this device's progress. Skipped when nothing changed since the last upload, unless asked for by hand. */
+  /**
+   * Saves this device's progress to the server. The first time (or after the server forgot it) it opens this device's
+   * place there; later it is skipped when nothing changed since the last upload, unless asked for by hand.
+   */
   async function syncUpload(byHand = false) {
-    if (!link || syncBusy || (!byHand && progressMark(game.s) === link.mark)) return;
+    if (syncBusy || !game.s.profile.registered || (link && !byHand && progressMark(game.s) === link.mark)) return;
     syncBusy = true; syncNote = ''; if (screen === 'pause') renderOverlay(true);
     try {
       game.save();
-      const { rev } = await pushSync(link.key, encodeSave(game.s), link.rev);
-      link = { ...link, rev, mark: progressMark(game.s), at: new Date().toISOString() }; writeLink(localStorage, link);
-    } catch (error) { syncNote = error.message; if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } }
+      const save = encodeSave(game.s), at = new Date().toISOString();
+      if (link) { const { rev } = await pushSync(link.key, save, link.rev); link = { ...link, rev, mark: progressMark(game.s), at }; }
+      else { const { key, rev } = await startSync(save); link = { key, rev, mark: progressMark(game.s), at }; }
+      writeLink(localStorage, link);
+    } catch (error) {
+      if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); syncBusy = false; return syncUpload(byHand); }
+      // Off-line in the village is normal; only a save asked for by hand reports it.
+      if (byHand || error.reason !== 'network') syncNote = error.message;
+    }
     syncBusy = false; if (screen === 'pause') renderOverlay(true);
   }
   /** Takes another device's save as this one's. */
@@ -576,7 +605,7 @@ try {
   async function syncCheck() {
     if (!link) return;
     let remote;
-    try { remote = await pullSync(link.key); } catch (error) { if (error.reason === 'unlinked') { syncNote = error.message; link = null; writeLink(localStorage, null); } return; }
+    try { remote = await pullSync(link.key); } catch (error) { if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } return; }
     // Once the player has left the title, the choice waits for the next opening.
     if (!onTitle || screen !== 'title') return;
     const plan = syncPlan(game.s, link, remote);
@@ -586,14 +615,7 @@ try {
     syncConflict = { state, remote }; screen = 'syncConflict'; renderOverlay(true);
   }
   async function syncAction(name) {
-    if (name === 'sync-on' && !syncBusy) {
-      syncBusy = true; syncNote = ''; renderOverlay(true);
-      try { game.save(); const { key, rev } = await startSync(encodeSave(game.s)); link = { key, rev, mark: progressMark(game.s), at: new Date().toISOString() }; writeLink(localStorage, link); }
-      catch (error) { syncNote = error.message; }
-      syncBusy = false; renderOverlay(true);
-    }
     if (name === 'sync-now') await syncUpload(true);
-    if (name === 'sync-off') { link = null; writeLink(localStorage, null); syncNote = ''; renderOverlay(true); }
     if (name === 'sync-take' && syncConflict) { takeRemote(syncConflict.state, syncConflict.remote); syncConflict = null; openTitle(); }
     // Keeping this device's progress: upload it over the other device's.
     if (name === 'sync-keep' && syncConflict) { link = { ...link, rev: syncConflict.remote.rev }; writeLink(localStorage, link); syncConflict = null; openTitle(); syncUpload(true); }
@@ -601,7 +623,7 @@ try {
   async function transferAction(name) {
     const input = $('transfer-input'); if (input) transfer.typed = input.value;
     const busy = async (kind, work) => { transfer.busy = kind; transfer.error = ''; renderOverlay(true); try { await work(); } catch (error) { transfer.error = error.message; } transfer.busy = ''; renderOverlay(true); };
-    if (name === 'transfer-send') await busy('send', async () => { game.save(); Object.assign(transfer, await sendSave(encodeSave(game.s), undefined, undefined, link?.key)); });
+    if (name === 'transfer-send') await busy('send', async () => { if (!link) await syncUpload(true); game.save(); Object.assign(transfer, await sendSave(encodeSave(game.s), undefined, undefined, link?.key)); });
     if (name === 'transfer-copy') { try { await navigator.clipboard.writeText(formatCode(transfer.code)); transfer.error = ''; } catch { transfer.error = '복사하지 못했어요. 코드를 직접 적어 주세요.'; } renderOverlay(true); }
     if (name === 'transfer-fetch') await busy('fetch', async () => {
       const { code, save, syncKey } = await fetchSave(transfer.typed);
@@ -873,6 +895,7 @@ try {
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame.
   await Promise.all([title.ready.catch(() => {}), playerSprites]);
+  await startSound();
   finishBoot();
 } catch (error) {
   finishBoot();

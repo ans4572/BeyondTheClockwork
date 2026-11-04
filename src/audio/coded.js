@@ -308,5 +308,25 @@ export const WORLD_CANDIDATES = {
     ['도장 탁 + 띵', (a, o) => { tone(a, o, { from: 150, to: 70, dur: 0.07, peak: 0.8 }); hiss(a, o, { freq: 1200, q: 2, dur: 0.03, peak: 0.6 }); tone(a, o, { type: 'triangle', from: 1319, dur: 0.25, peak: 0.3, at: 0.05 }); }]
   ]
 };
+/** Glass and ice ring brighter and longer than metal: partials closer to a bell's. */
+const GLASS = [1, 2.32, 4.25, 6.63];
+/** Frost settling: tiny high clicks scattered over `dur`, like ice crystals forming. */
+function crackle(audio, out, { count, dur, freq = 6000, peak = 0.35, at = 0 }) {
+  for (let i = 0; i < count; i++) hiss(audio, out, { type: 'highpass', freq: freq * (0.8 + Math.random() * 0.5), dur: 0.006 + Math.random() * 0.01, peak: peak * (0.5 + Math.random() * 0.5), at: at + Math.random() * dur });
+}
+
+/** The ice skills, still on recordings: three coded candidates each, compared on ice-sfx.html. */
+export const ICE_CANDIDATES = {
+  frostBolt: [
+    ['얼음 화살 쉭 + 챙', (a, o) => { whoosh(a, o, { from: 2000, to: 5200, dur: 0.12, q: 1.4, peak: 0.6 }); ring(a, o, { base: 2600, dur: 0.3, peak: 0.35, at: 0.06, partials: GLASS }); }],
+    ['크리스탈 핑', (a, o) => { tone(a, o, { from: 1800, to: 2700, glide: 0.06, dur: 0.22, peak: 0.45 }); notes(a, o, [[3520, 0.05], [4186, 0.1]], { type: 'sine', dur: 0.18, peak: 0.18 }); crackle(a, o, { count: 5, dur: 0.15, at: 0.03 }); }],
+    ['얼음 조각 날림', (a, o) => { hiss(a, o, { type: 'highpass', freq: 4000, dur: 0.02, peak: 0.6 }); ring(a, o, { base: 3100, dur: 0.18, peak: 0.3, partials: GLASS }); crackle(a, o, { count: 8, dur: 0.2, peak: 0.4 }); }]
+  ],
+  coolingField: [
+    ['냉기 퍼짐', (a, o) => { hiss(a, o, { type: 'lowpass', freq: 600, to: 3000, dur: 0.6, attack: 0.15, peak: 0.6 }); hiss(a, o, { type: 'highpass', freq: 7000, dur: 0.6, attack: 0.2, peak: 0.15 }); notes(a, o, [[1568, 0.15], [2093, 0.25], [2637, 0.35]], { type: 'sine', dur: 0.4, peak: 0.12 }); }],
+    ['서리 내려앉음', (a, o) => { whoosh(a, o, { from: 2500, to: 900, dur: 0.6, swell: 0.3, q: 0.7, peak: 0.45 }); crackle(a, o, { count: 18, dur: 0.6, peak: 0.45 }); }],
+    ['얼음 바닥 쩡', (a, o) => { tone(a, o, { from: 160, to: 90, dur: 0.25, peak: 0.6 }); ring(a, o, { base: 820, dur: 0.6, peak: 0.35, partials: GLASS }); crackle(a, o, { count: 10, dur: 0.4, peak: 0.35, at: 0.05 }); }]
+  ]
+};
 /** Every coded sound, by name, for sfx.js. */
-export const CODED_SOUNDS = { ...PLAYER_CANDIDATES, ...WORLD_CANDIDATES };
+export const CODED_SOUNDS = { ...PLAYER_CANDIDATES, ...WORLD_CANDIDATES, ...ICE_CANDIDATES };

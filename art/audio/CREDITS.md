@@ -4,13 +4,12 @@
 
 | 게임 이름 | 원본 묶음 | 원본 파일 |
 |---|---|---|
-| frostBolt, coolingField | Impact Sounds | impactGlass_medium_000, impactGlass_heavy_000 |
 | buy | Casino Audio | chips-handle-1 |
 | tune | RPG Audio | metalLatch |
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |
 
-그 밖의 효과음은 녹음 파일 없이 코드로 합성한다. 플레이어(렌치·회피·피격 등), 적·보스 공격, 클리어·보상 소리는 `src/audio/coded.js`, 불·전기·바람 기술과 융합, 마을 종, 원정 실패 나팔은 `src/audio/elements.js`.
+그 밖의 효과음은 녹음 파일 없이 코드로 합성한다. 플레이어(렌치·회피·피격 등), 얼음 기술, 적·보스 공격, 클리어·보상 소리는 `src/audio/coded.js`, 불·전기·바람 기술과 융합, 마을 종, 원정 실패 나팔은 `src/audio/elements.js`.
 
 ## 배경음악
 

@@ -27,11 +27,11 @@ export const SFX = {
   down: { code: ['down', 0], volume: 0.36 },
   charged: { code: ['charged', 0], volume: 0.42 },
   mend: { code: ['mend', 1], volume: 0.6 },
-  // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice keeps the glass recordings.
+  // Element skills, by skill id. Fire, lightning and wind are synthesized (src/audio/elements.js); ice is coded (src/audio/coded.js).
   heatSwing: { synth: 'heatSwing', volume: 0.85 },
   exhaustBurst: { synth: 'exhaustBurst', volume: 0.4 },
-  frostBolt: { file: 'frostBolt', takes: 1, volume: 0.35, rate: [1.32, 1.32] },
-  coolingField: { file: 'coolingField', takes: 1, volume: 0.4, rate: [0.78, 0.78] },
+  frostBolt: { code: ['frostBolt', 2], volume: 0.4 },
+  coolingField: { code: ['coolingField', 0], volume: 0.73 },
   conductiveSpanner: { synth: 'conductiveSpanner', volume: 0.35 },
   capacitorStrike: { synth: 'capacitorStrike', volume: 0.4 },
   pressureDash: { synth: 'pressureDash', volume: 1.1 },
