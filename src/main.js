@@ -185,12 +185,10 @@ try {
     if (choice === 'practice' && !game.enterPractice()) game.notify('속성 부품을 하나 이상 장착하면 시험할 수 있습니다.');
     renderOverlay(true);
   }
-  // After the safety pin Moru offers one element part for free; the choice is fitted and equipped at once.
+  // After the safety pin Moru shows his parts shelf: the first element is picked there, for free.
   async function meetMoru() {
     await talk('registration'); game.register();
-    const pick = await talk('firstElement');
-    if (game.buyElement(pick)) await talk('firstElementAfter');
-    renderOverlay(true);
+    await talk('firstElement'); game.openElements(); renderOverlay(true);
   }
   // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
   const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet' };
@@ -403,7 +401,9 @@ try {
       const action = owned ? button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')
         : price === null ? button(ownedElements.length ? '모두 보유' : '등록 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
         : button(price === 0 ? '무료로 달기' : `${ico('gear')} ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
-      return `<article class="reward-card ${picked ? 'picked' : ''} ${owned ? '' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${action}</article>`;
+      // Each part shows its two skills as icon rows, with the numbers that matter when choosing.
+      const moves = skills.map(skill => `<li><img src="art/ui/skill-icons/${skill.id}.png" alt=""><span><b>${skill.name}</b><small>피해 ${skill.totalDirectDamage} · 축전 ${skill.energyCost}</small><small>재사용 ${skill.cooldown}초</small></span></li>`).join('');
+      return `<article class="reward-card element-card ${picked ? 'picked' : ''} ${owned ? 'owned' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${owned ? `<span class="owned-badge">${picked ? '장착 중' : '보유'}</span>` : ''}<div class="element-head">${elementIcon(element.id)}<div><h3>${element.name}</h3><span class="device">${element.device}</span></div></div><span class="element-role">${element.role}</span><ul class="element-skills">${moves}</ul>${action}</article>`;
     }).join('');
     const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.'
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
@@ -679,7 +679,12 @@ try {
     if (name === 'close-panel') game.closePanel();
     let bought = null;
     if (name === 'element') { game.toggleElement(d.id); sfx('equip'); }
-    if (name === 'buy-element') bought = game.buyElement(d.id);
+    if (name === 'buy-element') {
+      const gift = game.nextElementPrice === 0;
+      bought = game.buyElement(d.id);
+      // Moru's free part is fitted: he says a few words over it, then the village is the player's.
+      if (bought && gift) { sfx('buy'); game.closePanel(); await talk('firstElementAfter'); updateHUD(); return; }
+    }
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
     if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
