@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-pressure-dash 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 1.png",
+   "frame": {
+    "x": 76,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 2.png",
+   "frame": {
+    "x": 152,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 3.png",
+   "frame": {
+    "x": 228,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 4.png",
+   "frame": {
+    "x": 0,
+    "y": 37,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 5.png",
+   "frame": {
+    "x": 76,
+    "y": 37,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 6.png",
+   "frame": {
+    "x": 152,
+    "y": 37,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 7.png",
+   "frame": {
+    "x": 228,
+    "y": 37,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 8.png",
+   "frame": {
+    "x": 0,
+    "y": 74,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 9.png",
+   "frame": {
+    "x": 76,
+    "y": 74,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 10.png",
+   "frame": {
+    "x": 152,
+    "y": 74,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-pressure-dash 11.png",
+   "frame": {
+    "x": 228,
+    "y": 74,
+    "w": 76,
+    "h": 37
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 76,
+    "h": 37
+   },
+   "sourceSize": {
+    "w": 76,
+    "h": 37
+   },
+   "pivot": {
+    "x": 0.5657894736842105,
+    "y": 0.4594594594594595
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-pressure-dash.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 304,
+   "h": 111
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 43,
+   "y": 17
+  },
+  "frameTags": [
+   {
+    "name": "btc-pressure-dash",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

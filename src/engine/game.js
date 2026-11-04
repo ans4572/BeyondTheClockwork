@@ -125,14 +125,14 @@ export class Game {
     if (this.s.mode !== 'registration') return false;
     // Someone who walked up to Moru stays where they are.
     const { x, y } = this.p, walkedIn = !!this.tutorial.step;
-    this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.resetPlayer(); this.enterHub();
+    this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.resetPlayer(); this.enterHub({ quiet: true });
     if (walkedIn) Object.assign(this.p, { x, y });
     this.save(); return true;
   }
-  enterHub() {
+  /** Quiet when Moru is still talking (right after the safety pin): a hint would sit over the dialogue. */
+  enterHub({ quiet = false } = {}) {
     Object.assign(this.p, this.hubMap?.spawn);
-    const { ownedElements, registered } = this.s.profile;
-    this.notify(!ownedElements.length && registered ? '모루에게 가면 첫 속성 부품을 무료로 달아 줍니다.' : '모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
+    if (!quiet) this.notify('모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
   }
   talk() {
     const npc = this.nearbyNpc;
@@ -273,6 +273,11 @@ export class Game {
     this.p.attack = null;
     const d = this.c.player.dodge;
     this.p.dodge = { elapsed: 0, angle: this.p.moveAngle, x: this.p.x, y: this.p.y };
+    const gust = this.trait('dodgeGust');
+    if (gust) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && !enemy.dummy && distance(this.p, enemy) <= gust.radius + enemy.radius) {
+      const a = Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x); this.move(enemy, Math.cos(a) * gust.knockback, Math.sin(a) * gust.knockback);
+      this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: a });
+    }
     this.p.dodgeReady = this.s.time + Math.max(this.c.caps.minDodgeCooldown, d.cooldown * (1 - (this.stats.dodgeCooldown || 0)) * (1 - this.upgradeAmount('dodgeCooldownReduction')));
     this.p.invulnerableUntil = Math.max(this.p.invulnerableUntil, this.s.time + d.invincibility);
     this.sense({ kind: 'dodge' });
@@ -294,14 +299,15 @@ export class Game {
   damageMultiplier(enemy, basic = false, slot = null) {
     const permanent = this.stats.attackDamage || 0;
     const brand = basic && enemy.burnStacks?.some(t => t > this.s.time) ? this.trait('burnBrand')?.damageBonus || 0 : 0;
-    const runBonus = (basic ? this.upgradeAmount('basicDamage') : 0) + brand;
+    const crack = basic && enemy.frozenUntil > this.s.time ? this.trait('frostCrack')?.damageBonus || 0 : 0;
+    const runBonus = (basic ? this.upgradeAmount('basicDamage') : 0) + brand + crack;
     const level = slot ? 1 + (slot.level - 1) * this.c.balance.skillLevelDamagePerLevel : 1;
     const rarity = slot ? this.c.balance.rarityDamage[slot.rarity] : 1;
-    return (1 + Math.min(this.c.caps.permanentConditionalDamageBonus, permanent)) * (1 + Math.min(this.c.caps.runDamageBonus, runBonus)) * level * rarity;
+    return (1 + Math.min(this.c.caps.permanentConditionalDamageBonus, permanent)) * (1 + Math.min(this.c.caps.runDamageBonus, runBonus)) * level * rarity * (1 + (this.perk('overheatEngine')?.damageBonus || 0));
   }
   /** Skips the roll at zero chance so runs without the stat keep their random sequence. */
   rollCrit() {
-    const chance = Math.min(this.c.caps.critChance, (this.c.player.critChance || 0) + (this.stats.critChance || 0));
+    const chance = Math.min(this.c.caps.critChance + (this.perk('glassSpring')?.critBonus || 0), (this.c.player.critChance || 0) + (this.stats.critChance || 0) + (this.perk('glassSpring')?.critBonus || 0));
     return chance > 0 && this.random() < chance;
   }
   get statusPower() { return 1 + (this.stats.statusPower || 0); }
@@ -321,7 +327,7 @@ export class Game {
     const opened = enemy.vulnerableUntil > this.s.time ? 1 + enemy.vulnerableBonus : 1;
     const amount = opened * base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
-    if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.3, 1, { targetX: this.p.x, targetY: this.p.y });
+    if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.45, 1, { targetX: this.p.x, targetY: this.p.y, look: 'thrust' });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     const beaten = !options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1;
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.09;
@@ -334,6 +340,16 @@ export class Game {
     if (enemy.hp <= 0) {
       enemy.tell = null; this.effect('scrap', enemy.x, enemy.y, enemy.color || '#dbbc6b', 0.6, 1);
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
+      const embers = this.trait('emberSpread');
+      if (embers && enemy.burnStacks?.some(t => t > this.s.time)) {
+        const cast = { id: this.id('embers'), staggerUsed: {}, fusion: false, statusAt: {} };
+        for (const e of this.s.enemies) if (e !== enemy && e.hp > 0 && !e.dummy && distance(enemy, e) <= embers.range) { this.applyStatus(e, 'fire', cast); this.effect('ring', e.x, e.y, '#e8742f', 0.6, 0.6, { look: 'heatSwing', angle: Math.atan2(e.y - enemy.y, e.x - enemy.x) }); }
+      }
+      const spread = this.trait('shockSpread');
+      if (spread && enemy.statuses.shock > this.s.time) {
+        const next = this.s.enemies.filter(e => e !== enemy && e.hp > 0 && !e.dummy && distance(enemy, e) <= spread.range).sort((a, b) => distance(enemy, a) - distance(enemy, b))[0];
+        if (next) { next.statuses.shock = Math.max(next.statuses.shock || 0, enemy.statuses.shock); this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.6, 1, { targetX: next.x, targetY: next.y, look: 'spanner', chain: [] }); }
+      }
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
       if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
@@ -402,7 +418,7 @@ export class Game {
     const info = this.c.statuses.find(s => s.id === 'shock');
     if (enemy.statuses.shock <= this.s.time || !enemy.statuses.shock || this.s.time < enemy.shockReady) return;
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius + (this.trait('arcRange')?.radiusBonus || 0) && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
-    for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.25, 0.7); }
+    for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.55, 0.7, { look: 'zap' }); }
   }
   updateBasic(dt) {
     const a = this.p.attack;
@@ -410,38 +426,42 @@ export class Game {
     const haste = this.s.time < (this.p.hasteUntil || 0) ? this.wrenchMod('scrapHarvest')?.speedBonus || 0 : 0;
     a.elapsed += dt * (1 + (this.stats.attackSpeed || 0) + haste);
     const info = this.c.player.combo[a.phase], range = info.range + (this.wrenchMod('longWrench')?.rangeBonus || 0);
+    // The spin wrench turns the third blow into a full circle round the body.
+    const arc = a.phase === 2 && this.wrenchMod('spinSlash') ? 360 : this.config.rules.comboArcDegrees;
     // The wind-up carries the body forward into the blow, unless an enemy is already right in front.
     if (a.elapsed < info.windup && !this.s.enemies.some(e => e.hp > 0 && inCone(this.p, e, a.angle, LUNGE_STOP, this.config.rules.comboArcDegrees))) {
       const step = LUNGE[a.phase] * Math.min(dt * (1 + (this.stats.attackSpeed || 0) + haste), info.windup - (a.elapsed - dt)) / info.windup;
       if (step > 0) this.move(this.p, Math.cos(a.angle) * step, Math.sin(a.angle) * step);
     }
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
-      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase, arc: this.config.rules.comboArcDegrees }); a.shown = true; }
+      if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase, arc }); a.shown = true; }
       this.breakSwing(a, range);
-      for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, this.config.rules.comboArcDegrees)) {
+      for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, arc)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
-        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) this.addEnergy(this.trait('staticCharge').energy);
+        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { this.addEnergy(this.trait('staticCharge').energy); this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
         this.triggerShock(enemy);
         if (!a.energyGiven) { this.addEnergy(this.c.player.energyPerBasicPhase * (1 + (this.stats.energyGain || 0))); a.energyGiven = true; }
         if (a.phase === 2) {
-          if (this.wrenchMod('windupRecoil')) this.p.dodgeReady = this.s.time;
-          if (this.wrenchMod('elementalCharge') && enemy.hp > 0) { a.statusCast ??= { id: this.id('wrench'), staggerUsed: {}, fusion: false }; for (const slot of this.slots) this.applyStatus(enemy, slot.element, a.statusCast); }
+          if (this.wrenchMod('windupRecoil') && this.p.dodgeReady > this.s.time) { this.p.dodgeReady = this.s.time; this.effect('spark', this.p.x, this.p.y, '#badbd3', 0.6, 1, { look: 'ready', follow: true }); }
+          if (this.wrenchMod('elementalCharge') && enemy.hp > 0) { a.statusCast ??= { id: this.id('wrench'), staggerUsed: {}, fusion: false }; for (const slot of this.slots) this.applyStatus(enemy, slot.element, a.statusCast); if (this.slots.length) this.effect('spark', enemy.x, enemy.y, '#ffd257', 0.6, 1, { look: 'ready' }); }
         }
       }
       const deflect = this.wrenchMod('deflect');
       if (deflect) {
         const mod = deflect;
-        for (const bullet of this.s.projectiles) if (!bullet.friendly && inCone(this.p, bullet, a.angle, range + deflect.reach, this.config.rules.comboArcDegrees)) { bullet.friendly = true; bullet.angle = a.angle; bullet.damage = mod.reflectedDamage; bullet.speed = mod.reflectedSpeed; }
+        for (const bullet of this.s.projectiles) if (!bullet.friendly && inCone(this.p, bullet, a.angle, range + deflect.reach, this.config.rules.comboArcDegrees)) { bullet.friendly = true; bullet.angle = a.angle; bullet.damage = mod.reflectedDamage; bullet.speed = mod.reflectedSpeed; this.effect('spark', bullet.x, bullet.y, '#86c0ac', 0.5, 1, { look: 'deflect' }); }
       }
       if (a.phase === 2 && !a.wave && this.s.run?.mods.includes('shockwave')) {
         a.wave = true; const mod = this.config.mods.find(m => m.id === 'shockwave');
         for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(this.p, enemy) <= mod.radius) this.hitEnemy(enemy, mod.damage, { basic: true });
-        this.effect('ring', this.p.x, this.p.y, '#f0c369', 0.35, mod.radius);
+        this.effect('ring', this.p.x, this.p.y, '#f0c369', 0.7, mod.radius, { look: 'quake' });
       }
     }
     if (a.elapsed >= info.windup + info.active + a.recovery) { this.p.attack = null; this.p.comboExpires = this.s.time + this.config.rules.comboReset; }
   }
   get slots() { return this.s.run?.slots || this.s.practice?.slots || []; }
+  /** A whole-run perk the player picked (coins, risk), or null. */
+  perk(id) { return this.s.run?.perks?.includes(id) ? this.config.perks.find(perk => perk.id === id) : null; }
   wrenchMod(id) { return this.s.run?.mods.includes(id) ? this.config.mods.find(m => m.id === id) : null; }
   skillMod(id) { return this.s.run?.skillMods?.includes(id) ? this.config.skillMods.find(m => m.id === id) : null; }
   trait(id) { return this.s.run?.traits?.includes(id) ? this.config.elementTraits.find(t => t.id === id) : null; }
@@ -489,6 +509,9 @@ export class Game {
     for (const mod of this.config.skillMods.filter(m => m.skill === cast.skillId && this.skillMod(m.id))) {
       if (mod.id === 'overload') cast.overload = mod.cooldownRefund;
       if (mod.id === 'backflow') cast.finalKnockback = mod.knockback;
+      if (mod.id === 'iceBurst') cast.finisher = mod.damage;
+      if (mod.id === 'extraStrike') cast.hits += mod.extraHits;
+      if (mod.id === 'vortexBlast') cast.finalKnockback = mod.knockback;
       if (mod.id === 'piercingBolt') cast.pierce = true;
       if (mod.id === 'flashFreeze') cast.chillBonus = mod.chillBonus;
       if (mod.id === 'overcurrent') cast.secondaryTargets += mod.extraTargets;
@@ -546,6 +569,7 @@ export class Game {
           const target = this.s.enemies.filter(e => e.hp > 0 && !bullet.pierced?.includes(e.id) && segmentDistance(e, before, bullet) <= e.radius + cast.width).sort((a, b) => distance(before, a) - distance(before, b))[0];
           if (target) {
             this.castHit(cast, target, cast.damage * (bullet.share || 1));
+            if (cast.skillId === 'frostBolt' && !bullet.shard) this.effect('ring', target.x, target.y, cast.color, 0.8, 0.5, { look: 'frostShatter' });
             if (cast.pierce) (bullet.pierced ??= []).push(target.id); else bullet.done = true;
             if (cast.shards && !bullet.shard) for (let i = 0; i < cast.shards.shards; i++) cast.projectiles.push({ x: target.x, y: target.y, angle: bullet.angle + (i - (cast.shards.shards - 1) / 2) * 0.9, travelled: 0, done: false, shard: true, share: cast.shards.damageShare, reach: cast.shards.range, pierced: [target.id] });
           }
@@ -557,9 +581,9 @@ export class Game {
         const before = { x: this.p.x, y: this.p.y };
         this.move(this.p, Math.cos(cast.angle) * cast.range / cast.duration * dt, Math.sin(cast.angle) * cast.range / cast.duration * dt);
         for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (!enemy.boss && !cast.pierceDash) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
-        this.effect('dodge', this.p.x, this.p.y, cast.color, 0.2, cast.radius);
+        if (!cast.streaked) { cast.streaked = true; this.effect('dodge', this.p.x, this.p.y, cast.color, cast.duration + 0.15, cast.radius, { look: 'dash', angle: cast.angle, follow: true }); }
         cast.done = cast.age >= cast.duration;
-        if (cast.done && cast.pierceDash) for (const id of cast.hit) { const e = this.s.enemies.find(x => x.id === id && x.hp > 0 && !x.boss); if (e) this.move(e, -Math.cos(cast.angle) * cast.pierceDash.pull * 2, -Math.sin(cast.angle) * cast.pierceDash.pull * 2); }
+        if (cast.done && cast.pierceDash) for (const id of cast.hit) { const e = this.s.enemies.find(x => x.id === id && x.hp > 0 && !x.boss); if (e) this.effect('dodge', e.x, e.y, '#badbd3', 0.45, 1, { look: 'gust', angle: cast.angle + Math.PI }); if (e) this.move(e, -Math.cos(cast.angle) * cast.pierceDash.pull * 2, -Math.sin(cast.angle) * cast.pierceDash.pull * 2); }
         continue;
       }
       if (cast.leaveBehind) { if (cast.age + 1e-7 >= cast.next) { cast.x = cast.trailX ?? cast.startX; cast.y = cast.trailY ?? cast.startY; cast.trailX = this.p.x; cast.trailY = this.p.y; } }
@@ -584,19 +608,23 @@ export class Game {
               const m = cast.delayed;
               this.s.casts.push({ ...cast, id: this.id('cast'), derived: true, delayed: null, shape: 'charge', follow: first.id, x: first.x, y: first.y, radius: m.radius, hits: 1, interval: 0, age: 0, pulse: 0, next: m.delay, damage: cast.damage * m.damageShare, finisher: 0, felt: false, staggerUsed: {}, hit: [], statusAt: {} });
               this.effect('friendlyTell', first.x, first.y, cast.color, m.delay, m.radius);
-            } else for (const e of this.s.enemies.filter(e => e.hp > 0 && e.id !== first.id && distance(first, e) <= cast.chainRange).slice(0, cast.secondaryTargets)) this.castHit(cast, e, cast.secondaryDamage);
-            this.effect('beam', this.p.x, this.p.y, cast.color, 0.3, 1, { targetX: first.x, targetY: first.y });
+            }
+            const jumps = cast.delayed ? [] : this.s.enemies.filter(e => e.hp > 0 && e.id !== first.id && distance(first, e) <= cast.chainRange).slice(0, cast.secondaryTargets);
+            for (const e of jumps) this.castHit(cast, e, cast.secondaryDamage);
+            // The spanner flies to the first enemy and the charge jumps on from it.
+            this.effect('beam', this.p.x, this.p.y, cast.color, 0.6, 1, { targetX: first.x, targetY: first.y, look: 'spanner', chain: jumps.map(e => ({ x: e.x, y: e.y })) });
           }
         } else {
           if (cast.homing) { const near = this.s.enemies.filter(e => e.hp > 0 && distance(cast, e) <= cast.homing).sort((a, b) => distance(cast, a) - distance(cast, b))[0]; if (near) { cast.x = near.x; cast.y = near.y; } }
           if (cast.finalKnockback && cast.pulse === cast.hits - 1) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && distance(cast, enemy) <= cast.radius + enemy.radius) { const a = Math.atan2(enemy.y - cast.y, enemy.x - cast.x); this.move(enemy, Math.cos(a) * cast.finalKnockback, Math.sin(a) * cast.finalKnockback); }
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && (cast.shape === 'cone' ? inCone(cast, enemy, cast.angle, cast.range, cast.arc) : distance(cast, enemy) <= cast.radius + enemy.radius)) { this.castHit(cast, enemy); if(cast.shape==='orb' && cast.knockback && !enemy.boss){const a=Math.atan2(enemy.y-cast.y,enemy.x-cast.x);this.move(enemy,Math.cos(a)*cast.knockback,Math.sin(a)*cast.knockback);} }
-          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc });
+          const look = cast.skillId === 'heatSwing' ? 'heatSwing' : cast.shape === 'charge' ? 'zapBig' : cast.finalKnockback && cast.pulse === cast.hits - 1 ? 'quake' : undefined;
+          this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, look ? 0.7 : Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc, look });
         }
         cast.pulse++; cast.next += cast.interval;
       }
       if (cast.pulse >= cast.hits && cast.age >= cast.next) {
-        if (cast.finisher) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(cast, enemy) <= cast.radius + enemy.radius) this.castHit(cast, enemy, cast.finisher);
+        if (cast.finisher) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(cast, enemy) <= cast.radius + enemy.radius) { this.castHit(cast, enemy, cast.finisher); if (cast.skillId === 'coolingField') this.effect('ring', enemy.x, enemy.y, cast.color, 0.8, 0.5, { look: 'frostShatter' }); }
         cast.done = true;
       }
     }
@@ -605,7 +633,7 @@ export class Game {
   hurt(amount) {
     if (!this.active || this.s.time + 1e-7 < this.p.invulnerableUntil) return false;
     // The first lesson in the scrapyard teaches the dodge: a hit still flashes and stuns, but costs no health.
-    amount *= this.s.mode === 'intro' ? 0 : 1 - (this.stats.damageReduction || 0);
+    amount *= this.s.mode === 'intro' ? 0 : (1 - (this.stats.damageReduction || 0)) * (1 + (this.perk('overheatEngine')?.damageTaken || 0));
     this.p.hp = Math.max(0, this.p.hp - amount);
     if (this.s.run) this.s.run.damageTaken += amount;
     this.p.invulnerableUntil = this.s.time + this.c.player.hurtInvulnerability;
@@ -730,7 +758,7 @@ export class Game {
     // A march lane comes down through wherever the player stands, every few seconds.
     if (now >= b.nextLane) { b.lanes.push({ x: p.x, at: now + rule.laneWarn }); b.nextLane = now + rule.laneEvery; }
     for (const lane of b.lanes) if (!lane.done && now >= lane.at) {
-      lane.done = true; this.effect('beam', lane.x, enemy.y - 12, '#cf767a', 0.35, 1, { targetX: lane.x, targetY: enemy.y + 12 });
+      lane.done = true; this.effect('beam', lane.x, enemy.y - 12, '#cf767a', 0.8, 1, { targetX: lane.x, targetY: enemy.y + 12, look: 'march' });
       if (Math.abs(p.x - lane.x) < rule.laneWidth / 2 + this.config.arena.playerRadius) { this.hurt(rule.laneDamage); if (!this.active) return; }
     }
     b.lanes = b.lanes.filter(lane => !lane.done);
@@ -831,7 +859,7 @@ export class Game {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
         // The rat goes off where its warning ring was drawn, and the ring counts the player's body, not only its centre.
-        enemy.hp = 0; this.effect('scrap', tell.x, tell.y, enemy.color, 0.6, 1); this.effect('ring', tell.x, tell.y, '#e8914e', 0.3, enemy.burstRadius); this.sense({ kind: 'burst' });
+        enemy.hp = 0; this.effect('scrap', tell.x, tell.y, enemy.color, 0.6, 1); this.effect('ring', tell.x, tell.y, '#e8914e', 1, enemy.burstRadius, { look: 'boom' }); this.sense({ kind: 'burst' });
         // A rat that bursts still counts as beaten: its share of the room's loot and any heal-on-kill.
         if (this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
         this.payKill(enemy);
@@ -851,7 +879,7 @@ export class Game {
         const spot = { x: tell.targetX, y: tell.targetY };
         if (!this.map?.walkable || fitsMap(spot.x, spot.y, enemy.radius, this.map)) Object.assign(enemy, spot);
         enemy.hidden = false; this.sense({ kind: 'pop' });
-        this.effect('ring', spot.x, spot.y, '#e8914e', 0.3, enemy.popRadius);
+        this.effect('ring', spot.x, spot.y, '#e8914e', 0.7, enemy.popRadius, { look: 'quake' });
         if (distance(spot, p) < enemy.popRadius) damage(); break;
       }
       // Spinning top: rolls off in a straight line and bounces from walls until it winds down.
@@ -864,19 +892,19 @@ export class Game {
       case 'thrust': case 'thrust2': {
         const length = tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength, end = { x: tell.x + Math.cos(tell.angle) * length, y: tell.y + Math.sin(tell.angle) * length };
         if (segmentDistance(p, tell, end) <= enemy.thrustWidth + this.config.arena.playerRadius) damage();
-        this.effect('beam', tell.x, tell.y, '#d1a85a', 0.2, 1, { targetX: end.x, targetY: end.y });
+        this.effect('beam', tell.x, tell.y, '#d1a85a', 0.45, 1, { targetX: end.x, targetY: end.y, look: 'thrust' });
         if (tell.type === 'thrust') enemy.followup = { type: 'thrust2', at: this.s.time + enemy.followupDelay };
         break;
       }
       case 'doubleWave':
         if (distance(tell, p) < enemy.attackRange) damage();
-        this.effect('ring', tell.x, tell.y, '#d86e76', 0.25, enemy.attackRange);
+        this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange, { look: 'quake' });
         enemy.followup = { type: 'eliteWave', at: this.s.time + enemy.followupDelay }; break;
-      case 'eliteWave': if (distance(tell, p) < enemy.attackRange + enemy.followupRadiusBonus) damage(); this.effect('ring', tell.x, tell.y, '#d86e76', 0.25, enemy.attackRange + enemy.followupRadiusBonus); break;
+      case 'eliteWave': if (distance(tell, p) < enemy.attackRange + enemy.followupRadiusBonus) damage(); this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange + enemy.followupRadiusBonus, { look: 'quake' }); break;
       case 'claw': {
         const end = { x: tell.x + Math.cos(tell.angle) * ai.clawLength, y: tell.y + Math.sin(tell.angle) * ai.clawLength };
         if (segmentDistance(p, tell, end) <= ai.clawWidth + this.config.arena.playerRadius) damage();
-        this.effect('beam', tell.x, tell.y, '#cf767a', 0.3, 1, { targetX: end.x, targetY: end.y }); break;
+        this.effect('beam', tell.x, tell.y, '#cf767a', 0.45, 1, { targetX: end.x, targetY: end.y, look: 'thrust' }); break;
       }
       case 'magnet':
         this.s.casts.push({ id: this.id('magnet'), shape: 'magnet', x: tell.targetX, y: tell.targetY, radius: ai.magnetRadius, age: 0, duration: ai.magnetDuration, pull: ai.magnetPull, enemyDamage: enemy.damage, damageAt: ai.magnetDamageDelay, done: false }); break;
@@ -899,17 +927,17 @@ export class Game {
         enemy.ready = this.s.time + ai.chargeSeconds + ai.hornDelay + 1 + enemy.recovery; break;
       case 'chargeHorn':
         if (inCone(tell, p, tell.angle, ai.hornRange, ai.hornDegrees)) damage();
-        this.effect('swing', tell.x, tell.y, '#e0a068', 0.3, ai.hornRange, { angle: tell.angle, phase: 2, arc: ai.hornDegrees }); break;
-      case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.4, ai.overchargeRadius); enemy.ready = this.s.time + ai.overchargeRecovery; break;
+        this.effect('swing', tell.x, tell.y, '#e0a068', 0.85, ai.hornRange, { angle: tell.angle, phase: 2, arc: ai.hornDegrees, look: 'wave' }); break;
+      case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.7, ai.overchargeRadius, { look: 'quake' }); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
         if (inCone(tell, p, tell.angle, ai.fanRange, ai.fanDegrees)) damage();
-        this.effect('swing', tell.x, tell.y, '#dc817b', 0.25, ai.fanRange, { angle: tell.angle, phase: 2, arc: ai.fanDegrees });
+        this.effect('swing', tell.x, tell.y, '#dc817b', 0.85, ai.fanRange, { angle: tell.angle, phase: 2, arc: ai.fanDegrees, look: 'wave' });
         if (tell.type === 'fan') enemy.followup = { type: 'fanSecond', at: this.s.time + ai.followupDelay }; break;
       case 'march': {
         const lanes = this.marchLanes(enemy);
         if (lanes.some(lane => this.onLane(lane, ai.marchWidth))) damage();
-        for (const [[ax, ay], [bx, by]] of lanes) this.effect('beam', ax, ay, '#cf767a', 0.35, 1, { targetX: bx, targetY: by }); break;
+        for (const [[ax, ay], [bx, by]] of lanes) this.effect('beam', ax, ay, '#cf767a', 0.8, 1, { targetX: bx, targetY: by, look: 'march' }); break;
       }
       case 'alarm': enemy.alarmUntil = this.s.time + ai.alarmSeconds; enemy.ready = enemy.alarmUntil + enemy.recovery; break;
       case 'crane':
@@ -923,7 +951,7 @@ export class Game {
       case 'carpet': {
         const lanes = this.marchLanes(enemy, true);
         if (!this.onLane(lanes[tell.safe], ai.carpetSafeWidth)) damage();
-        lanes.forEach(([[ax, ay], [bx, by]], i) => { if (i !== tell.safe) this.effect('beam', ax, ay, '#cf767a', 0.35, 1, { targetX: bx, targetY: by }); });
+        lanes.forEach(([[ax, ay], [bx, by]], i) => { if (i !== tell.safe) this.effect('beam', ax, ay, '#cf767a', 0.8, 1, { targetX: bx, targetY: by, look: 'march' }); });
         break;
       }
       case 'trumpetWave': {
@@ -1148,7 +1176,7 @@ export class Game {
     if (p.dodge) {
       this.moveDodge(dt);
       const slip = this.trait('slipstream');
-      if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration;
+      if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) { if (!(enemy.statuses.windPressure > this.s.time)) this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: p.moveAngle }); enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration; }
     // A wrench swing plants the feet: the player stands still until the swing and its recovery end.
     } else if (!p.attack && !this.s.casts.some(c => c.shape === 'dash')) {
       const stuck = this.s.casts.find(c => c.shape === 'sticker' && distance(p, c) < c.radius);
@@ -1246,6 +1274,8 @@ export class Game {
       const total = this.roomLoot(), paid = run.loot?.room === this.room.id ? run.loot : { gears: 0, coins: 0 };
       this.giveLoot(Math.max(0, total.gears - paid.gears), Math.max(0, total.coins - paid.coins)); this.s.profile.rewards.push(key); run.loot = null;
       run.clears.push(this.room.id); this.s.profile.combatClears++;
+      const bank = this.perk('piggyBank');
+      if (bank) { const interest = Math.min(bank.cap, Math.floor(run.coins * bank.rate)); if (interest) { run.coins += interest; this.notify(`저금통 이자 · 동전 +${interest}`); } }
       if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
       this.sense({ kind: 'loot' });
     }
@@ -1296,6 +1326,7 @@ export class Game {
     if (reward.kind === 'mod') return mods.find(m => m.id === reward.id).tier;
     if (reward.kind === 'skillMod') return skillMods.find(m => m.id === reward.id).tier;
     if (reward.kind === 'trait') return elementTraits.find(t => t.id === reward.id).tier;
+    if (reward.kind === 'perk') return this.config.perks.find(perk => perk.id === reward.id).tier;
     if (reward.kind === 'upgrade') return rewards[reward.id].tier;
     if (reward.kind === 'heal') return rules.healRewards.find(h => h.id === reward.id).tier;
     if (reward.kind === 'gears') return rules.gearReward.tier;
@@ -1314,7 +1345,8 @@ export class Game {
     const parts = this.c.balance.temporaryUpgrades.filter(u => (run.upgrades[u.id] || 0) < u.maxRank && (u.id !== 'skillCooldownReduction' || elements.length) && (u.id !== 'statusDamage' || elements.includes('fire'))).map(u => ({ kind: 'upgrade', id: u.id }));
     const levels = this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean);
     const repairs = this.p.hp < this.p.maxHp ? this.config.rules.healRewards.map(h => ({ kind: 'heal', id: h.id })) : [];
-    return [...parts, ...levels, ...repairs, { kind: 'gears', amount: this.config.rules.gearReward.amount }];
+    const perks = (this.config.perks || []).filter(perk => !run.perks?.includes(perk.id)).map(perk => ({ kind: 'perk', id: perk.id }));
+    return [...parts, ...levels, ...repairs, ...perks, { kind: 'gears', amount: this.config.rules.gearReward.amount }];
   }
   offerRewards() {
     const run = this.s.run;
@@ -1332,6 +1364,14 @@ export class Game {
       this.sense({ kind: 'cards' });
     }
     this.s.mode = 'reward';
+  }
+  /** Once per reward screen the three cards can be swapped for a fresh draw (a different set when the pool allows). */
+  rerollRewards() {
+    const run = this.s.run;
+    if (this.s.mode !== 'reward' || !run || run.rerolled) return false;
+    const before = JSON.stringify(run.rewardChoices);
+    for (let i = 0; i < 6; i++) { run.rewardChoices = []; this.offerRewards(); if (JSON.stringify(run.rewardChoices) !== before) break; }
+    run.rerolled = true; return true;
   }
   chooseReward(index, replacement = null) {
     if (this.s.mode !== 'reward') return false;
@@ -1352,9 +1392,14 @@ export class Game {
     if (reward.kind === 'mod') { if (run.mods.length >= this.data.progression.run.wrenchModsMax || run.mods.includes(reward.id)) return false; run.mods.push(reward.id); }
     if (reward.kind === 'skillMod') (run.skillMods ??= []).push(reward.id);
     if (reward.kind === 'trait') (run.traits ??= []).push(reward.id);
+    if (reward.kind === 'perk') {
+      (run.perks ??= []).push(reward.id);
+      const glass = this.perk('glassSpring');
+      if (reward.id === 'glassSpring') { this.p.maxHp = Math.max(1, this.p.maxHp - glass.maxHpLoss); this.p.hp = Math.min(this.p.hp, this.p.maxHp); }
+    }
     if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
-    run.rewardChoices = []; this.sense({ kind: 'pick' });
+    run.rewardChoices = []; run.rerolled = false; this.sense({ kind: 'pick' });
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
     else this.s.mode = 'route';

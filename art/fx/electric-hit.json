@@ -1,0 +1,287 @@
+{
+ "frames": [
+  {
+   "filename": "btc-electric-hit 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 1.png",
+   "frame": {
+    "x": 45,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 2.png",
+   "frame": {
+    "x": 90,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 3.png",
+   "frame": {
+    "x": 135,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 4.png",
+   "frame": {
+    "x": 0,
+    "y": 34,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 5.png",
+   "frame": {
+    "x": 45,
+    "y": 34,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 6.png",
+   "frame": {
+    "x": 90,
+    "y": 34,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 7.png",
+   "frame": {
+    "x": 135,
+    "y": 34,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 8.png",
+   "frame": {
+    "x": 0,
+    "y": 68,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  },
+  {
+   "filename": "btc-electric-hit 9.png",
+   "frame": {
+    "x": 45,
+    "y": 68,
+    "w": 45,
+    "h": 34
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 45,
+    "h": 34
+   },
+   "sourceSize": {
+    "w": 45,
+    "h": 34
+   },
+   "pivot": {
+    "x": 0.4,
+    "y": 0.4117647058823529
+   },
+   "duration": 56
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-electric-hit.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 180,
+   "h": 102
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 18,
+   "y": 14
+  },
+  "frameTags": [
+   {
+    "name": "btc-electric-hit",
+    "from": 0,
+    "to": 9,
+    "direction": "forward"
+   }
+  ]
+ }
+}

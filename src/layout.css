@@ -41,34 +41,13 @@
 body.touch .panel.atlas-panel { padding: 8px 10px; }
 body.touch .panel.atlas-panel .panel-header { position: absolute; top: 14px; right: 16px; z-index: 1; padding: 0; margin: 0; border: 0; }
 body.touch .panel.atlas-panel .panel-header h2 { display: none; }
-/* The region board: one floating island drawn in SVG by src/ui/world-map.js. */
+/* The region board: the painted Clockwork Island with the route drawn over it by src/ui/world-map.js. */
 .atlas { margin-top: 4px; line-height: 0; }
-.world-map { display: block; width: 100%; height: 100%; aspect-ratio: auto; border: 3px solid var(--ink); background: linear-gradient(#9fd3ec, #d7eef6); }
-.world-map .cloud ellipse { fill: #fff; stroke: #b9d7e6; stroke-width: 2; paint-order: stroke; }
-.world-map .cliff { fill: url(#wm-rock); stroke: #3c2a1c; stroke-width: 3; }
-.world-map .lawn { fill: url(#wm-lawn); }
-.world-map .rim { fill: none; stroke: #4c6b33; stroke-width: 4; }
-.world-map .fall { stroke: #e9f7ff; stroke-width: 10; stroke-linecap: round; }
-.world-map .hill { fill: #cfc6b0; } .world-map .hill-rim { stroke: #7a6f58; }
-.world-map .hill-cliff { fill: #9b8f78; stroke: #4e4536; stroke-width: 3; } .world-map .works-cliff { fill: #857a68; }
-.world-map .works { fill: #a49a8a; } .world-map .works-edge { fill: none; stroke: #6e6457; stroke-width: 3; stroke-dasharray: 8 5; }
-.world-map .town { fill: #ecd9b0; } .world-map .town-edge { fill: none; stroke: #b99a68; stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; }
-.world-map .bed { fill: #6aa84f; stroke: var(--ink); stroke-width: 2; } .world-map .bloom.b0 { fill: #f4a6b8; } .world-map .bloom.b1 { fill: #ffd257; }
-.world-map .shadow { fill: #1f2a1655; }
-.world-map .trunk { fill: #7a5232; stroke: #3c2a1c; stroke-width: 1.5; }
-.world-map .leaf { stroke: #2f4a22; stroke-width: 2.5; } .world-map .leaf.a { fill: #5d9e45; } .world-map .leaf.b { fill: #7bb552; }
-.world-map .shine { fill: #fff; opacity: .28; }
-.world-map .pine { fill: #4d7d4a; stroke: #2f4a22; stroke-width: 2.5; } .world-map .pine-lit { fill: #6b9a5c; }
-.world-map .ink { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
-.world-map .door { fill: #7a5232; stroke: var(--ink); stroke-width: 2; } .world-map .pane { fill: #7fc7e0; stroke: var(--ink); stroke-width: 1.5; }
-.world-map .hand { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
-.world-map .cog { fill: #b08b4a; stroke-dasharray: 4 3; } .world-map .hub { fill: #5c4630; }
-.world-map .crate { fill: #c08a52; stroke: var(--ink); stroke-width: 1.5; }
-.world-map .smoke { fill: #d7d9de; stroke: #9a9ea8; stroke-width: 2; opacity: .9; }
-.world-map .road-edge { fill: none; stroke: #8a6a44; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
-.world-map .road { fill: none; stroke: #f1dfb2; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
-.world-map .road-edge.future { stroke: #6e6457; } .world-map .road.future { stroke: #d6ccb6; }
-.world-map .road-dash { fill: none; stroke: #8f8573; stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
+.world-map { display: block; width: 100%; height: 100%; aspect-ratio: auto; border: 3px solid var(--ink); background: #a8d4ee; }
+.world-map .veil { fill: #3b4152; opacity: .35; }
+/* A faint dotted trail joins Smile Street's stops over the painted road; the walked part turns gold. */
+.world-map .road-trail { fill: none; stroke: #fff4d6; stroke-width: 3; stroke-dasharray: 2 7; stroke-linecap: round; opacity: .9; }
+.world-map .road-dash { fill: none; stroke: #e9e4d6; stroke-width: 3; stroke-dasharray: 2 9; stroke-linecap: round; }
 .world-map .road-walked { fill: none; stroke: #ffd257; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 .world-map .node { cursor: pointer; outline: none; }
 .world-map .node.locked { cursor: default; }
@@ -311,3 +290,35 @@ body.touch .panel .stat-row button { min-height: 36px; }
 @keyframes wipe-west { to { transform: translateX(-100%); } }
 @keyframes wipe-south { to { transform: translateY(100%); } }
 @keyframes wipe-north { to { transform: translateY(-100%); } }
+
+/* ---- UI pass (2026-11-04) ---- */
+/* 2. Everything the fight uses sits together top left: health, charge, then gears and coins under them. */
+.hud-wallet, .hud-minimap:not([hidden]) ~ .hud-wallet { left: 14px; right: auto; top: 98px; width: auto; justify-content: flex-start; gap: 18px; padding: 6px 14px; }
+.hud-minimap:not([hidden]) ~ .hud-tools { right: 196px; }
+/* 1. Bigger skill slots; small labels never below 10px on the sheet. */
+.slot { width: 48px; height: 48px; }
+.slot img { width: 36px; height: 36px; }
+.slot kbd { font-size: 11px; line-height: 13px; }
+.slot .lv { font-size: 10px; line-height: 12px; }
+.slot .cost, #touch .cost { font-size: 10px; line-height: 12px; }
+#skills { gap: 4px; }
+/* On a short screen panels keep their size and lose their side notes instead of scrolling. */
+body.cramped .panel { padding: 10px 16px; overflow: hidden; }
+body.cramped .panel h2 { font-size: 22px; margin-bottom: 4px; }
+body.cramped .panel > p:first-of-type:not(.result-next), body.cramped .panel > p.notice { display: none; }
+body.cramped .reward-grid { margin-top: 6px; gap: 8px; }
+body.cramped .reward-card { padding: 8px 10px; }
+body.cramped .reward-card .reward-icon, body.cramped .reward-skills img { width: 40px; height: 40px; margin-bottom: 4px; }
+body.cramped .reward-card .reward-icon .ico { width: 26px; height: 26px; }
+body.cramped .reward-card p, body.cramped .reward-card .values { font-size: 13px; line-height: 1.35; margin-bottom: 4px; }
+body.cramped .reward-card h3 { font-size: 16px; margin: 0 0 3px; }
+body.cramped .panel .reward-card .pick { margin-top: 6px; padding: 5px; }
+body.cramped .actions.reroll { margin-top: 6px; }
+/* 4. One look per role: filled for the main action, outlined for the rest, red outline for what cannot be undone. */
+.panel button.quiet { background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); text-decoration: none; }
+.reward-card .rarity { background: #d8ccb0; color: var(--ink); padding: 1px 7px; }
+.settings .codex-tabs { margin-top: 2px; }
+/* 5. Result: where it ended, what came along, what to do next. */
+.panel.result .result-build { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.panel.result .inline-element { width: 28px; height: 28px; image-rendering: pixelated; }
+.panel.result .result-next { margin-top: 10px; padding: 8px 10px; background: #ece0c0; font-weight: 700; }

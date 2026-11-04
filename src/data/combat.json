@@ -138,7 +138,7 @@
       },
       {
         "id": "killHeal",
-        "perRank": 2,
+        "perRank": 1,
         "maxRank": 3
       },
       {
@@ -472,7 +472,7 @@
       "id": "collectorRoco",
       "name": "회수관 로코",
       "kind": "miniboss",
-      "hp": 320,
+      "hp": 900,
       "damage": 10,
       "minimumTell": 0.7,
       "region": "smileStreet",
@@ -482,7 +482,7 @@
       "id": "captainBrass",
       "name": "행진대장 브라스",
       "kind": "regionBoss",
-      "hp": 1000,
+      "hp": 1800,
       "damage": 12,
       "minimumTell": 0.8,
       "region": "smileStreet",

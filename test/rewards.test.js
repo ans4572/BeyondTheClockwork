@@ -14,10 +14,13 @@ const dummy = (g, x = 9, y = 8, type = 'guard') => { const e = g.spawnEnemy(type
 const cast = (g, id, target = { x: 11, y: 8 }) => { const skill = data.combat.skills.find(s => s.id === id); g.makeCast(skill, data.slice.skillBehavior[id], g.slots[0] || { level: 1, rarity: 'common' }, target, false); return g.s.casts.at(-1); };
 const swing = (g, phase) => { g.p.combo = phase; g.p.comboExpires = g.s.time + 9; g.basicAttack(); step(g, 0.6); };
 
-test('every skill has one or two mods, and every element has two traits', () => {
+test('every element offers as many element cards (skill mods and traits) as every other', () => {
   for (const skill of data.combat.skills) assert.ok([1, 2].includes(data.slice.skillMods.filter(m => m.skill === skill.id).length), skill.id);
-  for (const element of data.combat.elements) assert.equal(data.slice.elementTraits.filter(t => t.element === element.id).length, 2, element.id);
-  assert.equal(data.slice.mods.length, 8);
+  const traits = data.combat.elements.map(element => data.slice.elementTraits.filter(t => t.element === element.id).length);
+  assert.ok(traits.every(n => n === traits[0]), `traits per element: ${traits}`);
+  const cards = data.combat.elements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
+  assert.ok(cards.every(n => n === cards[0]), `element cards per element: ${cards}`);
+  assert.equal(data.slice.mods.length, 9);
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);
 });
 

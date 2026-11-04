@@ -74,6 +74,7 @@ export function decodeSave(raw, data) {
         : reward.kind === 'upgrade' ? data.combat.balance.temporaryUpgrades.some(u => u.id === reward.id)
         : reward.kind === 'skillMod' ? data.slice.skillMods.some(m => m.id === reward.id)
         : reward.kind === 'trait' ? data.slice.elementTraits.some(t => t.id === reward.id)
+        : reward.kind === 'perk' ? (data.slice.perks || []).some(perk => perk.id === reward.id)
         : reward.kind === 'level' ? integerIn(reward.id, 0, run.slots.length - 1)
         : reward.kind === 'gears' && validNumber(reward.amount);
       if (!valid) fail('저장된 보상 선택지가 올바르지 않습니다.');

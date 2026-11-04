@@ -79,7 +79,9 @@ export class MusicPlayer {
     for (const name of Object.keys(MUSIC)) {
       const track = this.track(audio, name);
       if (name === this.current || !track.element.paused) continue;
-      track.element.play().then(() => { if (name !== this.current) track.element.pause(); }).catch(() => { this.unlocked = false; });
+      // Muted as well as at gain 0: a phone whose sound context is not running may play an element past its gain.
+      const { element } = track; element.muted = true;
+      element.play().then(() => { if (name !== this.current) element.pause(); }).catch(() => { this.unlocked = false; }).finally(() => { if (name !== this.current) element.pause(); element.muted = false; });
     }
   }
   /**
@@ -87,13 +89,24 @@ export class MusicPlayer {
    * the context is still waking up, for the call made inside the tap that unlocks sound.
    */
   update(audio, name, volume, force = false) {
-    if (!audio || (audio.state !== 'running' && !force)) return;
+    if (!audio) return;
+    // While the sound context is asleep (not yet allowed, or a phone interrupted it) nothing can fade. A change of song
+    // still happens at once: the old song is paused outright, so it can never carry on into the next scene.
+    if (audio.state !== 'running' && !force) {
+      if (name !== this.current) {
+        const old = this.current && this.tracks.get(this.current);
+        if (old) { clearTimeout(old.stopTimer); old.element.pause(); old.gain.gain.cancelScheduledValues(0); old.gain.gain.value = 0; }
+        this.current = name; this.fadeUntil = 0;
+        if (name) { const next = this.track(audio, name); next.element.currentTime = 0; next.element.play().catch(() => {}); next.gain.gain.cancelScheduledValues(0); next.gain.gain.value = MUSIC[name].volume * volume; }
+      }
+      return;
+    }
     const now = audio.currentTime;
     if (name !== this.current) {
       if (this.current) {
         const old = this.tracks.get(this.current);
         old.gain.gain.cancelScheduledValues(now); old.gain.gain.setValueAtTime(old.gain.gain.value, now); const out = name ? FADE_SECONDS : STOP_SECONDS; old.gain.gain.linearRampToValueAtTime(0, now + out);
-        old.stopTimer = setTimeout(() => old.element.pause(), out * 1000 + 50);
+        old.stopTimer = setTimeout(() => old.element.pause(), out * 1000 + 50); old.stopAt = now + out + 0.1;
       }
       this.current = name;
       if (name) {
@@ -105,6 +118,8 @@ export class MusicPlayer {
       }
       return;
     }
+    // Any other song still sounding once its fade is over (a late start from unlocking, a missed timer) is stopped.
+    for (const [other, track] of this.tracks) if (other !== name && !track.element.paused && now >= (track.stopAt || 0) && !track.element.muted) { track.element.pause(); track.gain.gain.cancelScheduledValues(now); track.gain.gain.setValueAtTime(0, now); }
     // Volume changes (settings, the pause menu) glide rather than jump, once the fade-in is done.
     if (name && now >= (this.fadeUntil || 0)) this.tracks.get(name).gain.gain.setTargetAtTime(MUSIC[name].volume * volume, now, 0.15);
     // A phone stops music when the app goes to the background; it picks up again by itself on return.

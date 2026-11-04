@@ -1,0 +1,287 @@
+{
+ "frames": [
+  {
+   "filename": "btc-frost-shatter 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 1.png",
+   "frame": {
+    "x": 39,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 2.png",
+   "frame": {
+    "x": 78,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 3.png",
+   "frame": {
+    "x": 117,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 4.png",
+   "frame": {
+    "x": 0,
+    "y": 50,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 5.png",
+   "frame": {
+    "x": 39,
+    "y": 50,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 6.png",
+   "frame": {
+    "x": 78,
+    "y": 50,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 7.png",
+   "frame": {
+    "x": 117,
+    "y": 50,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 8.png",
+   "frame": {
+    "x": 0,
+    "y": 100,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-frost-shatter 9.png",
+   "frame": {
+    "x": 39,
+    "y": 100,
+    "w": 39,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 39,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 39,
+    "h": 50
+   },
+   "pivot": {
+    "x": 0.5128205128205128,
+    "y": 0.38
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-frost-shatter.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 156,
+   "h": 150
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 20,
+   "y": 19
+  },
+  "frameTags": [
+   {
+    "name": "btc-frost-shatter",
+    "from": 0,
+    "to": 9,
+    "direction": "forward"
+   }
+  ]
+ }
+}

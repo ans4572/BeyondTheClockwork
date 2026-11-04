@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-rat-explosion 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 1.png",
+   "frame": {
+    "x": 43,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 2.png",
+   "frame": {
+    "x": 86,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 3.png",
+   "frame": {
+    "x": 129,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 4.png",
+   "frame": {
+    "x": 0,
+    "y": 45,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 5.png",
+   "frame": {
+    "x": 43,
+    "y": 45,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 6.png",
+   "frame": {
+    "x": 86,
+    "y": 45,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 7.png",
+   "frame": {
+    "x": 129,
+    "y": 45,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 8.png",
+   "frame": {
+    "x": 0,
+    "y": 90,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 9.png",
+   "frame": {
+    "x": 43,
+    "y": 90,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 10.png",
+   "frame": {
+    "x": 86,
+    "y": 90,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-rat-explosion 11.png",
+   "frame": {
+    "x": 129,
+    "y": 90,
+    "w": 43,
+    "h": 45
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 43,
+    "h": 45
+   },
+   "sourceSize": {
+    "w": 43,
+    "h": 45
+   },
+   "pivot": {
+    "x": 0.5116279069767442,
+    "y": 0.6
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-rat-explosion.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 172,
+   "h": 135
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 22,
+   "y": 27
+  },
+  "frameTags": [
+   {
+    "name": "btc-rat-explosion",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

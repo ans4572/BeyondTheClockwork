@@ -1,0 +1,235 @@
+{
+ "frames": [
+  {
+   "filename": "btc-ground-fire 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 1.png",
+   "frame": {
+    "x": 35,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 2.png",
+   "frame": {
+    "x": 70,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 3.png",
+   "frame": {
+    "x": 0,
+    "y": 27,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 4.png",
+   "frame": {
+    "x": 35,
+    "y": 27,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 5.png",
+   "frame": {
+    "x": 70,
+    "y": 27,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 6.png",
+   "frame": {
+    "x": 0,
+    "y": 54,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-ground-fire 7.png",
+   "frame": {
+    "x": 35,
+    "y": 54,
+    "w": 35,
+    "h": 27
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 35,
+    "h": 27
+   },
+   "sourceSize": {
+    "w": 35,
+    "h": 27
+   },
+   "pivot": {
+    "x": 0.5142857142857142,
+    "y": 0.6666666666666666
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-ground-fire.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 105,
+   "h": 81
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 18,
+   "y": 18
+  },
+  "frameTags": [
+   {
+    "name": "btc-ground-fire",
+    "from": 0,
+    "to": 7,
+    "direction": "forward"
+   }
+  ]
+ }
+}

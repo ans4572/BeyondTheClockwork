@@ -5,12 +5,13 @@ import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
-import { CanvasRenderer, STATUS_ICONS } from './render/canvas.js';
+import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART } from './render/canvas.js';
+import { FX_FILES } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
-import { worldMapSvg } from './ui/world-map.js';
+import { worldMapSvg, WORLD_MAP_ART } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
 import { MusicPlayer, musicScene } from './audio/music.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
@@ -27,16 +28,21 @@ const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른
 const HOME_NAME = '웃음 마을';
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
+/** What each run part changes, named on its reward card with the value now and with the part fitted. */
+const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['기술 재사용 시간', '−'], dodgeCooldownReduction: ['회피 대기 시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
+const PERK_ICONS = { piggyBank: 'coin', overheatEngine: 'flame', glassSpring: 'target' };
 const PART_ICONS = { basicDamage: 'wrench', maxHp: 'heart', skillCooldownReduction: 'clock', dodgeCooldownReduction: 'boot', statusDamage: 'flame', moveSpeed: 'boot', critChance: 'target', attackSpeed: 'haste', killHeal: 'heal', damageReduction: 'shield' };
-const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e' };
+const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
 const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
-/** Every small picture the menus show: element parts, skill slots and status marks. Loaded right after the title. */
+/** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
 const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/element-icons/${id}.png`),
   ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake',
-    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat', 'dodge', 'wrench'].map(id => `art/ui/skill-icons/${id}.png`)];
+    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat', 'dodge', 'wrench'].map(id => `art/ui/skill-icons/${id}.png`),
+  // The map's painting, so the map opens whole the first time.
+  WORLD_MAP_ART];
 /** The decoded icons are held here so the browser keeps them ready. */
 const keptIcons = [];
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
@@ -46,6 +52,8 @@ const MULTI_STOP = 0.02, MULTI_STOP_CAP = 0.06, CRIT_STOP = 0.03, CRIT_SHAKE = 3
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
+/** Below this many sheet pixels of height, panels drop their side notes and tighten up. */
+const CRAMPED_SHEET_HEIGHT = 600;
 const TOUCH_PANEL_ZOOM = 0.85, TOUCH_TEXT_ZOOM = 1, IMAGE_SLOTS = 3;
 const keyName = key => key.replace('Key', '').replace('Digit', '').replace('Arrow', '↑↓←→'[({ ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3 })[key]] || '').replace('Space', 'Space');
 
@@ -96,8 +104,10 @@ try {
     $('touch').style.setProperty('--tools-right', `${Math.round(document.documentElement.clientWidth - shown.left - (1120 - 182) * scale + 8)}px`);
     $('touch').style.setProperty('--tools-top', `${Math.round(shown.top + 12 * scale)}px`);
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
-    // Panels would be unreadable at a phone's scale, and scroll instead of shrinking.
-    $('overlay').style.zoom = isTouch ? Math.max(scale, TOUCH_PANEL_ZOOM) : scale;
+    // Panels never shrink past a readable size; on a short screen they switch to a compact layout so nothing scrolls.
+    const zoom = Math.max(scale, TOUCH_PANEL_ZOOM);
+    $('overlay').style.zoom = zoom;
+    document.body.classList.toggle('cramped', document.documentElement.clientHeight / zoom < CRAMPED_SHEET_HEIGHT);
   };
   addEventListener('resize', fitHud); document.addEventListener('fullscreenchange', fitHud); fitHud();
   const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
@@ -113,7 +123,7 @@ try {
   // Map art is loaded only where it is needed: the place underfoot and the one after it, never the whole region up front.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
   const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
-  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...FX_FILES, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
   const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
@@ -145,7 +155,7 @@ try {
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
   let link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
-  let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null;
+  let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null, settingsTab = 'general';
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -409,6 +419,22 @@ try {
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
     return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
   }
+  /**
+   * A run part's effect with `rank` of them fitted, counting the permanent tuning that adds to the same thing, the way the
+   * game itself combines them (percentages as fractions, health in points).
+   */
+  function partValue(id, rank) {
+    const amount = rank * data.combat.balance.temporaryUpgrades.find(u => u.id === id).perRank, caps = data.combat.caps;
+    const RUN = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'], tuned = key => (game.stats[key] || 0) - (RUN.includes(key) ? game.upgradeAmount(key) : 0);
+    if (id === 'maxHp') return game.p.maxHp + amount - game.upgradeAmount('maxHp');
+    if (id === 'killHeal') return amount;
+    if (id === 'basicDamage') return tuned('attackDamage') + amount;
+    if (id === 'skillCooldownReduction') return Math.min(caps.totalCooldownReduction, tuned('cooldownReduction') + amount);
+    if (id === 'dodgeCooldownReduction') return 1 - (1 - tuned('dodgeCooldown')) * (1 - amount);
+    if (id === 'statusDamage') return tuned('statusPower') + amount;
+    if (id === 'critChance') return Math.min(caps.critChance, (data.combat.player.critChance || 0) + tuned('critChance') + amount);
+    return tuned(id) + amount;
+  }
   function describeReward(reward) {
     if (reward.kind === 'element') {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
@@ -416,18 +442,22 @@ try {
     }
     if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: ico('wrench'), label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, skills: [skill.id], label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element] }; }
+    if (reward.kind === 'perk') { const perk = data.slice.perks.find(p => p.id === reward.id); return { name: perk.name, icon: ico(PERK_ICONS[perk.id] || 'spark'), label: '원정 특전', description: perk.description, value: '이 원정에 유지 · 한 번만' }; }
     if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, art: trait.element, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element] }; }
     if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); const skills = data.combat.skills.filter(s => s.element === slot.element); return { name: `${element.name} 기술 조율`, skills: skills.map(s => s.id), label: '기술 단계', description: `${skills.map(s => s.name).join(' · ')}이(가) 함께 강해진다.`, value: `Lv.${slot.level} → ${slot.level + 1} (최대 ${data.combat.balance.skillMaxLevel}) · 직접 피해 +12%p` }; }
     if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: ico('gear'), label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
     if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('heal'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
     const upgrade = data.combat.balance.temporaryUpgrades.find(u => u.id === reward.id), desc = data.slice.rewards[reward.id];
-    return { name: desc.name, icon: ico(PART_ICONS[reward.id] || 'spark'), label: '출력 부품', description: desc.description, value: `${reward.id === 'maxHp' ? '+' + upgrade.perRank + ' HP' : reward.id === 'killHeal' ? '처치마다 +' + upgrade.perRank + ' HP' : reward.id === 'damageReduction' ? '받는 피해 −' + Math.round(upgrade.perRank * 100) + '%' : '+' + Math.round(upgrade.perRank * 100) + '%'} · ${(game.s.run.upgrades[reward.id] || 0) + 1}/${upgrade.maxRank} 단계` };
+    const rank = game.s.run.upgrades[reward.id] || 0, [name, sign] = PART_VALUES[reward.id], now = partValue(reward.id, rank), next = partValue(reward.id, rank + 1);
+    const shown = v => reward.id === 'maxHp' || reward.id === 'killHeal' ? `${v}` : `${v ? sign : ''}${Math.round(v * 100)}%`;
+    // What the part changes, as it stands now and with this part fitted.
+    return { name: desc.name, icon: ico(PART_ICONS[reward.id] || 'spark'), label: '출력 부품', description: desc.description, value: `${name} ${shown(now)} → <strong>${shown(next)}</strong><br>${rank + 1}/${upgrade.maxRank} 단계` };
   }
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`${i + 1} · 선택`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
-    }).join('')}</div><p class="notice">속성·부품은 이 원정에만 유지됩니다. 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
+      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
+    }).join('')}</div><div class="actions reroll">${button(game.s.run.rerolled ? '다시 뽑기 사용함' : '다시 뽑기 (1회)', 'reroll', game.s.run.rerolled ? 'disabled' : '')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
   function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
@@ -436,14 +466,18 @@ try {
     const t = transfer, until = t.expiresAt ? new Date(t.expiresAt) : null;
     const made = t.code ? `<p class="transfer-code" aria-label="이동 코드">${formatCode(t.code)}</p><p class="notice">다른 기기에서 환경설정 → 이 코드를 입력하세요. ${until ? `${until.getHours()}:${String(until.getMinutes()).padStart(2, '0')}까지(5분)` : '5분 동안'} 쓸 수 있고, 한 번 불러오면 사라집니다.</p><div class="actions">${button('코드 복사', 'transfer-copy')}</div>` : '';
     const clock = at => { const d = at && new Date(at); return d && !Number.isNaN(d.getTime()) ? `${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}` : '아직 없음'; };
-    const sync = `<p class="notice">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}원정을 마치고 마을에 들어갈 때마다 진행이 서버에 저장되고, 연결된 기기에서 게임을 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
-    return `<div class="divider"></div><span class="form-no">다른 기기와 연동</span>${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">다른 기기를 연결하려면 이동 코드를 만들어 그 기기에서 입력하세요. 처음 한 번만 하면 그 뒤로는 저절로 이어집니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
+    const sync = `<p class="notice">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}마을에 들어갈 때마다 서버에 저장되고, 연결된 기기에서 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
+    return `${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">다른 기기를 연결하려면 코드를 만들어 그 기기에서 입력하세요. 한 번만 하면 됩니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
   }
   function settingsPanel() {
-    const keysOpen = !!$('overlay').querySelector('details.keys[open]');
     const settings = game.s.profile.settings, map = bindings();
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div></div><div class="pause-buttons">${onTitle ? button('닫기', 'resume', '', 'primary') : `${button('이어서 움직이기', 'resume', '', 'primary')}${button('속성 · 융합 도감', 'codex')}`}</div><div class="divider"></div><div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광 · 동작 효과 줄이기</label></div><details class="keys" ${keysOpen ? 'open' : ''}><summary>조작 키 바꾸기</summary><p>변경할 키를 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 좌클릭 렌치 · 우클릭 융합<br>패드: 왼쪽/오른쪽 스틱 이동·조준 · RB 렌치 · B 회피 · X/Y/LB/LT 기술 · RT 융합 · A 상호작용 · View 지도 · Menu 일시정지</p>${button('키 기본값', 'reset-bindings', '', 'quiet')}</details>${transferBlock()}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('원정 포기 · 수리점 귀환', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`, 'wide');
+    const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
+    const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
+    const body = settingsTab === 'keys' ? keys : settingsTab === 'devices' ? transferBlock() : general;
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
+
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
   function codexPanel() {
     const words = data.slice.presentation.codex, element = id => data.combat.elements.find(e => e.id === id);
@@ -504,7 +538,7 @@ try {
     if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p><h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;
-      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>도달 구간</span><span><b>${formatTime(result.elapsed)}</b>원정 시간</span><span><b>+${result.baseGears}</b>기본 자유 톱니</span></div>${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong> · 한 번만 지급</p>` : ''}<div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side');
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>${escapeHTML((data.slice.rooms[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
@@ -574,7 +608,7 @@ try {
       $('skills').dataset.key = slotKey;
       $('skills').innerHTML = slots.map(slot => {
         const art = slot.icon || slot.skill?.id;
-        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
+        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level > 1 ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
       }).join('');
     }
     [...$('skills').children].forEach((element, i) => {
@@ -688,17 +722,21 @@ try {
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
     if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
+    if (name === 'reroll') { bought = game.rerollRewards(); }
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
     if (name === 'unwind') game.unwind();
     if (name === 'return-complete') game.returnToHub('clear');
     if (name === 'acknowledge') game.acknowledgeReturn();
     if (name === 'abandon') screen = 'confirmAbandon';
+    // Back to the title: everything is saved first, and 이어하기 picks up exactly here.
+    if (name === 'to-title') { game.save(); sfx('click'); openTitle(); return; }
     if (name === 'cancel-abandon') screen = 'pause';
     if (name === 'abandon-confirmed') { game.returnToHub(game.s.mode === 'complete' ? 'clear' : 'abandon'); resume(); }
     if (name === 'resume') resume();
     if (name === 'codex') pause('codex');
     if (name === 'codex-tab') codexTab = d.id;
+    if (name === 'settings-tab') settingsTab = d.id;
     if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
@@ -725,7 +763,7 @@ try {
   $('fullscreen').addEventListener('click', () => { $('app').requestFullscreen?.().catch(() => {}); });
   $('hud-map').addEventListener('click', () => { if (!saveBlocked && !screen) pause('map'); });
   $('hud-menu').addEventListener('click', () => { if (!saveBlocked && !screen) pause(); });
-  for (const [id, icon] of [['fullscreen', 'fullscreen'], ['hud-map', 'map'], ['hud-menu', 'gear']]) $(id).insertAdjacentHTML('afterbegin', TOOL_ICONS[icon]);
+  for (const [id, icon] of [['fullscreen', 'fullscreen'], ['hud-map', 'map'], ['hud-menu', 'settings']]) $(id).insertAdjacentHTML('afterbegin', TOOL_ICONS[icon]);
   // Drawn icons rather than ⚙ and ◈, which phones set at different sizes (or as colour emoji).
   for (const span of document.querySelectorAll('.hud-wallet [data-icon]')) span.insertAdjacentHTML('afterbegin', TOOL_ICONS[span.dataset.icon]);
 

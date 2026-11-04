@@ -1,7 +1,7 @@
 import { readFile, stat } from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MUSIC, musicScene } from '../src/audio/music.js';
+import { MUSIC, musicScene, MusicPlayer } from '../src/audio/music.js';
 import { Game } from '../src/engine/game.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 
@@ -27,4 +27,29 @@ test('every track is on disk, and old saves get music switched on', async () => 
   delete saved.state.profile.settings.music; delete saved.state.profile.settings.musicVolume;
   const loaded = decodeSave(JSON.stringify(saved), data);
   assert.equal(loaded.profile.settings.music, true); assert.equal(loaded.profile.settings.musicVolume, 0.6);
+});
+
+// A stand-in for the browser: elements that remember play/pause, a sound context whose state the test sets.
+class FakeAudioElement { constructor() { this.paused = true; this.muted = false; this.currentTime = 0; } play() { this.paused = false; return Promise.resolve(); } pause() { this.paused = true; } getAttribute() { return 'x'; } }
+const param = () => ({ value: 0, cancelScheduledValues() {}, setValueAtTime(v) { this.value = v; }, linearRampToValueAtTime(v) { this.value = v; }, setTargetAtTime(v) { this.value = v; } });
+const fakeContext = () => ({ state: 'running', currentTime: 0, destination: {}, createGain: () => ({ gain: param(), connect: x => x }), createMediaElementSource: () => ({ connect: x => x }) });
+globalThis.Audio ??= FakeAudioElement;
+
+test('the title song stops on leaving the title even while a phone has the sound context asleep', () => {
+  const player = new MusicPlayer(), audio = fakeContext();
+  player.update(audio, 'title', 1); assert.equal(player.tracks.get('title').element.paused, false);
+  audio.state = 'interrupted';
+  player.update(audio, null, 1);
+  assert.equal(player.tracks.get('title').element.paused, true); assert.equal(player.current, null);
+  audio.state = 'running'; audio.currentTime = 5; player.update(audio, null, 1);
+  assert.equal(player.tracks.get('title').element.paused, true, 'it does not come back when sound wakes up');
+});
+
+test('a song left playing outside its scene is stopped once its fade is over', () => {
+  const player = new MusicPlayer(), audio = fakeContext();
+  player.update(audio, 'title', 1); audio.currentTime = 2; player.update(audio, null, 1);
+  // A late start (say, from unlocking sound on a tap) brings the title back on its own.
+  player.tracks.get('title').element.paused = false;
+  audio.currentTime = 3; player.update(audio, null, 1);
+  assert.equal(player.tracks.get('title').element.paused, true);
 });

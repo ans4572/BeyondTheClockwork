@@ -1,0 +1,235 @@
+{
+ "frames": [
+  {
+   "filename": "btc-deflect-flash 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 1.png",
+   "frame": {
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 2.png",
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 3.png",
+   "frame": {
+    "x": 0,
+    "y": 35,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 4.png",
+   "frame": {
+    "x": 32,
+    "y": 35,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 5.png",
+   "frame": {
+    "x": 64,
+    "y": 35,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 6.png",
+   "frame": {
+    "x": 0,
+    "y": 70,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-deflect-flash 7.png",
+   "frame": {
+    "x": 32,
+    "y": 70,
+    "w": 32,
+    "h": 35
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 35
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 35
+   },
+   "pivot": {
+    "x": 0.53125,
+    "y": 0.42857142857142855
+   },
+   "duration": 63
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-deflect-flash.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 96,
+   "h": 105
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 17,
+   "y": 15
+  },
+  "frameTags": [
+   {
+    "name": "btc-deflect-flash",
+    "from": 0,
+    "to": 7,
+    "direction": "forward"
+   }
+  ]
+ }
+}

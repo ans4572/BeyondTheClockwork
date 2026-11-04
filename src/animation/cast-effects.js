@@ -18,7 +18,8 @@ export class CastEffects {
   update(game) {
     const { s } = game;
     if (s.paused) return this.visible;
-    if (!['combat', 'intro'].includes(s.mode)) { this.active.clear(); return this.visible = []; }
+    // Moru's back yard too: a skill tried on the dummy shows the same picture as in a fight.
+    if (!['combat', 'intro', 'practice'].includes(s.mode)) { this.active.clear(); return this.visible = []; }
     for (const cast of s.casts) {
       // Patches and charges a mod leaves behind are drawn by the renderer, not as the skill's own sheet.
       const effect = !cast.derived && this.effects[cast.skillId];

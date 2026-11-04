@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-haste-arrows 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 1.png",
+   "frame": {
+    "x": 38,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 2.png",
+   "frame": {
+    "x": 76,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 3.png",
+   "frame": {
+    "x": 114,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 4.png",
+   "frame": {
+    "x": 0,
+    "y": 43,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 5.png",
+   "frame": {
+    "x": 38,
+    "y": 43,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 6.png",
+   "frame": {
+    "x": 76,
+    "y": 43,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 7.png",
+   "frame": {
+    "x": 114,
+    "y": 43,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 8.png",
+   "frame": {
+    "x": 0,
+    "y": 86,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 9.png",
+   "frame": {
+    "x": 38,
+    "y": 86,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 10.png",
+   "frame": {
+    "x": 76,
+    "y": 86,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-haste-arrows 11.png",
+   "frame": {
+    "x": 114,
+    "y": 86,
+    "w": 38,
+    "h": 43
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 38,
+    "h": 43
+   },
+   "sourceSize": {
+    "w": 38,
+    "h": 43
+   },
+   "pivot": {
+    "x": 0.47368421052631576,
+    "y": 0.7209302325581395
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-haste-arrows.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 152,
+   "h": 129
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 18,
+   "y": 31
+  },
+  "frameTags": [
+   {
+    "name": "btc-haste-arrows",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

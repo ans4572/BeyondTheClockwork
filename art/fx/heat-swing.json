@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-heat-swing 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 1.png",
+   "frame": {
+    "x": 55,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 2.png",
+   "frame": {
+    "x": 110,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 3.png",
+   "frame": {
+    "x": 165,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 4.png",
+   "frame": {
+    "x": 0,
+    "y": 51,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 5.png",
+   "frame": {
+    "x": 55,
+    "y": 51,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 6.png",
+   "frame": {
+    "x": 110,
+    "y": 51,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 7.png",
+   "frame": {
+    "x": 165,
+    "y": 51,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 8.png",
+   "frame": {
+    "x": 0,
+    "y": 102,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 9.png",
+   "frame": {
+    "x": 55,
+    "y": 102,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 10.png",
+   "frame": {
+    "x": 110,
+    "y": 102,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-heat-swing 11.png",
+   "frame": {
+    "x": 165,
+    "y": 102,
+    "w": 55,
+    "h": 51
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 55,
+    "h": 51
+   },
+   "sourceSize": {
+    "w": 55,
+    "h": 51
+   },
+   "pivot": {
+    "x": 0.4909090909090909,
+    "y": 0.47058823529411764
+   },
+   "duration": 63
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-heat-swing.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 220,
+   "h": 153
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 27,
+   "y": 24
+  },
+  "frameTags": [
+   {
+    "name": "btc-heat-swing",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

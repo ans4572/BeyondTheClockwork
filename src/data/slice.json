@@ -648,6 +648,12 @@
       "name": "태엽 반동",
       "description": "3타가 적중하면 회피가 바로 준비된다.",
       "tier": "rare"
+    },
+    {
+      "id": "spinSlash",
+      "name": "회전 렌치",
+      "description": "3타가 몸을 한 바퀴 돌며 주변의 적을 모두 벤다.",
+      "tier": "rare"
     }
   ],
   "rooms": [
@@ -681,7 +687,7 @@
           "rat"
         ]
       ],
-      "power": 0.55
+      "power": 0.8
     },
     {
       "id": "stop-03",
@@ -714,7 +720,7 @@
           "guard"
         ]
       ],
-      "power": 0.6
+      "power": 0.85
     },
     {
       "id": "stop-04",
@@ -734,7 +740,7 @@
         ],
         [
           "nutcracker",
-          "rat",
+          "musicbox",
           "rat",
           "rat",
           "nutcracker",
@@ -748,7 +754,7 @@
           "guard"
         ]
       ],
-      "power": 0.65
+      "power": 0.9
     },
     {
       "id": "stop-05",
@@ -768,7 +774,7 @@
         [
           "pikeman",
           "pikeman",
-          "rat",
+          "musicbox",
           "rat",
           "rat",
           "guard",
@@ -777,13 +783,13 @@
         ],
         [
           "nutcracker",
-          "rabbit",
+          "musicbox",
           "trumpet",
           "nutcracker",
           "rabbit"
         ]
       ],
-      "power": 0.7
+      "power": 0.95
     },
     {
       "id": "stop-06",
@@ -813,27 +819,30 @@
           "guard",
           "trumpet",
           "guard",
-          "guard"
+          "guard",
+          "elite"
         ],
         [
           "jackbox",
-          "rat",
+          "musicbox",
           "rat",
           "rat",
           "rabbit",
           "rat",
           "rat",
-          "guard"
+          "guard",
+          "elite"
         ],
         [
           "nutcracker",
           "musicbox",
           "trumpet",
           "nutcracker",
-          "trumpet"
+          "trumpet",
+          "elite"
         ]
       ],
-      "power": 0.75
+      "power": 1.0
     },
     {
       "id": "stop-09",
@@ -844,21 +853,23 @@
       "waves": [
         [
           "drummer",
-          "rabbit",
+          "musicbox",
           "rabbit",
           "trumpet",
           "rabbit",
-          "rabbit"
+          "rabbit",
+          "elite"
         ],
         [
           "nutcracker",
           "pikeman",
           "guard",
-          "rat",
+          "musicbox",
           "rat",
           "nutcracker",
           "guard",
-          "guard"
+          "guard",
+          "elite"
         ],
         [
           "musicbox",
@@ -866,10 +877,11 @@
           "trumpet",
           "trumpet",
           "rabbit",
-          "rabbit"
+          "rabbit",
+          "elite"
         ]
       ],
-      "power": 0.74
+      "power": 1.0
     },
     {
       "id": "stop-10",
@@ -887,27 +899,30 @@
           "trumpet",
           "guard",
           "guard",
-          "guard"
+          "guard",
+          "elite"
         ],
         [
           "nutcracker",
           "nutcracker",
           "jackbox",
-          "rat",
+          "musicbox",
           "rat",
           "nutcracker",
           "nutcracker",
-          "rat"
+          "rat",
+          "elite"
         ],
         [
           "pikeman",
-          "rabbit",
+          "musicbox",
           "trumpet",
           "rabbit",
-          "rabbit"
+          "rabbit",
+          "elite"
         ]
       ],
-      "power": 0.74
+      "power": 1.0
     },
     {
       "id": "stop-11",
@@ -919,8 +934,8 @@
         [
           "jackbox",
           "jackbox",
-          "rat",
-          "rat",
+          "elite",
+          "musicbox",
           "rat",
           "rat",
           "guard",
@@ -928,7 +943,7 @@
         ],
         [
           "nutcracker",
-          "drummer",
+          "elite",
           "guard",
           "trumpet",
           "trumpet",
@@ -938,8 +953,8 @@
         ],
         [
           "guard",
-          "rabbit",
-          "rabbit",
+          "elite",
+          "musicbox",
           "musicbox",
           "trumpet",
           "guard",
@@ -947,7 +962,7 @@
           "rabbit"
         ]
       ],
-      "power": 0.77
+      "power": 1.15
     },
     {
       "id": "stop-12",
@@ -957,35 +972,35 @@
       "short": "정예",
       "waves": [
         [
-          "elite",
           "spintop",
           "pikeman",
           "trumpet",
           "trumpet",
           "elite",
+          "elite",
           "guard",
-          "guard"
+          "elite"
         ],
         [
           "nutcracker",
           "guard",
           "jackbox",
-          "rat",
-          "rat",
+          "elite",
+          "musicbox",
           "nutcracker",
           "nutcracker",
           "rat"
         ],
         [
-          "elite",
           "drummer",
-          "rabbit",
+          "elite",
           "trumpet",
           "elite",
-          "rabbit"
+          "musicbox",
+          "elite"
         ]
       ],
-      "power": 0.76
+      "power": 1.2
     },
     {
       "id": "stop-13",
@@ -1067,7 +1082,7 @@
     },
     "skillCooldownReduction": {
       "name": "고속 배선",
-      "description": "속성 기술과 융합을 더 자주 사용한다.",
+      "description": "속성 기술과 융합의 재사용 대기 시간이 줄어든다.",
       "tier": "rare"
     },
     "dodgeCooldownReduction": {
@@ -1097,7 +1112,7 @@
     },
     "killHeal": {
       "name": "수리 회로",
-      "description": "적을 처치할 때마다 체력을 회복한다.",
+      "description": "적을 처치할 때마다 체력을 조금 회복한다.",
       "tier": "rare"
     },
     "damageReduction": {
@@ -1349,6 +1364,30 @@
       "description": "적을 밀지 않고 꿰뚫고 지나가며, 지나친 적을 내 뒤쪽으로 끌어당긴다.",
       "pull": 1.4,
       "tier": "rare"
+    },
+    {
+      "id": "iceBurst",
+      "skill": "coolingField",
+      "name": "냉각 폭발",
+      "description": "장판이 사라질 때 얼음이 터져 안에 있는 적에게 24 피해를 준다.",
+      "damage": 24,
+      "tier": "rare"
+    },
+    {
+      "id": "extraStrike",
+      "skill": "capacitorStrike",
+      "name": "연쇄 낙뢰",
+      "description": "낙뢰가 한 번 더 떨어진다.",
+      "extraHits": 1,
+      "tier": "rare"
+    },
+    {
+      "id": "vortexBlast",
+      "skill": "vortexIntake",
+      "name": "압축 방출",
+      "description": "마지막 타격이 빨아들인 적을 바깥으로 튕겨 낸다. 보스는 밀리지 않는다.",
+      "knockback": 1.4,
+      "tier": "rare"
     }
   ],
   "elementTraits": [
@@ -1417,9 +1456,68 @@
       "staggerBonus": 0.3,
       "stunMultiplier": 3,
       "tier": "special"
+    },
+    {
+      "id": "shockSpread",
+      "element": "lightning",
+      "name": "감전 전염",
+      "description": "감전된 적을 처치하면 가장 가까운 적에게 감전이 옮는다.",
+      "range": 3,
+      "tier": "rare"
+    },
+    {
+      "id": "emberSpread",
+      "element": "fire",
+      "name": "불씨 전이",
+      "description": "화상 걸린 적이 쓰러지면 가까운 적들에게 화상이 옮는다.",
+      "range": 2.5,
+      "tier": "rare"
+    },
+    {
+      "id": "frostCrack",
+      "element": "ice",
+      "name": "빙결 파쇄",
+      "description": "얼어붙은 적을 렌치로 치면 피해가 40% 늘어난다.",
+      "damageBonus": 0.4,
+      "tier": "rare"
+    },
+    {
+      "id": "dodgeGust",
+      "element": "wind",
+      "name": "회피 돌풍",
+      "description": "회피할 때 주변의 일반 적을 밀어낸다.",
+      "radius": 1.8,
+      "knockback": 1,
+      "tier": "rare"
     }
   ],
   "statChapters": {
     "ranksPerChapter": 10
-  }
+  },
+  "perks": [
+    {
+      "id": "piggyBank",
+      "name": "저금통",
+      "description": "방을 깰 때마다 가진 동전의 10%를 이자로 받는다(한 번에 최대 15).",
+      "rate": 0.1,
+      "cap": 15,
+      "tier": "rare"
+    },
+    {
+      "id": "overheatEngine",
+      "name": "과열 엔진",
+      "description": "주는 피해가 30% 늘지만 받는 피해도 20% 는다.",
+      "damageBonus": 0.3,
+      "damageTaken": 0.2,
+      "tier": "special"
+    },
+    {
+      "id": "glassSpring",
+      "name": "유리 태엽",
+      "description": "최대 체력이 30 줄지만 치명타 확률이 20% 오른다.",
+      "maxHpLoss": 30,
+      "critBonus": 0.2,
+      "tier": "special"
+    }
+  ]
 }

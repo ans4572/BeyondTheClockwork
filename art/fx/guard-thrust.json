@@ -1,0 +1,209 @@
+{
+ "frames": [
+  {
+   "filename": "btc-guard-thrust 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 1.png",
+   "frame": {
+    "x": 42,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 2.png",
+   "frame": {
+    "x": 84,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 3.png",
+   "frame": {
+    "x": 0,
+    "y": 20,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 4.png",
+   "frame": {
+    "x": 42,
+    "y": 20,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 5.png",
+   "frame": {
+    "x": 84,
+    "y": 20,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-guard-thrust 6.png",
+   "frame": {
+    "x": 0,
+    "y": 40,
+    "w": 42,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 42,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 42,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.09523809523809523,
+    "y": 0.5
+   },
+   "duration": 63
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-guard-thrust.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 126,
+   "h": 60
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 4,
+   "y": 10
+  },
+  "frameTags": [
+   {
+    "name": "btc-guard-thrust",
+    "from": 0,
+    "to": 6,
+    "direction": "forward"
+   }
+  ]
+ }
+}

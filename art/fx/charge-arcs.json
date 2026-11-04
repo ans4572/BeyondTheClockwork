@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "btc-charge-arcs 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 1.png",
+   "frame": {
+    "x": 27,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 2.png",
+   "frame": {
+    "x": 54,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 3.png",
+   "frame": {
+    "x": 81,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 4.png",
+   "frame": {
+    "x": 0,
+    "y": 30,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 5.png",
+   "frame": {
+    "x": 27,
+    "y": 30,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 6.png",
+   "frame": {
+    "x": 54,
+    "y": 30,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 7.png",
+   "frame": {
+    "x": 81,
+    "y": 30,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 8.png",
+   "frame": {
+    "x": 0,
+    "y": 60,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 9.png",
+   "frame": {
+    "x": 27,
+    "y": 60,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 10.png",
+   "frame": {
+    "x": 54,
+    "y": 60,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charge-arcs 11.png",
+   "frame": {
+    "x": 81,
+    "y": 60,
+    "w": 27,
+    "h": 30
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 27,
+    "h": 30
+   },
+   "sourceSize": {
+    "w": 27,
+    "h": 30
+   },
+   "pivot": {
+    "x": 0.48148148148148145,
+    "y": 0.5333333333333333
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-charge-arcs.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 108,
+   "h": 90
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 13,
+   "y": 16
+  },
+  "frameTags": [
+   {
+    "name": "btc-charge-arcs",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

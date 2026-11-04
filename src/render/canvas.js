@@ -7,7 +7,10 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
+import { FX, NOTE_ART } from './fx-sprites.js';
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
+/** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
+export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', BOSS_SPRITE_SCALE = 1.3, ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
@@ -139,6 +142,24 @@ export class CanvasRenderer {
     return true;
   }
   /** A boss's phase break on the floor: the shield, then Roco's suction and cans, Brass's drums and lanes, or the soldier ring. */
+  /**
+   * The four drums sit wide round Brass, often off screen; a small board under the boss bar repeats them in the same
+   * layout, lighting with them and ticking off the ones struck in order.
+   */
+  drawDrumBoard(b, rule, now, drumArt) {
+    const c = this.ctx, cell = 11, gap = 2, cx = this.camera.x * 20 + 6 + cell + gap * 2, top = this.camera.y * 20 + 40;
+    const xs = b.drums.map(d => d.x), ys = b.drums.map(d => d.y), midX = (Math.min(...xs) + Math.max(...xs)) / 2, midY = (Math.min(...ys) + Math.max(...ys)) / 2;
+    c.save(); c.globalAlpha = 0.92; this.rect(cx - cell - gap * 2, top - gap, cell * 2 + gap * 4, cell * 2 + gap * 3, '#f6ecd2'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(Math.round(cx - cell - gap * 2), Math.round(top - gap), Math.round(cell * 2 + gap * 4), Math.round(cell * 2 + gap * 3)); c.globalAlpha = 1;
+    for (const drum of b.drums) {
+      const col = drum.x > midX ? 1 : 0, row = drum.y > midY ? 1 : 0, x = cx - cell - gap + col * (cell + gap * 2), y = top + row * (cell + gap);
+      const glow = drum.flash > now && !drum.done ? Math.min(1, (drum.flash - now) / (rule.showStep * 0.8) / 0.35) : 0;
+      if (glow) { c.fillStyle = `rgba(255, 210, 87, ${0.9 * glow})`; c.fillRect(Math.round(x - 2), Math.round(y - 2), cell + 4, cell + 4); }
+      if (drumArt) c.drawImage(drumArt, Math.round(x), Math.round(y - (glow ? 2 : 0)), cell, cell); else this.rect(x + 3, y + 5, cell - 6, cell - 8, '#c43c36');
+      if (glow) { c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.6 * glow; if (drumArt) c.drawImage(drumArt, Math.round(x), Math.round(y - 2), cell, cell); c.restore(); }
+      if (drum.done) { c.fillStyle = '#4f8a4acc'; c.fillRect(Math.round(x), Math.round(y), cell, cell); this.text('✓', x + cell / 2, y + cell - 2, '#fff4d6', 9); }
+    }
+    c.restore();
+  }
   drawPhaseBreak(enemy) {
     const c = this.ctx, g = this.game, b = enemy.breaking, rule = g.config.bossAI[enemy.type].phaseBreaks[b.index], x = enemy.x * 20, y = enemy.y * 20, now = g.s.time;
     c.save();
@@ -159,12 +180,28 @@ export class CanvasRenderer {
     }
     if (b.kind === 'drums') {
       for (const lane of b.lanes) { const left = Math.max(0, (lane.at - now) / rule.laneWarn); c.fillStyle = `rgba(190, 81, 95, ${0.1 + (1 - left) * 0.2})`; c.fillRect((lane.x - rule.laneWidth / 2) * 20, this.camera.y * 20 - 20, rule.laneWidth * 20, 900); }
+      const drumArt = this.mapImages?.get(BRASS_DRUM_ART), playing = b.phase === 'play';
       for (const drum of b.drums) {
-        const dx = drum.x * 20, dy = drum.y * 20, lit = drum.flash > now;
-        if (lit || drum.done) { c.fillStyle = drum.done ? '#4f8a4a66' : '#ffd257aa'; c.beginPath(); c.ellipse(dx, dy - 4, 16, 12, 0, 0, TAU); c.fill(); }
-        this.rect(dx - 9, dy - 12, 18, 10, '#c43c36'); c.fillStyle = '#fff4d6'; c.beginPath(); c.ellipse(dx, dy - 12, 9, 3.5, 0, 0, TAU); c.fill();
-        c.strokeStyle = '#2b3345'; c.lineWidth = 1.2; c.strokeRect(dx - 9, dy - 12, 18, 10); c.beginPath(); c.ellipse(dx, dy - 12, 9, 3.5, 0, 0, TAU); c.stroke();
+        // A drum being shown hops, rings the floor gold and sends a column of light up, so the order can be followed.
+        const dx = drum.x * 20, dy = drum.y * 20, left = Math.max(0, (drum.flash - now) / (rule.showStep * 0.8)), glow = Math.min(1, left / 0.35), hop = left ? Math.sin((1 - left) * Math.PI) * 7 : 0;
+        if (drum.done) { c.fillStyle = '#4f8a4a77'; c.beginPath(); c.ellipse(dx, dy, 15, 6, 0, 0, TAU); c.fill(); }
+        else if (playing) { c.strokeStyle = '#ffd257'; c.lineWidth = 1.5; c.globalAlpha = 0.45 + 0.35 * Math.sin(now * 6); c.setLineDash([3, 3]); c.beginPath(); c.ellipse(dx, dy, 15, 6, 0, 0, TAU); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; }
+        if (glow && !drum.done) {
+          const column = c.createLinearGradient(0, dy - 90, 0, dy); column.addColorStop(0, 'rgba(255, 210, 87, 0)'); column.addColorStop(1, `rgba(255, 226, 120, ${0.8 * glow})`);
+          c.fillStyle = column; c.fillRect(dx - 13, dy - 90, 26, 90);
+          const spread = 1 - left; c.strokeStyle = '#ffd257'; c.lineWidth = 3; c.globalAlpha = glow; c.beginPath(); c.ellipse(dx, dy, 14 + spread * 18, 6 + spread * 7, 0, 0, TAU); c.stroke();
+          c.fillStyle = '#fff4d6'; c.beginPath(); c.ellipse(dx, dy - 22 - hop, 20, 15, 0, 0, TAU); c.globalAlpha = 0.5 * glow; c.fill(); c.globalAlpha = 1;
+        }
+        if (drumArt) {
+          const size = 34, x0 = Math.round(dx - size / 2), y0 = Math.round(dy - size + 4 - hop);
+          c.drawImage(drumArt, x0, y0, size, size);
+          if (glow && !drum.done) { c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.75 * glow; c.drawImage(drumArt, x0, y0, size, size); c.restore(); }
+        } else {
+          this.rect(dx - 9, dy - 12 - hop, 18, 10, glow ? '#ffd257' : '#c43c36'); c.strokeStyle = '#2b3345'; c.lineWidth = 1.2; c.strokeRect(dx - 9, dy - 12 - hop, 18, 10);
+        }
+        if (drum.done) this.text('✓', dx, dy - 30, '#4f8a4a', 12);
       }
+      this.drumBoard = [b, rule, now, drumArt];
     }
     if (b.kind === 'flags') {
       for (const s of b.soldiers) {
@@ -212,6 +249,59 @@ export class CanvasRenderer {
   tag(label, x, top) {
     this.rect(x - label.length * 3.5 - 4, top - 1, label.length * 7 + 8, 11, '#fff8e8');
     this.text(label, x, top + 7, '#3f5c55', 8);
+  }
+  /** One frame of an effect sheet (art/fx), placed by its anchor, turned and stretched as asked. */
+  drawFxFrame(name, frame, x, y, { angle = 0, sx = 1, sy = 1, alpha = 1 } = {}) {
+    const fx = FX[name], image = this.mapImages?.get(fx.sheet);
+    if (!image) return false;
+    const f = Math.max(0, Math.min(fx.frames - 1, Math.floor(frame) % fx.frames)), c = this.ctx;
+    c.save(); c.globalAlpha = alpha; c.translate(x, y); if (angle) c.rotate(angle); c.scale(sx, sy);
+    c.drawImage(image, (f % fx.cols) * fx.w, Math.floor(f / fx.cols) * fx.h, fx.w, fx.h, -fx.anchor[0], -fx.anchor[1], fx.w, fx.h);
+    c.restore(); return true;
+  }
+  /** A jagged spark of current between two points, redrawn each frame so it crackles. */
+  zigzag(x1, y1, x2, y2, seed) {
+    const c = this.ctx, n = 6, wobble = k => { const v = Math.sin(k * 91.7) * 43758.5; return v - Math.floor(v) - 0.5; };
+    const pts = Array.from({ length: n }, (_, i) => { const t = (i + 1) / n, j = i < n - 1 ? 10 : 0; return [x1 + (x2 - x1) * t + wobble(seed + i * 7.3) * j, y1 + (y2 - y1) * t + wobble(seed + i * 3.1 + 5) * j]; });
+    for (const [w, col] of [[3, '#fff8cf'], [1.2, '#ffd257']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x1, y1); for (const [px, py] of pts) c.lineTo(px, py); c.stroke(); }
+  }
+  /** The picture an effect asks for by `look`; false while its sheet is not loaded, so the plain shape is drawn. */
+  drawLook(fx, x, y, t) {
+    const g = this.game, frameAt = name => t * FX[name].frames;
+    switch (fx.look) {
+      case 'thrust': { const tx = fx.targetX * 20, ty = fx.targetY * 20, len = Math.hypot(tx - x, ty - y); return this.drawFxFrame('guardThrust', frameAt('guardThrust'), x, y - 8, { angle: Math.atan2(ty - y, tx - x), sx: Math.max(0.6, len / 36), sy: 1.4 }); }
+      case 'quake': { const k = fx.value * 20 / 44; return this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: k, sy: k, alpha: 0.85 }); }
+      case 'boom': { const k = Math.max(1, fx.value * 20 / 20); return this.drawFxFrame('ratExplosion', frameAt('ratExplosion'), x, y + 4, { sx: k, sy: k }); }
+      case 'wave': { const k = Math.max(0.7, fx.value * 20 / 84); return this.drawFxFrame('trumpetWave', frameAt('trumpetWave'), x, y - 10, { angle: fx.angle, sx: k, sy: k }); }
+      case 'heatSwing': return this.drawFxFrame('heatSwing', frameAt('heatSwing'), x, y - 10, { angle: fx.angle, sx: 1.6, sy: 1.6 });
+      case 'deflect': return this.drawFxFrame('deflectFlash', frameAt('deflectFlash'), x, y - 8);
+      case 'ready': { const at = fx.follow ? g.p : fx; return this.drawFxFrame('readyPop', frameAt('readyPop'), at.x * 20, at.y * 20 - 34); }
+      case 'zap': return this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 24);
+      case 'zapBig': return this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 20, { sx: 1.8, sy: 1.8 });
+      case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
+      case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
+      case 'dash': return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, alpha: 1 - t * 0.6 });
+      case 'march': {
+        // Boots come down along the lane one after another, from where the march starts to where it ends.
+        const tx = fx.targetX * 20, ty = fx.targetY * 20, steps = Math.max(1, Math.round(Math.hypot(tx - x, ty - y) / 24));
+        if (!this.mapImages?.get(FX.marchStomp.sheet)) return false;
+        for (let i = 0; i <= steps; i++) { const k = i / steps, local = t * 1.5 - k * 0.5; if (local >= 0 && local < 1) this.drawFxFrame('marchStomp', local * FX.marchStomp.frames, x + (tx - x) * k, y + (ty - y) * k); }
+        return true;
+      }
+      case 'spanner': {
+        // The charged spanner flies to its first enemy, bursts there, and current leaps on to the others.
+        if (!this.mapImages?.get(FX.conductiveSpanner.sheet)) return false;
+        const tx = fx.targetX * 20, ty = fx.targetY * 20 - 24, sx = x, sy = y - 16, fly = Math.min(1, t / 0.35);
+        if (t < 0.35) this.drawFxFrame('conductiveSpanner', this.visualTime * 12, sx + (tx - sx) * fly, sy + (ty - sy) * fly, { angle: Math.atan2(ty - sy, tx - sx) });
+        else {
+          const k = (t - 0.35) / 0.65;
+          this.drawFxFrame('electricHit', k * FX.electricHit.frames, tx, ty);
+          for (const [i, e] of (fx.chain || []).entries()) { const ex = e.x * 20, ey = e.y * 20 - 24; if (k < 0.6) this.zigzag(tx, ty, ex, ey, Math.floor(this.visualTime * 20) + i * 13); this.drawFxFrame('electricHit', Math.max(0, k - 0.1) * FX.electricHit.frames, ex, ey); }
+        }
+        return true;
+      }
+    }
+    return false;
   }
   drawCastEffect({ effect, frame, x, y, lift }) {
     const { frameWidth: w, frameHeight: h, columns, anchor, scale = 1 } = effect, size = scale / 2, left = Math.round((x * 20 - anchor[0] * size) * 2) / 2, top = Math.round(((y - lift) * 20 - anchor[1] * size) * 2) / 2;
@@ -494,18 +584,19 @@ export class CanvasRenderer {
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
     for (const cast of s.casts) {
       // Shards broken off a frost bolt: small spinning ice chips.
-      if (cast.shape === 'projectile') for (const bit of cast.projectiles) if (bit.shard && !bit.done) { const x = bit.x * 20, y = bit.y * 20 - 8, r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore(); }
+      if (cast.shape === 'projectile') for (const bit of cast.projectiles) if (bit.shard && !bit.done) { if (this.drawFxFrame('frostBolt', this.visualTime * 12, bit.x * 20, bit.y * 20 - 8, { angle: bit.angle, sx: 0.55, sy: 0.55 })) continue; const x = bit.x * 20, y = bit.y * 20 - 8, r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore(); }
       if (cast.shape === 'patch') {
         // A fire patch from the ember trail: a low flickering flame on the floor, fading as its pulses run out.
         const x = cast.x * 20, y = cast.y * 20, life = 1 - cast.pulse / cast.hits, flick = Math.sin(this.visualTime * 18 + cast.x * 7) * 1.5;
+        if (this.drawFxFrame('groundFire', this.visualTime * 12 + cast.x * 3, x, y, { sx: cast.radius * 20 / 16, sy: cast.radius * 20 / 16, alpha: 0.45 + 0.55 * life })) continue;
         c.save(); c.globalAlpha = 0.35 + 0.5 * life; c.fillStyle = '#e8742f'; c.beginPath(); c.ellipse(x, y, cast.radius * 16, cast.radius * 7, 0, 0, TAU); c.fill();
         c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(x - 5, y); c.quadraticCurveTo(x - 3, y - 9 - flick, x, y - 14 - flick); c.quadraticCurveTo(x + 3, y - 9 + flick, x + 5, y); c.fill(); c.restore();
       }
       if (cast.shape === 'charge') {
         // A charge left on an enemy: a ring that closes in as the burst comes.
         const left = Math.max(0, cast.next - cast.age), share = left / (cast.delayed?.delay || 3) || left / 3, x = cast.x * 20, y = cast.y * 20 - 10;
-        c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke();
-        c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); c.restore();
+        c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore();
+        if (!this.drawFxFrame('chargeArcs', this.visualTime * 12, x, y - 8)) { c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); }
       }
       if(cast.shape==='clamp'){
         const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
@@ -539,7 +630,12 @@ export class CanvasRenderer {
         c.save(); c.globalAlpha = 0.18; this.circle(cast.x * 20, cast.y * 20, cast.radius * 20, '#8c638f'); c.restore();
         for (let i = 0; i < 3; i++) { c.strokeStyle = '#9d74a1'; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, ((cast.age + i * 0.5) % 1.5) / 1.5 * cast.radius * 20, 0, TAU); c.stroke(); }
       }
-      for (const bullet of cast.projectiles || []) if (!bullet.done) { this.circle(bullet.x * 20, bullet.y * 20, 4, cast.color); this.rect(bullet.x * 20 - 2, bullet.y * 20 - 2, 4, 4, '#e7fbec'); }
+      for (const bullet of cast.projectiles || []) if (!bullet.done) {
+        // Frost bolts fly as ice lances pointed along their path; their broken-off shards are drawn above.
+        if (bullet.shard) continue;
+        if (cast.skillId === 'frostBolt' && this.drawFxFrame('frostBolt', this.visualTime * 12, bullet.x * 20, bullet.y * 20 - 8, { angle: bullet.angle })) continue;
+        this.circle(bullet.x * 20, bullet.y * 20, 4, cast.color); this.rect(bullet.x * 20 - 2, bullet.y * 20 - 2, 4, 4, '#e7fbec');
+      }
     }
     const onScreen = ({ polygon }) => polygon.some(([x, y]) => x > this.camera.x - 4 && x < this.camera.x + SCREEN_UNITS[0] + 4 && y > this.camera.y - 4 && y < this.camera.y + SCREEN_UNITS[1] + 4);
     const occluders = mapImage ? (map.occluders || []).filter(onScreen).map(o => ({ y: o.baseY, occluder: o })) : [];
@@ -570,7 +666,7 @@ export class CanvasRenderer {
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
       if (!actor.player && actor.hp > 0) {
         const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) * BODY_SCALE / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
-        if (!actor.boss) { this.rect(actor.x * 20 - width / 2, yy, width, 3, '#869282'); this.rect(actor.x * 20 - width / 2, yy, width * Math.max(0, actor.hp / actor.maxHp), 3, '#b38578'); }
+        if (!actor.boss) { const left = actor.x * 20 - width / 2; this.rect(left - 1, yy - 1, width + 2, 6, '#2b3345'); this.rect(left, yy, width, 4, '#5e4a52'); this.rect(left, yy, width * Math.max(0, actor.hp / actor.maxHp), 4, '#e0564c'); }
         if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
         this.drawStatuses(actor, actor.boss ? yy + 11 : yy - 13);
@@ -581,12 +677,30 @@ export class CanvasRenderer {
       this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54));
     }
     this.drawColumn(); this.drawBossState();
-    for (const bullet of s.projectiles) { this.circle(bullet.x * 20, bullet.y * 20, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bullet.x * 20, bullet.y * 20, 2, '#f7e6b0'); }
+    const note = this.mapImages?.get(NOTE_ART);
+    for (const bullet of s.projectiles) {
+      const bx = bullet.x * 20, by = bullet.y * 20;
+      // An enemy's shot is a note with a gold tail; one batted back stays a plain pellet.
+      if (note && !bullet.friendly) {
+        const back = bullet.angle + Math.PI, bob = Math.sin(this.visualTime * 14 + bullet.x) * 1.5;
+        for (let i = 1; i <= 4; i++) { c.globalAlpha = 0.45 - i * 0.09; this.circle(bx + Math.cos(back) * i * 4, by - 6 + Math.sin(back) * i * 4, 3 - i * 0.4, '#ffd257'); }
+        c.globalAlpha = 1; c.drawImage(note, Math.round(bx - 8), Math.round(by - 20 + bob), 16, 19);
+        continue;
+      }
+      this.circle(bx, by, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bx, by, 2, '#f7e6b0');
+    }
+    // Wrench buffs on the player: gold motes while a dash-charged blow is ready, rising arrows while scrap haste lasts.
+    if (['combat', 'route'].includes(s.mode)) {
+      if (g.p.strikeUntil > s.time) this.drawFxFrame('chargedMotes', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 16);
+      if (g.p.hasteUntil > s.time) this.drawFxFrame('hasteArrows', this.visualTime * 12, g.p.x * 20, g.p.y * 20 + 2, { alpha: 0.85 });
+    }
     for (const fx of s.effects) {
       if (fx.type === 'number' && !s.profile.settings.damageNumbers) continue;
       if (spriteFx && ['crosscut', 'iceClamp'].includes(fx.type)) continue;
       if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
+      // Blows and skills with a picture of their own play it; the plain shapes below are the fallback.
+      if (fx.look && this.drawLook(fx, x, y, fraction)) continue;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
       // Critical hits show in red, a little larger.
       if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
@@ -649,6 +763,8 @@ export class CanvasRenderer {
     }
     const hurtLeft = this.hurtUntil - performance.now();
     if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    // The drum board goes over the room, under the screen-wide flashes.
+    if (this.drumBoard) { this.drawDrumBoard(...this.drumBoard); this.drumBoard = null; }
     if (pulseLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.16 * pulseLeft; c.fillStyle = '#ffd257'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     const flashLeft = (this.flashUntil || 0) - performance.now();
     if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }

@@ -1,0 +1,391 @@
+{
+ "frames": [
+  {
+   "filename": "btc-trumpet-wave 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 1.png",
+   "frame": {
+    "x": 88,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 2.png",
+   "frame": {
+    "x": 176,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 3.png",
+   "frame": {
+    "x": 264,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 4.png",
+   "frame": {
+    "x": 0,
+    "y": 46,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 5.png",
+   "frame": {
+    "x": 88,
+    "y": 46,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 6.png",
+   "frame": {
+    "x": 176,
+    "y": 46,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 7.png",
+   "frame": {
+    "x": 264,
+    "y": 46,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 8.png",
+   "frame": {
+    "x": 0,
+    "y": 92,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 9.png",
+   "frame": {
+    "x": 88,
+    "y": 92,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 10.png",
+   "frame": {
+    "x": 176,
+    "y": 92,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 11.png",
+   "frame": {
+    "x": 264,
+    "y": 92,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 12.png",
+   "frame": {
+    "x": 0,
+    "y": 138,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  },
+  {
+   "filename": "btc-trumpet-wave 13.png",
+   "frame": {
+    "x": 88,
+    "y": 138,
+    "w": 88,
+    "h": 46
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 46
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 46
+   },
+   "pivot": {
+    "x": 0.06818181818181818,
+    "y": 0.5
+   },
+   "duration": 63
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-trumpet-wave.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 352,
+   "h": 184
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 6,
+   "y": 23
+  },
+  "frameTags": [
+   {
+    "name": "btc-trumpet-wave",
+    "from": 0,
+    "to": 13,
+    "direction": "forward"
+   }
+  ]
+ }
+}

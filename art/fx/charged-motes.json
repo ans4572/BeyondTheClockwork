@@ -1,0 +1,651 @@
+{
+ "frames": [
+  {
+   "filename": "btc-charged-motes 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 1.png",
+   "frame": {
+    "x": 34,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 2.png",
+   "frame": {
+    "x": 68,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 3.png",
+   "frame": {
+    "x": 102,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 4.png",
+   "frame": {
+    "x": 136,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 5.png",
+   "frame": {
+    "x": 0,
+    "y": 20,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 6.png",
+   "frame": {
+    "x": 34,
+    "y": 20,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 7.png",
+   "frame": {
+    "x": 68,
+    "y": 20,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 8.png",
+   "frame": {
+    "x": 102,
+    "y": 20,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 9.png",
+   "frame": {
+    "x": 136,
+    "y": 20,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 10.png",
+   "frame": {
+    "x": 0,
+    "y": 40,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 11.png",
+   "frame": {
+    "x": 34,
+    "y": 40,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 12.png",
+   "frame": {
+    "x": 68,
+    "y": 40,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 13.png",
+   "frame": {
+    "x": 102,
+    "y": 40,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 14.png",
+   "frame": {
+    "x": 136,
+    "y": 40,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 15.png",
+   "frame": {
+    "x": 0,
+    "y": 60,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 16.png",
+   "frame": {
+    "x": 34,
+    "y": 60,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 17.png",
+   "frame": {
+    "x": 68,
+    "y": 60,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 18.png",
+   "frame": {
+    "x": 102,
+    "y": 60,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 19.png",
+   "frame": {
+    "x": 136,
+    "y": 60,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 20.png",
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 21.png",
+   "frame": {
+    "x": 34,
+    "y": 80,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 22.png",
+   "frame": {
+    "x": 68,
+    "y": 80,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  },
+  {
+   "filename": "btc-charged-motes 23.png",
+   "frame": {
+    "x": 102,
+    "y": 80,
+    "w": 34,
+    "h": 20
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 34,
+    "h": 20
+   },
+   "sourceSize": {
+    "w": 34,
+    "h": 20
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "btc-charged-motes.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 170,
+   "h": 100
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 17,
+   "y": 10
+  },
+  "frameTags": [
+   {
+    "name": "btc-charged-motes",
+    "from": 0,
+    "to": 23,
+    "direction": "forward"
+   }
+  ]
+ }
+}

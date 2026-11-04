@@ -198,8 +198,8 @@ test('bosses do not move when vortex pulls normal enemies', () => {
 });
 test('shock discharge does not recurse or ignore its per-target lock', () => {
   const g = arena(), e = inert(g, 'captainBrass'), other = inert(g, 'captainBrass', { x: 9.5, y: 8 });
-  e.statuses.shock = other.statuses.shock = 3; g.triggerShock(e); assert.equal(e.hp, 990); assert.equal(other.hp, 990);
-  g.triggerShock(other); assert.equal(other.hp, 990); step(g, 0.6); g.triggerShock(other); assert.equal(other.hp, 980);
+  const full = e.maxHp; e.statuses.shock = other.statuses.shock = 3; g.triggerShock(e); assert.equal(e.hp, full - 10); assert.equal(other.hp, full - 10);
+  g.triggerShock(other); assert.equal(other.hp, full - 10); step(g, 0.6); g.triggerShock(other); assert.equal(other.hp, full - 20);
 });
 test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', () => {
   const g = arena(), e = inert(g); g.basicAttack(); g.beginEnemyTell(e, 'melee'); g.p.cooldowns.heatSwing = 5;
@@ -426,4 +426,44 @@ test('a bursting rat reaches the player\'s body at the ring\'s edge and still pa
   assert.equal(rat.hp, 0);
   assert.ok(g.p.hp < hp);
   assert.ok(g.s.run.coins > coins || g.s.run.loot?.kills === 1);
+});
+
+test('the reward cards can be drawn again once per reward screen', () => {
+  const g = hub(); g.startRun(7); completeRoom(g);
+  assert.equal(g.s.mode, 'reward'); const first = JSON.stringify(g.s.run.rewardChoices);
+  assert.equal(g.rerollRewards(), true); assert.equal(g.s.run.rewardChoices.length, 3); assert.notEqual(JSON.stringify(g.s.run.rewardChoices), first);
+  assert.equal(g.rerollRewards(), false, 'only once');
+  g.chooseReward(0); assert.equal(g.s.run.rerolled, false, 'the next reward screen gets its own');
+});
+
+test('run perks: the piggy bank pays interest, the overheat engine trades damage both ways, the glass spring trades health for crits', () => {
+  const g = hub(); g.startRun(7); completeRoom(g);
+  g.s.run.rewardChoices = [{ kind: 'perk', id: 'glassSpring' }]; const before = g.p.maxHp; g.chooseReward(0);
+  assert.equal(g.p.maxHp, before - 30); assert.ok(g.s.run.perks.includes('glassSpring'));
+  g.s.run.perks.push('piggyBank'); g.nextNode(0); g.s.run.coins = 100; completeRoom(g);
+  assert.ok(g.s.run.coins >= 110, 'ten percent interest on the clear');
+  g.s.run.perks.push('overheatEngine'); const e = g.s.enemies[0] || { burnStacks: [] };
+  assert.ok(g.damageMultiplier(e) > 1.29);
+});
+test('the spin wrench makes the third blow reach behind the player', () => {
+  for (const spin of [false, true]) {
+    const g = arena(), behind = inert(g, 'guard', { x: 7, y: 8 }), full = behind.hp;
+    if (spin) g.s.run.mods.push('spinSlash');
+    g.p.combo = 2; g.p.comboExpires = 1e9; g.basicAttack(); step(g, 0.8);
+    assert.equal(behind.hp < full, spin, spin ? 'the spin reaches behind' : 'a plain third blow does not');
+  }
+});
+
+test('the six balancing cards: more strikes, an ice burst, a vortex blast, frozen cracks, a dodge gust and spreading embers', () => {
+  const g = arena(); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }, { element: 'lightning', level: 1, rarity: 'common' }];
+  g.s.run.skillMods = ['extraStrike', 'iceBurst']; g.s.run.traits = ['frostCrack', 'dodgeGust', 'emberSpread'];
+  const strike = data.combat.skills.find(s => s.id === 'capacitorStrike'), field = data.combat.skills.find(s => s.id === 'coolingField');
+  g.makeCast(strike, data.slice.skillBehavior.capacitorStrike, { level: 1, rarity: 'common' });
+  assert.equal(g.s.casts.at(-1).hits, strike.hits + 1);
+  g.makeCast(field, data.slice.skillBehavior.coolingField, { level: 1, rarity: 'common' }); assert.equal(g.s.casts.at(-1).finisher, 24);
+  const e = inert(g, 'guard', { x: 9, y: 8 }), plain = g.damageMultiplier(e, true); e.frozenUntil = 1e9;
+  assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.4) < 1e-9);
+  const before = e.x; g.p.dodgeReady = 0; g.dodge(); assert.ok(e.x > before, 'the gust pushes the guard away');
+  const near = inert(g, 'guard', { x: 10, y: 8 }); e.burnStacks = [1e9]; g.hitEnemy(e, 1e6, {});
+  assert.ok(Object.keys(near.statusApplied).length > 0, 'the burn passed on');
 });
