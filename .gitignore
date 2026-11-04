@@ -25,3 +25,7 @@ art/**/background-v1*
 art/**/*.zip
 art/**/concept.png
 _workspace/
+# Full-size painted sources the game does not load (it uses the .webp next to them).
+art/**/background-compact-v*.png
+art/world-map/clockwork-island-v*.png
+tmp/

@@ -33,12 +33,13 @@ test('the collector stands in the middle of the depot, on its floor', () => {
 });
 
 test('solid props block bodies inside the floor', () => {
-  const g = run(), stall = placeOf(maps, maps.maps['stop-03']);
-  g.s.run.node = 1;
-  g.p.x = 19.8; g.p.y = 23;
+  // The flower planter in the middle of the first square stops a body walking up into it.
+  const g = run(), square = placeOf(maps, maps.maps['stop-02']);
+  g.s.run.node = 0;
+  g.p.x = 19.2; g.p.y = 17;
   for (let step = 0; step < 100; step++) g.move(g.p, 0, -0.1);
-  assert.ok(fitsMap(g.p.x, g.p.y, slice.arena.playerRadius, stall));
-  assert.ok(g.p.y > 20, `stopped at ${g.p.y}`);
+  assert.ok(fitsMap(g.p.x, g.p.y, slice.arena.playerRadius, square));
+  assert.ok(g.p.y > 14.4, `stopped at ${g.p.y}`);
 });
 
 test('a walk across every combat map stays on its floor', () => {

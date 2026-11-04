@@ -80,7 +80,7 @@ test('the new economy, dodge, energy and status stats each do their job', () => 
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
-  assert.equal(j.s.run.baseGears, 14); assert.equal(j.s.run.coins, 21);
+  assert.equal(j.s.run.baseGears, 21); assert.equal(j.s.run.coins, 31);
   assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.5) < 1e-9);
   const b = arena(), burned = inert(b); burned.hp = burned.maxHp = 1000; b.s.profile.stats.statusPower = 20; burned.burnStacks = [b.s.time + 4]; burned.burnTick = b.s.time; b.updateEnemies(1 / 60);
   assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.5)) < 1e-9);
@@ -207,8 +207,8 @@ test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', ()
 });
 test('first return without a cleared combat gives no bonus; valid return gives it once', () => {
   const g = hub(); g.startRun(4); g.returnToHub(); assert.equal(g.s.profile.freeGears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
-  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 25);
-  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 35);
+  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 30);
+  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 45);
 });
 test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choices', () => {
   const g = arena(); inert(g); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }]; g.castSkill(0, { x: 10, y: 8 }); step(g, 0.05);
@@ -220,7 +220,7 @@ test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choi
   assert.deepEqual(resumed.s.run.rewardChoices, choices); resumed.offerRewards(); assert.deepEqual(resumed.s.run.rewardChoices, choices);
   assert.equal(resumed.finishCombat(), false); assert.equal(resumed.s.profile.freeGears, gears); pick(resumed); assert.equal(resumed.chooseReward(0), false);
 });
-test('twelve-stage completion pays exactly 180 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
+test('twelve-stage completion pays exactly 270 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
   const g = hub(); g.startRun(123); const seen = [], last = data.slice.rooms.length - 1;
   assert.equal(g.s.mode, 'combat');
   for (let node = 0; node <= last; node++) {
@@ -233,7 +233,7 @@ test('twelve-stage completion pays exactly 180 base gears and records bosses onl
     }
     if (node < last) assert.equal(g.nextNode(0), true);
   }
-  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 180);
+  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 270);
   assert.equal(g.s.profile.combatClears, 11); assert.equal(g.s.profile.bossRecords.length, 2); assert.deepEqual(g.s.profile.blueprints, ['patrolBlueprint']);
   assert.equal(g.s.profile.wins, 1); g.returnToHub('clear'); assert.equal(g.s.profile.firstReturnClaimed, true); assert.equal(g.s.run, null); assert.equal(g.p.energy, 0); assert.equal(g.skillSlots.length, 0);
 });

@@ -58,7 +58,7 @@
     "introEnemyHp": 52,
     "aggroUnits": 12,
     "aggroLinkUnits": 3.5,
-    "spreadMinUnits": 8,
+    "spreadMinUnits": 5,
     "spreadGapUnits": 2.5,
     "elementPrices": [
       0,

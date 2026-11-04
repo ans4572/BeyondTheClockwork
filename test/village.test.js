@@ -41,8 +41,9 @@ test('each mask matches the declared map size, and each background is drawn at t
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
 });
 
-test('each place leaves by exactly one exit, on the wide bottom street (reaching up to a portal ring where there is one)', () => {
-  for (const { exit, size } of places) assert.ok(exit.polygon.every(([, y]) => y > size[1] - (exit.portal ? 3 : 2)), exit.label);
+test('each place leaves by exactly one exit, on a street at the bottom or right edge (reaching up to a portal ring where there is one)', () => {
+  const reach = exit => exit.portal ? 3 : 2;
+  for (const { exit, size } of places) assert.ok(exit.polygon.every(([, y]) => y > size[1] - reach(exit)) || exit.polygon.every(([x]) => x > size[0] - reach(exit)), exit.label);
 });
 
 test('overhead regions sit at a depth inside the map', () => {
@@ -130,8 +131,9 @@ test('Bolt sells only through his panel, and leaving the shop reaches the next r
   g.p.x = bolt.x + 2; g.p.y = bolt.y + 1;
   assert.equal(g.nearbyNpc.character, 'bolt'); g.talk(); assert.equal(g.s.panel, 'shop');
   g.closePanel(); assert.ok(bolt);
-  g.p.x = 22; g.p.y = 23;
-  for (let i = 0; i < 200 && g.s.run.node === 5; i++) g.update(1 / 60, { y: 1 });
+  // The rest stop is left by the street on the right, as the road runs on the world map.
+  const [, at] = g.village.exit.at; g.p.x = 35; g.p.y = at;
+  for (let i = 0; i < 200 && g.s.run.node === 5; i++) g.update(1 / 60, { x: 1 });
   assert.equal(g.s.run.node, 6); assert.equal(g.s.panel, null);
 });
 
@@ -414,7 +416,8 @@ test('waves arrive on the floor of every room, away from the player', () => {
 });
 
 test('an enemy pressed against a cart works its way around it', () => {
-  const g = atHub(); g.startRun(3); g.s.run.node = 1; g.enterNode(); g.s.run.wave = 2; g.s.run.arrivals = [];
+  // The flower planter in the middle of the first square.
+  const g = atHub(); g.startRun(3); g.s.run.node = 0; g.enterNode(); g.s.run.wave = 2; g.s.run.arrivals = [];
   const [cart] = g.map.solids, xs = cart.map(([x]) => x), ys = cart.map(([, y]) => y), mid = { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: (Math.min(...ys) + Math.max(...ys)) / 2 };
   g.s.enemies = []; g.p.x = mid.x + 2; g.p.y = mid.y + 4.5;
   const guard = g.spawnEnemy('guard', { x: mid.x - 1.5, y: mid.y - 4 }); guard.ready = 1e9;

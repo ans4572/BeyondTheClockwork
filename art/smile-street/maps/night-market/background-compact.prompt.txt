@@ -1,0 +1,48 @@
+Use case: stylized-concept.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create ONE static production game environment background for Beyond the Clockwork, Smile Street: the NIGHT MARKET REST STOP halfway along the street. No fighting happens here: the player rests, meets the parts peddler at his cart, and walks on. Generate it, then save it as a PNG at the SAVE path, unchanged, with no resizing. Overwrite nothing else.
+
+REFERENCES
+- WORLD MAP: art\world-map\smile-street-road-reference.png
+  This stop sits where a side road climbs north between the two pink-tiled plazas. Take its look from there: cream stone road with pink-tiled plazas, pastel shop fronts with striped awnings and wind-up keys on the roofs, smile-face banners, brass lamps, round planters.
+- CURRENT ROOM: art\smile-street\maps\night-market\background-v2.webp
+  Keep its style, materials, pixel density, object scale, camera and market mood, and REDESIGN IT SMALLER to match the new compact rooms.
+SAVE: art\smile-street\maps\night-market\background-compact-v1.png
+
+RENDERING AND SCALE
+- Landscape 3:2, OUTPUT 2304x1536 pixels. Opaque full-bleed background.
+- Polished richly detailed pixel-art toy-town materials, navy and brass trim, SAME quarter-view isometric camera as the current room. Crisp pixel-art edges, no depth blur.
+- CRITICAL SCALE: the current image is 1536x1024. Keep paving stones, doors, lanterns, stall awnings and cart wheels the SAME SIZE IN OUTPUT PIXELS as in the current image. Do not magnify anything. The room is smaller because the stalls and walls come in closer, NOT because objects get bigger.
+
+LIGHT
+Late afternoon turning golden, the market just opening: warm low sun on the facades, and every string light, paper lantern and stall lamp already lit, so warm amber pools glow on the paving. Calm and pretty, but faintly uneasy: rows of identical smiling flower banners and smiling paper lanterns all face the same way. Smile motifs are simple decorative faces, not text or characters. The paving stays clearly readable.
+
+FLOOR SIZE AND SHAPE
+The walkable floor fits inside 60% of image width × 52% of height (x20%-80%, y24%-76%), about the size of the smallest combat rooms. Shape: one small rounded market square with a SMALL CENTRAL STALL ISLAND (one closed candy stall with a striped tent, about 3 tiles across). The island is surrounded on all sides by broad continuous paving at least 4 tiles wide, so the walkable floor is one clear loop around it. Rich continuous market scenery fills everything outside the floor on every side.
+
+LAYOUT
+- PARTS PEDDLER'S CART on the UPPER LEFT of the square: a fixed wooden cart with a striped awning, crates of springs, gears and brass parts. In front of it, an EMPTY SEMICIRCULAR GREETING SPACE of open paving where the player talks to the peddler. The cart is unattended: no character.
+- Rest stop details hugging the walls: two benches, a brass water pump, potted round planters.
+- Lines of closed and open toy stalls, striped tents, gift boxes and candy jars along the TOP wall.
+- Strings of small round bulbs cross overhead between tall brass posts at the edges, never posts on the floor.
+- A side road climbing north appears at the TOP, between the stalls, blocked by a low striped market barrier and stacked crates. This is scenery only, NOT an exit.
+- ROAD EDGE (match the WORLD MAP): along the BOTTOM the street ends at the island edge: a low cream balustrade with lantern posts, then a strip of grass and the top of the rocky cliff, with big brass gears glimpsed in the cliff below. This is scenery, never floor.
+
+OPENINGS
+EXACTLY TWO WIDE OPEN STREET OPENINGS, following the road from left to right:
+- ONE on the LEFT at the floor's mid-height, where the player enters;
+- ONE on the RIGHT at mid-height, where the player leaves.
+Each opening is continuous broad paving at least 3 tiles wide, with NO gates, doors, barriers, stairs or blocking props. Every other part of the edge is SOLID stalls, shop fronts, balustrade or scenery: no third exit.
+
+READABILITY
+- The open floor has no thin props, clutter or scattered small objects.
+- Calm low-contrast paving.
+- Every stall, cart, wall, planter and balustrade has a clear solid base line where it meets the paving.
+- The outermost picture edge is scenery, not floor.
+- NO FOUNTAIN and NO LARGE PLAZA: this place must not be mistaken for the town square.
+
+No UI, labels, readable text, letters, numbers, watermarks, people, toy residents, the peddler, enemies, player, baked-in characters, arrows, grids, debug overlays or animation. Signs use pictograms only. Natural paving joints, no tactical grid. One cohesive detailed scene, not a contact sheet.
+
+When saved, give the SAVE path with its actual pixel size.

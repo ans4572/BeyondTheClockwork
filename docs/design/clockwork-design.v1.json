@@ -87,9 +87,9 @@
     "sharedCoreTotal": 5480,
     "elementTotal": 7200,
     "runCoinRewards": {
-      "normal": 15,
-      "miniboss": 25,
-      "regionBoss": 40
+      "normal": 22,
+      "miniboss": 38,
+      "regionBoss": 60
     },
     "baseCoinsBeforeFinalBoss": 500,
     "shop": [
@@ -1730,9 +1730,9 @@
       "id": "smileStreet",
       "name": "웃음거리",
       "index": 1,
-      "normalReward": 10,
-      "miniReward": 30,
-      "bossReward": 60,
+      "normalReward": 15,
+      "miniReward": 45,
+      "bossReward": 90,
       "miniboss": "collectorRoco",
       "boss": "captainBrass",
       "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"

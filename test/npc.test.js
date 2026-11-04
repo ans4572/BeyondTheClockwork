@@ -210,7 +210,9 @@ test('the shop shows Bolt on the village map instead of the old building and dol
   const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(1); g.s.run.node = 5; g.enterNode();
   const { r, calls, labels } = renderer(g); r.render(1 / 60);
   assert.equal(g.s.mode, 'shop'); assert.ok(!labels.includes('볼트의 부품 상점')); assert.ok(labels.includes('볼트'));
-  assert.ok(calls.filter(call => call[0] === 'drawImage').some(call => call[1].fake === library.clip('bolt-idle', 'south-east').sheet));
+  // Bolt may turn to greet the player walking in, so any of his idle or greeting facings counts.
+  const boltSheets = ['bolt-idle', 'bolt-greeting'].flatMap(action => ['south', 'south-east', 'east', 'north-east', 'north', 'north-west', 'west', 'south-west'].map(dir => library.clip(action, dir)?.sheet)).filter(Boolean);
+  assert.ok(calls.filter(call => call[0] === 'drawImage').some(call => boltSheets.includes(call[1].fake)));
   assert.deepEqual(calls.filter(call => call[0] === 'doll').map(call => call[1]), ['player']);
 });
 

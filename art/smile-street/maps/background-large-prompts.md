@@ -24,3 +24,21 @@
 | 10 | 사탕색 골목 | `ribbon-alley-a/background-large.prompt.txt` | `ribbon-alley-a/background.png` | `ribbon-alley-a/background-large.png` |
 | 11 | 행진 적재뜰 | `parade-approach-d/background-large.prompt.txt` | `parade-approach-d/background.png` | `parade-approach-d/background-large.png` |
 | 12 | 멈추지 않는 행진 | `march-gate/background-large.prompt.txt` | `parade-approach-d/background.png` | `march-gate/background-large.png` |
+
+## 일반 전투 방 축소판 (2026-11-04)
+
+보스 방 2곳처럼 일반 방 9곳도 좁히고, 월드맵 웃음거리 길(크림색 길, 분홍 광장, 줄무늬 차양 가게, 웃는 깃발, 섬 가장자리 절벽)에 맞춥니다. 입구는 모두 왼쪽, 출구는 오른쪽입니다(지도에서 길이 왼쪽에서 오른쪽으로 이어지므로). 싸우는 바닥은 그림의 가로 66% × 세로 55%쯤으로, 보스 방(60% × 55%)보다 조금 넓습니다.
+
+참조 그림 1은 표의 지금 그림, 참조 그림 2는 `art/world-map/smile-street-road-reference.png`(월드맵의 웃음거리 길 부분)입니다. 결과는 표의 저장 위치에 PNG로 저장합니다. 받으면 webp 변환, 걷는 영역 마스크, 시작·출구·적 위치를 새 그림에 맞춥니다.
+
+| 구간 | 방 | 프롬프트 | 참조 그림 1 | 저장 위치 |
+|---|---|---|---|---|
+| 02 | 첫 걸음 광장 | `first-step-a/background-compact.prompt.txt` | `first-step-a/background-large.webp` | `first-step-a/background-compact-v1.png` |
+| 03 | 사탕 수레마당 | `ribbon-alley-c/background-compact.prompt.txt` | `ribbon-alley-c/background-large.webp` | `ribbon-alley-c/background-compact-v1.png` |
+| 04 | 장난감 수선길 | `workshop-road-a/background-compact.prompt.txt` | `workshop-road-a/background-large.webp` | `workshop-road-a/background-compact-v1.png` |
+| 05 | 리본 교차골목 | `ribbon-alley-d/background-compact.prompt.txt` | `ribbon-alley-d/background-large.webp` | `ribbon-alley-d/background-compact-v1.png` |
+| 08 | 태엽 적재마당 | `workshop-road-c/background-compact.prompt.txt` | `workshop-road-c/background-large.webp` | `workshop-road-c/background-compact-v1.png` |
+| 09 | 분수 우회광장 | `first-step-c/background-compact.prompt.txt` | `first-step-c/background-large.webp` | `first-step-c/background-compact-v1.png` |
+| 10 | 깃발 검문광장 | `parade-approach-c/background-compact.prompt.txt` | `parade-approach-c/background-large.webp` | `parade-approach-c/background-compact-v1.png` |
+| 11 | 사탕색 골목 | `ribbon-alley-a/background-compact.prompt.txt` | `ribbon-alley-a/background-large.webp` | `ribbon-alley-a/background-compact-v1.png` |
+| 12 | 행진 적재뜰 | `parade-approach-d/background-compact.prompt.txt` | `parade-approach-d/background-large.webp` | `parade-approach-d/background-compact-v1.png` |
