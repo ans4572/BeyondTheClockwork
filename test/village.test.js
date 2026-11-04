@@ -140,6 +140,13 @@ test('walking out of a combat room is not a village', () => {
   assert.equal(g.village, null); assert.ok(!g.walking);
 });
 
+test('a swing after a cleared room plants the feet, as it does in a fight', () => {
+  const g = atHub(); g.startRun(9); g.s.run.node = 1; g.enterNode(); g.s.enemies = []; g.s.mode = 'route';
+  // Aimed up: the swing's own lunge goes up, so any sideways step would come from the stick.
+  g.p.angle = -Math.PI / 2; g.update(1 / 60, { basic: true }); assert.ok(g.p.attack);
+  const { x } = g.p; for (let i = 0; i < 5; i++) g.update(1 / 60, { x: 1, y: 0 }); assert.ok(g.p.attack); assert.equal(+g.p.x.toFixed(3), +x.toFixed(3));
+});
+
 test('returning from a run puts the player back at the hub spawn', () => {
   const g = atHub(); g.startRun(3); g.returnToHub(); assert.equal(g.s.mode, 'returned'); assert.ok(!g.walking);
   g.acknowledgeReturn(); assert.ok(g.walking); assert.deepEqual([g.p.x, g.p.y], [maps.hub.spawn.x, maps.hub.spawn.y]);
@@ -260,7 +267,7 @@ test('every dialogue line has a known speaker, fits the box, and every choice le
   const { speakers, scripts } = dialogue;
   for (const [name, lines] of Object.entries(scripts)) for (const { who, text, choices } of lines) {
     assert.ok(speakers[who], `${name} ${who}`); assert.ok(text.length <= 72, text);
-    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'practice'].includes(id) || scripts[id], id);
+    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'practice'].includes(id) || data.slice.elements.includes(id) || scripts[id], id);
   }
   for (const { sheet } of Object.values(speakers)) assert.ok(fs.existsSync(new URL(`..${sheet}`, import.meta.url)), sheet);
   assert.equal(scripts.registration.at(-1).choices[0].id, 'register');
@@ -355,12 +362,13 @@ test('every room has a portal the player can reach from its entrance', () => {
   }
 });
 
-test('the first trip leaves with the wrench alone; elements are bought one at a time and two owned ones go into the run', () => {
-  const fresh = new Game(data); fresh.s.mode = 'registration'; fresh.register();
+test('the first element is free right after registration; the rest are bought one at a time and two owned ones go into the run', () => {
+  const fresh = new Game(data); assert.equal(fresh.nextElementPrice, null, 'nothing is offered before the safety pin');
+  fresh.s.mode = 'registration'; fresh.register();
   const { polygon } = fresh.village.exit, walkOut = game => { game.p.x = (polygon[0][0] + polygon[1][0]) / 2; game.p.y = (polygon[0][1] + polygon[2][1]) / 2; game.update(1 / 60, {}); };
-  assert.equal(fresh.enterPractice(), false); assert.equal(fresh.nextElementPrice, null); assert.equal(fresh.buyElement('fire'), false);
-  walkOut(fresh); assert.equal(fresh.s.mode, 'combat'); assert.equal(fresh.slots.length, 0);
-  const g = new Game(data); g.s.mode = 'registration'; g.register(); g.s.profile.history = [{ reason: 'defeat' }];
+  assert.equal(fresh.enterPractice(), false); assert.equal(fresh.nextElementPrice, 0);
+  walkOut(fresh); assert.equal(fresh.s.mode, 'combat'); assert.equal(fresh.slots.length, 0, 'skipping the gift still lets the wrench go out alone');
+  const g = new Game(data); g.s.mode = 'registration'; g.register();
   const inside = () => { g.p.x = (polygon[0][0] + polygon[1][0]) / 2; g.p.y = (polygon[0][1] + polygon[2][1]) / 2; };
   assert.equal(g.toggleElement('fire'), false, 'an element not yet bought cannot be equipped');
   assert.equal(g.nextElementPrice, 0); assert.equal(g.buyElement('fire'), true); assert.equal(g.s.profile.freeGears, 0);

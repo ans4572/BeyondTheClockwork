@@ -185,7 +185,13 @@ try {
     if (choice === 'practice' && !game.enterPractice()) game.notify('속성 부품을 하나 이상 장착하면 시험할 수 있습니다.');
     renderOverlay(true);
   }
-  async function meetMoru() { await talk('registration'); game.register(); renderOverlay(true); }
+  // After the safety pin Moru offers one element part for free; the choice is fitted and equipped at once.
+  async function meetMoru() {
+    await talk('registration'); game.register();
+    const pick = await talk('firstElement');
+    if (game.buyElement(pick)) await talk('firstElementAfter');
+    renderOverlay(true);
+  }
   // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
   const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet' };
   async function meetBoss(boss) {
@@ -391,15 +397,15 @@ try {
   }
   /** Moru's parts shelf: owned elements are equipped (two at most), the rest are bought with gears one at a time. */
   function elementsPanel() {
-    const { loadout, ownedElements, freeGears, history } = game.s.profile, price = game.nextElementPrice, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
+    const { loadout, ownedElements, freeGears } = game.s.profile, price = game.nextElementPrice, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
     const cards = data.combat.elements.map(element => {
       const owned = ownedElements.includes(element.id), picked = loadout.includes(element.id), skills = data.combat.skills.filter(skill => skill.element === element.id);
       const action = owned ? button(picked ? '✓ 장착' : '장착', 'element', `data-id="${element.id}" aria-pressed="${picked}"`, 'pick')
-        : price === null ? button(ownedElements.length ? '모두 보유' : '첫 귀환 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
+        : price === null ? button(ownedElements.length ? '모두 보유' : '등록 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
         : button(price === 0 ? '무료로 달기' : `${ico('gear')} ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
       return `<article class="reward-card ${picked ? 'picked' : ''} ${owned ? '' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${elementIcon(element.id)}<h3>${element.name} · ${element.device}</h3><p>${element.role}</p><p>${skills.map(skill => skill.name).join('<br>')}</p>${action}</article>`;
     }).join('');
-    const note = !ownedElements.length ? (history.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.' : '첫 원정은 렌치만으로 나갑니다. 돌아오면 모루가 첫 속성 부품을 무료로 달아 줍니다.')
+    const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.'
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
     return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid four">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide');
   }

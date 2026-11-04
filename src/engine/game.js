@@ -131,8 +131,8 @@ export class Game {
   }
   enterHub() {
     Object.assign(this.p, this.hubMap?.spawn);
-    const { ownedElements, history } = this.s.profile;
-    this.notify(!ownedElements.length && history.length ? '모루에게 가면 첫 속성 부품을 무료로 달아 줍니다.' : '모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
+    const { ownedElements, registered } = this.s.profile;
+    this.notify(!ownedElements.length && registered ? '모루에게 가면 첫 속성 부품을 무료로 달아 줍니다.' : '모루에게 다가가 말을 거세요 · 남쪽 큰길로 나가면 출발합니다.');
   }
   talk() {
     const npc = this.nearbyNpc;
@@ -141,11 +141,11 @@ export class Game {
   }
   closePanel() { this.s.panel = null; }
   openElements() { if (this.s.mode === 'hub') this.s.panel = 'elements'; }
-  /** Gears for the next element: the first is Moru's gift once the player has come back from one expedition. */
+  /** Gears for the next element: the first is Moru's gift, chosen right after the safety pin is fitted. */
   get nextElementPrice() {
-    const { ownedElements, history } = this.s.profile, prices = this.config.rules.elementPrices;
+    const { ownedElements, registered } = this.s.profile, prices = this.config.rules.elementPrices;
     if (ownedElements.length >= prices.length) return null;
-    return ownedElements.length === 0 && !history.length ? null : prices[ownedElements.length];
+    return ownedElements.length === 0 && !registered ? null : prices[ownedElements.length];
   }
   buyElement(id) {
     const profile = this.s.profile, price = this.nextElementPrice;
@@ -1033,7 +1033,8 @@ export class Game {
     if (swing && input.aim && distance(p, input.aim) > 0.1) p.angle = Math.atan2(input.aim.y - p.y, input.aim.x - p.x);
     if (input.dodge) this.dodge();
     if (p.dodge) this.moveDodge(dt, radius);
-    else if (length > 0) {
+    // A swing plants the feet here too (after a room is cleared), as it does in a fight.
+    else if (length > 0 && !(swing && p.attack)) {
       const scale = Math.max(1, length), speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0));
       p.angle = p.moveAngle = Math.atan2(y, x);
       this.move(p, x / scale * speed * dt, y / scale * speed * dt, radius);

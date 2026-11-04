@@ -1,4 +1,5 @@
-// Puts F2's left arm back into the attack frames where PixelLab left it out (south 2nd blow, south-west 1st blow).
+// Puts F2's left arm back into the attack frames where PixelLab left it out (south-west 1st blow). The south and
+// south-east 2nd blows were drawn again in PixelLab instead (2026-11-04), so they are not patched here.
 // The arm is cut from the clip's first frame, moved with the body (the helmet's centre is followed from frame to
 // frame) and drawn in under the wrench: pixels of the wrench stay in front, everything else takes the arm.
 // Each sheet is patched from the copy committed before this script existed (ORIGINAL), so a rerun gives the same result.
@@ -12,7 +13,6 @@ const sharp = createRequire(import.meta.url)(path.join(os.homedir(), '.cache/cod
 const BASE = 'art/animations/player/movement/attacks/clips', SIZE = 192, COLUMNS = 4, ORIGINAL = '963b591';
 /** Clip, the frames missing the arm, and the arm's box in the first frame (x0, y0, x1, y1, inclusive). */
 const PATCHES = [
-  { clip: 'attack-2-south-5afda580', frames: [1, 2, 3, 4, 5, 6], arm: [111, 88, 124, 106] },
   { clip: 'attack-1-south-west-8735285c', frames: [4, 5, 6, 7, 8, 9, 10], arm: [105, 91, 120, 108] }
 ];
 const at = (info, f, x, y) => ((Math.floor(f / COLUMNS) * SIZE + y) * info.width + (f % COLUMNS) * SIZE + x) * 4;
