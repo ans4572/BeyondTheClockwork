@@ -1,0 +1,35 @@
+Use case: game UI icon set.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create the HUD TOOL BUTTON ICONS for Beyond the Clockwork, a cute wind-up toy-town roguelite. They sit inside small square cream buttons at the top right of the screen (about 36 screen pixels each, icon about 24 pixels) and on the phone's touch controls.
+
+REFERENCES (style, palette, pixel density)
+- art\ui\skill-icons\heatSwing.png (48x48): the game's own pixel-art icons. Match their crisp pixel clusters and dark navy outline.
+- art\ui\icons\gear-v1.png and art\ui\icons\coin-v1.png (if they exist): the currency icons made in the same pass; keep the same outline weight and light.
+Palette: navy ink (#2b3345) as the main drawing colour so the icons read on a cream button (#f6ecd2), with polished brass/gold and a touch of crimson as accents; gentle top-left light.
+
+DRAW EACH ICON
+- Pixel art on a 24x24 pixel grid, then output at 192x192 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 24x24 perfectly.
+- TRANSPARENT background (PNG with alpha), no button shape behind it: the game draws the button. 1 grid pixel of empty margin.
+- Must read instantly at 20 pixels: one bold silhouette, at most 5-6 colours, no text.
+
+THE ICONS
+1) MAP (지도) - opens the world map of Clockwork Island.
+   A folded parchment map with three panels, a dotted route line and a small red X, a tiny brass compass rose in one corner.
+   SAVE: art\ui\icons\map-v1.png
+2) SETTINGS (환경설정 · 잠시 멈춤) - opens settings and pauses the game.
+   Three horizontal brass slider rails with navy knobs at different positions (an equaliser / tuning board), clearly NOT a gear, because a gear already means the currency.
+   SAVE: art\ui\icons\settings-v1.png
+3) FULLSCREEN, ENTER (전체 화면) - makes the game fill the screen.
+   Four navy corner brackets pointing outward, a tiny brass rivet at each bend.
+   SAVE: art\ui\icons\fullscreen-v1.png
+4) FULLSCREEN, EXIT (전체 화면 끄기) - shown while in full screen.
+   The same four corner brackets pointing inward.
+   SAVE: art\ui\icons\fullscreen-exit-v1.png
+
+RULES
+- All four in one consistent style, the same outline weight, size and light; 3 and 4 identical except the bracket direction.
+- No text, letters, numbers, button frame, background, watermark or characters.
+
+When saved, list every SAVE path with its actual pixel size.

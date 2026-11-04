@@ -1,0 +1,34 @@
+Use case: game UI icon (one icon, a redraw).
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Redraw the DODGE (회피) icon for Beyond the Clockwork, a cute wind-up toy-town roguelite. It is the quick dash: the last slot of the skill bar, and the dodge button on phones. It is shown at 36-48 screen pixels.
+
+WHY A REDRAW
+- art\ui\icons\action-dodge-v1.png (the first try): its spring coil reads like the letters/digits "8cc" at small size. Do NOT reuse that idea: no coils, loops, rings or small curls in a row.
+
+REFERENCES (style, palette, pixel density)
+- art\ui\icons\action-wrench-v1.png: the basic attack icon in the same skill bar. Match its outline weight, light and pixel density exactly.
+- art\ui\skill-icons\heatSwing.png and art\ui\skill-icons\frostBolt.png (48x48): the game's skill icons in the same row.
+- art\ui\icons\reward-move-speed-v1.png (a boot with three speed lines) and art\ui\icons\reward-dodge-cooldown-v1.png (a winged boot with a clock): reward icons that also show a boot. Use the SAME shoe materials as these (brass, gold and cream, same family), but make the icon clearly different by its shape and parts: a wind-up toy shoe with an exhaust vent at its heel blasting hot air behind it, no wings, no clock, no straight speed lines.
+- art\ui\icons\reward-status-damage-v1.png and art\ui\skill-icons\heatSwing.png show FIRE. The dodge exhaust must NOT read as fire: hot air and steam, no flame tongues.
+Palette: polished brass and gold for the shoe body and the key, warm cream for the toe cap and sole, a small touch of F2's teal (#3f9a8c) only on the laces, a dark navy vent opening with a glowing orange rim, warm orange to pale yellow to white for the exhaust, navy ink outline (#2b3345), gentle top-left light.
+
+WHAT TO DRAW
+- A WIND-UP TOY SHOE seen from the side, pointing right, tilted slightly forward as if launched into a quick dash: a brass shoe body, a rounded cream toe cap, a cream sole, short teal laces and one brass rivet.
+- A small brass wind-up key on the back of the ankle collar (a short stem and a flat two-lobed key bow), pointing up and back, clearly readable.
+- A round EXHAUST VENT on the back of the heel, like a little brass pipe mouth, glowing orange inside.
+- Out of the vent, to the left, a HEAT BLAST that pushes the shoe forward: one or two wide, smooth, tapering jets of hot air, warm orange at the vent fading to pale yellow and then white steam toward the tail, ending in two or three soft puffs. Wide sweeps that thin out to points, not little curls, swirls or flames.
+- The shoe sits in the right two thirds of the frame, the heat blast fills the left third: one bold silhouette that reads as "quick dash" at 24 pixels.
+
+DRAW IT
+- Pixel art on a 48x48 pixel grid, then output at 384x384 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 48x48 perfectly.
+- TRANSPARENT background (PNG with alpha), centred, 2 grid pixels of empty margin, a 1 grid pixel dark navy outline round the shoe and the exhaust.
+- At most 9-10 colours.
+
+RULES
+- No text, letters, numbers or shapes that read as letters or digits (check it at 24 pixels).
+- No flames, wings, clock, coils, springs, straight speed lines, legs, characters, slot frame, background tile or watermark.
+
+SAVE: art\ui\icons\action-dodge-v2.png
+When saved, give its path and its actual pixel size.

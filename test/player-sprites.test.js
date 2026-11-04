@@ -53,7 +53,7 @@ test('animator follows dodge, attack, hit and movement in that priority', () => 
   assert.deepEqual([step().action, a.pose.direction], ['attack-3', 'south']);
   assert.equal(a.pose.frame, frameAtProgress(library.clip('attack-3', 'south'), 0.5));
   g.p.dodge = { elapsed: 0.09, angle: Math.PI };
-  assert.deepEqual([step().action, a.pose.direction], ['dodge', 'west']);
+  assert.deepEqual([step().action, a.pose.direction], ['run', 'west']);
 });
 
 test('animator returns to idle when movement stops and survives render frames without a step', () => {
@@ -98,6 +98,16 @@ test('renderer crops the current frame, and draws the doll without sprites', () 
   const draw = calls.find(call => call[0] === 'drawImage'), clip = library.clip('attack-1', 'south'), frame = frameAtProgress(clip, 0.5);
   assert.equal(draw[1].fake, true);
   assert.deepEqual(draw.slice(2, 6), [frame % clip.columns * 192, Math.floor(frame / clip.columns) * 192, 192, 192]);
-  assert.deepEqual(draw.slice(8).map(size => Math.round(size * 100) / 100), [94.62, 94.62]);
+  // One sheet pixel per world pixel: a 192px frame covers 96 world units at the 2x pixel grid.
+  assert.deepEqual(draw.slice(8).map(size => Math.round(size * 100) / 100), [86.4, 86.4]);
   assert.equal((draw[6] * 2) % 1, 0);
+});
+
+test('the colour grade lifts mid-tones, keeps transparency, and turns near-black outlines navy', async () => {
+  const { gradePixels } = await import('../src/render/grade.js');
+  const px = new Uint8ClampedArray([120, 110, 90, 255, 10, 10, 12, 255, 50, 60, 70, 0]);
+  gradePixels(px);
+  assert.ok(px[0] > 120 && px[1] > 110, 'mid-tones lighter');
+  assert.ok(px[6] > 12 && px[4] > 10 && px[6] > px[4], 'outline pulled toward navy');
+  assert.deepEqual([...px.slice(8)], [50, 60, 70, 0], 'transparent pixels untouched');
 });

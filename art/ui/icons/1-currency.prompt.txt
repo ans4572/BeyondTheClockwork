@@ -1,0 +1,33 @@
+Use case: game UI icon set.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create the CURRENCY ICONS for Beyond the Clockwork, a cute wind-up toy-town roguelite. They sit in the HUD next to a number (e.g. "120"), on reward cards and in shop prices, usually shown at 20-32 screen pixels.
+
+REFERENCES (style, palette, pixel density)
+- art\ui\skill-icons\heatSwing.png and art\ui\skill-icons\frostBolt.png (48x48): the game's own pixel-art icons. Match their crisp pixel clusters, dark navy outline and warm palette.
+- art\ui\element-icons\fire.png (32x32): the smaller icon size these must also read at.
+- art\world-map\icons\boss-marker-v2.png: the brass, cream and crimson materials of the game's newest markers.
+Palette: polished brass and gold, warm cream, navy ink outline (#2b3345), a touch of crimson; gentle top-left light.
+
+DRAW EACH ICON
+- Pixel art on a 32x32 pixel grid, then output at 256x256 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 32x32 perfectly.
+- TRANSPARENT background (PNG with alpha). One centred object, 1-2 grid pixels of empty margin. A 1 grid pixel dark navy outline around the silhouette.
+- Must read instantly at 20 pixels: one bold silhouette, at most 6-8 colours, no tiny details or text.
+
+THE ICONS
+1) FREE GEAR (자유 톱니) - the permanent currency kept between runs, spent on Moru's tuning board.
+   A chunky brass cog with 8 square teeth and a round hole, a small wind-up key bow sticking out of the hub, bright gold highlight top-left.
+   SAVE: art\ui\icons\gear-v1.png
+2) COIN (동전) - the run currency, spent at Bolt's shop and lost when the run ends.
+   A thick round gold coin seen slightly from the front, a small embossed smile face on it, a thin rim, one sparkle.
+   SAVE: art\ui\icons\coin-v1.png
+3) CHARGE (축전) - the energy that fills by hitting with the wrench and powers fusion skills.
+   A small brass battery cell with a glowing yellow lightning bolt in a glass window, two little terminals on top.
+   SAVE: art\ui\icons\charge-v1.png
+
+RULES
+- All three in one consistent style, the same outline weight and light, clearly different silhouettes (a cog, a disc, a cell).
+- No text, letters, numbers, UI frame, background shape, glow halo outside the object, watermark or characters.
+
+When saved, list every SAVE path with its actual pixel size.

@@ -104,7 +104,8 @@ test('a cast shows over a held basic attack, and a dodge still takes over', () =
   for (let i = 0; i < 40; i++) { g.update(1 / 60, input); const pose = a.update(1 / 60, g); assert.equal(pose.action, 'heatSwing'); frames.add(pose.frame); }
   assert.ok(frames.size >= 12);
   g.p.dodge = { elapsed: 0.05, angle: 0 };
-  assert.equal(a.update(1 / 60, g).action, 'dodge');
+  // A dodge outranks a cast and is drawn as a burst of the run.
+  assert.equal(a.update(1 / 60, g).action, 'run');
   g.p.dodge = null;
   for (let i = 0; i < 12; i++) { g.update(1 / 60, input); a.update(1 / 60, g); }
   assert.match(a.pose.action, /^attack-/);

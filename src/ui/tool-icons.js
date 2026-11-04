@@ -21,10 +21,27 @@ const BODIES = {
   crown: '<path d="M1 3h2v2h1V3h2v2h1V2h2v3h1V3h2v2h1V3h2v12H1z" fill="#2b3345"/><path d="M2 6h12v8H2z" fill="#e0b048"/><path d="M4 9h2v2H4zM10 9h2v2h-2z" fill="#c43c36"/>',
   home: '<path d="M7 1h2v1h1v1h1v1h1v1h1v1h1v1h1v2h-1v6H2V9H1V7h1V6h1V5h1V4h1V3h1V2h1z" fill="#2b3345"/><path d="M7 3h2v1h1v1h1v1h1v1h1v1H3V7h1V6h1V5h1V4h1z" fill="#c43c36"/><path d="M3 9h10v5H3z" fill="#f6ecd2"/><path d="M7 11h2v3H7z" fill="#2b3345"/>'
 };
-const svg = (name, cls) => `<svg class="${cls}" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${BODIES[name]}</svg>`;
+// The painted pixel icons (art/ui/icons/px, each a 24, 32 or 48 pixel grid). A name found here is shown as its picture;
+// the drawn bodies above stay for the few marks that have no painted icon yet (crown, home, spark).
+const ART = new Set(['gear', 'coin', 'charge', 'map', 'settings', 'fullscreen', 'fullscreen-exit', 'lock', 'action-wrench', 'action-dodge',
+  ...['wrench-damage', 'max-hp', 'skill-cooldown', 'dodge-cooldown', 'move-speed', 'status-damage', 'crit', 'attack-speed', 'kill-heal', 'armor',
+    'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`)]);
+export const iconUrl = name => `art/ui/icons/px/${name}.png`;
+export const ICON_FILES = [...ART].map(iconUrl);
+const svg = (name, cls) => ART.has(name)
+  ? `<img class="${cls} px-icon" src="${iconUrl(name)}" alt="" draggable="false">`
+  : `<svg class="${cls}" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${BODIES[name]}</svg>`;
 /** The tool buttons and wallet: sized by their own CSS. */
-export const TOOL_ICONS = Object.fromEntries(Object.keys(BODIES).map(name => [name, svg(name, 'tool-icon')]));
+export const TOOL_ICONS = Object.fromEntries([...Object.keys(BODIES), ...ART].map(name => [name, svg(name, 'tool-icon')]));
 /** An icon set in a line of text, one letter tall. */
 export const ico = name => svg(name, 'ico');
 /** An icon placed inside another SVG drawing, centred on (x, y). */
-export const iconAt = (name, x, y, size) => `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 16 16" shape-rendering="crispEdges">${BODIES[name]}</svg>`;
+export const iconAt = (name, x, y, size) => ART.has(name) ? `<image href="${iconUrl(name)}" x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" style="image-rendering:pixelated"/>` : `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 16 16" shape-rendering="crispEdges">${BODIES[name]}</svg>`;
+/** A skill slot's picture: the painted action icons by name, every other slot by its skill's own icon. */
+export const slotArt = art => (ART.has(art) ? iconUrl(art) : `art/ui/skill-icons/${art}.png`);
+/** Shows the enter or the leave picture on a full-screen button, whichever the next press will do. */
+export function syncFullscreenIcon(button) {
+  const image = button?.querySelector('img.px-icon'); if (!image) return;
+  const src = iconUrl(document.fullscreenElement ? 'fullscreen-exit' : 'fullscreen');
+  if (!image.src.endsWith(src)) image.src = src;
+}

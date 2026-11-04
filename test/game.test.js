@@ -428,12 +428,17 @@ test('a bursting rat reaches the player\'s body at the ring\'s edge and still pa
   assert.ok(g.s.run.coins > coins || g.s.run.loot?.kills === 1);
 });
 
-test('the reward cards can be drawn again once per reward screen', () => {
+test('each reward card can be drawn again once per reward screen, without touching the other two', () => {
   const g = hub(); g.startRun(7); completeRoom(g);
-  assert.equal(g.s.mode, 'reward'); const first = JSON.stringify(g.s.run.rewardChoices);
-  assert.equal(g.rerollRewards(), true); assert.equal(g.s.run.rewardChoices.length, 3); assert.notEqual(JSON.stringify(g.s.run.rewardChoices), first);
-  assert.equal(g.rerollRewards(), false, 'only once');
-  g.chooseReward(0); assert.equal(g.s.run.rerolled, false, 'the next reward screen gets its own');
+  assert.equal(g.s.mode, 'reward');
+  const key = r => `${r.kind}:${r.id ?? r.amount}`, before = g.s.run.rewardChoices.map(key);
+  assert.equal(g.rerollRewardCard(1), true);
+  const after = g.s.run.rewardChoices.map(key);
+  assert.equal(after.length, 3); assert.equal(after[0], before[0]); assert.equal(after[2], before[2]);
+  assert.notEqual(after[1], before[1]); assert.ok(!before.includes(after[1]), 'never a card already on the table');
+  assert.equal(g.rerollRewardCard(1), false, 'that card only once');
+  assert.equal(g.rerollRewardCard(0), true, 'the other cards keep their own');
+  g.chooseReward(0); assert.deepEqual(g.s.run.rerolledCards, [], 'the next reward screen starts fresh');
 });
 
 test('run perks: the piggy bank pays interest, the overheat engine trades damage both ways, the glass spring trades health for crits', () => {

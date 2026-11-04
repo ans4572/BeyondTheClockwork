@@ -8,7 +8,9 @@ export const WORLD_MAP_ART = 'art/world-map/clockwork-island.webp';
 const MARKER = name => `art/world-map/icons/${name}.webp`;
 export const WORLD_MAP_MARKERS = ['town', 'market', 'boss', 'stop-ahead', 'stop-done', 'stop-current'].map(MARKER);
 /** Marker height in map units, and where the plate's face sits (share of the height from the top) for the stop number. */
-const MARKER_SIZE = { stop: 40, town: 48, market: 50, boss: 54 }, FACE_AT = 0.39;
+const MARKER_SIZE = { stop: 40, town: 48, market: 50, boss: 54 };
+/** Centre of each plate's round face, as a share of the marker's width and height (measured on the pictures). */
+const FACE = { ahead: [0.485, 0.415], done: [0.491, 0.4], current: [0.482, 0.42] };
 const ART_W = 1672, ART_H = 941, W = 1000, H = Math.round(W * ART_H / ART_W), K = W / ART_W;
 const px = ([x, y]) => [x * K, y * K];
 const f = n => n.toFixed(1);
@@ -40,7 +42,7 @@ const soon = (x, y, text) => `<text class="soon" x="${x}" y="${y}">${text}</text
 // Stops of regions not open yet: the same painted markers, greyed, a `?` on each plate.
 const locked = pts => `<path class="road-dash" d="${path(pts)}"/>` + pts.map(([x, y], i) => {
   const boss = i === pts.length - 1, size = (boss ? MARKER_SIZE.boss : MARKER_SIZE.stop) * 0.85, top = y - size * 0.86;
-  return `<g class="node locked ${boss ? 'boss' : ''}"><image class="marker" href="${MARKER(boss ? 'boss' : 'stop-ahead')}" x="${f(x - size / 2)}" y="${f(top)}" width="${f(size)}" height="${f(size)}"/>${boss ? '' : `<text class="num" x="${f(x)}" y="${f(top + size * FACE_AT + 4.5)}">?</text>`}</g>`;
+  return `<g class="node locked ${boss ? 'boss' : ''}"><image class="marker" href="${MARKER(boss ? 'boss' : 'stop-ahead')}" x="${f(x - size / 2)}" y="${f(top)}" width="${f(size)}" height="${f(size)}"/>${boss ? '' : `<text class="num" x="${f(x - size / 2 + size * FACE.ahead[0])}" y="${f(top + size * FACE.ahead[1])}">?</text>`}</g>`;
 }).join('');
 
 let scenery = null;
@@ -62,7 +64,8 @@ export function worldMapSvg(stops, picked) {
     const size = MARKER_SIZE[kind === 'shop' ? 'market' : kind], art = kind === 'stop' ? `stop-${stop.state}` : kind === 'shop' ? 'market' : kind;
     // The marker's foot stands on the stop point; the number goes on the plate's face.
     const top = y - size * 0.86, r = size * 0.14;
-    const face = typeof stop.icon === 'number' && kind === 'stop' ? `<text class="num" x="${f(x)}" y="${f(top + size * FACE_AT + 5.5)}">${stop.icon}</text>` : '';
+    const [fx, fy] = FACE[stop.state] || FACE.ahead;
+    const face = typeof stop.icon === 'number' && kind === 'stop' ? `<text class="num" x="${f(x - size / 2 + size * fx)}" y="${f(top + size * fy)}">${stop.icon}</text>` : '';
     const name = on ? `<g class="name"><rect x="${f(x - stop.label.length * 7 - 8)}" y="${f(y + 4)}" width="${stop.label.length * 14 + 16}" height="20" rx="3"/><text x="${f(x)}" y="${f(y + 18.5)}">${stop.label}</text></g>` : '';
     return `<g class="node ${stop.state} ${stop.kind} ${on ? 'picked' : ''}" data-action="map-stop" data-id="${stop.id}" role="button" aria-label="${stop.label}">
       <circle class="hit" cx="${f(x)}" cy="${f(y - size * 0.4)}" r="${f(size * 0.6)}"/><image class="marker" href="${MARKER(art)}" x="${f(x - size / 2)}" y="${f(top)}" width="${size}" height="${size}"/>${face}${name}

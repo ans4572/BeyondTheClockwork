@@ -1,0 +1,119 @@
+{
+  "tool": "built-in image_gen",
+  "commonPrompt": "Use case: game UI pixel-art reward card icon for Beyond the Clockwork, cute windup toy-town roguelite. ONE standalone centered reward icon on TRUE ALPHA TRANSPARENT background. Input1 heatSwing,2 frostBolt,3 conductiveSpanner48x48 are exact CRISP PIXEL CLUSTERS,shading,saturation,NAVY outline style target;4 gear and5coin are same-family palette/light. Designed on48x48pixelgrid, intended384x384export eachpixelEXACT8x8block. No antialias,gradients,smoothing,halfpixels. Onegridpixel NAVY #2b3345 silhouetteoutline, TWOgridpixel empty margin. Atmost10FLATcolors:navy,bronze,brass,gold,cream,crimson,mint,skyblue,pink,white asneeded. TOPLEFTlight,smallhardclusterhighlights,bold20-28pxreadability. FEW LARGE shapes, no microdetail. Distinctsilhouette. No cardframe,backgroundtile,ground,shadowplate,text,letters,numbers,watermark orcharacters. Only requested icon,notcontactsheet.",
+  "referenceImages": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/conductiveSpanner.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/gear-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/coin-v1.png"
+  ],
+  "export": {
+    "grid": 48,
+    "scale": 8,
+    "width": 384,
+    "height": 384,
+    "margin": 2,
+    "alpha": "binary",
+    "sampling": "nearest",
+    "palette": [
+      "#2b3345",
+      "#96551a",
+      "#d38b25",
+      "#ffbe20",
+      "#fff4b7",
+      "#bb123b",
+      "#f77c9e",
+      "#70e2b5",
+      "#66bde8",
+      "#ffffff"
+    ]
+  },
+  "icons": [
+    {
+      "id": "reward-wrench-damage",
+      "prompt": "WRENCH DAMAGE: ONE hefty BRASS OPEN-END WRENCH diagonal lowerleft to upperright, distinctive jawhead. ONE RED POWER SPARK atitsjaw,chunkycrimsonfourpointburst,notfirehalo. Goldtoplefthighlight,navyoutline. Focusweaponpower.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-2fdedcc9-0fbc-4088-b023-77ba6835e4a6.png"
+    },
+    {
+      "id": "reward-max-hp",
+      "prompt": "MAX HEALTH: ONE BIG CRIMSON RED HEART with3smallBRASS RIVETS onheartedge andTINY WIND-UP KEY atRIGHTside. Heartbroadstrongsilhouette,redlighttopLEFT,pinkhighlight,deepcrimsonshadow. Notshield,no box. Keysmall notdominate.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-cbd9b6ea-9cc4-40d1-ac95-e9a8c30e5f14.png"
+    },
+    {
+      "id": "reward-skill-cooldown",
+      "prompt": "SKILL COOLDOWN: ONE BRASS POCKET WATCH roundclockwithsmalltoploop. CLOCKFACE navy/creamcontrast HAND SWEEPING BACKWARD representedcounterclockwise thickcurvedarc aroundface, SMALL DOWN ARROW atlowerrightedge. NO numerals,ticksfewsimple,noletters. Watchmainshape,readablehands.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-306a16c0-a445-40f0-8035-774eb317b39f.png"
+    },
+    {
+      "id": "reward-dodge-cooldown",
+      "prompt": "DODGE COOLDOWN: ONE WINGED BOOT, navy/brassboot withLARGE CREAM LITTLEWING behindankle, SMALL CLOCKFACE onankle. Boottoe pointsRIGHT,wingup-left,roundclockcreamfacewith2hands,no numbers. Differentfromrunningboot:wingandankleclock essential. No speedlines.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-67d713e1-ba84-4820-9bfa-837899c199c0.png"
+    },
+    {
+      "id": "reward-move-speed",
+      "prompt": "MOVE SPEED: ONE RUNNING BOOT toeRIGHT,tiltedforward,darknavybodybrasscuff,goldsole. EXACTLY THREE SPEED LINES behindheelatLEFT. NO wings,NO clock,NO feathers. Dynamiclonghorizontalshape,notwingedboot.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-c7c7b9e6-c2ef-4479-9f55-7599ae9c850d.png"
+    },
+    {
+      "id": "reward-status-damage",
+      "prompt": "STATUS BURN DAMAGE: ONE SMALL CRIMSON AND GOLD FLAME INSIDE BRASS RING. Ringclearlyenclosesflame,hollowgaps,roundsimpleoutline,threeflamelobes redoutsideyellowcore. No floorfire,notwrench,nobody. Strongringplusflame silhouette.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-a9d5f0d7-7c9e-49c8-a0ca-1dcd078e01c5.png"
+    },
+    {
+      "id": "reward-crit",
+      "prompt": "CRIT CHANCE: ONE ROUND TARGET DISC,navyrimcreamfaceandCRIMSON BULLSEYE,largeconcentricnavy/cream/redrings, ONE GOLD FOURPOINT SPARKLE atupperrightoverlappingedge. Nobow,arrow orweapon. Fewrings,thickclusteredpixels.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-beb85411-467f-42d2-8beb-c3b8355b50e6.png"
+    },
+    {
+      "id": "reward-attack-speed",
+      "prompt": "WRENCH SPEED: EXACTLY TWO NAVY/BRASS WRENCH SILHOUETTES overlapping asFAST DOUBLE SWING,offsetdiagonalwrenches headsreadclearly,onebrightgoldfrontonecoolbronze/navybehind. TWO SHORT MOTION ARCS followdouble-swingbesideheads. No gears,screwdrivers orredpowerspark. Dynamicfan/twoprongs silhouette.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-8406c0e2-5281-4595-9500-187302955f68.png"
+    },
+    {
+      "id": "reward-kill-heal",
+      "prompt": "HEAL ON KILL: ONE LARGE MINT MEDICAL PLUS SIGN, nexttoTINY BROKEN BRASS GEAR onlowerright. Plusdominates,thickequalarms,whitehighlight. Gear visiblymissingchunk/cracked,butno scatteredfragments. Noheart,box,skull. Strongplus-shaped silhouette.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-4651c6e1-21e2-4be8-8393-79869d12c7ef.png"
+    },
+    {
+      "id": "reward-armor",
+      "prompt": "DAMAGE REDUCTION: ONE ROUND BRASS SHIELD,THICK NAVY RIM,RAISED RIVETED CROSS onface. Roundeddiscslightperspective,cream/goldcrosswithrivetateachend,navyshadowunderedge. NO crossmedicalmint orbullseye. Shieldsoleobject.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-3ae17dcb-3eb5-4f88-8ca7-e36b9a1554dc.png"
+    },
+    {
+      "id": "reward-wrench-mod",
+      "prompt": "WRENCH MOD: ONE BRASS WRENCH diagonal withSMALL GEAR CLAMPED AROUND HANDLE halfwaydown andLITTLE SCREWDRIVER crossingbesideit. Gearobviouslyattachedtonarrowhandle,notfloating. Red screwdriverhandle,steel/navyshaft. Wrenchmainshape,mechanicalassembly distinctfromdoublewrench.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-4505ffc3-4352-484e-a19d-dd9de5c0dcc4.png"
+    },
+    {
+      "id": "reward-skill-level",
+      "prompt": "SKILL LEVEL: ONE GOLD UPWARD CHEVRON ARROW ABOVE SMALL BRASS GEAR. Bigbroadnavyoutlinedgold∧chevronpointingUP,smallcogbelow. No letters,numbers,leveltext. Arrowdominatesupperpart,separatebutonecohesiveicon. No watch,wrench.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-4bbc432d-7400-43f4-a4ab-79eb243b50e5.png"
+    },
+    {
+      "id": "reward-gear-pouch",
+      "prompt": "FREE GEAR POUCH: ONE SMALL WARM CREAM CLOTH POUCH tiedwithSTRING atneck, roundbulgingbody,navyoutline,clothfoldclusters. FEW BRASS GEARS SPILLING FROM OPEN TOP,2-3largegearteethshapes,onegearoverlip. Nodetachedclutterorcurrencytext. Bagmain silhouette,notpig.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-0e1db161-45f3-43d2-8ce7-6dba86511f5f.png"
+    },
+    {
+      "id": "reward-repair",
+      "prompt": "REPAIR: ONE MINT REPAIR KIT BOX withTOPHANDLE,WHITE MEDICAL PLUS onfrontandSMALL BRASS WRENCH leaningacrossloweredge. Boxclosed,broadrectangular,navydarkoutline,creamhighlight,navybase. Noletters,text orperson. Plusclearlywhiteonmint,notmintfloatingplus.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-cdb15111-c4e8-467f-bea4-37b9a036e31f.png"
+    },
+    {
+      "id": "reward-piggy-bank",
+      "prompt": "PIGGY BANK: ONE ROUND ROSE PINK PIGGY BANK toy withstubbyfeet,smallsnout,oneear,curlytail. ONE GOLD COIN ABOVE BACK goingintoSHORTNAVY SLOT. Inanimatetoystorageobject,nolivingcharacterpose orclothes. Simpleboldpinkpigbody,navyoutline,coinreadablegold. No number/text.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-fa37c097-92b5-4412-b0e2-c22cc9be4bc1.png"
+    },
+    {
+      "id": "reward-overheat",
+      "prompt": "OVERHEAT ENGINE: ONE SMALL BRASS ENGINE BLOCK,squatmechanicalunitwith2chunkypipes/cylinderfins, BIG REDHOT CRIMSON CORE throughcentralwindow,yellowcentre. ONE SMALL CREAM PUFF OF STEAM emergingfromtoppipe. No externalglowhalo,firefloororcloudbackdrop. Strongblockwithsteam silhouette,cuteengine,nocharacters.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-f08acc96-ae78-4801-ac83-94077349ce46.png"
+    },
+    {
+      "id": "reward-glass-spring",
+      "prompt": "GLASS SPRING: ONE DELICATE GLASS WIND-UP SPRING COIL,skyblue/mintandcreamhighlights,THICK CLEAR VISIBLE3-4COILloops,smallwindupkeyend. ONE CRACK asshortnavyzigzaginfrontloop,ONE smallFOURPOINT SPARKLE atupperright. Glassindicatedflatcyan/whitebands andtransparentgaps,notsofttranslucentglow. Coilsreadat28px,largecleanloops,notheapoffragments.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-a4b6a0db-dd62-4a33-ae5e-351cba6c5e7b.png"
+    }
+  ]
+}

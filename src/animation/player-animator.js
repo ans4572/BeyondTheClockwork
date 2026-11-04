@@ -1,7 +1,7 @@
 import { Locomotion } from './locomotion.js';
 import { frameAtProgress } from './sprite-library.js';
 
-const TAU = Math.PI * 2, HIT_SECONDS = 0.24, DIRECTIONS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
+const TAU = Math.PI * 2, HIT_SECONDS = 0.36, DIRECTIONS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
 // Fixed-step updates can leave a render frame with no movement; keep the last motion across those gaps.
 const MOTION_GAP_SECONDS = 0.05, ROOM_CHANGE_UNITS = 2;
 // Casting never locks movement; walking ends the body clip only after the skill's peak has shown.
@@ -69,7 +69,14 @@ export class PlayerAnimator {
       this.facing = 'south-east';
       return this.oneShot('death', this.facing, 1 - Math.max(0, (game.wakeProgress - LIE_STILL_SHARE) / (1 - LIE_STILL_SHARE)));
     }
-    if (p.dodge) return this.oneShot('dodge', this.facing = nearestDirection(p.dodge.angle), p.dodge.elapsed / c.player.dodge.duration);
+    // A dodge is a burst of the run itself (the old separate dodge drawing was a different, smaller figure and blinked in
+    // and out): the stride carries on from where the legs were, played fast across the dash.
+    if (p.dodge) {
+      this.facing = nearestDirection(p.dodge.angle);
+      const run = this.library.clip('run', this.facing), frames = run?.frameCount || 1;
+      if (this.dodgeFrom === undefined || p.dodge !== this.dodgeOf) { this.dodgeOf = p.dodge; this.dodgeFrom = this.locomotion.frame(frames); }
+      return { action: 'run', direction: this.facing, frame: (this.dodgeFrom + Math.floor(p.dodge.elapsed / c.player.dodge.duration * frames * 0.75)) % frames };
+    }
     // A cast outranks the basic attack, which is usually held down during combat.
     const cast = this.cast(game);
     if (cast) return cast;

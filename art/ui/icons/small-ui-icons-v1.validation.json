@@ -1,0 +1,41 @@
+[
+  {
+    "file": "C:\\Users\\ans45\\OneDrive\\바탕 화면\\Beyond the Clockwork\\art\\ui\\icons\\lock-v1.png",
+    "width": 192,
+    "height": 192,
+    "grid": 24,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "C:\\Users\\ans45\\OneDrive\\바탕 화면\\Beyond the Clockwork\\art\\ui\\icons\\action-wrench-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "C:\\Users\\ans45\\OneDrive\\바탕 화면\\Beyond the Clockwork\\art\\ui\\icons\\action-dodge-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  }
+]

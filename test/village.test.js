@@ -36,7 +36,8 @@ const imageSize = file => {
 test('each mask matches the declared map size, and each background is drawn at twice that for sharp screens', () => {
   for (const place of places) {
     assert.deepEqual(imageSize(new URL(`..${place.mask}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
-    assert.deepEqual(imageSize(new URL(`..${place.background}`, import.meta.url)), place.size.map(units => Math.round(units * 80)));
+    // The painting ships at map size x 40 and the game enlarges it x pixelScale with hard pixel edges.
+    assert.deepEqual(imageSize(new URL(`..${place.background}`, import.meta.url)).map(n => n * (place.pixelScale || 1)), place.size.map(units => Math.round(units * 80)));
   }
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
 });
@@ -212,9 +213,9 @@ test('the tutorial plays in the scrapyard and stays on its floor', () => {
 });
 
 test('the scrapyard picture is drawn one picture pixel per screen pixel, with its mask at map size', () => {
-  const { background, mask, size } = maps.villages.scrapyard;
+  const { background, mask, size, pixelScale = 1 } = maps.villages.scrapyard;
   assert.deepEqual(imageSize(new URL(`..${mask}`, import.meta.url)), size.map(units => Math.round(units * 40)));
-  assert.deepEqual(imageSize(new URL(`..${background}`, import.meta.url)), size.map(units => Math.round(units * 80)));
+  assert.deepEqual(imageSize(new URL(`..${background}`, import.meta.url)).map(n => n * pixelScale), size.map(units => Math.round(units * 80)));
 });
 
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };

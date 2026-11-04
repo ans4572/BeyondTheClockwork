@@ -55,7 +55,7 @@ body.touch .panel.atlas-panel .panel-header h2 { display: none; }
 .world-map .node circle:not(.hit) { fill: #fff4d6; stroke: var(--ink); stroke-width: 2.5; }
 .world-map .node text { font: 700 9.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
 .world-map .node .marker { filter: drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); transition: transform .12s; transform-box: fill-box; transform-origin: 50% 100%; }
-.world-map .node .num { font-size: 15px; }
+.world-map .node .num { font-size: 11px; dominant-baseline: central; }
 .world-map .node.done .num { fill: #fff4d6; }
 /* A boss already beaten stays on the map, dimmed. */
 .world-map .node.done.boss .marker { filter: saturate(.4) brightness(.85) drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); }
@@ -119,8 +119,11 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-bar { position: relative; height: 18px; background: #d8ccb0; box-shadow: inset 0 0 0 2px #2b3345; }
 .hud-bar i { position: absolute; left: 2px; top: 2px; bottom: 2px; background: #c43c36; }
 .hud-bar.energy i { background: #c79a3e; }
+/* The charge bar's label opens with the painted battery icon, half its 32 pixel grid. */
+.hud-bar.energy b { display: flex; justify-content: center; align-items: center; gap: 3px; }
+.hud-bar.energy b::before { content: ''; width: 16px; height: 16px; flex: none; background: url('../art/ui/icons/px/charge.png') center / contain no-repeat; image-rendering: pixelated; }
 .hud-bar b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; line-height: 1; }
-.hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px #2b3345, 4px 4px 0 3px #0e121a55; }
+.hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px rgba(43, 51, 69, .6); }
 .hud-minimap:not([hidden]) ~ .hud-tools { top: 12px; right: 196px; }
 /* The boss bar: name above, health below, a black line where each new phase begins. */
 .hud-boss { position: absolute; left: 50%; top: 14px; width: 440px; transform: translateX(-50%); text-align: center; }
@@ -135,7 +138,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 /* Gears and coins sit under the health panel, so everything the fight uses is together top left. */
 .hud-wallet { position: absolute; left: 14px; top: 98px; display: flex; gap: 18px; padding: 6px 14px; }
 .hud-wallet span { display: flex; align-items: center; gap: 6px; font-size: 16px; line-height: 1; }
-.hud-wallet .tool-icon { width: 20px; height: 20px; flex: none; }
+.hud-wallet .tool-icon { width: 24px; height: 24px; flex: none; }
 .hud-tools { position: absolute; right: 14px; top: 56px; display: flex; gap: 6px; }
 .hud-tools button { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 0; pointer-events: auto; cursor: pointer; }
 .hud-tools .tool-icon { width: 24px; height: 24px; }
@@ -295,7 +298,7 @@ body.cramped .panel > p:first-of-type:not(.result-next), body.cramped .panel > p
 body.cramped .reward-grid { margin-top: 6px; gap: 8px; }
 body.cramped .reward-card { padding: 8px 10px; }
 body.cramped .reward-card .reward-icon, body.cramped .reward-skills img { width: 40px; height: 40px; margin-bottom: 4px; }
-body.cramped .reward-card .reward-icon .ico { width: 26px; height: 26px; }
+body.cramped .reward-card .reward-icon .ico { width: 32px; height: 32px; }
 body.cramped .reward-card p, body.cramped .reward-card .values { font-size: 13px; line-height: 1.35; margin-bottom: 4px; }
 body.cramped .reward-card h3 { font-size: 16px; margin: 0 0 3px; }
 body.cramped .panel .reward-card .pick { margin-top: 6px; padding: 5px; }
@@ -309,3 +312,6 @@ body.cramped .actions.reroll { margin-top: 6px; }
 .panel.result .inline-element { width: 28px; height: 28px; image-rendering: pixelated; }
 .panel.result .result-next { margin-top: 10px; padding: 8px 10px; background: #ece0c0; font-weight: 700; }
 .settings .play-time { margin: 10px 0 0; font-weight: 700; } .settings .play-time strong { margin-left: 6px; }
+/* Each reward card can be drawn again once: a small outlined button under its pick button. */
+.panel .reward-card .reroll-one { margin-top: 6px; width: 100%; padding: 4px 6px; font-size: 12px; }
+body.cramped .panel .reward-card .reroll-one { margin-top: 4px; padding: 3px 6px; }

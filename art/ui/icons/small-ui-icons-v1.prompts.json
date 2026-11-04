@@ -1,0 +1,64 @@
+{
+  "tool": "built-in image_gen",
+  "scale": 8,
+  "margin": 2,
+  "alpha": "binary",
+  "palette": [
+    "#2b3345",
+    "#465269",
+    "#96551a",
+    "#d38b25",
+    "#ffbe20",
+    "#fff4b7",
+    "#ffffff",
+    "#3f9a8c",
+    "#1c6e69",
+    "#6cc7af"
+  ],
+  "icons": [
+    {
+      "id": "lock-v1",
+      "grid": 24,
+      "prompt": "LOCK ICON. Design on exactly 24x24 logical pixel grid, intended 192x192 export with each logical pixel an exact 8x8 block. Small ROUND BRASS PADLOCK body, DARK NAVY U-SHAPED SHACKLE with a few brass/cream highlights. In its center a TINY NAVY KEYHOLE shaped like a WIND-UP KEY BOW: two small round lobes joined together, plus a short stem. Body round and chunky, few brass colors, clearly a closed padlock. No ordinary gear teeth and no swing arc. Match small currency icons in images 5 and 6.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-42a60c3d-a7bb-473d-bd95-faa1df9afb58.png",
+      "refinementPrompt": "Use case: precise-object-edit. Input image 1 is the lock icon to refine. Keep the same round brass padlock, navy shackle, silhouette, composition, palette, pixel-art finish and true transparent background. CHANGE ONLY the center keyhole: make the WIND-UP KEY BOW keyhole about 1.6 times larger and simpler so it reads when the entire lock is reduced to a 24x24 pixel grid. It must have TWO CLEAR GOLD SQUARE HOLES inside a navy horizontal figure-eight key bow, not a blob, with a short navy stem below. At 24x24, picture a 7-grid-pixel-wide navy bow with two separate 1-grid-pixel gold holes, one on each side, and a 1-grid-pixel-wide 2-grid-pixel-long navy stem. Keep enough brass around the symbol. Crisp coarse pixel clusters, no smoothing or antialiasing, no half pixels, top-left hard cream highlights, dark navy #2b3345 outline. ONE centered standalone icon, no text, numbers, scenery, background tile, UI frame or watermark. Transparent PNG.",
+      "refinementReference": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-da6658bb-6d4f-4b6b-966d-b1793a53c369.png",
+      "finalPrompt": "Use case: stylized-concept. Asset type: pixel-art game UI icon for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images: 1 heatSwing and 2 frostBolt are the EXACT style, crisp pixel cluster, saturation and shading references; 3 wrench is an old semantic reference; 4 gear and 5 coin establish this UI family's navy outline and brass materials. These are references, not images to reproduce or a layout.\nONE centered bold standalone object on true ALPHA TRANSPARENT background. Crisp intentional low-resolution pixel art; no smoothing, antialiasing, soft texture, gradients or half pixels. One grid-pixel dark navy #2b3345 outline, 1-2 grid pixels clear margin. Restrained flat colors: polished brass/gold, warm cream, navy, teal #3f9a8c and crimson as needed; gentle TOP LEFT light with hard pixel-cluster highlights and shadows. Simple readable silhouette at 24 screen pixels.\nNo text, letters, numbers, slot frame, background tile, ground, watermark, characters or scenery. ONE icon, not a contact sheet. \nLOCK ICON. Design on exactly 24x24 logical pixel grid, intended 192x192 export with each logical pixel an exact 8x8 block. Small ROUND BRASS PADLOCK body, DARK NAVY U-SHAPED SHACKLE with a few brass/cream highlights. In its center a TINY NAVY KEYHOLE shaped like a WIND-UP KEY BOW: two small round lobes joined together, plus a short stem. Body round and chunky, few brass colors, clearly a closed padlock. No ordinary gear teeth and no swing arc. Match small currency icons in images 4 and 5.",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/wrench.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/gear-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/coin-v1.png"
+      ]
+    },
+    {
+      "id": "action-wrench-v1",
+      "grid": 48,
+      "prompt": "BASIC ATTACK ICON. Design on exactly 48x48 logical pixel grid, intended 384x384 export with each logical pixel an exact 8x8 block. F2's CHUNKY TEAL ADJUSTABLE WRENCH, diagonally lower-left to upper-right with HEAD UPPER RIGHT. Teal #3f9a8c painted handle and head, brass adjustment screw, dark navy outline, hard cream highlights and deep teal shadows. Open adjustable crescent jaw clearly recognizable, long solid handle with a small hole in its end. ONE SHORT WHITE-GOLD SWING ARC BEHIND the wrench, not an enclosing ring. Wrench is the main silhouette. No hand, no character, no red sparks, no second wrench. Match skill-bar icons images 1 and 2, retaining image 3's teal weapon identity.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-c0025a2a-796b-46f3-a649-b74d5b5a4d34.png",
+      "finalPrompt": "Use case: stylized-concept. Asset type: pixel-art game UI icon for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images: 1 heatSwing and 2 frostBolt are the EXACT style, crisp pixel cluster, saturation and shading references; 3 wrench and 4 dodge are old semantic references being replaced; 5 gear establish this UI family's navy outline and brass materials. These are references, not images to reproduce or a layout.\nONE centered bold standalone object on true ALPHA TRANSPARENT background. Crisp intentional low-resolution pixel art; no smoothing, antialiasing, soft texture, gradients or half pixels. One grid-pixel dark navy #2b3345 outline, 1-2 grid pixels clear margin. Restrained flat colors: polished brass/gold, warm cream, navy, teal #3f9a8c and crimson as needed; gentle TOP LEFT light with hard pixel-cluster highlights and shadows. Simple readable silhouette at 24 screen pixels.\nNo text, letters, numbers, slot frame, background tile, ground, watermark, characters or scenery. ONE icon, not a contact sheet. \nBASIC ATTACK ICON. Design on exactly 48x48 logical pixel grid, intended 384x384 export with each logical pixel an exact 8x8 block. F2's CHUNKY TEAL ADJUSTABLE WRENCH, diagonally lower-left to upper-right with HEAD UPPER RIGHT. Teal #3f9a8c painted handle and head, brass adjustment screw, dark navy outline, hard cream highlights and deep teal shadows. Open adjustable crescent jaw clearly recognizable, long solid handle with a small hole in its end. ONE SHORT WHITE-GOLD SWING ARC BEHIND the wrench, not an enclosing ring. Wrench is the main silhouette. No hand, no character, no red sparks, no second wrench. Match skill-bar icons images 1 and 2, retaining image 3's teal weapon identity.",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/wrench.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/dodge.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/gear-v1.png"
+      ]
+    },
+    {
+      "id": "action-dodge-v1",
+      "grid": 48,
+      "prompt": "DODGE ICON. Design on exactly 48x48 logical pixel grid, intended 384x384 export with each logical pixel an exact 8x8 block. A SMALL BRASS WIND-UP KEY SPRING UNCOILING INTO ONE CURVED DASH ARROW POINTING RIGHT. Key bow at LEFT joins a short coiled spring, which sweeps forward into a bold curved gold arrow at RIGHT. One connected dynamic silhouette with 2-3 clear large coil loops and a broad right-facing arrowhead. TWO SHORT SPEED LINES behind the key at LEFT. Polished brass, gold and cream highlights, navy outline. No boots, feet, wings, clock face, character or extra arrow. Match skill-bar icons images 1 and 2.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-d4bca6d8-255e-4f54-898d-fe1f863e35bb.png",
+      "finalPrompt": "Use case: stylized-concept. Asset type: pixel-art game UI icon for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images: 1 heatSwing and 2 frostBolt are the EXACT style, crisp pixel cluster, saturation and shading references; 3 wrench and 4 dodge are old semantic references being replaced; 5 gear establish this UI family's navy outline and brass materials. These are references, not images to reproduce or a layout.\nONE centered bold standalone object on true ALPHA TRANSPARENT background. Crisp intentional low-resolution pixel art; no smoothing, antialiasing, soft texture, gradients or half pixels. One grid-pixel dark navy #2b3345 outline, 1-2 grid pixels clear margin. Restrained flat colors: polished brass/gold, warm cream, navy, teal #3f9a8c and crimson as needed; gentle TOP LEFT light with hard pixel-cluster highlights and shadows. Simple readable silhouette at 24 screen pixels.\nNo text, letters, numbers, slot frame, background tile, ground, watermark, characters or scenery. ONE icon, not a contact sheet. \nDODGE ICON. Design on exactly 48x48 logical pixel grid, intended 384x384 export with each logical pixel an exact 8x8 block. A SMALL BRASS WIND-UP KEY SPRING UNCOILING INTO ONE CURVED DASH ARROW POINTING RIGHT. Key bow at LEFT joins a short coiled spring, which sweeps forward into a bold curved gold arrow at RIGHT. One connected dynamic silhouette with 2-3 clear large coil loops and a broad right-facing arrowhead. TWO SHORT SPEED LINES behind the key at LEFT. Polished brass, gold and cream highlights, navy outline. No boots, feet, wings, clock face, character or extra arrow. Match skill-bar icons images 1 and 2.",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/wrench.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/dodge.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/gear-v1.png"
+      ]
+    }
+  ]
+}

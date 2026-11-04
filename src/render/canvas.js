@@ -19,8 +19,8 @@ const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 
 const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
-const SWING_SWEEP = 0.45, FLASH_MS = 260, CRIT_PULSE_MS = 120, CRIT_ZOOM = 0.03, BODY_SCALE = 1.12, PLAYER_SCALE = 0.88, EYES_OPEN_SHARE = 0.5;
-/** Bosses draw one sheet pixel per screen pixel: their art is already large, and any stretch on top blurs it. */
+const SWING_SWEEP = 0.45, FLASH_MS = 260, CRIT_PULSE_MS = 120, CRIT_ZOOM = 0.03, BODY_SCALE = 1, PLAYER_SCALE = 0.9, EYES_OPEN_SHARE = 0.5;
+/** Every body (F2, mobs, bosses, residents) is drawn at its own art size: one sheet pixel per world pixel, so nothing is stretched or squeezed. */
 const BOSS_SPRITE_SCALE = 1 / BODY_SCALE;
 
 /** Canvas adapter only: positions are in engine units; drawing has no combat authority. */
@@ -136,7 +136,7 @@ export class CanvasRenderer {
     if (!place?.mapImage || !place.map) return false;
     const c = target.getContext('2d'), W = target.width, H = target.height, [mw, mh] = place.size, k = Math.min(W / mw, H / mh), ox = (W - mw * k) / 2, oy = (H - mh * k) / 2;
     const at = (x, y) => [ox + x * k, oy + y * k], dot = (x, y, r, fill, edge = '#2b3345') => { const [px, py] = at(x, y); c.beginPath(); c.arc(px, py, r, 0, TAU); c.fillStyle = fill; c.fill(); c.lineWidth = 2; c.strokeStyle = edge; c.stroke(); };
-    c.clearRect(0, 0, W, H); c.fillStyle = '#2b3345'; c.fillRect(0, 0, W, H);
+    c.clearRect(0, 0, W, H); c.fillStyle = 'rgba(43, 51, 69, 0.35)'; c.fillRect(0, 0, W, H);
     // The map shrunk to minimap size once per picture and size; scaling the full painting down every frame was costly.
     const key = `${W}x${H}`;
     if (this.minimapArt?.image !== place.mapImage || this.minimapArt.key !== key) {
@@ -144,7 +144,8 @@ export class CanvasRenderer {
       const a = art.getContext('2d'); a.imageSmoothingEnabled = true; a.imageSmoothingQuality = 'high'; a.drawImage(place.mapImage, 0, 0, art.width, art.height);
       this.minimapArt = { image: place.mapImage, key, art };
     }
-    c.globalAlpha = 0.85; c.drawImage(this.minimapArt.art, ox, oy); c.globalAlpha = 1;
+    // Half see-through, so the minimap sits on the scene instead of competing with it.
+    c.globalAlpha = 0.5; c.drawImage(this.minimapArt.art, ox, oy); c.globalAlpha = 1;
     const [vx, vy] = at(this.camera.x, this.camera.y); c.lineWidth = 2; c.strokeStyle = '#fff4d6cc'; c.strokeRect(vx, vy, SCREEN_UNITS[0] * k, SCREEN_UNITS[1] * k);
     if (place.goal) dot(place.goal.x, place.goal.y, 5, '#ffd257');
     for (const npc of (place.map.npcs || []).filter(npc => npc.label)) dot(npc.x, npc.y, 4, '#7fc7b0');
@@ -717,11 +718,18 @@ export class CanvasRenderer {
       if (actor.dummy) { this.drawDummy(actor, map.dummyImage); continue; }
       if (actor.npc) { this.drawNpc(actor.npc, depthMask); continue; }
       if (actor.hubPlayer) { this.drawSprite(map.spawn.x * 20, map.spawn.y * 20, this.animator.static(-2.4), this.sprites, false, PLAYER_SCALE); this.coverBody(depthMask, map.spawn.x, map.spawn.y); continue; }
-      const blink = actor.player && actor.invulnerableUntil > s.time && Math.floor(s.time * 22) % 2 === 0;
+      // Only being hit blinks the body; the dodge's own split second of safety shows as the dash, not as a flicker.
+      const blink = actor.player && !g.p.dodge && actor.invulnerableUntil > s.time && Math.floor(s.time * 22) % 2 === 0;
       c.globalAlpha = actor.hidden ? 0.25 : blink && !s.profile.settings.reducedMotion ? 0.45 : 1;
       const mobPose = mobPoses?.get(actor.id), mobClip = mobPose && this.mobSprites.clip(mobPose.action, mobPose.direction);
       // A struck body trembles side to side for a moment, even while the hit holds time still.
       const jolt = !actor.player && actor.joltUntil > s.time && !s.profile.settings.reducedMotion ? (Math.floor(performance.now() / 32) % 2 ? JOLT_PX : -JOLT_PX) : 0;
+      // Two fading copies trail a dodge, so the dash reads as one smooth burst of speed.
+      if (actor.player && g.p.dodge && playerPose && !s.profile.settings.reducedMotion) {
+        const back = g.p.dodge.angle + Math.PI, alpha = c.globalAlpha;
+        for (const [k, a] of [[0.9, 0.18], [0.45, 0.35]]) { c.globalAlpha = a; this.drawSprite((actor.x + Math.cos(back) * k) * 20, (actor.y + Math.sin(back) * k) * 20, playerPose, this.sprites, false, PLAYER_SCALE); }
+        c.globalAlpha = alpha;
+      }
       const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;

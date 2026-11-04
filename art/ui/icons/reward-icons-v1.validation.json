@@ -1,0 +1,206 @@
+[
+  {
+    "file": "art/ui/icons/reward-wrench-damage-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-max-hp-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-skill-cooldown-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-dodge-cooldown-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-move-speed-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-status-damage-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-crit-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-attack-speed-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-kill-heal-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-armor-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-wrench-mod-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-skill-level-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-gear-pouch-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-repair-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-piggy-bank-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-overheat-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  },
+  {
+    "file": "art/ui/icons/reward-glass-spring-v1.png",
+    "width": 384,
+    "height": 384,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true
+  }
+]

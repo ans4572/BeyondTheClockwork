@@ -1,0 +1,31 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: precise-object-edit. Asset type: transparent pixel-art dash shoe icon. Input image1 is the current original artwork.\nCHANGE ONLY THE EXHAUST STEAM at the LEFT OF THE HEEL VENT. It is currently too thick, opaque and flame-like. Make it a MUCH THINNER, AIRY, SEMITRANSPARENT SMOKY VAPOR trailing left from the same vent. ONE OR TWO SLENDER flowing vapor wisps, tapering outward and dissolving into tiny faint soft-looking puffs. Wisps are about HALF the current exhaust thickness, and noticeably translucent: 20-45 percent opacity at the thin left ends, 45-65 percent near the vent. REAL partial-alpha pixels in the PNG, not a solid white painted streak. Warm pale grey/cream/white smoke; only a SMALL muted warm orange hint directly at vent mouth, NOT a big orange jet or a white solid cloud. No flame tongues, bright fire core, red, sparks, swirls, spirals or rings.\nPRESERVE THE SHOE AND KEY EXACTLY: same brass/gold body, rounded cream toe cap and cream sole, two short teal laces, brass side rivet, ankle-collar winding key, circular heel vent, current nearly horizontal right-facing pose, composition, proportions, lighting, outlines and material highlights. Shoe stays FULLY OPAQUE. No changes to shoe design or its direction.\nMaintain intended48x48 pixel-art grid,384x384 final export exact8x8blocks. Keep crisp discrete PIXEL CLUSTERS even in semi-transparent smoke: translucent flat alpha steps rather than smooth antialiasing or blur. The smoky thinness comes from tapered shapes, broken wisps and LOWER ALPHA. Smoke must NOT get a heavy opaque navy outline; a very faint semitransparent outline is acceptable. Navy #2b3345 outline stays firm and opaque on the shoe.\nTRUE TRANSPARENT alpha background, no fake transparency checkerboard, no black/colored backdrop, no ground, outer glow, drop shadow, letters, digits, UI frame or watermark. One icon only, centered with2logicalpixelsmargin. Retain existing ten-color family: navy #2b3345 bronze #96551a brass #d38b25 gold #ffbe20 cream #f6ecd2 orange #f48a30 pale yellow #fff4b7 white #ffffff deep orange #c75420 teal #3f9a8c. Preserve semi-transparent alpha of the vapor. Change only the vapor.",
+  "references": [
+    "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-8b37a409-d3c3-4429-a82a-43e49549ff16.png"
+  ],
+  "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-40f39698-b3dd-4ac2-8b6d-e3869dfc663e.png",
+  "palette": [
+    "#2b3345",
+    "#96551a",
+    "#d38b25",
+    "#ffbe20",
+    "#f6ecd2",
+    "#f48a30",
+    "#fff4b7",
+    "#ffffff",
+    "#bfb8ad",
+    "#3f9a8c"
+  ],
+  "grid": 48,
+  "scale": 8,
+  "margin": 2,
+  "preserveSourceAlpha": true,
+  "alphaSteps": [
+    0,
+    64,
+    128,
+    192,
+    255
+  ]
+}

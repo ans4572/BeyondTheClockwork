@@ -1,0 +1,36 @@
+Use case: game UI icon set.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create three small UI ICONS for Beyond the Clockwork, a cute wind-up toy-town roguelite, in the same pass as the currency, tool and reward card icons.
+
+REFERENCES (style, palette, pixel density)
+- art\ui\skill-icons\heatSwing.png and art\ui\skill-icons\frostBolt.png (48x48): the game's own pixel-art skill icons. The two action icons below sit in the SAME row of skill slots, so match their crisp pixel clusters, dark navy outline, shading and saturation exactly.
+- art\ui\skill-icons\wrench.png and art\ui\skill-icons\dodge.png: the current basic attack and dodge icons these replace.
+- art\ui\icons\gear-v1.png and art\ui\icons\coin-v1.png (if they exist): the currency icons from the same pass.
+Palette: polished brass and gold, warm cream, navy ink outline (#2b3345), teal (F2's wrench, #3f9a8c), crimson; gentle top-left light.
+
+DRAW EACH ICON
+- Pixel art on the grid size given for each icon, then output with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down perfectly.
+- TRANSPARENT background (PNG with alpha), one centred object, a 1 grid pixel dark navy outline, 1-2 grid pixels of empty margin.
+- One bold silhouette that reads at 24 pixels, no text.
+
+THE ICONS
+1) LOCK (잠김) - shown on Moru's tuning board where a stat's next levels open only in the next chapter, and next to locked choices.
+   A small round brass padlock with a navy shackle and a tiny keyhole in the shape of a wind-up key's bow.
+   Grid 24x24, output 192x192.
+   SAVE: art\ui\icons\lock-v1.png
+2) BASIC ATTACK (렌치 공격) - the always-ready wrench swing, first slot of the skill bar.
+   F2's chunky teal adjustable wrench, held diagonally (head at the upper right), with a short white-gold swing arc behind it.
+   Grid 48x48, output 384x384.
+   SAVE: art\ui\icons\action-wrench-v1.png
+3) DODGE (회피) - the quick dash, last slot of the skill bar and the dodge button on phones.
+   A small brass wind-up key spring uncoiling into a curved dash arrow pointing right, with two speed lines; clearly different from the move-speed boot on the reward cards.
+   Grid 48x48, output 384x384.
+   SAVE: art\ui\icons\action-dodge-v1.png
+
+RULES
+- 2 and 3 must look like they belong in the same skill bar as the existing skill icons; 1 matches the small currency icons.
+- No text, letters, numbers, slot frame, background tile, watermark or characters.
+
+When saved, list every SAVE path with its actual pixel size.

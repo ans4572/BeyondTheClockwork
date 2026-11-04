@@ -1,16 +1,17 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
-import { TOOL_ICONS, ico } from './ui/tool-icons.js';
+import { TOOL_ICONS, ICON_FILES, ico, slotArt, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
-import { SpriteLibrary, assetUrl } from './animation/sprite-library.js';
+import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
+import { gradedCanvas } from './render/grade.js';
 import { worldMapSvg, WORLD_MAP_ART, WORLD_MAP_MARKERS } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
 import { MusicPlayer, musicScene } from './audio/music.js';
@@ -34,8 +35,8 @@ const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.host
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
 const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['스킬 대기시간', '−'], dodgeCooldownReduction: ['회피 대기 시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
-const PERK_ICONS = { piggyBank: 'coin', overheatEngine: 'flame', glassSpring: 'target' };
-const PART_ICONS = { basicDamage: 'wrench', maxHp: 'heart', skillCooldownReduction: 'clock', dodgeCooldownReduction: 'boot', statusDamage: 'flame', moveSpeed: 'boot', critChance: 'target', attackSpeed: 'haste', killHeal: 'heal', damageReduction: 'shield' };
+const PERK_ICONS = { piggyBank: 'reward-piggy-bank', overheatEngine: 'reward-overheat', glassSpring: 'reward-glass-spring' };
+const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', dodgeCooldownReduction: 'reward-dodge-cooldown', statusDamage: 'reward-status-damage', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
@@ -46,7 +47,7 @@ const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodge
 /** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
 const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/element-icons/${id}.png`),
   ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake',
-    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat', 'dodge', 'wrench'].map(id => `art/ui/skill-icons/${id}.png`),
+    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat'].map(id => `art/ui/skill-icons/${id}.png`), ...ICON_FILES,
   // The map's painting, so the map opens whole the first time.
   WORLD_MAP_ART, ...WORLD_MAP_MARKERS];
 /** The decoded icons are held here so the browser keeps them ready. */
@@ -87,10 +88,12 @@ try {
   // since no skill can be used before elements are equipped in town.
   const PLAYER_LATER = action => !['idle', 'walk', 'run', 'attack-1', 'attack-2', 'attack-3', 'hit', 'death', 'dodge'].includes(action);
   let playerReady = false;
-  const playerSprites = SpriteLibrary.load(undefined, undefined, PLAYER_LATER).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
+  // F2's and Moru's sheets are colour-graded as they load so they sit with the brighter cast (src/render/grade.js).
+  const gradedImage = url => browserImage(url).then(gradedCanvas);
+  const playerSprites = SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
-    .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json')).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+    .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
@@ -124,6 +127,15 @@ try {
   portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
   renderer.mapImages = new Map(); renderer.depthMasks = new Map();
   const offscreen = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
+  // Map paintings ship at their own pixel size (half the download) and are blown up here with hard pixel edges, so they
+  // look exactly as the old pre-enlarged files did.
+  const sharpened = (file, image) => {
+    const scale = Object.values(data?.maps?.villages || {}).find(village => village.background === file)?.pixelScale || 1;
+    if (scale === 1) return image;
+    const canvas = offscreen(image.width * scale, image.height * scale), c = canvas.getContext('2d');
+    c.imageSmoothingEnabled = false; c.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  };
   const buildDepth = village => {
     const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
     if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
@@ -141,7 +153,7 @@ try {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
       // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
-      image.onload = () => image.decode().catch(() => {}).then(() => { renderer.mapImages.set(file, image); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
+      image.onload = () => image.decode().catch(() => {}).then(() => { renderer.mapImages.set(file, sharpened(file, image)); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
       image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
       image.src = assetUrl(file);
     }
@@ -450,13 +462,13 @@ try {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
       return { name: element.device, art: element.id, label: game.s.profile.ownedElements.includes(element.id) ? `${element.name} 속성 모듈` : `${element.name} 속성 모듈 · 이번 원정 체험`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
-    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: ico('wrench'), label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
+    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: ico('reward-wrench-mod'), label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, skills: [skill.id], label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element] }; }
     if (reward.kind === 'perk') { const perk = data.slice.perks.find(p => p.id === reward.id); return { name: perk.name, icon: ico(PERK_ICONS[perk.id] || 'spark'), label: '원정 특전', description: perk.description, value: '이 원정에 유지 · 한 번만' }; }
     if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, art: trait.element, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element] }; }
     if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); const skills = data.combat.skills.filter(s => s.element === slot.element); return { name: `${element.name} 기술 조율`, skills: skills.map(s => s.id), label: '기술 단계', description: `${skills.map(s => s.name).join(' · ')}이(가) 함께 강해진다.`, value: `Lv.${slot.level} → ${slot.level + 1} (최대 ${data.combat.balance.skillMaxLevel}) · 직접 피해 +12%p` }; }
-    if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: ico('gear'), label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
-    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('heal'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
+    if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: ico('reward-gear-pouch'), label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
+    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('reward-repair'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
     const upgrade = data.combat.balance.temporaryUpgrades.find(u => u.id === reward.id), desc = data.slice.rewards[reward.id];
     const rank = game.s.run.upgrades[reward.id] || 0, [name, sign] = PART_VALUES[reward.id], now = partValue(reward.id, rank), next = partValue(reward.id, rank + 1);
     const shown = v => reward.id === 'maxHp' || reward.id === 'killHeal' ? `${v}` : `${v ? sign : ''}${Math.round(v * 100)}%`;
@@ -466,8 +478,8 @@ try {
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}</article>`;
-    }).join('')}</div><div class="actions reroll">${button(game.s.run.rerolled ? '다시 뽑기 사용함' : '다시 뽑기 (1회)', 'reroll', game.s.run.rerolled ? 'disabled' : '')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
+      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
+    }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
   function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
@@ -538,7 +550,7 @@ try {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
-      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'heal', skillLevel: 'up', persistentGears: 'gear' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
       const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감아 깨우기' : '회로 뽑기';
@@ -580,10 +592,10 @@ try {
   function hudSlots() {
     const keys = bindings(), skills = game.skillSlots;
     return [
-      { key: '좌', icon: 'wrench' },
+      { key: '좌', icon: 'action-wrench' },
       ...[0, 1, 2, 3].map(i => ({ key: keyName(keys['skill' + i]), skill: skills[i]?.skill, level: skills[i]?.slot.level })),
       { key: '우', skill: game.fusion, fusion: true },
-      { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'dodge', dodge: true }
+      { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'action-dodge', dodge: true }
     ];
   }
   /** Health fractions where a boss changes phase: where its later patterns unlock, and where Brass adds a march lane. */
@@ -632,7 +644,7 @@ try {
       $('skills').dataset.key = slotKey;
       $('skills').innerHTML = slots.map(slot => {
         const art = slot.icon || slot.skill?.id;
-        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="art/ui/skill-icons/${art}.png" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level > 1 ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
+        return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="${slotArt(art)}" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level > 1 ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
       }).join('');
     }
     [...$('skills').children].forEach((element, i) => {
@@ -749,7 +761,7 @@ try {
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
     if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
-    if (name === 'reroll') { bought = game.rerollRewards(); }
+    if (name === 'reroll-card') { bought = game.rerollRewardCard(Number(d.index)); }
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
     if (name === 'unwind') game.unwind();
@@ -787,7 +799,10 @@ try {
   // The row under the pointer or the keyboard explains itself in the line below the list.
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
   $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
-  $('fullscreen').addEventListener('click', () => { $('app').requestFullscreen?.().catch(() => {}); });
+  // The button enters full screen, or leaves it when already there; its picture shows which.
+  const toggleFullscreen = () => (document.fullscreenElement ? document.exitFullscreen?.() : $('app').requestFullscreen?.())?.catch(() => {});
+  $('fullscreen').addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', () => syncFullscreenIcon($('fullscreen')));
   $('hud-map').addEventListener('click', () => { if (!saveBlocked && !screen) pause('map'); });
   $('hud-menu').addEventListener('click', () => { if (!saveBlocked && !screen) pause(); });
   for (const [id, icon] of [['fullscreen', 'fullscreen'], ['hud-map', 'map'], ['hud-menu', 'settings']]) $(id).insertAdjacentHTML('afterbegin', TOOL_ICONS[icon]);
@@ -990,7 +1005,7 @@ try {
       else if (name === 'interact') interact();
       else if (name === 'menu') { if (!saveBlocked) pause(); }
       else if (name === 'map' && !saveBlocked) pause('map');
-      else if (name === 'fullscreen') $('app').requestFullscreen?.().catch(() => {});
+      else if (name === 'fullscreen') toggleFullscreen();
     });
     document.addEventListener('pointerdown', openAudio, { once: true });
   }

@@ -1370,13 +1370,24 @@ export class Game {
     }
     this.s.mode = 'reward';
   }
-  /** Once per reward screen the three cards can be swapped for a fresh draw (a different set when the pool allows). */
-  rerollRewards() {
+  /**
+   * Each of the three cards can be drawn again once per reward screen. The new card comes from the same draw as a fresh
+   * offer (its slot's rules: the first card grows the build) and is never a card already on the table.
+   */
+  rerollRewardCard(index) {
     const run = this.s.run;
-    if (this.s.mode !== 'reward' || !run || run.rerolled) return false;
-    const before = JSON.stringify(run.rewardChoices);
-    for (let i = 0; i < 6; i++) { run.rewardChoices = []; this.offerRewards(); if (JSON.stringify(run.rewardChoices) !== before) break; }
-    run.rerolled = true; return true;
+    if (this.s.mode !== 'reward' || !run || !run.rewardChoices[index] || run.rerolledCards?.[index]) return false;
+    const key = reward => `${reward.kind}:${reward.id ?? reward.amount}`, taken = new Set(run.rewardChoices.map(key)), kept = run.rewardChoices;
+    let pick = null;
+    for (let tries = 0; tries < 12 && !pick; tries++) {
+      run.rewardChoices = []; this.offerRewards();
+      const fresh = run.rewardChoices;
+      pick = fresh[index] && !taken.has(key(fresh[index])) ? fresh[index] : fresh.find(reward => !taken.has(key(reward))) || null;
+    }
+    run.rewardChoices = kept;
+    (run.rerolledCards ??= [])[index] = true;
+    if (pick) run.rewardChoices[index] = pick;
+    return !!pick;
   }
   chooseReward(index, replacement = null) {
     if (this.s.mode !== 'reward') return false;
@@ -1404,7 +1415,7 @@ export class Game {
     }
     if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
-    run.rewardChoices = []; run.rerolled = false; this.sense({ kind: 'pick' });
+    run.rewardChoices = []; run.rerolledCards = []; this.sense({ kind: 'pick' });
     if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
     else this.s.mode = 'route';

@@ -1,0 +1,44 @@
+Use case: game UI icon set.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Create the REWARD CARD ICONS for Beyond the Clockwork, a cute wind-up toy-town roguelite. After each fight the player picks one of three reward cards; each card shows one of these icons in a 56x56 tile at the top of the card. They also appear smaller (24-32 pixels) in lists.
+
+REFERENCES (style, palette, pixel density)
+- art\ui\skill-icons\heatSwing.png, art\ui\skill-icons\frostBolt.png, art\ui\skill-icons\conductiveSpanner.png (48x48): the game's own pixel-art skill icons, shown on the same cards. Match their crisp pixel clusters, dark navy outline, shading and saturation exactly so the new icons sit beside them.
+- art\ui\icons\gear-v1.png and art\ui\icons\coin-v1.png (if they exist): the currency icons from the same pass.
+Palette: polished brass and gold, warm cream, navy ink outline (#2b3345), crimson, mint, sky blue; gentle top-left light.
+
+DRAW EACH ICON
+- Pixel art on a 48x48 pixel grid, then output at 384x384 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 48x48 perfectly.
+- TRANSPARENT background (PNG with alpha), one centred object, 2 grid pixels of empty margin, a 1 grid pixel dark navy outline.
+- Must read at 28 pixels: one bold silhouette, at most 8-10 colours, no text.
+- Every icon must have a clearly different silhouette from the others.
+
+THE ICONS (what the card gives -> what to draw -> SAVE)
+Output parts (출력 부품, run upgrades):
+1) Wrench damage (렌치 피해) -> a brass wrench with a red power spark at its jaw -> art\ui\icons\reward-wrench-damage-v1.png
+2) Max health (최대 체력) -> a red heart with brass rivets and a tiny wind-up key on its side -> art\ui\icons\reward-max-hp-v1.png
+3) Skill cooldown (스킬 대기시간) -> a brass pocket watch with its hand sweeping backward and a small down arrow -> art\ui\icons\reward-skill-cooldown-v1.png
+4) Dodge cooldown (회피 대기시간) -> a winged boot with a small clock face on the ankle -> art\ui\icons\reward-dodge-cooldown-v1.png
+5) Move speed (이동 속도) -> a running boot with three speed lines behind it (different from 4: no wings, no clock) -> art\ui\icons\reward-move-speed-v1.png
+6) Status damage (화상 피해) -> a small flame inside a brass ring -> art\ui\icons\reward-status-damage-v1.png
+7) Crit chance (치명타 확률) -> a target with a crimson bullseye and a gold sparkle -> art\ui\icons\reward-crit-v1.png
+8) Wrench speed (렌치 속도) -> two wrench silhouettes overlapping like a fast double swing with motion arcs -> art\ui\icons\reward-attack-speed-v1.png
+9) Heal on kill (처치마다 회복) -> a small mint plus sign with a tiny broken gear beside it -> art\ui\icons\reward-kill-heal-v1.png
+10) Damage reduction (받는 피해) -> a round brass shield with a navy rim and a riveted cross -> art\ui\icons\reward-armor-v1.png
+Other card kinds:
+11) Wrench mod (렌치 개조) -> a wrench with a gear clamped onto its handle and a little screwdriver -> art\ui\icons\reward-wrench-mod-v1.png
+12) Skill level (기술 단계) -> a gold upward chevron arrow over a small brass gear -> art\ui\icons\reward-skill-level-v1.png
+13) Free gear pouch (자유 톱니 주머니) -> a small cloth pouch tied with string, brass gears spilling out -> art\ui\icons\reward-gear-pouch-v1.png
+14) Repair (응급 수리 / 정밀 수리) -> a mint repair kit box with a white plus and a small wrench -> art\ui\icons\reward-repair-v1.png
+Run perks (원정 특전):
+15) Piggy bank (저금통) -> a pink piggy bank with a coin going into the slot -> art\ui\icons\reward-piggy-bank-v1.png
+16) Overheat engine (과열 엔진) -> a small brass engine block with a red-hot glowing core and a puff of steam -> art\ui\icons\reward-overheat-v1.png
+17) Glass spring (유리 태엽) -> a delicate glass wind-up spring coil with a crack and a sparkle -> art\ui\icons\reward-glass-spring-v1.png
+
+RULES
+- All 17 in one consistent style: the same outline weight, light direction, saturation and pixel density.
+- No text, letters, numbers, card frame, background tile, watermark or characters.
+
+When saved, list every SAVE path with its actual pixel size.

@@ -1,4 +1,4 @@
-import { TOOL_ICONS } from './tool-icons.js';
+import { TOOL_ICONS, slotArt, syncFullscreenIcon } from './tool-icons.js';
 const STICK_REACH_PX = 52, DEAD_ZONE = 0.16, IDLE_AIM_UNITS = 3;
 
 /** Thumb offset to a move of at most length 1, with a small dead zone at the centre. */
@@ -22,6 +22,8 @@ export class TouchControls {
     this.root = root; this.onPress = onPress; this.move = { x: 0, y: 0 }; this.attacking = false; this.stickId = null;
     root.innerHTML = `<div class="touch-zone"></div><div class="touch-stick" hidden><i></i></div><div class="touch-tools">${document.fullscreenEnabled ? `<button data-press="fullscreen" aria-label="전체화면">${TOOL_ICONS.fullscreen}</button>` : ''}<button data-press="map" aria-label="지도">${TOOL_ICONS.map}</button><button data-press="menu" aria-label="환경설정">${TOOL_ICONS.settings}</button></div><button class="touch-talk" data-press="interact" hidden>말 걸기</button><div class="touch-pad">${SLOT_BUTTONS.map(id => `<button class="touch-${id}" data-press="${id}" aria-label="${SLOT_NAMES[id]}"><img alt=""><span class="cool"></span><b class="left"></b><i class="cost"></i></button>`).join('')}</div>`;
     this.zone = root.querySelector('.touch-zone'); this.stick = root.querySelector('.touch-stick'); this.knob = this.stick.firstChild; this.talk = root.querySelector('.touch-talk');
+    const full = root.querySelector('[data-press="fullscreen"]');
+    document.addEventListener('fullscreenchange', () => syncFullscreenIcon(full));
     this.slots = SLOT_BUTTONS.map(id => root.querySelector(`.touch-${id}`));
     this.zone.addEventListener('pointerdown', e => this.grab(e));
     this.zone.addEventListener('pointermove', e => this.drag(e));
@@ -51,7 +53,7 @@ export class TouchControls {
   /** `slots` is the HUD's list, in the order of SLOT_BUTTONS, with what each button is showing. */
   update(slots) {
     slots.forEach(({ art, cost, share, left, ready, short }, i) => {
-      const button = this.slots[i], image = button.firstChild, src = art ? `art/ui/skill-icons/${art}.png` : '';
+      const button = this.slots[i], image = button.firstChild, src = art ? slotArt(art) : '';
       if (button.dataset.art !== src) { button.dataset.art = src; button.classList.toggle('empty', !art); if (art) image.src = src; else image.removeAttribute('src'); }
       button.children[1].style.height = `${share * 100}%`; button.children[2].textContent = left; button.classList.toggle('ready', !!ready); button.classList.toggle('short', !!short);
       button.children[3].textContent = cost || '';

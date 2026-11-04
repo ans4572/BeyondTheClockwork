@@ -1,4 +1,4 @@
-const browserImage = url => new Promise((resolve, reject) => {
+export const browserImage = url => new Promise((resolve, reject) => {
   const image = new Image();
   // Decoded up front, so the first frame that shows a new sheet (a skill, a mob's attack) does not stall on it.
   image.onload = () => image.decode().catch(() => {}).then(() => resolve(image));

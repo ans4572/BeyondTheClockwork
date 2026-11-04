@@ -58,6 +58,8 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 /* Every card opens with one framed tile: a part's pixel icon, or the skills it strengthens, on the card's colour. */
 .reward-card .reward-icon, .reward-skills img { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 8px; background: radial-gradient(circle at 50% 40%, #fff8e8 0 40%, color-mix(in srgb, var(--accent, #9fae83) 35%, #f6ecd2) 75%); box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 5px color-mix(in srgb, var(--accent, #9fae83) 70%, #fff), 3px 3px 0 #0e121a40; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
 .reward-card .reward-icon .ico { width: 36px; height: 36px; vertical-align: 0; filter: drop-shadow(1px 1px 0 #0e121a55); }
+/* Painted 48 pixel card icons fill the tile at their own size; no extra shadow, they carry their own outline. */
+.reward-card .reward-icon .ico.px-icon { width: 48px; height: 48px; filter: none; }
 .reward-skills { display: flex; gap: 6px; }
 .reward-card .reward-icon .tile-art { width: 44px; height: 44px; image-rendering: pixelated; }
 .reward-skills img { padding: 8px; image-rendering: pixelated; object-fit: contain; }
@@ -119,6 +121,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 /* A pixel icon inside a line of text, one letter tall. */
 .ico { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -.2em; image-rendering: pixelated; }
+.px-icon { image-rendering: pixelated; object-fit: contain; }
+/* Painted icons set in a line of text are a little larger than a letter, since they keep a margin round the drawing. */
+.ico.px-icon { width: 1.35em; height: 1.35em; vertical-align: -.3em; }
 .actions.leave { justify-content: flex-end; }
 
 /* Moru's parts shelf: element at the top, its two skills as icon rows, the button kept at the bottom of every card. */
