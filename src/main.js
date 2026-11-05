@@ -97,6 +97,8 @@ try {
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
     .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+  // On a local test server the game and its renderer can be looked at from the console (never on the published site).
+  if (DEBUG_ALLOWED) window.__btc = { game, renderer };
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
@@ -141,7 +143,8 @@ try {
   };
   const buildDepth = village => {
     const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
-    if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
+    // Once the depth is read, the mask picture itself (as large as the map) is not needed any more.
+    if (image && mask) { renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen)); renderer.mapImages.delete(village.mask); }
   };
   // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
@@ -166,7 +169,7 @@ try {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
       // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
-      image.onload = () => image.decode().catch(() => {}).then(() => { renderer.mapImages.set(file, sharpened(file, image)); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
+      image.onload = () => image.decode().catch(() => {}).then(() => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, sharpened(file, image)); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
       image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
       image.src = assetUrl(file);
     }
@@ -177,6 +180,15 @@ try {
     placeLoaded = place?.background;
     // In town the next place is the first stop; on a run it is the stop after this one.
     const next = game.s.run ? placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
+    // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory
+    // made the town sluggish on phones after a run. The town itself stays, so coming home is instant; anything let go is
+    // still in the browser's cache and comes back in a moment if needed again.
+    const keep = new Set([...wanted, ...artOf(game.hubMap)]);
+    for (const village of Object.values(data?.maps?.villages || {})) for (const file of artOf(village)) {
+      if (keep.has(file) || !requested.has(file)) continue;
+      renderer.mapImages.delete(file); renderer.depthMasks.delete(file); requested.delete(file);
+      imageQueue = imageQueue.filter(queued => queued !== file);
+    }
     const fresh = wanted.filter(file => !requested.has(file)); fresh.forEach(file => requested.add(file));
     imageQueue = [...wanted.filter(file => imageQueue.includes(file)), ...fresh, ...imageQueue.filter(file => !wanted.includes(file))];
     fetchImages();
