@@ -209,3 +209,19 @@ test('elements act on hazards: fire sets off a crate, ice cools a plate, lightni
   g.castHit({ elements: ['wind'], slot: {}, staggerUsed: {}, statusAt: {}, id: 'w', color: '#fff', damage: 1 }, pushed);
   assert.ok(crate2.fuseAt !== undefined);
 });
+
+test('the room keeps its hazards through the reward and the walk to the portal, and the saw spares enemies', () => {
+  const g = roomFight(21);
+  const before = g.s.hazards.length; assert.ok(before > 0);
+  g.s.enemies = []; g.s.run.wave = g.room.waves.length - 1; g.s.run.arrivals = [];
+  g.finishCombat();
+  assert.equal(g.s.hazards.length, before); assert.ok(g.roomHazards.length === before, g.s.mode);
+  assert.ok(g.obstacles.length > 0);
+  g.chooseReward(0);
+  assert.equal(g.roomHazards.length, before, `still there in ${g.s.mode}`);
+  const h = roomFight(22); h.s.enemies = [];
+  const rail = { id: 'r', kind: 'rail', x: h.p.x + 4, y: h.p.y, dx: 2, dy: 0, offset: 0 }; h.s.hazards = [rail];
+  const guard = h.spawnWaveEnemy('guard', { x: rail.x, y: rail.y }), hp = guard.hp;
+  for (let i = 0; i < 120; i++) { h.s.time += 1 / 60; h.tickHazards(); }
+  assert.equal(guard.hp, hp);
+});

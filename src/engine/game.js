@@ -10,6 +10,8 @@ import { dealHazards, SOLID, hazardBox, sawAt, plateState } from './hazards.js';
 
 export const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+/** Modes in which the player is still in a run room (fighting, choosing a reward, walking to the portal). */
+const ROOM_MODES = new Set(['combat', 'reward', 'route', 'unwind']);
 const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, PORTAL_REACH_UNITS = 1, LEAVE_REFUSED_UNITS = 1.5, DIRECT_UNITS = 2, LAST_WAVE_ALREADY_PLAYED = 99, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
 const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
@@ -262,10 +264,12 @@ export class Game {
   }
   get obstacles() {
     // Crates, fences and music boxes stand in the way of feet and shots alike.
-    const solid = this.s.mode === 'combat' && this.s.hazards?.length ? this.s.hazards.filter(h => SOLID.has(h.kind) && !h.gone).map(hazardBox) : [];
+    const solid = this.roomHazards.filter(h => SOLID.has(h.kind) && !h.gone).map(hazardBox);
     if (this.s.mode === 'intro' || !this.s.run || this.map) return solid;
     return [...this.config.roomLayouts[this.s.run.plan[this.s.run.node].layout].obstacles, ...solid];
   }
+  /** The hazards of the room the run stands in: through the fight, the reward and the walk to the portal. */
+  get roomHazards() { return this.s.run && ROOM_MODES.has(this.s.mode) ? this.s.hazards || [] : []; }
   /** True when a body of `radius` at (x, y) would overlap a solid hazard. */
   inSolid(x, y, radius) { return this.obstacles.some(o => x + radius > o.x && x - radius < o.x + o.w && y + radius > o.y && y - radius < o.y + o.h); }
   move(body, dx, dy, radius = body.radius || this.config.arena.playerRadius) {
@@ -1290,10 +1294,7 @@ export class Game {
       if (h.kind === 'rail') {
         const saw = sawAt(h, t, rules.rail.speed);
         if (!p.dodge && distance(saw, p) < rules.rail.radius + playerR) this.hurt(rules.rail.damage);
-        h.hitAt ??= {};
-        for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(saw, e) < rules.rail.radius + e.radius && t >= (h.hitAt[e.id] || 0)) {
-          h.hitAt[e.id] = t + rules.rail.enemyEvery; this.hitEnemy(e, rules.rail.enemyDamage, { dot: true, color: '#d8dde2' }); this.effect('spark', e.x, e.y - 0.5, '#fff4d6', 0.2, 0.6);
-        }
+        // The saw is the town's trap for F2: enemies step over its groove unharmed (a charged rail still shocks them).
       }
     }
     if (list.some(h => h.gone)) this.s.hazards = list.filter(h => !h.gone);
@@ -1550,7 +1551,9 @@ export class Game {
       if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
       this.sense({ kind: 'loot' });
     }
-    this.clearCombat();
+    // The room's furniture stays where it stands while the reward is chosen and the portal walked to; only lit fuses go out.
+    const furniture = (this.s.hazards || []).filter(h => !h.gone).map(({ fuseAt, ...h }) => h);
+    this.clearCombat(); this.s.hazards = furniture;
     if (this.room.boss) this.s.mode = 'unwind'; else this.offerRewards();
     this.save(); return true;
   }

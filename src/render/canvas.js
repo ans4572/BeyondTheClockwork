@@ -850,7 +850,7 @@ export class CanvasRenderer {
     const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null }).map(npc => ({ y: npc.y, npc })) : [];
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
     // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
-    const hazards = s.mode === 'combat' ? (s.hazards || []).filter(h => !h.gone).map(h => ({ y: GROUND.has(h.kind) ? -Infinity : h.y, hazard: h })) : [];
+    const hazards = g.roomHazards.filter(h => !h.gone).map(h => ({ y: GROUND.has(h.kind) ? -Infinity : h.y, hazard: h }));
     const actors = [...hazards, ...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
     for (const actor of actors) {
       if (actor.occluder) { this.drawOccluder(mapImage, actor.occluder.polygon, size); continue; }

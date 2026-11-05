@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
-import { fitsMap, cameraFor, placeOf, pointInPolygon } from '../src/engine/map-geometry.js';
+import { fitsMap, cameraFor, placeOf, pointInPolygon, VIEW_UNITS } from '../src/engine/map-geometry.js';
 import { LANE_UNITS } from '../src/animation/npc-director.js';
 import { closeSlivers, columnDepths, ghostFor, raiseDepths } from '../src/render/depth-mask.js';
 
@@ -162,10 +162,11 @@ test('a save resumes on foot with panels closed, and an old off-map position ret
 });
 
 test('the camera follows the player and stops at the map edges', () => {
-  // The view is 22.4 by 12.8 units at the 1.25x camera.
-  assert.deepEqual(cameraFor({ x: 21, y: 12 }, [42, 24]), { x: 9.8, y: 5.6 });
+  // The view is VIEW_UNITS wide and tall (25.5 by 14.5 units at the 1.1x camera), centred on the player until an edge.
+  const [vw, vh] = VIEW_UNITS, near = (a, b) => Math.abs(a - b) < 1e-9;
+  const mid = cameraFor({ x: 21, y: 12 }, [42, 24]); assert.ok(near(mid.x, 21 - vw / 2) && near(mid.y, 12 - vh / 2));
   assert.deepEqual(cameraFor({ x: 1, y: 1 }, [42, 24]), { x: 0, y: 0 });
-  const edge = cameraFor({ x: 41, y: 23 }, [42, 24]); assert.ok(Math.abs(edge.x - 19.6) < 1e-9 && Math.abs(edge.y - 11.2) < 1e-9);
+  const edge = cameraFor({ x: 41, y: 23 }, [42, 24]); assert.ok(near(edge.x, 42 - vw) && near(edge.y, 24 - vh));
   assert.deepEqual(cameraFor({ x: 20, y: 3 }), { x: 0, y: 0 });
 });
 

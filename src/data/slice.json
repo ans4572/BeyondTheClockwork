@@ -1571,9 +1571,9 @@
     "spreadTries": 12,
     "doorClear": 3.5,
     "solidRoom": 1.6,
-    "crate": { "size": 0.9, "fuse": 0.8, "radius": 2.2, "damage": 8, "enemyDamage": 160, "chain": 0.15 },
+    "crate": { "size": 0.9, "fuse": 0.8, "radius": 2.2, "damage": 8, "enemyDamage": 15, "chain": 0.15 },
     "plate": { "half": 1.4, "depth": 0.82, "cycle": 5, "warn": 1, "hot": 1.5, "damage": 4, "tick": 0.7 },
-    "rail": { "chance": 0.5, "speed": 2.6, "radius": 0.45, "damage": 5, "enemyDamage": 60, "enemyEvery": 0.6 },
+    "rail": { "chance": 0.5, "speed": 2.6, "radius": 0.45, "damage": 5 },
     "fence": { "long": 1.9, "short": 0.45, "gap": 0.25, "hp": 4 },
     "musicbox": { "size": 0.8, "heal": 0.18 }
   ,
