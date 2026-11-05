@@ -2,14 +2,14 @@
 //   POST /api/stats                 one event (src/engine/stats.js cleanEvent) -> 204, or for a ping { mail: [gifts] }
 //   POST /api/mail/claim            { device, ids }  the game took these gifts                   -> { ok }
 // Admin routes (Authorization: Bearer <ADMIN_TOKEN>):
-//   GET    /api/admin/stats?days=30          the summary below
+//   GET    /api/admin/stats?days=7|30|0&difficulty=   the summary below
 //   GET    /api/admin/users?q=               players (devices), most recently seen first
 //   GET    /api/admin/users/:id              one player: details, recent runs, gifts
 //   POST   /api/admin/users/:id/memo         { memo }                    a name only the admin page shows
 //   POST   /api/admin/gifts                  { device, gears, note }     free gears the game hands over on its next ping
 //   DELETE /api/admin/gifts/:id              take back a gift that has not arrived yet
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
-import { cleanEvent, koreanDay, isDeviceId, plainText, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
+import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
 const SCHEMA = [
@@ -19,11 +19,14 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS gifts_device ON gifts (device)`,
   `CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, device TEXT, day TEXT, at INTEGER)`,
   `CREATE INDEX IF NOT EXISTS sessions_day ON sessions (day)`,
-  `CREATE TABLE IF NOT EXISTS runs (device TEXT, run TEXT, day TEXT, combo TEXT, started_at INTEGER, ended_at INTEGER, reason TEXT, node INTEGER, seconds INTEGER, PRIMARY KEY (device, run))`,
+  `CREATE TABLE IF NOT EXISTS runs (device TEXT, run TEXT, day TEXT, combo TEXT, started_at INTEGER, ended_at INTEGER, reason TEXT, node INTEGER, seconds INTEGER, difficulty TEXT, PRIMARY KEY (device, run))`,
   `CREATE INDEX IF NOT EXISTS runs_day ON runs (day)`
 ];
+/** Columns added after the first tables went live; on a database that has them already the statement fails and is skipped. */
+const MIGRATIONS = [`ALTER TABLE runs ADD COLUMN difficulty TEXT`];
 const ready = new WeakMap();
-const ensure = db => { if (!ready.has(db)) ready.set(db, db.batch(SCHEMA.map(sql => db.prepare(sql))).catch(error => { ready.delete(db); throw error; })); return ready.get(db); };
+const setUp = async db => { await db.batch(SCHEMA.map(sql => db.prepare(sql))); for (const sql of MIGRATIONS) await db.prepare(sql).run().catch(() => {}); };
+const ensure = db => { if (!ready.has(db)) ready.set(db, setUp(db).catch(error => { ready.delete(db); throw error; })); return ready.get(db); };
 
 /** Gifts made for a device that it has not taken yet, oldest first. */
 const waiting = (db, device) => db.prepare(`SELECT id, gears, note FROM gifts WHERE device = ?1 AND claimed_at IS NULL AND cancelled_at IS NULL ORDER BY id`).bind(device).all().then(r => r.results.map(row => ({ ...row })));
@@ -48,12 +51,12 @@ export async function record(db, sent, now = Date.now()) {
       .bind(event.device, day, now, event.where, event.node, event.gears, event.playSeconds, event.name || null).run();
     return { mail: await waiting(db, event.device) };
   } else if (event.kind === 'runStart') {
-    await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at) VALUES (?1, ?2, ?3, ?4, ?5)`).bind(event.device, event.run, day, event.combo, now).run();
+    await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at, difficulty) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`).bind(event.device, event.run, day, event.combo, now, event.difficulty).run();
   } else {
     // An end with no start (a run begun before statistics existed) still counts, on the day it came back.
-    await db.prepare(`INSERT INTO runs (device, run, day, combo, ended_at, reason, node, seconds) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
-      ON CONFLICT (device, run) DO UPDATE SET ended_at = ?5, reason = ?6, node = ?7, seconds = ?8`)
-      .bind(event.device, event.run, day, event.combo, now, event.reason, event.node, event.seconds).run();
+    await db.prepare(`INSERT INTO runs (device, run, day, combo, ended_at, reason, node, seconds, difficulty) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+      ON CONFLICT (device, run) DO UPDATE SET ended_at = ?5, reason = ?6, node = ?7, seconds = ?8, difficulty = COALESCE(runs.difficulty, ?9)`)
+      .bind(event.device, event.run, day, event.combo, now, event.reason, event.node, event.seconds, event.difficulty).run();
   }
   return {};
 }
@@ -91,7 +94,7 @@ export async function user(db, id, now = Date.now()) {
   await ensure(db);
   const [[row], runs, gifts] = await Promise.all([
     db.prepare(`SELECT ${USER_COLUMNS} ${USER_JOINS} WHERE d.id = ?1`).bind(id).all().then(r => r.results.map(plain)),
-    db.prepare(`SELECT day, combo, reason, node, seconds FROM runs WHERE device = ?1 ORDER BY COALESCE(ended_at, started_at) DESC LIMIT 20`).bind(id).all().then(r => r.results.map(plain)),
+    db.prepare(`SELECT day, combo, reason, node, seconds, difficulty FROM runs WHERE device = ?1 ORDER BY COALESCE(ended_at, started_at) DESC LIMIT 20`).bind(id).all().then(r => r.results.map(plain)),
     db.prepare(`SELECT id, gears, note, created_at, claimed_at, cancelled_at FROM gifts WHERE device = ?1 ORDER BY id DESC LIMIT 50`).bind(id).all().then(r => r.results.map(plain))
   ]);
   return row ? { now, onlineSeconds: ONLINE_SECONDS, user: row, runs, gifts } : null;
@@ -116,31 +119,39 @@ const daysFrom = (since, today) => { const out = []; for (let t = Date.parse(sin
  * totals, daily rows, device breakdowns over the devices that played in the range, element combos, where runs ended,
  * and the latest runs.
  */
-export async function summary(db, days = 30, now = Date.now()) {
+/**
+ * `difficulty` ('easy' | 'normal' | 'hard', or '' for all) narrows every expedition figure (totals, days, pairs, stops,
+ * recent runs) to runs set out on it; plays and devices stay as they are. `difficulties` always counts all of them,
+ * runs from before difficulties existed as 'legacy'.
+ */
+export async function summary(db, days = 30, now = Date.now(), difficulty = '') {
   await ensure(db);
-  const today = koreanDay(now), since = days > 0 ? koreanDay(now - (days - 1) * 86400000) : '0000-00-00';
+  const today = koreanDay(now), since = days > 0 ? koreanDay(now - (days - 1) * 86400000) : '0000-00-00', pick = DIFFICULTIES.includes(difficulty) ? difficulty : '';
   const all = (sql, ...args) => db.prepare(sql).bind(...args).all().then(r => r.results);
-  const [[devices], [sessionTotals], [runTotals], sessionDays, newDays, runDays, forms, systems, browsers, combos, depth, recent] = await Promise.all([
+  const level = `(?2 = '' OR difficulty = ?2)`;
+  const [[devices], [sessionTotals], [runTotals], sessionDays, newDays, runDays, forms, systems, browsers, combos, depth, recent, levels] = await Promise.all([
     all(`SELECT COUNT(*) AS everyone, SUM(first_day >= ?1) AS fresh, SUM(installed) AS installed FROM devices`, since),
     all(`SELECT COUNT(*) AS sessions, COUNT(DISTINCT device) AS active FROM sessions WHERE day >= ?1`, since),
     all(`SELECT COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, SUM(reason IS NULL) AS open,
-      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds FROM runs WHERE day >= ?1`, since),
+      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds FROM runs WHERE day >= ?1 AND ${level}`, since, pick),
     all(`SELECT day, COUNT(*) AS sessions, COUNT(DISTINCT device) AS devices FROM sessions WHERE day >= ?1 GROUP BY day`, since),
     all(`SELECT first_day AS day, COUNT(*) AS fresh FROM devices WHERE first_day >= ?1 GROUP BY first_day`, since),
-    all(`SELECT day, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, AVG(seconds) AS seconds FROM runs WHERE day >= ?1 GROUP BY day`, since),
+    all(`SELECT day, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, AVG(seconds) AS seconds FROM runs WHERE day >= ?1 AND ${level} GROUP BY day`, since, pick),
     ...['form', 'os', 'browser'].map(column => all(`SELECT d.${column} AS name, COUNT(DISTINCT s.device) AS devices, COUNT(*) AS sessions FROM sessions s JOIN devices d ON d.id = s.device WHERE s.day >= ?1 GROUP BY d.${column} ORDER BY devices DESC, sessions DESC`, since)),
     all(`SELECT combo, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons,
-      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node FROM runs WHERE day >= ?1 GROUP BY combo ORDER BY runs DESC`, since),
-    all(`SELECT node, COUNT(*) AS runs, SUM(reason = 'clear') AS clears FROM runs WHERE day >= ?1 AND reason IS NOT NULL GROUP BY node ORDER BY node`, since),
-    all(`SELECT r.day, r.combo, r.reason, r.node, r.seconds, d.form, d.os FROM runs r LEFT JOIN devices d ON d.id = r.device WHERE r.day >= ?1
-      ORDER BY COALESCE(r.ended_at, r.started_at) DESC LIMIT 20`, since)
+      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node FROM runs WHERE day >= ?1 AND ${level} GROUP BY combo ORDER BY runs DESC`, since, pick),
+    all(`SELECT node, COUNT(*) AS runs, SUM(reason = 'clear') AS clears FROM runs WHERE day >= ?1 AND ${level} AND reason IS NOT NULL GROUP BY node ORDER BY node`, since, pick),
+    all(`SELECT r.day, r.combo, r.reason, r.node, r.seconds, r.difficulty, d.form, d.os FROM runs r LEFT JOIN devices d ON d.id = r.device WHERE r.day >= ?1 AND (?2 = '' OR r.difficulty = ?2)
+      ORDER BY COALESCE(r.ended_at, r.started_at) DESC LIMIT 20`, since, pick),
+    all(`SELECT COALESCE(difficulty, 'legacy') AS difficulty, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, SUM(reason IS NULL) AS open,
+      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds, COUNT(DISTINCT device) AS devices FROM runs WHERE day >= ?1 GROUP BY 1`, since)
   ]);
   const first = days > 0 ? since : [sessionDays[0]?.day, runDays[0]?.day, newDays[0]?.day].filter(Boolean).sort()[0] || today;
   const byDay = rows => new Map(rows.map(row => [row.day, row]));
   const s = byDay(sessionDays), f = byDay(newDays), r = byDay(runDays);
   const n = value => Number(value) || 0;
   return {
-    range: { days, from: first, to: today },
+    range: { days, from: first, to: today, difficulty: pick },
     totals: {
       devices: n(devices.everyone), installed: n(devices.installed), newDevices: n(devices.fresh), activeDevices: n(sessionTotals.active), sessions: n(sessionTotals.sessions),
       runs: n(runTotals.runs), clears: n(runTotals.clears), defeats: n(runTotals.defeats), abandons: n(runTotals.abandons), unfinished: n(runTotals.open),
@@ -150,7 +161,11 @@ export async function summary(db, days = 30, now = Date.now()) {
     devices: { form: forms, os: systems, browser: browsers },
     combos: combos.map(row => ({ combo: row.combo, runs: n(row.runs), clears: n(row.clears), defeats: n(row.defeats), abandons: n(row.abandons), averageNode: row.node === null ? null : Math.round(row.node * 10) / 10 })),
     depth: depth.map(row => ({ node: row.node, runs: n(row.runs), clears: n(row.clears) })),
-    recent
+    recent,
+    difficulties: ['easy', 'normal', 'hard', 'legacy'].map(id => levels.find(row => row.difficulty === id) || { difficulty: id }).map(row => ({
+      difficulty: row.difficulty, runs: n(row.runs), devices: n(row.devices), clears: n(row.clears), defeats: n(row.defeats), abandons: n(row.abandons), unfinished: n(row.open),
+      averageNode: row.node == null ? null : Math.round(row.node * 10) / 10, averageSeconds: row.seconds == null ? null : Math.round(row.seconds)
+    })).filter(row => row.difficulty !== 'legacy' || row.runs)
   };
 }
 
@@ -192,7 +207,7 @@ export async function statsApi(request, url, env, reply, cors = {}) {
   const db = env.STATS, body = async () => { try { return await request.json(); } catch { return null; } };
   if (path === '/api/admin/stats' && method === 'GET') {
     const days = Number(url.searchParams.get('days'));
-    return reply(await summary(db, [7, 30, 90, 0].includes(days) ? days : 30));
+    return reply(await summary(db, [7, 30, 0].includes(days) ? days : 30, Date.now(), url.searchParams.get('difficulty') || ''));
   }
   if (path === '/api/admin/users' && method === 'GET') return reply(await users(db, url.searchParams.get('q') || ''));
   const one = path.match(/^\/api\/admin\/users\/([a-z0-9]+)(\/memo)?$/);

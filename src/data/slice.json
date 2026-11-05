@@ -628,7 +628,7 @@
       "description": "3타가 주변에 작은 충격파를 만든다.",
       "damage": 12,
       "radius": 2.8,
-      "tier": "special"
+      "tier": "rare"
     },
     {
       "id": "deflect",
@@ -659,7 +659,7 @@
       "description": "회피 후 1초 안의 첫 타격이 50% 강해진다.",
       "window": 1,
       "damageBonus": 0.5,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "elementalCharge",
@@ -679,7 +679,7 @@
       "id": "windupRecoil",
       "name": "태엽 반동",
       "description": "3타가 적중하면 회피가 바로 준비된다.",
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "spinSlash",
@@ -691,6 +691,7 @@
   "rooms": [
     {
       "id": "stop-02",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "첫 걸음 광장 A",
       "description": "미소를 검사하는 작은 경비들",
@@ -723,6 +724,7 @@
     },
     {
       "id": "stop-03",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕 수레마당 C",
       "description": "같은 박자로 움직이는 거리",
@@ -756,6 +758,7 @@
     },
     {
       "id": "stop-04",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "장난감 수선길 A",
       "description": "렌치 개조를 하나 고릅니다",
@@ -790,6 +793,7 @@
     },
     {
       "id": "stop-05",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "리본 교차골목 D",
       "description": "같은 박자로 움직이는 거리",
@@ -840,6 +844,7 @@
     },
     {
       "id": "stop-08",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "태엽 적재마당 C",
       "description": "렌치 개조를 하나 고릅니다",
@@ -878,6 +883,7 @@
     },
     {
       "id": "stop-09",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "분수 우회광장 C",
       "description": "미소를 검사하는 작은 경비들",
@@ -917,6 +923,7 @@
     },
     {
       "id": "stop-10",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "깃발 검문광장 C",
       "description": "예고 뒤 다시 오는 파동을 조심하세요",
@@ -958,6 +965,7 @@
     },
     {
       "id": "stop-11",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕색 골목 A",
       "description": "같은 박자로 움직이는 거리",
@@ -998,6 +1006,7 @@
     },
     {
       "id": "stop-12",
+      "variants": ["A", "B"],
       "kind": "normal",
       "name": "행진 적재뜰 D",
       "description": "예고 뒤 다시 오는 파동을 조심하세요",
@@ -1115,7 +1124,7 @@
     "skillCooldownReduction": {
       "name": "고속 배선",
       "description": "속성 기술과 융합 스킬의 대기시간이 줄어든다.",
-      "tier": "rare"
+      "tier": "common"
     },
     "dodgeCooldownReduction": {
       "name": "윤활 나사",
@@ -1140,7 +1149,7 @@
     "attackSpeed": {
       "name": "빠른 태엽",
       "description": "렌치를 더 빨리 휘두른다.",
-      "tier": "rare"
+      "tier": "common"
     },
     "killHeal": {
       "name": "수리 회로",
@@ -1150,7 +1159,7 @@
     "damageReduction": {
       "name": "강화 외장",
       "description": "받는 피해가 줄어든다.",
-      "tier": "special"
+      "tier": "rare"
     }
   },
   "permanentStats": [
@@ -1438,7 +1447,7 @@
       "name": "달궈진 틈",
       "description": "화상 걸린 적에게 기본 공격 피해가 15% 늘어난다.",
       "damageBonus": 0.15,
-      "tier": "special"
+      "tier": "rare"
     },
     {
       "id": "quickFreeze",
@@ -1462,7 +1471,7 @@
       "name": "넓은 전극",
       "description": "감전 방전 범위가 1 늘어난다.",
       "radiusBonus": 1,
-      "tier": "special"
+      "tier": "rare"
     },
     {
       "id": "staticCharge",
@@ -1478,7 +1487,7 @@
       "name": "뒷바람",
       "description": "회피로 스쳐 지나간 적에게 풍압을 건다.",
       "radius": 0.5,
-      "tier": "special"
+      "tier": "rare"
     },
     {
       "id": "galeHold",
@@ -1511,7 +1520,7 @@
       "name": "빙결 파쇄",
       "description": "얼어붙은 적을 렌치로 치면 피해가 40% 늘어난다.",
       "damageBonus": 0.4,
-      "tier": "rare"
+      "tier": "special"
     },
     {
       "id": "dodgeGust",
@@ -1546,8 +1555,8 @@
     {
       "id": "glassSpring",
       "name": "유리 태엽",
-      "description": "최대 체력이 30 줄지만 치명타 확률이 20% 오른다.",
-      "maxHpLoss": 30,
+      "description": "최대 체력이 15 줄지만 치명타 확률이 20% 오른다.",
+      "maxHpLoss": 15,
       "critBonus": 0.2,
       "tier": "special"
     }
@@ -1562,6 +1571,15 @@
       { "id": "splitter", "name": "분열", "color": "#6e7890", "spawn": "rat", "count": 2 },
       { "id": "coated", "name": "코팅", "color": "#3f8fc4", "elements": ["fire", "ice", "lightning", "wind"] },
       { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 18, "enemyDamage": 120 }
+    ]
+  },
+  "difficulty": {
+    "note": "Chosen at the town portal for each expedition. scale multiplies every enemy's and boss's health and attack and the number of room furniture pieces; loot multiplies what each kill and clear pays (gears and coins). 1.0 is the tuning before difficulties existed; easy and hard sit 40% below and above normal.",
+    "default": "normal",
+    "levels": [
+      { "id": "easy", "name": "쉬움", "scale": 0.54, "loot": 0.54, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다." },
+      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "웃음거리의 기본 원정입니다." },
+      { "id": "hard", "name": "어려움", "scale": 1.26, "loot": 1.26, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다." }
     ]
   },
   "hazards": {

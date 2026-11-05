@@ -8,6 +8,7 @@ export const FORMS = ['phone', 'tablet', 'desktop'];
 export const SYSTEMS = ['ios', 'android', 'windows', 'mac', 'chromeos', 'linux', 'other'];
 export const BROWSERS = ['chrome', 'safari', 'samsung', 'whale', 'edge', 'firefox', 'inapp', 'other'];
 export const END_REASONS = ['clear', 'defeat', 'abandon'];
+export const DIFFICULTIES = ['easy', 'normal', 'hard'];
 /** Where a player is when the game checks in: the title or first scenes, the village, out on a run, or the practice yard. */
 export const PLACES = ['title', 'hub', 'run', 'practice'];
 /** The game checks in this often while it is on screen; a device seen within ONLINE_SECONDS counts as playing now. */
@@ -51,8 +52,9 @@ export function deviceProfile({ userAgent: ua = '', maxTouchPoints = 0 } = {}, {
 /**
  * One event as the worker will store it, or null when anything is off. Kinds:
  *   open      — the game was opened: { device, form, os, browser, installed }
- *   runStart  — an expedition set out: { device, run, elements }
- *   runEnd    — it came back: { device, run, elements, reason, node, seconds }
+ *   runStart  — an expedition set out: { device, run, elements, difficulty }
+ *   runEnd    — it came back: { device, run, elements, difficulty, reason, node, seconds }
+ * (difficulty is null from a game made before difficulties existed)
  *   ping      — still playing: { device, name, where, node, gears, playSeconds } (the answer carries waiting gifts)
  */
 export function cleanEvent(sent) {
@@ -70,7 +72,8 @@ export function cleanEvent(sent) {
   if (kind !== 'runStart' && kind !== 'runEnd') return null;
   const combo = comboKey(sent.elements);
   if (typeof sent.run !== 'string' || !RUN_ID.test(sent.run) || combo === null) return null;
-  if (kind === 'runStart') return { kind, device, run: sent.run, combo };
+  const difficulty = DIFFICULTIES.includes(sent.difficulty) ? sent.difficulty : null;
+  if (kind === 'runStart') return { kind, device, run: sent.run, combo, difficulty };
   if (!END_REASONS.includes(sent.reason) || !whole(sent.node, 99) || sent.node < 1 || !whole(sent.seconds, 86400)) return null;
-  return { kind, device, run: sent.run, combo, reason: sent.reason, node: sent.node, seconds: sent.seconds };
+  return { kind, device, run: sent.run, combo, difficulty, reason: sent.reason, node: sent.node, seconds: sent.seconds };
 }

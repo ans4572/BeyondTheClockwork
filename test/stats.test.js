@@ -65,7 +65,7 @@ test('the game tells the reporter when an expedition sets out and comes back, wi
   game.returnToHub('defeat');
   assert.deepEqual(heard.map(e => e.kind), ['runStart', 'runEnd']);
   assert.equal(heard[0].run, heard[1].run);
-  assert.deepEqual(heard[1], { kind: 'runEnd', run: heard[0].run, elements: ['wind', 'fire'], reason: 'defeat', node: 1, seconds: 0 });
+  assert.deepEqual(heard[1], { kind: 'runEnd', run: heard[0].run, difficulty: 'normal', elements: ['wind', 'fire'], reason: 'defeat', node: 1, seconds: 0 });
   assert.ok(heard.every(e => cleanEvent({ device: phone, ...e })), 'every event the game makes passes the worker');
 });
 
@@ -186,4 +186,24 @@ test('the mailbox checks in with plain-text bodies and stays silent on a local s
   assert.equal(sent[0][1].headers, undefined, 'no custom headers, so no preflight');
   await box.claim([3]);
   assert.equal(sent[1][0], 'https://beyondtheclockwork.mungaeng.workers.dev/api/mail/claim');
+});
+
+test('expeditions are counted per difficulty, and the summary can be narrowed to one', async () => {
+  const db = d1();
+  // A database made before difficulties: the runs table has no difficulty column until the worker adds it.
+  await db.prepare(`CREATE TABLE runs (device TEXT, run TEXT, day TEXT, combo TEXT, started_at INTEGER, ended_at INTEGER, reason TEXT, node INTEGER, seconds INTEGER, PRIMARY KEY (device, run))`).run();
+  await db.prepare(`INSERT INTO runs (device, run, day, combo, ended_at, reason, node, seconds) VALUES ('${phone}', 'run-0-1', '${koreanDay(NOW)}', '', 1, 'defeat', 2, 60)`).run();
+  const go = async (run, difficulty, reason, node) => {
+    await record(db, { device: phone, kind: 'runStart', run, elements: ['fire'], difficulty }, NOW);
+    if (reason) await record(db, { device: phone, kind: 'runEnd', run, elements: ['fire'], difficulty, reason, node, seconds: 100 }, NOW);
+  };
+  await go('run-1-1', 'easy', 'clear', 12); await go('run-2-1', 'easy', 'defeat', 5); await go('run-3-1', 'hard', 'defeat', 3); await go('run-4-1', 'normal');
+  const all = await summary(db, 7, NOW);
+  assert.deepEqual(all.difficulties.map(d => [d.difficulty, d.runs, d.clears, d.unfinished]), [['easy', 2, 1, 0], ['normal', 1, 0, 1], ['hard', 1, 0, 0], ['legacy', 1, 0, 0]]);
+  assert.equal(all.totals.runs, 5);
+  const easy = await summary(db, 7, NOW, 'easy');
+  assert.equal(easy.range.difficulty, 'easy');
+  assert.deepEqual([easy.totals.runs, easy.totals.clears, easy.combos[0].runs, easy.recent.length], [2, 1, 2, 2]);
+  assert.ok(easy.recent.every(r => r.difficulty === 'easy'));
+  assert.equal((await summary(db, 7, NOW, 'nonsense')).totals.runs, 5, 'an unknown filter shows everything');
 });

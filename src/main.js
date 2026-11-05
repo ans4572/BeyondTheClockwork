@@ -3,7 +3,7 @@ import { Game } from './engine/game.js';
 import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
-import { placeOf, PIXELS_PER_UNIT, prepareClearance } from './engine/map-geometry.js';
+import { placeOf, roomPlace, PIXELS_PER_UNIT, prepareClearance } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
@@ -59,7 +59,14 @@ const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" s
 // Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck.
 const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015 }, fusion: { stop: 0.03, shake: 2 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0.03, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
 const MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
-function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
+/**
+ * The loading card waits only for what the title shows: its paper form and song. Everything else is held back until
+ * then so it does not share the connection: F2's sheets start once the title is drawn (titleDrawn), and the skill
+ * sheets, the other songs and the place art once the loading card is gone (bootDone).
+ */
+let markTitleDrawn, markBootDone;
+const titleDrawn = new Promise(done => { markTitleDrawn = done; }), bootDone = new Promise(done => { markBootDone = done; });
+function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); markTitleDrawn?.(); markBootDone?.(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
 /** Below this many sheet pixels of height, panels drop their side notes and tighten up. */
@@ -95,7 +102,7 @@ try {
   // Menu icons are tiny but shown all at once (codex, parts shelf, reward cards): fetched and decoded while the title
   // plays, and the decoded pictures kept, so a panel never opens with pictures arriving one by one.
   for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
-  const playerSprites = SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
+  const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
     .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
@@ -134,7 +141,7 @@ try {
   const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
   hudFace.imageSmoothingEnabled = false;
   portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
-  portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.png';
+  portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
   renderer.mapImages = new Map(); renderer.depthMasks = new Map();
   const offscreen = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
   // Map paintings ship at their own pixel size (half the download) and are blown up here with hard pixel edges, so they
@@ -192,7 +199,9 @@ try {
   // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
   const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
-  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  // The place a new game opens on comes first (the scrapyard), then the town and the first stop; icons and effects after.
+  const introPlace = placeOf(data.maps, data.maps?.intro);
+  let imageQueue = [...new Set([...artOf(introPlace), ...artOf(game.hubMap), ...artOf(firstRoom), ...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES].filter(Boolean))];
   // Every other place's files are then fetched into the browser's cache, one at a time and at low priority, but not
   // decoded: fourteen decoded maps and masks would not fit a phone's memory, and a cached file opens in a moment.
   let prefetch = [...new Set(Object.values(data?.maps?.villages || {}).flatMap(artOf).filter(file => !imageQueue.includes(file)))], prefetching = false;
@@ -223,7 +232,7 @@ try {
     if (place?.background === placeLoaded) return;
     placeLoaded = place?.background;
     // In town the next place is the first stop; on a run it is the stop after this one.
-    const next = game.s.run ? placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
+    const next = game.s.run ? roomPlace(data.maps, data.slice.rooms[game.s.run.node + 1]?.id, game.s.run.plan?.[game.s.run.node + 1]?.variant || 0) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
     // The next floor's clearance grid is built a few milliseconds per frame from now on, so entering it costs nothing.
     nextFloor = next;
     // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory
@@ -265,9 +274,23 @@ try {
   }
   function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); $('app').inert = false; $('title').inert = false; placeOverlay(); title.hide(); }
   /** The stamp and the opening sentences, then control of a waking body. */
+  /** Resolves once a place's painting (and its mask) is decoded and in the renderer, or after `ms`. */
+  function placeArtReady(place, ms) {
+    const files = artOf(place).filter(file => /\.(webp|png|jpe?g)$/.test(file));
+    return new Promise(done => {
+      const start = performance.now(), check = () => (files.every(file => renderer.mapImages.has(file)) || performance.now() - start > ms ? done() : setTimeout(check, 100));
+      check();
+    });
+  }
   async function playOpening(stamp) {
     screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true); leaveTitle();
     await title.opening(data.progression.intro.openingText, { stamp });
+    // The scrapyard's painting is fetched while the opening text plays; on a slow connection the game waits a little
+    // longer for it rather than open on the plain stand-in floor.
+    if (!artOf(introPlace).every(file => renderer.mapImages.has(file))) {
+      $('overlay').innerHTML = panel('<p class="loading-place">태엽을 감는 중…</p>', 'compact');
+      await placeArtReady(introPlace, 12000);
+    }
     game.s.paused = false; game.beginIntro({ wake: !reducedMotion(), lesson: true });
     title.hide(); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
   }
@@ -550,6 +573,17 @@ try {
     // What the part changes, as it stands now and with this part fitted.
     return { name: desc.name, icon: ico(PART_ICONS[reward.id] || 'spark'), label: '출력 부품', description: desc.description, value: `${name} ${shown(now)} → <strong>${shown(next)}</strong><br>${rank + 1}/${upgrade.maxRank} 단계` };
   }
+  /**
+   * The town portal's question: how hard this expedition is. Each card says what changes against 보통 (enemies, bosses and
+   * furniture by the difficulty's scale, every kill's loot by its loot share); the last pick is offered first.
+   */
+  const DIFFICULTY_COLORS = { easy: '#5f9a6e', normal: '#c79a3e', hard: '#a92f2b' };
+  function difficultyPanel() {
+    const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
+    const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
+    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}"`, 'pick')}</article>`).join('');
+    return panel(`<h2>어떤 난이도로 떠날까요?</h2><p>원정 중에는 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p><div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
+  }
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
@@ -628,7 +662,7 @@ try {
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
-    if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : tuningPanel();
+    if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
     if (mode === 'shop') html = panel(`<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
@@ -836,6 +870,7 @@ try {
     if (name === 'intro') game.beginIntro();
     if (name === 'register') game.register();
     if (name === 'close-panel') game.closePanel();
+    if (name === 'depart' && game.depart(d.id)) { resume(); renderOverlay(true); updateHUD(); return; }
     let bought = null;
     if (name === 'element') { game.toggleElement(d.id); sfx('equip'); }
     if (name === 'buy-element') {
@@ -965,6 +1000,12 @@ try {
     if (key.startsWith('skill')) pending.skill = Number(key.at(-1));
   });
   document.addEventListener('keydown', e => {
+    // 1, 2, 3 pick a difficulty in the town portal's popup, as they pick a reward card.
+    if (!screen && !e.repeat && /^Digit[123]$/.test(e.code) && game.s.panel === 'difficulty') {
+      const level = data.slice.difficulty.levels[Number(e.code.at(-1)) - 1];
+      if (level && game.depart(level.id)) { resume(); renderOverlay(true); updateHUD(); }
+      return;
+    }
     if (screen || e.repeat || !/^Digit[123]$/.test(e.code) || game.s.mode !== 'reward') return;
     const reward = game.s.run.rewardChoices[Number(e.code.at(-1)) - 1];
     if (reward?.kind === 'element' && game.slots.length >= 2) return;
@@ -1117,6 +1158,7 @@ try {
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame. Only the title waits:
   // the player's skill sheets, place art and the other songs come after, so they do not slow the first screen.
   await title.ready.catch(() => {});
+  markTitleDrawn();
   await startSound();
   finishBoot();
   fetchImages();

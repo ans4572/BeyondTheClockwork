@@ -4,8 +4,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
-import { circleInPolygon, fitsMap, placeOf, pointInPolygon } from '../src/engine/map-geometry.js';
+import { circleInPolygon, fitsMap, placeOf, pointInPolygon, roomPlace } from '../src/engine/map-geometry.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
+import { FlowField } from '../src/engine/flow-field.js';
+import { SOLID, hazardBox, keepPassable } from '../src/engine/hazards.js';
 
 const json = async name => JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'));
 const [combat, progression, slice, maps] = await Promise.all(['combat', 'progression', 'slice', 'maps'].map(json));
@@ -42,18 +44,49 @@ test('solid props block bodies inside the floor', () => {
   assert.ok(g.p.y > 14.4, `stopped at ${g.p.y}`);
 });
 
-test('a walk across every combat map stays on its floor', () => {
-  for (const [node, room] of slice.rooms.entries()) {
-    const area = placeOf(maps, maps.maps[room.id]);
-    if (!area?.walkable || room.kind === 'shop') continue;
+test('a walk across every combat map stays on its floor, both pictures of a room with two', () => {
+  for (const [node, room] of slice.rooms.entries()) for (let variant = 0; variant < (room.variants?.length || 1); variant++) {
     const g = run();
-    g.s.run.node = node; g.p.x = area.spawn.x; g.p.y = area.spawn.y;
+    g.s.run.node = node; g.s.run.plan[node].variant = variant;
+    const area = g.map;
+    if (!area?.walkable || room.kind === 'shop') continue;
+    assert.equal(area, roomPlace(maps, room.id, variant), `${room.id} ${variant}`);
+    g.p.x = area.spawn.x; g.p.y = area.spawn.y;
     for (let step = 0; step < 4000; step++) {
       const a = step / 40 | 0;
       g.move(g.p, Math.cos(a * 2.4) * 0.09, Math.sin(a * 2.4) * 0.09);
-      assert.ok(fitsMap(g.p.x, g.p.y, slice.arena.playerRadius, area), room.id);
+      assert.ok(fitsMap(g.p.x, g.p.y, slice.arena.playerRadius, area), `${room.id} ${variant}`);
     }
   }
+});
+
+test('on both pictures of every fight room the first wave stands on open floor, clear of furniture, and can be walked to', () => {
+  for (const [node, room] of slice.rooms.entries()) {
+    if (!room.waves) continue;
+    for (let variant = 0; variant < (room.variants?.length || 1); variant++) for (const seed of [3, 101]) {
+      const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(seed);
+      g.s.run.node = node; g.s.run.plan[node].variant = variant; g.enterNode();
+      const area = g.map, flow = new FlowField(area, area.size), label = `${room.id} ${variant ? 'B' : 'A'} seed ${seed}`;
+      flow.setBlocks(g.obstacles); flow.update(area.spawn.x, area.spawn.y);
+      const reach = p => { const cell = flow.nearestOpen(...flow.cell(p.x, p.y)); return cell && flow.steps[cell[1] * flow.cols + cell[0]] >= 0; };
+      assert.ok(reach(area.portal), `${label}: portal walled off`);
+      for (const e of g.s.enemies) {
+        assert.ok(fitsMap(e.x, e.y, 0.3, area) && !g.inSolid(e.x, e.y, 0.3), `${label}: ${e.type} at ${e.x.toFixed(1)},${e.y.toFixed(1)} off the floor`);
+        assert.ok(reach(e), `${label}: ${e.type} at ${e.x.toFixed(1)},${e.y.toFixed(1)} cannot be reached`);
+      }
+    }
+  }
+});
+
+test('a crate or fence that would cut a narrow floor in two is taken out again', () => {
+  // A corridor two units deep: a fence pair across it closes the way from the start to the portal.
+  const corridor = { walkable: [[0, 4], [20, 4], [20, 6.4], [0, 6.4]], size: [20, 10], spawn: { x: 1, y: 5.2 }, portal: { x: 19, y: 5.2 }, enemySpawns: [{ x: 15, y: 5.2 }] };
+  const across = [{ id: 'f1', kind: 'fence', x: 10, y: 5.2, w: 0.6, h: 3 }, { id: 'p1', kind: 'plate', x: 5, y: 5.2, half: 1, depth: 0.5 }];
+  const kept = keepPassable(corridor, across);
+  assert.deepEqual(kept.map(h => h.id), ['p1'], 'the blocking fence goes, the flat plate stays');
+  const aside = [{ id: 'c1', kind: 'crate', x: 10, y: 4.3, size: 0.5 }];
+  assert.deepEqual(keepPassable(corridor, aside).map(h => h.id), ['c1'], 'a crate that leaves room to pass stays');
+  assert.ok(SOLID.has('crate') && hazardBox(aside[0]).w === 0.5);
 });
 
 test('polygon checks include the body radius', () => {

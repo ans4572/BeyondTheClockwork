@@ -2007,7 +2007,7 @@
       },
       {
         "id": "dodgeCooldownReduction",
-        "perRank": 0.08,
+        "perRank": 0.15,
         "maxRank": 2
       },
       {
@@ -2022,7 +2022,7 @@
       },
       {
         "id": "critChance",
-        "perRank": 0.05,
+        "perRank": 0.07,
         "maxRank": 4
       },
       {
@@ -2037,7 +2037,7 @@
       },
       {
         "id": "damageReduction",
-        "perRank": 0.08,
+        "perRank": 0.1,
         "maxRank": 2
       }
     ]

@@ -67,6 +67,8 @@ export function decodeSave(raw, data) {
   const runModes = ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'];
   if (runModes.includes(s.mode) !== !!s.run) fail('저장된 원정과 화면 상태가 일치하지 않습니다.');
   if (s.run) {
+    // Runs saved before difficulties existed play on as the default; anything unknown is reset the same way.
+    if (!(data.slice.difficulty?.levels || []).some(level => level.id === s.run.difficulty)) s.run.difficulty = data.slice.difficulty?.default || 'normal';
     const run = s.run;
     for (const slot of Array.isArray(run.slots) ? run.slots : []) if (Number.isInteger(slot?.level)) slot.level = Math.min(slot.level, data.combat.balance.skillMaxLevel);
     if (!integerIn(run.node, 0, data.slice.rooms.length - 1) || !Array.isArray(run.slots) || run.slots.length > 2) fail('저장된 원정이 올바르지 않습니다.');

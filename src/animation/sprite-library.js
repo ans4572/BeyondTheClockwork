@@ -27,7 +27,8 @@ export class SpriteLibrary {
    * Loads the clips and their sheets. Clips whose action `later` accepts (skills, say) and every cast effect are not
    * waited for: they keep arriving after the library is returned, and `image` answers null until each one is in.
    */
-  static async load(url = '/art/animations/player/game-clips.json', loadImage = browserImage, later = () => false) {
+  /** `restAfter`: the sheets marked `later` start downloading only once it settles (the boot is done), not alongside the first ones. */
+  static async load(url = '/art/animations/player/game-clips.json', loadImage = browserImage, later = () => false, restAfter = Promise.resolve()) {
     // Always ask the server whether the clip list changed (a cheap 304 when not): a stale list points at old art.
     const response = await fetch(assetUrl(url), { cache: 'no-cache' });
     if (!response.ok) throw new Error(`game-clips.json을 불러올 수 없습니다 (${response.status})`);
@@ -36,7 +37,7 @@ export class SpriteLibrary {
     const clips = Object.entries(data.clips), now = [...new Set(sheetsOf(clips.filter(([key]) => !later(key.split('/')[0]))))];
     const rest = [...new Set([...sheetsOf(clips), ...Object.values(data.castEffects || {}).map(effect => effect.sheet).filter(Boolean)])].filter(sheet => !now.includes(sheet));
     const images = await Promise.all(now.map(loadImage)), library = new SpriteLibrary(data, new Map(now.map((sheet, i) => [sheet, images[i]])));
-    library.rest = Promise.all(rest.map(sheet => loadImage(sheet).then(image => library.images.set(sheet, image)).catch(() => {})));
+    library.rest = restAfter.catch(() => {}).then(() => Promise.all(rest.map(sheet => loadImage(sheet).then(image => library.images.set(sheet, image)).catch(() => {}))));
     return library;
   }
   clip(action, direction) { return this.data.clips[`${action}/${direction}`] || null; }

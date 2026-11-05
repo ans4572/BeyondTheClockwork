@@ -57,6 +57,12 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .panel button.quiet { background: none; box-shadow: none; text-decoration: underline; text-underline-offset: 3px; }
 
 .reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+/* The values and the button sit on the card's floor, so all three line up whatever the description's length. */
+.difficulty-values { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; margin: auto 0 10px; padding-top: 4px; font-size: 13px; }
+.difficulty-values dt { color: var(--label); }
+.difficulty-values dd { margin: 0; font-weight: 700; text-align: right; }
+.difficulty-card.last { box-shadow: inset 0 0 0 3px var(--accent); }
+.difficulty-card .pick { margin-top: 0; }
 .reward-card { position: relative; display: flex; flex-direction: column; padding: 12px; background: var(--paper-low); border-top: 6px solid var(--accent, var(--ink)); text-align: left; }
 /* Every card opens with one framed tile: a part's pixel icon, or the skills it strengthens, on the card's colour. */
 .reward-card .reward-icon, .reward-skills img { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 8px; background: radial-gradient(circle at 50% 40%, #fff8e8 0 40%, color-mix(in srgb, var(--accent, #9fae83) 35%, #f6ecd2) 75%); box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 5px color-mix(in srgb, var(--accent, #9fae83) 70%, #fff), 3px 3px 0 #0e121a40; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }

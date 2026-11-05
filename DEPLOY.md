@@ -54,7 +54,7 @@ npx wrangler deploy
 관리자 페이지: `https://beyondtheclockwork.mungaeng.workers.dev/admin.html` (검색엔진 제외, 토큰 없으면 아무것도 안 보임)
 
 - `POST /api/stats` 게임이 보내는 익명 이벤트: 게임 열기(`open`), 원정 출발(`runStart`), 귀환(`runEnd`). 형식이 틀리면 400.
-- `GET /api/admin/stats?days=7|30|90|0` 관리자 요약. `Authorization: Bearer <ADMIN_TOKEN>`이 맞아야 열림.
+- `GET /api/admin/stats?days=7|30|0&difficulty=easy|normal|hard` 관리자 요약(난이도를 빼면 전체). `Authorization: Bearer <ADMIN_TOKEN>`이 맞아야 열림.
 - 게임은 화면에 떠 있는 동안 1분마다 `POST /api/stats`(`ping`)로 접속을 알리고, 답으로 도착 전 선물을 받습니다. 받은 뒤 `POST /api/mail/claim`.
 - 유저 탭(관리자 토큰 필요): `GET /api/admin/users?q=` 목록, `GET /api/admin/users/:id` 한 명, `POST /api/admin/users/:id/memo` 이름 메모, `POST /api/admin/gifts` 자유 톱니 보내기(1~100,000개), `DELETE /api/admin/gifts/:id` 도착 전 선물 취소.
 - D1 쓰기량: 게임을 켜 둔 기기 하나가 1분에 한 번 씁니다. 무료 한도(하루 10만 행)는 동시에 70명이 하루 종일 켜 둬야 닿는 수준입니다.

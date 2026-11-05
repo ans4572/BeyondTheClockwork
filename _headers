@@ -10,10 +10,11 @@
 /concepts/*
   Cache-Control: public, max-age=0, must-revalidate
 
-# Art, fonts and sound: also checked on every visit. They are still redrawn often, and a day-old copy kept showing
-# replaced mobs and maps; an unchanged file costs only a 304. Loaded images stay in the page's memory meanwhile.
+# Art, fonts and sound: a returning visit shows the copy it has at once and checks for a newer one in the background
+# (stale-while-revalidate), instead of waiting on hundreds of checks before the first frame. Redrawn art gets a new file
+# name, so a replaced picture is never stuck; one replaced in place shows the old copy for one visit at most.
 /art/*
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: public, max-age=60, stale-while-revalidate=604800
 
 /*
   X-Content-Type-Options: nosniff

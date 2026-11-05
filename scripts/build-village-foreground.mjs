@@ -63,4 +63,6 @@ async function buildForeground(village) {
   console.log(JSON.stringify({ output, removedPercent: Math.round(removed / floor.length * 100) }));
 }
 
-for (const village of Object.values(villages)) await buildForeground(village);
+// `node scripts/build-village-foreground.mjs firstStepB candyYardB` rebuilds only those; no names rebuilds every mask.
+const only = process.argv.slice(2);
+for (const [name, village] of Object.entries(villages)) if (!only.length || only.includes(name)) await buildForeground(village);

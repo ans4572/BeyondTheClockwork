@@ -91,6 +91,9 @@ export function circleInPolygon(x, y, radius, polygon) {
 
 /** A place in a shared village: the village's map with this place's spawn, NPCs and exit on top. */
 const places = new WeakMap();
+/** A fight room's place for the picture a run rolled for it (rooms[].variants): 0 is maps[room], 1 the first alternate. */
+export const roomPlace = (maps, roomId, variant = 0) => placeOf(maps, (variant > 0 && maps?.alternates?.[roomId]?.[variant - 1]) || maps?.maps?.[roomId]);
+
 export const placeOf = (maps, place) => {
   if (!place?.village) return place || null;
   // The same merged place every time, so per-floor caches (clearance, flow fields) keep finding it.

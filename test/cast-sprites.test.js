@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import fs from 'node:fs';
 import test from 'node:test';
+import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
@@ -13,7 +14,8 @@ const clips = await json('../art/animations/player/game-clips.json');
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, await json(`../src/data/${name}.json`)])));
 const urls = [...Object.values(clips.clips).flatMap(c => [c.sheet, c.effect]), ...Object.values(clips.castEffects).map(e => e.sheet)].filter(Boolean);
 const library = new SpriteLibrary(clips, new Map(urls.map(url => [url, { fake: url }])));
-const pngSize = file => { const b = fs.readFileSync(file); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+// Sheets are lossless WebP beside their PNG sources (scripts/build-webp-art.mjs); both report their size.
+const pngSize = imageSize;
 const battle = () => { const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(4711); g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1; g.p.x = 10; g.p.y = 8; g.p.angle = 0; return g; };
 const slot = { level: 1, rarity: 'common' };
 const cast = (g, id, target = { x: 14, y: 8 }) => {

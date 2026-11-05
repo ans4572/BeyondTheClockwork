@@ -66,7 +66,7 @@
   ],
   "clips": {
     "C1-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -85,7 +85,7 @@
       "bodyHeight": 73
     },
     "C1-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -111,7 +111,7 @@
       "bodyHeight": 70
     },
     "C1-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -130,7 +130,7 @@
       "bodyHeight": 75
     },
     "C1-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -156,7 +156,7 @@
       "bodyHeight": 73
     },
     "C1-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -175,7 +175,7 @@
       "bodyHeight": 73
     },
     "C1-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -201,7 +201,7 @@
       "bodyHeight": 76
     },
     "C1-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -220,7 +220,7 @@
       "bodyHeight": 75
     },
     "C1-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -246,7 +246,7 @@
       "bodyHeight": 71
     },
     "C1-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -265,7 +265,7 @@
       "bodyHeight": 73
     },
     "C1-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -291,7 +291,7 @@
       "bodyHeight": 72
     },
     "C1-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -310,7 +310,7 @@
       "bodyHeight": 74
     },
     "C1-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -336,7 +336,7 @@
       "bodyHeight": 73
     },
     "C1-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -355,7 +355,7 @@
       "bodyHeight": 73
     },
     "C1-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -381,7 +381,7 @@
       "bodyHeight": 71
     },
     "C1-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -400,7 +400,7 @@
       "bodyHeight": 74
     },
     "C1-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C1-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -426,7 +426,7 @@
       "bodyHeight": 75
     },
     "C2-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -445,7 +445,7 @@
       "bodyHeight": 78
     },
     "C2-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -471,7 +471,7 @@
       "bodyHeight": 76
     },
     "C2-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -490,7 +490,7 @@
       "bodyHeight": 79
     },
     "C2-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -516,7 +516,7 @@
       "bodyHeight": 79
     },
     "C2-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -535,7 +535,7 @@
       "bodyHeight": 77
     },
     "C2-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -561,7 +561,7 @@
       "bodyHeight": 79
     },
     "C2-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -580,7 +580,7 @@
       "bodyHeight": 79
     },
     "C2-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -606,7 +606,7 @@
       "bodyHeight": 77
     },
     "C2-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -625,7 +625,7 @@
       "bodyHeight": 77
     },
     "C2-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -651,7 +651,7 @@
       "bodyHeight": 76
     },
     "C2-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -670,7 +670,7 @@
       "bodyHeight": 76
     },
     "C2-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -696,7 +696,7 @@
       "bodyHeight": 77
     },
     "C2-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -715,7 +715,7 @@
       "bodyHeight": 76
     },
     "C2-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -741,7 +741,7 @@
       "bodyHeight": 65
     },
     "C2-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -760,7 +760,7 @@
       "bodyHeight": 77
     },
     "C2-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C2-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -786,7 +786,7 @@
       "bodyHeight": 78
     },
     "C3-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -805,7 +805,7 @@
       "bodyHeight": 74
     },
     "C3-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -831,7 +831,7 @@
       "bodyHeight": 73
     },
     "C3-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -850,7 +850,7 @@
       "bodyHeight": 75
     },
     "C3-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -876,7 +876,7 @@
       "bodyHeight": 72
     },
     "C3-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -895,7 +895,7 @@
       "bodyHeight": 74
     },
     "C3-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -921,7 +921,7 @@
       "bodyHeight": 76
     },
     "C3-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -940,7 +940,7 @@
       "bodyHeight": 75
     },
     "C3-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -966,7 +966,7 @@
       "bodyHeight": 75
     },
     "C3-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -985,7 +985,7 @@
       "bodyHeight": 74
     },
     "C3-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1011,7 +1011,7 @@
       "bodyHeight": 72
     },
     "C3-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1030,7 +1030,7 @@
       "bodyHeight": 74
     },
     "C3-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1056,7 +1056,7 @@
       "bodyHeight": 72
     },
     "C3-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1075,7 +1075,7 @@
       "bodyHeight": 74
     },
     "C3-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1101,7 +1101,7 @@
       "bodyHeight": 73
     },
     "C3-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1120,7 +1120,7 @@
       "bodyHeight": 75
     },
     "C3-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C3-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1146,7 +1146,7 @@
       "bodyHeight": 72
     },
     "C4-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1165,7 +1165,7 @@
       "bodyHeight": 70
     },
     "C4-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1191,7 +1191,7 @@
       "bodyHeight": 71
     },
     "C4-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1210,7 +1210,7 @@
       "bodyHeight": 71
     },
     "C4-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1236,7 +1236,7 @@
       "bodyHeight": 72
     },
     "C4-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1255,7 +1255,7 @@
       "bodyHeight": 71
     },
     "C4-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1281,7 +1281,7 @@
       "bodyHeight": 72
     },
     "C4-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1300,7 +1300,7 @@
       "bodyHeight": 72
     },
     "C4-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1326,7 +1326,7 @@
       "bodyHeight": 66
     },
     "C4-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1345,7 +1345,7 @@
       "bodyHeight": 70
     },
     "C4-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1371,7 +1371,7 @@
       "bodyHeight": 69
     },
     "C4-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1390,7 +1390,7 @@
       "bodyHeight": 70
     },
     "C4-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1416,7 +1416,7 @@
       "bodyHeight": 71
     },
     "C4-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1435,7 +1435,7 @@
       "bodyHeight": 69
     },
     "C4-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1461,7 +1461,7 @@
       "bodyHeight": 67
     },
     "C4-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1480,7 +1480,7 @@
       "bodyHeight": 70
     },
     "C4-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/C4-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1506,7 +1506,7 @@
       "bodyHeight": 71
     },
     "R13-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1525,7 +1525,7 @@
       "bodyHeight": 79
     },
     "R13-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1551,7 +1551,7 @@
       "bodyHeight": 70
     },
     "R13-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1570,7 +1570,7 @@
       "bodyHeight": 81
     },
     "R13-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1596,7 +1596,7 @@
       "bodyHeight": 78
     },
     "R13-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1615,7 +1615,7 @@
       "bodyHeight": 78
     },
     "R13-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1641,7 +1641,7 @@
       "bodyHeight": 78
     },
     "R13-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1660,7 +1660,7 @@
       "bodyHeight": 79
     },
     "R13-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1686,7 +1686,7 @@
       "bodyHeight": 80
     },
     "R13-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1705,7 +1705,7 @@
       "bodyHeight": 80
     },
     "R13-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1731,7 +1731,7 @@
       "bodyHeight": 65
     },
     "R13-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1750,7 +1750,7 @@
       "bodyHeight": 80
     },
     "R13-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1776,7 +1776,7 @@
       "bodyHeight": 80
     },
     "R13-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1795,7 +1795,7 @@
       "bodyHeight": 74
     },
     "R13-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1821,7 +1821,7 @@
       "bodyHeight": 72
     },
     "R13-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1840,7 +1840,7 @@
       "bodyHeight": 77
     },
     "R13-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R13-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1866,7 +1866,7 @@
       "bodyHeight": 81
     },
     "R14-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1885,7 +1885,7 @@
       "bodyHeight": 70
     },
     "R14-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1911,7 +1911,7 @@
       "bodyHeight": 69
     },
     "R14-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1930,7 +1930,7 @@
       "bodyHeight": 73
     },
     "R14-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1956,7 +1956,7 @@
       "bodyHeight": 72
     },
     "R14-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -1975,7 +1975,7 @@
       "bodyHeight": 72
     },
     "R14-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2001,7 +2001,7 @@
       "bodyHeight": 69
     },
     "R14-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2020,7 +2020,7 @@
       "bodyHeight": 73
     },
     "R14-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2046,7 +2046,7 @@
       "bodyHeight": 70
     },
     "R14-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2065,7 +2065,7 @@
       "bodyHeight": 71
     },
     "R14-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2091,7 +2091,7 @@
       "bodyHeight": 70
     },
     "R14-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2110,7 +2110,7 @@
       "bodyHeight": 72
     },
     "R14-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2136,7 +2136,7 @@
       "bodyHeight": 75
     },
     "R14-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2155,7 +2155,7 @@
       "bodyHeight": 71
     },
     "R14-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2181,7 +2181,7 @@
       "bodyHeight": 70
     },
     "R14-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2200,7 +2200,7 @@
       "bodyHeight": 72
     },
     "R14-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R14-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2226,7 +2226,7 @@
       "bodyHeight": 73
     },
     "R15-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2245,7 +2245,7 @@
       "bodyHeight": 73
     },
     "R15-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2271,7 +2271,7 @@
       "bodyHeight": 71
     },
     "R15-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2290,7 +2290,7 @@
       "bodyHeight": 74
     },
     "R15-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2316,7 +2316,7 @@
       "bodyHeight": 72
     },
     "R15-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2335,7 +2335,7 @@
       "bodyHeight": 73
     },
     "R15-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2361,7 +2361,7 @@
       "bodyHeight": 75
     },
     "R15-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2380,7 +2380,7 @@
       "bodyHeight": 74
     },
     "R15-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2406,7 +2406,7 @@
       "bodyHeight": 73
     },
     "R15-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2425,7 +2425,7 @@
       "bodyHeight": 75
     },
     "R15-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2451,7 +2451,7 @@
       "bodyHeight": 69
     },
     "R15-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2470,7 +2470,7 @@
       "bodyHeight": 74
     },
     "R15-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2496,7 +2496,7 @@
       "bodyHeight": 78
     },
     "R15-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2515,7 +2515,7 @@
       "bodyHeight": 73
     },
     "R15-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2541,7 +2541,7 @@
       "bodyHeight": 72
     },
     "R15-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2560,7 +2560,7 @@
       "bodyHeight": 73
     },
     "R15-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R15-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2586,7 +2586,7 @@
       "bodyHeight": 72
     },
     "R16-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2605,7 +2605,7 @@
       "bodyHeight": 76
     },
     "R16-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2631,7 +2631,7 @@
       "bodyHeight": 72
     },
     "R16-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2650,7 +2650,7 @@
       "bodyHeight": 77
     },
     "R16-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2676,7 +2676,7 @@
       "bodyHeight": 73
     },
     "R16-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2695,7 +2695,7 @@
       "bodyHeight": 74
     },
     "R16-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2721,7 +2721,7 @@
       "bodyHeight": 74
     },
     "R16-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2740,7 +2740,7 @@
       "bodyHeight": 77
     },
     "R16-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2766,7 +2766,7 @@
       "bodyHeight": 75
     },
     "R16-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2785,7 +2785,7 @@
       "bodyHeight": 76
     },
     "R16-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2811,7 +2811,7 @@
       "bodyHeight": 72
     },
     "R16-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2830,7 +2830,7 @@
       "bodyHeight": 75
     },
     "R16-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2856,7 +2856,7 @@
       "bodyHeight": 76
     },
     "R16-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2875,7 +2875,7 @@
       "bodyHeight": 75
     },
     "R16-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2901,7 +2901,7 @@
       "bodyHeight": 75
     },
     "R16-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2920,7 +2920,7 @@
       "bodyHeight": 75
     },
     "R16-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R16-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2946,7 +2946,7 @@
       "bodyHeight": 72
     },
     "R17-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2965,7 +2965,7 @@
       "bodyHeight": 70
     },
     "R17-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -2991,7 +2991,7 @@
       "bodyHeight": 72
     },
     "R17-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3010,7 +3010,7 @@
       "bodyHeight": 70
     },
     "R17-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3036,7 +3036,7 @@
       "bodyHeight": 71
     },
     "R17-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3055,7 +3055,7 @@
       "bodyHeight": 69
     },
     "R17-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3081,7 +3081,7 @@
       "bodyHeight": 72
     },
     "R17-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3100,7 +3100,7 @@
       "bodyHeight": 70
     },
     "R17-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3126,7 +3126,7 @@
       "bodyHeight": 68
     },
     "R17-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3145,7 +3145,7 @@
       "bodyHeight": 70
     },
     "R17-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3171,7 +3171,7 @@
       "bodyHeight": 71
     },
     "R17-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3190,7 +3190,7 @@
       "bodyHeight": 69
     },
     "R17-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3216,7 +3216,7 @@
       "bodyHeight": 71
     },
     "R17-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3235,7 +3235,7 @@
       "bodyHeight": 68
     },
     "R17-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3261,7 +3261,7 @@
       "bodyHeight": 69
     },
     "R17-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3280,7 +3280,7 @@
       "bodyHeight": 69
     },
     "R17-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R17-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3306,7 +3306,7 @@
       "bodyHeight": 71
     },
     "R18-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3325,7 +3325,7 @@
       "bodyHeight": 71
     },
     "R18-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3351,7 +3351,7 @@
       "bodyHeight": 70
     },
     "R18-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3370,7 +3370,7 @@
       "bodyHeight": 71
     },
     "R18-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3396,7 +3396,7 @@
       "bodyHeight": 72
     },
     "R18-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3415,7 +3415,7 @@
       "bodyHeight": 72
     },
     "R18-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3441,7 +3441,7 @@
       "bodyHeight": 68
     },
     "R18-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3460,7 +3460,7 @@
       "bodyHeight": 76
     },
     "R18-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3486,7 +3486,7 @@
       "bodyHeight": 71
     },
     "R18-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3505,7 +3505,7 @@
       "bodyHeight": 78
     },
     "R18-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3531,7 +3531,7 @@
       "bodyHeight": 71
     },
     "R18-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3550,7 +3550,7 @@
       "bodyHeight": 75
     },
     "R18-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3576,7 +3576,7 @@
       "bodyHeight": 75
     },
     "R18-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3595,7 +3595,7 @@
       "bodyHeight": 73
     },
     "R18-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3621,7 +3621,7 @@
       "bodyHeight": 75
     },
     "R18-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3640,7 +3640,7 @@
       "bodyHeight": 71
     },
     "R18-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R18-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3666,7 +3666,7 @@
       "bodyHeight": 63
     },
     "R19-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3685,7 +3685,7 @@
       "bodyHeight": 73
     },
     "R19-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3711,7 +3711,7 @@
       "bodyHeight": 72
     },
     "R19-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3730,7 +3730,7 @@
       "bodyHeight": 74
     },
     "R19-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3756,7 +3756,7 @@
       "bodyHeight": 77
     },
     "R19-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3775,7 +3775,7 @@
       "bodyHeight": 72
     },
     "R19-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3801,7 +3801,7 @@
       "bodyHeight": 77
     },
     "R19-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3820,7 +3820,7 @@
       "bodyHeight": 72
     },
     "R19-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3846,7 +3846,7 @@
       "bodyHeight": 73
     },
     "R19-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3865,7 +3865,7 @@
       "bodyHeight": 73
     },
     "R19-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3891,7 +3891,7 @@
       "bodyHeight": 70
     },
     "R19-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3910,7 +3910,7 @@
       "bodyHeight": 72
     },
     "R19-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3936,7 +3936,7 @@
       "bodyHeight": 74
     },
     "R19-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3955,7 +3955,7 @@
       "bodyHeight": 71
     },
     "R19-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -3981,7 +3981,7 @@
       "bodyHeight": 71
     },
     "R19-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4000,7 +4000,7 @@
       "bodyHeight": 72
     },
     "R19-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R19-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4026,7 +4026,7 @@
       "bodyHeight": 71
     },
     "R20-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4045,7 +4045,7 @@
       "bodyHeight": 81
     },
     "R20-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4071,7 +4071,7 @@
       "bodyHeight": 76
     },
     "R20-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4090,7 +4090,7 @@
       "bodyHeight": 82
     },
     "R20-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4116,7 +4116,7 @@
       "bodyHeight": 83
     },
     "R20-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4135,7 +4135,7 @@
       "bodyHeight": 81
     },
     "R20-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4161,7 +4161,7 @@
       "bodyHeight": 82
     },
     "R20-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4180,7 +4180,7 @@
       "bodyHeight": 82
     },
     "R20-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4206,7 +4206,7 @@
       "bodyHeight": 88
     },
     "R20-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4225,7 +4225,7 @@
       "bodyHeight": 81
     },
     "R20-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4251,7 +4251,7 @@
       "bodyHeight": 78
     },
     "R20-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4270,7 +4270,7 @@
       "bodyHeight": 79
     },
     "R20-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4296,7 +4296,7 @@
       "bodyHeight": 80
     },
     "R20-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4315,7 +4315,7 @@
       "bodyHeight": 79
     },
     "R20-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4341,7 +4341,7 @@
       "bodyHeight": 76
     },
     "R20-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4360,7 +4360,7 @@
       "bodyHeight": 80
     },
     "R20-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R20-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4386,7 +4386,7 @@
       "bodyHeight": 75
     },
     "R1-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4405,7 +4405,7 @@
       "bodyHeight": 73
     },
     "R1-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4431,7 +4431,7 @@
       "bodyHeight": 70
     },
     "R1-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4450,7 +4450,7 @@
       "bodyHeight": 75
     },
     "R1-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4476,7 +4476,7 @@
       "bodyHeight": 73
     },
     "R1-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4495,7 +4495,7 @@
       "bodyHeight": 73
     },
     "R1-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4521,7 +4521,7 @@
       "bodyHeight": 76
     },
     "R1-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4540,7 +4540,7 @@
       "bodyHeight": 75
     },
     "R1-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4566,7 +4566,7 @@
       "bodyHeight": 71
     },
     "R1-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4585,7 +4585,7 @@
       "bodyHeight": 73
     },
     "R1-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4611,7 +4611,7 @@
       "bodyHeight": 72
     },
     "R1-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4630,7 +4630,7 @@
       "bodyHeight": 74
     },
     "R1-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4656,7 +4656,7 @@
       "bodyHeight": 73
     },
     "R1-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4675,7 +4675,7 @@
       "bodyHeight": 73
     },
     "R1-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4701,7 +4701,7 @@
       "bodyHeight": 71
     },
     "R1-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4720,7 +4720,7 @@
       "bodyHeight": 74
     },
     "R1-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R1-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4746,7 +4746,7 @@
       "bodyHeight": 75
     },
     "R2-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4765,7 +4765,7 @@
       "bodyHeight": 73
     },
     "R2-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4791,7 +4791,7 @@
       "bodyHeight": 70
     },
     "R2-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4810,7 +4810,7 @@
       "bodyHeight": 75
     },
     "R2-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4836,7 +4836,7 @@
       "bodyHeight": 73
     },
     "R2-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4855,7 +4855,7 @@
       "bodyHeight": 73
     },
     "R2-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4881,7 +4881,7 @@
       "bodyHeight": 76
     },
     "R2-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4900,7 +4900,7 @@
       "bodyHeight": 75
     },
     "R2-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4926,7 +4926,7 @@
       "bodyHeight": 71
     },
     "R2-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4945,7 +4945,7 @@
       "bodyHeight": 73
     },
     "R2-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4971,7 +4971,7 @@
       "bodyHeight": 72
     },
     "R2-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -4990,7 +4990,7 @@
       "bodyHeight": 74
     },
     "R2-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5016,7 +5016,7 @@
       "bodyHeight": 73
     },
     "R2-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5035,7 +5035,7 @@
       "bodyHeight": 73
     },
     "R2-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5061,7 +5061,7 @@
       "bodyHeight": 71
     },
     "R2-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5080,7 +5080,7 @@
       "bodyHeight": 74
     },
     "R2-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R2-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5106,7 +5106,7 @@
       "bodyHeight": 75
     },
     "R3-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5125,7 +5125,7 @@
       "bodyHeight": 78
     },
     "R3-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5151,7 +5151,7 @@
       "bodyHeight": 76
     },
     "R3-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5170,7 +5170,7 @@
       "bodyHeight": 79
     },
     "R3-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5196,7 +5196,7 @@
       "bodyHeight": 79
     },
     "R3-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5215,7 +5215,7 @@
       "bodyHeight": 77
     },
     "R3-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5241,7 +5241,7 @@
       "bodyHeight": 79
     },
     "R3-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5260,7 +5260,7 @@
       "bodyHeight": 79
     },
     "R3-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5286,7 +5286,7 @@
       "bodyHeight": 77
     },
     "R3-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5305,7 +5305,7 @@
       "bodyHeight": 77
     },
     "R3-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5331,7 +5331,7 @@
       "bodyHeight": 76
     },
     "R3-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5350,7 +5350,7 @@
       "bodyHeight": 76
     },
     "R3-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5376,7 +5376,7 @@
       "bodyHeight": 77
     },
     "R3-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5395,7 +5395,7 @@
       "bodyHeight": 76
     },
     "R3-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5421,7 +5421,7 @@
       "bodyHeight": 65
     },
     "R3-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5440,7 +5440,7 @@
       "bodyHeight": 77
     },
     "R3-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R3-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5466,7 +5466,7 @@
       "bodyHeight": 78
     },
     "R4-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5485,7 +5485,7 @@
       "bodyHeight": 78
     },
     "R4-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5511,7 +5511,7 @@
       "bodyHeight": 76
     },
     "R4-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5530,7 +5530,7 @@
       "bodyHeight": 79
     },
     "R4-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5556,7 +5556,7 @@
       "bodyHeight": 79
     },
     "R4-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5575,7 +5575,7 @@
       "bodyHeight": 77
     },
     "R4-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5601,7 +5601,7 @@
       "bodyHeight": 79
     },
     "R4-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5620,7 +5620,7 @@
       "bodyHeight": 79
     },
     "R4-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5646,7 +5646,7 @@
       "bodyHeight": 77
     },
     "R4-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5665,7 +5665,7 @@
       "bodyHeight": 77
     },
     "R4-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5691,7 +5691,7 @@
       "bodyHeight": 76
     },
     "R4-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5710,7 +5710,7 @@
       "bodyHeight": 76
     },
     "R4-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5736,7 +5736,7 @@
       "bodyHeight": 77
     },
     "R4-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5755,7 +5755,7 @@
       "bodyHeight": 76
     },
     "R4-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5781,7 +5781,7 @@
       "bodyHeight": 65
     },
     "R4-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5800,7 +5800,7 @@
       "bodyHeight": 77
     },
     "R4-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R4-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5826,7 +5826,7 @@
       "bodyHeight": 78
     },
     "R5-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5845,7 +5845,7 @@
       "bodyHeight": 78
     },
     "R5-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5871,7 +5871,7 @@
       "bodyHeight": 76
     },
     "R5-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5890,7 +5890,7 @@
       "bodyHeight": 79
     },
     "R5-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5916,7 +5916,7 @@
       "bodyHeight": 79
     },
     "R5-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5935,7 +5935,7 @@
       "bodyHeight": 77
     },
     "R5-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5961,7 +5961,7 @@
       "bodyHeight": 79
     },
     "R5-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -5980,7 +5980,7 @@
       "bodyHeight": 79
     },
     "R5-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6006,7 +6006,7 @@
       "bodyHeight": 77
     },
     "R5-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6025,7 +6025,7 @@
       "bodyHeight": 77
     },
     "R5-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6051,7 +6051,7 @@
       "bodyHeight": 76
     },
     "R5-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6070,7 +6070,7 @@
       "bodyHeight": 76
     },
     "R5-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6096,7 +6096,7 @@
       "bodyHeight": 77
     },
     "R5-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6115,7 +6115,7 @@
       "bodyHeight": 76
     },
     "R5-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6141,7 +6141,7 @@
       "bodyHeight": 65
     },
     "R5-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6160,7 +6160,7 @@
       "bodyHeight": 77
     },
     "R5-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R5-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6186,7 +6186,7 @@
       "bodyHeight": 78
     },
     "R6-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6205,7 +6205,7 @@
       "bodyHeight": 74
     },
     "R6-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6231,7 +6231,7 @@
       "bodyHeight": 73
     },
     "R6-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6250,7 +6250,7 @@
       "bodyHeight": 75
     },
     "R6-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6276,7 +6276,7 @@
       "bodyHeight": 72
     },
     "R6-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6295,7 +6295,7 @@
       "bodyHeight": 74
     },
     "R6-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6321,7 +6321,7 @@
       "bodyHeight": 76
     },
     "R6-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6340,7 +6340,7 @@
       "bodyHeight": 75
     },
     "R6-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6366,7 +6366,7 @@
       "bodyHeight": 75
     },
     "R6-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6385,7 +6385,7 @@
       "bodyHeight": 74
     },
     "R6-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6411,7 +6411,7 @@
       "bodyHeight": 72
     },
     "R6-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6430,7 +6430,7 @@
       "bodyHeight": 74
     },
     "R6-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6456,7 +6456,7 @@
       "bodyHeight": 72
     },
     "R6-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6475,7 +6475,7 @@
       "bodyHeight": 74
     },
     "R6-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6501,7 +6501,7 @@
       "bodyHeight": 73
     },
     "R6-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6520,7 +6520,7 @@
       "bodyHeight": 75
     },
     "R6-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R6-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6546,7 +6546,7 @@
       "bodyHeight": 72
     },
     "R7-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6565,7 +6565,7 @@
       "bodyHeight": 74
     },
     "R7-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6591,7 +6591,7 @@
       "bodyHeight": 73
     },
     "R7-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6610,7 +6610,7 @@
       "bodyHeight": 75
     },
     "R7-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6636,7 +6636,7 @@
       "bodyHeight": 72
     },
     "R7-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6655,7 +6655,7 @@
       "bodyHeight": 74
     },
     "R7-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6681,7 +6681,7 @@
       "bodyHeight": 76
     },
     "R7-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6700,7 +6700,7 @@
       "bodyHeight": 75
     },
     "R7-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6726,7 +6726,7 @@
       "bodyHeight": 75
     },
     "R7-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6745,7 +6745,7 @@
       "bodyHeight": 74
     },
     "R7-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6771,7 +6771,7 @@
       "bodyHeight": 72
     },
     "R7-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6790,7 +6790,7 @@
       "bodyHeight": 74
     },
     "R7-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6816,7 +6816,7 @@
       "bodyHeight": 72
     },
     "R7-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6835,7 +6835,7 @@
       "bodyHeight": 74
     },
     "R7-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6861,7 +6861,7 @@
       "bodyHeight": 73
     },
     "R7-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6880,7 +6880,7 @@
       "bodyHeight": 75
     },
     "R7-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R7-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6906,7 +6906,7 @@
       "bodyHeight": 72
     },
     "R8-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6925,7 +6925,7 @@
       "bodyHeight": 74
     },
     "R8-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6951,7 +6951,7 @@
       "bodyHeight": 73
     },
     "R8-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6970,7 +6970,7 @@
       "bodyHeight": 75
     },
     "R8-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -6996,7 +6996,7 @@
       "bodyHeight": 72
     },
     "R8-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7015,7 +7015,7 @@
       "bodyHeight": 74
     },
     "R8-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7041,7 +7041,7 @@
       "bodyHeight": 76
     },
     "R8-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7060,7 +7060,7 @@
       "bodyHeight": 75
     },
     "R8-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7086,7 +7086,7 @@
       "bodyHeight": 75
     },
     "R8-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7105,7 +7105,7 @@
       "bodyHeight": 74
     },
     "R8-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7131,7 +7131,7 @@
       "bodyHeight": 72
     },
     "R8-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7150,7 +7150,7 @@
       "bodyHeight": 74
     },
     "R8-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7176,7 +7176,7 @@
       "bodyHeight": 72
     },
     "R8-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7195,7 +7195,7 @@
       "bodyHeight": 74
     },
     "R8-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7221,7 +7221,7 @@
       "bodyHeight": 73
     },
     "R8-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7240,7 +7240,7 @@
       "bodyHeight": 75
     },
     "R8-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R8-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7266,7 +7266,7 @@
       "bodyHeight": 72
     },
     "R9-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7285,7 +7285,7 @@
       "bodyHeight": 70
     },
     "R9-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7311,7 +7311,7 @@
       "bodyHeight": 71
     },
     "R9-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7330,7 +7330,7 @@
       "bodyHeight": 71
     },
     "R9-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7356,7 +7356,7 @@
       "bodyHeight": 72
     },
     "R9-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7375,7 +7375,7 @@
       "bodyHeight": 71
     },
     "R9-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7401,7 +7401,7 @@
       "bodyHeight": 72
     },
     "R9-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7420,7 +7420,7 @@
       "bodyHeight": 72
     },
     "R9-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7446,7 +7446,7 @@
       "bodyHeight": 66
     },
     "R9-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7465,7 +7465,7 @@
       "bodyHeight": 70
     },
     "R9-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7491,7 +7491,7 @@
       "bodyHeight": 69
     },
     "R9-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7510,7 +7510,7 @@
       "bodyHeight": 70
     },
     "R9-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7536,7 +7536,7 @@
       "bodyHeight": 71
     },
     "R9-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7555,7 +7555,7 @@
       "bodyHeight": 69
     },
     "R9-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7581,7 +7581,7 @@
       "bodyHeight": 67
     },
     "R9-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7600,7 +7600,7 @@
       "bodyHeight": 70
     },
     "R9-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R9-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7626,7 +7626,7 @@
       "bodyHeight": 71
     },
     "R10-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7645,7 +7645,7 @@
       "bodyHeight": 70
     },
     "R10-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7671,7 +7671,7 @@
       "bodyHeight": 71
     },
     "R10-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7690,7 +7690,7 @@
       "bodyHeight": 71
     },
     "R10-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7716,7 +7716,7 @@
       "bodyHeight": 72
     },
     "R10-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7735,7 +7735,7 @@
       "bodyHeight": 71
     },
     "R10-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7761,7 +7761,7 @@
       "bodyHeight": 72
     },
     "R10-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7780,7 +7780,7 @@
       "bodyHeight": 72
     },
     "R10-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7806,7 +7806,7 @@
       "bodyHeight": 66
     },
     "R10-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7825,7 +7825,7 @@
       "bodyHeight": 70
     },
     "R10-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7851,7 +7851,7 @@
       "bodyHeight": 69
     },
     "R10-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7870,7 +7870,7 @@
       "bodyHeight": 70
     },
     "R10-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7896,7 +7896,7 @@
       "bodyHeight": 71
     },
     "R10-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7915,7 +7915,7 @@
       "bodyHeight": 69
     },
     "R10-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7941,7 +7941,7 @@
       "bodyHeight": 67
     },
     "R10-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7960,7 +7960,7 @@
       "bodyHeight": 70
     },
     "R10-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R10-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -7986,7 +7986,7 @@
       "bodyHeight": 71
     },
     "R11-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8005,7 +8005,7 @@
       "bodyHeight": 70
     },
     "R11-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8031,7 +8031,7 @@
       "bodyHeight": 71
     },
     "R11-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8050,7 +8050,7 @@
       "bodyHeight": 71
     },
     "R11-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8076,7 +8076,7 @@
       "bodyHeight": 72
     },
     "R11-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8095,7 +8095,7 @@
       "bodyHeight": 71
     },
     "R11-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8121,7 +8121,7 @@
       "bodyHeight": 72
     },
     "R11-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8140,7 +8140,7 @@
       "bodyHeight": 72
     },
     "R11-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8166,7 +8166,7 @@
       "bodyHeight": 66
     },
     "R11-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8185,7 +8185,7 @@
       "bodyHeight": 70
     },
     "R11-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8211,7 +8211,7 @@
       "bodyHeight": 69
     },
     "R11-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8230,7 +8230,7 @@
       "bodyHeight": 70
     },
     "R11-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8256,7 +8256,7 @@
       "bodyHeight": 71
     },
     "R11-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8275,7 +8275,7 @@
       "bodyHeight": 69
     },
     "R11-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8301,7 +8301,7 @@
       "bodyHeight": 67
     },
     "R11-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8320,7 +8320,7 @@
       "bodyHeight": 70
     },
     "R11-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R11-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8346,7 +8346,7 @@
       "bodyHeight": 71
     },
     "R12-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8365,7 +8365,7 @@
       "bodyHeight": 70
     },
     "R12-walk/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8391,7 +8391,7 @@
       "bodyHeight": 71
     },
     "R12-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8410,7 +8410,7 @@
       "bodyHeight": 71
     },
     "R12-walk/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8436,7 +8436,7 @@
       "bodyHeight": 72
     },
     "R12-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8455,7 +8455,7 @@
       "bodyHeight": 71
     },
     "R12-walk/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8481,7 +8481,7 @@
       "bodyHeight": 72
     },
     "R12-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8500,7 +8500,7 @@
       "bodyHeight": 72
     },
     "R12-walk/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8526,7 +8526,7 @@
       "bodyHeight": 66
     },
     "R12-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8545,7 +8545,7 @@
       "bodyHeight": 70
     },
     "R12-walk/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8571,7 +8571,7 @@
       "bodyHeight": 69
     },
     "R12-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8590,7 +8590,7 @@
       "bodyHeight": 70
     },
     "R12-walk/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8616,7 +8616,7 @@
       "bodyHeight": 71
     },
     "R12-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8635,7 +8635,7 @@
       "bodyHeight": 69
     },
     "R12-walk/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8661,7 +8661,7 @@
       "bodyHeight": 67
     },
     "R12-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8680,7 +8680,7 @@
       "bodyHeight": 70
     },
     "R12-walk/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/R12-walk-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8706,7 +8706,7 @@
       "bodyHeight": 71
     },
     "moru-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8725,7 +8725,7 @@
       "bodyHeight": 76
     },
     "moru-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8747,7 +8747,7 @@
       "bodyHeight": 77
     },
     "moru-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8766,7 +8766,7 @@
       "bodyHeight": 72
     },
     "moru-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8785,7 +8785,7 @@
       "bodyHeight": 75
     },
     "moru-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8804,7 +8804,7 @@
       "bodyHeight": 76
     },
     "moru-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8823,7 +8823,7 @@
       "bodyHeight": 74
     },
     "moru-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8842,7 +8842,7 @@
       "bodyHeight": 71
     },
     "moru-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8861,7 +8861,7 @@
       "bodyHeight": 75
     },
     "bolt-idle/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8880,7 +8880,7 @@
       "bodyHeight": 75
     },
     "bolt-idle/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8902,7 +8902,7 @@
       "bodyHeight": 73
     },
     "bolt-idle/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8921,7 +8921,7 @@
       "bodyHeight": 74
     },
     "bolt-idle/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8940,7 +8940,7 @@
       "bodyHeight": 76
     },
     "bolt-idle/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8959,7 +8959,7 @@
       "bodyHeight": 74
     },
     "bolt-idle/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-west.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8978,7 +8978,7 @@
       "bodyHeight": 75
     },
     "bolt-idle/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -8997,7 +8997,7 @@
       "bodyHeight": 74
     },
     "bolt-idle/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -9016,7 +9016,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9047,7 +9047,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/south-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9078,7 +9078,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/south": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9109,7 +9109,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/south-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9140,7 +9140,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9171,7 +9171,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/north-west": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9202,7 +9202,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/north": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,
@@ -9233,7 +9233,7 @@
       "bodyHeight": 75
     },
     "bolt-greeting/north-east": {
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-greeting.webp",
       "provider": "pixellab",
       "frameWidth": 108,
       "frameHeight": 108,

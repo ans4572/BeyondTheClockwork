@@ -44,7 +44,7 @@ test('owned rewards leave the pool; parts fill in, and repairs only come while t
   g.s.run.skillMods = data.slice.skillMods.map(m => m.id); g.s.run.traits = data.slice.elementTraits.map(t => t.id);
   g.s.run.slots.forEach(slot => { slot.level = data.combat.balance.skillMaxLevel; });
   g.offerRewards();
-  assert.equal(g.s.run.rewardChoices.length, 3); assert.ok(g.s.run.rewardChoices.every(c => c.kind === 'upgrade' || c.kind === 'gears'));
+  assert.equal(g.s.run.rewardChoices.length, 3); assert.ok(g.s.run.rewardChoices.every(c => ['upgrade', 'gears', 'perk'].includes(c.kind)));
   g.p.hp = 20; assert.ok(g.partRewards().some(c => c.kind === 'heal')); g.p.hp = g.p.maxHp; assert.ok(!g.partRewards().some(c => c.kind === 'heal'));
 });
 

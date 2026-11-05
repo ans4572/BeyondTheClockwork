@@ -42,3 +42,21 @@
 | 10 | 깃발 검문광장 | `parade-approach-c/background-compact.prompt.txt` | `parade-approach-c/background-large.webp` | `parade-approach-c/background-compact-v1.png` |
 | 11 | 사탕색 골목 | `ribbon-alley-a/background-compact.prompt.txt` | `ribbon-alley-a/background-large.webp` | `ribbon-alley-a/background-compact-v1.png` |
 | 12 | 행진 적재뜰 | `parade-approach-d/background-compact.prompt.txt` | `parade-approach-d/background-large.webp` | `parade-approach-d/background-compact-v1.png` |
+
+## 일반 전투 방 두 번째 맵 (2026-11-05)
+
+보스 방을 뺀 일반 전투 방 9곳에 맵을 한 장씩 더 만듭니다. 원정마다 각 정거장에서 두 맵 중 하나가 나옵니다. 같은 동네·같은 시간대의 빛은 지키고, 배치·소품·출구 위치는 기존 방과 다르게 합니다.
+
+참조 그림 1은 표의 기존 방 그림, 참조 그림 2는 `art/world-map/smile-street-road-reference.png`입니다. 결과는 2304×1536 PNG로 표의 저장 위치에 저장합니다. 받으면 webp 변환, 걷는 영역 마스크, 시작·출구·적 위치를 맞추고 `slice.json`의 방 variants로 연결합니다.
+
+| 구간 | 방 | 프롬프트 | 참조 그림 1 | 저장 위치 | 입구 → 출구 |
+|---|---|---|---|---|---|
+| 02 | 첫 걸음 광장 B | `first-step-a2/background-compact.prompt.txt` | `first-step-a/background-compact-v1.png` | `first-step-a2/background-compact-v1.png` | 왼쪽 아래 → 오른쪽 가운데 |
+| 03 | 사탕 수레마당 B | `ribbon-alley-c2/background-compact.prompt.txt` | `ribbon-alley-c/background-compact-v2.png` | `ribbon-alley-c2/background-compact-v1.png` | 왼쪽 위 → 오른쪽 아래 |
+| 04 | 장난감 수선길 B | `workshop-road-a2/background-compact.prompt.txt` | `workshop-road-a/background-compact-v1.png` | `workshop-road-a2/background-compact-v1.png` | 왼쪽 가운데 → 오른쪽 위 |
+| 05 | 리본 교차골목 B | `ribbon-alley-d2/background-compact.prompt.txt` | `ribbon-alley-d/background-compact-v1.png` | `ribbon-alley-d2/background-compact-v1.png` | 왼쪽 위 → 오른쪽 아래 |
+| 08 | 태엽 적재마당 B | `workshop-road-c2/background-compact.prompt.txt` | `workshop-road-c/background-compact-v1.png` | `workshop-road-c2/background-compact-v1.png` | 왼쪽 아래 → 오른쪽 가운데 |
+| 09 | 분수 우회광장 B | `first-step-c2/background-compact.prompt.txt` | `first-step-c/background-compact-v1.png` | `first-step-c2/background-compact-v1.png` | 왼쪽 가운데 → 오른쪽 아래 |
+| 10 | 깃발 검문광장 B | `parade-approach-c2/background-compact.prompt.txt` | `parade-approach-c/background-compact-v1.png` | `parade-approach-c2/background-compact-v1.png` | 왼쪽 위 → 오른쪽 가운데 |
+| 11 | 사탕색 골목 B | `ribbon-alley-a2/background-compact.prompt.txt` | `ribbon-alley-a/background-compact-v1.png` | `ribbon-alley-a2/background-compact-v1.png` | 왼쪽 가운데 → 오른쪽 아래 |
+| 12 | 행진 적재뜰 B | `parade-approach-d2/background-compact.prompt.txt` | `parade-approach-d/background-compact-v2.png` | `parade-approach-d2/background-compact-v1.png` | 왼쪽 아래 → 오른쪽 가운데 |

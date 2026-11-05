@@ -4,11 +4,15 @@
 import { apiBase } from './device-transfer.js';
 
 const TOKEN_KEY = 'beyond-the-clockwork.admin-token.v1';
-const RANGES = [[7, '7일'], [30, '30일'], [90, '90일'], [0, '전체']];
+const RANGES = [[7, '7일'], [30, '30일'], [0, '전체']];
 const FORMS = { phone: '휴대폰', tablet: '태블릿', desktop: 'PC' };
 const SYSTEMS = { ios: 'iOS', android: '안드로이드', windows: '윈도우', mac: 'macOS', chromeos: '크롬OS', linux: '리눅스', other: '기타' };
 const BROWSERS = { chrome: '크롬', safari: '사파리', samsung: '삼성', whale: '웨일', edge: '엣지', firefox: '파이어폭스', inapp: '앱 안', other: '기타' };
 const REASONS = { clear: '완주', defeat: '쓰러짐', abandon: '포기', open: '진행 중' };
+/** Expedition difficulties as the game names them; runs from before difficulties existed show as 이전. */
+const LEVELS = { easy: '쉬움', normal: '보통', hard: '어려움', legacy: '이전' };
+const LEVEL_COLORS = { easy: 'var(--good)', normal: 'var(--blue)', hard: 'var(--bad)', legacy: 'var(--blue-3)' };
+const levelChip = id => (id ? `<span class="chip level ${esc(id)}">${LEVELS[id] || esc(id)}</span>` : '<span class="chip level legacy">이전</span>');
 const WEEKDAYS = '일월화수목금토';
 /** Shares in one family of blues and greys, biggest first. */
 const SHARE_COLORS = ['var(--blue)', 'var(--blue-2)', 'var(--blue-3)', 'var(--blue-4)'];
@@ -16,7 +20,7 @@ const DAY_ROWS = 14;
 
 const app = document.getElementById('app'), tip = document.getElementById('tip');
 const state = {
-  tab: sessionStorage.getItem('admin-tab') === 'users' ? 'users' : 'stats', days: Number(sessionStorage.getItem('admin-days') ?? 30), data: null, names: null, allDays: false, at: null,
+  tab: sessionStorage.getItem('admin-tab') === 'users' ? 'users' : 'stats', days: [7, 30, 0].includes(Number(sessionStorage.getItem('admin-days') ?? 30)) ? Number(sessionStorage.getItem('admin-days') ?? 30) : 30, level: sessionStorage.getItem('admin-level') || '', data: null, names: null, allDays: false, at: null,
   people: null, q: '', onlineOnly: false, shown: 20, picked: null, detail: null, confirm: 0, said: ''
 };
 const PLACES = { title: '타이틀', hub: '마을', practice: '연습장' };
@@ -85,7 +89,7 @@ async function load() {
   state.names ??= await loadNames();
   if (state.tab === 'users') return loadPeople(true);
   if (!state.data) app.innerHTML = '<p class="empty">불러오는 중…</p>';
-  const answer = await request(`/api/admin/stats?days=${state.days}`);
+  const answer = await request(`/api/admin/stats?days=${state.days}${state.level ? `&difficulty=${state.level}` : ''}`);
   if (!answer) return;
   if (!answer.ok) return problem('서버에 문제가 생겼어요. 잠시 뒤 다시 불러오세요.');
   state.data = answer.body; state.at = new Date(); render();
@@ -145,6 +149,22 @@ function donut(rows, names, unit) {
 }
 const shareLine = (rows, names) => { const total = rows.reduce((sum, r) => sum + r.devices, 0); return rows.slice(0, 3).map(r => `${names[r.name] || '기타'} ${pct(r.devices, total)}%`).join(' · ') || '–'; };
 
+/** One card per difficulty: how many expeditions chose it (and its share), how they ended, how far and how long. */
+function levelCards(rows) {
+  const total = rows.reduce((sum, row) => sum + row.runs, 0);
+  if (!total) return '<div class="card"><p class="empty">아직 원정 기록이 없어요.</p></div>';
+  return rows.map(row => {
+    const done = row.clears + row.defeats + row.abandons;
+    return `<button class="card level-card" data-level="${row.difficulty === 'legacy' ? '' : esc(row.difficulty)}" aria-pressed="${state.level === row.difficulty}" style="--level:${LEVEL_COLORS[row.difficulty]}">
+      <div class="label"><span class="dot" style="background:var(--level)"></span>${LEVELS[row.difficulty] || esc(row.difficulty)}</div>
+      <div class="value num">${num(row.runs)}<small>판</small><span class="delta mute">${pct(row.runs, total)}%</span></div>
+      <div class="track"><i style="width:${pct(row.runs, total)}%;background:var(--level)"></i></div>
+      <div class="note">완주율 <b>${done ? `${pct(row.clears, done)}%` : '–'}</b> · 평균 ${row.averageNode ?? '–'}번째 · ${clock(row.averageSeconds)}</div>
+      <div class="note">완주 ${num(row.clears)} · 쓰러짐 ${num(row.defeats)} · 포기 ${num(row.abandons)}${row.unfinished ? ` · 진행 중 ${num(row.unfinished)}` : ''} · 기기 ${num(row.devices)}</div>
+    </button>`;
+  }).join('');
+}
+
 function render() {
   const { totals, daily, devices, combos, recent } = state.data, ended = totals.clears + totals.defeats + totals.abandons;
   const today = daily.at(-1) || { sessions: 0, devices: 0, runs: 0, clears: 0 }, yesterday = daily.at(-2);
@@ -156,13 +176,17 @@ function render() {
   app.innerHTML = `
     ${topBar()}
     <main>
-      <div class="toolbar"><span class="mute">기간</span><div class="seg" role="group" aria-label="기간">${RANGES.map(([d, label]) => `<button data-days="${d}" aria-pressed="${state.days === d}">${label}</button>`).join('')}</div></div>
+      <div class="toolbar"><span class="mute">원정 난이도</span><div class="seg" role="group" aria-label="원정 난이도">${[['', '전체'], ['easy', '쉬움'], ['normal', '보통'], ['hard', '어려움']].map(([id, label]) => `<button data-level="${id}" aria-pressed="${state.level === id}">${label}</button>`).join('')}</div><span class="mute">기간</span><div class="seg" role="group" aria-label="기간">${RANGES.map(([d, label]) => `<button data-days="${d}" aria-pressed="${state.days === d}">${label}</button>`).join('')}</div></div>
+      ${state.level ? `<p class="hint" style="margin:-4px 0 12px;text-align:right">원정 숫자(원정 판수·완주율·조합·정거장·최근 원정)는 <b>${LEVELS[state.level]}</b> 원정만 셉니다. 플레이 수와 기기는 전체예요.</p>` : ''}
       <section class="tiles" aria-label="요약">
         <div class="card tile"><div class="label">오늘 플레이</div><div class="value num">${num(today.sessions)}<small>번</small>${delta}</div><div class="note">기기 ${num(today.devices)} · 원정 ${num(today.runs)} · 완주 ${num(today.clears)}</div></div>
         <div class="card tile"><div class="label">${rangeLabel} 원정</div><div class="value num">${num(totals.runs)}<small>판</small>${totals.unfinished ? `<span class="delta mute" title="아직 돌아오지 않은 원정">진행 중 ${num(totals.unfinished)}</span>` : ''}</div><div class="note">완주 ${num(totals.clears)} · 쓰러짐 ${num(totals.defeats)} · 포기 ${num(totals.abandons)}</div></div>
         <div class="card tile"><div class="label">${rangeLabel} 기기</div><div class="value num">${num(totals.activeDevices)}<small>대</small></div><div class="note">플레이 ${num(totals.sessions)}번 · 새 기기 ${num(totals.newDevices)} · 누적 ${num(totals.devices)}</div></div>
         <div class="card tile"><div class="label">완주율</div><div class="value num">${pct(totals.clears, ended)}<small>%</small></div><div class="note">평균 ${totals.averageNode ?? '–'}번째 정거장 · ${clock(totals.averageSeconds)}</div></div>
       </section>
+
+      <div class="section"><h2>난이도</h2><span>${rangeLabel} · 원정을 떠날 때 고른 난이도 · 누르면 그 난이도만 봐요</span></div>
+      <section class="levels">${levelCards(state.data.difficulties || [])}</section>
 
       <div class="section"><h2>추세</h2><span>${rangeLabel} · 마우스를 올리면 그날 숫자</span></div>
       <section class="trend">
@@ -179,7 +203,7 @@ function render() {
           <tbody>${combos.map(c => { const done = c.clears + c.defeats + c.abandons; return `<tr><td>${comboCell(c.combo)}</td><td class="grow narrow-hide"><div class="track"><i style="width:${c.runs / maxCombo * 100}%;background:var(--blue)"></i></div></td><td class="r num">${num(c.runs)} <span class="mute">${pct(c.runs, totals.runs)}%</span></td><td class="r num">${done ? `${pct(c.clears, done)}%` : '–'}</td><td class="r num">${c.averageNode ?? '–'}</td></tr>`; }).join('')}</tbody>
         </table>` : '<p class="empty">아직 원정 기록이 없어요.</p>'}</div>
         <div class="card"><div class="card-head"><h3>최근 원정</h3></div>${recent.length ? `<table>
-          <tbody>${recent.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td><td class="r num mute narrow-hide">${r.seconds === null ? '' : clock(r.seconds)}</td></tr>`).join('')}</tbody>
+          <tbody>${recent.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td>${levelChip(r.difficulty)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td><td class="r num mute narrow-hide">${r.seconds === null ? '' : clock(r.seconds)}</td></tr>`).join('')}</tbody>
         </table>` : '<p class="empty">아직 원정 기록이 없어요.</p>'}</div>
       </section>
 
@@ -217,6 +241,7 @@ app.addEventListener('click', event => {
   if (button.dataset.act === 'memo') { saveMemo(); return; }
   if (button.dataset.act === 'more') { state.shown += 30; drawPeople(); return; }
   if (button.dataset.act === 'close') { state.picked = null; state.detail = null; drawDetail(); drawPeople(); return; }
+  if (button.dataset.level !== undefined) { state.level = button.dataset.level; state.allDays = false; sessionStorage.setItem('admin-level', state.level); load(); return; }
   if (button.dataset.days !== undefined) { state.days = Number(button.dataset.days); state.allDays = false; sessionStorage.setItem('admin-days', state.days); load(); }
   if (button.dataset.act === 'reload') load();
   if (button.dataset.act === 'theme') {
@@ -353,7 +378,7 @@ function drawDetail() {
     <h4>선물 기록</h4>
     ${d.gifts.length ? `<table><tbody>${d.gifts.map(g => { const [cls, label] = GIFT_STATE(g); return `<tr><td class="num mute">${when(g.created_at)}</td><td class="r num"><b>${num(g.gears)}</b></td><td class="mute" style="white-space:normal">${esc(g.note || '')}</td><td><span class="chip ${cls}">${label}</span></td><td class="r">${cls === 'open' ? `<button class="link" data-cancel="${g.id}">취소</button>` : ''}</td></tr>`; }).join('')}</tbody></table>` : '<p class="hint">아직 보낸 선물이 없어요.</p>'}
     <h4>최근 원정</h4>
-    ${d.runs.length ? `<table><tbody>${d.runs.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">아직 원정 기록이 없어요.</p>'}`;
+    ${d.runs.length ? `<table><tbody>${d.runs.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td>${levelChip(r.difficulty)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">아직 원정 기록이 없어요.</p>'}`;
   giftButton();
 }
 

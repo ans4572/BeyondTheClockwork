@@ -1,6 +1,6 @@
 import { createProfile, permanentStats, buyRank, refundAll } from './progression.js';
 import { roomTitle } from './room-title.js';
-import { fitsMap, pointInPolygon, placeOf } from './map-geometry.js';
+import { fitsMap, pointInPolygon, placeOf, roomPlace } from './map-geometry.js';
 // How far back from the spawn point the player starts, walking in from the map's edge.
 const ENTRY_UNITS = 3.5;
 import { Tutorial } from './tutorial.js';
@@ -74,7 +74,9 @@ export class Game {
   /** Authored map of the current room; rooms without one keep the rectangular arena. */
   get map() {
     const { maps } = this.data, { mode } = this.s;
-    return placeOf(maps, mode === 'practice' ? maps?.practice : ['intro', 'introDeath'].includes(mode) ? maps?.intro : maps?.maps[this.room?.id]);
+    if (mode === 'practice' || ['intro', 'introDeath'].includes(mode)) return placeOf(maps, mode === 'practice' ? maps?.practice : maps?.intro);
+    // A room with two pictures shows the one this run rolled for it.
+    return roomPlace(maps, this.room?.id, this.s.run?.plan?.[this.s.run.node]?.variant || 0);
   }
   get hubMap() { return placeOf(this.data.maps, this.data.maps?.hub); }
   /** The walkable village under the player, or null anywhere that plays through panels or combat. */
@@ -216,21 +218,34 @@ export class Game {
     if (result) { const { x, y } = this.p; this.resetPlayer(); Object.assign(this.p, { x, y }); this.save(); }
     return result;
   }
-  startRun(seed = Date.now() >>> 0) {
+  /** The expedition's difficulty (slice.json difficulty): a run saved before difficulties existed plays as the default. */
+  get difficulty() {
+    const rules = this.config.difficulty, id = this.s.run?.difficulty || rules?.default;
+    return rules?.levels.find(level => level.id === id) || { id: 'normal', scale: 1, loot: 1 };
+  }
+  /** Setting out from the town portal: the difficulty picked in the popup, remembered as the next one offered. */
+  depart(difficulty) {
+    if (this.s.mode !== 'hub' || this.s.panel !== 'difficulty' || !this.config.difficulty?.levels.some(level => level.id === difficulty)) return false;
+    this.s.panel = null; this.s.profile.lastDifficulty = difficulty;
+    return this.startRun(undefined, difficulty);
+  }
+  startRun(seed = Date.now() >>> 0, difficulty = this.config.difficulty?.default) {
     if (this.s.mode !== 'hub' || !this.s.profile.registered) return false;
     this.s.rng = seed || 1; this.s.profile.runs++;
-    this.s.run = { id: `run-${this.s.profile.runs}-${seed}`, seed, node: 0, startedAt: this.s.time, elapsed: 0, coins: 0, slots: this.loadoutSlots, upgrades: {}, mods: [], skillMods: [], traits: [], clears: [], rewardChoices: [], shopBought: [], branches: [], damageTaken: 0, baseGears: 0 };
+    this.s.run = { id: `run-${this.s.profile.runs}-${seed}`, seed, node: 0, startedAt: this.s.time, elapsed: 0, coins: 0, slots: this.loadoutSlots, upgrades: {}, mods: [], skillMods: [], traits: [], clears: [], rewardChoices: [], shopBought: [], branches: [], damageTaken: 0, baseGears: 0, difficulty: difficulty || 'normal' };
     // Generate the whole route once; resuming never rerolls layouts or encounters.
     this.s.run.plan = this.config.rooms.map(room => ({ variant: room.variants ? Math.floor(this.random() * room.variants.length) : 0, layout: room.boss || room.kind === 'shop' ? 2 : Math.floor(this.random() * this.config.roomLayouts.length) }));
     // Every run deals its own mix and formation for each fight, at the designed weight (see encounters.js).
     dealRun(this.config.rooms, this.config.enemies, seed, this.config.eliteAffixes).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
     this.resetPlayer(); this.enterNode();
-    this.onRun('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element) });
+    this.onRun('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element), difficulty: this.s.run.difficulty });
     return true;
   }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
     const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
+    // On an expedition every body, boss or not, has the difficulty's health and attack (practice and the intro do not).
+    if (this.s.run) { const k = this.difficulty.scale; enemy.hp = enemy.maxHp = Math.max(1, Math.round(template.hp * k)); if (Number.isFinite(template.damage)) enemy.damage = Math.max(1, Math.round(template.damage * k)); }
     this.s.enemies.push(enemy); return enemy;
   }
   enterNode() {
@@ -258,7 +273,7 @@ export class Game {
       if (rules && map?.walkable && map.size) {
         // Which fight of the run this is: the first three ease the furniture in (slice.json hazards.ramp).
         const step = this.config.rooms.slice(0, this.s.run.node).filter(r => r.waves).length;
-        plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0, step);
+        plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0, step, this.difficulty.scale);
         this.s.hazards = plan.hazards.map(h => ({ ...h }));
       }
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
@@ -1211,7 +1226,8 @@ export class Game {
     this.tutorial.tick();
     if (!pointInPolygon(p.x, p.y, this.village.exit.polygon)) return;
     if (this.s.mode === 'shop') this.nextNode(0);
-    else if (this.s.mode === 'hub' && this.readyToLeave) this.startRun();
+    // The town portal asks for a difficulty first; the player is set back a step so closing the popup does not reopen it.
+    else if (this.s.mode === 'hub' && this.readyToLeave) { p.y -= LEAVE_REFUSED_UNITS; this.s.panel = 'difficulty'; }
     else if (this.s.mode === 'hub') { p.y -= LEAVE_REFUSED_UNITS; this.notify('모루에게 속성 2개를 고른 뒤 출발하세요.'); }
   }
   /** One step of a dodge already under way. */
@@ -1528,7 +1544,8 @@ export class Game {
     const region = this.data.progression.region, kind = this.room.kind;
     const gears = kind === 'miniboss' ? region.miniReward : kind === 'regionBoss' ? region.bossReward : region.normalReward;
     const coins = this.data.progression.economy.runCoinRewards[kind === 'normal' ? 'normal' : kind];
-    return { gears: Math.round(gears * (1 + (this.stats.gearGain || 0))), coins: Math.round(coins * (1 + (this.stats.coinGain || 0))) };
+    const loot = this.difficulty.loot;
+    return { gears: Math.round(gears * loot * (1 + (this.stats.gearGain || 0))), coins: Math.round(coins * loot * (1 + (this.stats.coinGain || 0))) };
   }
   /**
    * The room's loot is paid out a share per enemy as each one falls, rather than all at the end; the clear pays whatever
@@ -1733,9 +1750,9 @@ export class Game {
     let bonus = 0;
     if (run.clears.length && !profile.firstReturnClaimed) { bonus = economy.firstReturnBonus; profile.freeGears += bonus; profile.firstReturnClaimed = true; }
     if (reason === 'defeat') this.sense({ kind: 'fail' });
-    this.s.result = { reason, node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
+    this.s.result = { reason, difficulty: run.difficulty || 'normal', node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
-    this.onRun('runEnd', { run: run.id, elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
+    this.onRun('runEnd', { run: run.id, difficulty: run.difficulty || 'normal', elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
   }
   /**

@@ -53,7 +53,7 @@
   ],
   "clips": {
     "rat-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -80,7 +80,7 @@
       "bodyHeight": 54
     },
     "rat-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -99,7 +99,7 @@
       "bodyHeight": 54
     },
     "rat-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -126,7 +126,7 @@
       "bodyHeight": 54
     },
     "rat-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -145,7 +145,7 @@
       "bodyHeight": 54
     },
     "rat-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -172,7 +172,7 @@
       "bodyHeight": 54
     },
     "rat-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -191,7 +191,7 @@
       "bodyHeight": 54
     },
     "rat-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -218,7 +218,7 @@
       "bodyHeight": 51
     },
     "rat-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -237,7 +237,7 @@
       "bodyHeight": 51
     },
     "rat-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -264,7 +264,7 @@
       "bodyHeight": 47
     },
     "rat-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -283,7 +283,7 @@
       "bodyHeight": 47
     },
     "rat-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -310,7 +310,7 @@
       "bodyHeight": 52
     },
     "rat-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -329,7 +329,7 @@
       "bodyHeight": 52
     },
     "rat-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -356,7 +356,7 @@
       "bodyHeight": 54
     },
     "rat-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -375,7 +375,7 @@
       "bodyHeight": 54
     },
     "rat-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -402,7 +402,7 @@
       "bodyHeight": 58
     },
     "rat-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rat/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -421,7 +421,7 @@
       "bodyHeight": 58
     },
     "rat-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -449,7 +449,7 @@
       "bodyHeight": 54
     },
     "rat-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -477,7 +477,7 @@
       "bodyHeight": 54
     },
     "rat-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -505,7 +505,7 @@
       "bodyHeight": 54
     },
     "rat-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -533,7 +533,7 @@
       "bodyHeight": 51
     },
     "rat-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -561,7 +561,7 @@
       "bodyHeight": 47
     },
     "rat-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -589,7 +589,7 @@
       "bodyHeight": 52
     },
     "rat-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -617,7 +617,7 @@
       "bodyHeight": 54
     },
     "rat-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rat-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 96,
       "frameHeight": 96,
@@ -645,7 +645,7 @@
       "bodyHeight": 58
     },
     "nutcracker-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -672,7 +672,7 @@
       "bodyHeight": 86
     },
     "nutcracker-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -691,7 +691,7 @@
       "bodyHeight": 86
     },
     "nutcracker-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -718,7 +718,7 @@
       "bodyHeight": 88
     },
     "nutcracker-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -737,7 +737,7 @@
       "bodyHeight": 88
     },
     "nutcracker-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -764,7 +764,7 @@
       "bodyHeight": 88
     },
     "nutcracker-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -783,7 +783,7 @@
       "bodyHeight": 88
     },
     "nutcracker-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -810,7 +810,7 @@
       "bodyHeight": 87
     },
     "nutcracker-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -829,7 +829,7 @@
       "bodyHeight": 87
     },
     "nutcracker-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -856,7 +856,7 @@
       "bodyHeight": 86
     },
     "nutcracker-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -875,7 +875,7 @@
       "bodyHeight": 86
     },
     "nutcracker-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -902,7 +902,7 @@
       "bodyHeight": 87
     },
     "nutcracker-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -921,7 +921,7 @@
       "bodyHeight": 87
     },
     "nutcracker-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -948,7 +948,7 @@
       "bodyHeight": 89
     },
     "nutcracker-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -967,7 +967,7 @@
       "bodyHeight": 89
     },
     "nutcracker-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -994,7 +994,7 @@
       "bodyHeight": 87
     },
     "nutcracker-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/nutcracker/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1013,7 +1013,7 @@
       "bodyHeight": 87
     },
     "nutcracker-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1049,7 +1049,7 @@
       "bodyHeight": 86
     },
     "nutcracker-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1085,7 +1085,7 @@
       "bodyHeight": 88
     },
     "nutcracker-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1121,7 +1121,7 @@
       "bodyHeight": 88
     },
     "nutcracker-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1157,7 +1157,7 @@
       "bodyHeight": 87
     },
     "nutcracker-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1193,7 +1193,7 @@
       "bodyHeight": 86
     },
     "nutcracker-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1229,7 +1229,7 @@
       "bodyHeight": 87
     },
     "nutcracker-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1265,7 +1265,7 @@
       "bodyHeight": 89
     },
     "nutcracker-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/nutcracker-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -1301,7 +1301,7 @@
       "bodyHeight": 87
     },
     "collectorRoco-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 168,
       "frameHeight": 168,
@@ -1327,7 +1327,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1346,7 +1346,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1372,7 +1372,7 @@
       "bodyHeight": 108
     },
     "collectorRoco-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1391,7 +1391,7 @@
       "bodyHeight": 108
     },
     "collectorRoco-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1417,7 +1417,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1436,7 +1436,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1462,7 +1462,7 @@
       "bodyHeight": 102
     },
     "collectorRoco-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1481,7 +1481,7 @@
       "bodyHeight": 102
     },
     "collectorRoco-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1507,7 +1507,7 @@
       "bodyHeight": 107
     },
     "collectorRoco-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1526,7 +1526,7 @@
       "bodyHeight": 107
     },
     "collectorRoco-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -1552,7 +1552,7 @@
       "bodyHeight": 113
     },
     "collectorRoco-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1571,7 +1571,7 @@
       "bodyHeight": 113
     },
     "collectorRoco-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 172,
       "frameHeight": 172,
@@ -1597,7 +1597,7 @@
       "bodyHeight": 113
     },
     "collectorRoco-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1616,7 +1616,7 @@
       "bodyHeight": 113
     },
     "collectorRoco-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -1642,7 +1642,7 @@
       "bodyHeight": 114
     },
     "collectorRoco-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1661,7 +1661,7 @@
       "bodyHeight": 114
     },
     "collectorRoco-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 168,
       "frameHeight": 168,
@@ -1688,7 +1688,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1715,7 +1715,7 @@
       "bodyHeight": 108
     },
     "collectorRoco-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1742,7 +1742,7 @@
       "bodyHeight": 106
     },
     "collectorRoco-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1769,7 +1769,7 @@
       "bodyHeight": 102
     },
     "collectorRoco-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 172,
       "frameHeight": 172,
@@ -1796,7 +1796,7 @@
       "bodyHeight": 113
     },
     "collectorRoco-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -1823,7 +1823,7 @@
       "bodyHeight": 114
     },
     "collectorRoco-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1850,7 +1850,7 @@
       "bodyHeight": 107
     },
     "collectorRoco-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/collectorRoco-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -1877,7 +1877,7 @@
       "bodyHeight": 113
     },
     "captainBrass-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1903,7 +1903,7 @@
       "bodyHeight": 129
     },
     "captainBrass-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1922,7 +1922,7 @@
       "bodyHeight": 127
     },
     "captainBrass-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1948,7 +1948,7 @@
       "bodyHeight": 133
     },
     "captainBrass-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1967,7 +1967,7 @@
       "bodyHeight": 130
     },
     "captainBrass-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -1993,7 +1993,7 @@
       "bodyHeight": 128
     },
     "captainBrass-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2012,7 +2012,7 @@
       "bodyHeight": 131
     },
     "captainBrass-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2038,7 +2038,7 @@
       "bodyHeight": 126
     },
     "captainBrass-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2057,7 +2057,7 @@
       "bodyHeight": 130
     },
     "captainBrass-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2083,7 +2083,7 @@
       "bodyHeight": 128
     },
     "captainBrass-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2102,7 +2102,7 @@
       "bodyHeight": 130
     },
     "captainBrass-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2128,7 +2128,7 @@
       "bodyHeight": 127
     },
     "captainBrass-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2147,7 +2147,7 @@
       "bodyHeight": 130
     },
     "captainBrass-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2173,7 +2173,7 @@
       "bodyHeight": 128
     },
     "captainBrass-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2192,7 +2192,7 @@
       "bodyHeight": 131
     },
     "captainBrass-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2218,7 +2218,7 @@
       "bodyHeight": 132
     },
     "captainBrass-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -2237,7 +2237,7 @@
       "bodyHeight": 131
     },
     "captainBrass-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2262,7 +2262,7 @@
       "bodyHeight": 127
     },
     "captainBrass-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2287,7 +2287,7 @@
       "bodyHeight": 129
     },
     "captainBrass-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2312,7 +2312,7 @@
       "bodyHeight": 129
     },
     "captainBrass-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2337,7 +2337,7 @@
       "bodyHeight": 126
     },
     "captainBrass-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2362,7 +2362,7 @@
       "bodyHeight": 129
     },
     "captainBrass-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2387,7 +2387,7 @@
       "bodyHeight": 125
     },
     "captainBrass-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2412,7 +2412,7 @@
       "bodyHeight": 126
     },
     "captainBrass-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/captainBrass-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 192,
       "frameHeight": 192,
@@ -2437,7 +2437,7 @@
       "bodyHeight": 122
     },
     "musicbox-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2464,7 +2464,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2483,7 +2483,7 @@
       "bodyHeight": 86
     },
     "musicbox-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2510,7 +2510,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2529,7 +2529,7 @@
       "bodyHeight": 86
     },
     "musicbox-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2556,7 +2556,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2575,7 +2575,7 @@
       "bodyHeight": 83
     },
     "musicbox-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2602,7 +2602,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2621,7 +2621,7 @@
       "bodyHeight": 81
     },
     "musicbox-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2648,7 +2648,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2667,7 +2667,7 @@
       "bodyHeight": 79
     },
     "musicbox-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2694,7 +2694,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2713,7 +2713,7 @@
       "bodyHeight": 80
     },
     "musicbox-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2740,7 +2740,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2759,7 +2759,7 @@
       "bodyHeight": 83
     },
     "musicbox-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/musicbox-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2786,7 +2786,7 @@
       "bodyHeight": 86
     },
     "musicbox-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/musicbox/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2805,7 +2805,7 @@
       "bodyHeight": 83
     },
     "jackbox-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -2831,7 +2831,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2850,7 +2850,7 @@
       "bodyHeight": 99
     },
     "jackbox-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -2876,7 +2876,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2895,7 +2895,7 @@
       "bodyHeight": 102
     },
     "jackbox-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -2921,7 +2921,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2940,7 +2940,7 @@
       "bodyHeight": 105
     },
     "jackbox-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -2966,7 +2966,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -2985,7 +2985,7 @@
       "bodyHeight": 104
     },
     "jackbox-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3011,7 +3011,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3030,7 +3030,7 @@
       "bodyHeight": 96
     },
     "jackbox-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3056,7 +3056,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3075,7 +3075,7 @@
       "bodyHeight": 104
     },
     "jackbox-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3101,7 +3101,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3120,7 +3120,7 @@
       "bodyHeight": 105
     },
     "jackbox-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3146,7 +3146,7 @@
       "bodyHeight": 99
     },
     "jackbox-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/jackbox/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3165,7 +3165,7 @@
       "bodyHeight": 104
     },
     "jackbox-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3192,7 +3192,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3219,7 +3219,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3246,7 +3246,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3273,7 +3273,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3300,7 +3300,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3327,7 +3327,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3354,7 +3354,7 @@
       "bodyHeight": 99
     },
     "jackbox-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/jackbox-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -3381,7 +3381,7 @@
       "bodyHeight": 99
     },
     "spintop-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3407,7 +3407,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3426,7 +3426,7 @@
       "bodyHeight": 78
     },
     "spintop-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3452,7 +3452,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3471,7 +3471,7 @@
       "bodyHeight": 77
     },
     "spintop-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3497,7 +3497,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3516,7 +3516,7 @@
       "bodyHeight": 78
     },
     "spintop-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3542,7 +3542,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3561,7 +3561,7 @@
       "bodyHeight": 77
     },
     "spintop-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3587,7 +3587,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3606,7 +3606,7 @@
       "bodyHeight": 78
     },
     "spintop-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3632,7 +3632,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3651,7 +3651,7 @@
       "bodyHeight": 76
     },
     "spintop-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3677,7 +3677,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3696,7 +3696,7 @@
       "bodyHeight": 78
     },
     "spintop-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3722,7 +3722,7 @@
       "bodyHeight": 78
     },
     "spintop-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/spintop/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3741,7 +3741,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3768,7 +3768,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3795,7 +3795,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3822,7 +3822,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3849,7 +3849,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3876,7 +3876,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3903,7 +3903,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3930,7 +3930,7 @@
       "bodyHeight": 78
     },
     "spintop-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/spintop-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -3957,7 +3957,7 @@
       "bodyHeight": 78
     },
     "drummer-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -3983,7 +3983,7 @@
       "bodyHeight": 100
     },
     "drummer-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4002,7 +4002,7 @@
       "bodyHeight": 100
     },
     "drummer-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4028,7 +4028,7 @@
       "bodyHeight": 93
     },
     "drummer-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4047,7 +4047,7 @@
       "bodyHeight": 102
     },
     "drummer-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4073,7 +4073,7 @@
       "bodyHeight": 99
     },
     "drummer-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4092,7 +4092,7 @@
       "bodyHeight": 102
     },
     "drummer-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4118,7 +4118,7 @@
       "bodyHeight": 101
     },
     "drummer-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4137,7 +4137,7 @@
       "bodyHeight": 102
     },
     "drummer-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4163,7 +4163,7 @@
       "bodyHeight": 96
     },
     "drummer-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4182,7 +4182,7 @@
       "bodyHeight": 101
     },
     "drummer-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4208,7 +4208,7 @@
       "bodyHeight": 102
     },
     "drummer-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4227,7 +4227,7 @@
       "bodyHeight": 102
     },
     "drummer-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4253,7 +4253,7 @@
       "bodyHeight": 98
     },
     "drummer-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4272,7 +4272,7 @@
       "bodyHeight": 103
     },
     "drummer-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4298,7 +4298,7 @@
       "bodyHeight": 103
     },
     "drummer-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/drummer/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4317,7 +4317,7 @@
       "bodyHeight": 103
     },
     "drummer-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4342,7 +4342,7 @@
       "bodyHeight": 100
     },
     "drummer-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4367,7 +4367,7 @@
       "bodyHeight": 103
     },
     "drummer-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4392,7 +4392,7 @@
       "bodyHeight": 100
     },
     "drummer-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4417,7 +4417,7 @@
       "bodyHeight": 98
     },
     "drummer-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4442,7 +4442,7 @@
       "bodyHeight": 99
     },
     "drummer-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4467,7 +4467,7 @@
       "bodyHeight": 100
     },
     "drummer-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4492,7 +4492,7 @@
       "bodyHeight": 103
     },
     "drummer-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/drummer-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4517,7 +4517,7 @@
       "bodyHeight": 95
     },
     "pikeman-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4543,7 +4543,7 @@
       "bodyHeight": 99
     },
     "pikeman-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4562,7 +4562,7 @@
       "bodyHeight": 99
     },
     "pikeman-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4588,7 +4588,7 @@
       "bodyHeight": 100
     },
     "pikeman-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4607,7 +4607,7 @@
       "bodyHeight": 99
     },
     "pikeman-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4633,7 +4633,7 @@
       "bodyHeight": 89
     },
     "pikeman-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4652,7 +4652,7 @@
       "bodyHeight": 100
     },
     "pikeman-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4678,7 +4678,7 @@
       "bodyHeight": 94
     },
     "pikeman-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4697,7 +4697,7 @@
       "bodyHeight": 98
     },
     "pikeman-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4723,7 +4723,7 @@
       "bodyHeight": 100
     },
     "pikeman-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4742,7 +4742,7 @@
       "bodyHeight": 100
     },
     "pikeman-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4768,7 +4768,7 @@
       "bodyHeight": 99
     },
     "pikeman-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4787,7 +4787,7 @@
       "bodyHeight": 103
     },
     "pikeman-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4813,7 +4813,7 @@
       "bodyHeight": 96
     },
     "pikeman-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4832,7 +4832,7 @@
       "bodyHeight": 103
     },
     "pikeman-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4858,7 +4858,7 @@
       "bodyHeight": 102
     },
     "pikeman-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/pikeman/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -4877,7 +4877,7 @@
       "bodyHeight": 103
     },
     "pikeman-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 164,
       "frameHeight": 164,
@@ -4904,7 +4904,7 @@
       "bodyHeight": 99
     },
     "pikeman-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4926,7 +4926,7 @@
       "bodyHeight": 81
     },
     "pikeman-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4948,7 +4948,7 @@
       "bodyHeight": 81
     },
     "pikeman-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4970,7 +4970,7 @@
       "bodyHeight": 78
     },
     "pikeman-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -4992,7 +4992,7 @@
       "bodyHeight": 103
     },
     "pikeman-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -5014,7 +5014,7 @@
       "bodyHeight": 82
     },
     "pikeman-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -5036,7 +5036,7 @@
       "bodyHeight": 103
     },
     "pikeman-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/pikeman-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 176,
       "frameHeight": 176,
@@ -5058,7 +5058,7 @@
       "bodyHeight": 90
     },
     "guard-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5077,7 +5077,7 @@
       "bodyHeight": 89
     },
     "guard-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5103,7 +5103,7 @@
       "bodyHeight": 89
     },
     "guard-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5130,7 +5130,7 @@
       "bodyHeight": 89
     },
     "guard-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5149,7 +5149,7 @@
       "bodyHeight": 91
     },
     "guard-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5175,7 +5175,7 @@
       "bodyHeight": 89
     },
     "guard-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 136,
       "frameHeight": 136,
@@ -5202,7 +5202,7 @@
       "bodyHeight": 91
     },
     "guard-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5221,7 +5221,7 @@
       "bodyHeight": 90
     },
     "guard-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5247,7 +5247,7 @@
       "bodyHeight": 92
     },
     "guard-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 140,
       "frameHeight": 140,
@@ -5274,7 +5274,7 @@
       "bodyHeight": 90
     },
     "guard-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5293,7 +5293,7 @@
       "bodyHeight": 92
     },
     "guard-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5319,7 +5319,7 @@
       "bodyHeight": 90
     },
     "guard-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 140,
       "frameHeight": 140,
@@ -5346,7 +5346,7 @@
       "bodyHeight": 92
     },
     "guard-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5365,7 +5365,7 @@
       "bodyHeight": 89
     },
     "guard-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5391,7 +5391,7 @@
       "bodyHeight": 84
     },
     "guard-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5418,7 +5418,7 @@
       "bodyHeight": 89
     },
     "guard-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5437,7 +5437,7 @@
       "bodyHeight": 90
     },
     "guard-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5463,7 +5463,7 @@
       "bodyHeight": 92
     },
     "guard-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 136,
       "frameHeight": 136,
@@ -5490,7 +5490,7 @@
       "bodyHeight": 90
     },
     "guard-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5509,7 +5509,7 @@
       "bodyHeight": 91
     },
     "guard-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5535,7 +5535,7 @@
       "bodyHeight": 90
     },
     "guard-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 140,
       "frameHeight": 140,
@@ -5562,7 +5562,7 @@
       "bodyHeight": 91
     },
     "guard-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/guard/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5581,7 +5581,7 @@
       "bodyHeight": 90
     },
     "guard-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5607,7 +5607,7 @@
       "bodyHeight": 90
     },
     "guard-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/guard-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 136,
       "frameHeight": 136,
@@ -5634,7 +5634,7 @@
       "bodyHeight": 90
     },
     "elite-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5653,7 +5653,7 @@
       "bodyHeight": 104
     },
     "elite-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5679,7 +5679,7 @@
       "bodyHeight": 97
     },
     "elite-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -5706,7 +5706,7 @@
       "bodyHeight": 104
     },
     "elite-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5725,7 +5725,7 @@
       "bodyHeight": 105
     },
     "elite-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5751,7 +5751,7 @@
       "bodyHeight": 102
     },
     "elite-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -5777,7 +5777,7 @@
       "bodyHeight": 105
     },
     "elite-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5796,7 +5796,7 @@
       "bodyHeight": 102
     },
     "elite-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5822,7 +5822,7 @@
       "bodyHeight": 103
     },
     "elite-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 168,
       "frameHeight": 168,
@@ -5848,7 +5848,7 @@
       "bodyHeight": 102
     },
     "elite-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5867,7 +5867,7 @@
       "bodyHeight": 104
     },
     "elite-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5893,7 +5893,7 @@
       "bodyHeight": 102
     },
     "elite-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -5919,7 +5919,7 @@
       "bodyHeight": 104
     },
     "elite-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5938,7 +5938,7 @@
       "bodyHeight": 104
     },
     "elite-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -5964,7 +5964,7 @@
       "bodyHeight": 106
     },
     "elite-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 156,
       "frameHeight": 156,
@@ -5990,7 +5990,7 @@
       "bodyHeight": 104
     },
     "elite-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6009,7 +6009,7 @@
       "bodyHeight": 101
     },
     "elite-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6035,7 +6035,7 @@
       "bodyHeight": 104
     },
     "elite-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -6062,7 +6062,7 @@
       "bodyHeight": 101
     },
     "elite-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6081,7 +6081,7 @@
       "bodyHeight": 103
     },
     "elite-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6107,7 +6107,7 @@
       "bodyHeight": 97
     },
     "elite-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 172,
       "frameHeight": 172,
@@ -6133,7 +6133,7 @@
       "bodyHeight": 103
     },
     "elite-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/elite/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6152,7 +6152,7 @@
       "bodyHeight": 102
     },
     "elite-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6178,7 +6178,7 @@
       "bodyHeight": 105
     },
     "elite-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/elite-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 160,
       "frameHeight": 160,
@@ -6205,7 +6205,7 @@
       "bodyHeight": 102
     },
     "trumpet-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6224,7 +6224,7 @@
       "bodyHeight": 81
     },
     "trumpet-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6250,7 +6250,7 @@
       "bodyHeight": 83
     },
     "trumpet-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6278,7 +6278,7 @@
       "bodyHeight": 81
     },
     "trumpet-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6297,7 +6297,7 @@
       "bodyHeight": 82
     },
     "trumpet-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6323,7 +6323,7 @@
       "bodyHeight": 83
     },
     "trumpet-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6350,7 +6350,7 @@
       "bodyHeight": 82
     },
     "trumpet-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6369,7 +6369,7 @@
       "bodyHeight": 81
     },
     "trumpet-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6395,7 +6395,7 @@
       "bodyHeight": 82
     },
     "trumpet-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6423,7 +6423,7 @@
       "bodyHeight": 81
     },
     "trumpet-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6442,7 +6442,7 @@
       "bodyHeight": 82
     },
     "trumpet-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6468,7 +6468,7 @@
       "bodyHeight": 84
     },
     "trumpet-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6496,7 +6496,7 @@
       "bodyHeight": 82
     },
     "trumpet-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6515,7 +6515,7 @@
       "bodyHeight": 81
     },
     "trumpet-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6541,7 +6541,7 @@
       "bodyHeight": 82
     },
     "trumpet-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -6569,7 +6569,7 @@
       "bodyHeight": 81
     },
     "trumpet-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6588,7 +6588,7 @@
       "bodyHeight": 81
     },
     "trumpet-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6614,7 +6614,7 @@
       "bodyHeight": 82
     },
     "trumpet-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6642,7 +6642,7 @@
       "bodyHeight": 81
     },
     "trumpet-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6661,7 +6661,7 @@
       "bodyHeight": 80
     },
     "trumpet-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6687,7 +6687,7 @@
       "bodyHeight": 82
     },
     "trumpet-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6715,7 +6715,7 @@
       "bodyHeight": 80
     },
     "trumpet-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/trumpet/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6734,7 +6734,7 @@
       "bodyHeight": 81
     },
     "trumpet-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6760,7 +6760,7 @@
       "bodyHeight": 82
     },
     "trumpet-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/trumpet-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6788,7 +6788,7 @@
       "bodyHeight": 81
     },
     "rabbit-idle/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6807,7 +6807,7 @@
       "bodyHeight": 89
     },
     "rabbit-move/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6833,7 +6833,7 @@
       "bodyHeight": 88
     },
     "rabbit-attack/east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6861,7 +6861,7 @@
       "bodyHeight": 89
     },
     "rabbit-idle/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6880,7 +6880,7 @@
       "bodyHeight": 88
     },
     "rabbit-move/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6906,7 +6906,7 @@
       "bodyHeight": 90
     },
     "rabbit-attack/south-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -6934,7 +6934,7 @@
       "bodyHeight": 88
     },
     "rabbit-idle/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6953,7 +6953,7 @@
       "bodyHeight": 86
     },
     "rabbit-move/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -6979,7 +6979,7 @@
       "bodyHeight": 81
     },
     "rabbit-attack/south": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -7007,7 +7007,7 @@
       "bodyHeight": 86
     },
     "rabbit-idle/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/south-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7026,7 +7026,7 @@
       "bodyHeight": 88
     },
     "rabbit-move/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7052,7 +7052,7 @@
       "bodyHeight": 90
     },
     "rabbit-attack/south-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-south-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -7080,7 +7080,7 @@
       "bodyHeight": 88
     },
     "rabbit-idle/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7099,7 +7099,7 @@
       "bodyHeight": 89
     },
     "rabbit-move/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7125,7 +7125,7 @@
       "bodyHeight": 88
     },
     "rabbit-attack/west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7153,7 +7153,7 @@
       "bodyHeight": 89
     },
     "rabbit-idle/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north-west.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north-west.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7172,7 +7172,7 @@
       "bodyHeight": 88
     },
     "rabbit-move/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7198,7 +7198,7 @@
       "bodyHeight": 88
     },
     "rabbit-attack/north-west": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north-west/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north-west/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -7226,7 +7226,7 @@
       "bodyHeight": 88
     },
     "rabbit-idle/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7245,7 +7245,7 @@
       "bodyHeight": 88
     },
     "rabbit-move/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7271,7 +7271,7 @@
       "bodyHeight": 84
     },
     "rabbit-attack/north": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,
@@ -7299,7 +7299,7 @@
       "bodyHeight": 88
     },
     "rabbit-idle/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/rabbit/north-east.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7318,7 +7318,7 @@
       "bodyHeight": 88
     },
     "rabbit-move/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-move-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 128,
       "frameHeight": 128,
@@ -7344,7 +7344,7 @@
       "bodyHeight": 87
     },
     "rabbit-attack/north-east": {
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north-east/sheet.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/clips/rabbit-attack-north-east/sheet.webp",
       "provider": "pixellab",
       "frameWidth": 132,
       "frameHeight": 132,

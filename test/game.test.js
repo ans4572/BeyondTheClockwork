@@ -7,6 +7,8 @@ import { buyRank, refundAll, permanentStats } from '../src/engine/progression.js
 import { encodeSave, decodeSave, hasProgress } from '../src/engine/storage.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
+// These tests pin the tuning itself, so the default difficulty plays at 1.0 here; test/difficulty.test.js covers the scaling.
+Object.assign(data.slice.difficulty.levels.find(level => level.id === data.slice.difficulty.default), { scale: 1, loot: 1 });
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };
 function hub() { const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; return g; }
 function arena() {
@@ -447,7 +449,7 @@ test('each reward card can be drawn again once per reward screen, without touchi
 test('run perks: the piggy bank pays interest, the overheat engine trades damage both ways, the glass spring trades health for crits', () => {
   const g = hub(); g.startRun(7); completeRoom(g);
   g.s.run.rewardChoices = [{ kind: 'perk', id: 'glassSpring' }]; const before = g.p.maxHp; g.chooseReward(0);
-  assert.equal(g.p.maxHp, before - 30); assert.ok(g.s.run.perks.includes('glassSpring'));
+  assert.equal(g.p.maxHp, before - g.config.perks.find(p => p.id === 'glassSpring').maxHpLoss); assert.ok(g.s.run.perks.includes('glassSpring'));
   g.s.run.perks.push('piggyBank'); g.nextNode(0); g.s.run.coins = 100; completeRoom(g);
   assert.ok(g.s.run.coins >= 110, 'ten percent interest on the clear');
   g.s.run.perks.push('overheatEngine'); const e = g.s.enemies[0] || { burnStacks: [] };

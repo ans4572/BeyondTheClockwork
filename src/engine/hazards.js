@@ -3,6 +3,7 @@
 // every run places its own set on each room's floor (seeded, so a resumed run finds them where they were).
 import { fitsMap } from './map-geometry.js';
 import { dealer } from './encounters.js';
+import { FlowField } from './flow-field.js';
 
 /** Kinds that bodies and shots cannot pass through. */
 export const SOLID = new Set(['crate', 'fence', 'musicbox']);
@@ -26,9 +27,11 @@ export function hazardBox(h) {
  * `step` is which fight room of the run this is (0 for the first): the first few use rules.ramp's lighter counts, so a
  * run eases into its furniture; later rooms (and a step left out) get the full counts.
  */
-export function dealHazards(map, rules, seed, step = Infinity) {
+export function dealHazards(map, rules, seed, step = Infinity, amount = 1) {
   const random = dealer(seed), placed = [], [width, height] = map.size;
-  const ramp = rules.ramp?.[step], counts = { ...rules.counts, ...ramp?.counts }, railChance = ramp?.railChance ?? rules.rail.chance;
+  // The expedition's difficulty scales how many pieces of each kind a room gets (slice.json difficulty.levels[].scale).
+  const ramp = rules.ramp?.[step], counts = Object.fromEntries(Object.entries({ ...rules.counts, ...ramp?.counts }).map(([kind, [low, high]]) => [kind, [Math.round(low * amount), Math.round(high * amount)]]));
+  const railChance = Math.min(1, (ramp?.railChance ?? rules.rail.chance) * amount);
   const keep = [map.spawn, map.portal].filter(Boolean);
   const clear = (x, y, gap) => keep.every(k => Math.hypot(x - k.x, y - k.y) >= rules.doorClear) && placed.every(p => Math.hypot(x - p.x, y - p.y) >= gap + (p.reach || 1));
   // Of several open spots, the one farthest from everything already placed, so the pieces spread over the whole floor.
@@ -72,7 +75,30 @@ export function dealHazards(map, rules, seed, step = Infinity) {
   }
   for (let i = between(counts.crate, random); i > 0; i--) add('crate', spot(rules.solidRoom, 1.2), { size: rules.crate.size, reach: 1 });
   for (let i = between(counts.musicbox, random); i > 0; i--) add('musicbox', spot(rules.solidRoom, 2), { size: rules.musicbox.size, reach: 1 });
-  return placed.map(({ reach, ...h }) => h);
+  return keepPassable(map, placed.map(({ reach, ...h }) => h));
+}
+
+/**
+ * A floor narrow enough to be cut in two by a crate, a fence or a music box would leave the player walled off from the
+ * fight or the portal (the narrow candy alley could). Solid pieces that close the way from the start to the portal and
+ * every enemy spot are taken out again: first the one whose removal reopens it, else the last placed.
+ */
+export function keepPassable(map, hazards) {
+  const goals = [map.portal, ...(map.enemySpawns || [])].filter(Boolean);
+  if (!map.walkable || !map.size || !map.spawn || !goals.length) return hazards;
+  const flow = new FlowField(map, map.size);
+  const passable = list => {
+    flow.setBlocks(list.filter(h => SOLID.has(h.kind)).map(hazardBox)); flow.update(map.spawn.x, map.spawn.y);
+    return goals.every(p => { const cell = flow.nearestOpen(...flow.cell(p.x, p.y)); return cell && flow.steps[cell[1] * flow.cols + cell[0]] >= 0; });
+  };
+  let list = hazards;
+  while (!passable(list)) {
+    const solids = list.map((h, i) => (SOLID.has(h.kind) ? i : -1)).filter(i => i >= 0);
+    if (!solids.length) break;
+    const freeing = solids.find(i => passable(list.filter((_, j) => j !== i)));
+    list = list.filter((_, j) => j !== (freeing ?? solids.at(-1)));
+  }
+  return list;
 }
 
 /** Where a rail's saw is at `time`: it runs end to end and back. */

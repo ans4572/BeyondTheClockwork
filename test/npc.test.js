@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import fs from 'node:fs';
 import test from 'node:test';
+import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
@@ -13,7 +14,8 @@ const clips = await json('../art/animations/npc/game-clips.json');
 const [combat, progression, slice, maps] = await Promise.all(['combat', 'progression', 'slice', 'maps'].map(name => json(`../src/data/${name}.json`)));
 const data = { combat, progression, slice, maps };
 const library = new SpriteLibrary(clips, new Map(Object.values(clips.clips).map(clip => [clip.sheet, { fake: clip.sheet }])));
-const pngSize = file => { const b = fs.readFileSync(file); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+// Sheets are lossless WebP beside their PNG sources (scripts/build-webp-art.mjs); both report their size.
+const pngSize = imageSize;
 const street = { cast: ['C1', 'R1'], points: [[0, 0], [11, 0], [11, 11]], links: [[0, 1], [1, 2]] };
 
 test('every NPC has real sheets of the declared size', () => {

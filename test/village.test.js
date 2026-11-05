@@ -118,10 +118,13 @@ test('talking to Moru opens tuning and stops the feet; closing frees them, keepi
   g.closePanel(); g.update(1 / 60, { x: 1 }); assert.ok(g.p.x > x);
 });
 
-test('walking out of the town starts the first battle at once', () => {
+test('walking out of the town asks for a difficulty, then starts the first battle at once', () => {
   const g = atHub(), { polygon } = g.village.exit;
   g.p.x = 28; g.p.y = 29;
-  for (let i = 0; i < 200 && !g.s.run; i++) g.update(1 / 60, { y: 1 });
+  for (let i = 0; i < 200 && g.s.panel !== 'difficulty'; i++) g.update(1 / 60, { y: 1 });
+  assert.equal(g.s.panel, 'difficulty'); assert.equal(g.s.run, null); assert.ok(!pointInPolygon(g.p.x, g.p.y, polygon), 'set back off the exit');
+  assert.equal(g.depart('nightmare'), false);
+  assert.ok(g.depart('hard')); assert.equal(g.s.run.difficulty, 'hard'); assert.equal(g.s.profile.lastDifficulty, 'hard');
   assert.ok(pointInPolygon(28, 31.4, polygon)); assert.equal(g.s.mode, 'combat'); assert.equal(g.s.run.node, 0); assert.equal(g.room.id, 'stop-02');
   assert.ok(g.s.enemies.length > 0); assert.ok(!g.walking);
 });
@@ -372,7 +375,7 @@ test('the first element is free right after registration; the rest are bought on
   fresh.s.mode = 'registration'; fresh.register();
   const { polygon } = fresh.village.exit, walkOut = game => { game.p.x = (polygon[0][0] + polygon[1][0]) / 2; game.p.y = (polygon[0][1] + polygon[2][1]) / 2; game.update(1 / 60, {}); };
   assert.equal(fresh.enterPractice(), false); assert.equal(fresh.nextElementPrice, 0);
-  walkOut(fresh); assert.equal(fresh.s.mode, 'combat'); assert.equal(fresh.slots.length, 0, 'skipping the gift still lets the wrench go out alone');
+  walkOut(fresh); fresh.depart('normal'); assert.equal(fresh.s.mode, 'combat'); assert.equal(fresh.slots.length, 0, 'skipping the gift still lets the wrench go out alone');
   const g = new Game(data); g.s.mode = 'registration'; g.register();
   const inside = () => { g.p.x = (polygon[0][0] + polygon[1][0]) / 2; g.p.y = (polygon[0][1] + polygon[2][1]) / 2; };
   assert.equal(g.toggleElement('fire'), false, 'an element not yet bought cannot be equipped');
@@ -384,7 +387,7 @@ test('the first element is free right after registration; the rest are bought on
   for (const id of ['fire', 'ice', 'wind']) g.toggleElement(id);
   assert.deepEqual(g.s.profile.loadout, ['ice', 'wind']);
   g.toggleElement('ice'); assert.deepEqual(g.s.profile.loadout, ['wind']); g.toggleElement('fire');
-  inside(); g.update(1 / 60, {}); assert.equal(g.s.mode, 'combat');
+  inside(); g.update(1 / 60, {}); g.depart('normal'); assert.equal(g.s.mode, 'combat');
   assert.deepEqual(g.slots.map(slot => [slot.element, slot.level]), [['wind', 1], ['fire', 1]]); assert.ok(g.fusion);
   assert.ok(g.s.run.rewardChoices.length === 0); for (const e of g.s.enemies) e.hp = 0; g.finishCombat();
   assert.ok(g.s.run.rewardChoices.every(reward => reward.kind !== 'element' || !g.slots.some(slot => slot.element === reward.id)));

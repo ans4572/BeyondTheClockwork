@@ -24,6 +24,11 @@ export function validateData(data) {
     const map = placeOf(maps, place);
     if (map.walkable) for (const point of [map.spawn, ...map.enemySpawns]) assert(fitsMap(point.x, point.y, map.bodyRadius ?? s.arena.playerRadius, map), `맵 시작 위치가 이동 영역 밖: ${room}`);
   }
+  for (const [room, list] of Object.entries(maps?.alternates || {})) {
+    const owner = s.rooms.find(r => r.id === room);
+    assert(owner && (owner.variants?.length || 1) === list.length + 1, `방의 그림 수와 맵 수가 다름: ${room}`);
+    for (const place of list) { const map = placeOf(maps, place); for (const point of [map.spawn, ...map.enemySpawns]) assert(fitsMap(point.x, point.y, map.bodyRadius ?? s.arena.playerRadius, map), `두 번째 맵 시작 위치가 이동 영역 밖: ${room}`); }
+  }
   if (maps?.intro) { const yard = placeOf(maps, maps.intro); for (const point of [yard.spawn, ...yard.enemySpawns]) assert(fitsMap(point.x, point.y, yard.bodyRadius, yard), '폐기장 시작 위치가 이동 영역 밖'); }
   for (const stat of s.permanentStats) assert(stat.maxRank > 0 && stat.perRank > 0 && stat.baseCost > 0 && stat.costStep >= 0, `영구 스탯: ${stat.id}`);
   return data;

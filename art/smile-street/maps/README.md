@@ -1,6 +1,6 @@
 # 웃음거리 게임 맵 · 12구간
 
-[혼합 지도 v2](../map-concepts/region-map/v2/index.html)의 순서대로 게임에 연결한 맵입니다. 방 순서와 적 구성은 `src/data/slice.json`, 맵 데이터는 `src/data/maps.json`에 있습니다.
+월드맵 웃음거리 길의 순서대로 게임에 연결한 맵입니다. 방 순서와 적 구성은 `src/data/slice.json`, 맵 데이터는 `src/data/maps.json`에 있습니다.
 
 | 구간 | 방 | 종류 | 배경 폴더 |
 | --- | --- | --- | --- |
@@ -19,9 +19,13 @@
 | 11 | 행진 적재뜰 D | 정예 전투 | `parade-approach-d` |
 | 12 | 멈추지 않는 행진 | 브라스 | 코드 배경 |
 
-배경은 `../map-concepts/`의 시안을 1120×640으로 줄인 그림입니다. `parade-approach-c`와 `parade-approach-d`는 시안에 그려진 분홍 설계선을 `scripts/clean-map-guides.mjs`로 지웠습니다.
+배경은 각 폴더의 `background-compact.prompt.txt`로 그린 그림을 1536×1024 webp로 줄인 것입니다. 예전 시안 폴더(`map-concepts`)는 2026-11-05에 정리했습니다.
 
 게임에서 `F9`를 누르면 튜토리얼부터 다시 시작하거나 원하는 방으로 바로 이동할 수 있습니다.
+
+## 두 번째 맵 (B)
+
+일반 전투 방 9곳에는 그림이 두 장입니다. 원정을 시작할 때 방마다 A·B 중 하나를 고릅니다(`slice.json`의 `variants`). A는 `maps.json`의 `maps`, B는 `alternates`에 있고 그림은 `*2` 폴더(`first-step-a2`, `ribbon-alley-c2`, `workshop-road-a2`, `ribbon-alley-d2`, `workshop-road-c2`, `first-step-c2`, `parade-approach-c2`, `ribbon-alley-a2`, `parade-approach-d2`)입니다. 프롬프트는 각 폴더의 `background-compact.prompt.txt`, 목록은 `background-large-prompts.md`에 있습니다.
 
 ## 맵 데이터
 

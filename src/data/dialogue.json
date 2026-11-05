@@ -3,22 +3,22 @@
   "speakers": {
     "f2": {
       "name": "F2",
-      "sheet": "/art/animations/player/movement/locomotion/clips/idle-south-west-708a71c5/sheet.png",
+      "sheet": "/art/animations/player/movement/locomotion/clips/idle-south-west-708a71c5/sheet.webp",
       "cell": 128
     },
     "moru": {
       "name": "모루",
-      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/moru-idle-south-east.webp",
       "cell": 96
     },
     "bolt": {
       "name": "볼트",
-      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/sheets/bolt-idle-south-east.webp",
       "cell": 96
     },
     "roco": {
       "name": "로코",
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/collectorRoco/south-east.webp",
       "cell": 160,
       "crop": [
         5,
@@ -30,7 +30,7 @@
     },
     "brass": {
       "name": "브라스",
-      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-east.png",
+      "sheet": "/art/animations/mobs/normal-elite/pixellab/rotations/captainBrass/south-east.webp",
       "cell": 160,
       "crop": [
         5,
@@ -42,7 +42,7 @@
     },
     "orden": {
       "name": "오르덴",
-      "sheet": "/art/animations/npc/pixellab/portraits/orden-south-west.png",
+      "sheet": "/art/animations/npc/pixellab/portraits/orden-south-west.webp",
       "cell": 160,
       "crop": [
         5,
@@ -54,7 +54,7 @@
     },
     "belgard": {
       "name": "벨가드",
-      "sheet": "/art/animations/npc/pixellab/portraits/belgard-south-east.png",
+      "sheet": "/art/animations/npc/pixellab/portraits/belgard-south-east.webp",
       "cell": 160,
       "crop": [
         5,

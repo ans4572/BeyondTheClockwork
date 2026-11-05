@@ -1,6 +1,6 @@
 # 첫 걸음 광장 A · 게임 적용 맵
 
-13구간 여정의 첫 전투방 `stop-02`에 쓰는 맵입니다. 배경은 [승인된 시안](../../map-concepts/first-step/room-a-multiway-v1.png)을 1120×640으로 줄인 그림입니다.
+13구간 여정의 첫 전투방 `stop-02`에 쓰는 맵입니다. 배경은 `background-compact.prompt.txt`로 다시 그린 그림입니다(예전 시안은 정리됨).
 
 이동 영역, 가림 영역, 시작 위치는 `src/data/maps.json`에 있습니다. 좌표는 이 배경 위에서 직접 읽은 화면 좌표이며 1유닛은 40픽셀입니다. `map-concepts/navigation-proposals.json`의 블록아웃은 대각선 좌표라서 사용하지 않았습니다.
 

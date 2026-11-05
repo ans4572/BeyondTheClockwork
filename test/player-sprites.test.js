@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import fs from 'node:fs';
 import test from 'node:test';
+import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
@@ -11,7 +12,8 @@ const json = async path => JSON.parse(await readFile(new URL(path, import.meta.u
 const clips = await json('../art/animations/player/game-clips.json');
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, await json(`../src/data/${name}.json`)])));
 const library = new SpriteLibrary(clips, new Map(Object.values(clips.clips).map(clip => [clip.sheet, { fake: true }])));
-const pngSize = file => { const b = fs.readFileSync(file); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+// Sheets are lossless WebP beside their PNG sources (scripts/build-webp-art.mjs); both report their size.
+const pngSize = imageSize;
 const combat = () => { const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(4711); g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1; return g; };
 
 test('every action has eight directions backed by a sheet of the declared size', () => {
