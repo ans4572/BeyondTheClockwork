@@ -2,7 +2,7 @@
 // linked devices on the newest progress.
 import { normalizeCode } from '../engine/transfer-code.js';
 
-const WORKER_ORIGIN = 'https://beyondtheclockwork.ans4572.workers.dev';
+const WORKER_ORIGIN = 'https://beyondtheclockwork.mungaeng.workers.dev';
 /** The Cloudflare copy answers the API itself; GitHub Pages and local play borrow it. */
 export const apiBase = (hostname = location.hostname) => (hostname.endsWith('workers.dev') ? '' : WORKER_ORIGIN);
 

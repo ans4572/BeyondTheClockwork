@@ -1,6 +1,6 @@
 # Cloudflare 배포 (Workers 정적 파일)
 
-주소: https://beyondtheclockwork.ans4572.workers.dev  ·  `main`에 푸시하면 자동 배포.
+주소: https://beyondtheclockwork.mungaeng.workers.dev  ·  `main`에 푸시하면 자동 배포.
 
 게임은 빌드 과정이 없는 정적 파일입니다. 저장소 루트를 그대로 올리면 됩니다.
 
@@ -47,11 +47,11 @@ npx wrangler deploy
 2. 만들어진 Namespace ID를 `wrangler.toml`의 `[[kv_namespaces]] id`에 넣기 (비밀값 아님, 현재 설정 완료)
 3. 커밋·푸시 → 자동 배포. Workers Builds의 Deploy command는 `npx wrangler deploy` 그대로.
 
-확인: `https://beyondtheclockwork.ans4572.workers.dev/api/transfer/AAAA-AAAA` 가 `{"error":"missing"}`을 돌려주면 정상입니다.
+확인: `https://beyondtheclockwork.mungaeng.workers.dev/api/transfer/AAAA-AAAA` 가 `{"error":"missing"}`을 돌려주면 정상입니다.
 
 ## 플레이 통계 · 관리자 페이지 (Worker + D1)
 
-관리자 페이지: `https://beyondtheclockwork.ans4572.workers.dev/admin.html` (검색엔진 제외, 토큰 없으면 아무것도 안 보임)
+관리자 페이지: `https://beyondtheclockwork.mungaeng.workers.dev/admin.html` (검색엔진 제외, 토큰 없으면 아무것도 안 보임)
 
 - `POST /api/stats` 게임이 보내는 익명 이벤트: 게임 열기(`open`), 원정 출발(`runStart`), 귀환(`runEnd`). 형식이 틀리면 400.
 - `GET /api/admin/stats?days=7|30|90|0` 관리자 요약. `Authorization: Bearer <ADMIN_TOKEN>`이 맞아야 열림.
@@ -69,4 +69,4 @@ npx wrangler deploy
 4. Workers & Pages → `beyondtheclockwork` → Settings → Variables and Secrets → Add → Type `Secret`, 이름 `ADMIN_TOKEN`, 값은 3번 글자 → Deploy
 5. 커밋·푸시 → 자동 배포 → `/admin.html`에서 토큰 입력
 
-확인: `https://beyondtheclockwork.ans4572.workers.dev/api/admin/stats`가 `{"error":"denied"}`를 돌려주면 정상입니다(`unconfigured`면 D1이나 토큰이 아직 없음).
+확인: `https://beyondtheclockwork.mungaeng.workers.dev/api/admin/stats`가 `{"error":"denied"}`를 돌려주면 정상입니다(`unconfigured`면 D1이나 토큰이 아직 없음).

@@ -131,7 +131,7 @@ test('the reporter keeps one device id, sends nothing from a local server, and d
   assert.ok(live('runStart', { run: 'run-1-1', elements: ['fire'] }));
   assert.equal(live('runStart', { run: 'bad', elements: ['fire'] }), false);
   assert.equal(sent.length, 1);
-  assert.equal(sent[0][0], 'https://beyondtheclockwork.ans4572.workers.dev/api/stats');
+  assert.equal(sent[0][0], 'https://beyondtheclockwork.mungaeng.workers.dev/api/stats');
   assert.equal(sent[0][1].device, id);
 });
 
@@ -185,5 +185,5 @@ test('the mailbox checks in with plain-text bodies and stays silent on a local s
   assert.equal(sent.length, 1);
   assert.equal(sent[0][1].headers, undefined, 'no custom headers, so no preflight');
   await box.claim([3]);
-  assert.equal(sent[1][0], 'https://beyondtheclockwork.ans4572.workers.dev/api/mail/claim');
+  assert.equal(sent[1][0], 'https://beyondtheclockwork.mungaeng.workers.dev/api/mail/claim');
 });
