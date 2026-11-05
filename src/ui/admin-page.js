@@ -1,5 +1,6 @@
 // The admin page (admin.html): reads the play statistics summary from the worker (worker/stats.js) with the admin
 // token the owner typed in, and lays it out as one compact dashboard. The token stays in this browser only.
+// Two tabs: 통계 (the summary) and 유저 (each device: when it was last seen, where it is now, gifts of free gears).
 import { apiBase } from './device-transfer.js';
 
 const TOKEN_KEY = 'beyond-the-clockwork.admin-token.v1';
@@ -14,7 +15,13 @@ const SHARE_COLORS = ['var(--blue)', 'var(--blue-2)', 'var(--blue-3)', 'var(--bl
 const DAY_ROWS = 14;
 
 const app = document.getElementById('app'), tip = document.getElementById('tip');
-const state = { days: Number(sessionStorage.getItem('admin-days') ?? 30), data: null, names: null, allDays: false, at: null };
+const state = {
+  tab: sessionStorage.getItem('admin-tab') === 'users' ? 'users' : 'stats', days: Number(sessionStorage.getItem('admin-days') ?? 30), data: null, names: null, allDays: false, at: null,
+  people: null, q: '', onlineOnly: false, shown: 20, picked: null, detail: null, confirm: 0, said: ''
+};
+const PLACES = { title: '타이틀', hub: '마을', practice: '연습장' };
+const GIFT_PRESETS = [100, 500, 1000];
+const USERS_REFRESH_SECONDS = 30;
 const esc = text => String(text ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 const num = value => Number(value || 0).toLocaleString('ko-KR');
 const pct = (part, whole) => (whole ? Math.round(part / whole * 100) : 0);
@@ -62,20 +69,35 @@ function problem(message) {
   app.innerHTML = `<div class="card login"><h1>운행 장부</h1><p class="error">${esc(message)}</p><button class="primary" data-act="reload">다시 불러오기</button><p class="hint"><button class="link" data-act="lock">잠그기</button></p></div>`;
 }
 
+/** One admin request with the token; null after the failure has been shown (wrong token, no server, …). */
+async function request(path, options = {}) {
+  let response;
+  try { response = await fetch(`${apiBase()}${path}`, { ...options, headers: { Authorization: `Bearer ${token()}`, ...(options.body ? { 'Content-Type': 'application/json' } : {}) }, cache: 'no-store' }); }
+  catch { problem('서버에 닿지 않아요. 인터넷 연결을 확인하고 다시 불러오세요.'); return null; }
+  const body = await response.json().catch(() => ({}));
+  if (response.status === 401) { try { localStorage.removeItem(TOKEN_KEY); } catch {} login('토큰이 맞지 않아요. Cloudflare의 ADMIN_TOKEN 값을 그대로 넣어 주세요.'); return null; }
+  if (response.status === 503) { problem('통계 서버 설정이 아직 끝나지 않았어요. D1 데이터베이스 연결과 24글자 이상의 ADMIN_TOKEN이 필요해요(DEPLOY.md “플레이 통계”).'); return null; }
+  return { ok: response.ok, status: response.status, body };
+}
+
 async function load() {
   if (!token()) return login();
+  state.names ??= await loadNames();
+  if (state.tab === 'users') return loadPeople(true);
   if (!state.data) app.innerHTML = '<p class="empty">불러오는 중…</p>';
-  let response;
-  try {
-    state.names ??= await loadNames();
-    response = await fetch(`${apiBase()}/api/admin/stats?days=${state.days}`, { headers: { Authorization: `Bearer ${token()}` }, cache: 'no-store' });
-  } catch { return problem('서버에 닿지 않아요. 인터넷 연결을 확인하고 다시 불러오세요.'); }
-  const body = await response.json().catch(() => ({}));
-  if (response.status === 401) { try { localStorage.removeItem(TOKEN_KEY); } catch {} return login('토큰이 맞지 않아요. Cloudflare의 ADMIN_TOKEN 값을 그대로 넣어 주세요.'); }
-  if (response.status === 503) return problem('통계 서버 설정이 아직 끝나지 않았어요. D1 데이터베이스 연결과 24글자 이상의 ADMIN_TOKEN이 필요해요(DEPLOY.md “플레이 통계”).');
-  if (!response.ok) return problem('서버에 문제가 생겼어요. 잠시 뒤 다시 불러오세요.');
-  state.data = body; state.at = new Date(); render();
+  const answer = await request(`/api/admin/stats?days=${state.days}`);
+  if (!answer) return;
+  if (!answer.ok) return problem('서버에 문제가 생겼어요. 잠시 뒤 다시 불러오세요.');
+  state.data = answer.body; state.at = new Date(); render();
 }
+
+/** The bar on top of both tabs: the tabs themselves, when the numbers were read, and the page's own buttons. */
+const topBar = () => `<header class="bar-top"><div class="in">
+  <div class="brand">운행 장부<span class="mute" style="font-weight:400"> · 태엽 밖으로</span></div>
+  <nav class="range" aria-label="화면">${[['stats', '통계'], ['users', '유저']].map(([id, label]) => `<button data-tab="${id}" aria-pressed="${state.tab === id}">${label}</button>`).join('')}</nav>
+  <span class="stamp">${state.at ? `${state.at.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })} 기준` : ''}</span>
+  <button class="link" data-act="theme">${document.documentElement.dataset.theme === 'paper' ? '어둡게' : '종이'}</button><button class="link" data-act="reload">새로고침</button><button class="link" data-act="lock">잠그기</button>
+</div></header>`;
 
 const niceStep = max => { const raw = max / 3, power = 10 ** Math.floor(Math.log10(raw)); return Math.max(1, [1, 2, 5, 10].map(m => m * power).find(s => s >= raw)); };
 /** A column with a 4px rounded top, square on the baseline. */
@@ -132,13 +154,9 @@ function render() {
   const maxDay = Math.max(1, ...daily.map(d => d.sessions)), maxCombo = Math.max(1, ...combos.map(c => c.runs));
   const days = [...daily].reverse(), shown = state.allDays ? days : days.slice(0, DAY_ROWS);
   app.innerHTML = `
-    <header class="bar-top"><div class="in">
-      <div class="brand">운행 장부<span class="mute" style="font-weight:400"> · 태엽 밖으로</span></div>
-      <nav class="range" aria-label="기간">${RANGES.map(([d, label]) => `<button data-days="${d}" aria-pressed="${state.days === d}">${label}</button>`).join('')}</nav>
-      <span class="stamp">${state.at.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })} 기준</span>
-      <button class="link" data-act="theme">${document.documentElement.dataset.theme === 'paper' ? '어둡게' : '종이'}</button><button class="link" data-act="reload">새로고침</button><button class="link" data-act="lock">잠그기</button>
-    </div></header>
+    ${topBar()}
     <main>
+      <div class="toolbar"><span class="mute">기간</span><div class="seg" role="group" aria-label="기간">${RANGES.map(([d, label]) => `<button data-days="${d}" aria-pressed="${state.days === d}">${label}</button>`).join('')}</div></div>
       <section class="tiles" aria-label="요약">
         <div class="card tile"><div class="label">오늘 플레이</div><div class="value num">${num(today.sessions)}<small>번</small>${delta}</div><div class="note">기기 ${num(today.devices)} · 원정 ${num(today.runs)} · 완주 ${num(today.clears)}</div></div>
         <div class="card tile"><div class="label">${rangeLabel} 원정</div><div class="value num">${num(totals.runs)}<small>판</small>${totals.unfinished ? `<span class="delta mute" title="아직 돌아오지 않은 원정">진행 중 ${num(totals.unfinished)}</span>` : ''}</div><div class="note">완주 ${num(totals.clears)} · 쓰러짐 ${num(totals.defeats)} · 포기 ${num(totals.abandons)}</div></div>
@@ -190,15 +208,24 @@ function drawCharts() {
 app.addEventListener('click', event => {
   const button = event.target.closest('button');
   if (!button) return;
+  if (button.dataset.tab && button.dataset.tab !== state.tab) { state.tab = button.dataset.tab; sessionStorage.setItem('admin-tab', state.tab); state.at = null; load(); return; }
+  if (button.dataset.user) { pick(button.dataset.user); return; }
+  if (button.dataset.online !== undefined) { state.onlineOnly = button.dataset.online === '1'; drawPeople(); return; }
+  if (button.dataset.preset) { const field = document.getElementById('gift-gears'); field.value = Number(field.value || 0) + Number(button.dataset.preset); state.confirm = 0; giftButton(); return; }
+  if (button.dataset.cancel) { cancelGift(Number(button.dataset.cancel)); return; }
+  if (button.dataset.act === 'gift') { sendGift(); return; }
+  if (button.dataset.act === 'memo') { saveMemo(); return; }
+  if (button.dataset.act === 'more') { state.shown += 30; drawPeople(); return; }
+  if (button.dataset.act === 'close') { state.picked = null; state.detail = null; drawDetail(); drawPeople(); return; }
   if (button.dataset.days !== undefined) { state.days = Number(button.dataset.days); state.allDays = false; sessionStorage.setItem('admin-days', state.days); load(); }
   if (button.dataset.act === 'reload') load();
   if (button.dataset.act === 'theme') {
     const next = document.documentElement.dataset.theme === 'paper' ? 'dark' : 'paper';
     document.documentElement.dataset.theme = next; try { localStorage.setItem('beyond-the-clockwork.admin-theme.v1', next); } catch {}
-    render();
+    if (state.tab === 'users') renderPeople(); else render();
   }
   if (button.dataset.act === 'days') { state.allDays = !state.allDays; render(); }
-  if (button.dataset.act === 'lock') { try { localStorage.removeItem(TOKEN_KEY); } catch {} state.data = null; login(); }
+  if (button.dataset.act === 'lock') { try { localStorage.removeItem(TOKEN_KEY); } catch {} state.data = null; state.people = null; login(); }
 });
 app.addEventListener('pointermove', event => {
   const target = event.target.closest('[data-tip]');
@@ -209,5 +236,164 @@ app.addEventListener('pointermove', event => {
 app.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
 let resizing = 0;
 addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => state.data && app.querySelector('[data-chart]') && drawCharts(), 150); });
+app.addEventListener('input', event => {
+  if (event.target.id === 'people-search') { state.q = event.target.value; state.shown = 20; clearTimeout(searching); searching = setTimeout(() => loadPeople(false), 250); }
+  if (event.target.id === 'gift-gears') { state.confirm = 0; giftButton(); }
+});
+app.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target.id === 'memo') saveMemo(); });
+let searching = 0;
+
+// ── 유저 tab ─────────────────────────────────────────────────────────────────────────────────────────────────
+const ago = (ms, now) => { const s = Math.max(0, (now - ms) / 1000); return s < 60 ? '방금' : s < 3600 ? `${Math.floor(s / 60)}분 전` : s < 86400 ? `${Math.floor(s / 3600)}시간 전` : `${Math.floor(s / 86400)}일 전`; };
+const isOnline = (u, data) => u.last_seen && data.now - u.last_seen < data.onlineSeconds * 1000;
+const placeOf = u => (u.where_now === 'run' ? `원정 ${u.node_now}번째` : PLACES[u.where_now] || '–');
+const kindOf = u => [FORMS[u.form], SYSTEMS[u.os], BROWSERS[u.browser]].filter(Boolean).join(' · ') || '알 수 없음';
+/** The admin's memo first, then the name the player wrote in Moru's ledger, else the product number every player starts as. */
+const nameOf = u => (u.memo ? `${esc(u.memo)}${u.nickname ? ` <span class="nick">${esc(u.nickname)}</span>` : ''}` : u.nickname ? esc(u.nickname) : '<span class="mute">F2 (이름 없음)</span>');
+const shortId = id => `#${id.slice(0, 6)}`;
+const hours = seconds => { if (!seconds) return '–'; const m = Math.round(seconds / 60); return m >= 60 ? `${Math.floor(m / 60)}시간 ${m % 60}분` : `${m}분`; };
+const when = ms => (ms ? new Date(ms).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '–');
+const seenLabel = (u, data) => (isOnline(u, data) ? '<span class="live"><span class="dot"></span>접속 중</span>' : `<span class="mute">${u.last_seen ? ago(u.last_seen, data.now) : esc(u.last_day || '–')}</span>`);
+
+async function loadPeople(full) {
+  if (full && !state.people) app.innerHTML = '<p class="empty">불러오는 중…</p>';
+  const answer = await request(`/api/admin/users?q=${encodeURIComponent(state.q.trim())}`);
+  if (!answer) return;
+  if (!answer.ok) return problem('서버에 문제가 생겼어요. 잠시 뒤 다시 불러오세요.');
+  state.people = answer.body; state.at = new Date();
+  if (full || !app.querySelector('#people')) renderPeople(); else { drawPeopleTiles(); drawPeople(); app.querySelector('.stamp').textContent = `${state.at.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })} 기준`; }
+  if (full && state.picked) pick(state.picked, true);
+}
+
+function renderPeople() {
+  app.innerHTML = `${topBar()}<main>
+    <section class="tiles" id="people-tiles" aria-label="유저 요약"></section>
+    <div class="section"><h2>유저</h2><span>기기 하나가 유저 한 명 · ${USERS_REFRESH_SECONDS}초마다 새로 읽어요</span></div>
+    <section class="people">
+      <div class="card">
+        <div class="toolbar">
+          <input id="people-search" class="field" type="search" placeholder="이름·메모·기기 id로 찾기" value="${esc(state.q)}" aria-label="유저 찾기">
+          <div class="seg" role="group" aria-label="보기">${[['0', '전체'], ['1', '접속 중']].map(([v, label]) => `<button data-online="${v}" aria-pressed="${state.onlineOnly === (v === '1')}">${label}</button>`).join('')}</div>
+        </div>
+        <div id="people"></div>
+      </div>
+      <div class="card detail" id="detail"></div>
+    </section>
+  </main>`;
+  drawPeopleTiles(); drawPeople(); drawDetail();
+}
+
+function drawPeopleTiles() {
+  const { counts } = state.people, box = app.querySelector('#people-tiles');
+  if (!box) return;
+  box.innerHTML = `
+    <div class="card tile"><div class="label">지금 접속 중</div><div class="value num">${num(counts.online)}<small>명</small></div><div class="note">최근 ${Math.round(state.people.onlineSeconds / 60 * 10) / 10}분 안에 확인된 기기</div></div>
+    <div class="card tile"><div class="label">오늘 접속</div><div class="value num">${num(counts.today)}<small>명</small></div><div class="note">한국 시간 오늘</div></div>
+    <div class="card tile"><div class="label">전체 유저</div><div class="value num">${num(counts.everyone)}<small>명</small></div><div class="note">통계를 켠 뒤 한 번이라도 연 기기</div></div>
+    <div class="card tile"><div class="label">도착 전 선물</div><div class="value num">${num(counts.pending)}<small>건</small></div><div class="note">다음 접속 때 전달돼요</div></div>`;
+}
+
+function drawPeople() {
+  const box = app.querySelector('#people'), data = state.people;
+  if (!box || !data) return;
+  for (const b of app.querySelectorAll('[data-online]')) b.setAttribute('aria-pressed', String(state.onlineOnly === (b.dataset.online === '1')));
+  const all = data.users.filter(u => !state.onlineOnly || isOnline(u, data)), list = all.slice(0, state.shown);
+  if (!list.length) { box.innerHTML = `<p class="empty">${state.onlineOnly ? '지금 접속 중인 유저가 없어요.' : state.q ? '찾는 유저가 없어요.' : '아직 유저 기록이 없어요.'}</p>`; return; }
+  box.innerHTML = `<div class="scroll"><table>
+    <thead><tr><th>접속</th><th>이름</th><th>지금</th><th class="narrow-hide wide-only">기기</th><th class="r narrow-hide">플레이</th><th class="r narrow-hide">톱니</th><th class="r">원정</th></tr></thead>
+    <tbody>${list.map(u => `<tr class="pick" aria-selected="${state.picked === u.id}"><td>${seenLabel(u, data)}</td>
+      <td><button class="who" data-user="${esc(u.id)}">${nameOf(u)} <small>${shortId(u.id)}</small></button>${u.pending ? ` <span class="chip open" title="도착 전 선물">선물 ${num(u.pending)}</span>` : ''}</td>
+      <td>${isOnline(u, data) ? esc(placeOf(u)) : '<span class="mute">–</span>'}</td>
+      <td class="narrow-hide wide-only mute">${esc(kindOf(u))}</td><td class="r num narrow-hide">${hours(u.play_seconds)}</td>
+      <td class="r num narrow-hide">${u.gears === null ? '–' : num(u.gears)}</td><td class="r num">${num(u.runs)}<span class="mute"> / ${num(u.clears)}</span></td></tr>`).join('')}</tbody>
+  </table></div>${all.length > list.length ? `<button class="more" data-act="more">${num(all.length - list.length)}명 더 보기</button>` : ''}<p class="hint">원정은 전체 / 완주. 톱니는 마지막 접속 때 가진 자유 톱니예요. 이름을 누르면 자세히 볼 수 있고, 거기서 톱니를 보낼 수 있어요.</p>`;
+  for (const row of box.querySelectorAll('tr.pick')) row.addEventListener('click', event => { if (!event.target.closest('button')) row.querySelector('[data-user]').click(); });
+}
+
+async function pick(id, quiet = false) {
+  state.picked = id; state.confirm = 0;
+  if (!quiet) { state.said = ''; state.detail = null; drawDetail(); drawPeople(); }
+  const answer = await request(`/api/admin/users/${encodeURIComponent(id)}`);
+  if (!answer) return;
+  state.detail = answer.ok ? answer.body : { missing: true };
+  drawDetail();
+  if (!quiet && matchMedia('(max-width: 960px)').matches) app.querySelector('#detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function drawDetail() {
+  const box = app.querySelector('#detail');
+  if (!box) return;
+  box.hidden = !state.picked; app.querySelector('.people')?.classList.toggle('solo', !state.picked);
+  if (!state.picked) { box.innerHTML = ''; return; }
+  const d = state.detail;
+  if (!d) { box.innerHTML = '<p class="empty">불러오는 중…</p>'; return; }
+  if (d.missing) { box.innerHTML = '<p class="empty">이 유저를 찾을 수 없어요.</p>'; return; }
+  const u = d.user, GIFT_STATE = g => (g.cancelled_at ? ['abandon', '취소'] : g.claimed_at ? ['clear', '받음'] : ['open', '도착 전']);
+  box.innerHTML = `
+    <div class="card-head"><h3>${nameOf(u)}</h3><span class="mute num">${shortId(u.id)}</span><button class="link" style="margin-left:auto" data-act="close">닫기</button></div>
+    <div class="memo-row"><input id="memo" class="field" maxlength="30" placeholder="관리자 메모 (관리자만 봐요)" value="${esc(u.memo || '')}" aria-label="메모 이름"><button class="ghost" data-act="memo">저장</button></div>
+    <dl>
+      <dt>접속</dt><dd>${seenLabel(u, d)}${isOnline(u, d) ? ` · ${esc(placeOf(u))}` : ''}</dd>
+      <dt>마지막 접속</dt><dd class="num">${when(u.last_seen)}</dd>
+      <dt>처음 본 날</dt><dd class="num">${esc(u.first_day || '–')}</dd>
+      <dt>기기</dt><dd>${esc(kindOf(u))}${u.installed ? ' · 홈 화면 설치' : ''}</dd>
+      <dt>플레이</dt><dd class="num">${hours(u.play_seconds)} · 게임 연 횟수 ${num(u.opens)}</dd>
+      <dt>원정</dt><dd class="num">${num(u.runs)}판 · 완주 ${num(u.clears)} · 최고 ${u.best ? `${u.best}번째` : '–'}</dd>
+      <dt>자유 톱니</dt><dd class="num">${u.gears === null ? '–' : `${num(u.gears)}개`} <span class="mute">(마지막 접속 때)</span></dd>
+      <dt>장부 이름</dt><dd>${u.nickname ? esc(u.nickname) : '<span class="mute">없음 (F2)</span>'} <span class="mute">유저가 게임에서 정한 이름</span></dd>
+      <dt>기기 id</dt><dd class="num mute" style="word-break:break-all">${esc(u.id)}</dd>
+    </dl>
+    <h4>자유 톱니 보내기</h4>
+    <div class="gift">
+      <div class="gift-row"><input id="gift-gears" class="field num" type="number" min="1" max="100000" step="1" inputmode="numeric" placeholder="개수" aria-label="보낼 톱니 수">${GIFT_PRESETS.map(n => `<button class="ghost" data-preset="${n}">+${num(n)}</button>`).join('')}</div>
+      <input id="gift-note" class="field" maxlength="60" placeholder="함께 보낼 말 (유저 화면에 떠요, 예: 점검 보상)" aria-label="선물 메시지">
+      <button class="primary" data-act="gift" id="gift-send">보내기</button>
+      ${state.said ? `<p class="hint">${esc(state.said)}</p>` : '<p class="hint">유저가 게임을 켜 두면 1분 안에, 꺼져 있으면 다음에 열 때 도착해요. 도착 전이면 취소할 수 있어요.</p>'}
+    </div>
+    <h4>선물 기록</h4>
+    ${d.gifts.length ? `<table><tbody>${d.gifts.map(g => { const [cls, label] = GIFT_STATE(g); return `<tr><td class="num mute">${when(g.created_at)}</td><td class="r num"><b>${num(g.gears)}</b></td><td class="mute" style="white-space:normal">${esc(g.note || '')}</td><td><span class="chip ${cls}">${label}</span></td><td class="r">${cls === 'open' ? `<button class="link" data-cancel="${g.id}">취소</button>` : ''}</td></tr>`; }).join('')}</tbody></table>` : '<p class="hint">아직 보낸 선물이 없어요.</p>'}
+    <h4>최근 원정</h4>
+    ${d.runs.length ? `<table><tbody>${d.runs.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">아직 원정 기록이 없어요.</p>'}`;
+  giftButton();
+}
+
+/** The send button says what it will do; the first press arms it, the second (within 5 seconds) sends. */
+function giftButton() {
+  const button = app.querySelector('#gift-send'), gears = Number(app.querySelector('#gift-gears')?.value);
+  if (!button) return;
+  const valid = Number.isInteger(gears) && gears >= 1 && gears <= 100000;
+  button.disabled = !valid;
+  button.textContent = !valid ? '보낼 톱니 수를 넣어 주세요' : state.confirm > Date.now() ? `한 번 더 누르면 ${num(gears)}개를 보내요` : `자유 톱니 ${num(gears)}개 보내기`;
+  button.classList.toggle('armed', valid && state.confirm > Date.now());
+}
+
+async function sendGift() {
+  const gears = Number(app.querySelector('#gift-gears')?.value), note = app.querySelector('#gift-note')?.value || '';
+  if (!(Number.isInteger(gears) && gears >= 1 && gears <= 100000)) return;
+  if (!(state.confirm > Date.now())) { state.confirm = Date.now() + 5000; giftButton(); setTimeout(giftButton, 5100); return; }
+  state.confirm = 0;
+  const answer = await request('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: state.picked, gears, note }) });
+  if (!answer) return;
+  state.said = answer.ok ? `자유 톱니 ${num(gears)}개를 보냈어요. 다음 접속 확인 때 도착해요.` : '보내지 못했어요. 개수(1~100,000)를 확인해 주세요.';
+  await pick(state.picked, true); loadPeople(false);
+}
+
+async function cancelGift(id) {
+  const answer = await request(`/api/admin/gifts/${id}`, { method: 'DELETE' });
+  if (!answer) return;
+  state.said = answer.ok ? '선물을 취소했어요.' : '이미 도착한 선물이라 취소할 수 없어요.';
+  await pick(state.picked, true); loadPeople(false);
+}
+
+async function saveMemo() {
+  const memo = app.querySelector('#memo')?.value || '';
+  const answer = await request(`/api/admin/users/${encodeURIComponent(state.picked)}/memo`, { method: 'POST', body: JSON.stringify({ memo }) });
+  if (!answer) return;
+  state.said = answer.ok ? '이름을 저장했어요.' : '저장하지 못했어요.';
+  await pick(state.picked, true); loadPeople(false);
+}
+
+// The 유저 tab reads the list again every half minute while it is on screen, so "접속 중" stays true.
+setInterval(() => { if (state.tab === 'users' && state.people && !document.hidden && token()) loadPeople(false); }, USERS_REFRESH_SECONDS * 1000);
 
 load();

@@ -1,12 +1,22 @@
 // Play statistics kept in Cloudflare D1 (binding STATS): the game posts small events, the admin page reads a summary.
-//   POST /api/stats                 one event (src/engine/stats.js cleanEvent) -> 204
-//   GET  /api/admin/stats?days=30   Authorization: Bearer <ADMIN_TOKEN>        -> the summary below
+//   POST /api/stats                 one event (src/engine/stats.js cleanEvent) -> 204, or for a ping { mail: [gifts] }
+//   POST /api/mail/claim            { device, ids }  the game took these gifts                   -> { ok }
+// Admin routes (Authorization: Bearer <ADMIN_TOKEN>):
+//   GET    /api/admin/stats?days=30          the summary below
+//   GET    /api/admin/users?q=               players (devices), most recently seen first
+//   GET    /api/admin/users/:id              one player: details, recent runs, gifts
+//   POST   /api/admin/users/:id/memo         { memo }                    a name only the admin page shows
+//   POST   /api/admin/gifts                  { device, gears, note }     free gears the game hands over on its next ping
+//   DELETE /api/admin/gifts/:id              take back a gift that has not arrived yet
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
-import { cleanEvent, koreanDay, EVENT_BYTES } from '../src/engine/stats.js';
+import { cleanEvent, koreanDay, isDeviceId, plainText, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
 const SCHEMA = [
-  `CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, form TEXT, os TEXT, browser TEXT, installed INTEGER DEFAULT 0, first_day TEXT, last_day TEXT, opens INTEGER DEFAULT 0)`,
+  `CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, form TEXT, os TEXT, browser TEXT, installed INTEGER DEFAULT 0, first_day TEXT, last_day TEXT, opens INTEGER DEFAULT 0,
+    last_seen INTEGER, where_now TEXT, node_now INTEGER, gears INTEGER, play_seconds INTEGER, memo TEXT, nickname TEXT)`,
+  `CREATE TABLE IF NOT EXISTS gifts (id INTEGER PRIMARY KEY AUTOINCREMENT, device TEXT, gears INTEGER, note TEXT, created_at INTEGER, claimed_at INTEGER, cancelled_at INTEGER)`,
+  `CREATE INDEX IF NOT EXISTS gifts_device ON gifts (device)`,
   `CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, device TEXT, day TEXT, at INTEGER)`,
   `CREATE INDEX IF NOT EXISTS sessions_day ON sessions (day)`,
   `CREATE TABLE IF NOT EXISTS runs (device TEXT, run TEXT, day TEXT, combo TEXT, started_at INTEGER, ended_at INTEGER, reason TEXT, node INTEGER, seconds INTEGER, PRIMARY KEY (device, run))`,
@@ -15,19 +25,28 @@ const SCHEMA = [
 const ready = new WeakMap();
 const ensure = db => { if (!ready.has(db)) ready.set(db, db.batch(SCHEMA.map(sql => db.prepare(sql))).catch(error => { ready.delete(db); throw error; })); return ready.get(db); };
 
-/** Stores one event. False when the body is not a valid event. */
+/** Gifts made for a device that it has not taken yet, oldest first. */
+const waiting = (db, device) => db.prepare(`SELECT id, gears, note FROM gifts WHERE device = ?1 AND claimed_at IS NULL AND cancelled_at IS NULL ORDER BY id`).bind(device).all().then(r => r.results.map(row => ({ ...row })));
+
+/** Stores one event: null when the body is not a valid event, else {} — or { mail } for a ping. */
 export async function record(db, sent, now = Date.now()) {
   const event = cleanEvent(sent);
-  if (!event) return false;
+  if (!event) return null;
   await ensure(db);
   const day = koreanDay(now);
   if (event.kind === 'open') {
     await db.batch([
-      db.prepare(`INSERT INTO devices (id, form, os, browser, installed, first_day, last_day, opens) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, 1)
-        ON CONFLICT (id) DO UPDATE SET form = ?2, os = ?3, browser = ?4, installed = MAX(installed, ?5), last_day = ?6, opens = opens + 1`)
-        .bind(event.device, event.form, event.os, event.browser, event.installed ? 1 : 0, day),
+      db.prepare(`INSERT INTO devices (id, form, os, browser, installed, first_day, last_day, opens, last_seen) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, 1, ?7)
+        ON CONFLICT (id) DO UPDATE SET form = ?2, os = ?3, browser = ?4, installed = MAX(installed, ?5), last_day = ?6, opens = opens + 1, last_seen = ?7`)
+        .bind(event.device, event.form, event.os, event.browser, event.installed ? 1 : 0, day, now),
       db.prepare(`INSERT INTO sessions (device, day, at) VALUES (?1, ?2, ?3)`).bind(event.device, day, now)
     ]);
+  } else if (event.kind === 'ping') {
+    // A device that never sent an open (it began before statistics existed) is still listed, with its kind unknown.
+    await db.prepare(`INSERT INTO devices (id, first_day, last_day, last_seen, where_now, node_now, gears, play_seconds, nickname) VALUES (?1, ?2, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+      ON CONFLICT (id) DO UPDATE SET last_day = ?2, last_seen = ?3, where_now = ?4, node_now = ?5, gears = ?6, play_seconds = ?7, nickname = ?8`)
+      .bind(event.device, day, now, event.where, event.node, event.gears, event.playSeconds, event.name || null).run();
+    return { mail: await waiting(db, event.device) };
   } else if (event.kind === 'runStart') {
     await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at) VALUES (?1, ?2, ?3, ?4, ?5)`).bind(event.device, event.run, day, event.combo, now).run();
   } else {
@@ -36,7 +55,57 @@ export async function record(db, sent, now = Date.now()) {
       ON CONFLICT (device, run) DO UPDATE SET ended_at = ?5, reason = ?6, node = ?7, seconds = ?8`)
       .bind(event.device, event.run, day, event.combo, now, event.reason, event.node, event.seconds).run();
   }
+  return {};
+}
+
+/** The game took these gifts (it keeps their ids in the save too, so a lost claim never pays twice). */
+export async function claimGifts(db, device, ids, now = Date.now()) {
+  if (!isDeviceId(device) || !Array.isArray(ids) || !ids.length || ids.length > 50 || !ids.every(id => Number.isInteger(id) && id > 0)) return false;
+  await ensure(db);
+  await db.batch(ids.map(id => db.prepare(`UPDATE gifts SET claimed_at = ?3 WHERE id = ?1 AND device = ?2 AND claimed_at IS NULL AND cancelled_at IS NULL`).bind(id, device, now)));
   return true;
+}
+
+const USER_COLUMNS = `d.id, d.memo, d.nickname, d.form, d.os, d.browser, d.installed, d.first_day, d.last_day, d.last_seen, d.where_now, d.node_now, d.gears, d.play_seconds, d.opens,
+  COALESCE(r.runs, 0) AS runs, COALESCE(r.clears, 0) AS clears, r.best AS best, COALESCE(g.given, 0) AS given, COALESCE(g.pending, 0) AS pending`;
+const USER_JOINS = `FROM devices d
+  LEFT JOIN (SELECT device, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, MAX(node) AS best FROM runs GROUP BY device) r ON r.device = d.id
+  LEFT JOIN (SELECT device, SUM(CASE WHEN cancelled_at IS NULL THEN gears ELSE 0 END) AS given, SUM(claimed_at IS NULL AND cancelled_at IS NULL) AS pending FROM gifts GROUP BY device) g ON g.device = d.id`;
+const plain = row => ({ ...row });
+
+/** Players, most recently seen first (at most 300), with a search over the id's start, the ledger name and the memo. */
+export async function users(db, query = '', now = Date.now()) {
+  await ensure(db);
+  const q = plainText(query, MEMO_MAX).replace(/[%_\\]/g, '');
+  const [list, [counts]] = await Promise.all([
+    db.prepare(`SELECT ${USER_COLUMNS} ${USER_JOINS} WHERE ?1 = '' OR d.id LIKE ?1 || '%' OR d.memo LIKE '%' || ?1 || '%' OR d.nickname LIKE '%' || ?1 || '%' ORDER BY COALESCE(d.last_seen, 0) DESC, d.last_day DESC LIMIT 300`).bind(q).all().then(r => r.results.map(plain)),
+    db.prepare(`SELECT COUNT(*) AS everyone, SUM(last_seen >= ?1) AS online, SUM(last_day = ?2) AS today, (SELECT COUNT(*) FROM gifts WHERE claimed_at IS NULL AND cancelled_at IS NULL) AS pending FROM devices`).bind(now - ONLINE_SECONDS * 1000, koreanDay(now)).all().then(r => r.results.map(plain))
+  ]);
+  const n = value => Number(value) || 0;
+  return { now, onlineSeconds: ONLINE_SECONDS, counts: { everyone: n(counts.everyone), online: n(counts.online), today: n(counts.today), pending: n(counts.pending) }, users: list };
+}
+
+/** One player: the same row as the list, their last 20 runs and their gifts (newest first). Null when unknown. */
+export async function user(db, id, now = Date.now()) {
+  if (!isDeviceId(id)) return null;
+  await ensure(db);
+  const [[row], runs, gifts] = await Promise.all([
+    db.prepare(`SELECT ${USER_COLUMNS} ${USER_JOINS} WHERE d.id = ?1`).bind(id).all().then(r => r.results.map(plain)),
+    db.prepare(`SELECT day, combo, reason, node, seconds FROM runs WHERE device = ?1 ORDER BY COALESCE(ended_at, started_at) DESC LIMIT 20`).bind(id).all().then(r => r.results.map(plain)),
+    db.prepare(`SELECT id, gears, note, created_at, claimed_at, cancelled_at FROM gifts WHERE device = ?1 ORDER BY id DESC LIMIT 50`).bind(id).all().then(r => r.results.map(plain))
+  ]);
+  return row ? { now, onlineSeconds: ONLINE_SECONDS, user: row, runs, gifts } : null;
+}
+
+/** A gift of free gears to one known device; null when the device or the amount is wrong. */
+export async function give(db, sent, now = Date.now()) {
+  const gears = sent?.gears, note = plainText(sent?.note, GIFT_NOTE_MAX);
+  if (!isDeviceId(sent?.device) || !Number.isInteger(gears) || gears < 1 || gears > GIFT_MAX_GEARS) return null;
+  await ensure(db);
+  if (!(await db.prepare(`SELECT id FROM devices WHERE id = ?1`).bind(sent.device).first())) return null;
+  await db.prepare(`INSERT INTO gifts (device, gears, note, created_at) VALUES (?1, ?2, ?3, ?4)`).bind(sent.device, gears, note, now).run();
+  const made = await db.prepare(`SELECT id, gears, note, created_at FROM gifts WHERE device = ?1 ORDER BY id DESC LIMIT 1`).bind(sent.device).first();
+  return made && { ...made };
 }
 
 /** Days, oldest first, from `since` to today. */
@@ -105,14 +174,45 @@ export async function statsApi(request, url, env, reply, cors = {}) {
     if (text.length > EVENT_BYTES) return reply({ error: 'bad' }, 400);
     let sent = null;
     try { sent = JSON.parse(text); } catch {}
-    return (await record(env.STATS, sent)) ? new Response(null, { status: 204, headers: cors }) : reply({ error: 'bad' }, 400);
+    const done = await record(env.STATS, sent);
+    if (!done) return reply({ error: 'bad' }, 400);
+    return done.mail ? reply({ mail: done.mail }) : new Response(null, { status: 204, headers: cors });
   }
+  if (path === '/api/mail/claim' && method === 'POST') {
+    if (!env.STATS) return reply({ error: 'unavailable' }, 503);
+    const text = await request.text();
+    let sent = null;
+    try { sent = text.length <= EVENT_BYTES ? JSON.parse(text) : null; } catch {}
+    return (await claimGifts(env.STATS, sent?.device, sent?.ids)) ? reply({ ok: true }) : reply({ error: 'bad' }, 400);
+  }
+  if (!path.startsWith('/api/admin/')) return null;
+  // A short token would be guessable, so the admin routes stay shut until a long one is set.
+  if (!env.STATS || typeof env.ADMIN_TOKEN !== 'string' || env.ADMIN_TOKEN.length < 24) return reply({ error: 'unconfigured' }, 503);
+  if (!(await isAdmin(request, env.ADMIN_TOKEN))) return reply({ error: 'denied' }, 401);
+  const db = env.STATS, body = async () => { try { return await request.json(); } catch { return null; } };
   if (path === '/api/admin/stats' && method === 'GET') {
-    // A short token would be guessable, so the page stays shut until a long one is set.
-    if (!env.STATS || typeof env.ADMIN_TOKEN !== 'string' || env.ADMIN_TOKEN.length < 24) return reply({ error: 'unconfigured' }, 503);
-    if (!(await isAdmin(request, env.ADMIN_TOKEN))) return reply({ error: 'denied' }, 401);
     const days = Number(url.searchParams.get('days'));
-    return reply(await summary(env.STATS, [7, 30, 90, 0].includes(days) ? days : 30));
+    return reply(await summary(db, [7, 30, 90, 0].includes(days) ? days : 30));
   }
-  return null;
+  if (path === '/api/admin/users' && method === 'GET') return reply(await users(db, url.searchParams.get('q') || ''));
+  const one = path.match(/^\/api\/admin\/users\/([a-z0-9]+)(\/memo)?$/);
+  if (one && !one[2] && method === 'GET') { const found = await user(db, one[1]); return found ? reply(found) : reply({ error: 'missing' }, 404); }
+  if (one && one[2] && method === 'POST') {
+    if (!isDeviceId(one[1])) return reply({ error: 'missing' }, 404);
+    const memo = plainText((await body())?.memo, MEMO_MAX);
+    await ensure(db);
+    await db.prepare(`UPDATE devices SET memo = ?2 WHERE id = ?1`).bind(one[1], memo || null).run();
+    return reply({ ok: true, memo });
+  }
+  if (path === '/api/admin/gifts' && method === 'POST') { const made = await give(db, await body()); return made ? reply(made) : reply({ error: 'bad' }, 400); }
+  const gift = path.match(/^\/api\/admin\/gifts\/(\d+)$/);
+  if (gift && method === 'DELETE') {
+    await ensure(db);
+    const held = await db.prepare(`SELECT claimed_at, cancelled_at FROM gifts WHERE id = ?1`).bind(Number(gift[1])).first();
+    if (!held) return reply({ error: 'missing' }, 404);
+    if (held.claimed_at !== null || held.cancelled_at !== null) return reply({ error: 'taken' }, 409);
+    await db.prepare(`UPDATE gifts SET cancelled_at = ?2 WHERE id = ?1 AND claimed_at IS NULL`).bind(Number(gift[1]), Date.now()).run();
+    return reply({ ok: true });
+  }
+  return reply({ error: 'missing' }, 404);
 }

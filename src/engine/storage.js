@@ -1,4 +1,5 @@
 import { roomTitle } from './room-title.js';
+import { cleanNickname } from './nickname.js';
 export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 /** True once there is anything worth loading; a save still on the opening has none. */
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
@@ -51,6 +52,8 @@ export function decodeSave(raw, data) {
   if (!Number.isInteger(s.profile.chapter) || s.profile.chapter < 1) s.profile.chapter = 1;
   // Older saves start their play clock at zero; a broken value is reset rather than refusing the save.
   if (!Number.isFinite(s.profile.playSeconds) || s.profile.playSeconds < 0) s.profile.playSeconds = 0;
+  // The ledger name: older saves have none (called F2); anything odd in it is cleaned rather than refused.
+  s.profile.nickname = cleanNickname(s.profile.nickname ?? '');
   s.profile.loadout ??= [];
   s.profile.ownedElements ??= [...s.profile.loadout];
   if (!Array.isArray(s.profile.ownedElements) || s.profile.ownedElements.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 부품이 올바르지 않습니다.');

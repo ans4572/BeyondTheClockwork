@@ -134,3 +134,56 @@ test('the reporter keeps one device id, sends nothing from a local server, and d
   assert.equal(sent[0][0], 'https://beyondtheclockwork.ans4572.workers.dev/api/stats');
   assert.equal(sent[0][1].device, id);
 });
+
+test('a gift sent from the admin page arrives on the next check-in, pays once, and can be taken back before then', async () => {
+  const token = 'a-long-admin-token-for-tests-only', env = { STATS: d1(), ADMIN_TOKEN: token };
+  const call = (path, options = {}) => { const request = new Request(new URL(path, 'https://w.example'), options); return api(request, new URL(request.url), env); };
+  const admin = (path, options = {}) => call(path, { ...options, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
+  const ping = async (fields = {}) => (await call('/api/stats', { method: 'POST', body: JSON.stringify({ device: phone, kind: 'ping', where: 'hub', node: 0, gears: 40, playSeconds: 600, ...fields }) })).json();
+  await call('/api/stats', { method: 'POST', body: JSON.stringify({ device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }) });
+  assert.deepEqual(await ping(), { mail: [] });
+
+  assert.equal((await admin('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: 'nobody0000000000', gears: 5 }) })).status, 400, 'an unknown player gets nothing');
+  assert.equal((await admin('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: phone, gears: 0 }) })).status, 400);
+  assert.equal((await call('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: phone, gears: 5 }) })).status, 401, 'no token, no gift');
+  const kept = await (await admin('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: phone, gears: 300, note: '  점검 보상\n감사합니다 ' }) })).json();
+  const dropped = await (await admin('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: phone, gears: 9 }) })).json();
+  assert.equal(kept.note, '점검 보상 감사합니다');
+  assert.equal((await admin(`/api/admin/gifts/${dropped.id}`, { method: 'DELETE' })).status, 200);
+
+  const game = new Game(data), before = game.s.profile.freeGears;
+  const { mail } = await ping({ where: 'run', node: 4 });
+  assert.deepEqual(mail.map(g => g.gears), [300], 'a gift taken back never arrives');
+  const ids = game.receiveGifts(mail);
+  assert.equal(game.s.profile.freeGears, before + 300);
+  assert.match(game.s.notices.at(-1).text, /점검 보상 감사합니다 · 자유 톱니 300개/);
+  assert.deepEqual(game.receiveGifts(mail), ids, 'the same gift again pays nothing but is still reported as taken');
+  assert.equal(game.s.profile.freeGears, before + 300);
+  assert.equal((await call('/api/mail/claim', { method: 'POST', body: JSON.stringify({ device: phone, ids }) })).status, 200);
+  assert.deepEqual((await ping()).mail, []);
+  assert.equal((await admin(`/api/admin/gifts/${kept.id}`, { method: 'DELETE' })).status, 409, 'a gift already taken cannot be taken back');
+
+  const list = await (await admin('/api/admin/users')).json();
+  assert.deepEqual(list.counts, { everyone: 1, online: 1, today: 1, pending: 0 });
+  const [row] = list.users;
+  assert.equal(row.id, phone); assert.equal(row.where_now, 'hub'); assert.equal(row.gears, 40); assert.equal(row.given, 300); assert.equal(row.pending, 0);
+  assert.equal((await (await admin('/api/admin/users/' + phone + '/memo', { method: 'POST', body: JSON.stringify({ memo: '테스트 폰' }) })).json()).memo, '테스트 폰');
+  assert.equal((await (await admin('/api/admin/users?q=테스트')).json()).users.length, 1);
+  assert.equal((await (await admin('/api/admin/users?q=zzz')).json()).users.length, 0);
+  const detail = await (await admin('/api/admin/users/' + phone)).json();
+  assert.equal(detail.user.memo, '테스트 폰');
+  assert.deepEqual(detail.gifts.map(g => [g.gears, g.claimed_at !== null, g.cancelled_at !== null]), [[9, false, true], [300, true, false]]);
+  assert.equal((await admin('/api/admin/users/nobody0000000000')).status, 404);
+});
+
+test('the mailbox checks in with plain-text bodies and stays silent on a local server', async () => {
+  const { mailbox } = await import('../src/ui/stats-report.js');
+  assert.equal(mailbox({ storage: storage(), hostname: '127.0.0.1' }), null);
+  const sent = [], box = mailbox({ storage: storage(), hostname: 'ans4572.github.io', fetchImpl: async (url, options) => { sent.push([url, options]); return new Response(JSON.stringify({ mail: [{ id: 3, gears: 10, note: '' }] }), { status: 200 }); } });
+  assert.deepEqual(await box.ping({ where: 'hub', node: 0, gears: 1, playSeconds: 2 }), [{ id: 3, gears: 10, note: '' }]);
+  assert.deepEqual(await box.ping({ where: 'moon', node: 0, gears: 1, playSeconds: 2 }), [], 'a malformed check-in is not sent');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0][1].headers, undefined, 'no custom headers, so no preflight');
+  await box.claim([3]);
+  assert.equal(sent[1][0], 'https://beyondtheclockwork.ans4572.workers.dev/api/mail/claim');
+});

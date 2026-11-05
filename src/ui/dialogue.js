@@ -18,8 +18,12 @@ function portrait({ sheet, cell, crop = [0, 0, cell, cell], zoom = ZOOM }) {
 
 /** The speaking scene along the bottom of the screen: the other party stands left, the player right. Holds no game state. */
 export class DialogueBox {
-  constructor(root, { speakers, player }, { reducedMotion, skipLabel }) {
-    this.root = root; this.speakers = speakers; this.playerId = player; this.reducedMotion = reducedMotion;
+  /**
+   * `nameOf(id)` gives a speaker's shown name (the player's can be renamed) and `fill(text)` fills {name} in a line;
+   * both default to the script as written.
+   */
+  constructor(root, { speakers, player }, { reducedMotion, skipLabel, nameOf = id => speakers[id].name, fill = text => text }) {
+    this.root = root; this.speakers = speakers; this.playerId = player; this.reducedMotion = reducedMotion; this.nameOf = nameOf; this.fill = fill;
     root.innerHTML = `<img class="talk-who other" alt=""><img class="talk-who player" alt=""><div class="talk-box"><div class="talk-name"></div><div class="talk-text"></div><div class="talk-skip">${skipLabel}</div><div class="talk-next">다음 ▸</div></div>`;
     [this.other, this.player] = root.querySelectorAll('img');
     this.name = root.querySelector('.talk-name'); this.text = root.querySelector('.talk-text'); this.next = root.querySelector('.talk-next');
@@ -28,10 +32,10 @@ export class DialogueBox {
     this.faces = Promise.all(Object.entries(speakers).map(async ([id, speaker]) => [id, await portrait(speaker)])).then(Object.fromEntries);
   }
   get open() { return !this.root.hidden; }
-  /** Plays the lines and resolves with the chosen id, or null if the last line had no choices. */
+  /** Plays the lines and resolves with the chosen id, the typed text of an asking line, or null. */
   async play(lines) {
     const faces = await this.faces;
-    this.lines = lines; this.at = 0;
+    this.lines = lines.map(line => ({ ...line, text: this.fill(line.text) })); this.at = 0; lines = this.lines;
     // With nobody else in the script it is a monologue, and the text takes the empty side.
     const other = lines.find(line => line.who !== this.playerId);
     // A scene without the player puts its second speaker on the player's side.
@@ -47,7 +51,7 @@ export class DialogueBox {
     const line = this.lines[this.at], speaking = line.who === this.right;
     this.root.classList.toggle('player-talks', speaking);
     this.other.classList.toggle('quiet', speaking); this.player.classList.toggle('quiet', !speaking);
-    this.name.textContent = this.speakers[line.who].name;
+    this.name.textContent = this.nameOf(line.who);
     this.next.hidden = true; this.typed = 0;
     clearInterval(this.typing); this.typing = 0;
     if (this.reducedMotion()) return this.finishLine();
@@ -61,6 +65,7 @@ export class DialogueBox {
     clearInterval(this.typing); this.typing = 0;
     const line = this.lines[this.at];
     this.text.textContent = line.text;
+    if (line.ask) return this.askFor(line.ask);
     if (!line.choices) { this.next.hidden = false; return; }
     const list = document.createElement('div');
     list.className = 'talk-choices';
@@ -74,10 +79,24 @@ export class DialogueBox {
     this.text.append(list);
     list.firstChild.focus({ preventScroll: true });
   }
-  get choices() { return [...this.text.querySelectorAll('button')]; }
+  /** A line that waits for typed text: an input and a button under it; Enter or the button answers. */
+  askFor({ label, placeholder = '', submit = '확인', note = '', max = 10, value = '' }) {
+    const form = document.createElement('form');
+    form.className = 'talk-ask';
+    form.innerHTML = `<input type="text" autocomplete="off" spellcheck="false" enterkeyhint="done"><button type="submit">▸ </button>${note ? '<small></small>' : ''}`;
+    const [input, button] = [form.querySelector('input'), form.querySelector('button')];
+    Object.assign(input, { maxLength: max, placeholder, value: this.askValue ?? value }); input.setAttribute('aria-label', label);
+    button.append(submit); if (note) form.querySelector('small').textContent = note;
+    form.addEventListener('submit', event => { event.preventDefault(); this.finish(input.value); });
+    this.text.append(form);
+    input.focus({ preventScroll: true });
+  }
+  get asking() { return this.text.querySelector('.talk-ask'); }
+  get choices() { return [...this.text.querySelectorAll('.talk-choices button')]; }
   /** Space, Enter or a click: finish typing, confirm a choice, or go to the next line. */
   advance() {
     if (this.typing) return this.finishLine();
+    if (this.asking) return this.asking.requestSubmit();
     if (this.lines[this.at].choices) return (this.choices.find(button => button === document.activeElement) || this.choices[0]).click();
     if (this.at === this.lines.length - 1) return this.finish(null);
     this.at++; this.show();
@@ -85,6 +104,7 @@ export class DialogueBox {
   /** Escape: straight to the last line, then out by its last choice. */
   skip() {
     const last = this.lines.length - 1;
+    if (this.asking) return this.asking.requestSubmit();
     if (this.at === last && this.lines[last].choices && !this.typing) return this.choices.at(-1).click();
     if (this.at === last && !this.lines[last].choices) return this.finish(null);
     this.at = last; this.show(); this.finishLine();

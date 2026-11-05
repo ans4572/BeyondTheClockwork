@@ -1738,6 +1738,29 @@ export class Game {
     this.onRun('runEnd', { run: run.id, elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
   }
+  /**
+   * Gifts of free gears sent from the admin page. Each is paid once: its id stays in the save (a linked device or a
+   * lost claim never pays twice). Returns the ids to report as taken, already-paid ones included.
+   */
+  receiveGifts(gifts) {
+    const profile = this.s.profile, paid = profile.giftsTaken ??= [];
+    const valid = (Array.isArray(gifts) ? gifts : []).filter(g => Number.isInteger(g?.id) && g.id > 0 && Number.isInteger(g.gears) && g.gears > 0 && g.gears <= 100000);
+    const fresh = valid.filter(g => !paid.includes(g.id));
+    for (const gift of fresh) {
+      profile.freeGears += gift.gears; paid.push(gift.id);
+      const note = typeof gift.note === 'string' ? gift.note.trim().slice(0, 60) : '';
+      this.notify(`${note ? `${note} · ` : '운영자 선물 · '}자유 톱니 ${gift.gears}개를 받았습니다.`); this.s.notices.at(-1).until += 4;
+    }
+    profile.giftsTaken = paid.slice(-200);
+    if (fresh.length) this.save();
+    return valid.map(g => g.id);
+  }
+  /** Writes the name in Moru's repair ledger (blank goes back to the product number F2). Returns the kept name. */
+  setNickname(text) {
+    this.s.profile.nickname = cleanNickname(text); this.save();
+    return this.s.profile.nickname;
+  }
   acknowledgeReturn() { if (this.s.mode !== 'returned') return false; this.s.mode = 'hub'; this.enterHub(); this.save(); return true; }
 }
 import {crosscutSegment,clampContains} from './fusion-geometry.js';
+import { cleanNickname } from './nickname.js';

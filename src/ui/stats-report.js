@@ -2,6 +2,7 @@
 // Each event is fire-and-forget; a lost one costs nothing. Local test servers never report, so testing leaves no marks.
 import { apiBase } from './device-transfer.js';
 import { deviceProfile, cleanEvent } from '../engine/stats.js';
+export { PING_SECONDS } from '../engine/stats.js';
 
 export const DEVICE_STORE_KEY = 'beyond-the-clockwork.device.v1';
 const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]', ''];
@@ -29,6 +30,30 @@ export function statsReporter({ storage, hostname, protocol = 'https:', send, ba
     const event = cleanEvent({ device, kind, ...fields });
     if (!event) return false;
     try { return send(`${base}/api/stats`, JSON.stringify({ device, kind, ...fields })) !== false; } catch { return false; }
+  };
+}
+
+/**
+ * The check-in that keeps the admin page's "playing now" true and brings gifts: ping(fields) answers with the gifts
+ * waiting for this device, claim(ids) tells the worker the game took them. Null on a local test server.
+ * Plain-text bodies keep these simple requests (no CORS preflight from GitHub Pages).
+ */
+export function mailbox({ storage, hostname, protocol = 'https:', fetchImpl = (...a) => fetch(...a), base = apiBase(hostname) } = {}) {
+  if (LOCAL_HOSTS.includes(hostname) || protocol === 'file:') return null;
+  const device = deviceId(storage);
+  if (!device) return null;
+  return {
+    device,
+    async ping(fields) {
+      const event = cleanEvent({ device, kind: 'ping', ...fields });
+      if (!event) return [];
+      try {
+        const response = await fetchImpl(`${base}/api/stats`, { method: 'POST', body: JSON.stringify(event) });
+        const body = response.ok ? await response.json() : {};
+        return Array.isArray(body?.mail) ? body.mail : [];
+      } catch { return []; }
+    },
+    claim: ids => (ids.length ? fetchImpl(`${base}/api/mail/claim`, { method: 'POST', body: JSON.stringify({ device, ids }) }).then(() => true, () => false) : Promise.resolve(true))
   };
 }
 

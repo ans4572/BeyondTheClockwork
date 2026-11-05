@@ -19,7 +19,8 @@ import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
-import { browserReporter } from './ui/stats-report.js';
+import { browserReporter, mailbox, PING_SECONDS } from './ui/stats-report.js';
+import { callName, fillName, NICKNAME_MAX } from './engine/nickname.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
@@ -288,7 +289,11 @@ try {
   }
   // After the safety pin Moru shows his parts shelf: the first element is picked there, for free.
   async function meetMoru() {
-    await talk('registration'); game.register();
+    await talk('registration');
+    // Moru writes the player into his repair ledger: the name typed here is what the dialogue calls them from now on.
+    const typed = await talk('ledger');
+    game.setNickname(typeof typed === 'string' ? typed : '');
+    await talk('ledgerDone'); game.register();
     await talk('firstElement'); game.openElements(); renderOverlay(true);
   }
   // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
@@ -561,10 +566,19 @@ try {
     const sync = `<p class="notice">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}마을에 들어갈 때마다 서버에 저장되고, 연결된 기기에서 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
     return `${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">다른 기기를 연결하려면 코드를 만들어 그 기기에서 입력하세요. 한 번만 하면 됩니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
   }
+  let nicknameNote = '';
+  /** The settings field for the ledger name; a linked device gets the new name with the next upload. */
+  function saveNickname() {
+    const input = $('nickname-input');
+    if (!input) return;
+    const kept = game.setNickname(input.value);
+    nicknameNote = kept ? `수리 장부에 적었어요: ${kept}` : '이름을 비워서 제품 번호 F2로 불려요.';
+    renderOverlay(true);
+  }
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
-    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div><p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
     const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     const body = settingsTab === 'keys' ? keys : settingsTab === 'devices' ? transferBlock() : general;
     return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
@@ -837,6 +851,7 @@ try {
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
     if (name === 'unwind') game.unwind();
+    if (name === 'nickname-save') { saveNickname(); return; }
     if (name === 'return-complete') game.returnToHub('clear');
     if (name === 'acknowledge') game.acknowledgeReturn();
     if (name === 'abandon') screen = 'confirmAbandon';
@@ -904,6 +919,7 @@ try {
     return document.activeElement?.closest('.panel') === sheet;
   }
   document.addEventListener('keydown', e => {
+    if (e.target.id === 'nickname-input' && e.code !== 'Escape') { if (e.code === 'Enter' || e.code === 'NumpadEnter') { e.preventDefault(); saveNickname(); } e.stopImmediatePropagation(); return; }
     if (e.target.id === 'transfer-input' && e.code !== 'Escape') { if (e.code === 'Enter' || e.code === 'NumpadEnter') { e.preventDefault(); transferAction('transfer-fetch'); } e.stopImmediatePropagation(); return; }
     if (bindingTarget) {
       e.preventDefault();
@@ -917,6 +933,8 @@ try {
     }
     if (screen === 'cinematic') return;
     if (screen === 'talk') {
+      // Typing a name in the ledger: letters go to the box; Enter answers through the form, Escape keeps what is typed.
+      if (e.target.closest?.('.talk-ask')) { if (e.code === 'Escape') { e.preventDefault(); talkBox.skip(); } e.stopImmediatePropagation(); return; }
       const keys = bindings();
       if (e.repeat) return;
       if (e.code === 'Escape') { e.preventDefault(); talkBox.skip(); }
@@ -963,6 +981,18 @@ try {
   document.addEventListener('pointerup', () => mouseHeld = false);
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });
+  // Checking in while the game is on screen: the admin page sees who is playing and where, and gifts sent from it
+  // arrive here (Game.receiveGifts). Never from a local test server.
+  const mail = mailbox({ storage: localStorage, hostname: location.hostname, protocol: location.protocol });
+  const place = () => (onTitle || ['opening', 'intro', 'introDeath', 'registration'].includes(game.s.mode) ? 'title' : game.s.run ? 'run' : game.s.mode === 'practice' ? 'practice' : 'hub');
+  let lastPing = 0;
+  const checkIn = async () => {
+    if (!mail || document.hidden || Date.now() - lastPing < 20000) return;
+    lastPing = Date.now();
+    const gifts = await mail.ping({ name: game.s.profile.nickname || '', where: place(), node: game.s.run ? game.s.run.node + 1 : 0, gears: Math.max(0, Math.floor(game.s.profile.freeGears)), playSeconds: Math.max(0, Math.floor(game.s.profile.playSeconds || 0)) });
+    if (gifts.length) mail.claim(game.receiveGifts(gifts));
+  };
+  if (mail) { setTimeout(checkIn, 3000); setInterval(checkIn, PING_SECONDS * 1000); document.addEventListener('visibilitychange', () => { if (!document.hidden) checkIn(); }); }
   document.addEventListener('visibilitychange', () => { if (document.hidden) writePlayTime(localStorage, game.s.profile.playSeconds || 0); if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } if (!document.hidden) audio?.resume().catch(() => {}); });
   window.addEventListener('pagehide', () => { writePlayTime(localStorage, game.s.profile.playSeconds || 0); game.save(); });
   window.addEventListener('beforeunload', () => game.save());
@@ -1058,8 +1088,8 @@ try {
     if (nextFloor && prepareClearance(nextFloor, 3)) nextFloor = null;
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
-  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });
-  $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button')) talkBox.advance(); });
+  const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기', nameOf: id => (id === data.dialogue.player ? callName(game.s.profile) : data.dialogue.speakers[id].name), fill: text => fillName(text, game.s.profile) });
+  $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button, .talk-ask')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
     // The player's sheets keep loading behind the title; leaving it waits for them, so F2 is never drawn without them.
     onNew: () => { openAudio(); playerSprites.then(startNew); },
