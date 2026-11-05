@@ -16,8 +16,7 @@ binding = "TRANSFER"
 id = "14a074391973456198e9fde6245692c3"
 
 # Play statistics for the admin page (worker/stats.js, admin.html): D1 database "beyondtheclockwork-stats", see DEPLOY.md.
-# Turned on once the database exists: paste its Database ID (not a secret) and remove the leading #.
-# [[d1_databases]]
-# binding = "STATS"
-# database_name = "beyondtheclockwork-stats"
-# database_id = "PASTE-DATABASE-ID"
+[[d1_databases]]
+binding = "STATS"
+database_name = "beyondtheclockwork-stats"
+database_id = "c3d806a7-495b-4d79-98cb-44ad9a4bb16e"

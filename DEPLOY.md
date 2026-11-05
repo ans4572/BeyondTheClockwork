@@ -64,7 +64,7 @@ npx wrangler deploy
 처음 한 번 필요한 설정:
 
 1. Cloudflare 대시보드 → Storage & Databases → D1 → Create → 이름 `beyondtheclockwork-stats`
-2. 만들어진 Database ID를 `wrangler.toml`의 `[[d1_databases]]` 블록에 넣고 블록 앞의 `#`을 지우기 (비밀값 아님)
+2. 만들어진 Database ID를 `wrangler.toml`의 `[[d1_databases]]` 블록에 넣기 (비밀값 아님, 현재 설정 완료)
 3. 관리자 토큰 만들기: 내 컴퓨터 터미널에서 `node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"` → 나온 글자를 비밀번호 관리자 등에 보관
 4. Workers & Pages → `beyondtheclockwork` → Settings → Variables and Secrets → Add → Type `Secret`, 이름 `ADMIN_TOKEN`, 값은 3번 글자 → Deploy
 5. 커밋·푸시 → 자동 배포 → `/admin.html`에서 토큰 입력
