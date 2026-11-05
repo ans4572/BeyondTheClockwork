@@ -3,6 +3,8 @@
 name = "beyondtheclockwork"
 compatibility_date = "2026-11-01"
 main = "worker/index.js"
+# Variables set in the dashboard (like ADMIN_TOKEN, if saved as Text) survive each git deploy instead of being wiped.
+keep_vars = true
 
 [assets]
 directory = "."
