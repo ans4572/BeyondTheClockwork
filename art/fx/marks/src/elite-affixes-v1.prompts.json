@@ -1,0 +1,63 @@
+{
+  "tool": "built-in image_gen",
+  "references": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-bell-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-alert-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-gear-ring-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/px/gear.png"
+  ],
+  "export": "Generated raster sources were sampled to the requested logical grids, then cleaned pixel by pixel at native resolution to preserve the outline, three rivets, six gear teeth, fuse and spark. Exact limited palette, binary alpha and lossless 16x integer block expansion.",
+  "exportScript": "tmp/export-elite-affixes-v1.mjs",
+  "review": "tmp/elite-affixes-v1-review.png",
+  "validation": "art/fx/marks/src/elite-affixes-v1.validation.json",
+  "icons": [
+    {
+      "id": "affix-shield-v1",
+      "gridWidth": 12,
+      "gridHeight": 24,
+      "block": 16,
+      "palette": [
+        "#2b3345",
+        "#c79a3e",
+        "#ffd257",
+        "#fff4d6",
+        "#8a8f9c"
+      ],
+      "save": "art/fx/marks/src/affix-shield-v1.png",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-5b62f178-3647-48f0-a6e7-10ba0afa7b69.png",
+      "prompt": "Use case: stylized-concept. Production game VFX still for Beyond the Clockwork. Attached images are STYLE REFERENCES ONLY: match the existing extremely low resolution pixel clusters and dark navy silhouette edging. ONE isolated sprite, genuinely transparent background. Every visible pixel fully opaque. NO text, letters, numbers, characters, UI, floor, shadows, glow or extra objects. Use a strictly tiny logical pixel grid enlarged as uniform sharp square blocks: no antialiasing, gradients or fine detail. Exactly one logical pixel empty margin. Light upper left.\nSUBJECT: elite frontal brass shield, seen STRAIGHT FROM ABOVE. Portrait 1:2 canvas, logical grid exactly 12 WIDE by 24 TALL, ultimately 192x384. One thick curved brass guard plate shaped like a RIGHT PARENTHESIS: convex round outer edge to RIGHT, hollow concave inside to LEFT. The crescent bends from upper-left tip through rightmost middle to lower-left tip, ends both on LEFT. A band with THREE logical pixels of thickness including navy edging, not a filled shield. Gold top edge and exactly THREE tiny round rivets evenly spaced along the arc. Polished toy brass, bold simple clean silhouette readable when 16 pixels high. FIVE colours maximum: navy #2b3345, brass #c79a3e, gold #ffd257, cream #fff4d6, steel grey #8a8f9c. Match the reference bell's chunky outline and minimal flat shading. Draw no frontal heraldic shield, no full ring, no handle. Sprite must occupy a 10x22 logical-pixel bounding box."
+    },
+    {
+      "id": "affix-gear-v1",
+      "gridWidth": 10,
+      "gridHeight": 10,
+      "block": 16,
+      "palette": [
+        "#2b3345",
+        "#c79a3e",
+        "#ffd257",
+        "#ffbe20",
+        "#fff4d6"
+      ],
+      "save": "art/fx/marks/src/affix-gear-v1.png",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-b4e097c7-d17f-4d4d-b9af-aeef59ded9c5.png",
+      "prompt": "Use case: stylized-concept. Production game VFX still for Beyond the Clockwork. Attached images are STYLE REFERENCES ONLY: match the existing extremely low resolution pixel clusters and dark navy silhouette edging. ONE isolated sprite, genuinely transparent background. Every visible pixel fully opaque. NO text, letters, numbers, characters, UI, floor, shadows, glow or extra objects. Use a strictly tiny logical pixel grid enlarged as uniform sharp square blocks: no antialiasing, gradients or fine detail. Exactly one logical pixel empty margin. Light upper left.\nSUBJECT: ONE tiny brass splitter gear. A 10x10 logical pixel sprite enlarged; square 160x160 final. The silhouette has exactly SIX projecting stubby TEETH at clock positions 12, 2, 4, 6, 8, 10 o'clock, with six clear valleys; no teeth at 3 or 9 o'clock. Gear diameter only 8 logical pixels inside a 1-pixel transparent border, so use extremely simple pixel clusters, not many small teeth. Dark navy centre hole, brass body, bright gold upper-left highlight, navy outline. Four or five flat colours only: #2b3345, #c79a3e, #ffd257, #ffbe20, #fff4d6. Tiny toy gear must read clearly at 8 pixels wide. Match the attached brass gear reference for material, but specifically SIX teeth. No wind-up key, no plate, no starburst, no bolt, no extra ring. Symmetric round-ish toothed cog silhouette. This is one single gear sprite, not a sprite sheet."
+    },
+    {
+      "id": "affix-bomb-v1",
+      "gridWidth": 14,
+      "gridHeight": 14,
+      "block": 16,
+      "palette": [
+        "#2b3345",
+        "#c79a3e",
+        "#fff4d6",
+        "#ffd257",
+        "#d8423c"
+      ],
+      "save": "art/fx/marks/src/affix-bomb-v1.png",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-f740a01d-22d6-4fc1-b2a8-692dd7118151.png",
+      "prompt": "Use case: stylized-concept. Production game VFX still for Beyond the Clockwork. Attached images are STYLE REFERENCES ONLY: match the existing extremely low resolution pixel clusters and dark navy silhouette edging. ONE isolated sprite, genuinely transparent background. Every visible pixel fully opaque. NO text, letters, numbers, characters, UI, floor, shadows, glow or extra objects. Use a strictly tiny logical pixel grid enlarged as uniform sharp square blocks: no antialiasing, gradients or fine detail. Exactly one logical pixel empty margin. Light upper left.\nSUBJECT: ONE tiny volatile toy BOMB. Square sprite, logical grid EXACTLY 14x14, final 224x224, with ONE clear logical pixel transparent margin. A round navy-black bomb body, cream upper-left highlight, short brass cap ON TOP. A short bent curly fuse goes UP from the cap and toward upper RIGHT, ending at ONE red-and-gold spark. No more than 12x12 occupied logical pixels TOTAL including fuse and spark, body about 8 or 9 logical pixels in diameter below. Bold readable classic toy bomb silhouette at 12 screen pixels. FIVE flat colours ONLY: navy #2b3345 body and outline, brass #c79a3e cap and fuse, cream #fff4d6 top-left body highlight, gold #ffd257 cap glint and spark, red #d8423c spark. No steel grey or extra shades. Crisp one logical pixel navy edging around brass and spark where needed. Curly fuse must stay small and legible, not a giant handle. One bomb with a single fuse, no explosion cloud, no danger sign, no face or symbol on bomb. Match the chunky reference bell and alert glyph shading, no texture."
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "tool": "built-in image_gen",
+  "commonPrompt": "Use case: stylized-concept. Asset type: ONE SMALL STATIC COMBAT VFX PARTICLE for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY: deflect-flash, electric-hit and ready-pop are sprite sheets containing several effect frames; do NOT draw a sheet or multiple frames. note is an enemy projectile style reference, do NOT add a music note to the requested subject. Match crisp hand-placed pixel clusters, simple bold silhouette, thin ONE logical-pixel dark NAVY #2b3345 edging where needed, hard top-left light.\nPixel-art on specified logical grid, output EVERY logical pixel as an exact16x16block. At most FIVE FLAT COLORS, palette provided below. Centered inside square canvas, ONE logical pixel clear margin, fully opaque foreground and true ALPHA-ZERO transparent background. Hard stepped edges and deliberately placed clusters, no smoothing, half pixels, antialiasing, gradients, blur, halo, glow cloud, shadow plate, grain or texture noise.\nShown at10-25screenpixels, so subject must be bold and minimal, readable instantly. No written text, letters, digits, characters, floor, background tile, UI frame or watermark. ONE PARTICLE ONLY, not a contact sheet or animation.",
+  "references": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/deflect-flash.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ready-pop.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/note.png"
+  ],
+  "alpha": "binary",
+  "blockSize": 16,
+  "margin": 1,
+  "icons": [
+    {
+      "id": "spark-hit-v1",
+      "grid": 24,
+      "scale": 16,
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#ffe086",
+        "#ffd257",
+        "#c79a3e"
+      ],
+      "subject": "HIT SPARK. 24x24 logicalgrid,384x384export. ONE FOUR-POINT STAR BURST, clear cardinal points UP/DOWN/LEFT/RIGHT, broad white central core, pale GOLD #ffe086 middle then GOLD #ffd257 long tapering points. Small hard top-left highlights and navy thin edge, not a solid round disk, cross with squared ends, sun with8rays or explosion cloud. EXACTLY TWO TINY LOOSE GOLD SPARK CLUSTERS, one near upper-right and one near lower-left, separated from star. Keep the four-point star dominant and centered, loose sparks only1-2logicalpixels each. Clean warm wrench-impact pop.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-de889ee1-e81a-48ed-87ae-e972fbc91f4d.png",
+      "prompt": "Use case: stylized-concept. Asset type: ONE SMALL STATIC COMBAT VFX PARTICLE for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY: deflect-flash, electric-hit and ready-pop are sprite sheets containing several effect frames; do NOT draw a sheet or multiple frames. note is an enemy projectile style reference, do NOT add a music note to the requested subject. Match crisp hand-placed pixel clusters, simple bold silhouette, thin ONE logical-pixel dark NAVY #2b3345 edging where needed, hard top-left light.\nPixel-art on specified logical grid, output EVERY logical pixel as an exact16x16block. At most FIVE FLAT COLORS, palette provided below. Centered inside square canvas, ONE logical pixel clear margin, fully opaque foreground and true ALPHA-ZERO transparent background. Hard stepped edges and deliberately placed clusters, no smoothing, half pixels, antialiasing, gradients, blur, halo, glow cloud, shadow plate, grain or texture noise.\nShown at10-25screenpixels, so subject must be bold and minimal, readable instantly. No written text, letters, digits, characters, floor, background tile, UI frame or watermark. ONE PARTICLE ONLY, not a contact sheet or animation.\nHIT SPARK. 24x24 logicalgrid,384x384export. ONE FOUR-POINT STAR BURST, clear cardinal points UP/DOWN/LEFT/RIGHT, broad white central core, pale GOLD #ffe086 middle then GOLD #ffd257 long tapering points. Small hard top-left highlights and navy thin edge, not a solid round disk, cross with squared ends, sun with8rays or explosion cloud. EXACTLY TWO TINY LOOSE GOLD SPARK CLUSTERS, one near upper-right and one near lower-left, separated from star. Keep the four-point star dominant and centered, loose sparks only1-2logicalpixels each. Clean warm wrench-impact pop.\nPALETTE: #2b3345 #ffffff #ffe086 #ffd257 #c79a3e",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/deflect-flash.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ready-pop.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/note.png"
+      ],
+      "save": "art/fx/marks/src/spark-hit-v1.png"
+    },
+    {
+      "id": "spark-hurt-v1",
+      "grid": 24,
+      "scale": 16,
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#e67d73",
+        "#d8423c",
+        "#b85863"
+      ],
+      "subject": "HURT SPARK. 24x24 logicalgrid,384x384export. SAME family and FOUR-POINT STAR BURST overall pose as hit spark, but slightly JAGGED with short one-pixel nicks / serrations on its four cardinal rays. Broad WHITE CORE, PINK-RED #e67d73 middle, WARNING RED #d8423c outer points and darker red shadow. Keep4majorpoints, not a16-pointsun or blood drop. Two tiny loose pink-red sparks like hit variant. Bold readable damage flash, no gore, body or face.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-da18524a-b94f-4020-9cb0-804d2884c1df.png",
+      "prompt": "Use case: stylized-concept. Asset type: ONE SMALL STATIC COMBAT VFX PARTICLE for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY: deflect-flash, electric-hit and ready-pop are sprite sheets containing several effect frames; do NOT draw a sheet or multiple frames. note is an enemy projectile style reference, do NOT add a music note to the requested subject. Match crisp hand-placed pixel clusters, simple bold silhouette, thin ONE logical-pixel dark NAVY #2b3345 edging where needed, hard top-left light.\nPixel-art on specified logical grid, output EVERY logical pixel as an exact16x16block. At most FIVE FLAT COLORS, palette provided below. Centered inside square canvas, ONE logical pixel clear margin, fully opaque foreground and true ALPHA-ZERO transparent background. Hard stepped edges and deliberately placed clusters, no smoothing, half pixels, antialiasing, gradients, blur, halo, glow cloud, shadow plate, grain or texture noise.\nShown at10-25screenpixels, so subject must be bold and minimal, readable instantly. No written text, letters, digits, characters, floor, background tile, UI frame or watermark. ONE PARTICLE ONLY, not a contact sheet or animation.\nINPUT ROLE OVERRIDE: image1 is the HIT SPARK SHAPE REFERENCE. Keep its 4-point burst family and pose, but redraw it as a jagged red hurt variant. Other images are style only.\nHURT SPARK. 24x24 logicalgrid,384x384export. SAME family and FOUR-POINT STAR BURST overall pose as hit spark, but slightly JAGGED with short one-pixel nicks / serrations on its four cardinal rays. Broad WHITE CORE, PINK-RED #e67d73 middle, WARNING RED #d8423c outer points and darker red shadow. Keep4majorpoints, not a16-pointsun or blood drop. Two tiny loose pink-red sparks like hit variant. Bold readable damage flash, no gore, body or face.\nPALETTE: #2b3345 #ffffff #e67d73 #d8423c #b85863",
+      "references": [
+        "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-de889ee1-e81a-48ed-87ae-e972fbc91f4d.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/deflect-flash.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ready-pop.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/note.png"
+      ],
+      "save": "art/fx/marks/src/spark-hurt-v1.png"
+    },
+    {
+      "id": "puff-dust-v1",
+      "grid": 16,
+      "scale": 16,
+      "palette": [
+        "#2b3345",
+        "#f0e2c0",
+        "#b49f78",
+        "#fff4d6"
+      ],
+      "subject": "DUST PUFF. 16x16 logicalgrid,256x256export. ONE ROUND SOFT-LOOKING CLOUD PUFF made of THREE OVERLAPPING UNEQUAL ROUNDED BUMPS, one cohesive chunky silhouette. Cream #f0e2c0 body, sand #b49f78 shadow on BOTTOM RIGHT, a few pale cream #fff4d6 top-left clusters, thin navy outer edge. Three irregular stepped lobes, not three perfect circles or a cloud with many tiny scallops. No detached dust specks, trailing wisps, spirals or puffs outside the ONE connected cloud. Softness conveyed by rounded cluster contour, NOT blur or transparency.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-dde0e0a0-4650-4007-8cc6-a5f504a94dc9.png",
+      "prompt": "Use case: precise-object-edit. Input image1 is the dust puff to fix. KEEP its ONE CONNECTED CLOUD OUTER CONTOUR made of THREE UNEQUAL ROUNDED LOBES and thin NAVY #2b3345 outline. CHANGE ONLY INTERIOR FILL.\nRemove the dark blurry patch / translucent hole / fuzzy gradient in the centre completely. The whole cloud must be SOLID OPAQUE FLAT CREAM #f0e2c0, including the ENTIRE CENTRE. Add ONLY a few hard pale-cream #fff4d6 top-left pixel clusters, and one stepped SAND #b49f78 SHADOW BAND on BOTTOM RIGHT edge. No navy or grey at centre. No hole, swirl, centre shading, soft vignette, blur, texture, noise, opacity variation or gradient anywhere.\nDesigned on16x16 logicalpixelgrid, final256x256 exact16x16blocks. Hard crisp flat pixel shapes, solid foreground alpha255, background alpha0. One cloud only, no loose specks, no ring, face, symbols, text, UI frame, ground or watermark. FOUR COLORS ONLY #2b3345 #f0e2c0 #b49f78 #fff4d6. One logicalpixel empty margin. Soft-looking refers ONLY to rounded cloud silhouette; all drawing is hard pixel art.",
+      "initialPrompt": "Use case: stylized-concept. Asset type: ONE SMALL STATIC COMBAT VFX PARTICLE for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY: deflect-flash, electric-hit and ready-pop are sprite sheets containing several effect frames; do NOT draw a sheet or multiple frames. note is an enemy projectile style reference, do NOT add a music note to the requested subject. Match crisp hand-placed pixel clusters, simple bold silhouette, thin ONE logical-pixel dark NAVY #2b3345 edging where needed, hard top-left light.\nPixel-art on specified logical grid, output EVERY logical pixel as an exact16x16block. At most FIVE FLAT COLORS, palette provided below. Centered inside square canvas, ONE logical pixel clear margin, fully opaque foreground and true ALPHA-ZERO transparent background. Hard stepped edges and deliberately placed clusters, no smoothing, half pixels, antialiasing, gradients, blur, halo, glow cloud, shadow plate, grain or texture noise.\nShown at10-25screenpixels, so subject must be bold and minimal, readable instantly. No written text, letters, digits, characters, floor, background tile, UI frame or watermark. ONE PARTICLE ONLY, not a contact sheet or animation.\nDUST PUFF. 16x16 logicalgrid,256x256export. ONE ROUND SOFT-LOOKING CLOUD PUFF made of THREE OVERLAPPING UNEQUAL ROUNDED BUMPS, one cohesive chunky silhouette. Cream #f0e2c0 body, sand #b49f78 shadow on BOTTOM RIGHT, a few pale cream #fff4d6 top-left clusters, thin navy outer edge. Three irregular stepped lobes, not three perfect circles or a cloud with many tiny scallops. No detached dust specks, trailing wisps, spirals or puffs outside the ONE connected cloud. Softness conveyed by rounded cluster contour, NOT blur or transparency.\nPALETTE: #2b3345 #f0e2c0 #b49f78 #fff4d6",
+      "references": [
+        "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-b56295ae-e300-4419-a8c4-1197cbf52b03.png"
+      ],
+      "save": "art/fx/marks/src/puff-dust-v1.png"
+    },
+    {
+      "id": "pellet-enemy-v1",
+      "grid": 12,
+      "scale": 16,
+      "palette": [
+        "#2b3345",
+        "#b96b78",
+        "#fff4d6",
+        "#8a485c"
+      ],
+      "subject": "ENEMY SHOT. 12x12 logicalgrid,192x192export. ONE SMALL PERFECTLY ROUND TOY PELLET, viewed FRONT-ON. Pink-red #b96b78 round body with dark pink #8a485c lower-right shade, ONE small CREAM #fff4d6 top-left highlight and thin1logicalpixelnavyoutline. TINY NAVY SCREW SLOT crosses the centre, short simple DIAGONAL cut about2-3logicalpixels long; no eye or face. Circle about10logicalpixelsdiameter with1pixelmargin. No fins, wings, motion trail, outer ring, glow or shadow. Bold toy screw-head ball that sits beside the music-note shot.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-ac87d918-b8f4-4a1f-b437-a137fef2f9ca.png",
+      "prompt": "Use case: stylized-concept. Asset type: ONE SMALL STATIC COMBAT VFX PARTICLE for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY: deflect-flash, electric-hit and ready-pop are sprite sheets containing several effect frames; do NOT draw a sheet or multiple frames. note is an enemy projectile style reference, do NOT add a music note to the requested subject. Match crisp hand-placed pixel clusters, simple bold silhouette, thin ONE logical-pixel dark NAVY #2b3345 edging where needed, hard top-left light.\nPixel-art on specified logical grid, output EVERY logical pixel as an exact16x16block. At most FIVE FLAT COLORS, palette provided below. Centered inside square canvas, ONE logical pixel clear margin, fully opaque foreground and true ALPHA-ZERO transparent background. Hard stepped edges and deliberately placed clusters, no smoothing, half pixels, antialiasing, gradients, blur, halo, glow cloud, shadow plate, grain or texture noise.\nShown at10-25screenpixels, so subject must be bold and minimal, readable instantly. No written text, letters, digits, characters, floor, background tile, UI frame or watermark. ONE PARTICLE ONLY, not a contact sheet or animation.\nENEMY SHOT. 12x12 logicalgrid,192x192export. ONE SMALL PERFECTLY ROUND TOY PELLET, viewed FRONT-ON. Pink-red #b96b78 round body with dark pink #8a485c lower-right shade, ONE small CREAM #fff4d6 top-left highlight and thin1logicalpixelnavyoutline. TINY NAVY SCREW SLOT crosses the centre, short simple DIAGONAL cut about2-3logicalpixels long; no eye or face. Circle about10logicalpixelsdiameter with1pixelmargin. No fins, wings, motion trail, outer ring, glow or shadow. Bold toy screw-head ball that sits beside the music-note shot.\nPALETTE: #2b3345 #b96b78 #fff4d6 #8a485c",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/deflect-flash.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ready-pop.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/note.png"
+      ],
+      "save": "art/fx/marks/src/pellet-enemy-v1.png"
+    },
+    {
+      "id": "pellet-friendly-v1",
+      "grid": 12,
+      "scale": 16,
+      "palette": [
+        "#2b3345",
+        "#86c0ac",
+        "#fff4d6",
+        "#5c8f81"
+      ],
+      "subject": "BATTED-BACK SHOT. 12x12 logicalgrid,192x192export. EXACT SAME ROUND TOY PELLET AS ENEMY SHOT: same outer silhouette, same small cream top-left highlight, same navy outline and tiny diagonal central screw slot. Change ONLY pink-red body to TEAL #86c0ac and shadow to DEEP TEAL #5c8f81. Front-on circle about10logicalpixelsdiameter,1pixelmargin. No added arrow, sparkle, tail, wing, face or different shape. This must look like a recolor of the same projectile.",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-64994943-779e-445e-b7f7-c3d224574fa2.png",
+      "prompt": "Use case: precise-object-edit. Asset type: tiny pixel-art combat projectile. IMAGE1 is the ENEMY PELLET to recolor; remaining images are STYLE references ONLY.\nCHANGE ONLY TWO FILL COLORS: all pink-red body #b96b78 becomes TEAL #86c0ac, and all darker pink shadow #8a485c becomes DEEP TEAL #5c8f81. Preserve the exact same circle silhouette, bounding box, placement, cream top-left highlight, navy outline and diagonal screw slot pixel layout. Do not move or redraw any edge, mark, highlight or notch. It is the SAME projectile batted back.\n12x12 logicalgrid,192x192 final exact16x16blocks, circle10pixelsdiameter with1pixelmargin, centered, TRUE ALPHA TRANSPARENT background. Four colors ONLY navy #2b3345 teal #86c0ac cream #fff4d6 deep teal #5c8f81. Fully opaque foreground, no gradients, smoothing, antialiasing, blur, halo, half pixels, texture, glow or shadow plate. ONE round pellet only, no extra arrow, spark, tail, face, letters, numbers, characters, UI frame, tile, background or watermark. Recolor only, keep geometry identical.",
+      "references": [
+        "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-ac87d918-b8f4-4a1f-b437-a137fef2f9ca.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/deflect-flash.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ready-pop.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/note.png"
+      ],
+      "save": "art/fx/marks/src/pellet-friendly-v1.png",
+      "geometryTemplate": "pellet-enemy-v1"
+    }
+  ]
+}

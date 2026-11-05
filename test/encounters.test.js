@@ -68,12 +68,12 @@ test('every formation puts each body on open floor away from the player', () => 
 const affixRules = data.slice.eliteAffixes;
 const fight = seed => { const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(seed); return g; };
 
-test('elites carry traits only after the rest stop: one from the first rooms after it, two later on', () => {
-  const ids = rooms.map(r => r.id), one = ids.indexOf(affixRules.oneFrom), two = ids.indexOf(affixRules.twoFrom);
+test('elites carry traits only after the rest stop, and never more than one', () => {
+  const ids = rooms.map(r => r.id), one = ids.indexOf(affixRules.oneFrom);
   for (const seed of [3, 11, 101]) {
     dealRun(rooms, enemies, seed, affixRules).forEach((dealt, i) => {
       if (!dealt) return;
-      const want = i >= two ? 2 : i >= one ? 1 : 0;
+      const want = i >= one ? 1 : 0;
       dealt.waves.forEach((wave, w) => wave.forEach((type, b) => {
         const traits = dealt.affixes?.[w]?.[b];
         if (type !== 'elite' || !want) return assert.ok(!traits, `${rooms[i].id} ${type}`);
@@ -117,6 +117,14 @@ test('a brass shield blocks the front until it has taken enough blows', () => {
 const maps = JSON.parse(await readFile(new URL('../src/data/maps.json', import.meta.url), 'utf8'));
 const { dealHazards, hazardBox, plateState, sawAt } = await import('../src/engine/hazards.js');
 const { placeOf, fitsMap } = await import('../src/engine/map-geometry.js');
+
+test('the first three fight rooms ease the furniture in: a crate and a plate, then a few more, then the full set', () => {
+  const rules = data.slice.hazards, room = rooms.find(r => r.waves), map = placeOf(maps, maps.maps[room.id]);
+  const total = step => [1, 2, 3, 4, 5, 6, 7, 8].reduce((sum, seed) => sum + dealHazards(map, rules, seed, step).length, 0);
+  for (let seed = 1; seed <= 8; seed++) { const first = dealHazards(map, rules, seed, 0); assert.ok(first.length <= 2 && first.every(h => ['crate', 'plate'].includes(h.kind))); }
+  for (const step of [0, 1]) assert.ok(!dealHazards(map, rules, 5, step).some(h => h.kind === 'rail'));
+  assert.ok(total(0) < total(1) && total(1) < total(2) && total(2) <= total(3), [0, 1, 2, 3].map(total).join(' '));
+});
 
 test('every fight room gets its own hazards each run, on open floor and clear of the door and the portal', () => {
   const rules = data.slice.hazards;

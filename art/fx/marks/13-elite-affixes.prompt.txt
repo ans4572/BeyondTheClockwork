@@ -1,0 +1,32 @@
+Use case: game VFX stills (3 small elite-trait marks), new art.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Draw 3 SMALL MARKS that show an elite enemy's trait in Beyond the Clockwork, a cute wind-up toy-town roguelite. They sit round toy soldiers and wind-up rabbits about 40 screen pixels tall, and replace plain code shapes (a yellow line, small squares). The game turns, spins and blinks them itself, so each is one still.
+
+STYLE REFERENCES (match these exactly)
+- art\fx\marks\src\glyph-bell-v1.png, art\fx\marks\src\glyph-alert-v1.png, art\fx\marks\src\mark-gear-ring-v1.png: the marks of the same set.
+- art\ui\icons\px\gear.png: the game's brass gear.
+Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345), top-left light.
+Palette: brass #c79a3e, gold #ffd257 / #ffbe20, cream #fff4d6, warning red #d8423c / #e0564c, navy ink #2b3345, steel grey #8a8f9c. At most 5 colours each.
+
+DRAW EACH
+- Pixel art on the grid given, output with every grid pixel as an exact 16x16 block (no smoothing, no anti-aliasing, no half pixels).
+- TRANSPARENT background (PNG with alpha), centred, fully opaque pixels only, 1 grid pixel of empty margin.
+- No text, letters, numbers or characters.
+
+THE MARKS
+1) Brass shield (황동 방패: the elite blocks blows from the front; the game turns this to face where the elite looks).
+   A curved brass guard plate seen from ABOVE: a thick crescent band, 3 grid pixels thick, curving like a ")" bracket, its outer (convex) side facing RIGHT, the inner side hollow. Polished brass with a gold top edge, 3 round rivets along it, navy outline. Reads as "armour plate in front" at 16 pixels.
+   12 wide x 24 tall grid, output 192x384. SAVE: art\fx\marks\src\affix-shield-v1.png
+2) Splitter gear (분열: the elite breaks into small ones when it falls; three of these orbit round it).
+   One tiny brass gear, 6 teeth, a dark centre hole, gold highlight top-left, navy outline. Must read as a gear at 8 pixels.
+   10x10 grid, output 160x160. SAVE: art\fx\marks\src\affix-gear-v1.png
+3) Volatile bomb (자폭: the elite explodes when it falls; it floats over its head and blinks).
+   A small round toy bomb, navy-black body with a cream highlight top-left, a short brass cap on top, a curly fuse with a red-and-gold spark at its tip. Must read as a bomb at 12 pixels.
+   14x14 grid, output 224x224. SAVE: art\fx\marks\src\affix-bomb-v1.png
+
+RULES
+- All 3 in one consistent style with the references: the same outline weight, light direction, saturation and pixel density.
+
+When saved, list every SAVE path with its actual pixel size.

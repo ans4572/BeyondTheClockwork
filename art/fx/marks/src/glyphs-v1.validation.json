@@ -1,0 +1,128 @@
+[
+  {
+    "file": "art/fx/marks/src/glyph-suction-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1
+  },
+  {
+    "file": "art/fx/marks/src/glyph-magnet-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1
+  },
+  {
+    "file": "art/fx/marks/src/glyph-stomp-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1
+  },
+  {
+    "file": "art/fx/marks/src/glyph-bell-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 3
+  },
+  {
+    "file": "art/fx/marks/src/glyph-gap-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 2
+  },
+  {
+    "file": "art/fx/marks/src/glyph-alert-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1
+  },
+  {
+    "file": "art/fx/marks/src/glyph-chevrons-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1,
+    "redChevrons": 3,
+    "increasingHeights": [
+      6,
+      8,
+      13
+    ]
+  },
+  {
+    "file": "art/fx/marks/src/glyph-sticker-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "components": 1
+  }
+]

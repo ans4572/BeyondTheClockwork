@@ -31,4 +31,21 @@ export const FX = {
 };
 /** A note drawn for enemy shots (hand-made pixels, 24 x 28). */
 export const NOTE_ART = 'art/fx/note.png';
-export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART];
+/**
+ * Still pictures the renderer moves itself (turns, pulses, tints): floor marks seen from above, warning glyphs, sparks
+ * and shots. Prompts: art/fx/marks/9-floor-marks, 10-tell-glyphs, 11-particles (.prompt.txt). Until a file exists the
+ * plain code shape it replaces is drawn instead.
+ */
+/** Marks redrawn after a first try in the game (prompt 12); a new name so browsers never show the cached first one. */
+const REDRAWN = new Set(['glyph-stomp', 'glyph-suction', 'mark-land-lightning', 'mark-land-fire']);
+export const MARKS = Object.fromEntries(Object.entries({
+  landLightning: 'mark-land-lightning', landIce: 'mark-land-ice', landFire: 'mark-land-fire', danger: 'mark-danger',
+  gearRing: 'mark-gear-ring', spawn: 'mark-spawn-hatch', dial: 'mark-charge-dial', dangerPaint: 'tile-danger-paint',
+  suction: 'glyph-suction', magnet: 'glyph-magnet', stomp: 'glyph-stomp', bell: 'glyph-bell', gap: 'glyph-gap',
+  alert: 'glyph-alert', chevrons: 'glyph-chevrons', sticker: 'glyph-sticker',
+  affixShield: 'affix-shield',
+  sparkHit: 'spark-hit', sparkHurt: 'spark-hurt', dust: 'puff-dust', pelletEnemy: 'pellet-enemy', pelletFriendly: 'pellet-friendly',
+}).map(([key, file]) => [key, `art/fx/marks/${file}-${REDRAWN.has(file) ? 'v2' : 'v1'}.png`]));
+/** Loot flies home as the coin and gear of the HUD (art/ui/icons/px). */
+export const LOOT_ART = { coin: 'art/ui/icons/px/coin.png', gear: 'art/ui/icons/px/gear.png' };
+export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART, ...Object.values(MARKS), ...Object.values(LOOT_ART)];

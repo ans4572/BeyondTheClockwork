@@ -1,0 +1,65 @@
+[
+  {
+    "file": "art/fx/marks/src/affix-shield-v1.png",
+    "width": 192,
+    "height": 384,
+    "grid": [
+      12,
+      24
+    ],
+    "blockSize": 16,
+    "uniformBlocks": true,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "minimumMarginPixels": 16,
+    "rivets": 3,
+    "convexSide": "right"
+  },
+  {
+    "file": "art/fx/marks/src/affix-gear-v1.png",
+    "width": 160,
+    "height": 160,
+    "grid": [
+      10,
+      10
+    ],
+    "blockSize": 16,
+    "uniformBlocks": true,
+    "colors": 3,
+    "alpha": [
+      0,
+      255
+    ],
+    "minimumMarginPixels": 16,
+    "teeth": 6,
+    "toothPositions": [
+      "12",
+      "2",
+      "4",
+      "6",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "file": "art/fx/marks/src/affix-bomb-v1.png",
+    "width": 224,
+    "height": 224,
+    "grid": [
+      14,
+      14
+    ],
+    "blockSize": 16,
+    "uniformBlocks": true,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "minimumMarginPixels": 16,
+    "redSparkPresent": true
+  }
+]

@@ -1,0 +1,184 @@
+{
+  "tool": "built-in image_gen",
+  "commonPrompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.",
+  "references": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+  ],
+  "grid": 24,
+  "scale": 16,
+  "width": 384,
+  "height": 384,
+  "margin": 1,
+  "alpha": "binary",
+  "icons": [
+    {
+      "id": "glyph-suction-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "SUCTION: THREE CURVED ARROWS sweep from RIGHT toward a SMALL ROUND MOUTH / INTAKE on the LEFT. All three arrowheads clearly POINT LEFT / INWARD toward that mouth: upper arc curves down-left, middle is shallow curved left, lower arc curves up-left. Compact fan shape, not a circle around itself. Mouth is a tiny navy open centre in a cream/brass circular rim at left. Arrows broad CREAM/BRASS with navy outlines and a little warning-red at arrowhead if useful. Three readable inward arrows, clear gaps; do not make a recycling emblem or arrows pointing away from mouth. No face, monster, lips or letters.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nSUCTION: THREE CURVED ARROWS sweep from RIGHT toward a SMALL ROUND MOUTH / INTAKE on the LEFT. All three arrowheads clearly POINT LEFT / INWARD toward that mouth: upper arc curves down-left, middle is shallow curved left, lower arc curves up-left. Compact fan shape, not a circle around itself. Mouth is a tiny navy open centre in a cream/brass circular rim at left. Arrows broad CREAM/BRASS with navy outlines and a little warning-red at arrowhead if useful. Three readable inward arrows, clear gaps; do not make a recycling emblem or arrows pointing away from mouth. No face, monster, lips or letters.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-15bed5d7-38d0-4686-9587-0b069134a720.png",
+      "save": "art/fx/marks/src/glyph-suction-v1.png"
+    },
+    {
+      "id": "glyph-magnet-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "MAGNET: ONE BOLD RED HORSESHOE MAGNET, arch on TOP and TWO POLES POINTING DOWN. Warning-red body with small pink-red shadow, cream/brass pole tips, navy outline. TWO SMALL PULL-LINES directly BELOW the open poles, one beneath each, pointing toward the magnet / suggesting inward attraction. No lightning, ice, arrows circling magnet or attached object. Large simple U silhouette and clearly separated short pull marks, readable16px.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nMAGNET: ONE BOLD RED HORSESHOE MAGNET, arch on TOP and TWO POLES POINTING DOWN. Warning-red body with small pink-red shadow, cream/brass pole tips, navy outline. TWO SMALL PULL-LINES directly BELOW the open poles, one beneath each, pointing toward the magnet / suggesting inward attraction. No lightning, ice, arrows circling magnet or attached object. Large simple U silhouette and clearly separated short pull marks, readable16px.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-d272b495-2fcb-4f66-8c3b-09213d35892a.png",
+      "save": "art/fx/marks/src/glyph-magnet-v1.png"
+    },
+    {
+      "id": "glyph-stomp-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "STOMP: ONE HEAVY CHUNKY TOY BOOT SOLE coming DOWN, dominant brass/cream sole at BOTTOM, compact warning-red upper/cuff and navy heavy body. Side / slight underside view, obvious broad flat sole and short thick boot, no leg. TWO SHORT IMPACT STREAKS, ONE at LEFT and ONE at RIGHT near bottom sole, suggesting a heavy downward stomp. No motion arc, wing, clock, speed tail or floor plate. Dense heavy boot shape, not the magnet or a footstep print.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nSTOMP: ONE HEAVY CHUNKY TOY BOOT SOLE coming DOWN, dominant brass/cream sole at BOTTOM, compact warning-red upper/cuff and navy heavy body. Side / slight underside view, obvious broad flat sole and short thick boot, no leg. TWO SHORT IMPACT STREAKS, ONE at LEFT and ONE at RIGHT near bottom sole, suggesting a heavy downward stomp. No motion arc, wing, clock, speed tail or floor plate. Dense heavy boot shape, not the magnet or a footstep print.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-56eb1ab2-85d1-4d7c-908b-03fef04626a6.png",
+      "save": "art/fx/marks/src/glyph-stomp-v1.png"
+    },
+    {
+      "id": "glyph-bell-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "BELL: ONE BRASS HAND BELL RINGING. Short small handle at TOP, rounded flared brass/gold bell body, broad cream/gold lower lip, tiny dark navy clapper. TWO SMALL CURVED RING-LINES, one beside LEFT and one beside RIGHT, clearly separate from bell. No clock face, gear, ribbon or numbers. Simple squat brass bell silhouette with cream top-left highlight, readable16px.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nBELL: ONE BRASS HAND BELL RINGING. Short small handle at TOP, rounded flared brass/gold bell body, broad cream/gold lower lip, tiny dark navy clapper. TWO SMALL CURVED RING-LINES, one beside LEFT and one beside RIGHT, clearly separate from bell. No clock face, gear, ribbon or numbers. Simple squat brass bell silhouette with cream top-left highlight, readable16px.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-17304080-7c03-4855-9496-4561af6d1d36.png",
+      "save": "art/fx/marks/src/glyph-bell-v1.png"
+    },
+    {
+      "id": "glyph-gap-v1",
+      "palette": [
+        "#2b3345",
+        "#fff4d6",
+        "#3fbf7f",
+        "#c79a3e"
+      ],
+      "subject": "SAFE GAP: ONE CREAM CURVED WAVE / BARRIER ARC BROKEN IN ITS MIDDLE, and a SMALL GREEN ARROW #3fbf7f PASSING UP THROUGH THE CENTRAL BREAK. Two cream quarter-arc segments curve on LEFT and RIGHT, separated by a clear central opening about5-6logicalpixels wide. Bold green UPWARD arrow occupies that opening, pointing from below barrier to above it. Thin navy outline around arc segments and arrow. Keep shapes large and few, green is the SAFE color. No red or fire, no circle surrounding arrow, no cross, door, text or clock. Reads as passage through a gap, not a shield or umbrella.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nSAFE GAP: ONE CREAM CURVED WAVE / BARRIER ARC BROKEN IN ITS MIDDLE, and a SMALL GREEN ARROW #3fbf7f PASSING UP THROUGH THE CENTRAL BREAK. Two cream quarter-arc segments curve on LEFT and RIGHT, separated by a clear central opening about5-6logicalpixels wide. Bold green UPWARD arrow occupies that opening, pointing from below barrier to above it. Thin navy outline around arc segments and arrow. Keep shapes large and few, green is the SAFE color. No red or fire, no circle surrounding arrow, no cross, door, text or clock. Reads as passage through a gap, not a shield or umbrella.\nPalette: #2b3345 #fff4d6 #3fbf7f #c79a3e",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-7930c189-d572-490f-b149-5c537cef16b9.png",
+      "save": "art/fx/marks/src/glyph-gap-v1.png"
+    },
+    {
+      "id": "glyph-alert-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "ALERT: ONE BOLD CREAM TRIANGULAR WARNING SIGN, point at TOP, broad flat base, dark navy stepped outline. LARGE WARNING-RED EXCLAMATION PICTOGRAM inside: thick vertical red stem with ONE separate red square dot below, enough cream space around it. Exclamation is a GRAPHIC WARNING SYMBOL, not typeset text. No other letters, numbers, extra badges or sign post. Strong triangular silhouette, readable16px.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nALERT: ONE BOLD CREAM TRIANGULAR WARNING SIGN, point at TOP, broad flat base, dark navy stepped outline. LARGE WARNING-RED EXCLAMATION PICTOGRAM inside: thick vertical red stem with ONE separate red square dot below, enough cream space around it. Exclamation is a GRAPHIC WARNING SYMBOL, not typeset text. No other letters, numbers, extra badges or sign post. Strong triangular silhouette, readable16px.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-4c06f997-c233-4be6-abd3-38041250d095.png",
+      "save": "art/fx/marks/src/glyph-alert-v1.png"
+    },
+    {
+      "id": "glyph-chevrons-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "CHARGE DIRECTION: EXACTLY THREE SEPARATE RED CHEVRONS in ONE HORIZONTAL ROW, ALL POINT RIGHT. Size grows clearly LEFT TO RIGHT: left small, middle medium, right LARGE. Same vertical centre. Dark navy outline, warning red solid interior, tiny pink-red shadow if useful. Visible transparent gap between each. Compact bold angular arrowhead bands, NO shafts and NO extra fourth chevron, no triangle sign or text. At24logicalgrid, use roughly4/5/7pixel widths and8/12/18pixel heights, ensure the small chevron still has a readable red core and navy edge at16px.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nCHARGE DIRECTION: EXACTLY THREE SEPARATE RED CHEVRONS in ONE HORIZONTAL ROW, ALL POINT RIGHT. Size grows clearly LEFT TO RIGHT: left small, middle medium, right LARGE. Same vertical centre. Dark navy outline, warning red solid interior, tiny pink-red shadow if useful. Visible transparent gap between each. Compact bold angular arrowhead bands, NO shafts and NO extra fourth chevron, no triangle sign or text. At24logicalgrid, use roughly4/5/7pixel widths and8/12/18pixel heights, ensure the small chevron still has a readable red core and navy edge at16px.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-31e26b65-7812-43c1-9b64-c9f1cd62f8aa.png",
+      "save": "art/fx/marks/src/glyph-chevrons-v1.png"
+    },
+    {
+      "id": "glyph-sticker-v1",
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "DEFECTIVE STICKER: ONE CREAM PAPER LABEL with a BOLD RED BORDER, one corner PEELING UP to show a small brass/cream triangular folded underside. In centre a LARGE RED REJECTION CROSS STAMP made of TWO THICK CROSSING DIAGONAL STROKES. This is a graphic crossed-out stamp, not a written letter or word. Dark navy paper silhouette outline, slightly irregular paper corner, no realistic text or microtext. Mostly square/rectangular label, different from triangular alert sign. Corner peeling should be simple and visible at16px.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE small pixel-art WARNING GLYPH for Beyond the Clockwork, cute wind-up toy-town roguelite. It floats over red-hatched attack zones, shown at16-18screenpixels.\nInput1 shock and input2 burn are SMALL-SIZE STYLE / WEIGHT references only. Input3 lock and input4 action-wrench are OUTLINE / TOP-LEFT MATERIAL SHADING references only. Do not draw their subjects. New requested pictogram only.\nDesign on EXACT24x24 LOGICAL PIXEL GRID, final384x384 with each logical pixel exact16x16block. ONE centered BOLD compact silhouette, ONE logical pixel empty margin. Thin1logicalpixel NAVY #2b3345 outline, thick enough main shapes to survive16px. Few large stepped clusters and clear negative spaces, no fiddly details, no grain. At most SIX FLAT COLORS from the provided palette. Cream contrast and navy edges must remain readable over a red hatch pattern.\nTop-left hard highlights, same saturation and logical pixel density as references. Crisp PIXEL ART only, no smoothing, half pixels, antialiasing, gradients, soft shadows, bloom, fuzzy halo or translucency. All visible pixels fully opaque; background true ALPHA ZERO.\nNo written text, letters, numbers, characters, UI slot frame, background tile, ground, shadow plate or watermark. Requested pictogram symbols such as graphic arrows, exclamation and rejection-cross are allowed where specified, but no typography. ONE GLYPH ONLY, not a contact sheet or multiple variants.\nDEFECTIVE STICKER: ONE CREAM PAPER LABEL with a BOLD RED BORDER, one corner PEELING UP to show a small brass/cream triangular folded underside. In centre a LARGE RED REJECTION CROSS STAMP made of TWO THICK CROSSING DIAGONAL STROKES. This is a graphic crossed-out stamp, not a written letter or word. Dark navy paper silhouette outline, slightly irregular paper corner, no realistic text or microtext. Mostly square/rectangular label, different from triangular alert sign. Corner peeling should be simple and visible at16px.\nPalette: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/shock.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/status-icons/burn.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/lock-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-087352b3-75ec-4db8-b9d9-6d7d9a84ce66.png",
+      "save": "art/fx/marks/src/glyph-sticker-v1.png"
+    }
+  ]
+}

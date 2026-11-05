@@ -1553,9 +1553,8 @@
     }
   ],
   "eliteAffixes": {
-    "note": "Traits dealt onto elites per run (src/engine/encounters.js). Rooms from oneFrom get one trait per elite, from twoFrom two.",
+    "note": "Traits dealt onto elites per run (src/engine/encounters.js). Rooms from oneFrom on give each elite one trait, never more.",
     "oneFrom": "stop-08",
-    "twoFrom": "stop-10",
     "bonusCoins": 3,
     "list": [
       { "id": "overwound", "name": "가속", "color": "#d68c25", "speed": 1.35, "recovery": 0.65 },
@@ -1567,6 +1566,12 @@
   },
   "hazards": {
     "note": "Room furniture dealt per run onto every fight room's floor (src/engine/hazards.js).",
+    "rampNote": "The first fight rooms of a run, in order, ease the furniture in: each entry overrides counts (and the saw rails' chance). From the fourth fight on, counts apply as they are.",
+    "ramp": [
+      { "counts": { "crate": [1, 1], "plate": [1, 1], "fence": [0, 0], "musicbox": [0, 0] }, "railChance": 0 },
+      { "counts": { "crate": [1, 2], "plate": [1, 2], "fence": [0, 0], "musicbox": [0, 1] }, "railChance": 0 },
+      { "counts": { "crate": [1, 2], "plate": [1, 1], "fence": [0, 1], "musicbox": [0, 0], "rail": [2, 2] }, "railChance": 0.5 }
+    ],
     "counts": { "crate": [2, 3], "plate": [1, 2], "rail": [2, 3], "fence": [1, 1], "musicbox": [0, 1] },
     "spreadTries": 12,
     "doorClear": 3.5,

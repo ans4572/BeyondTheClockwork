@@ -1,0 +1,104 @@
+[
+  {
+    "file": "art/fx/marks/src/glyph-stomp-v2.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "bounds": {
+      "width": 352,
+      "height": 320
+    },
+    "minMargin": 16
+  },
+  {
+    "file": "art/fx/marks/src/glyph-suction-v2.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "bounds": {
+      "width": 320,
+      "height": 352
+    },
+    "minMargin": 16
+  },
+  {
+    "file": "art/fx/marks/src/mark-land-lightning-v2.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "minMargin": 16,
+    "continuousBrightRing": true,
+    "openCentre": true,
+    "cardinalBrightPixelCounts": [
+      4,
+      5,
+      5,
+      3
+    ],
+    "firstBandRuns": {
+      "left": 3,
+      "right": 3,
+      "top": 3,
+      "bottom": 3
+    }
+  },
+  {
+    "file": "art/fx/marks/src/mark-land-fire-v2.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "minMargin": 16,
+    "continuousBrightRing": true,
+    "openCentre": true,
+    "cardinalBrightPixelCounts": [
+      3,
+      3,
+      11,
+      12
+    ],
+    "firstBandRuns": {
+      "left": 3,
+      "right": 3,
+      "top": 9,
+      "bottom": 12
+    },
+    "hotColorShare": 0.8874824191279888,
+    "scorchPixels": 31
+  }
+]

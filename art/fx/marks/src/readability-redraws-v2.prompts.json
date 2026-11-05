@@ -1,0 +1,105 @@
+{
+  "tool": "built-in image_gen",
+  "commonPrompt": "Use case: stylized-concept. Asset type: ONE production pixel-art GAME WARNING / VFX MARK for Beyond the Clockwork, cute wind-up toy-town roguelite. This is a readability REDRAW of a misread older design.\nInput images are STYLE REFERENCES ONLY, not subjects to reproduce. Match crisp intentional hand-placed pixel clusters, thin ONE logical-pixel NAVY #2b3345 silhouette outline, hard TOP LEFT light, saturation and chunky logical pixel density. Keep the requested NEW subject shape clear at small sizes.\nDraw on specified logical grid and export exact square blocks. True ALPHA TRANSPARENT background, all visible pixels FULLY OPAQUE, centered with at least one logicalpixelclear margin (two for floor marks). No smoothing, antialiasing, half opacity, gradients, blur, bloom, halo, texture noise or shadow plate. Use only provided flat palette, maximum6colors for glyphs /7for floor marks.\nNo text, letters, digits, characters, background tile, slot frame, scenery, ground plane or watermark. Any specifically requested short ground line is part of the stomp symbol only. ONE picture only, not a contact sheet or animation.",
+  "styleReferences": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-alert-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-bell-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-magnet-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-land-ice-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-danger-v1.png"
+  ],
+  "alpha": "binary",
+  "icons": [
+    {
+      "id": "glyph-stomp-v2",
+      "grid": 24,
+      "scale": 16,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-alert-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-bell-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-magnet-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "STOMP GLYPH. 24x24logicalgrid,384x384PNG exact16x16blocks, must read as a BOOT STOMP at16px.\nONE CHUNKY TOY BOOT in CLEAN TRUE SIDE VIEW, TOE POINTS RIGHT, heel at LEFT. Classic readable L-SHAPED BOOT: tall RED #d8423c ankle shaft on the left/rear, lower rounded toe projecting to the RIGHT, BRASS #c79a3e thick horizontal SOLE underneath, CLEAR SQUARE HEEL BLOCK and small heel notch. No tilted sole-facing view, no big round rivet, no eye-like buckle, no helmet/hat shape, no bird. Keep red boot upper one large clear shape.\nBoot coming STRAIGHT DOWN onto ONE SHORT FLAT NAVY GROUND LINE just below sole. TWO SHORT IMPACT LINES at EACH SIDE of sole, four small strokes total splaying outward. ONE SMALL SHALLOW CURVED SHOCK ARC under the ground line, no full floor circle. Those are small subordinate accents; the side boot must remain large and instantly identifiable. Cream top-left highlight, brass/gold sole, navy outline, red shadow. No leg, wings, clock or other shoe.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE production pixel-art GAME WARNING / VFX MARK for Beyond the Clockwork, cute wind-up toy-town roguelite. This is a readability REDRAW of a misread older design.\nInput images are STYLE REFERENCES ONLY, not subjects to reproduce. Match crisp intentional hand-placed pixel clusters, thin ONE logical-pixel NAVY #2b3345 silhouette outline, hard TOP LEFT light, saturation and chunky logical pixel density. Keep the requested NEW subject shape clear at small sizes.\nDraw on specified logical grid and export exact square blocks. True ALPHA TRANSPARENT background, all visible pixels FULLY OPAQUE, centered with at least one logicalpixelclear margin (two for floor marks). No smoothing, antialiasing, half opacity, gradients, blur, bloom, halo, texture noise or shadow plate. Use only provided flat palette, maximum6colors for glyphs /7for floor marks.\nNo text, letters, digits, characters, background tile, slot frame, scenery, ground plane or watermark. Any specifically requested short ground line is part of the stomp symbol only. ONE picture only, not a contact sheet or animation.\nSTOMP GLYPH. 24x24logicalgrid,384x384PNG exact16x16blocks, must read as a BOOT STOMP at16px.\nONE CHUNKY TOY BOOT in CLEAN TRUE SIDE VIEW, TOE POINTS RIGHT, heel at LEFT. Classic readable L-SHAPED BOOT: tall RED #d8423c ankle shaft on the left/rear, lower rounded toe projecting to the RIGHT, BRASS #c79a3e thick horizontal SOLE underneath, CLEAR SQUARE HEEL BLOCK and small heel notch. No tilted sole-facing view, no big round rivet, no eye-like buckle, no helmet/hat shape, no bird. Keep red boot upper one large clear shape.\nBoot coming STRAIGHT DOWN onto ONE SHORT FLAT NAVY GROUND LINE just below sole. TWO SHORT IMPACT LINES at EACH SIDE of sole, four small strokes total splaying outward. ONE SMALL SHALLOW CURVED SHOCK ARC under the ground line, no full floor circle. Those are small subordinate accents; the side boot must remain large and instantly identifiable. Cream top-left highlight, brass/gold sole, navy outline, red shadow. No leg, wings, clock or other shoe.\nPALETTE: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-0abb0d03-5976-4842-8484-95d85eecb67e.png",
+      "save": "art/fx/marks/src/glyph-stomp-v2.png"
+    },
+    {
+      "id": "glyph-suction-v2",
+      "grid": 24,
+      "scale": 16,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-alert-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-bell-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/glyph-magnet-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#b85863",
+        "#fff4d6",
+        "#c79a3e",
+        "#ffd257"
+      ],
+      "subject": "SUCTION GLYPH. 24x24logicalgrid,384x384PNG exact16x16blocks. ONE BOLD SPIRAL SWIRL, about ONE AND A HALF TURNS, winding into a SMALL DARK ROUND HOLE at centre. Continuous CREAM #fff4d6 spiral ribbon TWO LOGICAL PIXELS THICK plus thin navy outline, clear transparent negative space separating the turns. Very simple chunky whirlpool / inward suction, not three feeding curves, fork or whisk.\nPut EXACTLY TWO SMALL RED #d8423c ARROWHEADS ON THE OUTER TURN, pointing TANGENTIALLY ALONG the spiral's inward winding direction: one on right side pointing DOWN, one near bottom pointing LEFT for a clockwise inward swirl. Arrowheads are embedded accents on same spiral, no long separate arrow shafts. Centre dark hole diameter about3logicalpixels. Keep transparent gaps and readable cream spiral at16px. No three lines meeting at a point, no brass intake mouth on the side, no letter or number.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE production pixel-art GAME WARNING / VFX MARK for Beyond the Clockwork, cute wind-up toy-town roguelite. This is a readability REDRAW of a misread older design.\nInput images are STYLE REFERENCES ONLY, not subjects to reproduce. Match crisp intentional hand-placed pixel clusters, thin ONE logical-pixel NAVY #2b3345 silhouette outline, hard TOP LEFT light, saturation and chunky logical pixel density. Keep the requested NEW subject shape clear at small sizes.\nDraw on specified logical grid and export exact square blocks. True ALPHA TRANSPARENT background, all visible pixels FULLY OPAQUE, centered with at least one logicalpixelclear margin (two for floor marks). No smoothing, antialiasing, half opacity, gradients, blur, bloom, halo, texture noise or shadow plate. Use only provided flat palette, maximum6colors for glyphs /7for floor marks.\nNo text, letters, digits, characters, background tile, slot frame, scenery, ground plane or watermark. Any specifically requested short ground line is part of the stomp symbol only. ONE picture only, not a contact sheet or animation.\nSUCTION GLYPH. 24x24logicalgrid,384x384PNG exact16x16blocks. ONE BOLD SPIRAL SWIRL, about ONE AND A HALF TURNS, winding into a SMALL DARK ROUND HOLE at centre. Continuous CREAM #fff4d6 spiral ribbon TWO LOGICAL PIXELS THICK plus thin navy outline, clear transparent negative space separating the turns. Very simple chunky whirlpool / inward suction, not three feeding curves, fork or whisk.\nPut EXACTLY TWO SMALL RED #d8423c ARROWHEADS ON THE OUTER TURN, pointing TANGENTIALLY ALONG the spiral's inward winding direction: one on right side pointing DOWN, one near bottom pointing LEFT for a clockwise inward swirl. Arrowheads are embedded accents on same spiral, no long separate arrow shafts. Centre dark hole diameter about3logicalpixels. Keep transparent gaps and readable cream spiral at16px. No three lines meeting at a point, no brass intake mouth on the side, no letter or number.\nPALETTE: #2b3345 #d8423c #b85863 #fff4d6 #c79a3e #ffd257",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-751d2124-c1ca-4463-88be-2373a93324d6.png",
+      "save": "art/fx/marks/src/glyph-suction-v2.png"
+    },
+    {
+      "id": "mark-land-lightning-v2",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-land-ice-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-danger-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#e9bd59",
+        "#ffe086",
+        "#fff4d6",
+        "#ffffff",
+        "#c79a3e"
+      ],
+      "subject": "LIGHTNING LANDING FLOOR MARK.64x64logicalgrid,512x512PNG exact8x8blocks.\nSTRICT STRAIGHT-ABOVE ORTHOGRAPHIC VIEW, PERFECT CIRCLE, equal horizontal/vertical diameter, no ellipse/perspective. A STRONG UNBROKEN CONTINUOUS CIRCULAR BAND of LIGHTNING YELLOW #e9bd59. Colored band is THREE LOGICAL PIXELS THICK everywhere, PLUS ONE NAVY PIXEL OUTLINE ON BOTH INNER AND OUTER EDGES. Pale yellow #ffe086 / cream highlights along top-left band, no dark gaps, holes, broken fragments or scattered dotted ring. It must read as strongly as the reference ice ring on pale paving.\nFOUR BOLD ZIGZAG LIGHTNING BOLTS jump INWARD from the band, at FOUR DIAGONALS only: upper-right,lower-right,lower-left,upper-left (45/135/225/315degrees). Each colored bolt TWO LOGICAL PIXELS THICK, clear angular lightning, extends a short distance toward centre but never reaches it. A few tiny gold sparks near inner rim. LARGE CENTRE REMAINS COMPLETELY TRANSPARENT, do not fill disc or put icon in centre. All sparks stay within circular outer extent. No bolt at cardinal top/right/bottom/left, exactly4diagonalinwardbolts.",
+      "prompt": "Use case: precise-object-edit. Input1 is the bright continuous lightning circle to refine.\nKEEP its perfect top-view circle, palette, FOUR bold zigzag bolts pointing inward at FOUR DIAGONALS, tiny inner sparks and large transparent centre.\nCHANGE ONLY CIRCULAR BAND THICKNESS: the colored yellow band currently becomes about4pixels wide on64x64. Make it25percent THINNER, exactly THREE LOGICAL PIXELS OF YELLOW between ONE navy outer-edge pixel and ONE navy inner-edge pixel. Use the same OUTER diameter, move inner edge OUTWARD about1logicalpixel. At a cardinal cross-section on64grid: outside transparent, NAVY edge1pixel, YELLOW3pixels, NAVY edge1pixel, then transparent hole. Example at left horizontal centre: column2navy,columns3/4/5yellow,column6navy,holefrom7. Right symmetric. Bold yellow colour MUST remain continuous all around with no cuts or navy gaps, highlights stillyellow/palecolors. Do NOT reduce the4diagonalboltwidth: retain TWO colored pixels for each bolt, reconnect roots to ring. No extra bolts, no large new sparks.\nOuter silhouette must be a PERFECT CIRCLE with equal diameters, no notch, ellipse or perspective. Draw64x64logicalpixelart for512x512export exact8x8blocks. TWO logicalpixelmargin, solid opaque pixels/truealpha0background, atmost6colors #2b3345 #e9bd59 #ffe086 #fff4d6 #ffffff #c79a3e. Hard stepped pixelart only, no blur, glow, gradients, smoothing, antialiasing, text, numbers, ground, shadow or watermark. Preserve all design except make colored band exactly3pixels rather than4.",
+      "initialPrompt": "Use case: stylized-concept. Asset type: ONE production pixel-art GAME WARNING / VFX MARK for Beyond the Clockwork, cute wind-up toy-town roguelite. This is a readability REDRAW of a misread older design.\nInput images are STYLE REFERENCES ONLY, not subjects to reproduce. Match crisp intentional hand-placed pixel clusters, thin ONE logical-pixel NAVY #2b3345 silhouette outline, hard TOP LEFT light, saturation and chunky logical pixel density. Keep the requested NEW subject shape clear at small sizes.\nDraw on specified logical grid and export exact square blocks. True ALPHA TRANSPARENT background, all visible pixels FULLY OPAQUE, centered with at least one logicalpixelclear margin (two for floor marks). No smoothing, antialiasing, half opacity, gradients, blur, bloom, halo, texture noise or shadow plate. Use only provided flat palette, maximum6colors for glyphs /7for floor marks.\nNo text, letters, digits, characters, background tile, slot frame, scenery, ground plane or watermark. Any specifically requested short ground line is part of the stomp symbol only. ONE picture only, not a contact sheet or animation.\nLIGHTNING LANDING FLOOR MARK.64x64logicalgrid,512x512PNG exact8x8blocks.\nSTRICT STRAIGHT-ABOVE ORTHOGRAPHIC VIEW, PERFECT CIRCLE, equal horizontal/vertical diameter, no ellipse/perspective. A STRONG UNBROKEN CONTINUOUS CIRCULAR BAND of LIGHTNING YELLOW #e9bd59. Colored band is THREE LOGICAL PIXELS THICK everywhere, PLUS ONE NAVY PIXEL OUTLINE ON BOTH INNER AND OUTER EDGES. Pale yellow #ffe086 / cream highlights along top-left band, no dark gaps, holes, broken fragments or scattered dotted ring. It must read as strongly as the reference ice ring on pale paving.\nFOUR BOLD ZIGZAG LIGHTNING BOLTS jump INWARD from the band, at FOUR DIAGONALS only: upper-right,lower-right,lower-left,upper-left (45/135/225/315degrees). Each colored bolt TWO LOGICAL PIXELS THICK, clear angular lightning, extends a short distance toward centre but never reaches it. A few tiny gold sparks near inner rim. LARGE CENTRE REMAINS COMPLETELY TRANSPARENT, do not fill disc or put icon in centre. All sparks stay within circular outer extent. No bolt at cardinal top/right/bottom/left, exactly4diagonalinwardbolts.\nPALETTE: #2b3345 #e9bd59 #ffe086 #fff4d6 #ffffff #c79a3e",
+      "refinementReference": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-974d2c91-39bf-4ac8-a541-af496fe56f45.png",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-063dc0c3-49d8-42a4-9775-23e429f4781c.png",
+      "save": "art/fx/marks/src/mark-land-lightning-v2.png"
+    },
+    {
+      "id": "mark-land-fire-v2",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-land-ice-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/marks/src/mark-danger-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#e8742f",
+        "#ef8a61",
+        "#ffe086",
+        "#5a3a2a",
+        "#fff4d6",
+        "#c9552b"
+      ],
+      "subject": "FIRE LANDING FLOOR MARK.64x64logicalgrid,512x512PNG exact8x8blocks.\nSTRICT STRAIGHT-ABOVE ORTHOGRAPHIC VIEW, PERFECT CIRCLE, equal horizontal/vertical diameter, no ellipse/perspective. One STRONG CONTINUOUS RING BAND THREE LOGICAL PIXELS THICK in BRIGHT ORANGE #e8742f / PALE ORANGE #ef8a61, with small PALE YELLOW #ffe086 HOT SPOTS. Thin ONE NAVY #2b3345 outline. ORANGE MUST DOMINATE, NOT brown. A VERY THIN SCORCH LINE #5a3a2a only along outer edge, never a broad brown band; at least70percent of ring's colored surface orange/pale-orange/hot-yellow. Read instantly as FIRE, not soil or a burnt dirt stain.\nEXACTLY SIX SHORT FLAME TONGUES LICK INWARD from six evenly spread points around ring. Small orange pointed curling tips with yellow cores, not tall vertical flames or an exterior aura. A few tiny embers inside rim. LARGE CENTRE STAYS ALPHA TRANSPARENT, no filled disc or central fireball. All tiny embers within circle. No broken/dotted ring; opaque crisp colored band all around with hand-placed hot clusters. Match strength and weight of reference ice/danger marks.",
+      "prompt": "Use case: precise-object-edit. Input1 is the bright orange fire landing ring. KEEP its hot orange palette, EXACTLY SIX inward flame tongues, tiny embers, empty transparent centre and crisp pixel-art style.\nCHANGE ONLY BASE CIRCULAR BAND THICKNESS / OUTER CONTOUR: colored band is currently4-5pixels wide on64x64, reduce it to THREE LOGICAL PIXELS (about25-30percent thinner), moving inner band edge OUTWARD while keeping main OUTER CIRCLE diameter fixed. At a cross-section away from6tongues: one navy outer edge pixel, THREE ORANGE/PALE-ORANGE/YELLOW colored pixels, one navy inner edge pixel, then empty transparent floor. Color must stay continuous all around. Preserve same SIX short inward licking flames with yellow cores and reattach to thinner band. Do not thin the flame tongues or erase any.\nOuter silhouette must be a clean PERFECT CIRCLE. REMOVE the tiny brown/navy spike protruding outside ring at12oclock and6oclock, so the main circle has equal horizontal/vertical diameter. Scorch #5a3a2a ONLY as a very thin sparse line/pixel accents on outer boundary, never broad brown fill. HOT ORANGE #e8742f and PALE ORANGE #ef8a61 with YELLOW #ffe086 hotspots dominate at least70percent of colored pixels.\n64x64logicalgrid for512x512export exact8x8blocks, TWO logicalpixelmargin, solid opaque foreground and truealpha0background. Atmost7colors #2b3345 #e8742f #ef8a61 #ffe086 #5a3a2a #fff4d6 #c9552b. No glow/halo, blur, gradients, antialiasing, smoothing, noise, text, numbers, ground, shadow, tile or watermark. One top-view circular mark only. Preserve six inward flames, only make ring band3pixels and circular outer edge.",
+      "initialPrompt": "Use case: stylized-concept. Asset type: ONE production pixel-art GAME WARNING / VFX MARK for Beyond the Clockwork, cute wind-up toy-town roguelite. This is a readability REDRAW of a misread older design.\nInput images are STYLE REFERENCES ONLY, not subjects to reproduce. Match crisp intentional hand-placed pixel clusters, thin ONE logical-pixel NAVY #2b3345 silhouette outline, hard TOP LEFT light, saturation and chunky logical pixel density. Keep the requested NEW subject shape clear at small sizes.\nDraw on specified logical grid and export exact square blocks. True ALPHA TRANSPARENT background, all visible pixels FULLY OPAQUE, centered with at least one logicalpixelclear margin (two for floor marks). No smoothing, antialiasing, half opacity, gradients, blur, bloom, halo, texture noise or shadow plate. Use only provided flat palette, maximum6colors for glyphs /7for floor marks.\nNo text, letters, digits, characters, background tile, slot frame, scenery, ground plane or watermark. Any specifically requested short ground line is part of the stomp symbol only. ONE picture only, not a contact sheet or animation.\nFIRE LANDING FLOOR MARK.64x64logicalgrid,512x512PNG exact8x8blocks.\nSTRICT STRAIGHT-ABOVE ORTHOGRAPHIC VIEW, PERFECT CIRCLE, equal horizontal/vertical diameter, no ellipse/perspective. One STRONG CONTINUOUS RING BAND THREE LOGICAL PIXELS THICK in BRIGHT ORANGE #e8742f / PALE ORANGE #ef8a61, with small PALE YELLOW #ffe086 HOT SPOTS. Thin ONE NAVY #2b3345 outline. ORANGE MUST DOMINATE, NOT brown. A VERY THIN SCORCH LINE #5a3a2a only along outer edge, never a broad brown band; at least70percent of ring's colored surface orange/pale-orange/hot-yellow. Read instantly as FIRE, not soil or a burnt dirt stain.\nEXACTLY SIX SHORT FLAME TONGUES LICK INWARD from six evenly spread points around ring. Small orange pointed curling tips with yellow cores, not tall vertical flames or an exterior aura. A few tiny embers inside rim. LARGE CENTRE STAYS ALPHA TRANSPARENT, no filled disc or central fireball. All tiny embers within circle. No broken/dotted ring; opaque crisp colored band all around with hand-placed hot clusters. Match strength and weight of reference ice/danger marks.\nPALETTE: #2b3345 #e8742f #ef8a61 #ffe086 #5a3a2a #fff4d6 #c9552b",
+      "refinementReference": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-9d6cd2e3-8663-4868-9db4-39a8634f9f38.png",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-18b78eaa-3951-4eaa-876e-8ef52722cd4c.png",
+      "save": "art/fx/marks/src/mark-land-fire-v2.png"
+    }
+  ]
+}

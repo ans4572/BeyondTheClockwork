@@ -13,6 +13,8 @@ export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 /** Modes in which the player is still in a run room (fighting, choosing a reward, walking to the portal). */
 const ROOM_MODES = new Set(['combat', 'reward', 'route', 'unwind']);
 const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, PORTAL_REACH_UNITS = 1, LEAVE_REFUSED_UNITS = 1.5, DIRECT_UNITS = 2, LAST_WAVE_ALREADY_PLAYED = 99, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
+/** The floor mark a placed skill shows before it lands: fire first (the furnace), then frost, then lightning. */
+const floorMark = (elements = []) => ['fire', 'ice', 'lightning'].find(e => elements.includes(e)) || null;
 const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
 export function segmentDistance(p, a, b) {
@@ -250,7 +252,9 @@ export class Game {
       // Every run lays out its own crates, plates, saw rails, fences and music boxes on this floor.
       const rules = this.config.hazards;
       if (rules && map?.walkable && map.size) {
-        plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0);
+        // Which fight of the run this is: the first three ease the furniture in (slice.json hazards.ramp).
+        const step = this.config.rooms.slice(0, this.s.run.node).filter(r => r.waves).length;
+        plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0, step);
         this.s.hazards = plan.hazards.map(h => ({ ...h }));
       }
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
@@ -412,7 +416,7 @@ export class Game {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
     this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit, angle: attack.angle });
     // The third blow lands with a ring and a puff of dust where it first strikes.
-    if (heavy && !attack.waveShown) { attack.waveShown = true; this.effect('ring', enemy.x, enemy.y, '#fff4d6', 0.28, 1.2); this.effect('dust', enemy.x, enemy.y + enemy.radius * 0.6, '#b49f78', 0.45, 1); }
+    if (heavy && !attack.waveShown) { attack.waveShown = true; this.effect('ring', enemy.x, enemy.y, '#fff4d6', 0.4, 1.2, { look: 'quake' }); this.effect('dust', enemy.x, enemy.y + enemy.radius * 0.6, '#b49f78', 0.45, 1); }
     // A small burst of light where the wrench meets the body; the third blow throws a bigger one.
     this.effect('impact', enemy.x, enemy.y - 0.7, heavy ? '#ffd257' : '#fff4d6', heavy ? 0.22 : 0.14, heavy ? 1.3 : 0.8, { angle: attack.angle });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
@@ -583,7 +587,7 @@ export class Game {
     cast.x = clamp(cast.x, bounds.left, bounds.right); cast.y = clamp(cast.y, bounds.top, bounds.bottom);
     if (cast.shape === 'self' || cast.shape === 'moving' || cast.shape === 'cone' || cast.shape === 'dash' || cast.shape === 'crosscut') { cast.x = this.p.x; cast.y = this.p.y; }
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
-    if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId });
+    if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
     if (cast.shape === 'projectile') {
       for (let i = 0; i < skill.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (skill.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
     }
@@ -676,7 +680,7 @@ export class Game {
             if (cast.delayed) {
               const m = cast.delayed;
               this.s.casts.push({ ...cast, id: this.id('cast'), derived: true, delayed: null, shape: 'charge', follow: first.id, x: first.x, y: first.y, radius: m.radius, hits: 1, interval: 0, age: 0, pulse: 0, next: m.delay, damage: cast.damage * m.damageShare, finisher: 0, felt: false, staggerUsed: {}, hit: [], statusAt: {} });
-              this.effect('friendlyTell', first.x, first.y, cast.color, m.delay, m.radius);
+              this.effect('friendlyTell', first.x, first.y, cast.color, m.delay, m.radius, { mark: 'lightning' });
             }
             const jumps = cast.delayed ? [] : this.s.enemies.filter(e => e.hp > 0 && e.id !== first.id && distance(first, e) <= cast.chainRange).slice(0, cast.secondaryTargets);
             for (const e of jumps) this.castHit(cast, e, cast.secondaryDamage);
@@ -783,7 +787,7 @@ export class Game {
     if (b.failAt !== null) {
       // Out of time: a burst from the whole body, then the shield drops, the boss patches itself and the break waits again.
       if (now < b.failAt) return;
-      if (this.hurt(rule.failDamage)) this.effect('ring', enemy.x, enemy.y, '#a92f2b', 0.5, 9);
+      if (this.hurt(rule.failDamage)) this.effect('ring', enemy.x, enemy.y, '#a92f2b', 0.7, 9, { look: 'quake' });
       enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.maxHp * rule.failHeal);
       enemy.breaking = null; enemy.ready = now + enemy.recovery;
       this.notify(`${enemy.name}이(가) 몸을 고쳤습니다. 다시 깎아서 보호막을 깨세요.`); return;
@@ -799,7 +803,7 @@ export class Game {
       // The shield breaks: the boss stands stunned and open, and the next phase begins.
       enemy.breaking = null; enemy.breaksDone.push(b.index);
       enemy.exposedUntil = now + rule.stunSeconds; enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = now + rule.stunSeconds;
-      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.6, 3); this.notify(`보호막이 깨졌습니다! ${enemy.name}이(가) 멈췄습니다.`); return;
+      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.8, 3, { look: 'shieldBreak' }); this.notify(`보호막이 깨졌습니다! ${enemy.name}이(가) 멈췄습니다.`); return;
     }
     if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; b.lanes = []; }
   }
@@ -841,7 +845,7 @@ export class Game {
     if (b.phase !== 'play' || b.drums[i].done) return;
     if (b.order[b.next] === i) { b.drums[i].done = true; b.drums[i].flash = now + 0.3; b.next++; this.sense({ kind: 'hit' }); return; }
     for (const drum of b.drums) drum.done = false;
-    Object.assign(b, { phase: 'show', step: 0, stepAt: now + 0.6, next: 0 }); this.effect('ring', b.drums[i].x, b.drums[i].y, '#a92f2b', 0.3, 1); this.notify('순서가 틀렸습니다. 다시 보세요.');
+    Object.assign(b, { phase: 'show', step: 0, stepAt: now + 0.6, next: 0 }); this.effect('ring', b.drums[i].x, b.drums[i].y, '#a92f2b', 0.5, 1.2, { look: 'quake' }); this.notify('순서가 틀렸습니다. 다시 보세요.');
     void rule;
   }
   /** A swing during a break: bats cans back, strikes drums, knocks down soldiers it meets. */
@@ -1250,7 +1254,8 @@ export class Game {
   /** An elite's traits for this run (slice.json eliteAffixes): faster, a front shield, rats inside, an element it shrugs off, a bomb heart. */
   giveAffixes(enemy, affixes) {
     const rules = Object.fromEntries((this.config.eliteAffixes?.list || []).map(a => [a.id, a]));
-    enemy.affixes = affixes.filter(a => rules[a.id]).map(a => ({ ...a }));
+    // An elite never carries more than one trait, whatever an older save or a hand-made room asks for.
+    enemy.affixes = affixes.filter(a => rules[a.id]).slice(0, 1).map(a => ({ ...a }));
     for (const { id, element } of enemy.affixes) {
       const rule = rules[id];
       if (id === 'overwound') { enemy.speed *= rule.speed; enemy.recovery *= rule.recovery; }
@@ -1273,7 +1278,7 @@ export class Game {
       }
       if (id === 'volatile') {
         (this.s.blasts ??= []).push({ x: enemy.x, y: enemy.y, at: this.s.time + rule.delay, radius: rule.radius, damage: Math.round(rule.damage * (this.room?.power || 1)), enemyDamage: rule.enemyDamage });
-        this.effect('ring', enemy.x, enemy.y, '#d8423c', rule.delay, rule.radius);
+        this.effect('danger', enemy.x, enemy.y, '#d8423c', rule.delay, rule.radius);
       }
     }
     if (this.s.mode === 'combat' && this.s.run) this.giveLoot(0, (this.config.eliteAffixes?.bonusCoins || 0) * enemy.affixes.length);
@@ -1308,7 +1313,7 @@ export class Game {
   /** Light a crate's fuse (a blow, a shot, a blast); it goes off a moment later. */
   lightCrate(h, fuse = this.config.hazards.crate.fuse) {
     if (h.kind !== 'crate' || h.gone || h.fuseAt !== undefined) return;
-    h.fuseAt = this.s.time + fuse; this.effect('ring', h.x, h.y, '#d8423c', fuse, this.config.hazards.crate.radius);
+    h.fuseAt = this.s.time + fuse; this.effect('danger', h.x, h.y, '#d8423c', fuse, this.config.hazards.crate.radius);
   }
   blowCrate(h) {
     const rule = this.config.hazards.crate; h.gone = true;
@@ -1328,7 +1333,7 @@ export class Game {
       if (h.kind === 'crate') this.lightCrate(h);
       if (h.kind === 'musicbox' && !h.used) {
         h.used = true; this.heal(this.p.maxHp * this.config.hazards.musicbox.heal);
-        this.effect('ring', h.x, h.y, '#8fd8b0', 0.8, 1.6); this.effect('spark', this.p.x, this.p.y, '#8fd8b0', 0.6, 1, { look: 'ready', follow: true });
+        this.effect('ring', h.x, h.y, '#8fd8b0', 0.8, 1.6, { look: 'notes' }); this.effect('spark', this.p.x, this.p.y, '#8fd8b0', 0.6, 1, { look: 'ready', follow: true });
       }
     }
   }
@@ -1404,7 +1409,7 @@ export class Game {
     for (const [i, type] of types.entries()) {
       const spot = spots[i];
       run.arrivals.push({ type, x: spot.x, y: spot.y, at: this.s.time + waveWarnSeconds, affixes: run.plan?.[run.node]?.affixes?.[run.wave]?.[i] || null });
-      this.effect('friendlyTell', spot.x, spot.y, '#e0a03c', waveWarnSeconds, 0.7);
+      this.effect('friendlyTell', spot.x, spot.y, '#e0a03c', waveWarnSeconds, 0.7, { mark: 'spawn' });
     }
   }
   tickWaves() {

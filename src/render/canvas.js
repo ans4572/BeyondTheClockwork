@@ -7,7 +7,7 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
-import { FX, NOTE_ART } from './fx-sprites.js';
+import { FX, NOTE_ART, MARKS, LOOT_ART } from './fx-sprites.js';
 import { GROUND, sawAt, plateState } from '../engine/hazards.js';
 /** The music box's notes are drawn a little under their art size so a volley reads as shots, not as clutter. */
 const NOTE_SCALE = 0.8;
@@ -179,27 +179,16 @@ export class CanvasRenderer {
     }
     c.restore();
   }
-  /** An elite's traits as marks round its body: a glow at the feet, a brass shield arc, orbiting gears, a bomb heart. */
+  /**
+   * The one trait mark round an elite's body: the brass shield plate in front, turned to where it faces, because which side
+   * is guarded matters to the fight. The other traits show as the body's coloured outline and the name chips.
+   */
   drawAffixAura(enemy) {
-    const c = this.ctx, t = this.game.s.time, x = enemy.x * 20, y = enemy.y * 20, colors = this.game.config.presentation.colors;
-    for (const { id, element } of enemy.affixes) {
-      c.save();
-      if (id === 'overwound' || id === 'coated') {
-        c.globalAlpha = 0.45 + 0.15 * Math.sin(t * 6); c.fillStyle = id === 'coated' ? colors[element] || '#79cbd1' : '#ffbe20';
-        c.beginPath(); c.ellipse(x, y + 1, 15, 5, 0, 0, TAU); c.fill();
-      }
-      if (id === 'brassShield' && enemy.frontGuard > 0) {
-        const a = enemy.facing; c.lineWidth = 4; c.strokeStyle = '#2b3345';
-        c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke();
-        c.lineWidth = 2; c.strokeStyle = '#ffbe20'; c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke();
-      }
-      if (id === 'splitter') for (let i = 0; i < 3; i++) {
-        const a = t * 2.4 + i * TAU / 3, gx = x + Math.cos(a) * 15, gy = y - 16 + Math.sin(a) * 5;
-        c.fillStyle = '#2b3345'; c.fillRect(Math.round(gx) - 3, Math.round(gy) - 3, 6, 6); c.fillStyle = '#c79a3e'; c.fillRect(Math.round(gx) - 2, Math.round(gy) - 2, 4, 4);
-      }
-      if (id === 'volatile' && Math.sin(t * 9) > -0.2) { c.fillStyle = '#2b3345'; c.fillRect(Math.round(x) - 3, Math.round(y) - 22, 6, 6); c.fillStyle = '#e0564c'; c.fillRect(Math.round(x) - 2, Math.round(y) - 21, 4, 4); }
-      c.restore();
-    }
+    if (!(enemy.frontGuard > 0) || !enemy.affixes.some(a => a.id === 'brassShield')) return;
+    const c = this.ctx, x = enemy.x * 20, y = enemy.y * 20, a = enemy.facing;
+    if (this.drawMark('affixShield', x + Math.cos(a) * 15, y - 14 + Math.sin(a) * 8, 11, { angle: a })) return;
+    c.save(); c.lineWidth = 4; c.strokeStyle = '#2b3345'; c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke();
+    c.lineWidth = 2; c.strokeStyle = '#ffbe20'; c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke(); c.restore();
   }
   /** The traits' names above the health bar: navy chips with the trait's colour as a stripe, so every name reads on any floor. */
   drawAffixTags(enemy, y) {
@@ -213,6 +202,32 @@ export class CanvasRenderer {
       this.text(tag.text, x + 3 + (widths[i] - 3) / 2, y + TAG_SIZE + 0.5, '#fff4d6', TAG_SIZE);
       x += widths[i] + 2;
     });
+  }
+  /** Each trait's colour, in order: an element coating takes its element's colour. */
+  affixColors(enemy) {
+    const rules = this.game.config.eliteAffixes?.list || [], colors = this.game.config.presentation.colors;
+    return enemy.affixes.map(({ id, element }) => element ? colors[element] : rules.find(r => r.id === id)?.color).filter(Boolean);
+  }
+  /**
+   * An elite's body edged in its traits' colours: the sprite's own silhouette, filled with a colour, laid one sheet pixel
+   * out in eight directions under the body (a second trait adds a second ring outside the first). It pulses gently.
+   */
+  drawOutline(x, y, pose, library, resize, colors) {
+    const clip = library?.clip(pose.action, pose.direction), image = clip && library.image(clip.sheet);
+    if (!image || typeof document === 'undefined' || !colors.length) return;
+    const { frameWidth: w, frameHeight: h, columns, anchor, scale } = clip, size = scale * resize * BODY_SCALE / 2;
+    const left = x - anchor[0] * size, top = y - anchor[1] * size, c = this.ctx;
+    const shape = this.outlineShape ??= document.createElement('canvas');
+    if (shape.width !== w || shape.height !== h) { shape.width = w; shape.height = h; }
+    const t = shape.getContext('2d');
+    c.save(); c.imageSmoothingEnabled = false; c.globalAlpha *= 0.8 + 0.2 * Math.sin(this.visualTime * 5);
+    for (let ring = Math.min(2, colors.length); ring >= 1; ring--) {
+      t.globalCompositeOperation = 'copy'; t.drawImage(image, pose.frame % columns * w, Math.floor(pose.frame / columns) * h, w, h, 0, 0, w, h);
+      t.globalCompositeOperation = 'source-in'; t.fillStyle = colors[ring - 1]; t.fillRect(0, 0, w, h);
+      const d = ring * Math.max(1, size);
+      for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]]) c.drawImage(shape, left + ox * d, top + oy * d, w * size, h * size);
+    }
+    c.restore();
   }
   drawStatuses(enemy, y) {
     const c = this.ctx, badges = this.statusBadges(enemy), width = ({ count }) => BADGE_SIZE + BADGE_GAP + (count > 1 ? COUNT_WIDTH : 0);
@@ -356,10 +371,36 @@ export class CanvasRenderer {
    */
   drawLandingMark(fx, x, y, fraction) {
     const c = this.ctx, r = fx.value * 20, flat = 0.55;
+    // With its element's floor mark painted (lightning, frost, embers, or the hatch an enemy climbs out of), the mark turns
+    // slowly and firms up toward the hit; the closing ring still keeps the time.
+    const art = { lightning: 'landLightning', ice: 'landIce', fire: 'landFire', spawn: 'spawn' }[fx.mark];
+    if (art && this.mark(art)) {
+      const grow = fx.mark === 'spawn' ? 0.6 + 0.4 * Math.min(1, fraction * 3) : 1;
+      // A faint wash of the skill's colour under the mark, so the whole reach reads and not only its rim.
+      if (fx.mark !== 'spawn') { c.save(); c.globalAlpha = 0.12 + 0.14 * fraction; c.fillStyle = fx.color; c.beginPath(); c.ellipse(x, y, r, r * flat, 0, 0, TAU); c.fill(); c.restore(); }
+      this.drawMark(art, x, y, r * 2 * grow, { flat, angle: fx.mark === 'spawn' ? 0 : this.visualTime * 0.8, alpha: 0.55 + 0.45 * fraction });
+      c.save(); c.translate(x, y); c.scale(1, flat);
+      for (const [w, col] of [[4, '#2b3345'], [2, fx.mark === 'spawn' ? '#ffd257' : '#fff4d6']]) { c.globalAlpha = 0.5 + 0.5 * fraction; c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.arc(0, 0, Math.max(2, r * fraction), 0, TAU); c.stroke(); }
+      c.restore(); return;
+    }
     c.save(); c.translate(x, y); c.scale(1, flat);
     c.globalAlpha = 0.16 + 0.14 * fraction; c.fillStyle = fx.color; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
     c.globalAlpha = 0.85; c.strokeStyle = fx.color; c.lineWidth = 2; c.setLineDash([6, 5]); c.lineDashOffset = -this.visualTime * 18; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.stroke();
     c.setLineDash([]); c.globalAlpha = 0.5 + 0.5 * fraction; c.strokeStyle = '#fff4d6'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, Math.max(2, r * fraction), 0, TAU); c.stroke();
+    c.restore();
+  }
+  /**
+   * A blast about to go off (a lit crate, a volatile elite's death): the whole reach marked at once, blinking faster as the
+   * fuse burns, with a ring filling round its edge until the moment it blows.
+   */
+  drawDanger(fx, x, y, fraction) {
+    const c = this.ctx, r = fx.value * 20, flat = 0.55, blink = 0.5 + 0.5 * Math.sin(this.visualTime * (8 + 24 * fraction));
+    if (!this.drawMark('danger', x, y, r * 2, { flat, alpha: 0.45 + 0.35 * blink })) {
+      c.save(); c.translate(x, y); c.scale(1, flat); c.globalAlpha = 0.12 + 0.16 * blink; c.fillStyle = fx.color; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
+      c.globalAlpha = 0.9; c.strokeStyle = fx.color; c.lineWidth = 2; c.setLineDash([6, 4]); c.stroke(); c.restore();
+    }
+    c.save(); c.translate(x, y); c.scale(1, flat); c.lineCap = 'round';
+    for (const [w, col] of [[5, '#2b3345'], [3, fraction > 0.7 && blink > 0.5 ? '#fff4b7' : fx.color]]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.arc(0, 0, r, -Math.PI / 2, -Math.PI / 2 + TAU * fraction); c.stroke(); }
     c.restore();
   }
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
@@ -391,6 +432,46 @@ export class CanvasRenderer {
     c.drawImage(image, (f % fx.cols) * fx.w, Math.floor(f / fx.cols) * fx.h, fx.w, fx.h, -fx.anchor[0], -fx.anchor[1], fx.w, fx.h);
     c.restore(); return true;
   }
+  /** A still from MARKS (see fx-sprites.js), or undefined while it is not loaded or not drawn yet. */
+  mark(name) { return this.mapImages?.get(MARKS[name]); }
+  /**
+   * Draws a still centred on x, y, `width` render pixels wide. `flat` squashes a mark seen from above onto the floor;
+   * `tint` recolours a pale picture (cached per colour). False when the picture is missing, so the caller draws its shape.
+   */
+  drawMark(name, x, y, width, { flat = 1, angle = 0, alpha = 1, tint = null, smooth = false } = {}) {
+    let image = this.mark(name);
+    if (!image) return false;
+    if (tint) image = this.tinted(image, tint);
+    const c = this.ctx, height = width * image.height / image.width;
+    c.save(); c.globalAlpha *= alpha; c.translate(x, y); if (flat !== 1) c.scale(1, flat); if (angle) c.rotate(angle);
+    c.imageSmoothingEnabled = smooth; c.drawImage(image, -width / 2, -height / 2, width, height); c.restore();
+    return true;
+  }
+  /** A pale picture multiplied by `color`, its own transparency kept. Made once per picture and colour. */
+  tinted(image, color) {
+    this.tints ??= new Map();
+    const key = `${color}`, byImage = this.tints.get(image) || new Map();
+    this.tints.set(image, byImage);
+    if (byImage.has(key)) return byImage.get(key);
+    if (typeof document === 'undefined') return image;
+    const canvas = Object.assign(document.createElement('canvas'), { width: image.width, height: image.height }), t = canvas.getContext('2d');
+    t.drawImage(image, 0, 0); t.globalCompositeOperation = 'multiply'; t.fillStyle = color; t.fillRect(0, 0, canvas.width, canvas.height);
+    t.globalCompositeOperation = 'destination-in'; t.drawImage(image, 0, 0);
+    byImage.set(key, canvas); return canvas;
+  }
+  /** A small warning picture over a tell (suction, stomp, bell...); the old letters while it is missing. */
+  glyph(name, x, y, fallback, color = '#b85863', size = 11) {
+    if (!this.mark(name)) return this.text(fallback, x, y, color, size);
+    this.overlay(() => this.drawMark(name, x, y - 4, 24));
+  }
+  /**
+   * Draws later, over every body, at the place the current transform puts it: a tell's glyph sits on the floor zone but
+   * must not vanish under the boss or F2 standing in it.
+   */
+  overlay(draw) {
+    const m = this.ctx.getTransform?.();
+    (this.overlays ??= []).push(() => { const c = this.ctx; c.save(); if (m) c.setTransform(m); draw(); c.restore(); });
+  }
   /** A jagged spark of current between two points, redrawn each frame so it crackles. */
   zigzag(x1, y1, x2, y2, seed) {
     const c = this.ctx, n = 6, wobble = k => { const v = Math.sin(k * 91.7) * 43758.5; return v - Math.floor(v) - 0.5; };
@@ -401,7 +482,17 @@ export class CanvasRenderer {
   drawLook(fx, x, y, t) {
     const g = this.game, frameAt = name => t * FX[name].frames;
     switch (fx.look) {
-      case 'thrust': { const tx = fx.targetX * 20, ty = fx.targetY * 20, len = Math.hypot(tx - x, ty - y); return this.drawFxFrame('guardThrust', frameAt('guardThrust'), x, y - 8, { angle: Math.atan2(ty - y, tx - x), sx: Math.max(0.6, len / 36), sy: 1.4 }); }
+      case 'thrust': {
+        // A pike or claw shoots out along the line: a steel shaft grows to the far end with the jab picture (never stretched)
+        // riding its tip, holds a moment, then fades.
+        if (!this.mapImages?.get(FX.guardThrust.sheet)) return false;
+        const tx = fx.targetX * 20, ty = fx.targetY * 20 - 8, sy = y - 8, a = Math.atan2(ty - sy, tx - x), reach = Math.min(1, t / 0.25), c = this.ctx;
+        const hx = x + (tx - x) * reach, hy = sy + (ty - sy) * reach, fade = t < 0.6 ? 1 : 1 - (t - 0.6) / 0.4;
+        c.save(); c.globalAlpha *= fade; c.lineCap = 'round';
+        for (const [w, col] of [[5, '#2b3345'], [3, '#8a8f9c'], [1, '#d8dde2']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, sy); c.lineTo(hx - Math.cos(a) * 14, hy - Math.sin(a) * 14); c.stroke(); }
+        c.restore();
+        return this.drawFxFrame('guardThrust', frameAt('guardThrust'), hx - Math.cos(a) * 34, hy - Math.sin(a) * 34, { angle: a, sx: 1.2, sy: 1.2, alpha: fade });
+      }
       // The drum doll's beat: two gold rings and notes flying up (PixelLab), sized to the beat's reach.
       case 'drumBeat': { const k = fx.value * 20 / 54; return this.drawFxFrame('drumBeat', frameAt('drumBeat'), x, y, { sx: k, sy: k }); }
       case 'crateCrash': return this.drawFxFrame('crateCrash', frameAt('crateCrash'), x, y);
@@ -415,6 +506,22 @@ export class CanvasRenderer {
       case 'zapBig': return this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 20, { sx: 1.8, sy: 1.8 });
       case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
       case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
+      case 'zapLine': {
+        // Lightning runs along a saw rail: two crackling threads end to end, and a burst at each brass stop.
+        const tx = fx.targetX * 20, ty = fx.targetY * 20, seed = Math.floor(this.visualTime * 24);
+        this.zigzag(x, y - 2, tx, ty - 2, seed); if (t < 0.6) this.zigzag(x, y - 2, tx, ty - 2, seed + 41);
+        this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 10, { sx: 0.8, sy: 0.8 });
+        this.drawFxFrame('electricHit', frameAt('electricHit'), tx, ty - 10, { sx: 0.8, sy: 0.8 });
+        return true;
+      }
+      case 'shieldBreak': {
+        // A boss's shield gives: the cracked-floor shockwave under a big burst of brass sparks.
+        const k = fx.value * 20 / 44;
+        if (!this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: k, sy: k, alpha: 0.8 })) return false;
+        this.drawFxFrame('deflectFlash', frameAt('deflectFlash'), x, y - 30, { sx: 2.4, sy: 2.4 });
+        return true;
+      }
+      case 'notes': { const k = fx.value * 20 / 54; return this.drawFxFrame('drumBeat', frameAt('drumBeat'), x, y, { sx: k, sy: k }); }
       case 'dash': return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, alpha: 1 - t * 0.6 });
       case 'carpetRoll': {
         // A new live carpet unrolls from one end to the other, gold-edged, then stays lit while Brass lives.
@@ -656,12 +763,16 @@ export class CanvasRenderer {
       }
       if (s.drill) {
         const d = s.drill, still = d.steps[d.index] === 'still', left = Math.max(0, d.until - s.time);
-        c.save(); c.setLineDash([]); c.strokeStyle = still ? '#c43c36' : '#3fbf7f'; c.lineWidth = 3; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 18, 8, 0, 0, TAU); c.stroke(); c.restore();
+        if (!this.drawMark('gearRing', p.x * 20, p.y * 20, 40, { flat: 0.42, angle: still ? 0 : this.visualTime * 3, tint: still ? '#c43c36' : '#3fbf7f' })) { c.save(); c.setLineDash([]); c.strokeStyle = still ? '#c43c36' : '#3fbf7f'; c.lineWidth = 3; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 18, 8, 0, 0, TAU); c.stroke(); c.restore(); }
         this.text(still ? '멈춰!' : '앞으로!', enemy.x * 20, enemy.y * 20 - 70, still ? '#c43c36' : '#2f8a62', 13);
         this.rect(enemy.x * 20 - 20, enemy.y * 20 - 64, 40, 3, '#2b3345'); this.rect(enemy.x * 20 - 20, enemy.y * 20 - 64, 40 * left / d.rules.seconds, 3, still ? '#c43c36' : '#3fbf7f');
       }
-      if (enemy.alarmUntil > s.time) { c.save(); c.setLineDash([]); c.strokeStyle = Math.floor(s.time * 8) % 2 ? '#c43c36' : '#ffd257'; c.lineWidth = 3; c.beginPath(); c.arc(enemy.x * 20, enemy.y * 20, 40, 0, TAU); c.stroke(); c.restore(); this.drawAlert(enemy, enemy.y * 20 - 78); }
-      if (enemy.bellUntil > s.time) { c.save(); c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 16, 7, 0, 0, TAU); c.stroke(); c.restore(); }
+      if (enemy.alarmUntil > s.time) {
+        const col = Math.floor(s.time * 8) % 2 ? '#c43c36' : '#ffd257';
+        if (!this.drawMark('gearRing', enemy.x * 20, enemy.y * 20, 84, { flat: 0.5, angle: this.visualTime * 2, tint: col })) { c.save(); c.setLineDash([]); c.strokeStyle = col; c.lineWidth = 3; c.beginPath(); c.arc(enemy.x * 20, enemy.y * 20, 40, 0, TAU); c.stroke(); c.restore(); }
+        this.drawAlert(enemy, enemy.y * 20 - 78);
+      }
+      if (enemy.bellUntil > s.time && !this.drawMark('gearRing', p.x * 20, p.y * 20, 36, { flat: 0.42, angle: -this.visualTime * 2, tint: '#ffd257' })) { c.save(); c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 16, 7, 0, 0, TAU); c.stroke(); c.restore(); }
     }
   }
   drawTell(enemy) {
@@ -671,40 +782,46 @@ export class CanvasRenderer {
     const progress = Math.min(1, (g.s.time - tell.started) / (tell.until - tell.started));
     // Only bosses mark the floor with a filled shape, and even theirs stays faint; the outline carries it.
     c.save(); c.strokeStyle = '#b85863'; c.fillStyle = `rgba(190, 81, 95, ${enemy.boss ? 0.05 + progress * 0.08 : 0})`; c.lineWidth = 1.5; c.setLineDash([4, 3]);
-    const sector = (radius, degrees) => { c.beginPath(); c.moveTo(x, y); c.arc(x, y, radius * 20, tell.angle - degrees * Math.PI / 360, tell.angle + degrees * Math.PI / 360); c.closePath(); c.fill(); c.stroke(); };
-    const ring = (cx, cy, radius) => { c.beginPath(); c.arc(cx, cy, radius * 20, 0, TAU); c.fill(); c.stroke(); c.setLineDash([]); c.beginPath(); c.arc(cx, cy, radius * 20, -Math.PI / 2, -Math.PI / 2 + TAU * progress); c.lineWidth = 3; c.stroke(); };
+    // The danger is painted on the floor: red hatching (a tiled picture) inside a dashed edge with an ink shadow under it.
+    const hatch = this.mark('dangerPaint'), pattern = hatch && (this.hatchPattern?.image === hatch ? this.hatchPattern.pattern : (this.hatchPattern = { image: hatch, pattern: c.createPattern(hatch, 'repeat') }).pattern);
+    const paint = () => { c.fill(); if (pattern) { c.save(); c.globalAlpha = 0.16 + progress * 0.24; c.fillStyle = pattern; c.fill(); c.restore(); } };
+    const edge = () => { c.save(); c.setLineDash([]); c.globalAlpha = 0.4; c.strokeStyle = '#2b3345'; c.lineWidth += 2; c.stroke(); c.restore(); c.stroke(); };
+    const sector = (radius, degrees) => { c.beginPath(); c.moveTo(x, y); c.arc(x, y, radius * 20, tell.angle - degrees * Math.PI / 360, tell.angle + degrees * Math.PI / 360); c.closePath(); paint(); edge(); };
+    const box = (length, width) => { c.translate(x, y); c.rotate(tell.angle); c.beginPath(); c.rect(0, -width, length, width * 2); paint(); edge(); };
+    const ring = (cx, cy, radius) => { c.beginPath(); c.arc(cx, cy, radius * 20, 0, TAU); paint(); edge(); c.setLineDash([]); c.beginPath(); c.arc(cx, cy, radius * 20, -Math.PI / 2, -Math.PI / 2 + TAU * progress); c.lineWidth = 3; c.stroke(); };
+    // A count beside a glyph: '×3' stomps, '×5' stickers.
+    const counted = (name, fallback, count, gx, gy) => { if (this.mark(name)) { this.overlay(() => this.drawMark(name, gx - 7, gy - 4, 24)); this.text(`×${count}`, gx + 6, gy + 2, '#b85863', 10, 'left'); } else this.text(fallback, gx, gy, '#b85863', 11); };
     switch (tell.type) {
       case 'fan': case 'fanSecond': sector(ai.fanRange, ai.fanDegrees); break;
       case 'dash': this.line(x, y, x + Math.cos(tell.angle) * enemy.dashDistance * 20, y + Math.sin(tell.angle) * enemy.dashDistance * 20, '#b85863', 1); break;
       case 'claw': {
         const range = ai.clawLength, width = ai.clawWidth * 20;
-        c.translate(x, y); c.rotate(tell.angle); c.fillRect(0, -width, range * 20, width * 2); c.strokeRect(0, -width, range * 20, width * 2);
-        this.text('› › ›', range * 10, 3, '#b85863', 11); break;
+        box(range * 20, width); this.glyph('chevrons', range * 10, 3, '› › ›'); break;
       }
       case 'shot': this.line(x, y, tell.targetX * 20, tell.targetY * 20, '#b85863', 1); this.circle(x, y - 14, 1 + progress * 3, '#ffd257'); break;
-      case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.text('↓ 吸 ↓', tell.targetX * 20, tell.targetY * 20 + 3, '#b85863', 10); break;
-      case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.text('‹ ‹ 吸', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '#b85863', 11); break;
-      case 'stickers': this.text('불량 ×' + ai.stickerCount, x, y - 46, '#b85863', 11); break;
-      case 'stomp': ring(x, y, 1.2); this.text('쿵 ×' + ai.stompRings, x, y - 46, '#b85863', 11); break;
-      case 'charge': { const width = ai.chargeWidth * 20; c.translate(x, y); c.rotate(tell.angle); c.fillRect(0, -width, ai.chargeLength * 20, width * 2); c.strokeRect(0, -width, ai.chargeLength * 20, width * 2); this.text('» » »', ai.chargeLength * 10, 3, '#b85863', 11); break; }
+      case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.glyph('magnet', tell.targetX * 20, tell.targetY * 20 + 3, '↓ 吸 ↓', '#b85863', 10); break;
+      case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.glyph('suction', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '‹ ‹ 吸'); break;
+      case 'stickers': counted('sticker', '불량 ×' + ai.stickerCount, ai.stickerCount, x, y - 46); break;
+      case 'stomp': ring(x, y, 1.2); counted('stomp', '쿵 ×' + ai.stompRings, ai.stompRings, x, y - 46); break;
+      case 'charge': box(ai.chargeLength * 20, ai.chargeWidth * 20); this.glyph('chevrons', ai.chargeLength * 10, 3, '» » »'); break;
       case 'chargeHorn': sector(ai.hornRange, ai.hornDegrees); break;
-      case 'overcharge': ring(x, y, ai.overchargeRadius); this.text('!', x, y - 12, '#b85863', 15); break;
+      case 'overcharge': ring(x, y, ai.overchargeRadius); this.glyph('alert', x, y - 12, '!', '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
-      case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.text('!', tell.targetX * 20, tell.targetY * 20 + 4, '#b85863', 14); break;
+      case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.glyph('alert', tell.targetX * 20, tell.targetY * 20 + 4, '!', '#b85863', 14); break;
       case 'spin': this.line(x, y, x + Math.cos(tell.angle) * 80, y + Math.sin(tell.angle) * 80, '#b85863', 1.5); this.text('↻', x, y - 18, '#b85863', 12); break;
       case 'beat': c.strokeStyle = '#d9a43a'; ring(x, y, enemy.beatRadius); break;
       case 'thrust': case 'thrust2': {
         const length = (tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength) * 20, width = enemy.thrustWidth * 20;
-        c.translate(x, y); c.rotate(tell.angle); c.strokeRect(0, -width, length, width * 2); break;
+        c.fillStyle = 'rgba(0, 0, 0, 0)'; box(length, width); break;
       }
       case 'doubleWave': case 'eliteWave': ring(x, y, enemy.attackRange + (tell.type === 'eliteWave' ? enemy.followupRadiusBonus : 0)); break;
       case 'march': {
         for (const lane of g.marchLanes(enemy)) this.lanePath(lane, ai.marchWidth, true);
         break;
       }
-      case 'alarm': ring(x, y, 1.6); this.text('!', x, y - 44, '#b85863', 15); break;
-      case 'bell': ring(x, y, 1.6); this.text('종', x, y - 44, '#b85863', 12); break;
+      case 'alarm': ring(x, y, 1.6); this.glyph('alert', x, y - 44, '!', '#b85863', 15); break;
+      case 'bell': ring(x, y, 1.6); this.glyph('bell', x, y - 44, '종', '#b85863', 12); break;
       case 'column': this.columnPreview(); break;
       case 'crane':
         // Rings first: the crates change the fill colour the rings share.
@@ -727,7 +844,7 @@ export class CanvasRenderer {
         break;
       }
       case 'trumpetWave':
-        ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 72, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.text('틈', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '#67805b', 8); break;
+        ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 72, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.glyph('gap', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '틈', '#67805b', 8); break;
     }
     c.restore();
   }
@@ -771,7 +888,10 @@ export class CanvasRenderer {
     const streetPortal = ['hub', 'shop'].includes(s.mode) && g.village ? g.village.exit.portal : null;
     for (const spot of [portal, goal, streetPortal]) if (spot) this.marker(spot);
     this.minimapPlace = { map, mapImage, size, goal: goal || portal || streetPortal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
+    this.overlays = [];
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
+    // Marks painted on the floor (where a skill lands, a blast's reach, a hatch) lie under every body, like the tells.
+    for (const fx of s.effects) if (fx.type === 'friendlyTell' || fx.type === 'danger') { const fraction = Math.min(1, (s.time - fx.created) / fx.duration); if (fx.type === 'danger') this.drawDanger(fx, fx.x * 20, fx.y * 20, fraction); else this.drawLandingMark(fx, fx.x * 20, fx.y * 20, fraction); }
     // Bodies hastened and hardened by the drum: a gold ring at the feet and red arrows rising while it lasts.
     for (const enemy of s.enemies) if (enemy.hp > 0 && enemy.beatUntil > s.time) this.drawFxFrame('drumBuff', this.visualTime * 12 + enemy.x, enemy.x * 20, enemy.y * 20, { alpha: 0.9 });
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
@@ -788,7 +908,9 @@ export class CanvasRenderer {
       if (cast.shape === 'charge') {
         // A charge left on an enemy: a ring that closes in as the burst comes.
         const left = Math.max(0, cast.next - cast.age), share = left / (cast.delayed?.delay || 3) || left / 3, x = cast.x * 20, y = cast.y * 20 - 10;
-        c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore();
+        // A brass dial over the body whose gold hand sweeps round to the burst; a closing ring while the dial is missing.
+        if (this.drawMark('dial', x, y - 28, 18)) { const a = -Math.PI / 2 + TAU * (1 - Math.min(1, share)); c.save(); c.lineCap = 'round'; for (const [w, col] of [[3, '#2b3345'], [1.5, '#ffe086']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, y - 28); c.lineTo(x + Math.cos(a) * 6, y - 28 + Math.sin(a) * 6); c.stroke(); } c.restore(); }
+        else { c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore(); }
         if (!this.drawFxFrame('chargeArcs', this.visualTime * 12, x, y - 8)) { c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); }
       }
       if(cast.shape==='clamp'){
@@ -800,9 +922,19 @@ export class CanvasRenderer {
       if(cast.shape === 'orb' && !spriteFx){ const x=cast.x*20,y=cast.y*20-16; this.circle(x,y,9,'#a4c7b1');this.circle(x,y,5,'#dfca6a');this.line(x-5,y,x+4,y+3,'#fff1a2',2); }
       if (cast.shape === 'suction') {
         // The air rushing in: arcs that close toward Roco's mouth.
-        c.save(); c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5; const half = cast.degrees * Math.PI / 360;
-        for (let i = 0; i < 3; i++) { const r = (1 - ((cast.age * 1.6 + i / 3) % 1)) * cast.range * 20; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, Math.max(4, r), cast.angle - half, cast.angle + half); c.stroke(); }
-        c.restore();
+        const half = cast.degrees * Math.PI / 360;
+        if (this.mapImages?.get(FX.pressureDash.sheet)) {
+          // The pressure dash's wind turned round: five streams across the cone, each pulled in toward the mouth and thinning.
+          for (let i = 0; i < 5; i++) {
+            const k = (cast.age * 1.4 + i * 0.37) % 1, r = (1 - k) * cast.range * 20, a = cast.angle + (i / 4 - 0.5) * half * 1.4;
+            if (r < 12) continue;
+            this.drawFxFrame('pressureDash', this.visualTime * 12 + i * 3, cast.x * 20 + Math.cos(a) * r, cast.y * 20 + Math.sin(a) * r - 12, { angle: a + Math.PI, sx: 0.9, sy: 0.9, alpha: Math.min(1, k * 4) });
+          }
+        } else {
+          c.save(); c.strokeStyle = '#8c9fb0'; c.lineWidth = 1.5;
+          for (let i = 0; i < 3; i++) { const r = (1 - ((cast.age * 1.6 + i / 3) % 1)) * cast.range * 20; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, Math.max(4, r), cast.angle - half, cast.angle + half); c.stroke(); }
+          c.restore();
+        }
       }
       if (cast.shape === 'stompRing' && cast.age >= 0) {
         // A shock ring spreading over the floor, thinning as it goes.
@@ -812,8 +944,10 @@ export class CanvasRenderer {
       if (cast.shape === 'stickerFall') {
         // Where the next sticker lands: a ring closing in until it hits.
         const x = cast.x * 20, y = cast.y * 20, left = 1 - Math.min(1, cast.age / cast.warn);
-        c.save(); c.strokeStyle = '#b85863'; c.lineWidth = 1.5; c.setLineDash([4, 3]); c.beginPath(); c.arc(x, y, cast.radius * 20, 0, TAU); c.stroke();
-        c.setLineDash([]); c.lineWidth = 2; c.beginPath(); c.arc(x, y, cast.radius * 20 * (0.25 + left * 0.75), 0, TAU); c.stroke(); c.restore();
+        // The striped warning ring where it lands (a dashed circle while the picture is missing), and a ring closing in.
+        const marked = this.drawMark('danger', x, y, cast.radius * 40, { flat: 0.55, alpha: 0.55 + 0.35 * (1 - left) });
+        c.save(); c.strokeStyle = '#b85863'; c.lineWidth = 1.5; if (!marked) { c.setLineDash([4, 3]); c.beginPath(); c.arc(x, y, cast.radius * 20, 0, TAU); c.stroke(); }
+        c.setLineDash([]); c.lineWidth = 2; c.beginPath(); if (marked) c.ellipse(x, y, cast.radius * 20 * (0.25 + left * 0.75), cast.radius * 11 * (0.25 + left * 0.75), 0, 0, TAU); else c.arc(x, y, cast.radius * 20 * (0.25 + left * 0.75), 0, TAU); c.stroke(); c.restore();
       }
       if (cast.shape === 'sticker') {
         // A paper 'defective' label stuck to the floor, fading as it peels.
@@ -872,7 +1006,15 @@ export class CanvasRenderer {
         for (const [k, a] of [[0.9, 0.18], [0.45, 0.35]]) { c.globalAlpha = a; this.drawSprite((actor.x + Math.cos(back) * k) * 20, (actor.y + Math.sin(back) * k) * 20, playerPose, this.sprites, false, PLAYER_SCALE); }
         c.globalAlpha = alpha;
       }
+      // A dashing enemy (Brass's charge, a rabbit's lunge) trails two fading copies and kicks up dust behind its feet.
+      if (!actor.player && actor.dash && mobPose && !s.profile.settings.reducedMotion) {
+        const back = actor.dash.angle + Math.PI, alpha = c.globalAlpha, size = actor.boss ? BOSS_SPRITE_SCALE : 1;
+        for (const [k, a] of [[1.1, 0.2], [0.55, 0.38]]) { c.globalAlpha = a; this.drawSprite((actor.x + Math.cos(back) * k) * 20, (actor.y + Math.sin(back) * k) * 20, mobPose, this.mobSprites, false, size); }
+        c.globalAlpha = alpha;
+        for (let i = 0; i < 3; i++) { const k = 0.3 + i * 0.35, wob = Math.sin(this.visualTime * 20 + i * 2) * 3; this.drawMark('dust', (actor.x + Math.cos(back) * k) * 20 + wob, (actor.y + Math.sin(back) * k) * 20 - 3, (actor.boss ? 16 : 11) - i * 3, { alpha: 0.75 - i * 0.2, smooth: true }); }
+      }
       if (!actor.player && actor.affixes?.length && actor.hp > 0) this.drawAffixAura(actor);
+      if (!actor.player && actor.affixes?.length && actor.hp > 0 && mobPose) this.drawOutline(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.boss ? BOSS_SPRITE_SCALE : 1, this.affixColors(actor));
       const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;
@@ -890,6 +1032,7 @@ export class CanvasRenderer {
       const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction);
       this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54));
     }
+    for (const draw of this.overlays) draw();
     this.drawColumn(); this.drawParades(); this.drawBossState();
     const note = this.mapImages?.get(NOTE_ART);
     for (const bullet of s.projectiles) {
@@ -902,6 +1045,7 @@ export class CanvasRenderer {
         c.globalAlpha = 1; c.drawImage(note, Math.round(bx - w / 2), Math.round(by - 20 * k + bob), w, h);
         continue;
       }
+      if (this.drawMark(bullet.friendly ? 'pelletFriendly' : 'pelletEnemy', bx, by - 4, 10, { angle: this.visualTime * 8 })) continue;
       this.circle(bx, by, 4, bullet.friendly ? '#86c0ac' : '#b96b78'); this.circle(bx, by, 2, '#f7e6b0');
     }
     // Wrench buffs on the player: gold motes while a dash-charged blow is ready, rising arrows while scrap haste lasts.
@@ -916,7 +1060,12 @@ export class CanvasRenderer {
       if (spriteFx && fx.type === 'ring' && fx.skill && this.castEffects.effects?.[fx.skill]) continue;
       if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
-      if (fx.type === 'friendlyTell') { this.drawLandingMark(fx, x, y, fraction); continue; }
+      if (fx.type === 'friendlyTell' || fx.type === 'danger') continue;
+      // Sparks of a blow, a hurt and a dodge: painted stills that pop and fade; the old gear shape while they are missing.
+      if (['spark', 'hurt', 'dodge'].includes(fx.type) && !fx.look) {
+        const name = fx.type === 'spark' ? 'sparkHit' : fx.type === 'hurt' ? 'sparkHurt' : 'dust', pop = Math.min(1, fraction * 4);
+        if (this.drawMark(name, x, y - 10, (fx.type === 'dodge' ? 18 : 16) * fx.value * (0.7 + 0.5 * pop), { angle: fx.type === 'dodge' ? 0 : fraction * 1.2, alpha: 1 - fraction * fraction, smooth: true })) continue;
+      }
       // Blows and skills with a picture of their own play it; the plain shapes below are the fallback.
       if (fx.look && this.drawLook(fx, x, y, fraction)) continue;
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
@@ -932,16 +1081,18 @@ export class CanvasRenderer {
       if (fx.type === 'scrap') for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + i * 0.37, out = fraction * (18 + (i % 3) * 7), lift = fraction * 34 - fraction * fraction * 44; this.rect(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.55 - lift, i % 4 ? 3 : 4, i % 4 ? 3 : 2, i % 3 ? fx.color : '#8a8f9c'); }
       // A blow lands: a flash and short rays along the swing, gone in a few frames.
       // Dust thrown out low along the floor by the third blow.
-      if (fx.type === 'dust') for (let i = 0; i < 7; i++) { const a = i * TAU / 7 + 0.4, out = 6 + fraction * 22, r = 5 * (1 - fraction) + 1.5; c.globalAlpha = 0.75 * (1 - fraction); this.circle(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.4, r, fx.color); }
+      if (fx.type === 'dust') for (let i = 0; i < 7; i++) { const a = i * TAU / 7 + 0.4, out = 6 + fraction * 22, r = 5 * (1 - fraction) + 1.5, px = x + Math.cos(a) * out, py = y + Math.sin(a) * out * 0.4; if (this.drawMark('dust', px, py - r, r * 3.2, { alpha: 0.85 * (1 - fraction), smooth: true })) continue; c.globalAlpha = 0.75 * (1 - fraction); this.circle(px, py, r, fx.color); }
       // A kill's pay pops out of the body, then flies into the player: coins in gold, gears in brass.
       if (fx.type === 'loot') for (let i = 0; i < fx.value; i++) {
         const t = Math.max(0, Math.min(1, (fraction - i * 0.08) / 0.7)), pop = Math.min(1, t / 0.3), home = Math.max(0, (t - 0.3) / 0.7), ease = home * home * (3 - 2 * home);
         const sx = x + Math.cos(i * 2.1) * 10 * pop, sy = y - 12 * pop + Math.sin(i * 2.1) * 4, px = g.p.x * 20, py = g.p.y * 20 - 14;
         const lx = sx + (px - sx) * ease, ly = sy + (py - sy) * ease;
         c.globalAlpha = t >= 1 ? 0 : 1;
-        if (i < fx.gears) { this.circle(lx, ly, 3.5, '#a07a3c'); this.circle(lx, ly, 1.5, '#5c4630'); } else { this.circle(lx, ly, 3, '#c79a3e'); this.circle(lx, ly, 2, '#ffd257'); }
+        const icon = this.mapImages?.get(i < fx.gears ? LOOT_ART.gear : LOOT_ART.coin);
+        if (icon && t < 1) { c.imageSmoothingEnabled = true; c.drawImage(icon, Math.round(lx - 5), Math.round(ly - 5), 10, 10); c.imageSmoothingEnabled = false; }
+        else if (i < fx.gears) { this.circle(lx, ly, 3.5, '#a07a3c'); this.circle(lx, ly, 1.5, '#5c4630'); } else { this.circle(lx, ly, 3, '#c79a3e'); this.circle(lx, ly, 2, '#ffd257'); }
       }
-      if (fx.type === 'impact') { const r = fx.value * 10 * (0.6 + fraction); c.globalAlpha *= 1 - fraction; this.circle(x, y, r * 0.55 * (1 - fraction * 0.5), fx.color); for (let i = -2; i <= 2; i++) { const a = (fx.angle || 0) + i * 0.45; this.line(x + Math.cos(a) * r * 0.6, y + Math.sin(a) * r * 0.6, x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3, fx.color, 2); } }
+      if (fx.type === 'impact') { const r = fx.value * 10 * (0.6 + fraction); c.globalAlpha *= 1 - fraction; if (!this.drawMark('sparkHit', x, y, r * 2.2 * (1 - fraction * 0.4), { angle: (fx.angle || 0) + fraction, smooth: true })) this.circle(x, y, r * 0.55 * (1 - fraction * 0.5), fx.color); for (let i = -2; i <= 2; i++) { const a = (fx.angle || 0) + i * 0.45; this.line(x + Math.cos(a) * r * 0.6, y + Math.sin(a) * r * 0.6, x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3, fx.color, 2); } }
       c.restore();
     }
     if (s.mode === 'unwind') {
@@ -949,7 +1100,9 @@ export class CanvasRenderer {
       this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4); this.text(this.game.room?.boss === 'captainBrass' ? 'G · 태엽 감아 깨우기' : 'G · 회로 뽑기', x, y + 30, '#5c7462', 10);
     }
     // A player lost behind scenery shows through it, after every body so nothing repaints over them.
-    const ghost = ghostFor(playerHidden);
+    // ... and through a body standing in front of it: an enemy just below F2 on screen and close beside it covers the sprite.
+    const inFront = ['combat', 'route', 'reward', 'unwind'].includes(s.mode) && s.enemies.some(e => (e.hp > 0 || mobPoses?.has(e.id)) && !e.hidden && e.y > g.p.y && e.y - g.p.y < (e.boss ? 1.6 : 1.1) && Math.abs(e.x - g.p.x) < (e.boss ? 1.3 : 0.75));
+    const ghost = Math.max(ghostFor(playerHidden), inFront ? 0.45 : 0);
     if (ghost && playerPose) { c.globalAlpha = ghost; this.drawSprite(g.p.x * 20, g.p.y * 20, playerPose, this.sprites, false, PLAYER_SCALE); c.globalAlpha = 1; }
     if (this.lighting && mapImage) {
       const glow = { fire: 'rgba(255, 150, 70, 0.35)', lightning: 'rgba(255, 230, 120, 0.35)', ice: 'rgba(140, 210, 255, 0.28)' };

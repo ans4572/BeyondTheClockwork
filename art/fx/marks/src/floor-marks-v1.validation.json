@@ -1,0 +1,247 @@
+[
+  {
+    "file": "art/fx/marks/src/mark-land-lightning-v1.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "openCentre": true
+  },
+  {
+    "file": "art/fx/marks/src/mark-land-ice-v1.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "openCentre": true
+  },
+  {
+    "file": "art/fx/marks/src/mark-land-fire-v1.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "openCentre": true
+  },
+  {
+    "file": "art/fx/marks/src/mark-danger-v1.png",
+    "width": 512,
+    "height": 512,
+    "grid": 64,
+    "blockSize": 8,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 480,
+      "height": 480
+    },
+    "openCentre": true
+  },
+  {
+    "file": "art/fx/marks/src/mark-gear-ring-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "blockSize": 8,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 352,
+      "height": 352
+    },
+    "openCentre": true,
+    "outerToothCounts": [
+      {
+        "radius": 19,
+        "count": 15
+      },
+      {
+        "radius": 19.5,
+        "count": 16
+      },
+      {
+        "radius": 20,
+        "count": 16
+      },
+      {
+        "radius": 20.5,
+        "count": 16
+      },
+      {
+        "radius": 21,
+        "count": 15
+      }
+    ],
+    "teeth": 16
+  },
+  {
+    "file": "art/fx/marks/src/mark-spawn-hatch-v1.png",
+    "width": 256,
+    "height": 256,
+    "grid": 32,
+    "blockSize": 8,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 224,
+      "height": 224
+    }
+  },
+  {
+    "file": "art/fx/marks/src/mark-charge-dial-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 32,
+    "bounds": {
+      "width": 320,
+      "height": 320
+    },
+    "tickComponents": 12,
+    "ticks": 12,
+    "faceComponents": [
+      {
+        "pixels": 2,
+        "x": 12,
+        "y": 5.5
+      },
+      {
+        "pixels": 1,
+        "x": 9,
+        "y": 7
+      },
+      {
+        "pixels": 1,
+        "x": 15,
+        "y": 7
+      },
+      {
+        "pixels": 1,
+        "x": 6,
+        "y": 9
+      },
+      {
+        "pixels": 1,
+        "x": 18,
+        "y": 9
+      },
+      {
+        "pixels": 2,
+        "x": 5.5,
+        "y": 12
+      },
+      {
+        "pixels": 1,
+        "x": 12,
+        "y": 12
+      },
+      {
+        "pixels": 2,
+        "x": 18.5,
+        "y": 12
+      },
+      {
+        "pixels": 1,
+        "x": 6,
+        "y": 15
+      },
+      {
+        "pixels": 1,
+        "x": 18,
+        "y": 15
+      },
+      {
+        "pixels": 1,
+        "x": 9,
+        "y": 17
+      },
+      {
+        "pixels": 1,
+        "x": 15,
+        "y": 17
+      },
+      {
+        "pixels": 2,
+        "x": 12,
+        "y": 18.5
+      }
+    ]
+  },
+  {
+    "file": "art/fx/marks/src/tile-danger-paint-v1.png",
+    "width": 288,
+    "height": 288,
+    "grid": 36,
+    "blockSize": 8,
+    "colors": 1,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 0,
+    "bounds": {
+      "width": 288,
+      "height": 288
+    },
+    "seamless": true,
+    "strokeWidth": 2,
+    "transparentGap": 4,
+    "period": 6
+  }
+]

@@ -1,0 +1,32 @@
+Use case: game VFX stills (5 small particles), new art.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Draw 5 SMALL PARTICLES for Beyond the Clockwork, a cute wind-up toy-town roguelite. They replace plain code circles and gear shapes: the spark when a blow lands, the flash when F2 is hurt, the puff of a dodge and of dust, and the round shots enemies fire. The game pops, turns and fades them itself. Shown at 10-25 screen pixels in the middle of a fight, so each must be one bold readable shape.
+
+STYLE REFERENCES (match these exactly)
+- art\fx\deflect-flash.png, art\fx\electric-hit.png, art\fx\ready-pop.png: the game's spark art.
+- art\fx\note.png: the enemy music-note shot (the new shots sit beside it).
+Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345) where a shape needs edging, top-left light.
+
+DRAW EACH PARTICLE
+- Pixel art on the grid given, output with every grid pixel as an exact 16x16 block (no smoothing, no anti-aliasing, no half pixels).
+- TRANSPARENT background (PNG with alpha), centred, fully opaque pixels only, at most 5 colours.
+- No text, letters, numbers or characters.
+
+THE PARTICLES
+1) Hit spark (a wrench blow lands): a 4-point star burst, white core, pale gold (#ffe086) then gold (#ffd257) points, two tiny loose sparks. 24x24 grid, 384x384 output.
+   SAVE: art\fx\marks\src\spark-hit-v1.png
+2) Hurt spark (F2 takes a hit): the same star burst shape but jagged, white core, pink-red (#e67d73) to red (#d8423c) points. 24x24 grid, 384x384 output.
+   SAVE: art\fx\marks\src\spark-hurt-v1.png
+3) Dust puff: one round soft-looking cloud puff made of 3 overlapping bumps, cream (#f0e2c0) with a sand shadow (#b49f78) bottom-right and a navy outline. 16x16 grid, 256x256 output.
+   SAVE: art\fx\marks\src\puff-dust-v1.png
+4) Enemy shot: a small round toy pellet, pink-red (#b96b78) with a cream highlight top-left and a navy outline, a tiny screw slot across it. 12x12 grid, 192x192 output.
+   SAVE: art\fx\marks\src\pellet-enemy-v1.png
+5) Batted-back shot: the same pellet in teal (#86c0ac) with a cream highlight and a navy outline. 12x12 grid, 192x192 output.
+   SAVE: art\fx\marks\src\pellet-friendly-v1.png
+
+RULES
+- All 5 in one consistent style with the references above.
+
+When saved, list every SAVE path with its actual pixel size.

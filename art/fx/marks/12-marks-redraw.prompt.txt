@@ -1,0 +1,35 @@
+Use case: game VFX stills (4 redraws), replacing 4 of the marks from prompts 9 and 10.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Redraw 4 pictures for Beyond the Clockwork, a cute wind-up toy-town roguelite. Each one was tried in the game and misread; the reason and the fix are given. Keep everything else about them: grid, size, palette, outline and the style of the set they belong to.
+
+STYLE REFERENCES (match these exactly)
+- Glyphs: art\fx\marks\src\glyph-alert-v1.png, glyph-bell-v1.png, glyph-magnet-v1.png (the good ones of the same set).
+- Floor marks: art\fx\marks\src\mark-land-ice-v1.png and mark-danger-v1.png (the good ones of the same set).
+Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345), top-left light.
+
+THE REDRAWS
+1) STOMP glyph (a heavy stomp sends shock rings over the floor).
+   Was: art\fx\marks\src\glyph-stomp-v1.png. It reads as a red hat or a bird, not a stomp.
+   Now: ONE chunky toy boot seen from the SIDE, toe pointing right, brass sole (#c79a3e), red upper (#d8423c), coming straight DOWN onto a short flat navy ground line, with 2 short impact lines splaying out at each side of the sole and one small curved shock arc under it. The boot must read as a boot at 16 pixels: clear heel, sole and toe.
+   24x24 grid, 384x384 output (16x16 blocks). SAVE: art\fx\marks\src\glyph-stomp-v2.png
+2) SUCTION glyph (Roco breathes in and pulls F2 toward him).
+   Was: art\fx\marks\src\glyph-suction-v1.png. Three curves meeting at a point read as a fork or a whisk.
+   Now: ONE bold spiral swirl (about 1.5 turns, 2 grid pixels thick, cream #fff4d6 edged in navy) winding INTO a dark round hole at its centre, plus two short red (#d8423c) arrow heads on the outer turn pointing along the spiral inward. Reads as "pulled in" at 16 pixels. No lines that meet at one point.
+   24x24 grid, 384x384 output (16x16 blocks). SAVE: art\fx\marks\src\glyph-suction-v2.png
+3) LIGHTNING landing mark (축전 낙뢰, a bolt striking here soon). Seen from straight above, a perfect circle.
+   Was: art\fx\marks\src\mark-land-lightning-v1.png. Its line is thin and broken into scattered bits, so on the pale floor it is much weaker than the ice and fire marks.
+   Now: a CONTINUOUS ring band 3 grid pixels thick in lightning yellow (#e9bd59 with #ffe086 highlights and a navy outline on both edges), with 4 bold zigzag bolts (2 grid pixels thick) jumping from the band toward the centre at the 4 diagonals, and a few small sparks. The centre stays transparent. As strong and as readable as the ice mark.
+   64x64 grid, 512x512 output (8x8 blocks). SAVE: art\fx\marks\src\mark-land-lightning-v2.png
+4) FIRE landing mark (전호 용광로, a furnace blast here soon). Seen from straight above, a perfect circle.
+   Was: art\fx\marks\src\mark-land-fire-v1.png. Mostly dark brown, so it reads as a dirt stain, not fire.
+   Now: a ring band 3 grid pixels thick of HOT colours: orange (#e8742f) and pale orange (#ef8a61) with yellow (#ffe086) hot spots, a thin navy outline, and only a thin line of dark scorch (#5a3a2a) on its outer edge. 6 short flame tongues licking inward from the band and a few embers inside. The centre stays transparent. Orange must dominate.
+   64x64 grid, 512x512 output (8x8 blocks). SAVE: art\fx\marks\src\mark-land-fire-v2.png
+
+DRAW EACH
+- Pixel art on the grid given, every grid pixel an exact square block (no smoothing, no anti-aliasing, no half pixels).
+- TRANSPARENT background (PNG with alpha), fully opaque pixels only, centred, at most 6 colours (glyphs) or 7 (marks).
+- No text, letters, numbers, characters or background tile.
+
+When saved, list every SAVE path with its actual pixel size.

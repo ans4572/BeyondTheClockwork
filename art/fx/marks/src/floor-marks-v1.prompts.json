@@ -1,0 +1,192 @@
+{
+  "tool": "built-in image_gen for seven painted marks; exact raster tiling for the mathematical hatch pattern",
+  "styleReferences": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/frost-shatter.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+  ],
+  "commonPrompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.",
+  "alpha": "binary",
+  "circleView": "orthographic top/front; equal bounding-box diameters",
+  "icons": [
+    {
+      "id": "mark-land-lightning-v1",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#e9bd59",
+        "#ffe086",
+        "#fff4d6",
+        "#ffffff",
+        "#ad7f2d"
+      ],
+      "subject": "LIGHTNING LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). One slender circular RING MADE OF CRACKLING YELLOW ELECTRIC CURRENT, NOT a brass mechanical ring. Jagged small electrical changes along the otherwise perfectly round path. Exactly3or4 short sharp gold/yellow ZIGZAG ARCS jump a short way INWARD from separated places on ring, pointing toward centre without reaching it. A few tiny electric spark clusters inside rim. Lightning #e9bd59 / #ffe086 with cream/white hot highlights and navy thin edges. Huge empty central area, no bolt symbol in middle. Equal circle diameters, no ellipse.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nLIGHTNING LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). One slender circular RING MADE OF CRACKLING YELLOW ELECTRIC CURRENT, NOT a brass mechanical ring. Jagged small electrical changes along the otherwise perfectly round path. Exactly3or4 short sharp gold/yellow ZIGZAG ARCS jump a short way INWARD from separated places on ring, pointing toward centre without reaching it. A few tiny electric spark clusters inside rim. Lightning #e9bd59 / #ffe086 with cream/white hot highlights and navy thin edges. Huge empty central area, no bolt symbol in middle. Equal circle diameters, no ellipse.\nPalette: #2b3345 #e9bd59 #ffe086 #fff4d6 #ffffff #ad7f2d",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-16221a29-e63b-40c3-9e8f-4cab8a1e795e.png",
+      "save": "art/fx/marks/src/mark-land-lightning-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-land-ice-v1",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/frost-shatter.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#79cbd1",
+        "#66bde8",
+        "#fff4d6",
+        "#ffffff",
+        "#c8f3f4",
+        "#30779c"
+      ],
+      "subject": "FROST LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). One circular RING OF PALE ICE CRYSTALS, little angular facets with white highlights. SIX FROST-FERN SPIKES extend INWARD from evenly spaced points on rim; slender short branching fern ice shapes, no giant central snowflake. A few tiny snowflake glints near rim but entirely inside outer circle. Cyan #79cbd1 / #66bde8, pale ice and white top-left edges, navy thin edging. Most centre completely transparent, no filled disc. Perfect circle, not ellipse.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nFROST LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). One circular RING OF PALE ICE CRYSTALS, little angular facets with white highlights. SIX FROST-FERN SPIKES extend INWARD from evenly spaced points on rim; slender short branching fern ice shapes, no giant central snowflake. A few tiny snowflake glints near rim but entirely inside outer circle. Cyan #79cbd1 / #66bde8, pale ice and white top-left edges, navy thin edging. Most centre completely transparent, no filled disc. Perfect circle, not ellipse.\nPalette: #2b3345 #79cbd1 #66bde8 #fff4d6 #ffffff #c8f3f4 #30779c",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-019ab1f1-afbf-4138-8782-49c7c6d00818.png",
+      "save": "art/fx/marks/src/mark-land-ice-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-land-fire-v1",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#ef8a61",
+        "#e8742f",
+        "#fff4d6",
+        "#5f443c",
+        "#b94928",
+        "#ffe086"
+      ],
+      "subject": "FIRE LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). A SCORCHED CIRCULAR RING with uneven dark charcoal-brown pixel clusters, GLOWING ORANGE CRACKS breaking through ring, a few short glowing fissures and scattered small embers pointing INWARD. Fire #ef8a61 / #e8742f with cream/pale-yellow tiny hot centres, thin navy outline on charred ring. NOT a ring of tall flames, no fireball. Low flat floor burn / scorch sigil, large transparent central area, very little clutter. Keep pure round circle.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nFIRE LANDING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). A SCORCHED CIRCULAR RING with uneven dark charcoal-brown pixel clusters, GLOWING ORANGE CRACKS breaking through ring, a few short glowing fissures and scattered small embers pointing INWARD. Fire #ef8a61 / #e8742f with cream/pale-yellow tiny hot centres, thin navy outline on charred ring. NOT a ring of tall flames, no fireball. Low flat floor burn / scorch sigil, large transparent central area, very little clutter. Keep pure round circle.\nPalette: #2b3345 #ef8a61 #e8742f #fff4d6 #5f443c #b94928 #ffe086",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-05a9cdd3-73aa-424b-a7df-288dcdb68f55.png",
+      "save": "art/fx/marks/src/mark-land-fire-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-danger-v1",
+      "grid": 64,
+      "scale": 8,
+      "refs": [
+        "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-f55dd6fd-b7d8-4967-b95e-381b46fdf05e.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#d8423c",
+        "#e9bd59",
+        "#c79a3e",
+        "#fff4d6",
+        "#9e302e"
+      ],
+      "subject": "BLAST WARNING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). A PERFECTLY CIRCULAR OPEN WARNING RING, band about5logicalpixels thick, RED and AMBER alternating DIAGONAL HAZARD STRIPES clipped cleanly inside that circular band, navy inner/outer edges. Not a gear, not red solid disc, not a life preserver. A few tiny dark-red forked cracks INSIDE ring near its edge, otherwise centre empty. Danger red #d8423c, amber/brass #c79a3e / #e9bd59, clear high contrast. No exclamation sign or emblem. Straight-above circle, not ellipse.",
+      "prompt": "Use case: precise-object-edit. Keep input image1's round RED AND AMBER DIAGONAL HAZARD STRIPE RING exactly as it is: same pixel-painted style, perfectly circular top view, navy edges, red #d8423c and amber #e9bd59, transparent open middle.\nONLY ADD THREE SMALL RED BRANCHED CRACKS in the TRANSPARENT INTERIOR, just inside the inner rim around 2oclock,6oclock and10oclock. Each thin dark-red/red crack extends 4-6 logical pixels inward from the inner edge, a short jagged fork. They must clearly project into the empty centre rather than stay painted on the stripe band. Do not reach centre, keep most centre empty and alpha transparent. No triangles, exclamation sign, symbols or new object.\n64x64 logicalgrid,512x512 final exact8x8blocks, crisp stepped opaque pixel clusters, no antialiasing, smoothing, blur, gradients, halo or half alpha. Palette #2b3345 #d8423c #e9bd59 #c79a3e #fff4d6 #9e302e. One ring only, no background tile, text, letters, digits, ground, shadow or watermark. Preserve circular ring, change only the tiny inward cracks.",
+      "initialPrompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nBLAST WARNING MARK. 64x64 logicalgrid, final512x512 (8x8blocks). A PERFECTLY CIRCULAR OPEN WARNING RING, band about5logicalpixels thick, RED and AMBER alternating DIAGONAL HAZARD STRIPES clipped cleanly inside that circular band, navy inner/outer edges. Not a gear, not red solid disc, not a life preserver. A few tiny dark-red forked cracks INSIDE ring near its edge, otherwise centre empty. Danger red #d8423c, amber/brass #c79a3e / #e9bd59, clear high contrast. No exclamation sign or emblem. Straight-above circle, not ellipse.\nPalette: #2b3345 #d8423c #e9bd59 #c79a3e #fff4d6 #9e302e",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-1d7d4d2b-b4d8-4f03-b1c9-5a53bf11b8e0.png",
+      "save": "art/fx/marks/src/mark-danger-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-gear-ring-v1",
+      "grid": 48,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#e6e6e6",
+        "#bdbdbd"
+      ],
+      "subject": "ELITE GEAR RING. 48x48 logicalgrid, final384x384 (8x8blocks). A THIN OPEN RING with EXACTLY SIXTEEN (16) equally spaced blunt GEAR TEETH on its OUTER EDGE. Count as four cardinal teeth N/E/S/W, four diagonal teeth NE/SE/SW/NW, and eight between them =16TOTAL. Thin ring body2-3logicalpixels, teeth2logicalpixels deep, bold clean readable chunky teeth, generous empty centre. ONLY LIGHT GREY AND WHITE #ffffff #e6e6e6 #bdbdbd plus NAVY #2b3345 outline. No brass, gold, red or element colors; game recolors it. Perfect top-view circle, no perspective or depth extrusion. No inner cog, hub or spokes.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nELITE GEAR RING. 48x48 logicalgrid, final384x384 (8x8blocks). A THIN OPEN RING with EXACTLY SIXTEEN (16) equally spaced blunt GEAR TEETH on its OUTER EDGE. Count as four cardinal teeth N/E/S/W, four diagonal teeth NE/SE/SW/NW, and eight between them =16TOTAL. Thin ring body2-3logicalpixels, teeth2logicalpixels deep, bold clean readable chunky teeth, generous empty centre. ONLY LIGHT GREY AND WHITE #ffffff #e6e6e6 #bdbdbd plus NAVY #2b3345 outline. No brass, gold, red or element colors; game recolors it. Perfect top-view circle, no perspective or depth extrusion. No inner cog, hub or spokes.\nPalette: #2b3345 #ffffff #e6e6e6 #bdbdbd",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-75bcd319-afbd-4697-98fc-ccca32f7fbb6.png",
+      "save": "art/fx/marks/src/mark-gear-ring-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-spawn-hatch-v1",
+      "grid": 32,
+      "scale": 8,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#c79a3e",
+        "#fff4d6",
+        "#96551a",
+        "#e9bd59",
+        "#555b50"
+      ],
+      "subject": "SPAWN HATCH. 32x32 logicalgrid, final256x256 (8x8blocks). OVERRIDE OPEN-RING RULE for this subject only: one ROUND BRASS TOY TRAPDOOR in floor, straight-above circular outer rim, lid SLIGHTLY OPEN showing a narrow DARK CRESCENT GAP. Small simple GEAR embossed on lid, a few bold rivets at rim. Warm brass #c79a3e, cream top-left highlights, bronze shadows, dark navy gap/outline. Lid mostly covers circle, do not draw a hole with no lid. Hinge integrated within top rim; no outside handles/props. Ring boundary remains perfectly round seen top-down, no oval ground, no perspective shadow, no enemy visible.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nSPAWN HATCH. 32x32 logicalgrid, final256x256 (8x8blocks). OVERRIDE OPEN-RING RULE for this subject only: one ROUND BRASS TOY TRAPDOOR in floor, straight-above circular outer rim, lid SLIGHTLY OPEN showing a narrow DARK CRESCENT GAP. Small simple GEAR embossed on lid, a few bold rivets at rim. Warm brass #c79a3e, cream top-left highlights, bronze shadows, dark navy gap/outline. Lid mostly covers circle, do not draw a hole with no lid. Hinge integrated within top rim; no outside handles/props. Ring boundary remains perfectly round seen top-down, no oval ground, no perspective shadow, no enemy visible.\nPalette: #2b3345 #c79a3e #fff4d6 #96551a #e9bd59 #555b50",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-f3e57d7a-c479-4b06-96b7-4045827261b5.png",
+      "save": "art/fx/marks/src/mark-spawn-hatch-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "mark-charge-dial-v1",
+      "grid": 24,
+      "scale": 16,
+      "refs": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png"
+      ],
+      "palette": [
+        "#2b3345",
+        "#c79a3e",
+        "#fff4d6",
+        "#96551a",
+        "#e9bd59"
+      ],
+      "subject": "CHARGE DIAL. 24x24 logicalgrid, final384x384 (EXACT16x16blocks). OVERRIDE EMPTY-RING RULE: a SMALL BRASS CLOCK DIAL seen exactly FRONT-ON, perfectly round, NAVY RIM, flat CREAM FACE. EXACTLY TWELVE separated dark navy TICK MARKS at twelve regular clock hour positions, no numbers. No extra minor ticks. 12oclock top,3oclock right,6oclock bottom,9oclock left plus TWO ticks in each quadrant =12total. NO HANDS AT ALL. Blank cream centre except one TINY SIMPLE NAVY PIVOT DOT, game adds the moving hand. No top watch loop, strap, winding knob or gear teeth. One centered round face, clear readable24pixelclock, no UI button behind it.",
+      "prompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.\nCHARGE DIAL. 24x24 logicalgrid, final384x384 (EXACT16x16blocks). OVERRIDE EMPTY-RING RULE: a SMALL BRASS CLOCK DIAL seen exactly FRONT-ON, perfectly round, NAVY RIM, flat CREAM FACE. EXACTLY TWELVE separated dark navy TICK MARKS at twelve regular clock hour positions, no numbers. No extra minor ticks. 12oclock top,3oclock right,6oclock bottom,9oclock left plus TWO ticks in each quadrant =12total. NO HANDS AT ALL. Blank cream centre except one TINY SIMPLE NAVY PIVOT DOT, game adds the moving hand. No top watch loop, strap, winding knob or gear teeth. One centered round face, clear readable24pixelclock, no UI button behind it.\nPalette: #2b3345 #c79a3e #fff4d6 #96551a #e9bd59",
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-cb0dd62d-5597-4d23-bc0b-7c1d22a57f3d.png",
+      "save": "art/fx/marks/src/mark-charge-dial-v1.png",
+      "kind": "generated-art"
+    },
+    {
+      "id": "tile-danger-paint-v1",
+      "kind": "exact-diagonal-raster",
+      "grid": 36,
+      "scale": 8,
+      "palette": [
+        "#d8423c"
+      ],
+      "save": "art/fx/marks/src/tile-danger-paint-v1.png",
+      "prompt": "Seamless 36x36 logical grid, 288x288 PNG, exact8x8blocks. Opaque danger-red #d8423c diagonal45degree hatching: two grid pixels on, four transparent pixels off; period6 in each axis, six complete periods per edge. No border or margin. Grid/size change explicitly approved by user."
+    }
+  ]
+}

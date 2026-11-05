@@ -114,12 +114,13 @@ export function dealAffixes(waves, count, list, random) {
 /** Every combat room of a run, in route order; rooms without waves get null. `affixes` is slice.json's eliteAffixes. */
 export function dealRun(rooms, enemies, seed, affixes) {
   const random = dealer(seed), hp = Object.fromEntries(Object.entries(enemies).map(([type, e]) => [type, e.hp]));
-  const ids = rooms.map(room => room.id), one = affixes ? ids.indexOf(affixes.oneFrom) : -1, two = affixes ? ids.indexOf(affixes.twoFrom) : -1;
+  const ids = rooms.map(room => room.id), one = affixes ? ids.indexOf(affixes.oneFrom) : -1;
   let before = null;
   return rooms.map((room, i) => {
     if (!room.waves) return null;
     const dealt = dealRoom(room, before, hp, random);
-    const count = two >= 0 && i >= two ? 2 : one >= 0 && i >= one ? 1 : 0;
+    // One trait per elite at most: two at once read as clutter and the second rarely changed how the fight played.
+    const count = one >= 0 && i >= one ? 1 : 0;
     if (count) dealt.affixes = dealAffixes(dealt.waves, count, affixes.list, random);
     before = room;
     return dealt;

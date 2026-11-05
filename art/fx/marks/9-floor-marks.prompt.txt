@@ -1,0 +1,42 @@
+Use case: game VFX stills (8 floor marks), new art.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Draw 8 FLOOR MARKS for Beyond the Clockwork, a cute wind-up toy-town roguelite seen from a 3/4 top-down camera. They replace plain code circles: where a skill is about to land, where a crate is about to blow, where an enemy is about to climb out, the toothed ring under an elite's feet. The game turns, pulses, fades and squashes them itself.
+
+STYLE REFERENCES (match these exactly)
+- art\fx\ground-shockwave.png, art\fx\drum-beat.png, art\fx\electric-hit.png, art\fx\frost-shatter.png: the game's effect art.
+- art\smile-street\hazards\plate-v1.png and art\ui\icons\action-wrench-v1.png: the outline and shading.
+Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345) where a shape needs edging, top-left light.
+Element colours: fire #ef8a61 / #e8742f, ice #79cbd1 / #66bde8, lightning #e9bd59 / #ffe086, danger red #d8423c, brass #c79a3e, cream #fff4d6.
+
+HOW EVERY MARK IS DRAWN
+- Seen from STRAIGHT ABOVE, a perfect circle (not an ellipse); the game squashes it onto the floor.
+- Pixel art on the grid given, output with every grid pixel as an exact square block (no smoothing, no anti-aliasing, no half pixels).
+- TRANSPARENT background (PNG with alpha); fully opaque pixels only (the game fades them).
+- Mostly an open ring and a few marks inside, so the floor and the bodies on it still show through.
+- No text, letters, numbers, characters, shadows or background tile.
+
+THE MARKS
+1) Lightning landing mark (축전 낙뢰, a lightning bolt striking here soon): a ring of crackling yellow current, 3-4 short zigzag arcs jumping inward toward the centre, small sparks. 64x64 grid, 512x512 output (8x8 blocks).
+   SAVE: art\fx\marks\src\mark-land-lightning-v1.png
+2) Frost landing mark (냉각 지대, a cold field here soon): a ring of pale ice crystals with six frost-fern spikes reaching inward, a few snow-flake glints. 64x64 grid, 512x512 output.
+   SAVE: art\fx\marks\src\mark-land-ice-v1.png
+3) Fire landing mark (전호 용광로, a furnace blast here soon): a scorched ring with glowing orange cracks and a few embers inward. 64x64 grid, 512x512 output.
+   SAVE: art\fx\marks\src\mark-land-fire-v1.png
+4) Blast warning (a crate or a volatile enemy about to explode): a ring of red and amber diagonal hazard stripes edged in navy, with a few small red cracks inside. Reads as DANGER at a glance. 64x64 grid, 512x512 output.
+   SAVE: art\fx\marks\src\mark-danger-v1.png
+5) Gear ring (under an elite's feet; the game recolours it): a thin ring of gear teeth, 16 teeth, in LIGHT GREY TO WHITE ONLY (#ffffff, #e6e6e6, #bdbdbd) with a navy outline, empty centre. 48x48 grid, 384x384 output (8x8 blocks).
+   SAVE: art\fx\marks\src\mark-gear-ring-v1.png
+6) Spawn hatch (an enemy climbs out here soon): a round brass toy trapdoor in the floor, slightly open, a dark gap, a small gear on its lid, rivets on the rim. 32x32 grid, 256x256 output (8x8 blocks).
+   SAVE: art\fx\marks\src\mark-spawn-hatch-v1.png
+7) Charge dial (floats over a charged enemy; the game draws the moving hand): a small brass clock dial seen from the FRONT, 12 tick marks, cream face, navy rim, NO hands, empty centre dot. 24x24 grid, 384x384 output (16x16 blocks).
+   SAVE: art\fx\marks\src\mark-charge-dial-v1.png
+8) Danger paint tile (the game fills enemy attack zones with it): a SEAMLESS tile of red chalk diagonal hatching (#d8423c), 45-degree strokes 2 grid pixels wide with 4 grid pixels of transparent gap, edges that tile with no seam. 32x32 grid, 256x256 output (8x8 blocks).
+   SAVE: art\fx\marks\src\tile-danger-paint-v1.png
+
+RULES
+- All 8 in one consistent style with the references: the same outline weight, light direction, saturation and pixel density.
+- Each mark keeps its own silhouette: current, frost, embers, stripes, teeth, a trapdoor, a dial, hatching.
+
+When saved, list every SAVE path with its actual pixel size.

@@ -1,0 +1,32 @@
+Use case: game warning glyphs (8 small pictograms), new art.
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Draw 8 WARNING GLYPHS for Beyond the Clockwork, a cute wind-up toy-town roguelite. They float over a boss's or an enemy's attack zone for a second before it hits, replacing letters like 吸, 쿵, 종, 틈 and !. Shown at about 18 screen pixels over a red-hatched floor zone, so each must read instantly at that size.
+
+STYLE REFERENCES (match these exactly)
+- art\ui\status-icons\shock.png, art\ui\status-icons\burn.png: small icons over enemies in the same view.
+- art\ui\icons\lock-v1.png and art\ui\icons\action-wrench-v1.png: the outline and shading.
+Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345), top-left light.
+Palette: warning red #d8423c / #b85863, cream #fff4d6, brass #c79a3e / #ffd257, navy ink #2b3345. At most 6 colours each.
+
+DRAW EACH GLYPH
+- Pixel art on a 24x24 grid, output at 384x384 with every grid pixel as an exact 16x16 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 24x24 perfectly.
+- TRANSPARENT background (PNG with alpha), one centred bold shape, 1 grid pixel of empty margin, navy outline round the silhouette.
+- Must read at 16 pixels. No text, letters or numbers.
+
+THE GLYPHS
+1) Suction (Roco breathes in): three curved arrows converging into a small round mouth on the LEFT side, pointing left. SAVE: art\fx\marks\src\glyph-suction-v1.png
+2) Magnet (pulled toward one spot): a red horseshoe magnet, poles down, two small pull lines under it. SAVE: art\fx\marks\src\glyph-magnet-v1.png
+3) Stomp (shock rings from a stomp): a heavy toy boot sole coming down with two short impact lines either side. SAVE: art\fx\marks\src\glyph-stomp-v1.png
+4) Bell (the alarm bell): a brass hand bell ringing, two small ring lines beside it. SAVE: art\fx\marks\src\glyph-bell-v1.png
+5) Gap (the one safe opening in a wave): a cream arc broken in the middle with a small green arrow (#3fbf7f) passing through the break. SAVE: art\fx\marks\src\glyph-gap-v1.png
+6) Alert (about to strike): a bold red exclamation shape inside a cream triangle sign edged in navy. SAVE: art\fx\marks\src\glyph-alert-v1.png
+7) Chevrons (a charge or claw rushes this way): three red chevrons in a row pointing RIGHT, getting larger to the right. SAVE: art\fx\marks\src\glyph-chevrons-v1.png
+8) Sticker (Roco's 'defective' stickers fall): a cream paper label with a red border and a red X stamp, one corner peeling. SAVE: art\fx\marks\src\glyph-sticker-v1.png
+
+RULES
+- All 8 in one consistent style: the same outline weight, light direction, saturation and pixel density.
+- Every glyph keeps a clearly different silhouette from the others.
+
+When saved, list every SAVE path with its actual pixel size.

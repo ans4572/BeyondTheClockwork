@@ -1,0 +1,99 @@
+[
+  {
+    "file": "art/fx/marks/src/spark-hit-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 352,
+      "height": 352
+    },
+    "components": 3
+  },
+  {
+    "file": "art/fx/marks/src/spark-hurt-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 24,
+    "blockSize": 16,
+    "colors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 336,
+      "height": 352
+    },
+    "components": 3
+  },
+  {
+    "file": "art/fx/marks/src/puff-dust-v1.png",
+    "width": 256,
+    "height": 256,
+    "grid": 16,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 224,
+      "height": 224
+    },
+    "components": 1,
+    "solidCentre": true
+  },
+  {
+    "file": "art/fx/marks/src/pellet-enemy-v1.png",
+    "width": 192,
+    "height": 192,
+    "grid": 12,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 160,
+      "height": 160
+    },
+    "components": 1
+  },
+  {
+    "file": "art/fx/marks/src/pellet-friendly-v1.png",
+    "width": 192,
+    "height": 192,
+    "grid": 12,
+    "blockSize": 16,
+    "colors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "uniformBlocks": true,
+    "minMargin": 16,
+    "bounds": {
+      "width": 160,
+      "height": 160
+    },
+    "components": 1,
+    "identicalShotGeometry": true
+  }
+]
