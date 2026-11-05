@@ -19,6 +19,7 @@ import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
+import { browserReporter } from './ui/stats-report.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
@@ -99,6 +100,9 @@ try {
     .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
   // On a local test server the game and its renderer can be looked at from the console (never on the published site).
   if (DEBUG_ALLOWED) window.__btc = { game, renderer };
+  // Anonymous play statistics for the admin page (admin.html); never sent from a local test server.
+  const report = browserReporter();
+  game.onRun = report; report.opened();
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.

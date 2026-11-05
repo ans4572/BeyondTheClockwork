@@ -1,0 +1,136 @@
+import { readFile } from 'node:fs/promises';
+import { DatabaseSync } from 'node:sqlite';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Game } from '../src/engine/game.js';
+import { validateData } from '../src/engine/data.js';
+import { cleanEvent, comboKey, deviceProfile, koreanDay, ELEMENT_IDS } from '../src/engine/stats.js';
+import { record, summary } from '../worker/stats.js';
+import { api } from '../worker/index.js';
+import { statsReporter, deviceId, DEVICE_STORE_KEY } from '../src/ui/stats-report.js';
+
+const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
+
+/** Cloudflare D1 over Node's own SQLite: prepare/bind/run/all/first and batch, enough for the worker. */
+function d1() {
+  const db = new DatabaseSync(':memory:');
+  const statement = (sql, args = []) => ({
+    bind: (...values) => statement(sql, values),
+    run: async () => { db.prepare(sql).run(...args); return { success: true }; },
+    all: async () => ({ results: db.prepare(sql).all(...args).map(row => ({ ...row })) }),
+    first: async () => { const row = db.prepare(sql).get(...args); return row ? { ...row } : null; }
+  });
+  return { prepare: sql => statement(sql), batch: async list => { const out = []; for (const s of list) out.push(await s.all()); return out; } };
+}
+const storage = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)) }; };
+const DAY = 86400000, NOW = Date.parse('2026-11-05T03:00:00Z');
+const phone = 'phone0000000000a', pc = 'desktop000000000b';
+
+test('the element list the statistics accept is the game’s own', () => {
+  assert.deepEqual(ELEMENT_IDS, data.slice.elements);
+  assert.equal(comboKey(['ice', 'fire']), 'fire+ice');
+  assert.equal(comboKey([]), '');
+  assert.equal(comboKey(['fire', 'fire']), null);
+  assert.equal(comboKey(['earth']), null);
+});
+
+test('a device is described in coarse words: an iPad on the desktop site is still an iPad', () => {
+  const iphone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+  const ipad = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+  const galaxy = 'Mozilla/5.0 (Linux; Android 14; SM-S921N) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/26.0 Chrome/122.0.0.0 Mobile Safari/537.36';
+  const kakao = 'Mozilla/5.0 (Linux; Android 14; SM-S921N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Mobile Safari/537.36 KAKAOTALK 10.8.0';
+  const windows = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0';
+  assert.deepEqual(deviceProfile({ userAgent: iphone, maxTouchPoints: 5 }, { width: 390, height: 844 }), { form: 'phone', os: 'ios', browser: 'safari' });
+  assert.deepEqual(deviceProfile({ userAgent: ipad, maxTouchPoints: 5 }, { width: 820, height: 1180 }), { form: 'tablet', os: 'ios', browser: 'safari' });
+  assert.deepEqual(deviceProfile({ userAgent: ipad, maxTouchPoints: 0 }, { width: 1440, height: 900 }), { form: 'desktop', os: 'mac', browser: 'safari' });
+  assert.deepEqual(deviceProfile({ userAgent: galaxy, maxTouchPoints: 5 }, { width: 384, height: 832 }), { form: 'phone', os: 'android', browser: 'samsung' });
+  assert.equal(deviceProfile({ userAgent: kakao }).browser, 'inapp');
+  assert.deepEqual(deviceProfile({ userAgent: windows, maxTouchPoints: 10 }, { width: 1920, height: 1080 }), { form: 'desktop', os: 'windows', browser: 'edge' });
+});
+
+test('only well-formed events are kept, and nothing beyond their known fields', () => {
+  assert.deepEqual(cleanEvent({ device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari', installed: true, name: 'x' }), { kind: 'open', device: phone, form: 'phone', os: 'ios', browser: 'safari', installed: true });
+  assert.equal(cleanEvent({ device: 'short', kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }), null);
+  assert.equal(cleanEvent({ device: phone, kind: 'open', form: 'fridge', os: 'ios', browser: 'safari' }), null);
+  assert.equal(cleanEvent({ device: phone, kind: 'runEnd', run: 'run-1-5', elements: ['fire'], reason: 'clear', node: 0, seconds: 10 }), null);
+  assert.equal(cleanEvent({ device: phone, kind: 'runStart', run: "run-1-5'; DROP", elements: [] }), null);
+  assert.equal(cleanEvent({ device: phone, kind: 'hack' }), null);
+});
+
+test('the game tells the reporter when an expedition sets out and comes back, with the element pair', () => {
+  const game = new Game(data), heard = [];
+  game.onRun = (kind, fields) => heard.push({ kind, ...fields });
+  Object.assign(game.s.profile, { registered: true, ownedElements: ['fire', 'wind'], loadout: ['wind', 'fire'] }); game.s.mode = 'hub';
+  game.startRun(77);
+  game.returnToHub('defeat');
+  assert.deepEqual(heard.map(e => e.kind), ['runStart', 'runEnd']);
+  assert.equal(heard[0].run, heard[1].run);
+  assert.deepEqual(heard[1], { kind: 'runEnd', run: heard[0].run, elements: ['wind', 'fire'], reason: 'defeat', node: 1, seconds: 0 });
+  assert.ok(heard.every(e => cleanEvent({ device: phone, ...e })), 'every event the game makes passes the worker');
+});
+
+test('the admin summary counts opens, devices, runs and element pairs over the chosen days', async () => {
+  const db = d1(), at = days => NOW - days * DAY;
+  await record(db, { device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }, at(40));
+  await record(db, { device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }, at(1));
+  await record(db, { device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }, at(0));
+  await record(db, { device: pc, kind: 'open', form: 'desktop', os: 'windows', browser: 'chrome' }, at(0));
+  await record(db, { device: phone, kind: 'runStart', run: 'run-1-1', elements: ['ice', 'fire'] }, at(1));
+  await record(db, { device: phone, kind: 'runEnd', run: 'run-1-1', elements: ['ice', 'fire'], reason: 'defeat', node: 4, seconds: 300 }, at(1));
+  await record(db, { device: phone, kind: 'runStart', run: 'run-2-2', elements: ['fire', 'ice'] }, at(0));
+  await record(db, { device: phone, kind: 'runEnd', run: 'run-2-2', elements: ['fire', 'ice'], reason: 'clear', node: 12, seconds: 1500 }, at(0));
+  await record(db, { device: pc, kind: 'runStart', run: 'run-1-9', elements: ['wind'] }, at(0));
+  await record(db, { device: pc, kind: 'runEnd', run: 'run-1-9', elements: ['wind'], reason: 'clear', node: 12, seconds: 900 }, at(0));
+  await record(db, { device: pc, kind: 'runEnd', run: 'run-1-9', elements: ['wind'], reason: 'clear', node: 12, seconds: 900 }, at(0));
+  await record(db, { device: pc, kind: 'runStart', run: 'run-2-3', elements: [] }, at(0));
+
+  const week = await summary(db, 7, NOW);
+  assert.equal(week.range.to, koreanDay(NOW));
+  assert.equal(week.daily.length, 7);
+  assert.deepEqual(week.totals, { devices: 2, installed: 0, newDevices: 1, activeDevices: 2, sessions: 3, runs: 4, clears: 2, defeats: 1, abandons: 0, unfinished: 1, averageNode: 9.3, averageSeconds: 900 });
+  assert.deepEqual(week.combos.find(c => c.combo === 'fire+ice'), { combo: 'fire+ice', runs: 2, clears: 1, defeats: 1, abandons: 0, averageNode: 8 });
+  assert.equal(week.combos.find(c => c.combo === '').runs, 1, 'a wrench-only run is its own combo');
+  assert.deepEqual(week.devices.form.map(f => [f.name, f.devices, f.sessions]), [['desktop', 1, 1], ['phone', 1, 2]].sort((a, b) => b[1] - a[1] || b[2] - a[2]));
+  assert.deepEqual(week.depth, [{ node: 4, runs: 1, clears: 0 }, { node: 12, runs: 2, clears: 2 }]);
+  assert.equal(week.daily.at(-1).sessions, 2);
+  assert.equal(week.recent.length, 4);
+
+  const ever = await summary(db, 0, NOW);
+  assert.equal(ever.totals.sessions, 4);
+  assert.equal(ever.totals.newDevices, 2);
+  assert.equal(ever.daily[0].day, koreanDay(at(40)));
+});
+
+test('the stats routes: events need no token, the summary needs the right one', async () => {
+  const token = 'a-long-admin-token-for-tests-only', env = { STATS: d1(), ADMIN_TOKEN: token };
+  const call = (path, options = {}) => { const request = new Request(new URL(path, 'https://w.example'), options); return api(request, new URL(request.url), env); };
+  assert.equal((await call('/api/stats', { method: 'POST', body: JSON.stringify({ device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }) })).status, 204);
+  assert.equal((await call('/api/stats', { method: 'POST', body: '{"device":"x"}' })).status, 400);
+  assert.equal((await call('/api/stats', { method: 'POST', body: 'x'.repeat(5000) })).status, 400);
+  assert.equal((await call('/api/admin/stats')).status, 401);
+  assert.equal((await call('/api/admin/stats', { headers: { Authorization: 'Bearer wrong' } })).status, 401);
+  const answer = await call('/api/admin/stats?days=7', { headers: { Authorization: `Bearer ${token}` } });
+  assert.equal(answer.status, 200);
+  assert.equal((await answer.json()).totals.sessions, 1);
+  assert.equal(answer.headers.get('Cache-Control'), 'no-store');
+  const short = { STATS: d1(), ADMIN_TOKEN: 'short' }, request = new Request('https://w.example/api/admin/stats', { headers: { Authorization: 'Bearer short' } });
+  assert.equal((await api(request, new URL(request.url), short)).status, 503, 'a short token keeps the page shut');
+  const none = new Request('https://w.example/api/stats', { method: 'POST', body: '{}' });
+  assert.equal((await api(none, new URL(none.url), {})).status, 503);
+});
+
+test('the reporter keeps one device id, sends nothing from a local server, and drops malformed events', () => {
+  const store = storage(), sent = [];
+  const id = deviceId(store);
+  assert.match(id, /^[a-z0-9]{20}$/);
+  assert.equal(deviceId(store), id);
+  assert.equal(store.getItem(DEVICE_STORE_KEY), id);
+  const local = statsReporter({ storage: store, hostname: '127.0.0.1', send: (...a) => sent.push(a) });
+  assert.equal(local('open', { form: 'phone', os: 'ios', browser: 'safari' }), false);
+  const live = statsReporter({ storage: store, hostname: 'ans4572.github.io', send: (url, text) => { sent.push([url, JSON.parse(text)]); return true; } });
+  assert.ok(live('runStart', { run: 'run-1-1', elements: ['fire'] }));
+  assert.equal(live('runStart', { run: 'bad', elements: ['fire'] }), false);
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0][0], 'https://beyondtheclockwork.ans4572.workers.dev/api/stats');
+  assert.equal(sent[0][1].device, id);
+});

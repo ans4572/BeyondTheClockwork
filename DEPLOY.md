@@ -48,3 +48,22 @@ npx wrangler deploy
 3. 커밋·푸시 → 자동 배포. Workers Builds의 Deploy command는 `npx wrangler deploy` 그대로.
 
 확인: `https://beyondtheclockwork.ans4572.workers.dev/api/transfer/AAAA-AAAA` 가 `{"error":"missing"}`을 돌려주면 정상입니다.
+
+## 플레이 통계 · 관리자 페이지 (Worker + D1)
+
+관리자 페이지: `https://beyondtheclockwork.ans4572.workers.dev/admin.html` (검색엔진 제외, 토큰 없으면 아무것도 안 보임)
+
+- `POST /api/stats` 게임이 보내는 익명 이벤트: 게임 열기(`open`), 원정 출발(`runStart`), 귀환(`runEnd`). 형식이 틀리면 400.
+- `GET /api/admin/stats?days=7|30|90|0` 관리자 요약. `Authorization: Bearer <ADMIN_TOKEN>`이 맞아야 열림.
+- 표는 첫 요청 때 Worker가 직접 만듭니다(마이그레이션 명령 필요 없음).
+- 저장하는 것: 기기 무작위 id, 기기 형태·운영체제·브라우저 이름, 원정 id·속성 조합·결과·도달 정거장·걸린 시간, 날짜. IP와 이름은 저장하지 않습니다.
+
+처음 한 번 필요한 설정:
+
+1. Cloudflare 대시보드 → Storage & Databases → D1 → Create → 이름 `beyondtheclockwork-stats`
+2. 만들어진 Database ID를 `wrangler.toml`의 `[[d1_databases]]` 블록에 넣고 블록 앞의 `#`을 지우기 (비밀값 아님)
+3. 관리자 토큰 만들기: 내 컴퓨터 터미널에서 `node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"` → 나온 글자를 비밀번호 관리자 등에 보관
+4. Workers & Pages → `beyondtheclockwork` → Settings → Variables and Secrets → Add → Type `Secret`, 이름 `ADMIN_TOKEN`, 값은 3번 글자 → Deploy
+5. 커밋·푸시 → 자동 배포 → `/admin.html`에서 토큰 입력
+
+확인: `https://beyondtheclockwork.ans4572.workers.dev/api/admin/stats`가 `{"error":"denied"}`를 돌려주면 정상입니다(`unconfigured`면 D1이나 토큰이 아직 없음).

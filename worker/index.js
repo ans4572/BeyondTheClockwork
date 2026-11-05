@@ -8,6 +8,8 @@
 //   POST   /api/sync              { save }           -> { key, rev }
 //   GET    /api/sync/:key                            -> { rev, save, at }
 //   PUT    /api/sync/:key         { save, baseRev }  -> { rev }   or 409 { rev } when another device uploaded since baseRev
+// Play statistics and the admin page's summary: worker/stats.js.
+import { statsApi } from './stats.js';
 import { makeCode, normalizeCode, normalizeSyncKey, looksLikeSave, CODE_TTL_SECONDS, SYNC_KEY_LENGTH, SYNC_TTL_SECONDS } from '../src/engine/transfer-code.js';
 
 /** The copies of the game that may call the API from another address (GitHub Pages, local play). */
@@ -27,9 +29,11 @@ export default {
 };
 
 export async function api(request, url, env, cors = {}) {
-  const store = env.TRANSFER;
-  if (!store) return json({ error: 'unavailable' }, 503, cors);
   const reply = (body, status = 200) => json(body, status, cors);
+  const stats = await statsApi(request, url, env, reply, cors);
+  if (stats) return stats;
+  const store = env.TRANSFER;
+  if (!store) return reply({ error: 'unavailable' }, 503);
   const body = async () => { try { return await request.json(); } catch { return null; } };
   /** Counts a new code or key against the caller's hour; false once the hour is used up. */
   const allowNew = async () => {
@@ -86,6 +90,6 @@ export async function api(request, url, env, cors = {}) {
 function corsHeaders(request) {
   const origin = request.headers.get('Origin');
   if (!origin || !ALLOWED_ORIGINS.includes(origin)) return {};
-  return { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Vary': 'Origin' };
+  return { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Vary': 'Origin' };
 }
 const json = (body, status, headers) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers } });

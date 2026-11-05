@@ -36,6 +36,8 @@ export class Game {
   constructor(data, savedState = null, onSave = () => {}) {
     this.data = data;
     this.onSave = onSave;
+    /** Told when an expedition sets out and when it comes back (play statistics, src/ui/stats-report.js). */
+    this.onRun = () => {};
     // Hits the screen should feel (stop, shake, sound). The browser drains it; the rules never wait on it.
     this.feel = [];
     this.tutorial = new Tutorial(this);
@@ -222,7 +224,9 @@ export class Game {
     this.s.run.plan = this.config.rooms.map(room => ({ variant: room.variants ? Math.floor(this.random() * room.variants.length) : 0, layout: room.boss || room.kind === 'shop' ? 2 : Math.floor(this.random() * this.config.roomLayouts.length) }));
     // Every run deals its own mix and formation for each fight, at the designed weight (see encounters.js).
     dealRun(this.config.rooms, this.config.enemies, seed, this.config.eliteAffixes).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
-    this.resetPlayer(); this.enterNode(); return true;
+    this.resetPlayer(); this.enterNode();
+    this.onRun('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element) });
+    return true;
   }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
@@ -1731,6 +1735,7 @@ export class Game {
     if (reason === 'defeat') this.sense({ kind: 'fail' });
     this.s.result = { reason, node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
+    this.onRun('runEnd', { run: run.id, elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
   }
   acknowledgeReturn() { if (this.s.mode !== 'returned') return false; this.s.mode = 'hub'; this.enterHub(); this.save(); return true; }

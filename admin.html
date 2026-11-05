@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko" data-theme="paper">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>운행 장부 · 태엽 밖으로</title>
+  <style>
+    /* Galmuri11 by Lee Minseo, SIL OFL 1.1 (art/fonts/Galmuri-OFL.txt), the game's own reading face (paper look). */
+    @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; font-display: swap; }
+    @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; font-display: swap; }
+    /* A dense dashboard: everything on one or two screens. Two looks share one layout: the game's office paper
+       (default: the same paper, ink, gold and stamp red as the game's panels) and a dark one. */
+    :root {
+      --page: #121316; --card: #1c1d22; --raise: #26272d; --line: #2c2d33; --text: #f1f1f3; --muted: #8d8f98; --faint: #5d5f68;
+      --blue: #5b8def; --blue-2: #3e5aa6; --blue-3: #8a8c94; --blue-4: #3a3b42; --good: #4cc38a; --bad: #e26a5a; --warn: #d9a441;
+      --trace: var(--text); --accent: var(--blue); --on-accent: #fff; --tip: #000; --on-tip: var(--text); --edge: transparent; --radius: 14px; --hover: .8;
+      color-scheme: dark;
+      font: 13px/1.45 "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; color: var(--text); background: var(--page);
+    }
+    :root[data-theme="paper"] {
+      --page: #f6ecd2; --card: #fbf5e4; --raise: #ebe1c6; --line: #d9cba5; --text: #2b3345; --muted: #5d6476; --faint: #8f8a7c;
+      --blue: #2b3345; --blue-2: #c79a3e; --blue-3: #9a9384; --blue-4: #d9cba5; --good: #3d7a52; --bad: #a92f2b; --warn: #a8761c;
+      --trace: #a92f2b; --accent: #2b3345; --on-accent: #f6ecd2; --tip: #2b3345; --on-tip: #f6ecd2; --edge: #2b3345; --radius: 6px; --hover: .75;
+      color-scheme: light;
+      font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    }
+    :root[data-theme="paper"] .bar-top { border-bottom: 2px solid var(--edge); }
+    :root[data-theme="paper"] .tile .value, :root[data-theme="paper"] .donut text[style] { font-weight: 700; letter-spacing: 0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    p { margin: 0; }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; background: none; border: 0; padding: 0; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--blue-2); outline-offset: 2px; border-radius: 4px; }
+    .num { font-variant-numeric: tabular-nums; }
+
+    .bar-top { position: sticky; top: 0; z-index: 4; background: var(--page); border-bottom: 1px solid var(--line); }
+    .bar-top .in { max-width: 1120px; margin: 0 auto; padding: 0 20px; height: 52px; display: flex; align-items: center; gap: 24px; }
+    .brand { font-weight: 700; font-size: 15px; white-space: nowrap; }
+    .range { display: flex; gap: 18px; height: 100%; }
+    .range button { color: var(--muted); height: 100%; border-bottom: 2px solid transparent; white-space: nowrap; }
+    .range button[aria-pressed="true"] { color: var(--text); font-weight: 700; border-bottom-color: var(--text); }
+    .stamp { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .link { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .link:hover { color: var(--text); }
+
+    main { max-width: 1120px; margin: 0 auto; padding: 20px 20px 48px; }
+    .card { background: var(--card); border: 2px solid var(--edge); border-radius: var(--radius); padding: 18px 20px; min-width: 0; }
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .tile .label { color: var(--muted); }
+    .tile .value { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 6px 0 4px; }
+    .tile .value small { font-size: 14px; font-weight: 700; margin-left: 2px; }
+    .tile .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+    .tile .delta.up { color: var(--good); } .tile .delta.down { color: var(--blue); }
+    .tile .note { color: var(--muted); font-size: 12px; }
+
+    .section { display: flex; align-items: baseline; gap: 10px; margin: 28px 0 12px; }
+    .section h2 { margin: 0; font-size: 18px; }
+    .section span { color: var(--muted); }
+    .trend { display: grid; grid-template-columns: 1.55fr 1fr 1fr; gap: 12px; }
+    .pair { display: grid; grid-template-columns: 1.35fr 1fr; gap: 12px; }
+    .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .card-head h3 { margin: 0; font-size: 14px; }
+    .legend { margin-left: auto; display: flex; gap: 10px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; }
+    .dash { display: inline-block; width: 10px; height: 2px; margin-right: 4px; vertical-align: 3px; background: var(--trace); }
+    .chart { width: 100%; }
+    svg { display: block; overflow: visible; }
+    svg text { font-family: inherit; fill: var(--muted); font-size: 10px; }
+    svg .grid-line { stroke: var(--line); }
+    svg .hit { fill: transparent; }
+    svg g:hover .bar { opacity: var(--hover); }
+    .foot { color: var(--muted); font-size: 12px; margin-top: 10px; }
+
+    .donut { display: flex; align-items: center; gap: 18px; min-height: 150px; }
+    .donut ul { list-style: none; margin: 0; padding: 0; flex: 1; display: grid; gap: 8px; }
+    .donut li { display: flex; justify-content: space-between; gap: 8px; }
+    .donut li b { font-variant-numeric: tabular-nums; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-weight: 400; color: var(--muted); font-size: 12px; padding: 0 8px 10px; white-space: nowrap; }
+    td { padding: 8px; white-space: nowrap; }
+    th:first-child, td:first-child { padding-left: 0; } th:last-child, td:last-child { padding-right: 0; }
+    .r { text-align: right; }
+    .grow { width: 100%; }
+    .track { height: 6px; border-radius: 3px; background: var(--raise); overflow: hidden; display: flex; min-width: 60px; }
+    .track i { display: block; height: 100%; }
+    .combo { display: flex; align-items: center; gap: 8px; }
+    .combo img { width: 22px; height: 22px; image-rendering: pixelated; }
+    .combo .sw { display: inline-flex; gap: 2px; }
+    .combo .sw i { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .chip { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--raise); }
+    .chip.clear { color: var(--good); } .chip.defeat { color: var(--bad); } .chip.abandon { color: var(--muted); } .chip.open { color: var(--warn); }
+    .mute { color: var(--muted); }
+    .day b { font-weight: 600; }
+    .more { margin-top: 10px; color: var(--muted); font-size: 12px; }
+    .more:hover { color: var(--text); }
+    .empty { color: var(--muted); padding: 20px 0; text-align: center; }
+
+    .login { max-width: 380px; margin: 14vh auto 0; }
+    .login h1 { font-size: 18px; margin: 0 0 4px; }
+    .login label { display: block; margin: 16px 0 6px; color: var(--muted); }
+    .login input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--raise); }
+    .primary { margin-top: 12px; width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+    .error { color: var(--bad); margin-top: 12px; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 10px; }
+    #tip { position: fixed; pointer-events: none; background: var(--tip); border: 1px solid var(--line); color: var(--on-tip); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); display: none; z-index: 9; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    @media (max-width: 960px) {
+      .trend { grid-template-columns: 1fr 1fr; }
+      .trend > :first-child { grid-column: 1 / -1; }
+      .pair { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .bar-top .in { gap: 10px; padding: 0 12px; }
+      .range { gap: 10px; }
+      .bar-top .link { font-size: 11px; }
+      .bar-top .link:first-of-type { margin-left: auto; }
+      .brand span, .stamp { display: none; }
+      main { padding: 14px 12px 40px; }
+      .tiles { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .card { padding: 14px; }
+      .tile .value { font-size: 22px; }
+      .trend { grid-template-columns: 1fr; }
+      .narrow-hide { display: none; }
+      td, th { padding-left: 5px; padding-right: 5px; }
+    }
+  </style>
+</head>
+<body>
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('beyond-the-clockwork.admin-theme.v1') || 'paper'; } catch {}</script>
+  <div id="app" aria-live="polite"><p class="empty">불러오는 중…</p></div>
+  <div id="tip" role="status"></div>
+  <script type="module" src="src/ui/admin-page.js"></script>
+</body>
+</html>
