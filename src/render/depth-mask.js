@@ -1,7 +1,7 @@
 import { pointInPolygon } from '../engine/map-geometry.js';
 
 // Small gaps in a column, such as a railing, still belong to the object around them.
-const GAP_PIXELS = 6, SLIVER_PIXELS = 5, DEPTH_MAX_WIDTH = 1920;
+const GAP_PIXELS = 6, SLIVER_PIXELS = 5, DEPTH_MAX_WIDTH = 1920, BLOCK_PIXELS = 16, KEPT_LIMIT = 48, SEEN_LIMIT = 400;
 const BODY_HALF_UNITS = 0.35, BODY_UNITS = 1.7, GHOST_FROM = 0.35, GHOST_TO = 0.75, GHOST_ALPHA = 0.6;
 
 /** How strongly the player shows through scenery that hides this share of their body. */
@@ -57,11 +57,17 @@ export class DepthMask {
       context.drawImage(picture, 0, 0, width, height);
       return context.getImageData(0, 0, width, height).data;
     };
-    this.pixels = read(image); this.width = width; this.height = height; this.perUnit = width / size[0];
+    this.kept = new Map(); this.seen = new Set(); this.patches = new Map();
+    this.pixels = read(image); this.pixels32 = new Uint32Array(this.pixels.buffer, this.pixels.byteOffset, this.pixels.length / 4); this.width = width; this.height = height; this.perUnit = width / size[0];
     const marks = read(maskImage), alpha = new Uint8Array(width * height);
     for (let p = 0; p < alpha.length; p++) alpha[p] = marks[p * 4] > 127 ? 255 : 0;
     this.depths = closeSlivers(columnDepths(alpha, width, height), width, height); this.createCanvas = createCanvas;
     for (const { polygon, baseY } of overhead) raiseDepths(this.depths, width, height, this.perUnit, polygon, baseY);
+    // The deepest ground line in each 16x16 block, so a body standing in front of everything near it is passed over
+    // without reading its whole patch, as most bodies are on most frames.
+    const B = BLOCK_PIXELS, bw = Math.ceil(width / B), bh = Math.ceil(height / B), deepest = new Uint16Array(bw * bh);
+    for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) { const d = this.depths[y * width + x], b = Math.floor(y / B) * bw + Math.floor(x / B); if (d > deepest[b]) deepest[b] = d; }
+    Object.assign(this, { deepest, blocksWide: bw });
   }
   /** `x`, `y` are the feet in units; `halfWidth` and `tall` bound the body above them. Returns the share of the body hidden. */
   cover(context, x, y, halfWidth, tall) {
@@ -69,28 +75,58 @@ export class DepthMask {
     const left = Math.max(0, Math.floor((x - halfWidth) * perUnit)), top = Math.max(0, Math.floor((y - tall) * perUnit));
     const w = Math.min(width, Math.ceil((x + halfWidth) * perUnit)) - left, h = Math.min(height, feet + 2) - top;
     if (w <= 0 || h <= 0) return 0;
-    if (!this.scratch || this.scratch.width < w || this.scratch.height < h) { this.scratch = this.createCanvas(Math.max(w, 256), Math.max(h, 256)); this.scratchContext = this.scratch.getContext('2d'); }
+    // A body standing still (a shopkeeper, a resident waiting, the player at rest) asks for the same patch every frame:
+    // once seen twice in a row it is kept as its own small picture and simply drawn again.
+    const key = `${left},${top},${w},${h},${feet}`, kept = this.kept.get(key);
+    if (kept) { this.kept.delete(key); this.kept.set(key, kept); if (kept.canvas) this.paint(context, kept.canvas, 0, 0, left, top, kept.part); return kept.hidden; }
+    const keep = this.seen.has(key); this.seen.add(key);
+    if (this.seen.size > SEEN_LIMIT) this.seen.clear();
+    if (!this.scratch || this.scratch.width < w || this.scratch.height < h) { this.scratch = this.createCanvas(Math.max(w, 256), Math.max(h, 256)); this.scratchContext = this.scratch.getContext('2d', { willReadFrequently: true }); }
     // One reusable buffer per patch size: a fresh ImageData for every body every frame kept the garbage collector busy.
-    if (this.patch?.width !== w || this.patch.height !== h) this.patch = this.scratchContext.createImageData(w, h); else this.patch.data.fill(0);
-    const patch = this.patch;
+    // One buffer per patch size (bodies come in a few sizes), cleared only where the last use wrote to it.
+    let slot = this.patches.get(w * 4096 + h);
+    if (!slot) { const image = this.scratchContext.createImageData(w, h); slot = { image, words: new Uint32Array(image.data.buffer), dirty: null }; this.patches.set(w * 4096 + h, slot); }
+    else if (slot.dirty) { const { x0, y0, x1, y1 } = slot.dirty; for (let y = y0; y <= y1; y++) slot.words.fill(0, y * w + x0, y * w + x1 + 1); slot.dirty = null; }
+    const patch = slot.image, words = slot.words, source = this.pixels32;
+    let dx0 = w, dy0 = h, dx1 = -1, dy1 = -1;
     const bodyLeft = (x - BODY_HALF_UNITS) * perUnit, bodyRight = (x + BODY_HALF_UNITS) * perUnit, bodyTop = (y - BODY_UNITS) * perUnit;
     let found = false, inBody = 0, hidden = 0;
-    for (let row = 0; row < h; row++) for (let col = 0; col < w; col++) {
-      const p = (top + row) * width + left + col, body = left + col >= bodyLeft && left + col <= bodyRight && top + row >= bodyTop;
-      if (body) inBody++;
-      if (depths[p] <= feet) continue;
-      if (body) hidden++;
-      const to = (row * w + col) * 4, from = p * 4;
-      patch.data[to] = pixels[from]; patch.data[to + 1] = pixels[from + 1]; patch.data[to + 2] = pixels[from + 2]; patch.data[to + 3] = 255;
-      found = true;
+    // Only blocks that hold something standing in front of the feet are read pixel by pixel.
+    const firstX = Math.max(left, Math.ceil(bodyLeft)), lastX = Math.min(left + w - 1, Math.floor(bodyRight)), firstY = Math.max(top, Math.ceil(bodyTop));
+    inBody = Math.max(0, lastX - firstX + 1) * Math.max(0, top + h - firstY);
+    const B = BLOCK_PIXELS;
+    for (let by = Math.floor(top / B); by <= Math.floor((top + h - 1) / B); by++) for (let bx = Math.floor(left / B); bx <= Math.floor((left + w - 1) / B); bx++) {
+      if (this.deepest[by * this.blocksWide + bx] <= feet) continue;
+      const y0 = Math.max(top, by * B), y1 = Math.min(top + h, by * B + B), x0 = Math.max(left, bx * B), x1 = Math.min(left + w, bx * B + B);
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const p = y * width + x;
+        if (depths[p] <= feet) continue;
+        if (x >= bodyLeft && x <= bodyRight && y >= bodyTop) hidden++;
+        const px = x - left, py = y - top;
+        if (px < dx0) dx0 = px; if (px > dx1) dx1 = px; if (py < dy0) dy0 = py; if (py > dy1) dy1 = py;
+        // One word per pixel, made fully opaque (the alpha byte is the high byte on every platform the game runs on).
+        words[py * w + px] = source[p] | 0xff000000;
+        found = true;
+      }
     }
+    const share = hidden / (inBody || 1);
+    if (found) slot.dirty = { x0: dx0, y0: dy0, x1: dx1, y1: dy1 };
+    // Only the part that really covers the body is uploaded and drawn, usually a small corner of the patch.
+    const part = found ? { x: dx0, y: dy0, w: dx1 - dx0 + 1, h: dy1 - dy0 + 1 } : null;
+    let picture = null;
+    if (found && keep) { picture = this.createCanvas(part.w, part.h); picture.getContext('2d', { willReadFrequently: true }).putImageData(patch, -part.x, -part.y, part.x, part.y, part.w, part.h); }
+    if (keep) { this.kept.set(key, { canvas: picture, part, hidden: share }); if (this.kept.size > KEPT_LIMIT) this.kept.delete(this.kept.keys().next().value); }
     if (!found) return 0;
-    this.scratchContext.putImageData(patch, 0, 0);
-    const scale = 20 / perUnit;
+    if (picture) this.paint(context, picture, 0, 0, left, top, part);
+    else { this.scratchContext.putImageData(patch, 0, 0, part.x, part.y, part.w, part.h); this.paint(context, this.scratch, part.x, part.y, left, top, part); }
+    return share;
+  }
+  /** Draws `part` of the patch (taken at sx, sy in `picture`) where it belongs on the map. */
+  paint(context, picture, sx, sy, left, top, part) {
+    const scale = 20 / this.perUnit;
     // Matches the smooth background it patches, so no seam shows around a covered body.
     const smooth = context.imageSmoothingEnabled; context.imageSmoothingEnabled = true;
-    context.drawImage(this.scratch, 0, 0, w, h, left * scale, top * scale, w * scale, h * scale);
+    context.drawImage(picture, sx, sy, part.w, part.h, (left + part.x) * scale, (top + part.y) * scale, part.w * scale, part.h * scale);
     context.imageSmoothingEnabled = smooth;
-    return hidden / (inBody || 1);
   }
 }

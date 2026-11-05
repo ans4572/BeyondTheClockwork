@@ -15,9 +15,9 @@ export class FlowField {
    * passing the current boxes again restores any cell a box no longer covers.
    */
   setBlocks(boxes) {
-    const key = JSON.stringify(boxes);
-    if (key === this.blockKey) return;
-    this.blockKey = key; this.base ??= this.open.slice(); this.open.set(this.base); this.target = -1;
+    // The same list (obstacles are cached by the game) or the same boxes: nothing to redo.
+    if (boxes === this.blockList || (this.blockList && boxes.length === this.blockList.length && boxes.every((b, i) => { const o = this.blockList[i]; return b.x === o.x && b.y === o.y && b.w === o.w && b.h === o.h; }))) { this.blockList = boxes; return; }
+    this.blockList = boxes; this.base ??= this.open.slice(); this.open.set(this.base); this.target = -1;
     for (const box of boxes) {
       const [c0, r0] = this.cell(box.x - CLEARANCE_UNITS, box.y - CLEARANCE_UNITS), [c1, r1] = this.cell(box.x + box.w + CLEARANCE_UNITS, box.y + box.h + CLEARANCE_UNITS);
       for (let row = Math.max(0, r0); row <= Math.min(this.rows - 1, r1); row++) for (let col = Math.max(0, c0); col <= Math.min(this.cols - 1, c1); col++) {

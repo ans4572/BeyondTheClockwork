@@ -263,10 +263,16 @@ export class Game {
     this.save();
   }
   get obstacles() {
-    // Crates, fences and music boxes stand in the way of feet and shots alike.
-    const solid = this.roomHazards.filter(h => SOLID.has(h.kind) && !h.gone).map(hazardBox);
-    if (this.s.mode === 'intro' || !this.s.run || this.map) return solid;
-    return [...this.config.roomLayouts[this.s.run.plan[this.s.run.node].layout].obstacles, ...solid];
+    // Crates, fences and music boxes stand in the way of feet and shots alike. Asked for by every step of every body,
+    // so the list is kept until a piece appears or breaks.
+    const list = this.roomHazards, plain = this.s.mode === 'intro' || !this.s.run || this.map;
+    let gone = 0; for (const h of list) if (h.gone) gone++;
+    const cache = this.obstacleCache, layout = plain ? null : this.s.run.plan[this.s.run.node].layout;
+    if (cache && cache.list === list && cache.size === list.length && cache.gone === gone && cache.layout === layout) return cache.value;
+    const solid = list.filter(h => SOLID.has(h.kind) && !h.gone).map(hazardBox);
+    const value = plain ? solid : [...this.config.roomLayouts[layout].obstacles, ...solid];
+    this.obstacleCache = { list, size: list.length, gone, layout, value };
+    return value;
   }
   /** The hazards of the room the run stands in: through the fight, the reward and the walk to the portal. */
   get roomHazards() { return this.s.run && ROOM_MODES.has(this.s.mode) ? this.s.hazards || [] : []; }

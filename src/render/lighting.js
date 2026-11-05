@@ -30,6 +30,15 @@ export function findLamps(image, size, createCanvas) {
 
 export class Lighting {
   constructor(createCanvas) { this.createCanvas = createCanvas; this.lamps = new WeakMap(); this.motes = []; }
+  /** A soft round light, drawn once and then stamped at any size and strength (no new gradient every frame). */
+  blob(key, inner, outer) {
+    this.blobs ??= {};
+    if (!this.blobs[key]) {
+      const canvas = this.createCanvas(128, 128), c = canvas.getContext('2d'), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+      g.addColorStop(0, inner); g.addColorStop(1, outer); c.fillStyle = g; c.fillRect(0, 0, 128, 128); this.blobs[key] = canvas;
+    }
+    return this.blobs[key];
+  }
   lampsFor(image, size) {
     if (!this.lamps.has(image)) this.lamps.set(image, findLamps(image, size, this.createCanvas));
     return this.lamps.get(image);
@@ -51,7 +60,8 @@ export class Lighting {
       const s = this.shadeContext;
       s.globalCompositeOperation = 'source-over'; s.clearRect(0, 0, W, H); s.fillStyle = `rgba(10, 12, 30, ${m.dark})`; s.fillRect(0, 0, W, H);
       s.globalCompositeOperation = 'destination-out';
-      const hole = (x, y, r, k) => { const px = (x - vx) * 10, py = (y - vy) * 10, g = s.createRadialGradient(px, py, 0, px, py, r * 10); g.addColorStop(0, `rgba(0,0,0,${k})`); g.addColorStop(1, 'rgba(0,0,0,0)'); s.fillStyle = g; s.fillRect(px - r * 10, py - r * 10, r * 20, r * 20); };
+      const dot = this.blob('hole', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)');
+      const hole = (x, y, r, k) => { if (x < vx - r || x > vx + vw + r || y < vy - r || y > vy + vh + r) return; const px = (x - vx) * 10, py = (y - vy) * 10, d = r * 10; s.globalAlpha = k; s.drawImage(dot, px - d, py - d, d * 2, d * 2); s.globalAlpha = 1; };
       for (const l of lamps) hole(l.x, l.y, 3.2 * l.strength, 0.9);
       for (const l of lights) hole(l.x, l.y, l.radius, 0.85);
       ctx.drawImage(this.shade, vx * PER_UNIT, vy * PER_UNIT, vw * PER_UNIT, vh * PER_UNIT);
@@ -62,8 +72,7 @@ export class Lighting {
     for (const l of lamps) {
       if (l.x < vx - 3 || l.x > vx + vw + 3 || l.y < vy - 3 || l.y > vy + vh + 3) continue;
       const flicker = still ? 1 : 0.9 + 0.1 * Math.sin(time * 7 + l.x * 3), r = 2.1 * l.strength * PER_UNIT, x = l.x * PER_UNIT, y = l.y * PER_UNIT;
-      const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255, 186, 100, ${m.glow * 0.38 * flicker})`); g.addColorStop(1, 'rgba(255, 160, 80, 0)');
-      ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      ctx.globalAlpha = m.glow * 0.38 * flicker; ctx.drawImage(this.blob('lamp', 'rgba(255, 186, 100, 1)', 'rgba(255, 160, 80, 0)'), x - r, y - r, r * 2, r * 2); ctx.globalAlpha = 1;
     }
     for (const l of lights) if (l.color) {
       const r = l.radius * PER_UNIT * 0.8, x = l.x * PER_UNIT, y = l.y * PER_UNIT, g = ctx.createRadialGradient(x, y, 0, x, y, r);
