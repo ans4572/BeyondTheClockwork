@@ -8,15 +8,18 @@ import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/m
 import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
 import { FX, NOTE_ART } from './fx-sprites.js';
+import { GROUND, sawAt, plateState } from '../engine/hazards.js';
 /** The music box's notes are drawn a little under their art size so a volley reads as shots, not as clutter. */
 const NOTE_SCALE = 0.8;
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 /** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
 export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
+/** The room hazards' painted sprites (src/engine/hazards.js places them; drawHazard adds their states). */
+export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', musicbox: 'musicbox', plate: 'plate', saw: 'saw', fenceAcross: 'fence-across', fenceUpright: 'fence-upright' }).map(([key, file]) => [key, `art/smile-street/hazards/${file}-v1.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
-const TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
+const TAG_SIZE = 7, TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
 const SWING_SWEEP = 0.45, FLASH_MS = 260, CRIT_PULSE_MS = 120, CRIT_ZOOM = 0.03, BODY_SCALE = 1, PLAYER_SCALE = 0.9, EYES_OPEN_SHARE = 0.5;
@@ -111,6 +114,105 @@ export class CanvasRenderer {
     else if (enemy.statuses.chill > time) badges.push({ id: 'chill' });
     for (const id of ['shock', 'windPressure']) if (enemy.statuses[id] > time) badges.push({ id });
     return badges;
+  }
+  /**
+   * One room hazard: its painted sprite (art/smile-street/hazards), with its state drawn over it in code: a plate's
+   * warning and heat, a crate's blinking fuse, the saw running along its groove, a spent music box.
+   */
+  drawHazard(h) {
+    const c = this.ctx, g = this.game, rules = g.config.hazards, t = g.s.time, x = h.x * 20, y = h.y * 20, NAVY = '#2b3345';
+    const art = name => this.mapImages?.get(HAZARD_ART[name]);
+    /** The sprite `width` render pixels wide, its bottom edge at `bottom` (or centred on y when bottom is null). */
+    const put = (image, width, bottom = null, alpha = 1) => {
+      if (!image) return false;
+      const height = width * image.height / image.width;
+      c.save(); c.globalAlpha *= alpha; c.imageSmoothingEnabled = false; c.drawImage(image, Math.round(x - width / 2), Math.round(bottom === null ? y - height / 2 : bottom - height), Math.round(width), Math.round(height)); c.restore();
+      return true;
+    };
+    const diamond = (hw, hd) => { c.beginPath(); c.moveTo(x, y - hd); c.lineTo(x + hw, y); c.lineTo(x, y + hd); c.lineTo(x - hw, y); c.closePath(); };
+    c.save();
+    if (h.kind === 'plate') {
+      const frozen = h.cooledUntil > t, state = frozen ? 'cool' : plateState(h, t, rules.plate), hw = h.half * 20, hd = (h.depth ?? rules.plate.depth) * 20;
+      put(art('plate'), hw * 2);
+      // Cooled by ice: a pale frost sheet over the grate until it thaws.
+      if (frozen) { diamond(hw * 0.9, hd * 0.9); c.globalAlpha = 0.45; c.fillStyle = '#cdf3fa'; c.fill(); c.globalAlpha = 1; c.lineWidth = 2; c.strokeStyle = '#7fd0e0'; c.stroke(); }
+      // Warning: a pulsing amber outline. Heat: the grate glows orange under a solid navy-edged diamond.
+      if (state === 'warn') { diamond(hw, hd); c.lineWidth = 3; c.strokeStyle = NAVY; c.stroke(); c.lineWidth = 2; c.strokeStyle = Math.floor(t * 8) % 2 ? '#ffd257' : '#ffbe20'; c.stroke(); }
+      if (state === 'hot') {
+        diamond(hw * 0.86, hd * 0.86); c.globalAlpha = 0.62 + 0.12 * Math.sin(t * 20); c.fillStyle = '#ff7a2c'; c.fill(); c.globalAlpha = 1;
+        diamond(hw, hd); c.lineWidth = 3; c.strokeStyle = NAVY; c.stroke(); c.lineWidth = 2; c.strokeStyle = '#ff7a2c'; c.stroke();
+        c.fillStyle = '#ffd257'; for (let k = 0; k < 3; k++) { const wx = x + (k - 1) * hw * 0.45, wy = y - 4 - ((t * 30 + k * 7) % 12); c.fillRect(Math.round(wx), Math.round(wy), 2, 3); }
+      }
+    }
+    if (h.kind === 'rail') {
+      // The groove: brass lips either side of a dark slot, end to end, with brass stops at both ends.
+      const ax = x - h.dx * 20, ay = y - h.dy * 20, bx = x + h.dx * 20, by = y + h.dy * 20;
+      c.lineCap = 'round';
+      const charged = h.chargedUntil > t;
+      for (const [w, col] of [[8, NAVY], [6, '#c79a3e'], [3, charged ? (Math.floor(t * 16) % 2 ? '#ffe086' : '#fff4b7') : '#3a3440']]) { c.lineWidth = w; c.strokeStyle = col; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); }
+      if (charged) { c.save(); c.globalAlpha = 0.35; c.lineWidth = 16; c.strokeStyle = '#ffe086'; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore(); }
+      for (const [ex, ey] of [[ax, ay], [bx, by]]) { this.rect(ex - 4, ey - 4, 8, 8, NAVY); this.rect(ex - 3, ey - 3, 6, 6, '#e0b048'); this.rect(ex - 1, ey - 1, 2, 2, NAVY); }
+      const saw = sawAt(h, t, rules.rail.speed), image = art('saw'), size = rules.rail.radius * 2 * 20 * 1.4;
+      c.save(); c.translate(saw.x * 20, saw.y * 20 - size * 0.35); c.rotate(t * 12);
+      if (image) { c.imageSmoothingEnabled = false; c.drawImage(image, -size / 2, -size / 2, size, size); }
+      c.restore();
+    }
+    if (h.kind === 'crate') {
+      const lit = h.fuseAt !== undefined, w = h.size * 20 * 1.35, bottom = y + h.size * 10;
+      if (lit && Math.floor(t * 12) % 2) c.filter = 'brightness(1.35) saturate(1.3)';
+      put(art('crate'), w, bottom); c.filter = 'none';
+      if (lit) { const top = bottom - w * 47 / 44; this.rect(x - 3, top - 7, 6, 6, NAVY); this.rect(x - 2, top - 6, 4, 4, Math.floor(t * 12) % 2 ? '#fff4b7' : '#d8423c'); }
+    }
+    if (h.kind === 'fence') {
+      const across = h.w >= h.h, worn = h.hp <= 2;
+      if (worn) c.filter = 'brightness(0.85) saturate(0.8)';
+      if (across) put(art('fenceAcross'), h.w * 20 * 1.1, y + h.h * 10 + 2);
+      else { const image = art('fenceUpright'); if (image) put(image, (h.h + 0.9) * 20 * image.width / image.height, y + h.h * 10 + 2); }
+      c.filter = 'none';
+    }
+    if (h.kind === 'musicbox') {
+      const off = h.used;
+      if (off) c.filter = 'grayscale(0.8) brightness(0.9)';
+      put(art('musicbox'), h.size * 20 * 1.45, y + h.size * 10);
+      c.filter = 'none';
+      if (!off) { const bob = Math.sin(t * 4) * 2; this.text('♪', x + 6, y - h.size * 20 * 1.3 + bob, '#2f8a62', 10); }
+    }
+    c.restore();
+  }
+  /** An elite's traits as marks round its body: a glow at the feet, a brass shield arc, orbiting gears, a bomb heart. */
+  drawAffixAura(enemy) {
+    const c = this.ctx, t = this.game.s.time, x = enemy.x * 20, y = enemy.y * 20, colors = this.game.config.presentation.colors;
+    for (const { id, element } of enemy.affixes) {
+      c.save();
+      if (id === 'overwound' || id === 'coated') {
+        c.globalAlpha = 0.45 + 0.15 * Math.sin(t * 6); c.fillStyle = id === 'coated' ? colors[element] || '#79cbd1' : '#ffbe20';
+        c.beginPath(); c.ellipse(x, y + 1, 15, 5, 0, 0, TAU); c.fill();
+      }
+      if (id === 'brassShield' && enemy.frontGuard > 0) {
+        const a = enemy.facing; c.lineWidth = 4; c.strokeStyle = '#2b3345';
+        c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke();
+        c.lineWidth = 2; c.strokeStyle = '#ffbe20'; c.beginPath(); c.arc(x, y - 14, 17, a - 0.9, a + 0.9); c.stroke();
+      }
+      if (id === 'splitter') for (let i = 0; i < 3; i++) {
+        const a = t * 2.4 + i * TAU / 3, gx = x + Math.cos(a) * 15, gy = y - 16 + Math.sin(a) * 5;
+        c.fillStyle = '#2b3345'; c.fillRect(Math.round(gx) - 3, Math.round(gy) - 3, 6, 6); c.fillStyle = '#c79a3e'; c.fillRect(Math.round(gx) - 2, Math.round(gy) - 2, 4, 4);
+      }
+      if (id === 'volatile' && Math.sin(t * 9) > -0.2) { c.fillStyle = '#2b3345'; c.fillRect(Math.round(x) - 3, Math.round(y) - 22, 6, 6); c.fillStyle = '#e0564c'; c.fillRect(Math.round(x) - 2, Math.round(y) - 21, 4, 4); }
+      c.restore();
+    }
+  }
+  /** The traits' names above the health bar: navy chips with the trait's colour as a stripe, so every name reads on any floor. */
+  drawAffixTags(enemy, y) {
+    const names = { fire: '불', ice: '얼음', lightning: '번개', wind: '바람' }, rules = this.game.config.eliteAffixes?.list || [];
+    const tags = enemy.affixes.map(({ id, element }) => { const rule = rules.find(r => r.id === id); return rule && { text: element ? `${names[element]} ${rule.name}` : rule.name, color: element ? this.game.config.presentation.colors[element] : rule.color }; }).filter(Boolean);
+    const ink = this.ink(); ink.font = `700 ${TAG_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
+    const widths = tags.map(tag => Math.ceil(ink.measureText(tag.text).width) + 9), total = widths.reduce((a, b) => a + b, 0) + (tags.length - 1) * 2;
+    let x = Math.round(enemy.x * 20 - total / 2);
+    tags.forEach((tag, i) => {
+      this.rect(x - 1, y - 1, widths[i] + 2, TAG_SIZE + 5, '#f6ecd2'); this.rect(x, y, widths[i], TAG_SIZE + 3, '#2b3345'); this.rect(x, y, 3, TAG_SIZE + 3, tag.color);
+      this.text(tag.text, x + 3 + (widths[i] - 3) / 2, y + TAG_SIZE + 0.5, '#fff4d6', TAG_SIZE);
+      x += widths[i] + 2;
+    });
   }
   drawStatuses(enemy, y) {
     const c = this.ctx, badges = this.statusBadges(enemy), width = ({ count }) => BADGE_SIZE + BADGE_GAP + (count > 1 ? COUNT_WIDTH : 0);
@@ -314,6 +416,14 @@ export class CanvasRenderer {
       case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
       case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
       case 'dash': return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, alpha: 1 - t * 0.6 });
+      case 'carpetRoll': {
+        // A new live carpet unrolls from one end to the other, gold-edged, then stays lit while Brass lives.
+        const ax = fx.x, ay = fx.y, length = Math.hypot(fx.targetX - ax, fx.targetY - ay) * 20 * Math.min(1, t * 1.6), c = this.ctx;
+        c.save(); c.translate(x, y); c.rotate(Math.atan2(fx.targetY - ay, fx.targetX - ax));
+        c.globalAlpha *= 1 - Math.max(0, t - 0.7) / 0.3; c.fillStyle = 'rgba(255, 210, 87, 0.35)'; c.fillRect(0, -14, length, 28);
+        c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.strokeRect(0, -14, length, 28); c.fillStyle = '#ffd257'; c.fillRect(length - 4, -16, 8, 32); c.restore();
+        return true;
+      }
       case 'march': {
         // Boots come down along the lane one after another, from where the march starts to where it ends.
         const tx = fx.targetX * 20, ty = fx.targetY * 20, steps = Math.max(1, Math.round(Math.hypot(tx - x, ty - y) / 24));
@@ -513,6 +623,14 @@ export class CanvasRenderer {
     return ai;
   }
   /** The soldiers of the marching line, walking in step, with their gap. */
+  /** Parades: files of toy soldiers walking down their carpets, one place left empty. */
+  drawParades() {
+    const g = this.game;
+    for (const parade of g.s.parades || []) for (const body of g.paradeBodies(parade)) {
+      const direction = nearestDirection(body.heading), clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
+      if (!(clip && this.drawSprite(body.x * 20, body.y * 20, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(body.x * 20 - 7, body.y * 20 - 26, 14, 26, '#dc8b83');
+    }
+  }
   drawColumn() {
     const g = this.game, line = g.columnLine;
     if (!line) return;
@@ -528,8 +646,20 @@ export class CanvasRenderer {
   }
   /** What a running boss pattern needs on screen: who is listening, and who must hold still. */
   drawBossState() {
-    const { s, p } = this.game, c = this.ctx;
+    const g = this.game, { s, p } = g, c = this.ctx;
     for (const enemy of s.enemies.filter(e => e.boss && e.hp > 0)) {
+      // Brass's live carpets carry a dashed gold edge, so the player always sees where marches and parades can run.
+      if (g.config.bossAI[enemy.type]?.liveLanes) {
+        c.save(); c.setLineDash([6, 6]); c.lineDashOffset = -this.visualTime * 18; c.strokeStyle = 'rgba(255, 210, 87, 0.75)'; c.lineWidth = 2;
+        for (const lane of g.marchLanes(enemy)) this.lanePath(lane, g.config.bossAI[enemy.type].marchWidth, false);
+        c.restore();
+      }
+      if (s.drill) {
+        const d = s.drill, still = d.steps[d.index] === 'still', left = Math.max(0, d.until - s.time);
+        c.save(); c.setLineDash([]); c.strokeStyle = still ? '#c43c36' : '#3fbf7f'; c.lineWidth = 3; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 18, 8, 0, 0, TAU); c.stroke(); c.restore();
+        this.text(still ? '멈춰!' : '앞으로!', enemy.x * 20, enemy.y * 20 - 70, still ? '#c43c36' : '#2f8a62', 13);
+        this.rect(enemy.x * 20 - 20, enemy.y * 20 - 64, 40, 3, '#2b3345'); this.rect(enemy.x * 20 - 20, enemy.y * 20 - 64, 40 * left / d.rules.seconds, 3, still ? '#c43c36' : '#3fbf7f');
+      }
       if (enemy.alarmUntil > s.time) { c.save(); c.setLineDash([]); c.strokeStyle = Math.floor(s.time * 8) % 2 ? '#c43c36' : '#ffd257'; c.lineWidth = 3; c.beginPath(); c.arc(enemy.x * 20, enemy.y * 20, 40, 0, TAU); c.stroke(); c.restore(); this.drawAlert(enemy, enemy.y * 20 - 78); }
       if (enemy.bellUntil > s.time) { c.save(); c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.ellipse(p.x * 20, p.y * 20, 16, 7, 0, 0, TAU); c.stroke(); c.restore(); }
     }
@@ -581,6 +711,15 @@ export class CanvasRenderer {
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.craneRadius);
         for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170; if (!this.drawFxFrame('crate', 0, dx * 20, top + 16)) { this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); this.rect(dx * 20 - 8, top, 16, 3, '#c79a5e'); } }
         break;
+      case 'crateToss':
+        for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.crateTossRadius);
+        for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170, art = this.mapImages?.get(HAZARD_ART.crate); if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, dx * 20 - 12, top - 10, 24, 26); c.restore(); } else this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); }
+        break;
+      case 'parade':
+        c.setLineDash([]); c.strokeStyle = '#c43c36'; c.fillStyle = 'rgba(196, 60, 54, 0.22)'; c.lineWidth = 3;
+        for (const lane of tell.lanes) this.lanePath(lane, ai.paradeRadius + 0.3, true);
+        this.text('퍼레이드!', x, y - 70, '#b85863', 12); break;
+      case 'drill': ring(x, y, 1.6); this.text('구령 준비!', x, y - 70, '#b85863', 12); break;
       case 'carpet': {
         const lanes = g.marchLanes(enemy, true);
         this.floorWash(progress);
@@ -710,9 +849,12 @@ export class CanvasRenderer {
     const effects = castFx.map(fx => ({ y: fx.effect.ground ? -Infinity : fx.y - 0.01, fx }));
     const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null }).map(npc => ({ y: npc.y, npc })) : [];
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
-    const actors = [...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
+    // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
+    const hazards = s.mode === 'combat' ? (s.hazards || []).filter(h => !h.gone).map(h => ({ y: GROUND.has(h.kind) ? -Infinity : h.y, hazard: h })) : [];
+    const actors = [...hazards, ...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
     for (const actor of actors) {
       if (actor.occluder) { this.drawOccluder(mapImage, actor.occluder.polygon, size); continue; }
+      if (actor.hazard) { this.drawHazard(actor.hazard); continue; }
       if (actor.prop) { this.drawProp(actor.prop); this.coverBody(depthMask, actor.prop.x, actor.prop.y, 2, 2.6); continue; }
       if (actor.fx) { this.drawCastEffect(actor.fx); continue; }
       if (actor.dummy) { this.drawDummy(actor, map.dummyImage); continue; }
@@ -730,6 +872,7 @@ export class CanvasRenderer {
         for (const [k, a] of [[0.9, 0.18], [0.45, 0.35]]) { c.globalAlpha = a; this.drawSprite((actor.x + Math.cos(back) * k) * 20, (actor.y + Math.sin(back) * k) * 20, playerPose, this.sprites, false, PLAYER_SCALE); }
         c.globalAlpha = alpha;
       }
+      if (!actor.player && actor.affixes?.length && actor.hp > 0) this.drawAffixAura(actor);
       const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;
@@ -740,13 +883,14 @@ export class CanvasRenderer {
         if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
         this.drawStatuses(actor, actor.boss ? yy + 11 : yy - 13);
+        if (actor.affixes?.length) this.drawAffixTags(actor, yy - (this.statusBadges(actor).length ? 27 : 14));
       }
     }
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.tell && !e.boss)) {
       const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction);
       this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54));
     }
-    this.drawColumn(); this.drawBossState();
+    this.drawColumn(); this.drawParades(); this.drawBossState();
     const note = this.mapImages?.get(NOTE_ART);
     for (const bullet of s.projectiles) {
       const bx = bullet.x * 20, by = bullet.y * 20;

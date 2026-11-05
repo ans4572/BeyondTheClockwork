@@ -1,0 +1,246 @@
+[
+  {
+    "file": "art/ui/icons/skill-heatSwing-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "fire": 198
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-exhaustBurst-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "fire": 237
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-frostBolt-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "ice": 184
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-coolingField-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "ice": 384
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-conductiveSpanner-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "lightning": 68
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-capacitorStrike-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "lightning": 118
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-pressureDash-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "wind": 175
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-vortexIntake-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "wind": 533
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-steamShatter-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "fire": 80,
+      "ice": 296
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-arcFurnace-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "fire": 138,
+      "lightning": 176
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-fireCyclone-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "fire": 197,
+      "wind": 78
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-magneticIceClamp-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "ice": 166,
+      "lightning": 66
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-frostCrosscut-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 9,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "ice": 315,
+      "wind": 153
+    }
+  },
+  {
+    "file": "art/ui/icons/skill-stormFloat-v1.png",
+    "width": 384,
+    "height": 384,
+    "grid": 48,
+    "colors": 10,
+    "alpha": [
+      0,
+      255
+    ],
+    "minMargin": 16,
+    "uniform8x8Blocks": true,
+    "navyContour": true,
+    "elementPixels": {
+      "lightning": 110,
+      "wind": 115
+    }
+  }
+]

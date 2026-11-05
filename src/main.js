@@ -1,11 +1,11 @@
 import { loadData } from './engine/data.js';
 import { Game } from './engine/game.js';
-import { TOOL_ICONS, ICON_FILES, ico, slotArt, syncFullscreenIcon } from './ui/tool-icons.js';
+import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
-import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART } from './render/canvas.js';
+import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
 import { DepthMask } from './render/depth-mask.js';
@@ -47,7 +47,7 @@ const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodge
 /** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
 const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/element-icons/${id}.png`),
   ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake',
-    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat'].map(id => `art/ui/skill-icons/${id}.png`), ...ICON_FILES,
+    'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat'].map(skillIcon), ...ICON_FILES,
   // The map's painting, so the map opens whole the first time.
   WORLD_MAP_ART, ...WORLD_MAP_MARKERS];
 /** The decoded icons are held here so the browser keeps them ready. */
@@ -143,7 +143,7 @@ try {
   // Map art is loaded only where it is needed: the place underfoot and the one after it, never the whole region up front.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
   const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
-  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...FX_FILES, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
   const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
@@ -434,7 +434,7 @@ try {
         : price === null ? button(ownedElements.length ? '모두 보유' : '등록 뒤 무료', 'buy-element', `data-id="${element.id}" disabled`, 'pick')
         : button(price === 0 ? '무료로 달기' : `${ico('gear')} ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
       // Each part shows its two skills as icon rows, with the numbers that matter when choosing.
-      const moves = skills.map(skill => `<li><img src="art/ui/skill-icons/${skill.id}.png" alt=""><span><b>${skill.name}</b><small>피해 ${skill.totalDirectDamage} · 축전 ${skill.energyCost}</small><small>재사용 ${skill.cooldown}초</small></span></li>`).join('');
+      const moves = skills.map(skill => `<li><img src="${skillIcon(skill.id)}" alt=""><span><b>${skill.name}</b><small>피해 ${skill.totalDirectDamage} · 축전 ${skill.energyCost}</small><small>재사용 ${skill.cooldown}초</small></span></li>`).join('');
       return `<article class="reward-card element-card ${picked ? 'picked' : ''} ${owned ? 'owned' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${owned ? `<span class="owned-badge">${picked ? '장착 중' : '보유'}</span>` : ''}<div class="element-head">${elementIcon(element.id)}<div><h3>${element.name}</h3><span class="device">${element.device}</span></div></div><span class="element-role">${element.role}</span><ul class="element-skills">${moves}</ul>${action}</article>`;
     }).join('');
     const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.'
@@ -478,7 +478,7 @@ try {
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img src="art/ui/skill-icons/${id}.png" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
+      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
     }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
@@ -506,7 +506,7 @@ try {
     const tab = (id, label) => button(label, 'codex-tab', `data-id="${id}" aria-pressed="${codexTab === id}"`, codexTab === id ? 'tab on' : 'tab');
     const status = id => `<span class="tag status"><img src="${assetUrl(STATUS_ICONS[id])}" alt="">${words.statuses[id][0]}</span>`;
     const tags = (move, statuses) => `<div class="tags"><span class="tag">피해 ${move.totalDirectDamage}</span>${move.energyCost ? `<span class="tag">축전 ${move.energyCost}</span>` : ''}<span class="tag">대기 ${move.cooldown}초</span>${statuses.map(status).join('')}</div>`;
-    const move = (m, line, statuses, extra = '') => `<div class="codex-move"><img class="move-icon" src="art/ui/skill-icons/${m.id}.png" alt=""><div><h4>${m.name}${extra}</h4><p>${line}</p>${tags(m, statuses)}</div></div>`;
+    const move = (m, line, statuses, extra = '') => `<div class="codex-move"><img class="move-icon" src="${skillIcon(m.id)}" alt=""><div><h4>${m.name}${extra}</h4><p>${line}</p>${tags(m, statuses)}</div></div>`;
     const elements = data.combat.elements.map(e => `<article class="codex-entry" style="--accent:${data.slice.presentation.colors[e.id]}"><h3>${elementIcon(e.id, 'codex-icon')}${e.name} · ${e.device}</h3>${data.combat.skills.filter(s => s.element === e.id).map(s => move(s, words.skills[s.id], [ELEMENT_STATUS[e.id]])).join('')}</article>`).join('');
     const fusions = data.combat.fusions.map(f => `<article class="codex-entry"><div class="pair">${f.pair.map(id => `${elementIcon(id, 'codex-icon')}${element(id).name}`).join('<b>+</b>')}</div>${move(f, words.fusions[f.id], f.pair.map(id => ELEMENT_STATUS[id]), game.s.profile.discoveredFusions.includes(f.id) ? ' <small>✓ 써 봄</small>' : '')}</article>`).join('');
     const legend = `<div class="status-legend">${Object.entries(words.statuses).map(([id, [name, text]]) => `<p><img src="${assetUrl(STATUS_ICONS[id])}" alt=""><strong>${name}</strong> ${text}</p>`).join('')}</div>`;
@@ -593,7 +593,7 @@ try {
     const keys = bindings(), skills = game.skillSlots;
     return [
       { key: '좌', icon: 'action-wrench' },
-      ...[0, 1, 2, 3].map(i => ({ key: keyName(keys['skill' + i]), skill: skills[i]?.skill, level: skills[i]?.slot.level })),
+      ...[0, 1, 2, 3].map(i => ({ key: keyName(keys['skill' + i]), skill: skills[i]?.skill, level: skills[i]?.slot.level, locked: game.isConfiscated(i) })),
       { key: '우', skill: game.fusion, fusion: true },
       { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'action-dodge', dodge: true }
     ];
@@ -654,6 +654,8 @@ try {
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
       // A skill or the fusion without enough charge greys out the same way.
       element.classList.toggle('short', !!skill?.energyCost && p.energy < skill.energyCost);
+      // A skill Roco has taken shows a padlock until it is won back.
+      element.classList.toggle('locked', !!slot.locked);
     });
     const resetting = game.s.practice?.resetCooldowns;
     put($('practice-reset'), 'hidden', game.s.mode !== 'practice');
@@ -661,7 +663,7 @@ try {
     $('practice-reset').classList.toggle('on', !!resetting);
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, { remaining, total } = slotCooldown(slot);
-      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!skill?.energyCost && p.energy < skill.energyCost };
+      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!slot.locked || !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
     put($('hint'), 'text', hint);

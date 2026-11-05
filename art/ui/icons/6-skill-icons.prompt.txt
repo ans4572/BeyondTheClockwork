@@ -1,0 +1,43 @@
+Use case: game UI icon set (a redraw of the skill icons).
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Redraw the 14 SKILL and FUSION icons of Beyond the Clockwork, a cute wind-up toy-town roguelite, so they match the new pixel icon set. They sit in the skill bar next to the basic attack and dodge icons, on the reward cards and in the codex, shown at 36-56 screen pixels.
+
+WHY A REDRAW
+The current icons (art\ui\skill-icons\*.png) have soft, anti-aliased edges and no outline, so they look blurry beside the new crisp icons. Keep what each one SHOWS (its subject, pose and element colour) but redraw it in the new style.
+
+STYLE REFERENCES (match these exactly)
+- art\ui\icons\action-wrench-v1.png and art\ui\icons\action-dodge-v3.png: the icons in the same skill bar.
+- art\ui\icons\reward-wrench-damage-v2.png, art\ui\icons\reward-status-damage-v1.png, art\ui\icons\coin-v1.png: the same pass.
+Match their crisp pixel clusters, 1 grid pixel dark navy outline (#2b3345), top-left light, saturation and pixel density.
+Palette: navy ink outline (#2b3345), polished brass and gold, warm cream, plus the element colours: fire #ef8a61 / #e8742f, ice #79cbd1 / #66bde8, lightning #e9bd59 / #ffe086, wind #89bea0 / #8fd8b0. F2's wrench is teal #5ca99a when a wrench appears.
+
+DRAW EACH ICON
+- Pixel art on a 48x48 pixel grid, then output at 384x384 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 48x48 perfectly.
+- TRANSPARENT background (PNG with alpha), one centred subject, 2 grid pixels of empty margin, a 1 grid pixel dark navy outline round the silhouette.
+- Must read at 28 pixels: one bold silhouette, at most 8-10 colours, no text.
+- The element colour dominates each skill; fusions show both of their elements.
+- Every icon keeps a clearly different silhouette from the others.
+
+THE ICONS
+1) 과열 휘두르기 (heatSwing, fire skill) -> redraw the subject of art\ui\skill-icons\heatSwing.png -> SAVE: art\ui\icons\skill-heatSwing-v1.png
+2) 배기 폭발 (exhaustBurst, fire skill) -> redraw the subject of art\ui\skill-icons\exhaustBurst.png -> SAVE: art\ui\icons\skill-exhaustBurst-v1.png
+3) 서리 볼트 (frostBolt, ice skill) -> redraw the subject of art\ui\skill-icons\frostBolt.png -> SAVE: art\ui\icons\skill-frostBolt-v1.png
+4) 냉각 지대 (coolingField, ice skill) -> redraw the subject of art\ui\skill-icons\coolingField.png -> SAVE: art\ui\icons\skill-coolingField-v1.png
+5) 도전 스패너 (conductiveSpanner, lightning skill) -> redraw the subject of art\ui\skill-icons\conductiveSpanner.png -> SAVE: art\ui\icons\skill-conductiveSpanner-v1.png
+6) 축전 낙뢰 (capacitorStrike, lightning skill) -> redraw the subject of art\ui\skill-icons\capacitorStrike.png -> SAVE: art\ui\icons\skill-capacitorStrike-v1.png
+7) 압축 돌진 (pressureDash, wind skill) -> redraw the subject of art\ui\skill-icons\pressureDash.png -> SAVE: art\ui\icons\skill-pressureDash-v1.png
+8) 회오리 흡입 (vortexIntake, wind skill) -> redraw the subject of art\ui\skill-icons\vortexIntake.png -> SAVE: art\ui\icons\skill-vortexIntake-v1.png
+9) 증기 파쇄 (steamShatter, fusion of fire + ice) -> redraw the subject of art\ui\skill-icons\steamShatter.png, both element colours visible -> SAVE: art\ui\icons\skill-steamShatter-v1.png
+10) 전호 용광로 (arcFurnace, fusion of fire + lightning) -> redraw the subject of art\ui\skill-icons\arcFurnace.png, both element colours visible -> SAVE: art\ui\icons\skill-arcFurnace-v1.png
+11) 화염 회오리 (fireCyclone, fusion of fire + wind) -> redraw the subject of art\ui\skill-icons\fireCyclone.png, both element colours visible -> SAVE: art\ui\icons\skill-fireCyclone-v1.png
+12) 자성 빙쇄 (magneticIceClamp, fusion of ice + lightning) -> redraw the subject of art\ui\skill-icons\magneticIceClamp.png, both element colours visible -> SAVE: art\ui\icons\skill-magneticIceClamp-v1.png
+13) 빙풍 절단 (frostCrosscut, fusion of ice + wind) -> redraw the subject of art\ui\skill-icons\frostCrosscut.png, both element colours visible -> SAVE: art\ui\icons\skill-frostCrosscut-v1.png
+14) 폭뢰 부유구 (stormFloat, fusion of lightning + wind) -> redraw the subject of art\ui\skill-icons\stormFloat.png, both element colours visible -> SAVE: art\ui\icons\skill-stormFloat-v1.png
+
+RULES
+- All 14 in one consistent style with the icons above: the same outline weight, light direction, saturation and pixel density.
+- No text, letters, numbers, slot frame, background tile, watermark or characters.
+
+When saved, list every SAVE path with its actual pixel size.

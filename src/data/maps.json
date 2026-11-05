@@ -2021,7 +2021,39 @@
         ]
       ],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.5,
+          12.5,
+          2.5,
+          0.0
+        ],
+        [
+          15.0,
+          14.0,
+          0.0,
+          2.5
+        ],
+        [
+          19.0,
+          15.5,
+          2.236,
+          1.118
+        ],
+        [
+          14.5,
+          10.0,
+          2.236,
+          -1.118
+        ],
+        [
+          18.5,
+          9.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "candyYard": {
       "background": "/art/smile-street/maps/ribbon-alley-c/background-1x.webp",
@@ -2161,7 +2193,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.0,
+          15.5,
+          2.5,
+          0.0
+        ],
+        [
+          27.5,
+          13.0,
+          0.0,
+          2.5
+        ],
+        [
+          14.0,
+          15.5,
+          2.236,
+          1.118
+        ],
+        [
+          32.5,
+          12.5,
+          2.236,
+          -1.118
+        ],
+        [
+          23.0,
+          16.0,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "repairRoad": {
       "background": "/art/smile-street/maps/workshop-road-a/background-1x.webp",
@@ -2253,7 +2317,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          13.0,
+          13.0,
+          2.5,
+          0.0
+        ],
+        [
+          17.0,
+          12.5,
+          2.236,
+          1.118
+        ],
+        [
+          22.0,
+          13.0,
+          2.236,
+          -1.118
+        ],
+        [
+          30.0,
+          12.5,
+          2.5,
+          0.0
+        ],
+        [
+          26.0,
+          13.5,
+          2.236,
+          -1.118
+        ]
+      ]
     },
     "ribbonCross": {
       "background": "/art/smile-street/maps/ribbon-alley-d/background-1x.webp",
@@ -2421,7 +2517,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.5,
+          10.5,
+          2.5,
+          0.0
+        ],
+        [
+          16.5,
+          11.0,
+          0.0,
+          2.5
+        ],
+        [
+          18.0,
+          15.0,
+          2.236,
+          1.118
+        ],
+        [
+          20.5,
+          11.5,
+          2.236,
+          -1.118
+        ],
+        [
+          24.5,
+          10.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "lostFound": {
       "background": "/art/smile-street/maps/lost-and-found/background-1x.webp",
@@ -2712,7 +2840,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.5,
+          12.0,
+          2.5,
+          0.0
+        ],
+        [
+          14.0,
+          14.0,
+          0.0,
+          2.5
+        ],
+        [
+          17.5,
+          12.0,
+          2.236,
+          1.118
+        ],
+        [
+          20.5,
+          15.5,
+          2.236,
+          -1.118
+        ],
+        [
+          10.5,
+          16.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "fountainRing": {
       "background": "/art/smile-street/maps/first-step-c/background-1x.webp",
@@ -2880,7 +3040,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.5,
+          14.5,
+          2.5,
+          0.0
+        ],
+        [
+          14.5,
+          14.0,
+          0.0,
+          2.5
+        ],
+        [
+          18.5,
+          14.5,
+          2.236,
+          1.118
+        ],
+        [
+          23.5,
+          14.0,
+          2.236,
+          -1.118
+        ],
+        [
+          27.5,
+          13.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "checkpoint": {
       "background": "/art/smile-street/maps/parade-approach-c/background-1x.webp",
@@ -3072,7 +3264,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          9.5,
+          9.0,
+          2.5,
+          0.0
+        ],
+        [
+          8.5,
+          13.0,
+          0.0,
+          2.5
+        ],
+        [
+          13.0,
+          12.5,
+          2.236,
+          1.118
+        ],
+        [
+          17.0,
+          11.5,
+          2.236,
+          -1.118
+        ],
+        [
+          20.5,
+          13.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "sweetAlley": {
       "background": "/art/smile-street/maps/ribbon-alley-a/background-1x.webp",
@@ -3228,7 +3452,15 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          18.5,
+          10.5,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "paradeYard": {
       "background": "/art/smile-street/maps/parade-approach-d/background-1x.webp",
@@ -3364,7 +3596,39 @@
       ],
       "solids": [],
       "overhead": [],
-      "pixelScale": 2
+      "pixelScale": 2,
+      "railSlots": [
+        [
+          10.0,
+          14.5,
+          2.5,
+          0.0
+        ],
+        [
+          13.5,
+          12.0,
+          0.0,
+          2.5
+        ],
+        [
+          17.0,
+          14.0,
+          2.236,
+          1.118
+        ],
+        [
+          20.5,
+          11.0,
+          2.236,
+          -1.118
+        ],
+        [
+          20.5,
+          16.0,
+          2.5,
+          0.0
+        ]
+      ]
     },
     "marchGround": {
       "background": "/art/smile-street/maps/march-gate/background-1x.webp",

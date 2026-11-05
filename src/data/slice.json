@@ -320,8 +320,15 @@
         "magnet",
         "suction",
         "overcharge",
-        "stickers"
+        "stickers",
+        "crateToss"
       ],
+      "crateTossCount": 2,
+      "crateTossRadius": 0.9,
+      "crateTossMax": 4,
+      "crateStunSeconds": 2.5,
+      "confiscateSeconds": 6,
+      "confiscateBackDegrees": 110,
       "clawLength": 7,
       "clawWidth": 0.65,
       "magnetRadius": 3.6,
@@ -344,7 +351,8 @@
         "alarm": 0.7,
         "crane": 1.1,
         "suction": 0.8,
-        "stickers": 0.7
+        "stickers": 0.7,
+        "crateToss": 1.0
       },
       "alarmSeconds": 2,
       "craneDrops": 4,
@@ -421,12 +429,35 @@
         {
           "pattern": "carpet",
           "below": 0.33
+        },
+        {
+          "pattern": "parade",
+          "below": 0.66
+        },
+        {
+          "pattern": "drill",
+          "below": 0.33
         }
       ],
+      "liveLanes": [
+        { "below": 1, "count": 2 },
+        { "below": 0.66, "count": 3 },
+        { "below": 0.33, "count": 4 }
+      ],
+      "laneOrder": [1, 2, 0, 3],
+      "paradeSoldiers": 7,
+      "paradeSpacing": 1.25,
+      "paradeSpeed": 4.2,
+      "paradeRadius": 0.45,
+      "drillStepSeconds": 1.3,
+      "drillStillUnits": 0.3,
+      "drillMoveUnits": 1.6,
       "tellSeconds": {
         "bell": 0.9,
         "column": 1.2,
         "carpet": 2.2,
+        "parade": 1.1,
+        "drill": 1.0,
         "stomp": 0.9,
         "charge": 0.9
       },
@@ -513,7 +544,7 @@
     },
     "conductiveSpanner": {
       "shape": "chain",
-      "chainRange": 3,
+      "chainRange": 4,
       "acquisitionArc": 80,
       "interval": 0,
       "delay": 0
@@ -526,7 +557,8 @@
     "pressureDash": {
       "shape": "dash",
       "duration": 0.2,
-      "knockback": 0.6,
+      "knockback": 1.4,
+        "bossStagger": 30,
       "interval": 0,
       "delay": 0
     },
@@ -1519,5 +1551,40 @@
       "critBonus": 0.2,
       "tier": "special"
     }
-  ]
+  ],
+  "eliteAffixes": {
+    "note": "Traits dealt onto elites per run (src/engine/encounters.js). Rooms from oneFrom get one trait per elite, from twoFrom two.",
+    "oneFrom": "stop-08",
+    "twoFrom": "stop-10",
+    "bonusCoins": 3,
+    "list": [
+      { "id": "overwound", "name": "가속", "color": "#d68c25", "speed": 1.35, "recovery": 0.65 },
+      { "id": "brassShield", "name": "황동 방패", "color": "#96551a", "frontGuard": 0.6, "guardArcDegrees": 120, "breakHits": 4 },
+      { "id": "splitter", "name": "분열", "color": "#6e7890", "spawn": "rat", "count": 2 },
+      { "id": "coated", "name": "코팅", "color": "#3f8fc4", "elements": ["fire", "ice", "lightning", "wind"] },
+      { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 18, "enemyDamage": 120 }
+    ]
+  },
+  "hazards": {
+    "note": "Room furniture dealt per run onto every fight room's floor (src/engine/hazards.js).",
+    "counts": { "crate": [2, 3], "plate": [1, 2], "rail": [2, 3], "fence": [1, 1], "musicbox": [0, 1] },
+    "spreadTries": 12,
+    "doorClear": 3.5,
+    "solidRoom": 1.6,
+    "crate": { "size": 0.9, "fuse": 0.8, "radius": 2.2, "damage": 8, "enemyDamage": 160, "chain": 0.15 },
+    "plate": { "half": 1.4, "depth": 0.82, "cycle": 5, "warn": 1, "hot": 1.5, "damage": 4, "tick": 0.7 },
+    "rail": { "chance": 0.5, "speed": 2.6, "radius": 0.45, "damage": 5, "enemyDamage": 60, "enemyEvery": 0.6 },
+    "fence": { "long": 1.9, "short": 0.45, "gap": 0.25, "hp": 4 },
+    "musicbox": { "size": 0.8, "heal": 0.18 }
+  ,
+    "elements": {
+      "note": "What each element does to the room hazards (src/engine/game.js elementOnHazards).",
+      "frostSeconds": 5,
+      "chargeSeconds": 3,
+      "chargeTick": 0.5,
+      "chargeDamage": 25,
+      "chargeReach": 0.7,
+      "shoveCrateReach": 1.1
+    }
+  }
 }

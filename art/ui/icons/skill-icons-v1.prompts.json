@@ -1,0 +1,542 @@
+{
+  "tool": "built-in image_gen",
+  "commonPrompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.",
+  "grid": 48,
+  "scale": 8,
+  "width": 384,
+  "height": 384,
+  "margin": 2,
+  "alpha": "binary",
+  "icons": [
+    {
+      "id": "heatSwing",
+      "subject": "HEAT SWING / FIRE. Preserve the original DIAGONAL WRENCH rising lower-left to upper-right, with a BROAD FLAMING SWING ARC hooking over its head across the upper half. Main silhouette is a fiery arched wrench swing, not a sword or standalone fireball. Teal wrench handle/body, brass small hardware, orange/peach flame arc with yellow-cream core and 2-3 clear flame tongues. Fire occupies most of upper silhouette. Do not turn the arc into a full ring.",
+      "palette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#5ca99a",
+        "#ef8a61",
+        "#e8742f",
+        "#ffe086",
+        "#b94928"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+      "exportPalette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#34736b",
+        "#5ca99a",
+        "#ef8a61",
+        "#e8742f",
+        "#ffe086",
+        "#b94928"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-864ab3c8-c55a-4bec-af5d-0c5692637fe6.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nHEAT SWING / FIRE. Preserve the original DIAGONAL WRENCH rising lower-left to upper-right, with a BROAD FLAMING SWING ARC hooking over its head across the upper half. Main silhouette is a fiery arched wrench swing, not a sword or standalone fireball. Teal wrench handle/body, brass small hardware, orange/peach flame arc with yellow-cream core and 2-3 clear flame tongues. Fire occupies most of upper silhouette. Do not turn the arc into a full ring.\nFLAT PALETTE: #2b3345 #fff4b7 #ffffff #96551a #d3a247 #5ca99a #ef8a61 #e8742f #ffe086 #b94928",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/heatSwing.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-heatSwing-v1.png"
+    },
+    {
+      "id": "exhaustBurst",
+      "subject": "EXHAUST BURST / FIRE. Preserve original SHORT BRASS PIPE / NOZZLE at LOWER LEFT, diagonally pointing UPPER RIGHT, blasting a LARGE EXPLOSIVE FIRE BURST at its mouth. Thick cylindrical brass nozzle with a dark opening, bright orange/peach explosion, cream-yellow core and a few bold outward flame spikes. No shoe or steam puffs, this IS a FIRE combat explosion. Same diagonal nozzle-and-burst composition.",
+      "palette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#ef8a61",
+        "#e8742f",
+        "#b94928",
+        "#ffe086",
+        "#c77d31"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/exhaustBurst.png",
+      "exportPalette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#ef8a61",
+        "#e8742f",
+        "#b94928",
+        "#ffe086",
+        "#c77d31"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-c695112f-e595-44b3-b462-cf7f35268a2e.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nEXHAUST BURST / FIRE. Preserve original SHORT BRASS PIPE / NOZZLE at LOWER LEFT, diagonally pointing UPPER RIGHT, blasting a LARGE EXPLOSIVE FIRE BURST at its mouth. Thick cylindrical brass nozzle with a dark opening, bright orange/peach explosion, cream-yellow core and a few bold outward flame spikes. No shoe or steam puffs, this IS a FIRE combat explosion. Same diagonal nozzle-and-burst composition.\nFLAT PALETTE: #2b3345 #fff4b7 #ffffff #96551a #d3a247 #ef8a61 #e8742f #b94928 #ffe086 #c77d31",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/exhaustBurst.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-exhaustBurst-v1.png"
+    },
+    {
+      "id": "frostBolt",
+      "subject": "FROST BOLT / ICE. Preserve EXACTLY THREE ELONGATED ICICLE SHARDS, a descending size staircase from tall upper-right to short lower-left, all tilted slightly RIGHT and with needle tips pointing DOWN/LOWER LEFT. Three distinct cyan/sky-blue ice projectiles with white edge highlights, transparent gaps between them, sharp tapered points. No bow, snowflake, circle or extra particles. Same three-shard pose as image1.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#c8f3f4",
+        "#344f73"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#c8f3f4",
+        "#344f73"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-63089167-a09c-4b2e-9dd0-9da1326a895e.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nFROST BOLT / ICE. Preserve EXACTLY THREE ELONGATED ICICLE SHARDS, a descending size staircase from tall upper-right to short lower-left, all tilted slightly RIGHT and with needle tips pointing DOWN/LOWER LEFT. Three distinct cyan/sky-blue ice projectiles with white edge highlights, transparent gaps between them, sharp tapered points. No bow, snowflake, circle or extra particles. Same three-shard pose as image1.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #79cbd1 #66bde8 #30779c #c8f3f4 #344f73",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostBolt.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-frostBolt-v1.png"
+    },
+    {
+      "id": "coolingField",
+      "subject": "COOLING FIELD / ICE. Preserve original ROUND CYAN FROST SIGIL DISC seen front-on, thick icy circular rim and a large SIMPLE SIX-BRANCH SNOWFLAKE filling its center. Concentric circular frost field, sky-blue/navy border, pale cyan inside, white crystalline snowflake. No text runes, ground tile, decorative frame or extra detached flakes. Disc IS the spell subject, not a UI frame. Bold readable snowflake, no fine lace.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#c8f3f4",
+        "#344f73",
+        "#5ba6b9"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/coolingField.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#c8f3f4",
+        "#344f73",
+        "#5ba6b9"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-a4f18bc6-a210-4779-9f94-3159b2fbb204.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nCOOLING FIELD / ICE. Preserve original ROUND CYAN FROST SIGIL DISC seen front-on, thick icy circular rim and a large SIMPLE SIX-BRANCH SNOWFLAKE filling its center. Concentric circular frost field, sky-blue/navy border, pale cyan inside, white crystalline snowflake. No text runes, ground tile, decorative frame or extra detached flakes. Disc IS the spell subject, not a UI frame. Bold readable snowflake, no fine lace.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #79cbd1 #66bde8 #30779c #c8f3f4 #344f73 #5ba6b9",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/coolingField.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-coolingField-v1.png"
+    },
+    {
+      "id": "conductiveSpanner",
+      "subject": "CONDUCTIVE SPANNER / LIGHTNING. Preserve original DIAGONAL WRENCH lower-left handle to upper-right open jaw, with a GOLD LIGHTNING BOLT crossing along the center of the handle. F2 TEAL wrench body and jaw with small brass fittings; large bright gold/yellow jagged electricity dominates across the wrench, cream-white inner highlight. One wrench, one readable bold electric bolt. No fire or red power sparkle.",
+      "palette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#5ca99a",
+        "#e9bd59",
+        "#ffe086",
+        "#34736b",
+        "#8bd0bf"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/conductiveSpanner.png",
+      "exportPalette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#5ca99a",
+        "#e9bd59",
+        "#ffe086",
+        "#34736b",
+        "#8bd0bf"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-643b9ddd-7c88-4ffe-8045-fad0b4be16af.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nCONDUCTIVE SPANNER / LIGHTNING. Preserve original DIAGONAL WRENCH lower-left handle to upper-right open jaw, with a GOLD LIGHTNING BOLT crossing along the center of the handle. F2 TEAL wrench body and jaw with small brass fittings; large bright gold/yellow jagged electricity dominates across the wrench, cream-white inner highlight. One wrench, one readable bold electric bolt. No fire or red power sparkle.\nFLAT PALETTE: #2b3345 #fff4b7 #ffffff #96551a #d3a247 #5ca99a #e9bd59 #ffe086 #34736b #8bd0bf",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/conductiveSpanner.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-conductiveSpanner-v1.png"
+    },
+    {
+      "id": "capacitorStrike",
+      "subject": "CAPACITOR STRIKE / LIGHTNING. Preserve original ONE BOLD GOLD JAGGED LIGHTNING BOLT slanting from UPPER RIGHT to LOWER LEFT and striking a TINY OVAL CONTACT / IMPACT RIM at its lower tip. Dominant yellow-gold bolt, white/cream center, darker golden edges, small navy/brass oval at bottom. No hammer, wrench, cloud or extra detached bolts. The small oval is part of spell contact, not a background plate.",
+      "palette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#e9bd59",
+        "#ffe086",
+        "#ad7f2d",
+        "#536071"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/capacitorStrike.png",
+      "exportPalette": [
+        "#2b3345",
+        "#fff4b7",
+        "#ffffff",
+        "#96551a",
+        "#d3a247",
+        "#e9bd59",
+        "#ffe086",
+        "#ad7f2d",
+        "#536071"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-78378459-9038-4965-ba34-38ec4335d0e6.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nCAPACITOR STRIKE / LIGHTNING. Preserve original ONE BOLD GOLD JAGGED LIGHTNING BOLT slanting from UPPER RIGHT to LOWER LEFT and striking a TINY OVAL CONTACT / IMPACT RIM at its lower tip. Dominant yellow-gold bolt, white/cream center, darker golden edges, small navy/brass oval at bottom. No hammer, wrench, cloud or extra detached bolts. The small oval is part of spell contact, not a background plate.\nFLAT PALETTE: #2b3345 #fff4b7 #ffffff #96551a #d3a247 #e9bd59 #ffe086 #ad7f2d #536071",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/capacitorStrike.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-capacitorStrike-v1.png"
+    },
+    {
+      "id": "pressureDash",
+      "subject": "PRESSURE DASH / WIND. Preserve original LONG SHARP GREEN WIND ARROW running from LOWER LEFT to UPPER RIGHT, slender tapered tail, broad triangular arrowhead near top, a couple of integrated wind fins behind the head. Mint/sage green dominates with pale mint highlight and deep green underside. ONE diagonal directional wind-arrow silhouette. No shoe, boots, key or lightning zigzag. No text or letters.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#65a986"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/pressureDash.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#65a986"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-6ad5d38b-f32e-4a1e-a496-2adc6330e9e7.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nPRESSURE DASH / WIND. Preserve original LONG SHARP GREEN WIND ARROW running from LOWER LEFT to UPPER RIGHT, slender tapered tail, broad triangular arrowhead near top, a couple of integrated wind fins behind the head. Mint/sage green dominates with pale mint highlight and deep green underside. ONE diagonal directional wind-arrow silhouette. No shoe, boots, key or lightning zigzag. No text or letters.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #89bea0 #8fd8b0 #417858 #c9f1d8 #65a986",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/pressureDash.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-pressureDash-v1.png"
+    },
+    {
+      "id": "vortexIntake",
+      "subject": "VORTEX INTAKE / WIND. Preserve original ROUND GREEN WHIRLPOOL viewed from ABOVE, one thick swirling ring curling inward into a dark central intake, a clear hooked inner spiral and open negative-space center. Sage/mint green broad bands, dark green depth, pale mint top-left crest. A compact circular vortex, NOT a tall tornado cone or a flat plain ring. Few bold wind curves, no small concentric loops or extra objects.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#65a986"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/vortexIntake.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#65a986"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-e07a807c-0471-4922-9dfd-3f2cf720975a.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nVORTEX INTAKE / WIND. Preserve original ROUND GREEN WHIRLPOOL viewed from ABOVE, one thick swirling ring curling inward into a dark central intake, a clear hooked inner spiral and open negative-space center. Sage/mint green broad bands, dark green depth, pale mint top-left crest. A compact circular vortex, NOT a tall tornado cone or a flat plain ring. Few bold wind curves, no small concentric loops or extra objects.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #89bea0 #8fd8b0 #417858 #c9f1d8 #65a986",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/vortexIntake.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-vortexIntake-v1.png"
+    },
+    {
+      "id": "steamShatter",
+      "subject": "STEAM SHATTER / FIRE+ICE FUSION. Preserve original TALL CLUSTER OF JAGGED CYAN ICE at the top / right, shattering against a small explosive ORANGE FIRE BURST at its LOWER LEFT / BASE. Ice occupies about two thirds, fire about one third, both visibly distinct. Three to five large angular blue crystalline chunks with white highlights; peach-orange and yellow hot impact base. Same upright ice-over-fiery-impact composition, no hammer, wrench or cloud.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#ef8a61",
+        "#e8742f",
+        "#79cbd1",
+        "#66bde8",
+        "#b94928",
+        "#30779c",
+        "#ffe086"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/steamShatter.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#ef8a61",
+        "#e8742f",
+        "#79cbd1",
+        "#66bde8",
+        "#b94928",
+        "#30779c",
+        "#ffe086"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-c6d97139-b0de-4125-95d1-e864f86ef5c7.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nSTEAM SHATTER / FIRE+ICE FUSION. Preserve original TALL CLUSTER OF JAGGED CYAN ICE at the top / right, shattering against a small explosive ORANGE FIRE BURST at its LOWER LEFT / BASE. Ice occupies about two thirds, fire about one third, both visibly distinct. Three to five large angular blue crystalline chunks with white highlights; peach-orange and yellow hot impact base. Same upright ice-over-fiery-impact composition, no hammer, wrench or cloud.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #ef8a61 #e8742f #79cbd1 #66bde8 #b94928 #30779c #ffe086",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/steamShatter.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-steamShatter-v1.png"
+    },
+    {
+      "id": "arcFurnace",
+      "subject": "ARC FURNACE / FIRE+LIGHTNING FUSION. Preserve original squat DARK BRONZE / BROWN FURNACE BLOCK (rounded tall top, small feet), a bright molten-orange furnace opening at LOWER RIGHT FRONT, and a CURVED ELECTRIC GOLD ARC sweeping diagonally across its face toward upper right. Material dark bronze, fire opening peach/orange with cream core; gold/yellow electrical ribbon clearly distinct and visible over the furnace. No castle, giant tower, weapon or extra gears. Same chunky furnace with hot opening and slanted arc silhouette.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#96551a",
+        "#73554e",
+        "#ef8a61",
+        "#e8742f",
+        "#e9bd59",
+        "#ffe086",
+        "#49363a"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/arcFurnace.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#96551a",
+        "#73554e",
+        "#ef8a61",
+        "#e8742f",
+        "#e9bd59",
+        "#ffe086",
+        "#49363a"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-3819d668-e229-4654-beda-cd6c3ed0d3ce.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nARC FURNACE / FIRE+LIGHTNING FUSION. Preserve original squat DARK BRONZE / BROWN FURNACE BLOCK (rounded tall top, small feet), a bright molten-orange furnace opening at LOWER RIGHT FRONT, and a CURVED ELECTRIC GOLD ARC sweeping diagonally across its face toward upper right. Material dark bronze, fire opening peach/orange with cream core; gold/yellow electrical ribbon clearly distinct and visible over the furnace. No castle, giant tower, weapon or extra gears. Same chunky furnace with hot opening and slanted arc silhouette.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #96551a #73554e #ef8a61 #e8742f #e9bd59 #ffe086 #49363a",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/arcFurnace.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-arcFurnace-v1.png"
+    },
+    {
+      "id": "fireCyclone",
+      "subject": "FIRE CYCLONE / FIRE+WIND FUSION. Preserve original TAPERED TORNADO CONE, BROAD OVAL SPINNING TOP and a pointed lower tail, curving flame tip at upper-left. Orange/peach FIRE winding bands dominate about two thirds, clear MINT/SAGE WIND ribbon weaves visibly between fire bands for remaining third. Cream hot highlights, dark orange and green shadows. A tall spiral funnel / fiery cyclone, NOT a circular overhead vortex, no new objects.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#ef8a61",
+        "#e8742f",
+        "#89bea0",
+        "#8fd8b0",
+        "#b94928",
+        "#417858",
+        "#d3a247"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/fireCyclone.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#ef8a61",
+        "#e8742f",
+        "#89bea0",
+        "#8fd8b0",
+        "#b94928",
+        "#417858",
+        "#d3a247"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-c368a63d-dc69-4017-8528-693a6365a49c.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nFIRE CYCLONE / FIRE+WIND FUSION. Preserve original TAPERED TORNADO CONE, BROAD OVAL SPINNING TOP and a pointed lower tail, curving flame tip at upper-left. Orange/peach FIRE winding bands dominate about two thirds, clear MINT/SAGE WIND ribbon weaves visibly between fire bands for remaining third. Cream hot highlights, dark orange and green shadows. A tall spiral funnel / fiery cyclone, NOT a circular overhead vortex, no new objects.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #ef8a61 #e8742f #89bea0 #8fd8b0 #b94928 #417858 #d3a247",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/fireCyclone.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-fireCyclone-v1.png"
+    },
+    {
+      "id": "magneticIceClamp",
+      "subject": "MAGNETIC ICE CLAMP / ICE+LIGHTNING FUSION. Preserve original U-SHAPED CRIMSON HORSESHOE MAGNET arch at TOP, two poles pointing DOWN, with a LARGE JAGGED CYAN ICE CRYSTAL suspended BETWEEN / BELOW the poles. Magnet stays recognizable crimson metal; tips carry bright GOLD ELECTRICAL accents and tiny gold crackle, ice is cyan / sky blue with white facet highlight. Both ICE BLUE and LIGHTNING GOLD must be prominent enough to see at28px. One magnet and one large ice chunk, no hammer or free-floating bolt.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#b63757",
+        "#e9bd59",
+        "#ffe086",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#96551a"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/magneticIceClamp.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#b63757",
+        "#e9bd59",
+        "#ffe086",
+        "#79cbd1",
+        "#66bde8",
+        "#30779c",
+        "#96551a"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-e7ed3ff6-5cbb-4b2c-90c0-5dc59accefb8.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nMAGNETIC ICE CLAMP / ICE+LIGHTNING FUSION. Preserve original U-SHAPED CRIMSON HORSESHOE MAGNET arch at TOP, two poles pointing DOWN, with a LARGE JAGGED CYAN ICE CRYSTAL suspended BETWEEN / BELOW the poles. Magnet stays recognizable crimson metal; tips carry bright GOLD ELECTRICAL accents and tiny gold crackle, ice is cyan / sky blue with white facet highlight. Both ICE BLUE and LIGHTNING GOLD must be prominent enough to see at28px. One magnet and one large ice chunk, no hammer or free-floating bolt.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #b63757 #e9bd59 #ffe086 #79cbd1 #66bde8 #30779c #96551a",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/magneticIceClamp.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-magneticIceClamp-v1.png"
+    },
+    {
+      "id": "frostCrosscut",
+      "subject": "FROST CROSSCUT / ICE+WIND FUSION. Preserve image1's SINGLE LARGE CRESCENT-SHAPED CURVED CUT, an almost-round crescent blade OPEN TO THE RIGHT, with sharp upper and lower tips. This request keeps the actual source crescent silhouette, do NOT substitute crossed X blades. Outer broad edge CYAN / SKY BLUE ICE with white edge highlight; clearly visible INNER SWEEP of MINT/SAGE WIND forming the same crescent's inner band. Both elements visible as two strong colored bands. No extra ring, weapon or detached shards.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#89bea0",
+        "#8fd8b0",
+        "#30779c",
+        "#417858",
+        "#c9f1d8"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostCrosscut.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#79cbd1",
+        "#66bde8",
+        "#89bea0",
+        "#8fd8b0",
+        "#30779c",
+        "#417858",
+        "#c9f1d8"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-590eaad5-2bf5-4cec-b37c-588b5e9c17e0.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nFROST CROSSCUT / ICE+WIND FUSION. Preserve image1's SINGLE LARGE CRESCENT-SHAPED CURVED CUT, an almost-round crescent blade OPEN TO THE RIGHT, with sharp upper and lower tips. This request keeps the actual source crescent silhouette, do NOT substitute crossed X blades. Outer broad edge CYAN / SKY BLUE ICE with white edge highlight; clearly visible INNER SWEEP of MINT/SAGE WIND forming the same crescent's inner band. Both elements visible as two strong colored bands. No extra ring, weapon or detached shards.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #79cbd1 #66bde8 #89bea0 #8fd8b0 #30779c #417858 #c9f1d8",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/frostCrosscut.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-frostCrosscut-v1.png"
+    },
+    {
+      "id": "stormFloat",
+      "subject": "STORM FLOAT / LIGHTNING+WIND FUSION. Preserve original LARGE ROUND FLOATING LUMINOUS ORB above a clustered curved cushion / orbit of chunky air lobes at its LOWER HALF, with a few small electrical sparks at UPPER LEFT. Orb pale mint/cream with a sky-blue glint; surrounding lower sweeping air cushion MINT / SAGE WIND, upper sparks and lower electric accents BRIGHT GOLD / YELLOW LIGHTNING instead of the old purple. Round orb is dominant focal subject, asymmetrical small orbit lobes below keep silhouette distinctive. Both GOLD and MINT clearly visible. No magnet, gear, star, text or new weapon.",
+      "palette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#e9bd59",
+        "#ffe086",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#66bde8"
+      ],
+      "original": "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/stormFloat.png",
+      "exportPalette": [
+        "#2b3345",
+        "#ffffff",
+        "#fff4b7",
+        "#e9bd59",
+        "#ffe086",
+        "#89bea0",
+        "#8fd8b0",
+        "#417858",
+        "#c9f1d8",
+        "#66bde8"
+      ],
+      "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-6e816394-dc05-4959-8043-82d1f61b406b.png",
+      "prompt": "Use case: style-transfer. Asset type: ONE finished pixel-art SKILL ICON for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput roles: image1 is the original 48x48 icon whose SUBJECT, POSE, orientation, composition and elemental identity MUST BE KEPT. REDRAW that same idea, do not invent a different symbol. Images2 action-wrench,3 action-dodge-v3,4 reward-wrench-damage-v2 and5 reward-status-damage are STYLE REFERENCES ONLY: match their crisp pixel clusters, one logical-pixel NAVY #2b3345 silhouette outline, top-left hard light, saturated material shading and logical pixel density. Do not copy any unrelated reference objects.\nProduction: draw on 48x48 logical grid, intended384x384 export with every logical pixel an EXACT8x8block. ONE centered coherent bold silhouette, TWO logical pixels clear transparent margin. At most TEN FLAT colors, provided below. Intentional clean stair-step pixel curves, not giant block placeholders. Clear material contrast, few large shapes readable at28px. No antialiasing, half pixels, gradients, soft glow, bloom, blurred aura, smoothing, texture, speckles or small noisy details. True ALPHA TRANSPARENT background, opacity solid within pixel clusters, no checkerboard painted in.\nElement color DOMINATES; when a wrench appears its main body is F2 TEAL #5ca99a with small brass trim. Fusion icons must visibly show BOTH elements. No text, letters, numbers, slot frame, background tile, ground, watermark or characters. ONE ICON ONLY, not a contact sheet. Keep all meaningful subject features inside the outline.\nSTORM FLOAT / LIGHTNING+WIND FUSION. Preserve original LARGE ROUND FLOATING LUMINOUS ORB above a clustered curved cushion / orbit of chunky air lobes at its LOWER HALF, with a few small electrical sparks at UPPER LEFT. Orb pale mint/cream with a sky-blue glint; surrounding lower sweeping air cushion MINT / SAGE WIND, upper sparks and lower electric accents BRIGHT GOLD / YELLOW LIGHTNING instead of the old purple. Round orb is dominant focal subject, asymmetrical small orbit lobes below keep silhouette distinctive. Both GOLD and MINT clearly visible. No magnet, gear, star, text or new weapon.\nFLAT PALETTE: #2b3345 #ffffff #fff4b7 #e9bd59 #ffe086 #89bea0 #8fd8b0 #417858 #c9f1d8 #66bde8",
+      "references": [
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/skill-icons/stormFloat.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-dodge-v3.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-wrench-damage-v2.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/reward-status-damage-v1.png"
+      ],
+      "save": "art/ui/icons/skill-stormFloat-v1.png"
+    }
+  ]
+}

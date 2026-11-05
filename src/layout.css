@@ -265,9 +265,9 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
 
 /* The charge a skill spends, small in the slot's bottom-right corner; red while there is not enough. */
-.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 10px/12px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
+.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 12px/14px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
 .slot.short .cost, #touch .short .cost { color: #ff8a80; }
-#touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 11px; line-height: 13px; }
+#touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 14px; line-height: 16px; }
 #touch .cost:empty { display: none; }
 .header-stats { display: flex; gap: 14px; align-items: center; }
 
@@ -315,3 +315,7 @@ body.cramped .actions.reroll { margin-top: 6px; }
 /* Each reward card can be drawn again once: a small outlined button under its pick button. */
 .panel .reward-card .reroll-one { margin-top: 6px; width: 100%; padding: 4px 6px; font-size: 12px; }
 body.cramped .panel .reward-card .reroll-one { margin-top: 4px; padding: 3px 6px; }
+
+/* A skill Roco confiscated: greyed, with the padlock icon over it until F2 wins it back. */
+.slot.locked img { filter: grayscale(1) brightness(.7); }
+.slot.locked::after { content: ''; position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; background: url('../art/ui/icons/px/lock.png') center / contain no-repeat; image-rendering: pixelated; }

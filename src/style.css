@@ -62,7 +62,7 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .reward-card .reward-icon .ico.px-icon { width: 48px; height: 48px; filter: none; }
 .reward-skills { display: flex; gap: 6px; }
 .reward-card .reward-icon .tile-art { width: 44px; height: 44px; image-rendering: pixelated; }
-.reward-skills img { padding: 8px; image-rendering: pixelated; object-fit: contain; }
+.reward-skills img { padding: 4px; image-rendering: pixelated; object-fit: contain; }
 /* Element parts are drawn at 32px and shown at whole multiples so every pixel stays square. */
 .reward-card .element-icon { width: 64px; height: 64px; margin: -4px 0 0 -4px; image-rendering: pixelated; }
 .codex-entry .codex-icon { width: 32px; height: 32px; margin: -6px 0; image-rendering: pixelated; }

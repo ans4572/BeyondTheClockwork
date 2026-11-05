@@ -78,9 +78,9 @@ test('Brass stomps out rings to dodge through, and charges along a line before a
   for (let i = 0; i < 90; i++) h.update(1 / 60, {});
   assert.ok(r.x > 15, 'ran along the line'); assert.ok(h.p.hp < 100);
 });
-test('Brass marches add one lane at half HP while leaving multiple safe gaps', () => {
+test('Brass marches reach every carpet in the last phase while leaving multiple safe gaps', () => {
   const [g, e] = boss('captainBrass');
-  e.hp = e.maxHp * 0.49; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');
+  e.hp = e.maxHp * 0.3; g.p.x = 25; g.p.y = 10; g.beginEnemyTell(e, 'march');
   assert.ok(e.tell.until - e.tell.started >= 0.8); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
   g.s.time += 1; g.p.x = 15; g.beginEnemyTell(e, 'march'); g.s.time = e.tell.until; g.executeEnemy(e); assert.equal(g.p.hp, 100 - e.damage);
 });
@@ -111,14 +111,15 @@ const until = (g, tell) => { g.s.time = tell.until; };
 const roundOf = (g, boss, turns = 12) => Array.from({ length: turns }, () => g.nextBossPattern(boss));
 
 test('bosses unlock patterns as they are hurt', () => {
-  const [g, roco] = bossAt(4); assert.deepEqual([...new Set(roundOf(g, roco))].sort(), ['claw', 'magnet', 'overcharge', 'stickers', 'suction']);
+  const [g, roco] = bossAt(4); assert.deepEqual([...new Set(roundOf(g, roco))].sort(), ['claw', 'crateToss', 'magnet', 'overcharge', 'stickers', 'suction']);
   // Roco has two phases: alarm and crane both join at half health.
   roco.hp = roco.maxHp * 0.55; assert.ok(!new Set(roundOf(g, roco)).has('alarm'));
   roco.hp = roco.maxHp * 0.5; assert.ok(new Set(roundOf(g, roco)).has('alarm')); assert.ok(new Set(roundOf(g, roco)).has('crane'));
   const [h, brass] = bossAt(11); assert.ok(new Set(roundOf(h, brass)).has('bell')); assert.ok(!new Set(roundOf(h, brass)).has('column'));
   // Brass has three: the column joins below 66%, the safe carpet below 33%.
-  brass.hp = brass.maxHp * 0.5; const middle = new Set(roundOf(h, brass)); assert.ok(middle.has('column') && !middle.has('carpet'));
-  brass.hp = brass.maxHp * 0.3; const late = new Set(roundOf(h, brass)); assert.ok(late.has('column') && late.has('carpet'));
+  // The parade joins with the column, the drill with the carpet.
+  brass.hp = brass.maxHp * 0.5; const middle = new Set(roundOf(h, brass, 24)); assert.ok(middle.has('column') && middle.has('parade') && !middle.has('carpet') && !middle.has('drill'));
+  brass.hp = brass.maxHp * 0.3; const late = new Set(roundOf(h, brass, 24)); assert.ok(late.has('column') && late.has('carpet') && late.has('drill'));
 });
 
 test('hitting Roco during the alarm costs the player, and waiting does not', () => {
@@ -145,10 +146,64 @@ test('the bell punishes moving or attacking, once, and holding still is safe', (
 });
 
 test('the march follows the carpets on the map', () => {
-  const [g, brass] = bossAt(11); const lanes = g.marchLanes(brass); assert.equal(lanes.length, 3);
+  const [g, brass] = bossAt(11); const lanes = g.marchLanes(brass); assert.equal(lanes.length, 2);
   const [[ax, ay], [bx, by]] = lanes[1], full = g.p.hp; g.p.x = (ax + bx) / 2; g.p.y = (ay + by) / 2;
   g.beginEnemyTell(brass, 'march'); until(g, brass.tell); g.executeEnemy(brass); assert.equal(g.p.hp, full - brass.damage);
-  brass.hp = brass.maxHp * 0.4; assert.equal(g.marchLanes(brass).length, 4);
+  // A live carpet more with each phase: two, three, then all four.
+  brass.hp = brass.maxHp * 0.4; assert.equal(g.marchLanes(brass).length, 3);
+  brass.hp = brass.maxHp * 0.3; assert.equal(g.marchLanes(brass).length, 4);
+});
+
+test('a carpet rolls out when Brass enters a new phase', () => {
+  const [g, brass] = bossAt(11); g.s.effects = []; g.s.notices = [];
+  brass.hp = brass.maxHp * 0.6; g.checkCarpets(brass);
+  assert.equal(g.s.effects.filter(fx => fx.look === 'carpetRoll').length, 1); assert.equal(brass.lanesShown, 3);
+  g.checkCarpets(brass); assert.equal(g.s.effects.filter(fx => fx.look === 'carpetRoll').length, 1);
+});
+
+test('a parade walks down a live carpet and hits whoever stands in its file', () => {
+  const [g, brass] = bossAt(11, 0.5); const full = g.p.hp;
+  g.beginEnemyTell(brass, 'parade'); const [lane] = brass.tell.lanes; until(g, brass.tell); g.executeEnemy(brass);
+  assert.equal(g.s.parades.length, 1);
+  const [[ax, ay], [bx, by]] = lane; g.p.x = (ax + bx) / 2; g.p.y = (ay + by) / 2; g.p.invulnerableUntil = 0;
+  for (let i = 0; i < 300 && g.p.hp === full; i++) { g.s.time += 1 / 60; g.tickBossHazards(1 / 60); }
+  assert.ok(g.p.hp < full);
+  for (let i = 0; i < 900 && g.s.parades.length; i++) { g.s.time += 1 / 60; g.tickBossHazards(1 / 60); }
+  assert.equal(g.s.parades.length, 0);
+});
+
+test('the drill hurts moving on "halt" and standing on "march", and nothing when obeyed', () => {
+  const [g, brass] = bossAt(11, 0.5), rules = data.slice.bossAI.captainBrass;
+  g.beginEnemyTell(brass, 'drill'); until(g, brass.tell); g.executeEnemy(brass);
+  const full = g.p.hp, step = 1 / 60;
+  // Obey: stand still, then walk.
+  for (let t = 0; t < rules.drillStepSeconds + step; t += step) { g.s.time += step; g.tickBossHazards(step); }
+  for (let t = 0; t < rules.drillStepSeconds + 2 * step; t += step) { g.p.x += (rules.drillMoveUnits * 1.5) * step / rules.drillStepSeconds * (Math.floor(t * 4) % 2 ? 1 : -1); g.s.time += step; g.tickBossHazards(step); }
+  assert.equal(g.p.hp, full); assert.equal(g.s.drill, null);
+  // Disobey: walk on halt.
+  g.beginEnemyTell(brass, 'drill'); until(g, brass.tell); g.executeEnemy(brass); g.p.invulnerableUntil = 0;
+  g.p.x += 1; g.s.time += step; g.tickBossHazards(step);
+  assert.ok(g.p.hp < full);
+});
+
+test('Roco throws crates that stay, and one blown beside him knocks him out', () => {
+  const [g, roco] = bossAt(4); g.s.hazards = []; g.p.x = roco.x + 5; g.p.y = roco.y;
+  g.beginEnemyTell(roco, 'crateToss'); const drops = roco.tell.drops; until(g, roco.tell); g.executeEnemy(roco);
+  assert.ok(g.s.hazards.filter(h => h.kind === 'crate').length >= 1 && drops.length === data.slice.bossAI.collectorRoco.crateTossCount);
+  const crate = { id: 'c', kind: 'crate', x: roco.x + 1, y: roco.y, size: 0.9 }; g.s.hazards.push(crate);
+  roco.tell = null; g.lightCrate(crate); g.s.time = crate.fuseAt + 0.01; g.tickHazards();
+  assert.ok(roco.exposedUntil > g.s.time);
+});
+
+test("Roco's claw takes a skill, and a blow to his back wins it back", () => {
+  const [g, roco] = bossAt(4); g.s.hazards = [];
+  assert.ok(g.skillSlots.length > 0);
+  roco.facing = 0; g.p.x = roco.x + 3; g.p.y = roco.y;
+  g.beginEnemyTell(roco, 'claw'); until(g, roco.tell); g.executeEnemy(roco);
+  const taken = g.p.confiscated.index; assert.ok(g.isConfiscated(taken)); assert.equal(g.castSkill(taken), false);
+  // Behind him (he faces east): a hit from the west returns it.
+  roco.facing = 0; g.p.x = roco.x - 1.5; g.p.y = roco.y; g.hitEnemy(roco, 1);
+  assert.ok(!g.isConfiscated(taken));
 });
 
 test('only the green carpet is safe, and it can always be reached', () => {

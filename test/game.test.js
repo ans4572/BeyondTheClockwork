@@ -164,7 +164,10 @@ test('all eight individual skills hit; pressure dash grants no invulnerability',
     const index = g.skillSlots.findIndex(entry => entry.skill.id === skill.id);
     assert.equal(g.castSkill(index, e), true); step(g, 3);
     assert.ok(e.hp < 100000, `${skill.id} failed to hit`);
-    assert.ok(e.stagger <= data.combat.balance.skillStaggerPerCastCap, `${skill.id} exceeded per-cast stagger`);
+    // Pressure dash is the boss-breaker: its shove adds its own stagger on top of the per-cast cap.
+    const bonus = data.slice.skillBehavior[skill.id].bossStagger || 0;
+    assert.ok(e.stagger <= data.combat.balance.skillStaggerPerCastCap + bonus, `${skill.id} exceeded per-cast stagger`);
+    if (bonus) assert.ok(e.stagger > data.combat.balance.skillStaggerPerCastCap, 'pressure dash staggers bosses harder');
     if (skill.id === 'pressureDash') assert.equal(g.p.invulnerableUntil, 0);
   }
 });
@@ -313,7 +316,7 @@ test('magnetic ice clamp is a fixed oriented target rectangle with a tell and ex
  const g=arena(),center=inert(g,'captainBrass',{x:12,y:8}),outside=inert(g,'guard',{x:13.7,y:9.9});center.hp=center.maxHp=outside.hp=outside.maxHp=1000;
  g.s.run.slots=['ice','lightning'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:12,y:8}),true);
  const cast=g.s.casts[0];assert.equal(cast.shape,'clamp');assert.equal(cast.x,12);assert.equal(cast.y,8);g.p.x=5;g.p.y=5;
- step(g,.55);assert.equal(center.hp,1000);assert.equal(outside.hp,1000);step(g,.07);assert.equal(center.hp,968);step(g,.18);assert.equal(center.hp,936);step(g,.18);assert.equal(center.hp,904);step(g,.5);assert.equal(center.hp,904);assert.equal(outside.hp,1000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,35);assert.equal(g.p.fusionReady,20);
+ step(g,.55);assert.equal(center.hp,1000);assert.equal(outside.hp,1000);step(g,.07);assert.equal(center.hp,963);step(g,.18);assert.equal(center.hp,926);step(g,.18);assert.equal(center.hp,889);step(g,.5);assert.equal(center.hp,889);assert.equal(outside.hp,1000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,35);assert.equal(g.p.fusionReady,20);
 });
 
 test('magnetic ice clamp aims at an off-axis target, limits placement range and migrates ring discoveries',()=>{

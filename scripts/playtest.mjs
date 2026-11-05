@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { Game, distance } from '../src/engine/game.js';
 import { FlowField } from '../src/engine/flow-field.js';
+import { plateState } from '../src/engine/hazards.js';
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice', 'maps'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))])));
 
 /** Deterministic input bot. Uses the same public actions as the UI; no stat or damage cheats. */
@@ -63,8 +64,12 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     if (!target) { game.update(1 / 60, {}); continue; }
     const d = distance(game.p, target), angle = Math.atan2(target.y - game.p.y, target.x - game.p.x);
     // Enemies wait spread over the map, so the bot walks the floor to them the way they would walk to it.
-    const map = game.map, route = map?.walkable && d > 3 ? (routes[map.id] ??= new FlowField(map, map.size)) : null;
-    route?.update(target.x, target.y);
+    // A crate about to go off or a plate about to burn is stepped away from first, as a player would.
+    const rules = game.config.hazards, fire = (game.s.hazards || []).find(h => !h.gone && ((h.kind === 'crate' && h.fuseAt !== undefined && distance(game.p, h) < rules.crate.radius + 0.6)
+      || (h.kind === 'plate' && plateState(h, game.s.time, rules.plate) !== 'cool' && Math.abs(game.p.x - h.x) / h.half + Math.abs(game.p.y - h.y) / (h.depth ?? rules.plate.depth) <= 1.3)));
+    if (fire) { const away = Math.atan2(game.p.y - fire.y, game.p.x - fire.x); game.update(1 / 60, { x: Math.cos(away), y: Math.sin(away) }); continue; }
+    const map = game.map, route = map?.walkable && d > 1.5 ? (routes[map.id] ??= new FlowField(map, map.size)) : null;
+    route?.setBlocks(game.obstacles); route?.update(target.x, target.y);
     // Against a wall the bot's own cell may be too tight to map; the nearest open cell gives the way instead.
     const open = route && route.nearestOpen(...route.cell(game.p.x, game.p.y)), way = route && (route.heading(game.p.x, game.p.y) ?? (open && route.heading((open[0] + 0.5) * 0.5, (open[1] + 0.5) * 0.5)));
     let move = d > 1.3 ? way ?? angle : angle + Math.PI / 2, speed = d > 1.3 ? 1 : 0;

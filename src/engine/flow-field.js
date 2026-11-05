@@ -10,6 +10,22 @@ export class FlowField {
     this.open = new Uint8Array(this.cols * this.rows); this.steps = new Int32Array(this.open.length).fill(-1); this.target = -1;
     for (let row = 0; row < this.rows; row++) for (let col = 0; col < this.cols; col++) this.open[row * this.cols + col] = fitsMap((col + 0.5) * CELL_UNITS, (row + 0.5) * CELL_UNITS, CLEARANCE_UNITS, map) ? 1 : 0;
   }
+  /**
+   * Closes the cells under solid boxes ({ x, y, w, h } from the top-left, like crates and fences) on top of the floor;
+   * passing the current boxes again restores any cell a box no longer covers.
+   */
+  setBlocks(boxes) {
+    const key = JSON.stringify(boxes);
+    if (key === this.blockKey) return;
+    this.blockKey = key; this.base ??= this.open.slice(); this.open.set(this.base); this.target = -1;
+    for (const box of boxes) {
+      const [c0, r0] = this.cell(box.x - CLEARANCE_UNITS, box.y - CLEARANCE_UNITS), [c1, r1] = this.cell(box.x + box.w + CLEARANCE_UNITS, box.y + box.h + CLEARANCE_UNITS);
+      for (let row = Math.max(0, r0); row <= Math.min(this.rows - 1, r1); row++) for (let col = Math.max(0, c0); col <= Math.min(this.cols - 1, c1); col++) {
+        const cx = (col + 0.5) * CELL_UNITS, cy = (row + 0.5) * CELL_UNITS;
+        if (cx > box.x - CLEARANCE_UNITS * 0.8 && cx < box.x + box.w + CLEARANCE_UNITS * 0.8 && cy > box.y - CLEARANCE_UNITS * 0.8 && cy < box.y + box.h + CLEARANCE_UNITS * 0.8) this.open[row * this.cols + col] = 0;
+      }
+    }
+  }
   cell(x, y) { return [Math.floor(x / CELL_UNITS), Math.floor(y / CELL_UNITS)]; }
   isOpen(col, row) { return col >= 0 && row >= 0 && col < this.cols && row < this.rows && this.open[row * this.cols + col] === 1; }
   /** The player can hug a wall closer than a large enemy can stand, so the nearest open cell stands in. */

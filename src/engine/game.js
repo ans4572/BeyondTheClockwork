@@ -5,6 +5,8 @@ import { fitsMap, pointInPolygon, placeOf } from './map-geometry.js';
 const ENTRY_UNITS = 3.5;
 import { Tutorial } from './tutorial.js';
 import { FlowField } from './flow-field.js';
+import { dealRun, formationSpots, ARRIVAL_NOTES } from './encounters.js';
+import { dealHazards, SOLID, hazardBox, sawAt, plateState } from './hazards.js';
 
 export const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -55,7 +57,14 @@ export class Game {
     for (const id of RUN_STATS) stats[id] = (stats[id] || 0) + this.upgradeAmount(id);
     return stats;
   }
-  get room() { return this.s.run ? this.config.rooms[this.s.run.node] : null; }
+  /** The room the run stands in, with the waves this run dealt for it (a run saved before dealing keeps the designed ones). */
+  get room() {
+    const run = this.s.run; if (!run) return null;
+    const base = this.config.rooms[run.node], dealt = run.plan?.[run.node];
+    if (!base.waves || !dealt?.waves) return base;
+    if (this.dealtRoom?.base !== base || this.dealtRoom.dealt !== dealt) this.dealtRoom = { base, dealt, room: { ...base, waves: dealt.waves } };
+    return this.dealtRoom.room;
+  }
   /** Authored map of the current room; rooms without one keep the rectangular arena. */
   get map() {
     const { maps } = this.data, { mode } = this.s;
@@ -93,7 +102,7 @@ export class Game {
     const stats = this.stats, spawn = this.config.arena.spawn;
     this.s.player = { ...spawn, hp: this.c.player.maxHp + (stats.maxHp || 0), maxHp: this.c.player.maxHp + (stats.maxHp || 0), energy: 0, angle: 0, moveAngle: 0, attack: null, combo: 0, comboExpires: 0, invulnerableUntil: 0, dodge: null, dodgeReady: 0, cooldowns: {}, fusionReady: 0 };
   }
-  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; }
+  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; }
   /** `wake` opens on the player getting up, with the world held until they stand. */
   beginIntro({ wake = false, lesson = false } = {}) {
     if (!['opening', 'introDeath'].includes(this.s.mode)) return false;
@@ -207,6 +216,8 @@ export class Game {
     this.s.run = { id: `run-${this.s.profile.runs}-${seed}`, seed, node: 0, startedAt: this.s.time, elapsed: 0, coins: 0, slots: this.loadoutSlots, upgrades: {}, mods: [], skillMods: [], traits: [], clears: [], rewardChoices: [], shopBought: [], branches: [], damageTaken: 0, baseGears: 0 };
     // Generate the whole route once; resuming never rerolls layouts or encounters.
     this.s.run.plan = this.config.rooms.map(room => ({ variant: room.variants ? Math.floor(this.random() * room.variants.length) : 0, layout: room.boss || room.kind === 'shop' ? 2 : Math.floor(this.random() * this.config.roomLayouts.length) }));
+    // Every run deals its own mix and formation for each fight, at the designed weight (see encounters.js).
+    dealRun(this.config.rooms, this.config.enemies, seed, this.config.eliteAffixes).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
     this.resetPlayer(); this.enterNode(); return true;
   }
   spawnEnemy(type, position) {
@@ -234,8 +245,15 @@ export class Game {
     }
     if (room.boss) { this.spawnEnemy(room.boss, map?.bossSpawn || { x: 18, y: 8.5 }); this.notify(room.description); }
     else if (room.waves) {
+      // Every run lays out its own crates, plates, saw rails, fences and music boxes on this floor.
+      const rules = this.config.hazards;
+      if (rules && map?.walkable && map.size) {
+        plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0);
+        this.s.hazards = plan.hazards.map(h => ({ ...h }));
+      }
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
-      room.waves[0].forEach(type => this.spawnWaveEnemy(type, this.spreadSpot()));
+      const spots = this.formation(plan.formations?.[0], room.waves[0]);
+      room.waves[0].forEach((type, i) => this.spawnWaveEnemy(type, spots[i], plan.affixes?.[0]?.[i]));
       this.notify(roomTitle(room));
     }
     // Nobody strikes while the player is still walking in.
@@ -243,9 +261,13 @@ export class Game {
     this.save();
   }
   get obstacles() {
-    if (this.s.mode === 'intro' || !this.s.run || this.map) return [];
-    return this.config.roomLayouts[this.s.run.plan[this.s.run.node].layout].obstacles;
+    // Crates, fences and music boxes stand in the way of feet and shots alike.
+    const solid = this.s.mode === 'combat' && this.s.hazards?.length ? this.s.hazards.filter(h => SOLID.has(h.kind) && !h.gone).map(hazardBox) : [];
+    if (this.s.mode === 'intro' || !this.s.run || this.map) return solid;
+    return [...this.config.roomLayouts[this.s.run.plan[this.s.run.node].layout].obstacles, ...solid];
   }
+  /** True when a body of `radius` at (x, y) would overlap a solid hazard. */
+  inSolid(x, y, radius) { return this.obstacles.some(o => x + radius > o.x && x - radius < o.x + o.w && y + radius > o.y && y - radius < o.y + o.h); }
   move(body, dx, dy, radius = body.radius || this.config.arena.playerRadius) {
     const bounds = this.bounds;
     // A body already off the floor, such as one from an older save, may walk back onto it.
@@ -253,7 +275,10 @@ export class Game {
     // Small steps prevent tunnelling, including dashes and knockback.
     const steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (radius * 0.5)));
     const standing = this.village?.npcs || [];
-    const blocked = (x, y) => (floor && !fitsMap(x, y, radius, floor)) || standing.some(npc => Math.hypot(x - npc.x, y - npc.y) < radius + NPC_BODY_UNITS) || this.obstacles.some(o => x + radius > o.x && x - radius < o.x + o.w && y + radius > o.y && y - radius < o.y + o.h);
+    // A body already overlapping an obstacle (a crate set down beside it) may still step out of it.
+    const overlap = (x, y, o) => x + radius > o.x && x - radius < o.x + o.w && y + radius > o.y && y - radius < o.y + o.h;
+    const walls = this.obstacles.filter(o => !overlap(body.x, body.y, o));
+    const blocked = (x, y) => (floor && !fitsMap(x, y, radius, floor)) || standing.some(npc => Math.hypot(x - npc.x, y - npc.y) < radius + NPC_BODY_UNITS) || walls.some(o => overlap(x, y, o));
     for (let i = 0; i < steps; i++) {
       const x = clamp(body.x + dx / steps, bounds.left + radius, bounds.right - radius);
       if (!blocked(x, body.y)) body.x = x;
@@ -324,6 +349,10 @@ export class Game {
     const crit = !options.dot && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     if (guarded) this.sense({ kind: 'block' });
+    // A trait shield gives way after a few blocked blows.
+    if (guarded && enemy.shieldHits !== undefined && ++enemy.shieldHits >= (this.config.eliteAffixes?.list.find(a => a.id === 'brassShield')?.breakHits || Infinity)) {
+      enemy.frontGuard = 0; enemy.shieldHits = undefined; enemy.shieldBroken = true; this.effect('scrap', enemy.x, enemy.y - enemy.radius, '#ffbe20', 0.5, 0.8);
+    }
     // A boss behind its phase-break shield takes nothing; one just broken out of it takes more.
     if (enemy.breaking) { this.effect('spark', enemy.x, enemy.y - enemy.radius, '#7fc7e0', 0.2, 0.6); this.sense({ kind: 'block' }); return { crit: false, killed: false }; }
     const opened = enemy.vulnerableUntil > this.s.time ? 1 + enemy.vulnerableBonus : 1;
@@ -333,7 +362,12 @@ export class Game {
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     const beaten = !options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1;
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.09;
-    this.checkPhaseBreak(enemy);
+    this.checkPhaseBreak(enemy); if (enemy.boss) this.checkCarpets(enemy);
+    // A blow to Roco's back shakes a confiscated skill out of his bag.
+    if (enemy.type === 'collectorRoco' && !options.dot && this.p.confiscated && this.isConfiscated(this.p.confiscated.index)
+      && Math.abs(angleDiff(Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), enemy.facing)) * 180 / Math.PI >= this.config.bossAI.collectorRoco.confiscateBackDegrees) {
+      this.p.confiscated = null; this.effect('spark', this.p.x, this.p.y, '#ffd257', 0.6, 1, { look: 'ready', follow: true }); this.notify('기술을 되찾았습니다!');
+    }
     this.tutorial.onHit(enemy, !!options.basic);
     this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
@@ -357,6 +391,7 @@ export class Game {
       if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
       if (!enemy.dummy) this.sense({ kind: 'kill', boss: !!enemy.boss, last: !this.s.enemies.some(e => e !== enemy && e.hp > 0 && !e.dummy) });
       if (!enemy.dummy) this.payKill(enemy);
+      if (enemy.affixes?.length) this.affixDeath(enemy);
     }
     return { crit, killed: enemy.hp <= 0 };
   }
@@ -384,7 +419,7 @@ export class Game {
   }
   applyStatus(enemy, element, cast) {
     const status = this.c.elements.find(e => e.id === element)?.status;
-    if (!status) return;
+    if (!status || enemy.immuneTo === status) return;
     const key = `${cast.id}:${status}`, next = enemy.statusApplied[key] || 0;
     if (this.s.time + 1e-7 < next) return;
     enemy.statusApplied[key] = this.s.time + this.c.balance.statusApplyPerCastTargetCooldown;
@@ -438,6 +473,7 @@ export class Game {
     if (a.elapsed >= info.windup && a.elapsed <= info.windup + info.active) {
       if (!a.shown) { this.effect('swing', this.p.x, this.p.y, '#fff5d9', info.active + 0.08, range, { angle: a.angle, phase: a.phase, arc }); a.shown = true; }
       this.breakSwing(a, range);
+      if (!a.hazardsStruck) { a.hazardsStruck = true; this.strikeHazards(a.angle, range, arc); }
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, arc)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
         if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { this.addEnergy(this.trait('staticCharge').energy); this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
@@ -483,6 +519,7 @@ export class Game {
   castSkill(index, target) {
     const entry = this.skillSlots[index];
     if (!entry || !this.active || this.p.dodge || this.s.casts.some(c => c.shape === 'dash')) return false;
+    if (this.isConfiscated(index)) { if (this.s.time >= (this.p.confiscateNote || 0)) { this.p.confiscateNote = this.s.time + 1.5; this.notify('로코가 가져간 기술입니다. 로코의 등을 치면 되찾습니다.'); } return false; }
     const recast = entry.skill.id === 'pressureDash' && this.s.time < (this.p.dashRecastUntil || 0), ready = (this.p.cooldowns[entry.skill.id] || 0) <= this.s.time;
     // Skills spend charge built by the wrench, so they wait for the moment that earns them.
     const cost = entry.skill.energyCost || 0;
@@ -558,6 +595,23 @@ export class Game {
     if (enemy.hp > 0) for (const element of cast.elements) this.applyStatus(enemy, element, cast);
     if (cast.overload && enemy.burnStacks.some(t => t > this.s.time)) { this.p.cooldowns[cast.skillId] = Math.max(0, (this.p.cooldowns[cast.skillId] || 0) - cast.overload); cast.overload = 0; }
     this.castStagger(enemy, cast.fusion ? this.c.balance.fusionStaggerPerCastCap : this.c.balance.skillStaggerPerCastCap, cast);
+    // Wind throws enemies about: one shoved against a crate sets it off.
+    if (cast.elements.includes('wind')) { const reach = this.config.hazards?.elements?.shoveCrateReach || 1; for (const h of this.s.hazards || []) if (h.kind === 'crate' && !h.gone && distance(h, enemy) <= reach) this.lightCrate(h, 0.3); }
+  }
+  /**
+   * A skill reaching a room hazard (`touches(h)` says which): fire sets a crate off at once, ice cools a plate for a few
+   * seconds, lightning runs along a saw rail and shocks whatever stands on it.
+   */
+  elementOnHazards(cast, touches) {
+    const list = this.s.hazards, rules = this.config.hazards?.elements;
+    if (!list?.length || !rules) return;
+    const t = this.s.time;
+    for (const h of list) {
+      if (h.gone || !touches(h)) continue;
+      if (h.kind === 'crate' && cast.elements.includes('fire')) this.lightCrate(h, 0.05);
+      if (h.kind === 'plate' && cast.elements.includes('ice') && !(h.cooledUntil > t)) { h.cooledUntil = t + rules.frostSeconds; this.effect('ring', h.x, h.y, '#9fe3f0', 0.6, h.half, { look: 'frostShatter' }); }
+      if (h.kind === 'rail' && cast.elements.includes('lightning') && !(h.chargedUntil > t + 0.5)) { h.chargedUntil = t + rules.chargeSeconds; h.chargeNext = t; this.effect('beam', h.x - h.dx, h.y - h.dy, '#ffe086', 0.5, 1, { targetX: h.x + h.dx, targetY: h.y + h.dy, look: 'zapLine' }); }
+    }
   }
   updateCasts(dt) {
     for (const cast of this.s.casts) {
@@ -568,6 +622,7 @@ export class Game {
           const before = { x: bullet.x, y: bullet.y }, step = cast.speed * dt;
           this.move(bullet, Math.cos(bullet.angle) * step, Math.sin(bullet.angle) * step, cast.width);
           bullet.travelled += step;
+          this.elementOnHazards(cast, h => segmentDistance(h, before, bullet) <= cast.width + 0.6);
           const target = this.s.enemies.filter(e => e.hp > 0 && !bullet.pierced?.includes(e.id) && segmentDistance(e, before, bullet) <= e.radius + cast.width).sort((a, b) => distance(before, a) - distance(before, b))[0];
           if (target) {
             this.castHit(cast, target, cast.damage * (bullet.share || 1));
@@ -582,7 +637,8 @@ export class Game {
       if (cast.shape === 'dash') {
         const before = { x: this.p.x, y: this.p.y };
         this.move(this.p, Math.cos(cast.angle) * cast.range / cast.duration * dt, Math.sin(cast.angle) * cast.range / cast.duration * dt);
-        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (!enemy.boss && !cast.pierceDash) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
+        this.elementOnHazards(cast, h => segmentDistance(h, before, this.p) <= cast.radius + 0.6);
+        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (enemy.boss && cast.bossStagger) this.addStagger(enemy, cast.bossStagger, false); if (!enemy.boss && !cast.pierceDash) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
         if (!cast.streaked) { cast.streaked = true; this.effect('dodge', this.p.x, this.p.y, cast.color, cast.duration + 0.15, cast.radius, { look: 'dash', angle: cast.angle, follow: true }); }
         cast.done = cast.age >= cast.duration;
         if (cast.done && cast.pierceDash) for (const id of cast.hit) { const e = this.s.enemies.find(x => x.id === id && x.hp > 0 && !x.boss); if (e) this.effect('dodge', e.x, e.y, '#badbd3', 0.45, 1, { look: 'gust', angle: cast.angle + Math.PI }); if (e) this.move(e, -Math.cos(cast.angle) * cast.pierceDash.pull * 2, -Math.sin(cast.angle) * cast.pierceDash.pull * 2); }
@@ -604,6 +660,7 @@ export class Game {
           this.effect('iceClamp',cast.x,cast.y,cast.color,.18,cast.halfWidth,{angle:cast.angle,halfLength:cast.halfLength,pulse:cast.pulse});
         } else if (cast.shape === 'chain') {
           const first = this.s.enemies.filter(e => e.hp > 0 && inCone(this.p, e, cast.angle, cast.range, cast.acquisitionArc)).sort((a, b) => distance(this.p, a) - distance(this.p, b))[0];
+          this.elementOnHazards(cast, h => first ? segmentDistance(h, this.p, first) <= 0.8 : inCone(this.p, h, cast.angle, cast.range, cast.acquisitionArc));
           if (first) {
             this.castHit(cast, first);
             if (cast.delayed) {
@@ -619,6 +676,7 @@ export class Game {
         } else {
           if (cast.homing) { const near = this.s.enemies.filter(e => e.hp > 0 && distance(cast, e) <= cast.homing).sort((a, b) => distance(cast, a) - distance(cast, b))[0]; if (near) { cast.x = near.x; cast.y = near.y; } }
           if (cast.finalKnockback && cast.pulse === cast.hits - 1) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && distance(cast, enemy) <= cast.radius + enemy.radius) { const a = Math.atan2(enemy.y - cast.y, enemy.x - cast.x); this.move(enemy, Math.cos(a) * cast.finalKnockback, Math.sin(a) * cast.finalKnockback); }
+          this.elementOnHazards(cast, h => cast.shape === 'cone' ? inCone(cast, h, cast.angle, cast.range, cast.arc) : distance(cast, h) <= cast.radius + 0.6);
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && (cast.shape === 'cone' ? inCone(cast, enemy, cast.angle, cast.range, cast.arc) : distance(cast, enemy) <= cast.radius + enemy.radius)) { this.castHit(cast, enemy); if(cast.shape==='orb' && cast.knockback && !enemy.boss){const a=Math.atan2(enemy.y-cast.y,enemy.x-cast.x);this.move(enemy,Math.cos(a)*cast.knockback,Math.sin(a)*cast.knockback);} }
           const look = cast.skillId === 'heatSwing' ? 'heatSwing' : cast.shape === 'charge' ? 'zapBig' : cast.finalKnockback && cast.pulse === cast.hits - 1 ? 'quake' : undefined;
           this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, look ? 0.7 : Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc, look, skill: cast.skillId });
@@ -660,6 +718,8 @@ export class Game {
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
+    if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.config.bossAI[enemy.type].crateTossCount);
+    if (type === 'parade') { const live = this.marchLanes(enemy), n = this.liveLaneCount(enemy) >= 4 ? 2 : 1, order = live.map((_, i) => i).sort(() => this.random() - 0.5); enemy.tell.lanes = order.slice(0, n).map(i => live[i]); }
     enemy.state = 'tell';
   }
   /** A boss with phase breaks stops at each threshold, raises a shield and has to be broken out of it before losing more. */
@@ -793,8 +853,25 @@ export class Game {
   marchLanes(enemy, all = false) {
     const ai = this.config.bossAI[enemy.type], { top, bottom } = this.config.arena.bounds, map = this.map;
     const lanes = map?.lanes || [...ai.marchLanes, ai.phaseTwoLane].map(x => [[x, top], [x, bottom]]);
-    return all || enemy.hp <= enemy.maxHp * ai.phaseTwoHpFraction ? lanes : lanes.slice(0, ai.marchLanes.length);
+    if (all) return lanes;
+    // Brass's live carpets grow with each phase: two, then three, then all four (slice.json liveLanes, laneOrder).
+    if (ai.liveLanes) return (ai.laneOrder || lanes.map((_, i) => i)).filter(i => i < lanes.length).slice(0, this.liveLaneCount(enemy)).sort((a, b) => a - b).map(i => lanes[i]);
+    return enemy.hp <= enemy.maxHp * ai.phaseTwoHpFraction ? lanes : lanes.slice(0, ai.marchLanes.length);
   }
+  liveLaneCount(enemy) {
+    const ai = this.config.bossAI[enemy.type];
+    return ai.liveLanes ? Math.max(...ai.liveLanes.filter(({ below }) => enemy.hp <= enemy.maxHp * below).map(({ count }) => count), 0) : 0;
+  }
+  /** A new live carpet rolls out the moment Brass enters a phase that adds one. */
+  checkCarpets(enemy) {
+    const ai = this.config.bossAI[enemy.type], count = this.liveLaneCount(enemy), shown = enemy.lanesShown ??= ai.liveLanes?.[0].count;
+    if (!count || count <= shown) return;
+    const lanes = this.marchLanes(enemy, true), order = ai.laneOrder || lanes.map((_, i) => i); enemy.lanesShown = count;
+    for (const i of order.slice(shown, count)) { const [[ax, ay], [bx, by]] = lanes[i]; this.effect('beam', ax, ay, '#ffd257', 1.2, 1, { targetX: bx, targetY: by, look: 'carpetRoll' }); }
+    this.notify('카펫이 한 줄 더 깔립니다! 행진이 그 위로도 지나갑니다.');
+  }
+  /** Skill slot `index` while Roco holds it in his bag. */
+  isConfiscated(index) { const held = this.p.confiscated; return !!held && held.index === index && held.until > this.s.time; }
   onLane(lane, width) {
     const [[ax, ay], [bx, by]] = lane;
     return segmentDistance(this.p, { x: ax, y: ay }, { x: bx, y: by }) < width + this.config.arena.playerRadius;
@@ -833,12 +910,43 @@ export class Game {
     const { s, p } = this, bell = s.enemies.find(e => e.bellUntil > s.time);
     if (!bell) s.bellWatch = null;
     else if (s.bellWatch && (Math.hypot(p.x - s.bellWatch.x, p.y - s.bellWatch.y) > BELL_DRIFT_UNITS || p.attack || p.lastCast?.at >= s.bellWatch.at)) { s.bellWatch = null; this.hurt(bell.damage); if (!this.active) return; }
+    if (s.drill) {
+      const d = s.drill, step = d.steps[d.index];
+      d.moved += Math.hypot(p.x - d.last.x, p.y - d.last.y); d.last = { x: p.x, y: p.y };
+      const tooMuch = step === 'still' && (Math.hypot(p.x - d.from.x, p.y - d.from.y) > d.rules.still || p.attack);
+      if (!d.failed && tooMuch) { d.failed = true; this.hurt(d.damage); if (!this.active) return; }
+      if (s.time >= d.until) {
+        if (step === 'move' && !d.failed && d.moved < d.rules.move) { this.hurt(d.damage); if (!this.active) return; }
+        d.index++;
+        if (d.index >= d.steps.length) s.drill = null;
+        else Object.assign(d, { until: s.time + d.rules.seconds, from: { x: p.x, y: p.y }, moved: 0, failed: false });
+      }
+    }
+    if (s.parades?.length) {
+      for (const parade of s.parades) {
+        parade.at += parade.speed * dt;
+        if (!parade.spent && this.paradeBodies(parade).some(body => Math.hypot(body.x - p.x, body.y - p.y) < parade.radius + this.config.arena.playerRadius) && this.hurt(parade.damage)) parade.spent = true;
+        if (!this.active) return;
+      }
+      s.parades = s.parades.filter(parade => parade.at - (parade.count + 1) * parade.spacing < Math.hypot(parade.b[0] - parade.a[0], parade.b[1] - parade.a[1]));
+    }
     const column = s.column;
     if (!column) return;
     column.at += dt / column.seconds;
     if (column.at >= 1) { s.column = null; return; }
     const { a, b, gapA, gapB } = this.columnLine, near = (from, to) => this.onLane([from, to], column.width);
     if (!column.spent && (near(a, gapA) || near(gapB, b)) && this.hurt(column.damage)) column.spent = true;
+  }
+  /** Where each soldier of a parade is now: a file walking from the lane's start, one place left empty. */
+  paradeBodies(parade) {
+    const [ax, ay] = parade.a, [bx, by] = parade.b, length = Math.hypot(bx - ax, by - ay), bodies = [];
+    for (let i = 0; i < parade.count; i++) {
+      if (i === parade.gap) continue;
+      const along = parade.at - i * parade.spacing;
+      if (along < 0 || along > length) continue;
+      bodies.push({ x: ax + (bx - ax) * along / length, y: ay + (by - ay) * along / length, heading: Math.atan2(by - ay, bx - ax) });
+    }
+    return bodies;
   }
   /** A line for the player to read while a boss pattern is running. */
   get bossWarning() {
@@ -848,6 +956,10 @@ export class Game {
     if (boss.bellUntil > time || boss.tell?.type === 'bell') return '종이 울립니다! 움직이지 마세요';
     if (boss.tell?.type === 'carpet') return '초록 카펫 위로 이동하세요';
     if (boss.tell?.type === 'column' || this.s.column) return '대열의 틈으로 지나가세요';
+    if (boss.tell?.type === 'parade' || this.s.parades?.length) return '퍼레이드! 카펫에서 비키거나 빈자리를 기다리세요';
+    if (boss.tell?.type === 'drill') return '구령 훈련! 구령을 따르세요';
+    if (this.s.drill) return this.s.drill.steps[this.s.drill.index] === 'still' ? '구령: 멈춰!' : '구령: 앞으로! 계속 걸으세요';
+    if (boss.tell?.type === 'crateToss') return '상자가 떨어집니다! 로코 옆에서 터뜨리면 기절합니다';
     return '';
   }
   executeEnemy(enemy) {
@@ -905,7 +1017,12 @@ export class Game {
       case 'eliteWave': if (distance(tell, p) < enemy.attackRange + enemy.followupRadiusBonus) damage(); this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange + enemy.followupRadiusBonus, { look: 'quake' }); break;
       case 'claw': {
         const end = { x: tell.x + Math.cos(tell.angle) * ai.clawLength, y: tell.y + Math.sin(tell.angle) * ai.clawLength };
-        if (segmentDistance(p, tell, end) <= ai.clawWidth + this.config.arena.playerRadius) damage();
+        if (segmentDistance(p, tell, end) <= ai.clawWidth + this.config.arena.playerRadius && damage() && ai.confiscateSeconds && this.skillSlots.length && !(this.p.confiscated?.until > this.s.time)) {
+          // The claw that catches F2 takes a skill back to Roco's bag for a while: a blow to his back returns it.
+          const index = Math.floor(this.random() * this.skillSlots.length);
+          this.p.confiscated = { index, until: this.s.time + ai.confiscateSeconds };
+          this.notify(`로코가 ${this.skillSlots[index].skill.name}을(를) 압수했습니다! 등을 쳐서 되찾으세요.`);
+        }
         this.effect('beam', tell.x, tell.y, '#cf767a', 0.45, 1, { targetX: end.x, targetY: end.y, look: 'thrust' }); break;
       }
       case 'magnet':
@@ -946,6 +1063,32 @@ export class Game {
         if (tell.drops.some(drop => distance(drop, p) <= ai.craneRadius + this.config.arena.playerRadius)) damage();
         for (const { x, y } of tell.drops) { this.effect('ring', x, y, '#c9a66b', 0.7, ai.craneRadius, { look: 'crateCrash' }); this.effect('scrap', x, y, '#c9a66b', 0.5, 1); }
         break;
+      // Roco throws crates: under one is a hit, and the crates stay. One blown up next to Roco knocks him out for a moment.
+      case 'crateToss': {
+        if (tell.drops.some(drop => distance(drop, p) <= ai.crateTossRadius + this.config.arena.playerRadius)) damage();
+        const crates = (this.s.hazards ??= []);
+        for (const { x, y } of tell.drops) {
+          if (this.map?.walkable && !fitsMap(x, y, 0.45, this.map)) continue;
+          crates.push({ id: this.id('hz'), kind: 'crate', x, y, size: this.config.hazards?.crate.size || 0.9 });
+          this.effect('ring', x, y, '#c9a66b', 0.5, ai.crateTossRadius, { look: 'crateCrash' });
+        }
+        const thrown = crates.filter(h => h.kind === 'crate' && !h.gone && h.fuseAt === undefined);
+        while (thrown.length > ai.crateTossMax) { const old = thrown.shift(); old.gone = true; this.effect('scrap', old.x, old.y, '#b0783e', 0.4, 0.8); }
+        break;
+      }
+      // Parade: toy soldiers march down one or two live carpets in a long file; step off, or let the gap pass you.
+      case 'parade':
+        for (const lane of tell.lanes) {
+          const [[ax, ay], [bx, by]] = this.random() < 0.5 ? lane : [lane[1], lane[0]];
+          this.s.parades = [...(this.s.parades || []), { a: [ax, ay], b: [bx, by], at: 0, gap: 1 + Math.floor(this.random() * (ai.paradeSoldiers - 2)), speed: ai.paradeSpeed, spacing: ai.paradeSpacing, count: ai.paradeSoldiers, radius: ai.paradeRadius, damage: enemy.damage, spent: false }];
+        }
+        break;
+      // Drill: Brass calls the steps: freeze on "멈춰!", walk on "앞으로!". Getting either wrong costs a hit.
+      case 'drill': {
+        const steps = this.liveLaneCount(enemy) >= 4 ? ['still', 'move', 'still'] : ['still', 'move'];
+        this.s.drill = { steps, index: 0, until: this.s.time + ai.drillStepSeconds, from: { x: p.x, y: p.y }, moved: 0, last: { x: p.x, y: p.y }, failed: false, damage: enemy.damage, rules: { seconds: ai.drillStepSeconds, still: ai.drillStillUnits, move: ai.drillMoveUnits } };
+        enemy.ready = this.s.time + steps.length * ai.drillStepSeconds + enemy.recovery; break;
+      }
       case 'bell':
         enemy.bellUntil = this.s.time + ai.bellSeconds; enemy.ready = enemy.bellUntil + enemy.recovery;
         this.s.bellWatch = { x: p.x, y: p.y, at: this.s.time }; break;
@@ -1031,7 +1174,7 @@ export class Game {
     for (const b of this.s.projectiles) {
       const before = { x: b.x, y: b.y }, step = b.speed * dt;
       this.move(b, Math.cos(b.angle) * step, Math.sin(b.angle) * step, b.radius);
-      if (distance(before, b) < step * 0.6) b.until = 0;
+      if (distance(before, b) < step * 0.6) { b.until = 0; this.shotStopped(b); }
       if (b.friendly) {
         const target = this.s.enemies.find(e => e.hp > 0 && segmentDistance(e, before, b) < e.radius + b.radius);
         if (target) { this.hitEnemy(target, b.damage); b.until = 0; }
@@ -1055,8 +1198,8 @@ export class Game {
   }
   /** One step of a dodge already under way. */
   moveDodge(dt, radius) {
-    const p = this.p, d = this.c.player.dodge, stepTime = Math.min(dt, d.duration - p.dodge.elapsed);
-    this.move(p, Math.cos(p.dodge.angle) * d.distance / d.duration * stepTime, Math.sin(p.dodge.angle) * d.distance / d.duration * stepTime, radius);
+    const p = this.p, d = this.c.player.dodge, stepTime = Math.min(dt, d.duration - p.dodge.elapsed), reach = d.distance * (p.dodge.boost || 1);
+    this.move(p, Math.cos(p.dodge.angle) * reach / d.duration * stepTime, Math.sin(p.dodge.angle) * reach / d.duration * stepTime, radius);
     p.dodge.elapsed += dt; if (p.dodge.elapsed >= d.duration - 1e-7) p.dodge = null;
   }
   /** Out of a fight the body still dodges; after a cleared room the wrench still swings, in town it does not. */
@@ -1081,26 +1224,147 @@ export class Game {
     if (!map?.walkable) return null;
     this.flows ??= new Map();
     if (!this.flows.has(map.id)) this.flows.set(map.id, new FlowField(map, map.size || [this.config.arena.width, this.config.arena.height]));
-    return this.flows.get(map.id);
+    // Enemies find their way round this run's crates, fences and music boxes too.
+    const flow = this.flows.get(map.id); flow.setBlocks(this.s.mode === 'combat' ? this.obstacles : []);
+    return flow;
   }
-  spawnWaveEnemy(type, spot) {
+  spawnWaveEnemy(type, spot, affixes) {
     const enemy = this.spawnEnemy(type, spot);
     const { power } = this.room;
     enemy.hp = enemy.maxHp = Math.round(enemy.hp * power); enemy.damage = Math.max(1, Math.round(enemy.damage * power * this.config.rules.waveDamageShare));
     // Wave bodies wait where they stand until the player comes near; nothing rushes in from across the map.
     enemy.aggro = false;
+    if (affixes?.length) this.giveAffixes(enemy, affixes);
+    return enemy;
+  }
+  /** An elite's traits for this run (slice.json eliteAffixes): faster, a front shield, rats inside, an element it shrugs off, a bomb heart. */
+  giveAffixes(enemy, affixes) {
+    const rules = Object.fromEntries((this.config.eliteAffixes?.list || []).map(a => [a.id, a]));
+    enemy.affixes = affixes.filter(a => rules[a.id]).map(a => ({ ...a }));
+    for (const { id, element } of enemy.affixes) {
+      const rule = rules[id];
+      if (id === 'overwound') { enemy.speed *= rule.speed; enemy.recovery *= rule.recovery; }
+      if (id === 'brassShield') Object.assign(enemy, { frontGuard: rule.frontGuard, guardArcDegrees: rule.guardArcDegrees, shieldHits: 0 });
+      if (id === 'coated') enemy.immuneTo = this.c.elements.find(e => e.id === element)?.status;
+    }
+  }
+  /** What a trait-bearing elite leaves behind: rats spilling out, a blast a moment later, and a few extra coins. */
+  affixDeath(enemy) {
+    const rules = Object.fromEntries((this.config.eliteAffixes?.list || []).map(a => [a.id, a]));
+    for (const { id } of enemy.affixes) {
+      const rule = rules[id];
+      if (id === 'splitter') for (let i = 0; i < rule.count; i++) {
+        const angle = Math.PI * 2 * i / rule.count + this.random(), spot = { x: enemy.x + Math.cos(angle) * 0.8, y: enemy.y + Math.sin(angle) * 0.8 };
+        const map = this.map, place = !map?.walkable || fitsMap(spot.x, spot.y, 0.3, map) ? spot : { x: enemy.x, y: enemy.y };
+        const rat = this.spawnEnemy(rule.spawn, place);
+        if (this.room?.power) { rat.hp = rat.maxHp = Math.round(rat.hp * this.room.power); rat.damage = Math.max(1, Math.round(rat.damage * this.room.power * this.config.rules.waveDamageShare)); }
+        rat.ready = this.s.time + 0.6;
+        this.effect('scrap', place.x, place.y, '#dbbc6b', 0.4, 0.6);
+      }
+      if (id === 'volatile') {
+        (this.s.blasts ??= []).push({ x: enemy.x, y: enemy.y, at: this.s.time + rule.delay, radius: rule.radius, damage: Math.round(rule.damage * (this.room?.power || 1)), enemyDamage: rule.enemyDamage });
+        this.effect('ring', enemy.x, enemy.y, '#d8423c', rule.delay, rule.radius);
+      }
+    }
+    if (this.s.mode === 'combat' && this.s.run) this.giveLoot(0, (this.config.eliteAffixes?.bonusCoins || 0) * enemy.affixes.length);
+  }
+  /** Crates, plates, saws: their clocks run and they act on whoever is in reach. */
+  tickHazards() {
+    const rules = this.config.hazards, list = this.s.hazards;
+    if (!rules || !list?.length || this.s.mode !== 'combat') return;
+    const { p } = this, t = this.s.time, playerR = this.config.arena.playerRadius;
+    for (const h of list) {
+      if (h.gone) continue;
+      if (h.kind === 'crate' && h.fuseAt !== undefined && t >= h.fuseAt) this.blowCrate(h);
+      if (h.kind === 'plate' && !(h.cooledUntil > t) && plateState(h, t, rules.plate) === 'hot') {
+        const depth = h.depth ?? rules.plate.depth, inside = body => Math.abs(body.x - h.x) / h.half + Math.abs(body.y - h.y) / depth <= 1;
+        if (inside(p) && !p.dodge && t >= (p.plateNext || 0)) { p.plateNext = t + rules.plate.tick; this.hurt(rules.plate.damage); }
+        h.cast ??= { id: `plate-${h.id}`, staggerUsed: {}, fusion: false, statusAt: {} };
+        for (const e of this.s.enemies) if (e.hp > 0 && !e.boss && inside(e)) this.applyStatus(e, 'fire', h.cast);
+      }
+      if (h.kind === 'rail' && h.chargedUntil > t && t >= (h.chargeNext || 0)) {
+        const ends = [{ x: h.x - h.dx, y: h.y - h.dy }, { x: h.x + h.dx, y: h.y + h.dy }], e2 = rules.elements;
+        h.chargeNext = t + e2.chargeTick; h.chargeCast ??= { id: `rail-${h.id}`, staggerUsed: {}, fusion: false, statusAt: {} };
+        for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && segmentDistance(e, ends[0], ends[1]) <= e2.chargeReach + e.radius) { this.hitEnemy(e, e2.chargeDamage, { dot: true, color: '#ffe086' }); this.applyStatus(e, 'lightning', h.chargeCast); this.effect('spark', e.x, e.y - 0.5, '#ffe086', 0.3, 0.7, { look: 'zap' }); }
+      }
+      if (h.kind === 'rail') {
+        const saw = sawAt(h, t, rules.rail.speed);
+        if (!p.dodge && distance(saw, p) < rules.rail.radius + playerR) this.hurt(rules.rail.damage);
+        h.hitAt ??= {};
+        for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(saw, e) < rules.rail.radius + e.radius && t >= (h.hitAt[e.id] || 0)) {
+          h.hitAt[e.id] = t + rules.rail.enemyEvery; this.hitEnemy(e, rules.rail.enemyDamage, { dot: true, color: '#d8dde2' }); this.effect('spark', e.x, e.y - 0.5, '#fff4d6', 0.2, 0.6);
+        }
+      }
+    }
+    if (list.some(h => h.gone)) this.s.hazards = list.filter(h => !h.gone);
+  }
+  /** Light a crate's fuse (a blow, a shot, a blast); it goes off a moment later. */
+  lightCrate(h, fuse = this.config.hazards.crate.fuse) {
+    if (h.kind !== 'crate' || h.gone || h.fuseAt !== undefined) return;
+    h.fuseAt = this.s.time + fuse; this.effect('ring', h.x, h.y, '#d8423c', fuse, this.config.hazards.crate.radius);
+  }
+  blowCrate(h) {
+    const rule = this.config.hazards.crate; h.gone = true;
+    this.effect('ring', h.x, h.y, '#e8914e', 0.6, rule.radius, { look: 'boom' }); this.effect('scrap', h.x, h.y, '#b0783e', 0.6, 1); this.sense({ kind: 'burst' });
+    if (!this.p.dodge && distance(h, this.p) < rule.radius + this.config.arena.playerRadius) this.hurt(rule.damage);
+    for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(h, e) < rule.radius + e.radius) {
+      this.hitEnemy(e, rule.enemyDamage, { dot: true, color: '#e8914e' });
+      const stun = e.boss && !e.breaking && this.config.bossAI[e.type]?.crateStunSeconds;
+      if (stun && e.hp > 0) { e.tell = null; e.exposedUntil = Math.max(e.exposedUntil, this.s.time + stun); e.ready = Math.max(e.ready, e.exposedUntil + 0.4); this.notify('로코가 폭발에 휘청거립니다! 지금 공격하세요.'); }
+    }
+    for (const other of this.s.hazards) if (other !== h && distance(h, other) < rule.radius) this.lightCrate(other, rule.chain);
+  }
+  /** A wrench swing: crates get lit, a music box plays its mending tune once. */
+  strikeHazards(angle, range, arc) {
+    for (const h of this.s.hazards || []) {
+      if (h.gone || !inCone(this.p, h, angle, range + 0.4, arc)) continue;
+      if (h.kind === 'crate') this.lightCrate(h);
+      if (h.kind === 'musicbox' && !h.used) {
+        h.used = true; this.heal(this.p.maxHp * this.config.hazards.musicbox.heal);
+        this.effect('ring', h.x, h.y, '#8fd8b0', 0.8, 1.6); this.effect('spark', this.p.x, this.p.y, '#8fd8b0', 0.6, 1, { look: 'ready', follow: true });
+      }
+    }
+  }
+  /** A shot stopped by something solid: a fence takes the blow, a crate caught by the player's shot is lit. */
+  shotStopped(b) {
+    const near = h => { const o = hazardBox(h), r = b.radius + 0.25; return b.x + r > o.x && b.x - r < o.x + o.w && b.y + r > o.y && b.y - r < o.y + o.h; };
+    const hit = (this.s.hazards || []).find(h => SOLID.has(h.kind) && !h.gone && near(h));
+    if (!hit) return;
+    if (hit.kind === 'fence' && --hit.hp <= 0) { hit.gone = true; this.effect('scrap', hit.x, hit.y, '#a07a4a', 0.6, 1); }
+    else if (hit.kind === 'fence') this.effect('spark', b.x, b.y, '#d8c7a0', 0.2, 0.5);
+    if (hit.kind === 'crate' && b.friendly) this.lightCrate(hit);
+  }
+  /** A bomb heart goes off where its elite fell, hurting the player and anyone else standing in it. */
+  tickBlasts() {
+    if (!this.s.blasts?.length) return;
+    this.s.blasts = this.s.blasts.filter(blast => {
+      if (blast.at > this.s.time) return true;
+      this.effect('ring', blast.x, blast.y, '#e8914e', 0.6, blast.radius, { look: 'boom' }); this.sense({ kind: 'burst' });
+      if (!this.p.dodge && distance(blast, this.p) < blast.radius + this.config.arena.playerRadius) this.hurt(blast.damage);
+      for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(blast, e) < blast.radius) this.hitEnemy(e, blast.enemyDamage, { dot: true, color: '#e8914e' });
+      for (const h of this.s.hazards || []) if (distance(blast, h) < blast.radius) this.lightCrate(h, this.config.hazards.crate.chain);
+      return false;
+    });
   }
   /** Anywhere on the floor, well away from the player and from bodies already placed, so a room fills evenly. */
-  spreadSpot() {
+  spreadSpot(extra = []) {
     const { spreadMinUnits, spreadGapUnits } = this.config.rules, map = this.map, { arena } = this.config, radius = 0.6;
-    const [width, height] = map?.size || [arena.width, arena.height], taken = [...this.s.enemies.filter(e => e.hp > 0), ...(this.s.run?.arrivals || [])], flow = this.flowField;
+    const [width, height] = map?.size || [arena.width, arena.height], taken = [...this.s.enemies.filter(e => e.hp > 0), ...(this.s.run?.arrivals || []), ...extra], flow = this.flowField;
     flow?.update(this.p.x, this.p.y);
     for (let tries = 0; tries < 80; tries++) {
       const spot = { x: this.random() * width, y: this.random() * height };
       const floor = map?.walkable ? fitsMap(spot.x, spot.y, radius, map) : spot.x > arena.bounds.left && spot.x < arena.bounds.right && spot.y > arena.bounds.top && spot.y < arena.bounds.bottom;
-      if (floor && (!flow || flow.reachable(spot.x, spot.y)) && distance(spot, this.p) >= spreadMinUnits && taken.every(other => distance(spot, other) >= spreadGapUnits)) return spot;
+      if (floor && !this.inSolid(spot.x, spot.y, radius) && (!flow || flow.reachable(spot.x, spot.y)) && distance(spot, this.p) >= spreadMinUnits && taken.every(other => distance(spot, other) >= spreadGapUnits)) return spot;
     }
     return this.arrivalSpot();
+  }
+  /** Spots for a wave standing in `kind` of formation (spread, camps, flank, pincer, ring); see encounters.js. */
+  formation(kind = 'spread', types) {
+    const map = this.map, { arena } = this.config, flow = this.flowField, radius = 0.6;
+    flow?.update(this.p.x, this.p.y);
+    const fits = (x, y) => (map?.walkable ? fitsMap(x, y, radius, map) && (!flow || flow.reachable(x, y)) : x > arena.bounds.left && x < arena.bounds.right && y > arena.bounds.top && y < arena.bounds.bottom)
+      && distance({ x, y }, this.p) >= 4 && !this.inSolid(x, y, radius);
+    return formationSpots(kind, types, { fits, player: this.p, size: map?.size || [arena.width, arena.height], random: () => this.random(), spread: taken => this.spreadSpot(taken) });
   }
   /** A waiting body notices the player, and so do the ones standing beside it. */
   rouse(enemy) {
@@ -1128,9 +1392,11 @@ export class Game {
   callWave() {
     const { run } = this.s, { waveWarnSeconds } = this.config.rules;
     run.wave++;
-    for (const type of this.room.waves[run.wave]) {
-      const spot = this.spreadSpot();
-      run.arrivals.push({ type, ...spot, at: this.s.time + waveWarnSeconds });
+    const types = this.room.waves[run.wave], kind = run.plan?.[run.node]?.formations?.[run.wave], spots = this.formation(kind, types);
+    if (ARRIVAL_NOTES[kind]) this.notify(ARRIVAL_NOTES[kind]);
+    for (const [i, type] of types.entries()) {
+      const spot = spots[i];
+      run.arrivals.push({ type, x: spot.x, y: spot.y, at: this.s.time + waveWarnSeconds, affixes: run.plan?.[run.node]?.affixes?.[run.wave]?.[i] || null });
       this.effect('friendlyTell', spot.x, spot.y, '#e0a03c', waveWarnSeconds, 0.7);
     }
   }
@@ -1138,7 +1404,7 @@ export class Game {
     const { run } = this.s;
     if (this.s.mode !== 'combat' || !this.room?.waves) return;
     const waiting = run.arrivals.length;
-    run.arrivals = run.arrivals.filter(({ type, x, y, at }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }); return false; });
+    run.arrivals = run.arrivals.filter(({ type, x, y, at, affixes }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }, affixes); return false; });
     if (run.arrivals.length < waiting) this.sense({ kind: 'summon' });
     const living = this.s.enemies.filter(e => e.hp > 0).length;
     if (!run.arrivals.length && run.wave < this.room.waves.length - 1 && living <= this.config.rules.waveCallsAtLiving) this.callWave();
@@ -1238,7 +1504,7 @@ export class Game {
     if (!this.active) return;
     this.s.effects = this.s.effects.filter(e => e.until > this.s.time);
     this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
-    this.tutorial.tick(); this.tickPractice(); this.tickWaves();
+    this.tutorial.tick(); this.tickPractice(); this.tickWaves(); this.tickBlasts(); this.tickHazards();
     if (this.active && this.s.enemies.length && this.s.enemies.every(e => e.hp <= 0) && !this.wavesLeft) { if (this.s.mode === 'combat') this.holdClear(); else this.finishCombat(); }
   }
   /** What clearing the current room is worth in all: free gears kept for good, and coins for this run. */
