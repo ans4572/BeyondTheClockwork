@@ -90,6 +90,9 @@ try {
   let playerReady = false;
   // F2's and Moru's sheets are colour-graded as they load so they sit with the brighter cast (src/render/grade.js).
   const gradedImage = url => browserImage(url).then(gradedCanvas);
+  // Menu icons are tiny but shown all at once (codex, parts shelf, reward cards): fetched and decoded while the title
+  // plays, and the decoded pictures kept, so a panel never opens with pictures arriving one by one.
+  for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
   const playerSprites = SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
@@ -140,15 +143,25 @@ try {
     const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
     if (image && mask) renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen));
   };
-  // Map art is loaded only where it is needed: the place underfoot and the one after it, never the whole region up front.
+  // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
   const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
   let imageQueue = [...new Set([...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES, ...artOf(placeOf(data.maps, data.maps?.intro)), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  // Every other place's files are then fetched into the browser's cache, one at a time and at low priority, but not
+  // decoded: fourteen decoded maps and masks would not fit a phone's memory, and a cached file opens in a moment.
+  let prefetch = [...new Set(Object.values(data?.maps?.villages || {}).flatMap(artOf).filter(file => !imageQueue.includes(file)))], prefetching = false;
+  function prefetchRest() {
+    if (prefetching || imagesLoading || imageQueue.length || !prefetch.length) return;
+    const file = prefetch.shift(); if (requested.has(file)) return prefetchRest();
+    prefetching = true;
+    fetch(assetUrl(file), { priority: 'low' }).then(r => r.blob()).catch(() => {}).finally(() => { prefetching = false; prefetchRest(); });
+  }
   const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
     // Places are drawn only after the title, so their art waits for the title and then for F2's own sheets.
     if (!document.body.classList.contains('booted') || !playerReady) return;
+    if (!imageQueue.length) prefetchRest();
     while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
@@ -1019,9 +1032,6 @@ try {
   await startSound();
   finishBoot();
   fetchImages();
-  // Menu icons are tiny but shown all at once (element and skill panels): fetch and decode them now so a panel never
-  // opens with pictures arriving one by one.
-  for (const file of UI_ICONS) { const image = new Image(); image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
 } catch (error) {
   finishBoot();
   // Anyone with the link can land here, so the local-server advice is for this machine only.
