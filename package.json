@@ -10,8 +10,9 @@
     "data:check": "node scripts/sync-data.mjs --check",
     "test": "node --test",
     "playtest": "node scripts/playtest.mjs",
-    "check": "npm run data:check && npm run art:check && node --test",
-    "art:check": "node scripts/check-assets.mjs"
+    "check": "npm run data:check && npm run art:check && node scripts/sync-preloads.mjs --check && node --test",
+    "art:check": "node scripts/check-assets.mjs",
+    "preload:sync": "node scripts/sync-preloads.mjs"
   },
   "engines": {
     "node": ">=20"

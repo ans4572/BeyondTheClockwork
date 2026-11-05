@@ -64,8 +64,8 @@ const MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 
  * then so it does not share the connection: F2's sheets start once the title is drawn (titleDrawn), and the skill
  * sheets, the other songs and the place art once the loading card is gone (bootDone).
  */
-let markTitleDrawn, markBootDone;
-const titleDrawn = new Promise(done => { markTitleDrawn = done; }), bootDone = new Promise(done => { markBootDone = done; });
+let markTitleDrawn, markBootDone, titleIsDrawn = false;
+const titleDrawn = new Promise(done => { markTitleDrawn = () => { titleIsDrawn = true; done(); }; }), bootDone = new Promise(done => { markBootDone = done; });
 function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); markTitleDrawn?.(); markBootDone?.(); }
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
@@ -101,7 +101,8 @@ try {
   const gradedImage = url => browserImage(url).then(gradedCanvas);
   // Menu icons are tiny but shown all at once (codex, parts shelf, reward cards): fetched and decoded while the title
   // plays, and the decoded pictures kept, so a panel never opens with pictures arriving one by one.
-  for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
+  // They wait for the title to be drawn, so they do not hold up the loading card.
+  titleDrawn.then(() => { for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); } });
   const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
@@ -214,8 +215,9 @@ try {
   const requested = new Set(imageQueue);
   let imagesLoading = 0, placeLoaded = null;
   function fetchImages() {
-    // Places are drawn only after the title, so their art waits for the title and then for F2's own sheets.
-    if (!document.body.classList.contains('booted') || !playerReady) return;
+    // Places are drawn only after the title, so their art starts once the title is drawn, beside F2's own sheets
+    // rather than after all of them (on a slow connection the scrapyard came too late for the opening).
+    if (!titleIsDrawn) return;
     if (!imageQueue.length) prefetchRest();
     while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
@@ -227,8 +229,12 @@ try {
     }
   }
   let nextFloor = null;
-  function bringPlaceForward() {
-    const place = game.village || game.map;
+  function bringPlaceForward(wantedPlace) {
+    // Before registration (the title, the opening text, the scrapyard fight) the place that matters is the scrapyard,
+    // even while the game still reports the town: treating the town as current here once dropped the scrapyard's
+    // painting from the queue every frame, and the tutorial opened on the plain stand-in floor.
+    const opening = !game.s.profile.registered && ['opening', 'intro', 'introDeath'].includes(game.s.mode);
+    const place = wantedPlace || (opening ? introPlace : game.village || game.map);
     if (place?.background === placeLoaded) return;
     placeLoaded = place?.background;
     // In town the next place is the first stop; on a run it is the stop after this one.
@@ -238,7 +244,7 @@ try {
     // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory
     // made the town sluggish on phones after a run. The town itself stays, so coming home is instant; anything let go is
     // still in the browser's cache and comes back in a moment if needed again.
-    const keep = new Set([...wanted, ...artOf(game.hubMap)]);
+    const keep = new Set([...wanted, ...artOf(game.hubMap), ...(game.s.profile.registered ? [] : artOf(introPlace))]);
     for (const village of Object.values(data?.maps?.villages || {})) for (const file of artOf(village)) {
       if (keep.has(file) || !requested.has(file)) continue;
       release(file); renderer.depthMasks.delete(file); originals.delete(file); requested.delete(file);
@@ -274,9 +280,9 @@ try {
   }
   function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); $('app').inert = false; $('title').inert = false; placeOverlay(); title.hide(); }
   /** The stamp and the opening sentences, then control of a waking body. */
-  /** Resolves once a place's painting (and its mask) is decoded and in the renderer, or after `ms`. */
+  /** Resolves once a place's painting is decoded and in the renderer, or after `ms` (the mask is turned into depth and let go, so it is not waited for). */
   function placeArtReady(place, ms) {
-    const files = artOf(place).filter(file => /\.(webp|png|jpe?g)$/.test(file));
+    const files = [place?.background].filter(Boolean);
     return new Promise(done => {
       const start = performance.now(), check = () => (files.every(file => renderer.mapImages.has(file)) || performance.now() - start > ms ? done() : setTimeout(check, 100));
       check();
@@ -287,9 +293,12 @@ try {
     await title.opening(data.progression.intro.openingText, { stamp });
     // The scrapyard's painting is fetched while the opening text plays; on a slow connection the game waits a little
     // longer for it rather than open on the plain stand-in floor.
-    if (!artOf(introPlace).every(file => renderer.mapImages.has(file))) {
-      $('overlay').innerHTML = panel('<p class="loading-place">태엽을 감는 중…</p>', 'compact');
-      await placeArtReady(introPlace, 12000);
+    if (introPlace?.background && !renderer.mapImages.has(introPlace.background)) {
+      // The same card as the page's own loading screen, over everything, until the painting is in.
+      document.body.insertAdjacentHTML('beforeend', '<div id="boot" class="place" role="status"><div class="card"><b>태엽 밖으로</b><span><i>⚙</i>태엽을 감는 중…</span></div></div>');
+      bringPlaceForward(introPlace);
+      await placeArtReady(introPlace, 30000);
+      document.getElementById('boot')?.remove();
     }
     game.s.paused = false; game.beginIntro({ wake: !reducedMotion(), lesson: true });
     title.hide(); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
@@ -1158,7 +1167,7 @@ try {
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame. Only the title waits:
   // the player's skill sheets, place art and the other songs come after, so they do not slow the first screen.
   await title.ready.catch(() => {});
-  markTitleDrawn();
+  markTitleDrawn(); fetchImages();
   await startSound();
   finishBoot();
   fetchImages();

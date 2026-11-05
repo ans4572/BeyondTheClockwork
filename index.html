@@ -21,6 +21,52 @@
     @keyframes boot-blink { 50% { opacity: .35; } }
     @media (prefers-reduced-motion: reduce) { #boot i, #boot.tap span { animation: none; } }
   </style>
+  <!-- preload:start -->
+  <link rel="preload" href="art/fonts/Galmuri11.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="art/fonts/Galmuri11-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="art/fonts/NeoDunggeunmoPro.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp" as="image">
+  <link rel="preload" href="src/data/combat.json" as="fetch" crossorigin>
+  <link rel="preload" href="src/data/progression.json" as="fetch" crossorigin>
+  <link rel="preload" href="src/data/slice.json" as="fetch" crossorigin>
+  <link rel="preload" href="src/data/maps.json" as="fetch" crossorigin>
+  <link rel="preload" href="src/data/dialogue.json" as="fetch" crossorigin>
+  <link rel="modulepreload" href="src/engine/data.js">
+  <link rel="modulepreload" href="src/engine/game.js">
+  <link rel="modulepreload" href="src/ui/tool-icons.js">
+  <link rel="modulepreload" href="src/engine/room-title.js">
+  <link rel="modulepreload" href="src/engine/storage.js">
+  <link rel="modulepreload" href="src/engine/map-geometry.js">
+  <link rel="modulepreload" href="src/engine/progression.js">
+  <link rel="modulepreload" href="src/render/canvas.js">
+  <link rel="modulepreload" href="src/render/fx-sprites.js">
+  <link rel="modulepreload" href="src/animation/sprite-library.js">
+  <link rel="modulepreload" href="src/render/depth-mask.js">
+  <link rel="modulepreload" href="src/ui/title-screen.js">
+  <link rel="modulepreload" href="src/ui/touch-controls.js">
+  <link rel="modulepreload" href="src/render/grade.js">
+  <link rel="modulepreload" href="src/ui/world-map.js">
+  <link rel="modulepreload" href="src/audio/sfx.js">
+  <link rel="modulepreload" href="src/audio/music.js">
+  <link rel="modulepreload" href="src/engine/tutorial.js">
+  <link rel="modulepreload" href="src/ui/dialogue.js">
+  <link rel="modulepreload" href="src/engine/transfer-code.js">
+  <link rel="modulepreload" href="src/ui/device-transfer.js">
+  <link rel="modulepreload" href="src/ui/stats-report.js">
+  <link rel="modulepreload" href="src/engine/nickname.js">
+  <link rel="modulepreload" href="src/engine/sync.js">
+  <link rel="modulepreload" href="src/engine/flow-field.js">
+  <link rel="modulepreload" href="src/engine/encounters.js">
+  <link rel="modulepreload" href="src/engine/hazards.js">
+  <link rel="modulepreload" href="src/engine/fusion-geometry.js">
+  <link rel="modulepreload" href="src/animation/player-animator.js">
+  <link rel="modulepreload" href="src/animation/mob-animator.js">
+  <link rel="modulepreload" href="src/animation/cast-effects.js">
+  <link rel="modulepreload" href="src/animation/npc-director.js">
+  <link rel="modulepreload" href="src/render/lighting.js">
+  <link rel="modulepreload" href="src/engine/stats.js">
+  <link rel="modulepreload" href="src/animation/locomotion.js">
+  <!-- preload:end -->
   <link rel="stylesheet" href="src/style.css">
   <link rel="stylesheet" href="src/layout.css">
 </head>
