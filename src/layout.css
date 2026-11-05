@@ -291,8 +291,9 @@ body.touch .panel .stat-row button { min-height: 36px; }
 @keyframes wipe-north { to { transform: translateY(-100%); } }
 
 /* ---- UI pass (2026-11-04) ---- */
-/* On a short screen panels keep their size and lose their side notes instead of scrolling. */
-body.cramped .panel { padding: 10px 16px; overflow: hidden; }
+/* On a short screen panels lose their side notes first; whatever still does not fit (the codex, the parts shelf) scrolls with a finger. */
+body.cramped .panel { padding: 10px 16px; overflow-x: hidden; overflow-y: auto; }
+body.touch .panel, body.touch .panel .stat-list { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 body.cramped .panel h2 { font-size: 22px; margin-bottom: 4px; }
 body.cramped .panel > p:first-of-type:not(.result-next), body.cramped .panel > p.notice { display: none; }
 body.cramped .reward-grid { margin-top: 6px; gap: 8px; }

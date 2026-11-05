@@ -612,7 +612,7 @@
         ],
         [
           12.9,
-          17.0
+          16.2
         ],
         [
           13.4,
@@ -1409,7 +1409,7 @@
           "minValue": 0.3
         }
       },
-      "mask": "/art/smile-street/maps/village-court/mask-v7.png",
+      "mask": "/art/smile-street/maps/village-court/mask-v8.png",
       "overhead": [
         {
           "baseY": 20.4,

@@ -1,0 +1,36 @@
+Use case: game UI icon (one icon, a redraw).
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Redraw the DODGE (회피) icon for Beyond the Clockwork, a cute wind-up toy-town roguelite. It is the quick dash: the last slot of the skill bar and the dodge button on phones, shown at 36-48 screen pixels next to the other skill icons.
+
+WHY A REDRAW
+- art\ui\icons\action-dodge-v3.png (the current one): the shoe is good, but its heat jet was drawn by a script: smooth geometric bands of flat colour and perfect circles. Beside the hand-made icons it looks code-drawn, not pixel-painted. Keep the IDEA, redraw the whole icon by hand.
+
+KEEP FROM v3
+- A brass wind-up toy shoe seen from the side, pointing right, tilted slightly forward: brass body, rounded cream toe cap, cream sole, short teal laces (#3f9a8c), one brass rivet, a small brass wind-up key on the back of the ankle.
+- A round exhaust vent at the heel, glowing inside, blasting hot air to the left that pushes the shoe forward.
+
+STYLE REFERENCES (match these exactly)
+- art\ui\icons\action-wrench-v1.png: the basic attack icon in the same skill bar.
+- art\ui\icons\skill-pressureDash-v1.png, art\ui\icons\skill-exhaustBurst-v1.png, art\ui\icons\skill-heatSwing-v1.png: the new skill icons; their flames and wind are the way to draw the exhaust.
+Match their crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345), top-left light, saturation and pixel density.
+Palette: polished brass and gold, warm cream, a touch of teal on the laces, warm orange (#e8742f) to pale yellow (#ffe086) to white for the exhaust, navy ink outline (#2b3345).
+
+THE EXHAUST, DRAWN BY HAND
+- Two or three curling puffs of hot air and steam, of different sizes, overlapping, each with its own navy outline and a lighter top-left edge, like the smoke in skill-exhaustBurst-v1.png.
+- Hottest (orange, then yellow) right at the vent, cooling to cream and white puffs toward the tail; one or two small loose wisps or sparks behind.
+- No smooth gradient bands, no perfect geometric circles or cones, no straight speed lines.
+- The shoe fills the right two thirds of the frame, the exhaust the left third, the whole icon one bold silhouette that reads as "quick dash" at 24 pixels.
+
+DRAW IT
+- Pixel art on a 48x48 pixel grid, then output at 384x384 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 48x48 perfectly.
+- TRANSPARENT background (PNG with alpha), centred, 2 grid pixels of empty margin.
+- At most 10 colours.
+
+RULES
+- No text, letters, numbers or shapes that read as letters or digits.
+- No flames tall enough to read as a fire skill, no wings, clock, coils, legs, characters, slot frame, background tile or watermark.
+
+SAVE: art\ui\icons\action-dodge-v4.png
+When saved, give its path and its actual pixel size.

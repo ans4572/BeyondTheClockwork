@@ -1,0 +1,36 @@
+Use case: game UI icon (one icon, a new design).
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Draw the DODGE (회피) icon for Beyond the Clockwork, a cute wind-up toy-town roguelite. It is the quick dash: the last slot of the skill bar and the dodge button on phones, shown at 36-48 screen pixels on a cream slot (#f6ecd2).
+
+THE IDEA
+A pictogram, like the classic "running person" sign: ONE flat solid dark SILHOUETTE of a figure leaning hard forward mid-sprint, with three speed lines streaming behind it. No colours, no shading, no inner detail: the shape alone tells the story.
+
+THE SILHOUETTE IS F2
+The runner is F2, the game's hero, a small wind-up robot doll, so the outline must read as him and not as a person:
+- A big ROUND helmet head, about as big as the body (chibi proportions), with a small round cap bump on top.
+- Two short scarf ends flying back from the neck.
+- A small wind-up key sticking out of the back.
+- A compact body, mitten-like hands, chunky boots.
+- Facing and dashing to the RIGHT, seen from the side: leaning forward, front knee up, back leg stretched out behind, arms swinging. No wrench.
+Use these for his shape only: art\animations\player\movement\locomotion\clips\run-east-a64fd735\sheet.png and art\animations\player\movement\locomotion\clips\idle-east-708a71c5\sheet.png (128x128 frames, seen from the side).
+
+THE DASH
+- Three short horizontal speed lines behind him (to the left), in the same solid colour, of uneven lengths, with gaps between them and the body, like the pictogram.
+
+COLOUR
+- Everything in ONE colour: the game's ink, dark navy-black #2b3345. Fully opaque pixels only.
+- No outline of another colour, no highlight, no eye, no gradient, no glow, no after-image.
+
+DRAW IT
+- Pixel art on a 48x48 pixel grid, then output at 384x384 with every grid pixel as an exact 8x8 block (no smoothing, no anti-aliasing, no half pixels), so it scales down to 48x48 perfectly.
+- TRANSPARENT background (PNG with alpha), centred, 2 grid pixels of empty margin.
+- Clean stepped pixel edges with the same chunky weight as the line icons art\ui\icons\settings-v1.png and art\ui\icons\fullscreen-v1.png; the figure about 40 grid pixels wide including the speed lines.
+- Must read as "a little robot dashing" at 24 pixels.
+
+RULES
+- One colour only. No text, letters or numbers, no shoe-only icon, no wings, clock or fire, no slot frame, background tile or watermark.
+
+SAVE: art\ui\icons\action-dodge-v6.png
+When saved, give its path and its actual pixel size.

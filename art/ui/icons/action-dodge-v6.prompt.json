@@ -1,0 +1,25 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: stylized-concept. Asset type: ONE monochrome pixel-art UI DODGE PICTOGRAM for Beyond the Clockwork.\nInput1 and input2 are F2 robot sprite frames, SHAPE / CHARACTER OUTLINE references ONLY. Do NOT retain their colors, shading, eye, face, clothing details, material parts or internal marks. Input3 settings and input4 fullscreen are references ONLY for chunky clean stepped pixel weight. Ignore their accent colors.\nTHE RESULT IS A FLAT SOLID DARK SILHOUETTE, like a classic RUNNING PERSON SIGN, but shaped as F2 the chibi wind-up ROBOT. EVERYTHING IS EXACTLY ONE FILL COLOR: DARK NAVY #2b3345, FULLY OPAQUE. No outline of another color, no highlights, eyes, lens circles, inner lines, holes in head, gradients, shading, texture or glow. Only navy silhouette and fully transparent empty space.\nPOSE: dashing RIGHT in SIDE VIEW, torso LEANING HARD FORWARD, BIG ROUND HELMET HEAD thrust right, FRONT KNEE lifted high, BACK LEG stretched far to lower-left, TWO BENT ARMS pumping opposite ways. Compact torso, mitten hands, chunky angular toy boots. Clear negative spaces between the arms/torso and between the two legs, at least2logicalpixels wide where possible so pose reads at24px. Full figure visible, TWO ARMS and TWO LEGS, no missing limb, no extra limb, hands empty, NO WRENCH.\nF2-SPECIFIC OUTER SHAPE: chibi ROUND DIVING-HELMET HEAD about as big as torso+body, small ROUND CAP BUMP at top. No human nose, hair or ears, no face detail at all. Two short SCARF ENDS fly LEFT from neck, separated by a small negative-space notch. A small SOLID TWO-LOBED WIND-UP KEY HANDLE on a short stem sticks out of BACK / left side of torso; no holes or digit8 shape. Robot mitten fists and broad boot shapes distinguish from a normal stickman. Round head about15-17logicalpixels diameter, limbs about3-4logicalpixels thick, clean strong silhouette, not fine anatomical detail.\nEXACTLY THREE SHORT STRAIGHT HORIZONTAL SPEED LINES behind figure on LEFT, same fully opaque NAVY #2b3345, UNEVEN lengths. Each about2-3logicalpixels tall, separate from each other and from scarf/body with visible transparent gaps. Not outlines, not cream interiors. Overall subject including speed lines about40logicalpixels wide inside a48x48grid, CENTERED with at least2logicalpixels clear margin.\n48x48 logical PIXEL ART, intended384x384 export every logical pixel EXACT8x8block. Clean stair-step pixel edges, no antialiasing, smoothing, blur, half opacity or dithering. ONE bold readable 'little ROBOT DASHING' silhouette at24px. True ALPHA TRANSPARENT background, no black or cream backdrop painted in, no shadow plate.\nNo text, letters, numbers, shoe-only icon, wings, clock, fire, slot frame, background tile, watermark or extra characters. ONE standalone single-color pictogram, not multiple sprites or a contact sheet.",
+  "references": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/tmp/f2-dodge-v6-run-reference.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/tmp/f2-dodge-v6-idle-reference.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/settings-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/fullscreen-v1.png"
+  ],
+  "originalReferences": [
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/animations/player/movement/locomotion/clips/run-east-a64fd735/sheet.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/animations/player/movement/locomotion/clips/idle-east-708a71c5/sheet.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/settings-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/fullscreen-v1.png"
+  ],
+  "source": "C:\\Users\\ans45\\.codex\\generated_images\\01a18786-d691-79e2-9413-3169c1ccff0e\\exec-2376960d-ebec-45cb-b351-4a91b94451b9.png",
+  "palette": [
+    "#2b3345"
+  ],
+  "grid": 48,
+  "scale": 8,
+  "margin": 2,
+  "contentExtent": 40,
+  "singleColor": true
+}

@@ -26,7 +26,9 @@ const BODIES = {
 const ART = new Set(['gear', 'coin', 'charge', 'map', 'settings', 'fullscreen', 'fullscreen-exit', 'lock', 'action-wrench', 'action-dodge',
   ...['wrench-damage', 'max-hp', 'skill-cooldown', 'dodge-cooldown', 'move-speed', 'status-damage', 'crit', 'attack-speed', 'kill-heal', 'armor',
     'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`)]);
-export const iconUrl = name => `art/ui/icons/px/${name}.png`;
+// A redrawn icon gets a new file name (browsers keep the old picture at the old path).
+const FILES = { 'action-dodge': 'action-dodge-v7' };
+export const iconUrl = name => `art/ui/icons/px/${FILES[name] || name}.png`;
 export const ICON_FILES = [...ART].map(iconUrl);
 const svg = (name, cls) => ART.has(name)
   ? `<img class="${cls} px-icon" src="${iconUrl(name)}" alt="" draggable="false">`
