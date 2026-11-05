@@ -47,27 +47,35 @@ export function raiseDepths(depths, width, height, perUnit, polygon, baseY) {
   }
 }
 
-/** Repaints the scenery standing in front of a body, so the map behaves like separate objects. */
+/**
+ * Reads a place's picture and its mask into what DepthMask needs: the map's pixels, each pixel's ground line, and the
+ * deepest ground line per block. Pure arithmetic on pixels, so it runs in a worker (src/render/depth-worker.js) as well
+ * as here. `overhead` regions hang above their true ground line, so their depth is set by hand.
+ */
+export function computeDepth(image, maskImage, { size, overhead = [] }, createCanvas) {
+  // Read at most 1920 px wide: sharper 2x map art needs no finer depth, and phones keep the memory.
+  const shrink = Math.min(1, DEPTH_MAX_WIDTH / image.width), [width, height] = [Math.round(image.width * shrink), Math.round(image.height * shrink)], read = picture => {
+    const context = createCanvas(width, height).getContext('2d', { willReadFrequently: true });
+    context.drawImage(picture, 0, 0, width, height);
+    return context.getImageData(0, 0, width, height).data;
+  };
+  const pixels = read(image), perUnit = width / size[0], marks = read(maskImage), alpha = new Uint8Array(width * height);
+  for (let p = 0; p < alpha.length; p++) alpha[p] = marks[p * 4] > 127 ? 255 : 0;
+  const depths = closeSlivers(columnDepths(alpha, width, height), width, height);
+  for (const { polygon, baseY } of overhead) raiseDepths(depths, width, height, perUnit, polygon, baseY);
+  // The deepest ground line in each 16x16 block, so a body standing in front of everything near it is passed over
+  // without reading its whole patch, as most bodies are on most frames.
+  const B = BLOCK_PIXELS, blocksWide = Math.ceil(width / B), deepest = new Uint16Array(blocksWide * Math.ceil(height / B));
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) { const d = depths[y * width + x], b = Math.floor(y / B) * blocksWide + Math.floor(x / B); if (d > deepest[b]) deepest[b] = d; }
+  return { width, height, perUnit, pixels, depths, deepest, blocksWide };
+}
+
+/** Repaints the scenery standing in front of a body, so the map behaves like separate objects. `depth` is computeDepth's result. */
 export class DepthMask {
-  /** `overhead` regions hang above their true ground line, so their depth is set by hand. */
-  constructor(image, maskImage, { size, overhead = [] }, createCanvas) {
-    // Read at most 1920 px wide: sharper 2x map art needs no finer depth, and phones keep the memory.
-    const shrink = Math.min(1, DEPTH_MAX_WIDTH / image.width), [width, height] = [Math.round(image.width * shrink), Math.round(image.height * shrink)], read = picture => {
-      const context = createCanvas(width, height).getContext('2d', { willReadFrequently: true });
-      context.drawImage(picture, 0, 0, width, height);
-      return context.getImageData(0, 0, width, height).data;
-    };
+  constructor({ width, height, perUnit, pixels, depths, deepest, blocksWide }, createCanvas) {
     this.kept = new Map(); this.seen = new Set(); this.patches = new Map();
-    this.pixels = read(image); this.pixels32 = new Uint32Array(this.pixels.buffer, this.pixels.byteOffset, this.pixels.length / 4); this.width = width; this.height = height; this.perUnit = width / size[0];
-    const marks = read(maskImage), alpha = new Uint8Array(width * height);
-    for (let p = 0; p < alpha.length; p++) alpha[p] = marks[p * 4] > 127 ? 255 : 0;
-    this.depths = closeSlivers(columnDepths(alpha, width, height), width, height); this.createCanvas = createCanvas;
-    for (const { polygon, baseY } of overhead) raiseDepths(this.depths, width, height, this.perUnit, polygon, baseY);
-    // The deepest ground line in each 16x16 block, so a body standing in front of everything near it is passed over
-    // without reading its whole patch, as most bodies are on most frames.
-    const B = BLOCK_PIXELS, bw = Math.ceil(width / B), bh = Math.ceil(height / B), deepest = new Uint16Array(bw * bh);
-    for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) { const d = this.depths[y * width + x], b = Math.floor(y / B) * bw + Math.floor(x / B); if (d > deepest[b]) deepest[b] = d; }
-    Object.assign(this, { deepest, blocksWide: bw });
+    Object.assign(this, { width, height, perUnit, pixels, depths, deepest, blocksWide, createCanvas });
+    this.pixels32 = new Uint32Array(pixels.buffer, pixels.byteOffset, pixels.length / 4);
   }
   /** `x`, `y` are the feet in units; `halfWidth` and `tall` bound the body above them. Returns the share of the body hidden. */
   cover(context, x, y, halfWidth, tall) {

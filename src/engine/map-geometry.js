@@ -48,21 +48,40 @@ function edgeDistance(x, y, polygon) {
   return best;
 }
 function clearanceOf(map) {
+  const field = fieldFor(map);
+  if (!field.done) buildRows(field, map, Infinity);
+  return field;
+}
+function fieldFor(map) {
   const known = fields.get(map.walkable);
   if (known && known.solids === map.solids) return known;
   const xs = map.walkable.map(p => p[0]), ys = map.walkable.map(p => p[1]), left = Math.min(...xs), top = Math.min(...ys);
-  const cols = Math.ceil((Math.max(...xs) - left) / FIELD_CELL) + 1, rows = Math.ceil((Math.max(...ys) - top) / FIELD_CELL) + 1, room = new Float32Array(cols * rows);
-  const solids = map.solids || [];
-  for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
-    const x = left + (col + 0.5) * FIELD_CELL, y = top + (row + 0.5) * FIELD_CELL;
-    let d = edgeDistance(x, y, map.walkable);
-    if (!pointInPolygon(x, y, map.walkable)) d = -d;
-    else for (const solid of solids) { if (pointInPolygon(x, y, solid)) { d = -edgeDistance(x, y, solid); break; } d = Math.min(d, edgeDistance(x, y, solid)); }
-    room[row * cols + col] = d;
-  }
-  const field = { left, top, cols, rows, room, solids: map.solids };
+  const cols = Math.ceil((Math.max(...xs) - left) / FIELD_CELL) + 1, rows = Math.ceil((Math.max(...ys) - top) / FIELD_CELL) + 1;
+  const field = { left, top, cols, rows, room: new Float32Array(cols * rows), solids: map.solids, nextRow: 0, done: false };
   fields.set(map.walkable, field);
   return field;
+}
+function buildRows(field, map, until) {
+  const { left, top, cols, rows, room } = field, solids = map.solids || [];
+  while (field.nextRow < rows) {
+    const row = field.nextRow++;
+    for (let col = 0; col < cols; col++) {
+      const x = left + (col + 0.5) * FIELD_CELL, y = top + (row + 0.5) * FIELD_CELL;
+      let d = edgeDistance(x, y, map.walkable);
+      if (!pointInPolygon(x, y, map.walkable)) d = -d;
+      else for (const solid of solids) { if (pointInPolygon(x, y, solid)) { d = -edgeDistance(x, y, solid); break; } d = Math.min(d, edgeDistance(x, y, solid)); }
+      room[row * cols + col] = d;
+    }
+    if (until !== Infinity && performance.now() >= until) break;
+  }
+  field.done = field.nextRow >= rows;
+}
+/** Builds a floor's clearance grid a few rows at a time (about `ms` per call), ahead of the place being entered; true when ready. */
+export function prepareClearance(map, ms) {
+  if (!map?.walkable) return true;
+  const field = fieldFor(map);
+  if (!field.done) buildRows(field, map, performance.now() + ms);
+  return field.done;
 }
 
 /** True when a body of this radius fits; checks the centre and eight points on its edge. */

@@ -3,12 +3,12 @@ import { Game } from './engine/game.js';
 import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
-import { placeOf, PIXELS_PER_UNIT } from './engine/map-geometry.js';
+import { placeOf, PIXELS_PER_UNIT, prepareClearance } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
-import { DepthMask } from './render/depth-mask.js';
+import { DepthMask, computeDepth } from './render/depth-mask.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
 import { gradedCanvas } from './render/grade.js';
@@ -141,10 +141,48 @@ try {
     c.imageSmoothingEnabled = false; c.drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas;
   };
+  // The same enlargement made by the browser off the main thread where it can (pixel-exact 'pixelated' resize).
+  // Used only once a tiny test shows this browser really keeps the pixels square (some ignore 'pixelated' and blur).
+  const pixelatedResize = (async () => {
+    try {
+      const probe = offscreen(2, 1), p = probe.getContext('2d'); p.fillStyle = '#000'; p.fillRect(0, 0, 1, 1); p.fillStyle = '#fff'; p.fillRect(1, 0, 1, 1);
+      const bitmap = await createImageBitmap(probe, { resizeWidth: 8, resizeHeight: 1, resizeQuality: 'pixelated' }), check = offscreen(8, 1), c = check.getContext('2d', { willReadFrequently: true });
+      c.drawImage(bitmap, 0, 0); const row = c.getImageData(0, 0, 8, 1).data; bitmap.close();
+      return [0, 1, 2, 3].every(i => row[i * 4] === 0) && [4, 5, 6, 7].every(i => row[i * 4] === 255);
+    } catch { return false; }
+  })();
+  const sharpenedLater = async (file, image) => {
+    const scale = Object.values(data?.maps?.villages || {}).find(village => village.background === file)?.pixelScale || 1;
+    if (scale === 1 || !(await pixelatedResize)) return sharpened(file, image);
+    return createImageBitmap(image, { resizeWidth: image.width * scale, resizeHeight: image.height * scale, resizeQuality: 'pixelated' }).catch(() => sharpened(file, image));
+  };
+  // The depth is read from the pictures as decoded (not from the enlarged copy on the graphics card): reading that copy
+  // back took a quarter of a second on a desktop and froze phones mid-fight while the next place was prepared.
+  const originals = new Map(), buildingDepth = new Set();
+  // A picture let go is closed at once where it is an ImageBitmap, rather than left for the garbage collector to find.
+  const release = file => { const picture = renderer.mapImages.get(file); renderer.mapImages.delete(file); picture?.close?.(); };
+  // The depth is worked out in a worker where the browser allows it (OffscreenCanvas in workers); otherwise right here.
+  let depthWorker = null, depthJobs = new Map(), depthIds = 0;
+  try { if (typeof OffscreenCanvas === 'function' && typeof createImageBitmap === 'function') depthWorker = new Worker(new URL('./render/depth-worker.js', import.meta.url), { type: 'module' }); } catch { depthWorker = null; }
+  const dropWorker = () => { depthWorker?.terminate(); depthWorker = null; const jobs = [...depthJobs.values()]; depthJobs.clear(); jobs.forEach(job => job.fallback()); };
+  depthWorker?.addEventListener('message', ({ data }) => {
+    const job = depthJobs.get(data.id); depthJobs.delete(data.id);
+    if (!job) return;
+    if (data.error) { console.warn('깊이 작업 실패, 화면에서 계산합니다:', data.error); dropWorker(); job.fallback(); } else job.done(data.depth);
+  });
+  depthWorker?.addEventListener('error', () => dropWorker());
   const buildDepth = village => {
-    const [image, mask] = [village.background, village.mask].map(file => renderer.mapImages.get(file));
-    // Once the depth is read, the mask picture itself (as large as the map) is not needed any more.
-    if (image && mask) { renderer.depthMasks.set(village.background, new DepthMask(image, mask, village, offscreen)); renderer.mapImages.delete(village.mask); }
+    const background = village.background, [image, mask] = [background, village.mask].map(file => originals.get(file) || renderer.mapImages.get(file));
+    if (!image || !mask || !renderer.mapImages.has(background) || buildingDepth.has(background)) return;
+    buildingDepth.add(background);
+    const finish = depth => { buildingDepth.delete(background); if (requested.has(background)) renderer.depthMasks.set(background, new DepthMask(depth, offscreen)); };
+    const here = () => finish(computeDepth(image, mask, village, offscreen));
+    // The mask picture (as large as the map) and the originals are not kept once handed over.
+    release(village.mask); originals.delete(background); originals.delete(village.mask);
+    if (!depthWorker) return here();
+    const id = ++depthIds, url = file => new URL(assetUrl(file), location.href).href;
+    depthJobs.set(id, { done: finish, fallback: here });
+    depthWorker.postMessage({ id, imageUrl: url(background), maskUrl: url(village.mask), size: village.size, overhead: village.overhead || [] });
   };
   // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.
   const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
@@ -169,24 +207,27 @@ try {
       const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
       imagesLoading++;
       // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
-      image.onload = () => image.decode().catch(() => {}).then(() => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, sharpened(file, image)); Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)).forEach(buildDepth); done(); });
+      image.onload = () => image.decode().catch(() => {}).then(() => { if (!requested.has(file)) return done(); const villages = Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)); if (villages.length) originals.set(file, image); sharpenedLater(file, image).then(picture => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, picture); villages.forEach(buildDepth); done(); }); });
       image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
       image.src = assetUrl(file);
     }
   }
+  let nextFloor = null;
   function bringPlaceForward() {
     const place = game.village || game.map;
     if (place?.background === placeLoaded) return;
     placeLoaded = place?.background;
     // In town the next place is the first stop; on a run it is the stop after this one.
     const next = game.s.run ? placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[game.s.run.node + 1]?.id]) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
+    // The next floor's clearance grid is built a few milliseconds per frame from now on, so entering it costs nothing.
+    nextFloor = next;
     // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory
     // made the town sluggish on phones after a run. The town itself stays, so coming home is instant; anything let go is
     // still in the browser's cache and comes back in a moment if needed again.
     const keep = new Set([...wanted, ...artOf(game.hubMap)]);
     for (const village of Object.values(data?.maps?.villages || {})) for (const file of artOf(village)) {
       if (keep.has(file) || !requested.has(file)) continue;
-      renderer.mapImages.delete(file); renderer.depthMasks.delete(file); requested.delete(file);
+      release(file); renderer.depthMasks.delete(file); originals.delete(file); requested.delete(file);
       imageQueue = imageQueue.filter(queued => queued !== file);
     }
     const fresh = wanted.filter(file => !requested.has(file)); fresh.forEach(file => requested.add(file));
@@ -1010,6 +1051,7 @@ try {
     // The hour of the place: bright street, the night market and everything after it at dusk, Brass's square at night.
     const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
     renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
+    if (nextFloor && prepareClearance(nextFloor, 3)) nextFloor = null;
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기' });

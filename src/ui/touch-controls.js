@@ -55,8 +55,13 @@ export class TouchControls {
     slots.forEach(({ art, cost, share, left, ready, short }, i) => {
       const button = this.slots[i], image = button.firstChild, src = art ? slotArt(art) : '';
       if (button.dataset.art !== src) { button.dataset.art = src; button.classList.toggle('empty', !art); if (art) image.src = src; else image.removeAttribute('src'); }
-      button.children[1].style.height = `${share * 100}%`; button.children[2].textContent = left; button.classList.toggle('ready', !!ready); button.classList.toggle('short', !!short);
-      button.children[3].textContent = cost || '';
+      // Written only when it changes: touching a button's style every frame cost phones a style pass per frame.
+      const height = `${Math.round(share * 1000) / 10}%`, shown = button.shown ??= {};
+      if (shown.height !== height) { shown.height = height; button.children[1].style.height = height; }
+      if (shown.left !== left) { shown.left = left; button.children[2].textContent = left; }
+      if (shown.cost !== (cost || '')) { shown.cost = cost || ''; button.children[3].textContent = shown.cost; }
+      if (shown.ready !== !!ready) { shown.ready = !!ready; button.classList.toggle('ready', !!ready); }
+      if (shown.short !== !!short) { shown.short = !!short; button.classList.toggle('short', !!short); }
     });
   }
 }
