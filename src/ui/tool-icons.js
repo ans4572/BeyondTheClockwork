@@ -37,8 +37,6 @@ const svg = (name, cls) => ART.has(name)
 export const TOOL_ICONS = Object.fromEntries([...Object.keys(BODIES), ...ART].map(name => [name, svg(name, 'tool-icon')]));
 /** An icon set in a line of text, one letter tall. */
 export const ico = name => svg(name, 'ico');
-/** An icon placed inside another SVG drawing, centred on (x, y). */
-export const iconAt = (name, x, y, size) => ART.has(name) ? `<image href="${iconUrl(name)}" x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" style="image-rendering:pixelated"/>` : `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 16 16" shape-rendering="crispEdges">${BODIES[name]}</svg>`;
 /** A skill slot's picture: the painted action icons by name, every other slot by its skill's own icon. */
 /** A skill's or fusion's painted pixel icon (art/ui/icons/px/skill-<id>.png, 48 pixel grid). */
 export const skillIcon = id => iconUrl(`skill-${id}`);

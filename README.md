@@ -61,8 +61,14 @@ src/data/slice.json                   직접 수정: 적, 방, 보상, 조율 �
 src/data/maps.json                    직접 수정: 맵, 걷는 구역, 등장 위치, 포탈
 src/data/dialogue.json                직접 수정: 대사
 src/engine/                           화면과 브라우저에 의존하지 않는 게임 규칙
+src/engine/game.js                    게임 상태, 플레이어, 기술, 방 진행의 중심
+src/engine/enemy-actions.js           몹·보스의 경고, 공격, 패턴, 탄
+src/engine/room-waves.js              웨이브 등장, 정예 특성, 방 장애물, 포탈까지 걷기
+src/engine/reward-draws.js            방 보상 카드 뽑기·다시 뽑기·고르기
 src/animation/                        플레이어, 몹, NPC, 시전 이펙트 애니메이션
 src/render/canvas.js                  게임 화면 그리기
+src/render/floor-marks.js             바닥에 그리는 것: 몹 공격 경고, 위험 원, 융합 고리, 착지 표시
+src/render/map-loader.js              장소별 맵 그림 불러오기, 미리 받기, 깊이 계산
 src/ui/                               타이틀과 대화창
 src/main.js                           입력, 패널, 저장소, 오디오 연결
 art/                                  스프라이트, 맵 배경, 시안
@@ -224,6 +230,9 @@ test/                                 자동 테스트
 - 바닥 장판(적 경고·폭발 원판·스티커 낙하·융합 고리)이 걸을 수 있는 바닥에만 칠해지도록 잘라냄: 화단·벽·가게 위로 넘어가지 않음. 공중의 떨어지는 상자·나팔 불꽃은 잘리지 않게 몸통 뒤에 그림.
 - 웃음 마을(court) 이동 영역 재작성: 그림의 바닥 색을 따라 가게 앞·벽 가장자리·화단 둘레까지 넓힘(약 476→520칸²), 광장 위쪽 가게 문 앞 현관을 걸을 수 있게, 오른쪽 위 카페 테이블은 막음. 발 반경 0.5→0.35칸으로 줄여 벽·가게 앞에 더 붙어 설 수 있게. 깊이 마스크는 mask-v10.png(새로 넓어진 바닥만 가림 대상에서 뺌, 아치는 유지).
 - 웃음 마을 배경 화질 개선: 원본(1920×1280)을 Real-ESRGAN `realesr-animevideov3` 모델로 2배 업스케일해 3840×2560 크기로 바로 내려줌(`background-esr2x-q92.webp`, 캐시 때문에 새 이름). 불러올 때 픽셀 그대로 2배로 키우던 처리(`pixelScale: 2`)는 뺌. 계단처럼 보이던 꽃·화분·가로등·진열대 윤곽이 매끄러워지고 바닥 줄눈은 유지. 마을 그림 1.2MB → 3.0MB, 메모리는 그대로(약 39MB). 전투 맵은 그대로.
+- 배포 업로드에서 게임이 받지 않는 원본 1080개(17.2MB) 제외(`.assetsignore`): 애니메이션 시트 PNG 원본(게임은 WebP만 받음), 바닥 표시 원본(`art/fx/marks/src`), 맵 참고 그림, 프롬프트 텍스트. 저장소에는 그대로 남음.
+- 안 쓰는 파일·코드 정리: 바닥 경고를 바꾸며 쓰지 않게 된 `mark-danger-v1.png`·`tile-danger-paint-v1.png`, 예전 마을 배경 `background-q92.webp`를 휴지통으로 옮김. 쓰이지 않던 `iconAt`, 변수 `playerReady`·`spawns` 등 삭제.
+- 리팩토링(동작 변화 없음, 테스트 296개 통과): `main.js`의 맵 불러오기·깊이 계산·미리 받기를 `src/render/map-loader.js`로, `canvas.js`의 바닥 경고·위험 원·융합 고리·착지 표시를 `src/render/floor-marks.js`로, `game.js`의 몹·보스 행동을 `enemy-actions.js`, 웨이브·장애물을 `room-waves.js`, 보상 카드를 `reward-draws.js`로, 공용 계산(`distance` 등)을 `math.js`로 나눔. `game.js` 1846→1071줄, `canvas.js` 1395→1171줄, `main.js` 1256→1140줄. `HAZARD_ART`는 `fx-sprites.js`로 옮김(기존 import는 그대로 동작).
 
 ### 2026-11-05
 

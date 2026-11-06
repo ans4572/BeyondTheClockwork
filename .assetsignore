@@ -11,3 +11,10 @@ wrangler.toml
 package.json
 package-lock.json
 worker
+# Art sources the game never fetches (it loads the WebP sheets and the finished marks): the PNG masters of every
+# animation sheet, the mark sources and their prompts, and the reference picture used to paint the maps.
+art/animations/**/*.png
+art/fx/marks/src
+art/world-map/smile-street-road-reference.png
+*.prompt.txt
+*-submission.txt

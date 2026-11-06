@@ -53,3 +53,5 @@ export const MARKS = Object.fromEntries(Object.entries({
 /** Loot flies home as the coin and gear of the HUD (art/ui/icons/px). */
 export const LOOT_ART = { coin: 'art/ui/icons/px/coin.png', gear: 'art/ui/icons/px/gear.png' };
 export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART, ...Object.values(MARKS), ...Object.values(LOOT_ART)];
+/** The room hazards' painted sprites (src/engine/hazards.js places them; drawHazard adds their states). */
+export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', musicbox: 'musicbox', plate: 'plate', saw: 'saw', fenceAcross: 'fence-across', fenceUpright: 'fence-upright' }).map(([key, file]) => [key, `art/smile-street/hazards/${file}-v1.png`]));

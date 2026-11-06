@@ -3,12 +3,12 @@ import { Game } from './engine/game.js';
 import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
-import { placeOf, roomPlace, PIXELS_PER_UNIT, prepareClearance } from './engine/map-geometry.js';
+import { PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
-import { DepthMask, computeDepth } from './render/depth-mask.js';
+import { createMapLoader } from './render/map-loader.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
 import { gradedCanvas } from './render/grade.js';
@@ -97,14 +97,13 @@ try {
   // Walking, the wrench, dodging and falling are waited for; skill poses and cast effects follow in the background,
   // since no skill can be used before elements are equipped in town.
   const PLAYER_LATER = action => !['idle', 'walk', 'run', 'attack-1', 'attack-2', 'attack-3', 'hit', 'death', 'dodge'].includes(action);
-  let playerReady = false;
   // F2's and Moru's sheets are colour-graded as they load so they sit with the brighter cast (src/render/grade.js).
   const gradedImage = url => browserImage(url).then(gradedCanvas);
   // Menu icons are tiny but shown all at once (codex, parts shelf, reward cards): fetched and decoded while the title
   // plays, and the decoded pictures kept, so a panel never opens with pictures arriving one by one.
   // They wait for the title to be drawn, so they do not hold up the loading card.
   titleDrawn.then(() => { for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); } });
-  const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error)).finally(() => { playerReady = true; });
+  const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error));
   playerSprites
     .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
     .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
@@ -144,117 +143,10 @@ try {
   hudFace.imageSmoothingEnabled = false;
   portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
   portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
-  renderer.mapImages = new Map(); renderer.depthMasks = new Map();
-  const offscreen = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
-  // Map paintings ship at their own pixel size (half the download) and are blown up here with hard pixel edges, so they
-  // look exactly as the old pre-enlarged files did.
-  const sharpened = (file, image) => {
-    const scale = Object.values(data?.maps?.villages || {}).find(village => village.background === file)?.pixelScale || 1;
-    if (scale === 1) return image;
-    const canvas = offscreen(image.width * scale, image.height * scale), c = canvas.getContext('2d');
-    c.imageSmoothingEnabled = false; c.drawImage(image, 0, 0, canvas.width, canvas.height);
-    return canvas;
-  };
-  // The same enlargement made by the browser off the main thread where it can (pixel-exact 'pixelated' resize).
-  // Used only once a tiny test shows this browser really keeps the pixels square (some ignore 'pixelated' and blur).
-  const pixelatedResize = (async () => {
-    try {
-      const probe = offscreen(2, 1), p = probe.getContext('2d'); p.fillStyle = '#000'; p.fillRect(0, 0, 1, 1); p.fillStyle = '#fff'; p.fillRect(1, 0, 1, 1);
-      const bitmap = await createImageBitmap(probe, { resizeWidth: 8, resizeHeight: 1, resizeQuality: 'pixelated' }), check = offscreen(8, 1), c = check.getContext('2d', { willReadFrequently: true });
-      c.drawImage(bitmap, 0, 0); const row = c.getImageData(0, 0, 8, 1).data; bitmap.close();
-      return [0, 1, 2, 3].every(i => row[i * 4] === 0) && [4, 5, 6, 7].every(i => row[i * 4] === 255);
-    } catch { return false; }
-  })();
-  const sharpenedLater = async (file, image) => {
-    const scale = Object.values(data?.maps?.villages || {}).find(village => village.background === file)?.pixelScale || 1;
-    if (scale === 1 || !(await pixelatedResize)) return sharpened(file, image);
-    return createImageBitmap(image, { resizeWidth: image.width * scale, resizeHeight: image.height * scale, resizeQuality: 'pixelated' }).catch(() => sharpened(file, image));
-  };
-  // The depth is read from the pictures as decoded (not from the enlarged copy on the graphics card): reading that copy
-  // back took a quarter of a second on a desktop and froze phones mid-fight while the next place was prepared.
-  const originals = new Map(), buildingDepth = new Set();
-  // A picture let go is closed at once where it is an ImageBitmap, rather than left for the garbage collector to find.
-  const release = file => { const picture = renderer.mapImages.get(file); renderer.mapImages.delete(file); picture?.close?.(); };
-  // The depth is worked out in a worker where the browser allows it (OffscreenCanvas in workers); otherwise right here.
-  let depthWorker = null, depthJobs = new Map(), depthIds = 0;
-  try { if (typeof OffscreenCanvas === 'function' && typeof createImageBitmap === 'function') depthWorker = new Worker(new URL('./render/depth-worker.js', import.meta.url), { type: 'module' }); } catch { depthWorker = null; }
-  const dropWorker = () => { depthWorker?.terminate(); depthWorker = null; const jobs = [...depthJobs.values()]; depthJobs.clear(); jobs.forEach(job => job.fallback()); };
-  depthWorker?.addEventListener('message', ({ data }) => {
-    const job = depthJobs.get(data.id); depthJobs.delete(data.id);
-    if (!job) return;
-    if (data.error) { console.warn('깊이 작업 실패, 화면에서 계산합니다:', data.error); dropWorker(); job.fallback(); } else job.done(data.depth);
-  });
-  depthWorker?.addEventListener('error', () => dropWorker());
-  const buildDepth = village => {
-    const background = village.background, [image, mask] = [background, village.mask].map(file => originals.get(file) || renderer.mapImages.get(file));
-    if (!image || !mask || !renderer.mapImages.has(background) || buildingDepth.has(background)) return;
-    buildingDepth.add(background);
-    const finish = depth => { buildingDepth.delete(background); if (requested.has(background)) renderer.depthMasks.set(background, new DepthMask(depth, offscreen)); };
-    const here = () => finish(computeDepth(image, mask, village, offscreen));
-    // The mask picture (as large as the map) and the originals are not kept once handed over.
-    release(village.mask); originals.delete(background); originals.delete(village.mask);
-    if (!depthWorker) return here();
-    const id = ++depthIds, url = file => new URL(assetUrl(file), location.href).href;
-    depthJobs.set(id, { done: finish, fallback: here });
-    depthWorker.postMessage({ id, imageUrl: url(background), maskUrl: url(village.mask), size: village.size, overhead: village.overhead || [] });
-  };
-  // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.
-  const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
-  const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
-  // The place a new game opens on comes first (the scrapyard), then the town and the first stop; icons and effects after.
-  const introPlace = placeOf(data.maps, data.maps?.intro);
-  let imageQueue = [...new Set([...artOf(introPlace), ...artOf(game.hubMap), ...artOf(firstRoom), ...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES].filter(Boolean))];
-  // Every other place's files are then fetched into the browser's cache, one at a time and at low priority, but not
-  // decoded: fourteen decoded maps and masks would not fit a phone's memory, and a cached file opens in a moment.
-  let prefetch = [...new Set(Object.values(data?.maps?.villages || {}).flatMap(artOf).filter(file => !imageQueue.includes(file)))], prefetching = false;
-  function prefetchRest() {
-    if (prefetching || imagesLoading || imageQueue.length || !prefetch.length) return;
-    const file = prefetch.shift(); if (requested.has(file)) return prefetchRest();
-    prefetching = true;
-    fetch(assetUrl(file), { priority: 'low' }).then(r => r.blob()).catch(() => {}).finally(() => { prefetching = false; prefetchRest(); });
-  }
-  const requested = new Set(imageQueue);
-  let imagesLoading = 0, placeLoaded = null;
-  function fetchImages() {
-    // Places are drawn only after the title, so their art starts once the title is drawn, beside F2's own sheets
-    // rather than after all of them (on a slow connection the scrapyard came too late for the opening).
-    if (!titleIsDrawn) return;
-    if (!imageQueue.length) prefetchRest();
-    while (imagesLoading < IMAGE_SLOTS && imageQueue.length) {
-      const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
-      imagesLoading++;
-      // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
-      image.onload = () => image.decode().catch(() => {}).then(() => { if (!requested.has(file)) return done(); const villages = Object.values(data?.maps?.villages || {}).filter(village => [village.background, village.mask].includes(file)); if (villages.length) originals.set(file, image); sharpenedLater(file, image).then(picture => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, picture); villages.forEach(buildDepth); done(); }); });
-      image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
-      image.src = assetUrl(file);
-    }
-  }
-  let nextFloor = null;
-  function bringPlaceForward(wantedPlace) {
-    // Before registration (the title, the opening text, the scrapyard fight) the place that matters is the scrapyard,
-    // even while the game still reports the town: treating the town as current here once dropped the scrapyard's
-    // painting from the queue every frame, and the tutorial opened on the plain stand-in floor.
-    const opening = !game.s.profile.registered && ['opening', 'intro', 'introDeath'].includes(game.s.mode);
-    const place = wantedPlace || (opening ? introPlace : game.village || game.map);
-    if (place?.background === placeLoaded) return;
-    placeLoaded = place?.background;
-    // In town the next place is the first stop; on a run it is the stop after this one.
-    const next = game.s.run ? roomPlace(data.maps, data.slice.rooms[game.s.run.node + 1]?.id, game.s.run.plan?.[game.s.run.node + 1]?.variant || 0) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
-    // The next floor's clearance grid is built a few milliseconds per frame from now on, so entering it costs nothing.
-    nextFloor = next;
-    // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory
-    // made the town sluggish on phones after a run. The town itself stays, so coming home is instant; anything let go is
-    // still in the browser's cache and comes back in a moment if needed again.
-    const keep = new Set([...wanted, ...artOf(game.hubMap), ...(game.s.profile.registered ? [] : artOf(introPlace))]);
-    for (const village of Object.values(data?.maps?.villages || {})) for (const file of artOf(village)) {
-      if (keep.has(file) || !requested.has(file)) continue;
-      release(file); renderer.depthMasks.delete(file); originals.delete(file); requested.delete(file);
-      imageQueue = imageQueue.filter(queued => queued !== file);
-    }
-    const fresh = wanted.filter(file => !requested.has(file)); fresh.forEach(file => requested.add(file));
-    imageQueue = [...wanted.filter(file => imageQueue.includes(file)), ...fresh, ...imageQueue.filter(file => !wanted.includes(file))];
-    fetchImages();
-  }
+  // Each place's art, in order of need (src/render/map-loader.js); nothing starts before the title is drawn.
+  const mapArt = createMapLoader({ data, game, renderer, slots: IMAGE_SLOTS, canStart: () => titleIsDrawn,
+    firstFiles: [...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES] });
+  const { introPlace, fetchImages, bringPlaceForward, placeArtReady } = mapArt;
   fetchImages();
   const gameViewport = $('overlay').parentElement;
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
@@ -281,14 +173,6 @@ try {
   }
   function leaveTitle() { onTitle = false; document.body.classList.remove('on-title'); $('app').inert = false; $('title').inert = false; placeOverlay(); title.hide(); }
   /** The stamp and the opening sentences, then control of a waking body. */
-  /** Resolves once a place's painting is decoded and in the renderer, or after `ms` (the mask is turned into depth and let go, so it is not waited for). */
-  function placeArtReady(place, ms) {
-    const files = [place?.background].filter(Boolean);
-    return new Promise(done => {
-      const start = performance.now(), check = () => (files.every(file => renderer.mapImages.has(file)) || performance.now() - start > ms ? done() : setTimeout(check, 100));
-      check();
-    });
-  }
   async function playOpening(stamp) {
     screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true); leaveTitle();
     await title.opening(data.progression.intro.openingText, { stamp });
@@ -1200,7 +1084,7 @@ try {
     // The hour of the place: bright street, the night market and everything after it at dusk, Brass's square at night.
     const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
     renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
-    if (nextFloor && prepareClearance(nextFloor, 3)) nextFloor = null;
+    mapArt.prepareNextFloor();
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   /** Draws F2 (and the camera on F2) part of the way from the last step to this one, so a dash or walk glides instead of stepping. */
