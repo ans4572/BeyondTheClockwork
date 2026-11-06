@@ -30,7 +30,11 @@ const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;
 const formatPlayTime = seconds => { const minutes = Math.floor(seconds / 60), hours = Math.floor(minutes / 60); return hours ? `${hours}시간 ${minutes % 60}분` : minutes ? `${minutes}분` : '1분 미만'; };
 const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM', stats: 'KeyC' };
-const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도', stats: 'F2 정보' };
+// Moving with the mouse: right click walks to the spot (held, F2 follows the cursor), Q W E R are the four skills, F the fusion.
+const mouseBindings = { dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyW', skill2: 'KeyE', skill3: 'KeyR', fusion: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM', stats: 'KeyC' };
+/** Closer than this to the clicked spot, F2 has arrived; held this many steps without getting anywhere, F2 gives up on it. */
+const ARRIVE_DISTANCE = 0.15, STUCK_STEPS = 30;
+const bindingNames = { fusion: '융합', up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도', stats: 'F2 정보' };
 const HOME_NAME = '웃음 마을';
 /** The F9 room jumper works only on this computer's dev server, never on the deployed sites. */
 const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
@@ -175,13 +179,16 @@ try {
   let transfer = { code: null, expiresAt: null, typed: '', busy: '', error: '', incoming: null };
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
   let lastPlayWrite = 0, lastPlayUpload = -Infinity, link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
-  let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
+  let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, rightHeld = false, moveHeld = false, moveTarget = null, lastMouse = null, stuckSteps = 0, movedIn = null, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
   let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null, settingsTab = 'general';
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function bindings() { return { ...defaultBindings, ...game.s.profile.settings.bindings }; }
-  function clearInput() { held.clear(); mouseHeld = false; pending = {}; touch?.release(); }
+  const mouseMove = () => !isTouch && game.s.profile.settings.controls === 'mouse';
+  function bindings() { const settings = game.s.profile.settings; return mouseMove() ? { ...mouseBindings, ...settings.mouseBindings } : { ...defaultBindings, ...settings.bindings }; }
+  /** The changed keys of the way F2 moves now; the other way keeps its own. */
+  function changedBindings() { const settings = game.s.profile.settings; return mouseMove() ? (settings.mouseBindings ??= {}) : settings.bindings; }
+  function clearInput() { held.clear(); mouseHeld = false; moveHeld = false; rightHeld = false; moveTarget = null; pending = {}; touch?.release(); }
   function pause(view = 'pause') { screen = view; game.s.paused = true; clearInput(); renderOverlay(true); }
   // Panels sit inside the game frame, whose stacking would keep them under the title.
   const placeOverlay = () => (onTitle ? document.body : gameViewport).append($('overlay'));
@@ -603,7 +610,9 @@ try {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
     const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
-    const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
+    const byMouse = mouseMove(), scheme = (id, label) => button(label, 'controls', `data-id="${id}" aria-pressed="${(id === 'mouse') === byMouse}"`, (id === 'mouse') === byMouse ? 'tab on' : 'tab');
+    const mouseNote = byMouse ? '마우스: 오른쪽 클릭 이동 (누르고 있으면 커서를 따라감), 왼쪽 클릭 렌치' : '마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합';
+    const keys = `<div class="actions control-scheme"><span>이동 방식</span>${scheme('keys', '키보드 이동 (WASD)')}${scheme('mouse', '마우스 이동 (우클릭)')}</div><p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(byMouse ? mouseBindings : defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">${mouseNote}<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     const onRun = !onTitle && !!game.s.run, current = settingsTab === 'run' && !onRun ? 'general' : settingsTab;
     const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
     return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
@@ -708,7 +717,7 @@ try {
   }
 
   function lessonHint() {
-    const keys = bindings(), lesson = game.tutorial, moveWord = isTouch ? '왼쪽을 끌어' : `${['up', 'left', 'down', 'right'].map(key => keyName(keys[key])).join(' ')} 키로`;
+    const keys = bindings(), lesson = game.tutorial, moveWord = isTouch ? '왼쪽을 끌어' : mouseMove() ? '우클릭으로' : `${['up', 'left', 'down', 'right'].map(key => keyName(keys[key])).join(' ')} 키로`;
     if (!screen && game.s.mode === 'route' && game.s.run.node === 0) return '노란 표시로 걸어 나가세요';
     if (!screen && game.s.mode === 'combat' && game.bossWarning) return game.bossWarning;
     if (screen || !['intro', 'registration'].includes(game.s.mode) || game.wakeProgress !== null) return '';
@@ -725,7 +734,7 @@ try {
     return [
       { key: '좌', icon: 'action-wrench' },
       ...[0, 1, 2, 3].map(i => ({ key: keyName(keys['skill' + i]), skill: skills[i]?.skill, level: skills[i]?.slot.level, locked: game.isConfiscated(i) })),
-      { key: '우', skill: game.fusion, fusion: true },
+      { key: mouseMove() ? keyName(keys.fusion) : '우', skill: game.fusion, fusion: true },
       { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'action-dodge', dodge: true }
     ];
   }
@@ -961,7 +970,8 @@ try {
     if (name === 'settings-tab') settingsTab = d.id;
     if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
-    if (name === 'reset-bindings') { game.s.profile.settings.bindings = {}; game.save(); }
+    if (name === 'reset-bindings') { game.s.profile.settings[mouseMove() ? 'mouseBindings' : 'bindings'] = {}; game.save(); }
+    if (name === 'controls') { game.s.profile.settings.controls = d.id === 'mouse' ? 'mouse' : 'keys'; game.save(); }
     if (name.startsWith('transfer-')) { sfx('click'); await transferAction(name); return; }
     if (name.startsWith('sync-')) { sfx('click'); await syncAction(name); return; }
     // Purchases answer with coins or a refusal; picking a reward and equipping have their own sounds; every other button clicks.
@@ -1031,8 +1041,9 @@ try {
       e.preventDefault();
       if (e.code !== 'Escape' && !['MetaLeft', 'MetaRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'].includes(e.code)) {
         const map = bindings(), old = map[bindingTarget], duplicate = Object.keys(map).find(key => map[key] === e.code && key !== bindingTarget);
-        game.s.profile.settings.bindings[bindingTarget] = e.code;
-        if (duplicate) game.s.profile.settings.bindings[duplicate] = old;
+        const changed = changedBindings();
+        changed[bindingTarget] = e.code;
+        if (duplicate) changed[duplicate] = old;
         game.save();
       }
       bindingTarget = null; renderOverlay(true); return;
@@ -1045,7 +1056,7 @@ try {
       if (e.repeat) return;
       if (e.code === 'Escape') { e.preventDefault(); talkBox.skip(); }
       if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { e.preventDefault(); talkBox.move(e.code === 'ArrowUp' ? -1 : 1); }
-      if (['Space', 'Enter', keys.interact, keys.skill1].includes(e.code)) { e.preventDefault(); talkBox.advance(); }
+      if (['Space', 'Enter', keys.interact].includes(e.code)) { e.preventDefault(); talkBox.advance(); }
       return;
     }
     const sheet = $('overlay').querySelector('.panel');
@@ -1062,12 +1073,15 @@ try {
     if (key === 'map') { if (!saveBlocked) screen === 'map' ? resume() : pause('map'); return; }
     if (key === 'stats') { if (!saveBlocked && game.s.profile.registered) screen === 'stats' ? resume() : pause('stats'); return; }
     if (screen) return;
-    if (key === 'interact' || (game.village && key === 'skill1')) { interact(); return; }
+    // Talking to Moru, the night market and everyone else is the interact key (G) alone; the skill keys never talk.
+    if (key === 'interact') { interact(); return; }
     if (!game.onFoot) {
       return;
     }
     openAudio(); held.add(e.code);
-    if (key === 'dodge') pending.dodge = true;
+    // Moving with the mouse, a dodge goes toward the cursor and ends the walk to the clicked spot.
+    if (key === 'dodge') { pending.dodge = true; if (mouseMove()) moveTarget = null; }
+    if (key === 'fusion') pending.fusion = true;
     if (key.startsWith('skill')) pending.skill = Number(key.at(-1));
   });
   document.addEventListener('keyup', e => held.delete(e.code));
@@ -1076,9 +1090,20 @@ try {
     pointer = { x: (e.clientX - rect.left - (rect.width - 1120 * scale) / 2) / scale / PIXELS_PER_UNIT + renderer.camera.x, y: (e.clientY - rect.top - (rect.height - 640 * scale) / 2) / scale / PIXELS_PER_UNIT + renderer.camera.y };
     renderer.pointer = pointer;
   }
-  $('game').addEventListener('pointermove', e => { if (!isTouch) mousePosition(e); });
-  $('game').addEventListener('pointerdown', e => { if (!(game.active || game.leaving) || isTouch) return; e.preventDefault(); openAudio(); mousePosition(e); $('game').focus({ preventScroll: true }); if (e.button === 0) mouseHeld = true; if (e.button === 2) pending.fusion = true; });
-  document.addEventListener('pointerup', () => mouseHeld = false);
+  /**
+   * The mouse buttons as they are now. A second button pressed while one is held comes as a pointermove, not a
+   * pointerdown, so every pointer event reads the whole set. Right is the fusion, or (moving with the mouse) the walk.
+   */
+  function mouseButtons(e, canPress) {
+    const left = !!(e.buttons & 1), right = !!(e.buttons & 2), pressed = right && !rightHeld;
+    if (mouseMove()) { moveHeld = right && (canPress || moveHeld); if (pressed && canPress) { moveTarget = { ...pointer }; stuckSteps = 0; } }
+    else if (pressed && canPress) pending.fusion = true;
+    rightHeld = right; mouseHeld = left && (canPress || mouseHeld);
+  }
+  const canClick = () => (game.active || game.leaving || game.walking) && !screen;
+  $('game').addEventListener('pointermove', e => { if (isTouch) return; lastMouse = { clientX: e.clientX, clientY: e.clientY }; mousePosition(e); mouseButtons(e, canClick()); });
+  $('game').addEventListener('pointerdown', e => { if (!canClick() || isTouch) return; e.preventDefault(); openAudio(); lastMouse = { clientX: e.clientX, clientY: e.clientY }; mousePosition(e); $('game').focus({ preventScroll: true }); mouseButtons(e, true); });
+  document.addEventListener('pointerup', e => { if (!isTouch) mouseButtons(e, false); });
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('blur', () => { clearInput(); if (game.active && screen !== 'talk') pause(); game.save(); });
   // Checking in while the game is on screen: the admin page sees who is playing and where, and gifts sent from it
@@ -1166,11 +1191,17 @@ try {
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;
     if (pad?.skill !== undefined) pending.skill = pad.skill;
+    // Moving with the mouse: the cursor stays on the same spot of the floor while the camera follows F2, and a held
+    // right button keeps the walk on the cursor. A new room or screen drops the walk.
+    if (mouseMove() && lastMouse && !screen) { mousePosition(lastMouse); if (moveHeld) moveTarget = { ...pointer }; }
+    if (movedIn !== game.room || screen) { moveTarget = null; movedIn = game.room; }
     while (accumulator >= 1 / 60) {
       // A landed hit holds the rules still for a few frames; input pressed meanwhile waits for the next step.
       if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; drawnFrom = { x: game.p.x, y: game.p.y }; continue; }
-      const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0), y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0), aim: pointer, basic: mouseHeld || pad?.basic || touch?.attacking, ...pending };
+      const walk = walkToTarget();
+      const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0) + walk.x, y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0) + walk.y, aim: pointer, basic: mouseHeld || pad?.basic || touch?.attacking, ...pending };
       drawnFrom = { x: game.p.x, y: game.p.y }; game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
+      noteWalk(walk);
     }
     if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
     // Every ordinary enemy's wind-up gets the same short ping, once per tell.
@@ -1188,7 +1219,22 @@ try {
     const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
     renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
     mapArt.prepareNextFloor();
-    renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    const controlsLabel = mouseMove() ? '우클릭 이동, 마우스 조준, 좌클릭 공격, QWER 기술, Space 회피' : 'WASD 이동, 마우스 조준, 좌클릭 공격, Space 회피';
+    if ($('game').getAttribute('aria-label') !== controlsLabel) $('game').setAttribute('aria-label', controlsLabel);
+    renderer.moveTarget = moveTarget; renderer.talkKey = isTouch ? '▸' : keyName(map.interact); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+  }
+  /** One step of the walk to the clicked spot: a direction, or none once F2 is there. */
+  function walkToTarget() {
+    if (!moveTarget || screen) return { x: 0, y: 0 };
+    const dx = moveTarget.x - game.p.x, dy = moveTarget.y - game.p.y, gap = Math.hypot(dx, dy);
+    if (gap < ARRIVE_DISTANCE) { if (!moveHeld) moveTarget = null; return { x: 0, y: 0 }; }
+    return { x: dx / gap, y: dy / gap };
+  }
+  /** A walk that runs into a wall stops after a moment instead of pushing at it; a swing or dodge in the way does not count. */
+  function noteWalk(walk) {
+    if (!moveTarget || moveHeld || (!walk.x && !walk.y) || game.p.attack || game.p.dodge) { stuckSteps = 0; return; }
+    stuckSteps = Math.hypot(game.p.x - drawnFrom.x, game.p.y - drawnFrom.y) < 0.004 ? stuckSteps + 1 : 0;
+    if (stuckSteps > STUCK_STEPS) moveTarget = null;
   }
   /** Draws F2 (and the camera on F2) part of the way from the last step to this one, so a dash or walk glides instead of stepping. */
   function drawBetween(draw) {

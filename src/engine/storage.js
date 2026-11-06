@@ -62,6 +62,10 @@ export function decodeSave(raw, data) {
   // Saves from before background music get it switched on at the default volume.
   if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; }
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
+  // How F2 is moved: the keys (WASD) or the mouse (right click). Older saves move with the keys; each way keeps its own keys.
+  const settings = s.profile.settings;
+  settings.controls = settings.controls === 'mouse' ? 'mouse' : 'keys';
+  if (!settings.mouseBindings || typeof settings.mouseBindings !== 'object' || Array.isArray(settings.mouseBindings)) settings.mouseBindings = {};
   // Saves from before chapters start in chapter 1.
   if (!Number.isInteger(s.profile.chapter) || s.profile.chapter < 1) s.profile.chapter = 1;
   // Older saves start their play clock at zero; a broken value is reset rather than refusing the save.

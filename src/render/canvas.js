@@ -1197,6 +1197,11 @@ export class CanvasRenderer {
       const x = this.pointer.x * 20, y = this.pointer.y * 20;
       this.line(x - 6, y, x - 2, y, '#557d70'); this.line(x + 2, y, x + 6, y, '#557d70'); this.line(x, y - 6, x, y - 2, '#557d70'); this.line(x, y + 2, x, y + 6, '#557d70');
     }
+    // Moving with the mouse: a flat ring on the floor where F2 is walking to, in the crosshair's green (yellow is the way out).
+    if (g.onFoot && this.moveTarget && g.wakeProgress === null) {
+      const x = this.moveTarget.x * 20, y = this.moveTarget.y * 20;
+      c.save(); c.strokeStyle = '#557d70'; c.lineWidth = 1.5; c.beginPath(); c.ellipse(x, y, 5, 2.5, 0, 0, TAU); c.stroke(); c.restore();
+    }
     const hurtLeft = this.hurtUntil - performance.now();
     if (hurtLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.55 * hurtLeft / HURT_EDGE_MS; c.strokeStyle = '#c43c36'; c.lineWidth = 28 * this.backing; c.strokeRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     // The drum board goes over the room, under the screen-wide flashes.

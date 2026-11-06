@@ -107,6 +107,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .binding-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px 12px; }
 .binding { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
 .panel .binding button { min-width: 62px; padding: 4px 6px; font-size: 12px; }
+.control-scheme { margin: 0 0 10px; gap: 6px; }
+.control-scheme span { font-size: 12px; margin-right: 4px; }
+.panel .control-scheme button.on { background: var(--ink); color: var(--paper); }
 
 .codex-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
 .panel .codex-tabs button.on { background: var(--ink); color: var(--paper); }
