@@ -1,0 +1,48 @@
+Use case: game UI icon set (smooth, not pixel art).
+Project root: C:\Users\ans45\OneDrive\바탕 화면\Beyond the Clockwork
+All paths below are relative to that root. Open each reference image from its path yourself; nothing is attached.
+
+Redraw six HUD icons for Beyond the Clockwork, a cute wind-up toy-town roguelite, as SMOOTH illustrated icons instead of pixel art.
+They are interface, not world art: they sit on the cream HUD tags and buttons at the top of the screen (the wallet tag at the top left,
+three square buttons at the top right), shown at about 22-28 screen pixels, and up to 56 pixels on a phone or a 4K screen.
+The characters and maps stay pixel art; only these UI icons become smooth.
+
+REFERENCES
+- art\ui\icons\gear-v1.png, coin-v1.png, map-v1.png, settings-v1.png, fullscreen-v1.png, fullscreen-exit-v1.png:
+  the current pixel versions. Keep each one's idea and silhouette; redraw it smoothly.
+- art\smile-street\maps\village-court\background-wide-v7.png: the game's painted town. Take its warm brass, cream and
+  crimson materials and soft top-left sunlight from here.
+Palette: navy ink #2b3345 for outlines and line icons, polished brass and gold (#d9a441, #f3cd6a highlight, #9a6a24 shade),
+warm cream #f6ecd2, a touch of crimson #c8463c. The buttons behind them are cream #f6ecd2 with a navy edge.
+
+STYLE (all six the same)
+- Clean vector-like illustration: smooth anti-aliased edges, crisp curves, no visible pixels, no pixel grid, no dithering.
+- One consistent navy outline, about 1/16 of the icon width, rounded joins. Simple two-tone shading (base + one shade) with
+  one small soft highlight top-left. No gradients wider than that, no texture, no noise.
+- Bold and simple so it still reads at 22 pixels: one silhouette, at most 4-5 colours, no tiny details.
+- Square 512x512 PNG, TRANSPARENT background, the object centred with about 40 px of empty margin on every side.
+- No text, letters, numbers, button frame, drop shadow outside the object, glow halo, watermark or characters.
+
+THE ICONS
+1) FREE GEAR (자유 톱니) - permanent currency. A chunky brass cog, 8 rounded square teeth, a round hole, a small wind-up
+   key bow sticking out of the hub.
+   SAVE: art\ui\icons\gear-v2.png
+2) COIN (동전) - run currency. A thick round gold coin seen slightly from the front, a small embossed smile face, a thin rim,
+   one small sparkle.
+   SAVE: art\ui\icons\coin-v2.png
+3) MAP (지도) - opens the world map. A folded cream map with three panels, a dashed navy route line and a small crimson X.
+   SAVE: art\ui\icons\map-v2.png
+4) SETTINGS (환경설정) - opens settings and pauses. Three horizontal navy slider rails with round brass knobs at different
+   positions. Clearly NOT a gear, because a gear already means the currency.
+   SAVE: art\ui\icons\settings-v2.png
+5) FULLSCREEN, ENTER (전체 화면) - four navy corner brackets pointing outward, rounded ends.
+   SAVE: art\ui\icons\fullscreen-v2.png
+6) FULLSCREEN, EXIT (전체 화면 끄기) - the same four brackets pointing inward. Identical to 5 except the direction.
+   SAVE: art\ui\icons\fullscreen-exit-v2.png
+
+RULES
+- 1 and 2 are filled objects (brass, gold); 3 to 6 are mostly navy line icons with brass or crimson accents so they read on cream.
+- Same outline weight, same light, same visual size across all six (the cog and the coin fill about the same area).
+- New file names (-v2): do not overwrite the -v1 files.
+
+When saved, list every SAVE path with its actual pixel size.

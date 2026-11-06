@@ -36,15 +36,15 @@ const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.host
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
-const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['스킬 대기시간', '−'], dodgeCooldownReduction: ['회피 대기 시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
+const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['스킬 대기시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동 속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
 const PERK_ICONS = { piggyBank: 'reward-piggy-bank', overheatEngine: 'reward-overheat', glassSpring: 'reward-glass-spring' };
-const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', dodgeCooldownReduction: 'reward-dodge-cooldown', statusDamage: 'reward-status-damage', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor' };
+const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', statusDamage: 'reward-status-damage', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
 /** Tuning stats that shorten a wait: their value is shown as a cut. */
-const SHORTER_WAITS = new Set(['cooldownReduction', 'dodgeCooldown']);
-const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed', 'dodgeCooldown']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
+const SHORTER_WAITS = new Set(['cooldownReduction']);
+const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
 /** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
 const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/element-icons/${id}.png`),
@@ -56,9 +56,10 @@ const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind'].map(id => `art/ui/elem
 const keptIcons = [];
 const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
-// Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck.
-const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015 }, fusion: { stop: 0.03, shake: 2 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0.03, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
+// Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck. Skills shake and fusions hold and slow (2026-11-06):
+// they hit harder than the wrench and should feel it.
+const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.08, shake: 6 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0.03, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const FUSION_SLOW_MS = 150, MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 /**
  * The loading card waits only for what the title shows: its paper form and song. Everything else is held back until
  * then so it does not share the connection: F2's sheets start once the title is drawn (titleDrawn), and the skill
@@ -505,6 +506,11 @@ try {
     const finisher = hits.find(hit => hit.kind === 'kill' && (hit.boss || hit.last));
     if (finisher && !calm) slowUntil = performance.now() + (finisher.boss ? BOSS_SLOW_MS : LAST_SLOW_MS);
     if (hits.some(hit => hit.kind === 'phase') && !calm) renderer.flash();
+    // A fusion going off: the screen's edges light in its two elements, the floor dims and the view leans in;
+    // its first blow then holds and slows the world for a moment.
+    const fusionCast = hits.find(hit => hit.kind === 'cast' && hit.fusion);
+    if (fusionCast && !calm) renderer.fusionBurst(fusionCast.pair);
+    if (hits.some(hit => hit.kind === 'fusion') && !calm) slowUntil = Math.max(slowUntil, performance.now() + FUSION_SLOW_MS);
     // One sound per moment: the most telling thing that happened in this step, and nothing layered under it.
     const top = hits.reduce((best, hit) => (SOUND_RANK.indexOf(hit.kind) > SOUND_RANK.indexOf(best.kind) ? hit : best));
     if (['hit', 'heavy'].includes(top.kind)) { landedAt = performance.now(); pendingWhoosh = null; }
@@ -559,7 +565,6 @@ try {
     if (id === 'killHeal') return amount;
     if (id === 'basicDamage') return tuned('attackDamage') + amount;
     if (id === 'skillCooldownReduction') return Math.min(caps.totalCooldownReduction, tuned('cooldownReduction') + amount);
-    if (id === 'dodgeCooldownReduction') return 1 - (1 - tuned('dodgeCooldown')) * (1 - amount);
     if (id === 'statusDamage') return tuned('statusPower') + amount;
     if (id === 'critChance') return Math.min(caps.critChance, (data.combat.player.critChance || 0) + tuned('critChance') + amount);
     return tuned(id) + amount;
@@ -596,7 +601,7 @@ try {
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택 (${i + 1})`, 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
+      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button('선택', 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
     }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
@@ -618,13 +623,28 @@ try {
     nicknameNote = kept ? `수리 장부에 적었어요: ${kept}` : '이름을 비워서 제품 번호 F2로 불려요.';
     renderOverlay(true);
   }
+  /** This run's rewards in the order they were picked: the stop, the card's tier and name, and what it does. */
+  function runPicks() {
+    const run = game.s.run, picks = run?.picks || [], rooms = data.slice.rooms;
+    const head = `<p class="run-picks-head">${escapeHTML(roomTitle(rooms[run.node]))} · ${run.node + 1}번째 정거장 · 고른 보상 ${picks.length}개</p>`;
+    if (!picks.length) return `${head}<p class="notice">아직 고른 보상이 없습니다. 구간을 깨면 보상 카드를 고를 수 있어요.</p>`;
+    const elementName = id => data.combat.elements.find(e => e.id === id)?.name || '';
+    const rows = picks.map((pick, i) => {
+      const reward = { kind: pick.kind, id: pick.id, amount: pick.amount, rarity: pick.rarity };
+      let info; try { info = pick.kind === 'level' ? { name: `${elementName(pick.element)} 기술 단계 +1`, label: '기술 단계', description: '이 속성 기술의 피해가 오릅니다.' } : describeReward(reward); } catch { info = { name: pick.id ?? pick.kind, label: '' }; }
+      let tier = ''; try { tier = TIER_NAMES[game.rewardTier(reward)] || ''; } catch {}
+      return `<li><span class="pick-no">${i + 1}</span><div><b>${escapeHTML(String(info.name || ''))}</b> <span class="pick-meta">${escapeHTML([tier, info.label, `${pick.node + 1}번째 정거장`].filter(Boolean).join(' · '))}</span>${info.description ? `<p>${info.description}</p>` : ''}</div></li>`;
+    }).join('');
+    return `${head}<ol class="run-picks">${rows}</ol>`;
+  }
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
     const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
     const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
-    const body = settingsTab === 'keys' ? keys : settingsTab === 'devices' ? transferBlock() : general;
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    const onRun = !onTitle && !!game.s.run, current = settingsTab === 'run' && !onRun ? 'general' : settingsTab;
+    const body = current === 'run' ? runPicks() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -669,7 +689,7 @@ try {
     if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 연결되어 그 뒤로는 저절로 이어집니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
     if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
-    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
+    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-give"><span>자유 톱니 ${ico('gear')} ${Math.floor(game.s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}${s.run ? `<span>동전 ${ico('coin')} ${s.run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}` : ''}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
@@ -725,6 +745,33 @@ try {
       { key: keyName(keys.dodge).replace('Space', 'SP'), icon: 'action-dodge', dodge: true }
     ];
   }
+  /** What a HUD slot does, for its tooltip: the name, its cost and wait, and the codex's plain sentence. */
+  function slotTip(slot) {
+    const codex = data.slice.presentation.codex, element = id => data.combat.elements.find(e => e.id === id)?.name;
+    if (slot.icon === 'action-wrench') return { title: '렌치 · 좌클릭', text: '세 번 이어 치는 근접 공격입니다. 3타가 가장 강하고 멀리 닿으며, 맞힐 때마다 축전이 찹니다.' };
+    if (slot.dodge) return { title: `회피 · ${slot.key}`, text: '짧게 미끄러지며 잠깐 공격을 피합니다. 적이나 탄을 스쳐 지나갈 수 있습니다.', note: `대기 ${data.combat.player.dodge.cooldown}초` };
+    if (slot.fusion) return slot.skill
+      ? { title: `융합 · ${slot.skill.name} · 우클릭`, text: codex.fusions?.[slot.skill.id] || slot.skill.effect, note: `축전 ${slot.skill.energyCost}이 모이면 쓸 수 있습니다 · 대기 ${slot.skill.cooldown}초` }
+      : { title: '융합 · 우클릭', text: '속성 두 개를 장착하면 두 속성을 합친 융합 기술이 열립니다.' };
+    if (!slot.skill) return { title: `빈 칸 · ${slot.key}`, text: '모루에게서 속성 부품을 장착하면 이 칸에 기술이 들어갑니다.' };
+    const s = slot.skill;
+    return { title: `${s.name} · ${element(s.element) || ''} · ${slot.key}`, text: codex.skills?.[s.id] || s.effect, note: [`축전 ${s.energyCost}`, `대기 ${s.cooldown}초`, slot.level > 1 ? `Lv${slot.level}` : '', slot.locked ? '로코에게 빼앗김 · 되찾아야 쓸 수 있음' : ''].filter(Boolean).join(' · ') };
+  }
+  let tipSlot = -1;
+  function showSlotTip(index) {
+    const tip = $('skill-tip'), element = $('skills').children[index], slot = hudSlots()[index];
+    tipSlot = element && slot ? index : -1;
+    if (tipSlot < 0) { tip.hidden = true; return; }
+    const { title, text, note } = slotTip(slot);
+    tip.innerHTML = `<b>${escapeHTML(title)}</b>${escapeHTML(text)}${note ? `<small>${escapeHTML(note)}</small>` : ''}`;
+    // The HUD is drawn at 1120x640 and scaled to the screen, so the slot's place is measured back into HUD pixels.
+    const hud = $('hud').getBoundingClientRect(), box = element.getBoundingClientRect(), scale = hud.width / 1120;
+    tip.style.left = `${Math.min(1120 - 160, Math.max(160, (box.left + box.width / 2 - hud.left) / scale))}px`;
+    tip.style.top = `${(box.top - hud.top) / scale - 8}px`;
+    tip.hidden = false;
+  }
+  $('skills').addEventListener('pointerover', e => { const element = e.target.closest('.slot'); if (element && !isTouch) showSlotTip([...$('skills').children].indexOf(element)); });
+  $('skills').addEventListener('pointerleave', () => { tipSlot = -1; $('skill-tip').hidden = true; });
   /** Health fractions where a boss changes phase: where its later patterns unlock, and where Brass adds a march lane. */
   function bossPhaseMarks(ai) {
     const marks = (ai.phasePatterns || []).map(p => p.below).concat(ai.phaseTwoHpFraction ?? []);
@@ -773,6 +820,8 @@ try {
         const art = slot.icon || slot.skill?.id;
         return `<div class="slot hud-tag ${art ? '' : 'empty'}">${art ? `<img src="${slotArt(art)}" alt="">` : ''}<kbd>${slot.key}</kbd>${slot.level > 1 ? `<span class="lv">Lv${slot.level}</span>` : ''}<div class="cool"></div><div class="left"></div>${slot.skill?.energyCost ? `<span class="cost" title="필요 축전">${slot.skill.energyCost}</span>` : ''}</div>`;
       }).join('');
+      // A slot that changed under the pointer (a skill won back, an element swapped) keeps its tooltip up to date.
+      if (tipSlot >= 0) showSlotTip(tipSlot);
     }
     [...$('skills').children].forEach((element, i) => {
       const slot = slots[i], { skill } = slot, { remaining, total } = slotCooldown(slot);
@@ -788,6 +837,17 @@ try {
     put($('practice-reset'), 'hidden', game.s.mode !== 'practice');
     put($('practice-reset'), 'text', `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`);
     $('practice-reset').classList.toggle('on', !!resetting);
+    // In Moru's back yard the switch sits on the top-right corner of the skill bar, clear of the wallet at the left.
+    if (game.s.mode === 'practice') {
+      const bar = $('skills'), button = $('practice-reset');
+      if (bar.offsetWidth) {
+        // Above the bar's right end, and above the hint line when one is showing over the bar.
+        const hint = $('hint'), hud = $('hud').getBoundingClientRect(), k = hud.width / $('hud').offsetWidth || 1;
+        const hintTop = hint.hidden || !hint.offsetHeight ? Infinity : (hint.getBoundingClientRect().top - hud.top) / k;
+        put(button, 'left', `${bar.offsetLeft + bar.offsetWidth / 2 - button.offsetWidth}px`);
+        put(button, 'top', `${Math.round(Math.min(bar.offsetTop, hintTop) - button.offsetHeight - 6)}px`);
+      }
+    }
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, { remaining, total } = slotCooldown(slot);
       return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!slot.locked || !!skill?.energyCost && p.energy < skill.energyCost };
@@ -875,6 +935,12 @@ try {
     openAudio();
     if (name.startsWith('debug-') && !DEBUG_ALLOWED) return;
     if (name === 'debug-tutorial') { leaveTitle(); game.debugRestartTutorial(); resume(); }
+    // Test money: free gears for the town's shops and tuning, coins for the run's shop.
+    if (name === 'debug-gears' || name === 'debug-coins') {
+      const amount = Number(d.amount) || 0;
+      if (name === 'debug-gears') game.s.profile.freeGears += amount; else if (game.s.run) game.s.run.coins += amount;
+      game.save(); updateHUD(); renderOverlay(true); return;
+    }
     if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room)); resume(); }
     if (name === 'intro') game.beginIntro();
     if (name === 'register') game.register();
@@ -948,6 +1014,11 @@ try {
     else if (game.s.mode === 'complete') game.returnToHub('clear');
     renderOverlay();
   }
+  /** Buttons that commit a choice. A keyboard press never activates them: only a click or a tap does. */
+  const DECISIONS = new Set(['reward', 'reroll-card', 'element', 'buy-element', 'depart', 'shop-buy', 'tune-buy', 'refund', 'abandon', 'abandon-confirmed', 'new-game', 'confirm-new', 'sync-take', 'sync-keep', 'transfer-apply', 'to-title']);
+  const isDecision = control => !!control?.closest?.('.panel') && (control.matches('.pick') || DECISIONS.has(control.dataset?.action));
+  // Space on a button fires its click when the key comes up; a decision swallows that too.
+  document.addEventListener('keyup', e => { if ((e.key === ' ' || e.key === 'Enter') && isDecision(document.activeElement)) e.preventDefault(); }, true);
   /** A sheet owns the keyboard: Tab and arrows walk its controls, and game keys stay out of Space and Enter. */
   function sheetKeys(e, sheet) {
     const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, Tab: e.shiftKey ? -1 : 1 }[e.key];
@@ -958,6 +1029,11 @@ try {
       return true;
     }
     if (e.key !== ' ' && e.key !== 'Enter') return false;
+    // Reward cards are picked with the mouse only: Space or Enter on a focused card once took it by accident.
+    if (sheet.querySelector('.reward-card [data-action="reward"]')) { e.preventDefault(); return true; }
+    // Every other choice (an element, a purchase, a difficulty, a refund, giving up a run) is also clicked, never keyed:
+    // Space is the dodge, and a press meant for the fight must not buy or decide anything.
+    if (isDecision(document.activeElement)) { e.preventDefault(); return true; }
     // A key still held from the fight must not press whatever the sheet focused.
     if (e.repeat) e.preventDefault();
     return document.activeElement?.closest('.panel') === sheet;
@@ -1001,24 +1077,11 @@ try {
     if (screen) return;
     if (key === 'interact' || (game.village && key === 'skill1')) { interact(); return; }
     if (!game.onFoot) {
-      if (game.s.mode === 'reward' && /^Digit[123]$/.test(e.code)) game.chooseReward(Number(e.code.at(-1)) - 1);
       return;
     }
     openAudio(); held.add(e.code);
     if (key === 'dodge') pending.dodge = true;
     if (key.startsWith('skill')) pending.skill = Number(key.at(-1));
-  });
-  document.addEventListener('keydown', e => {
-    // 1, 2, 3 pick a difficulty in the town portal's popup, as they pick a reward card.
-    if (!screen && !e.repeat && /^Digit[123]$/.test(e.code) && game.s.panel === 'difficulty') {
-      const level = data.slice.difficulty.levels[Number(e.code.at(-1)) - 1];
-      if (level && game.depart(level.id)) { resume(); renderOverlay(true); updateHUD(); }
-      return;
-    }
-    if (screen || e.repeat || !/^Digit[123]$/.test(e.code) || game.s.mode !== 'reward') return;
-    const reward = game.s.run.rewardChoices[Number(e.code.at(-1)) - 1];
-    if (reward?.kind === 'element' && game.slots.length >= 2) return;
-    game.chooseReward(Number(e.code.at(-1)) - 1); renderOverlay(true);
   });
   document.addEventListener('keyup', e => held.delete(e.code));
   function mousePosition(e) {
@@ -1085,6 +1148,8 @@ try {
     gamepadLast = pad.buttons.map(b => b.pressed); return result;
   }
 
+  // Where F2 stood before the last rules step: the picture is drawn between that and now (the rules run 60 times a second, screens often faster).
+  let drawnFrom = null;
   let lastTime = performance.now(), accumulator = 0, bellWasRinging = false, lastChargeAt = -1, lastBossTellAt = -1;
   function frame(now) {
     const delta = Math.min(0.1, (now - lastTime) / 1000); lastTime = now; accumulator += delta * (now < slowUntil ? SLOW_RATE : 1);
@@ -1116,9 +1181,9 @@ try {
     if (pad?.skill !== undefined) pending.skill = pad.skill;
     while (accumulator >= 1 / 60) {
       // A landed hit holds the rules still for a few frames; input pressed meanwhile waits for the next step.
-      if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; continue; }
+      if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; drawnFrom = { x: game.p.x, y: game.p.y }; continue; }
       const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0), y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0), aim: pointer, basic: mouseHeld || pad?.basic || touch?.attacking, ...pending };
-      game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
+      drawnFrom = { x: game.p.x, y: game.p.y }; game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
     }
     if (game.s.time - lastAutosave >= 5) { game.save(); lastAutosave = game.s.time; }
     // Every ordinary enemy's wind-up gets the same short ping, once per tell.
@@ -1136,7 +1201,15 @@ try {
     const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
     renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
     if (nextFloor && prepareClearance(nextFloor, 3)) nextFloor = null;
-    renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; renderer.render(delta); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+  }
+  /** Draws F2 (and the camera on F2) part of the way from the last step to this one, so a dash or walk glides instead of stepping. */
+  function drawBetween(draw) {
+    const p = game.p, from = drawnFrom;
+    if (!p || !from || Math.hypot(p.x - from.x, p.y - from.y) > 1.5) { draw(); return; }
+    const x = p.x, y = p.y, t = Math.min(1, accumulator * 60);
+    p.x = from.x + (x - from.x) * t; p.y = from.y + (y - from.y) * t;
+    try { draw(); } finally { p.x = x; p.y = y; }
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기', nameOf: id => (id === data.dialogue.player ? callName(game.s.profile) : data.dialogue.speakers[id].name), fill: text => fillName(text, game.s.profile) });
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button, .talk-ask')) talkBox.advance(); });
@@ -1145,7 +1218,8 @@ try {
     onNew: () => { openAudio(); playerSprites.then(startNew); },
     onLoad: () => { openAudio(); playerSprites.then(() => { leaveTitle(); resume(); }); },
     onSettings: () => { screen = 'pause'; renderOverlay(true); },
-    onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; beep(70, 0.2, 0.09); game.s.paused = paused; },
+    // The stamp lands with a heavy 쾅 (sfx.js stamp); the old low beep is only the fallback.
+    onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; sfx('stamp', () => beep(70, 0.2, 0.09)); game.s.paused = paused; },
     reducedMotion
   });
   if (isTouch) {

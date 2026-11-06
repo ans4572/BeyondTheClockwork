@@ -1,3 +1,6 @@
+.debug-give { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 12px; }
+.debug-give span { display: inline-flex; gap: 4px; align-items: center; font-weight: 700; margin-right: 4px; }
+.debug-give span:not(:first-child) { margin-left: 10px; }
 .debug-rooms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
 .panel .debug-rooms button { display: flex; gap: 8px; align-items: center; padding: 6px 8px; font-size: 12px; text-align: left; }
 .debug-rooms small { color: var(--label); }
@@ -146,6 +149,12 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 .hud-tools kbd { font: inherit; opacity: .65; }
 #skills { position: absolute; left: 50%; bottom: 8px; display: flex; gap: 4px; transform: translateX(-50%); }
 #skills[hidden] { display: none; }
+/* A mouse over a skill slot shows what it does; the HUD itself lets clicks through to the game. */
+body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
+#skill-tip { position: absolute; z-index: 7; width: max-content; max-width: 300px; padding: 8px 12px; background: #2b3345; color: #f6ecd2; font: 400 13px/1.45 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; transform: translate(-50%, -100%); pointer-events: none; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+#skill-tip[hidden] { display: none; }
+#skill-tip b { display: block; font-weight: 700; color: #ffd257; }
+#skill-tip small { display: block; margin-top: 3px; color: #c9c2ad; font-size: 12px; }
 .slot { position: relative; display: grid; place-items: center; width: 48px; height: 48px; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
 .slot.ready { background: #ffd257; }
 .slot.empty { opacity: .85; }

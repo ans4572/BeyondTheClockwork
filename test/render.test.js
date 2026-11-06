@@ -34,13 +34,14 @@ test('renderer handles every enemy archetype and all boss telegraph shapes', () 
   assert.ok(calls.length > 1000);
 });
 
-test('ordinary enemies warn with their body, and only bosses paint the floor', () => {
+test('a swing paints its cone on the floor and the body blinks; bosses paint theirs too', () => {
   const g = new Game(data), calls = [];
   const context = new Proxy({}, { get: (_, name) => (...args) => { calls.push([name, ...args]); }, set: () => true });
   const r = new CanvasRenderer({ getContext: () => context }, g), filled = () => calls.filter(([name]) => ['arc', 'fillRect'].includes(name)).length;
   const tell = { x: 5, y: 5, targetX: 8, targetY: 5, angle: 0, started: 0, until: 0.7 };
   r.drawTell({ ...g.config.enemies.guard, tell: { ...tell, type: 'melee' } });
-  assert.equal(filled(), 0);
+  assert.ok(calls.some(([name, , , radius]) => name === 'arc' && radius === g.config.enemies.guard.attackRange * 20));
+  calls.length = 0;
   const blinking = { boss: false, tell: { ...tell, type: 'melee' } };
   g.s.time = 0.05; assert.equal(r.tellBlink(blinking), true);
   g.s.time = 0.15; assert.equal(r.tellBlink(blinking), false);

@@ -19,9 +19,33 @@ export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', mu
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
+/** Effect looks that lie flat on the floor: drawn under the bodies with the other floor marks. */
+/** The ice crescent's sheet is drawn at this share of its pixels (its blade then spans the cut's width), this far off the floor. */
+const CRESCENT_SCALE = 0.65, CRESCENT_LIFT = 14;
+/** Must match how long the rules keep a struck enemy's flashUntil (game.js hitEnemy). */
+const HIT_FLASH_SECONDS = 0.12;
+/** A struck body's sheen: how see-through-white at its strongest, and how far across the body it reaches (1 = corner to corner). */
+const HIT_SHEEN = 0.55, HIT_SHEEN_REACH = 0.75;
+/** How far (units, across and down) the fight view leans toward the aim, and how quickly it follows. */
+const CAMERA_LEAD = [1.2, 0.8], CAMERA_LEAD_SECONDS = 0.25;
+const GROUND_LOOKS = new Set(['quake', 'drumBeat', 'march', 'carpetRoll']);
 const TAG_SIZE = 7, TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
+/** A fusion's burst: how long the floor dims, the edges glow and the view leans in, and by how much. */
+const FUSION_DIM_MS = 260, FUSION_EDGE_MS = 420, FUSION_ZOOM_MS = 240, FUSION_ZOOM = 0.06, FUSION_DIM = 0.32;
+/** Fusion shapes that strike an area of floor, drawn under their pictures (see drawFusionFloors); a shockwave lasts this long. */
+const FLOOR_SHAPES = new Set(['self', 'target', 'moving', 'orb', 'clamp']), FLOOR_WAVE_SECONDS = 0.28, FLOOR_FLASH_SECONDS = 0.22;
+/** How long a '!' stays over a body that has just noticed F2. */
+const NOTICE_SECONDS = 0.8;
+/**
+ * Enemy danger floors, as Lost Ark paints them: one red multiplied into the floor (its pattern shows through), no
+ * hatching or outline; a deeper red fills from the attacker outward and the blow lands as it reaches the edge.
+ */
+const TELL_RED = '#e0303c', TELL_WASH = 0.42, TELL_BOSS_WASH = 0.48, TELL_FILL = 0.35;
+/** Each element's reach ring (a MARKS name); a ring fills 124 of its 128 pixels, and the second element's sits inside. */
+const FUSION_RINGS = { fire: 'ringFire', ice: 'ringIce', lightning: 'ringLightning', wind: 'ringWind' }, RING_SPAN = 128 / 124, RING_INNER = 0.84;
+const ELEMENT_TINTS = { fire: '#ff7a2f', ice: '#8fe3ff', lightning: '#ffe14d', wind: '#8ff5b4' };
 const SWING_SWEEP = 0.45, FLASH_MS = 260, CRIT_PULSE_MS = 120, CRIT_ZOOM = 0.03, BODY_SCALE = 1, PLAYER_SCALE = 0.9, EYES_OPEN_SHARE = 0.5;
 /** Every body (F2, mobs, bosses, residents) is drawn at its own art size: one sheet pixel per world pixel, so nothing is stretched or squeezed. */
 const BOSS_SPRITE_SCALE = 1 / BODY_SCALE;
@@ -40,6 +64,25 @@ export class CanvasRenderer {
   kick(size, angle) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; this.shakeAngle = angle; } }
   /** A critical hit: the view leans in a few percent and a gold light passes over it. */
   critPulse() { this.pulseUntil = performance.now() + CRIT_PULSE_MS; }
+  /** A fusion goes off: edges lit in its two elements, the floor dimmed, the view leaning in (see render). */
+  fusionBurst(pair = []) { this.fusionAt = performance.now(); this.fusionTints = pair.map(id => ELEMENT_TINTS[id] || '#fff4cd'); }
+  /**
+   * The glow along the screen's top edge: `left` fading into `right` across the width, and from the edge down to nothing.
+   * Kept and reused while the size and colours stay the same.
+   */
+  fusionBand(width, height, left, right) {
+    const key = `${width}x${height}${left}${right}`;
+    if (this.bandKey === key) return this.band;
+    const band = this.band ??= document.createElement('canvas'), b = band.getContext('2d');
+    band.width = width; band.height = height;
+    const across = b.createLinearGradient(0, 0, width, 0); across.addColorStop(0.35, left); across.addColorStop(0.65, right);
+    b.fillStyle = across; b.fillRect(0, 0, width, height);
+    const down = b.createLinearGradient(0, 0, 0, height); down.addColorStop(0, 'rgba(0,0,0,1)'); down.addColorStop(1, 'rgba(0,0,0,0)');
+    b.globalCompositeOperation = 'destination-in'; b.fillStyle = down; b.fillRect(0, 0, width, height); b.globalCompositeOperation = 'source-over';
+    this.bandKey = key; return band;
+  }
+  /** How far into a fusion's burst the screen is: 1 at the start, 0 once over (`ms` long). */
+  fusionLeft(ms) { return this.fusionAt ? Math.max(0, 1 - (performance.now() - this.fusionAt) / ms) : 0; }
   wince() { this.hurtUntil = performance.now() + HURT_EDGE_MS; }
   /**
    * The wrench's slash: one thin crescent drawn along the swing, up to 3 px at its head and thinning to the tail, with a
@@ -91,20 +134,48 @@ export class CanvasRenderer {
     const size = scale * resize * BODY_SCALE / 2, left = Math.round((x - anchor[0] * size) * 2) / 2, top = Math.round((y - anchor[1] * size) * 2) / 2;
     // A firm contact shadow grounds every body on the painted floor.
     c.fillStyle = 'rgba(24, 20, 36, 0.34)'; c.beginPath(); c.ellipse(x, y, 13, 4.5, 0, 0, TAU); c.fill();
-    if (flash) c.filter = flash === true ? 'brightness(1.9)' : flash;
+    const white = typeof flash === 'number' ? flash : 0;
+    if (flash && !white) c.filter = flash === true ? 'brightness(1.9)' : flash;
     c.imageSmoothingEnabled = resize !== 1;
     for (const url of [clip.sheet, clip.effect]) if (url && library.image(url)) c.drawImage(library.image(url), sx, sy, w, h, left, top, w * size, h * size);
-    if (flash) c.filter = 'none';
+    if (flash && !white) c.filter = 'none';
+    if (white > 0) this.whiteOver(image, sx, sy, w, h, left, top, w * size, h * size, white);
     c.imageSmoothingEnabled = false;
     return true;
   }
   /** A street prop stands on its bottom centre; its feet decide what it hides. */
-  drawProp({ image, x, y, scale = 1, flip }) {
+  drawProp({ image, x, y, scale = 1, flip, white = 0 }) {
     const c = this.ctx, picture = this.mapImages.get(image);
     if (!picture) return;
     const w = picture.width / 2 * scale, h = picture.height / 2 * scale;
     c.save(); c.translate(x * 20, y * 20); if (flip) c.scale(-1, 1);
-    c.imageSmoothingEnabled = scale !== 1; c.drawImage(picture, -w / 2, -h, w, h); c.restore();
+    c.imageSmoothingEnabled = scale !== 1; c.drawImage(picture, -w / 2, -h, w, h);
+    if (white > 0) this.whiteOver(picture, 0, 0, picture.width, picture.height, -w / 2, -h, w, h, white);
+    c.restore();
+  }
+  /**
+   * A struck body catches a quick see-through white sheen and fades back (as in Hades): the frame's own shape filled
+   * white, strongest on the upper-left (where the town's light comes from) and gone by the lower-right, laid over it at
+   * `amount`. Falls back to a brightened copy where no scratch canvas can be made (tests).
+   */
+  whiteOver(image, sx, sy, w, h, dx, dy, dw, dh, amount) {
+    const c = this.ctx;
+    if (typeof document === 'undefined') { c.filter = 'brightness(1.9)'; c.globalAlpha *= amount; c.drawImage(image, sx, sy, w, h, dx, dy, dw, dh); c.globalAlpha /= amount; c.filter = 'none'; return; }
+    const scratch = this.whiteCanvas ??= document.createElement('canvas');
+    if (scratch.width < w || scratch.height < h) { scratch.width = Math.max(scratch.width, w); scratch.height = Math.max(scratch.height, h); }
+    const s = scratch.getContext('2d');
+    s.globalCompositeOperation = 'copy'; s.drawImage(image, sx, sy, w, h, 0, 0, w, h);
+    s.globalCompositeOperation = 'source-in'; s.fillStyle = '#ffffff'; s.fillRect(0, 0, w, h);
+    // Only part of the body shines: full on the upper-left, fading out across it.
+    const fade = s.createLinearGradient(0, 0, w * HIT_SHEEN_REACH, h * HIT_SHEEN_REACH);
+    fade.addColorStop(0, 'rgba(0,0,0,1)'); fade.addColorStop(0.45, 'rgba(0,0,0,0.7)'); fade.addColorStop(1, 'rgba(0,0,0,0)');
+    s.globalCompositeOperation = 'destination-in'; s.fillStyle = fade; s.fillRect(0, 0, w, h); s.globalCompositeOperation = 'source-over';
+    const alpha = c.globalAlpha; c.globalAlpha = alpha * amount; c.drawImage(scratch, 0, 0, w, h, dx, dy, dw, dh); c.globalAlpha = alpha;
+  }
+  /** How white a struck body is now: solid white for the first frames after the blow, then fading out (0 when untouched). */
+  hitWhite(enemy) {
+    const left = (enemy.flashUntil || 0) - this.game.s.time;
+    return left > 0 ? Math.min(1, left / (HIT_FLASH_SECONDS * 0.6)) * HIT_SHEEN : 0;
   }
   /** What an enemy is suffering right now, in the order it is drawn. */
   statusBadges(enemy) {
@@ -241,10 +312,8 @@ export class CanvasRenderer {
     }
   }
   drawDummy(enemy, image) {
-    const c = this.ctx, flash = enemy.flashUntil > this.game.s.time;
-    if (flash) c.filter = 'brightness(1.6)';
-    this.drawProp({ image, x: enemy.x, y: enemy.y, scale: 1 });
-    c.filter = 'none';
+    const c = this.ctx;
+    this.drawProp({ image, x: enemy.x, y: enemy.y, scale: 1, white: this.hitWhite(enemy) });
     this.drawStatuses(enemy, enemy.y * 20 - 70);
   }
   /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
@@ -261,8 +330,8 @@ export class CanvasRenderer {
       const a = art.getContext('2d'); a.imageSmoothingEnabled = true; a.imageSmoothingQuality = 'high'; a.drawImage(place.mapImage, 0, 0, art.width, art.height);
       this.minimapArt = { image: place.mapImage, key, art };
     }
-    // Half see-through, so the minimap sits on the scene instead of competing with it.
-    c.globalAlpha = 0.5; c.drawImage(this.minimapArt.art, ox, oy); c.globalAlpha = 1;
+    // Mostly see-through, so the minimap sits on the scene instead of competing with it.
+    c.globalAlpha = 0.6; c.drawImage(this.minimapArt.art, ox, oy); c.globalAlpha = 1;
     const [vx, vy] = at(this.camera.x, this.camera.y); c.lineWidth = 2; c.strokeStyle = '#fff4d6cc'; c.strokeRect(vx, vy, SCREEN_UNITS[0] * k, SCREEN_UNITS[1] * k);
     if (place.goal) dot(place.goal.x, place.goal.y, 5, '#ffd257');
     for (const npc of (place.map.npcs || []).filter(npc => npc.label)) dot(npc.x, npc.y, 4, '#7fc7b0');
@@ -303,7 +372,9 @@ export class CanvasRenderer {
       for (let i = 0; i < 4; i++) { const r = (1 - ((now * 1.4 + i / 4) % 1)) * rule.range * 20; c.beginPath(); c.arc(x, y, Math.max(4, r), b.angle - half, b.angle + half); c.stroke(); }
       for (const can of b.cans) {
         c.save(); c.translate(can.x * 20, can.y * 20 - 6); c.rotate(can.spin);
-        if (can.back) { c.fillStyle = '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
+        if (can.back) { c.fillStyle = can.bomb ? '#e0564c66' : '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
+        // A bomb can: a red body with a sparking fuse, so it reads apart from the silver ones at a glance.
+        if (can.bomb) { c.rotate(-can.spin); this.rect(-5, -6, 10, 12, '#2b3345'); this.rect(-4, -5, 8, 10, '#c8463c'); this.rect(-4, -1, 8, 2, '#f6ecd2'); const spark = Math.floor(now * 16) % 2; this.rect(-1, -10, 2, 4, '#5c4630'); this.circle(0, -11, spark ? 3 : 2, spark ? '#ffd257' : '#ff8a3c'); c.restore(); continue; }
         if (!this.drawFxFrame('rocoCan', now * 8 + can.x, 0, 0)) { this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); }
         c.restore();
       }
@@ -393,15 +464,33 @@ export class CanvasRenderer {
    * A blast about to go off (a lit crate, a volatile elite's death): the whole reach marked at once, blinking faster as the
    * fuse burns, with a ring filling round its edge until the moment it blows.
    */
+  /**
+   * Clips what is drawn next to the floor bodies can stand on (the map's walkable area less its solids), so a reach
+   * painted on the floor stops at planters, walls and stalls. Returns whether it clipped; the caller then restores.
+   */
+  clipToFloor(map) {
+    const c = this.ctx;
+    if (!map?.walkable || !c.clip) return false;
+    c.save(); c.beginPath();
+    for (const polygon of [map.walkable, ...(map.solids || [])]) { polygon.forEach(([px, py], i) => i ? c.lineTo(px * 20, py * 20) : c.moveTo(px * 20, py * 20)); c.closePath(); }
+    c.clip('evenodd');
+    return true;
+  }
+  /** Fills the current path as a danger floor: `color` multiplied into the painting, a little laid over for dark floors. */
+  washFloor(alpha, color = TELL_RED) {
+    const c = this.ctx;
+    c.save(); c.setLineDash([]); c.globalCompositeOperation = 'multiply'; c.globalAlpha = alpha; c.fillStyle = color; c.fill();
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = alpha * 0.3; c.fill(); c.restore();
+  }
+  /** A round danger floor `r` pixels wide around (x, y), its deeper red grown to `progress` (0 to 1) of the way out. */
+  dangerDisc(x, y, r, progress) {
+    const c = this.ctx;
+    c.beginPath(); c.arc(x, y, r, 0, TAU); this.washFloor(TELL_WASH);
+    if (progress > 0) { c.beginPath(); c.arc(x, y, r * Math.min(1, progress), 0, TAU); this.washFloor(TELL_FILL); }
+  }
   drawDanger(fx, x, y, fraction) {
-    const c = this.ctx, r = fx.value * 20, flat = 0.55, blink = 0.5 + 0.5 * Math.sin(this.visualTime * (8 + 24 * fraction));
-    if (!this.drawMark('danger', x, y, r * 2, { flat, alpha: 0.45 + 0.35 * blink })) {
-      c.save(); c.translate(x, y); c.scale(1, flat); c.globalAlpha = 0.12 + 0.16 * blink; c.fillStyle = fx.color; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
-      c.globalAlpha = 0.9; c.strokeStyle = fx.color; c.lineWidth = 2; c.setLineDash([6, 4]); c.stroke(); c.restore();
-    }
-    c.save(); c.translate(x, y); c.scale(1, flat); c.lineCap = 'round';
-    for (const [w, col] of [[5, '#2b3345'], [3, fraction > 0.7 && blink > 0.5 ? '#fff4b7' : fx.color]]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.arc(0, 0, r, -Math.PI / 2, -Math.PI / 2 + TAU * fraction); c.stroke(); }
-    c.restore();
+    // A true circle, as the blast hits, washed red like every danger floor and filling to the rim as the fuse burns.
+    this.dangerDisc(x, y, fx.value * 20, fraction);
   }
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
   coverBody(mask, x, y, halfWidth = 1.3, tall = 2.9) { return mask?.cover(this.ctx, x, y, halfWidth, tall) || 0; }
@@ -506,6 +595,7 @@ export class CanvasRenderer {
       case 'zapBig': return this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 20, { sx: 1.8, sy: 1.8 });
       case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
       case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
+      case 'frostCrescentBreak': return this.drawFxFrame('frostCrescentBreak', frameAt('frostCrescentBreak'), x, y - CRESCENT_LIFT, { angle: fx.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE }) || this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
       case 'zapLine': {
         // Lightning runs along a saw rail: two crackling threads end to end, and a burst at each brass stop.
         const tx = fx.targetX * 20, ty = fx.targetY * 20, seed = Math.floor(this.visualTime * 24);
@@ -553,6 +643,17 @@ export class CanvasRenderer {
     }
     return false;
   }
+  /** One of F2's shots in flight: a frost lance along its path, a small spinning chip for a shard, a plain pellet otherwise. */
+  drawBolt(bullet, cast) {
+    const c = this.ctx, x = bullet.x * 20, y = bullet.y * 20 - 8;
+    if (bullet.shard) {
+      if (this.drawFxFrame('frostBolt', this.visualTime * 12, x, y, { angle: bullet.angle, sx: 0.55, sy: 0.55 })) return;
+      const r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore();
+      return;
+    }
+    if (cast.skillId === 'frostBolt' && this.drawFxFrame('frostBolt', this.visualTime * 12, x, y, { angle: bullet.angle })) return;
+    this.circle(bullet.x * 20, bullet.y * 20, 4, cast.color); this.rect(bullet.x * 20 - 2, bullet.y * 20 - 2, 4, 4, '#e7fbec');
+  }
   drawCastEffect({ effect, frame, x, y, lift }) {
     const { frameWidth: w, frameHeight: h, columns, anchor, scale = 1 } = effect, size = scale / 2, left = Math.round((x * 20 - anchor[0] * size) * 2) / 2, top = Math.round(((y - lift) * 20 - anchor[1] * size) * 2) / 2;
     const image = this.sprites.image(effect.sheet);
@@ -571,6 +672,82 @@ export class CanvasRenderer {
     return t;
   }
   text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ink(); c.font = `600 ${size}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
+  /**
+   * A fallen body's parts: small cogs, bolts, springs and plates of its colour thrown away from F2, arcing up,
+   * bouncing once on the floor and fading. `fx.value` is how many; each piece's path is fixed by its effect's id.
+   */
+  drawParts(fx, x, y, t) {
+    let seed = 7; for (const ch of String(fx.id)) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+    const rand = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0; return seed / 4294967296; };
+    const scale = fx.big ? 2.1 : 1.5, c = this.ctx, fade = t > 0.7 ? 1 - (t - 0.7) / 0.3 : 1;
+    c.save(); c.globalAlpha *= fade;
+    for (let i = 0; i < fx.value; i++) {
+      // Most fly on, away from F2; every fourth scatters any way.
+      const spread = i % 4 === 3 ? (rand() * 2 - 1) * Math.PI : (rand() * 2 - 1) * 0.9, dir = (fx.angle ?? 0) + spread;
+      const reach = (22 + rand() * 34) * scale, height = (16 + rand() * 22) * scale, spin = (rand() * 2 - 1) * 14;
+      const travel = 1 - (1 - Math.min(1, t * 1.25)) ** 2, d = reach * travel;
+      // Up and down once, then a small hop, then lying still.
+      const first = 0.55, hop = (t - first) / 0.25;
+      const lift = t < first ? 4 * height * (t / first) * (1 - t / first) : t < 0.8 ? 4 * height * 0.22 * hop * (1 - hop) : 0;
+      const px = x + Math.cos(dir) * d, py = y - 12 * scale * (1 - travel) + Math.sin(dir) * d * 0.55 - lift, turn = spin * Math.min(t, 0.8);
+      const kind = i % 4;
+      if (kind === 0) { this.gear(px, py, 2.6 * scale, '#c79a3e', turn); continue; }
+      c.save(); c.translate(px, py); c.rotate(turn);
+      if (kind === 1) { this.rect(-2.5 * scale, -1 * scale, 5 * scale, 2 * scale, '#8a8f9c'); this.rect(-3 * scale, -1.5 * scale, 1.5 * scale, 3 * scale, '#5c6170'); }
+      else if (kind === 2) { c.strokeStyle = '#b8bcc6'; c.lineWidth = 1.2; c.beginPath(); for (let k = 0; k <= 12; k++) { const a = k / 12 * TAU * 2; c.lineTo(Math.cos(a) * 1.8 * scale, (k * 0.5 - 3) * scale); } c.stroke(); }
+      else { this.rect(-2 * scale, -2 * scale, 4 * scale, 3.5 * scale, fx.color); this.rect(-2 * scale, -2 * scale, 4 * scale, 1, '#2b3345'); }
+      c.restore();
+    }
+    c.restore();
+  }
+  /**
+   * Where a fusion strikes, flashed on the floor the way action games show the player's own blast: its rings burst
+   * out to the true reach as it goes off and are gone within a fifth of a second, and each later blow sends one faint
+   * ring out to the rim. Nothing stays on the floor in between; the blast's own picture carries it (2026-11-06).
+   */
+  drawFusionFloors() {
+    const g = this.game, c = this.ctx, ease = t => 1 - (1 - t) ** 2;
+    for (const cast of g.s.casts) {
+      if (!cast.fusion || cast.derived || cast.done || !FLOOR_SHAPES.has(cast.shape)) continue;
+      // Targeted fusions go off once they have gathered.
+      const start = ['target', 'orb'].includes(cast.shape) ? cast.delay || 0 : 0;
+      if (cast.age < start) continue;
+      const [a, b = a] = (cast.elements || []).map(id => ELEMENT_TINTS[id] || '#fff4cd'), x = cast.x * 20, y = cast.y * 20;
+      const flash = (cast.age - start) / FLOOR_FLASH_SECONDS;
+      const since = cast.pulse > 0 ? cast.age - (cast.next - (cast.interval || 0)) : Infinity, wave = Math.min(1, since / FLOOR_WAVE_SECONDS);
+      // The rings of this frame: the opening flash (both elements, with a brief glow on the floor), then each blow's wave.
+      const bursts = [];
+      if (flash < 1) bursts.push({ grow: 0.55 + 0.45 * ease(flash), alpha: 1 - flash * flash, both: true, glow: 0.2 * (1 - flash) });
+      else if (wave < 1) bursts.push({ grow: 0.3 + 0.7 * ease(wave), alpha: 0.45 * (1 - wave) });
+      if (!bursts.length) continue;
+      // A round reach uses the PixelLab rings (art/fx/marks/ring-fusion-*): the first element's outside, the second's inside.
+      const rings = (cast.elements || []).map(id => FUSION_RINGS[id]).filter(name => name && this.mark(name));
+      if (cast.shape !== 'clamp' && rings.length) {
+        const [outer, inner = outer] = rings, r = cast.radius * 20, size = 2 * r * RING_SPAN;
+        for (const { grow, alpha, both, glow } of bursts) {
+          if (glow) { c.save(); c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.arc(x, y, r * grow, 0, TAU); c.fill(); c.restore(); }
+          this.drawMark(outer, x, y, size * grow, { alpha });
+          if (both && inner !== outer) this.drawMark(inner, x, y, size * RING_INNER * grow, { alpha: 0.85 * alpha });
+        }
+        continue;
+      }
+      // The clamp's box (and any ring still loading): flat-colour lines, as the pixel art around it.
+      c.save(); c.translate(x, y);
+      if (cast.shape === 'clamp') c.rotate(cast.angle);
+      const outline = grow => {
+        c.beginPath();
+        if (cast.shape === 'clamp') { const l = cast.halfLength * 20 * grow, w = cast.halfWidth * 20 * grow; c.rect(-l, -w, l * 2, w * 2); }
+        else c.arc(0, 0, cast.radius * 20 * grow, 0, TAU);
+      };
+      for (const { grow, alpha, both, glow } of bursts) {
+        if (glow) { c.globalAlpha = glow; c.fillStyle = a; outline(grow); c.fill(); }
+        c.globalAlpha = 0.45 * alpha; c.strokeStyle = '#2b3345'; c.lineWidth = 2; outline(grow * 1.03); c.stroke();
+        c.globalAlpha = alpha; c.strokeStyle = a; c.lineWidth = 3; outline(grow); c.stroke();
+        if (both) { c.globalAlpha = 0.8 * alpha; c.strokeStyle = b; c.lineWidth = 2; outline(grow * 0.93); c.stroke(); }
+      }
+      c.restore();
+    }
+  }
   gear(x, y, radius, color, rotation = 0) {
     const c = this.ctx; c.save(); c.translate(x, y); c.rotate(rotation);
     for (let i = 0; i < 8; i++) { c.rotate(Math.PI / 4); this.rect(-radius * 0.2, -radius * 1.2, radius * 0.4, radius * 0.55, color); }
@@ -694,9 +871,11 @@ export class CanvasRenderer {
     const beat = Math.floor((this.game.s.time - enemy.tell.started) / TELL_BLINK_SECONDS);
     return beat < TELL_BLINKS * 2 && beat % 2 === 0;
   }
-  drawAlert(enemy, top) {
-    const x = enemy.x * 20;
+  drawAlert(enemy, top, size = 1) {
+    const x = enemy.x * 20, c = this.ctx;
+    c.save(); c.translate(x, top - 8); c.scale(size, size); c.translate(-x, -(top - 8));
     this.rect(x - 4, top - 15, 8, 14, '#2b3345'); this.rect(x - 1.5, top - 13, 3, 6, '#ffd257'); this.rect(x - 1.5, top - 6, 3, 2, '#ffd257');
+    c.restore();
   }
   /** A long band along a line, filled and outlined in the current colours. */
   lanePath([[ax, ay], [bx, by]], halfWidth, fill) {
@@ -731,25 +910,49 @@ export class CanvasRenderer {
   }
   /** The soldiers of the marching line, walking in step, with their gap. */
   /** Parades: files of toy soldiers walking down their carpets, one place left empty. */
-  drawParades() {
-    const g = this.game;
-    for (const parade of g.s.parades || []) for (const body of g.paradeBodies(parade)) {
-      const direction = nearestDirection(body.heading), clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
-      if (!(clip && this.drawSprite(body.x * 20, body.y * 20, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(body.x * 20 - 7, body.y * 20 - 26, 14, 26, '#dc8b83');
-    }
-  }
-  drawColumn() {
-    const g = this.game, line = g.columnLine;
-    if (!line) return;
-    const { a, b, gapA, gapB } = line, { start, end } = g.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), direction = nearestDirection(heading);
-    const clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
-    for (const [from, to] of [[a, gapA], [gapB, b]]) {
-      const length = Math.hypot(to[0] - from[0], to[1] - from[1]), count = Math.max(1, Math.round(length / COLUMN_SPACING_UNITS));
-      for (let i = 0; i <= count; i++) {
-        const x = (from[0] + (to[0] - from[0]) * i / count) * 20, y = (from[1] + (to[1] - from[1]) * i / count) * 20;
-        if (!(clip && this.drawSprite(x, y, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(x - 7, y - 26, 14, 26, '#dc8b83');
+  /**
+   * Every toy soldier Brass sends marching (his parades and his column), as { x, y, direction } in floor units. They
+   * are sorted in among the bodies by depth, so one passing behind F2 is hidden by F2 and one in front covers F2.
+   */
+  marchers() {
+    const g = this.game, out = [];
+    for (const parade of g.s.parades || []) for (const body of g.paradeBodies(parade)) out.push({ x: body.x, y: body.y, direction: nearestDirection(body.heading) });
+    const line = g.columnLine;
+    if (line) {
+      const { a, b, gapA, gapB } = line, { start, end } = g.s.column, direction = nearestDirection(Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]));
+      for (const [from, to] of [[a, gapA], [gapB, b]]) {
+        const length = Math.hypot(to[0] - from[0], to[1] - from[1]), count = Math.max(1, Math.round(length / COLUMN_SPACING_UNITS));
+        for (let i = 0; i <= count; i++) out.push({ x: from[0] + (to[0] - from[0]) * i / count, y: from[1] + (to[1] - from[1]) * i / count, direction });
       }
     }
+    return out;
+  }
+  /** 빙풍 절단's blade: the PixelLab ice crescent turned to its heading, at waist height (a code-drawn one until it loads). */
+  drawCrescent(cast) {
+    if (this.drawFxFrame('frostCrescent', this.visualTime * 14, cast.x * 20, cast.y * 20 - CRESCENT_LIFT, { angle: cast.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE })) return;
+    const c = this.ctx, R = cast.halfWidth * 20, T = cast.thickness * 20, ice = ['#1d4f7a', '#2f7fae', '#5fb9d8', '#9fe3f0', '#e9fbff'];
+    c.save(); c.translate(cast.x * 20, cast.y * 20 - 14); c.scale(1, 0.72); c.rotate(cast.angle);
+    c.lineCap = 'round';
+    for (let i = 0; i < 6; i++) { const oy = (i - 2.5) * R * 0.3, len = R * (0.9 + ((i * 37) % 10) / 12); c.strokeStyle = `rgba(214, 240, 232, ${0.75 - Math.abs(i - 2.5) * 0.12})`; c.lineWidth = 2; c.beginPath(); c.moveTo(-len - T, oy); c.lineTo(-T * 0.6, oy); c.stroke(); }
+    for (let i = 0; i < ice.length; i++) {
+      const t = T * (1 - i / ice.length);
+      c.beginPath(); c.arc(0, 0, R, -1.25, 1.25); c.arc(-t, 0, R - t * 0.2, 1.1, -1.1, true); c.closePath(); c.fillStyle = ice[i]; c.fill();
+    }
+    c.fillStyle = '#ffffff'; for (const [sx, sy] of [[R * 0.35, -R * 0.75], [R * 0.3, R * 0.8], [R * 0.95, 0]]) { c.fillRect(sx - 1, sy - 4, 2, 8); c.fillRect(sx - 4, sy - 1, 8, 2); }
+    c.restore();
+  }
+  /** The frost the blade leaves on the paving behind it, fading. */
+  drawCrescentFrost(cast) {
+    const c = this.ctx, fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), reach = cast.travel ?? 0;
+    for (let d = cast.startDistance || 0; d < reach; d += 0.35) {
+      const left = 1 - (cast.age - (cast.delay || 0) - d / cast.speed) / 1.2;
+      if (left <= 0) continue;
+      for (const side of [-0.6, 0, 0.6]) { const k = (d * 7 + side * 13) % 1; c.fillStyle = `rgba(233, 251, 255, ${Math.min(0.85, left)})`; c.fillRect(Math.round((cast.startX + fx * d - fy * side * cast.halfWidth * (0.6 + k * 0.4)) * 20), Math.round((cast.startY + fy * d + fx * side * cast.halfWidth * (0.6 + k * 0.4)) * 20), 3, 2); }
+    }
+  }
+  drawMarcher({ x, y, direction }) {
+    const clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
+    if (!(clip && this.drawSprite(x * 20, y * 20, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(x * 20 - 7, y * 20 - 26, 14, 26, '#dc8b83');
   }
   /** What a running boss pattern needs on screen: who is listening, and who must hold still. */
   drawBossState() {
@@ -780,25 +983,30 @@ export class CanvasRenderer {
     if (!tell) return;
     const c = this.ctx, g = this.game, ai = g.config.bossAI[enemy.type], x = tell.x * 20, y = tell.y * 20;
     const progress = Math.min(1, (g.s.time - tell.started) / (tell.until - tell.started));
-    // Only bosses mark the floor with a filled shape, and even theirs stays faint; the outline carries it.
-    c.save(); c.strokeStyle = '#b85863'; c.fillStyle = `rgba(190, 81, 95, ${enemy.boss ? 0.05 + progress * 0.08 : 0})`; c.lineWidth = 1.5; c.setLineDash([4, 3]);
-    // The danger is painted on the floor: red hatching (a tiled picture) inside a dashed edge with an ink shadow under it.
-    const hatch = this.mark('dangerPaint'), pattern = hatch && (this.hatchPattern?.image === hatch ? this.hatchPattern.pattern : (this.hatchPattern = { image: hatch, pattern: c.createPattern(hatch, 'repeat') }).pattern);
-    const paint = () => { c.fill(); if (pattern) { c.save(); c.globalAlpha = 0.16 + progress * 0.24; c.fillStyle = pattern; c.fill(); c.restore(); } };
-    const edge = () => { c.save(); c.setLineDash([]); c.globalAlpha = 0.4; c.strokeStyle = '#2b3345'; c.lineWidth += 2; c.stroke(); c.restore(); c.stroke(); };
-    const sector = (radius, degrees) => { c.beginPath(); c.moveTo(x, y); c.arc(x, y, radius * 20, tell.angle - degrees * Math.PI / 360, tell.angle + degrees * Math.PI / 360); c.closePath(); paint(); edge(); };
-    const box = (length, width) => { c.translate(x, y); c.rotate(tell.angle); c.beginPath(); c.rect(0, -width, length, width * 2); paint(); edge(); };
-    const ring = (cx, cy, radius) => { c.beginPath(); c.arc(cx, cy, radius * 20, 0, TAU); paint(); edge(); c.setLineDash([]); c.beginPath(); c.arc(cx, cy, radius * 20, -Math.PI / 2, -Math.PI / 2 + TAU * progress); c.lineWidth = 3; c.stroke(); };
+    // The whole reach washed red (see TELL_RED); lanes and glyphs still use the plain red line below.
+    c.save(); c.strokeStyle = '#b85863'; c.lineWidth = 2.5;
+    let tone = TELL_RED;
+    const paint = () => this.washFloor(enemy.boss ? TELL_BOSS_WASH : TELL_WASH, tone);
+    // The deeper red filling from the attacker outward; the blow lands as it reaches the edge.
+    const fillTo = shape => { c.beginPath(); shape(); this.washFloor(TELL_FILL, tone); };
+    const sector = (radius, degrees) => { const from = tell.angle - degrees * Math.PI / 360, to = tell.angle + degrees * Math.PI / 360; c.beginPath(); c.moveTo(x, y); c.arc(x, y, radius * 20, from, to); c.closePath(); paint(); fillTo(() => { c.moveTo(x, y); c.arc(x, y, radius * 20 * progress, from, to); c.closePath(); }); };
+    const box = (length, width) => { c.translate(x, y); c.rotate(tell.angle); c.beginPath(); c.rect(0, -width, length, width * 2); paint(); fillTo(() => c.rect(0, -width, length * progress, width * 2)); };
+    // How wide a body's path hurts: its own radius and the player's.
+    const reach = (radius = enemy.radius) => (radius + g.config.arena.playerRadius) * 20;
+    const ring = (cx, cy, radius) => { c.beginPath(); c.arc(cx, cy, radius * 20, 0, TAU); paint(); fillTo(() => c.arc(cx, cy, radius * 20 * progress, 0, TAU)); };
     // A count beside a glyph: '×3' stomps, '×5' stickers.
     const counted = (name, fallback, count, gx, gy) => { if (this.mark(name)) { this.overlay(() => this.drawMark(name, gx - 7, gy - 4, 24)); this.text(`×${count}`, gx + 6, gy + 2, '#b85863', 10, 'left'); } else this.text(fallback, gx, gy, '#b85863', 11); };
     switch (tell.type) {
       case 'fan': case 'fanSecond': sector(ai.fanRange, ai.fanDegrees); break;
-      case 'dash': this.line(x, y, x + Math.cos(tell.angle) * enemy.dashDistance * 20, y + Math.sin(tell.angle) * enemy.dashDistance * 20, '#b85863', 1); break;
+      // A plain swing (nutcracker, guard): the cone it sweeps, as wide and as far as the blow.
+      case 'melee': sector(enemy.attackRange, g.config.rules.enemyMeleeArc); break;
+      case 'dash': box(enemy.dashDistance * 20, reach()); this.glyph('chevrons', enemy.dashDistance * 10, 3, '› › ›'); break;
       case 'claw': {
         const range = ai.clawLength, width = ai.clawWidth * 20;
         box(range * 20, width); this.glyph('chevrons', range * 10, 3, '› › ›'); break;
       }
-      case 'shot': this.line(x, y, tell.targetX * 20, tell.targetY * 20, '#b85863', 1); this.circle(x, y - 14, 1 + progress * 3, '#ffd257'); break;
+      // The gold spark at the bell keeps its own fill off the band.
+      case 'shot': this.overlay(() => this.circle(x, y - 14, 1 + progress * 3, '#ffd257')); box(enemy.attackRange * 20, reach(g.config.rules.enemyProjectileRadius)); break;
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.glyph('magnet', tell.targetX * 20, tell.targetY * 20 + 3, '↓ 吸 ↓', '#b85863', 10); break;
       case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.glyph('suction', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '‹ ‹ 吸'); break;
       case 'stickers': counted('sticker', '불량 ×' + ai.stickerCount, ai.stickerCount, x, y - 46); break;
@@ -809,11 +1017,11 @@ export class CanvasRenderer {
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
       case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.glyph('alert', tell.targetX * 20, tell.targetY * 20 + 4, '!', '#b85863', 14); break;
-      case 'spin': this.line(x, y, x + Math.cos(tell.angle) * 80, y + Math.sin(tell.angle) * 80, '#b85863', 1.5); this.text('↻', x, y - 18, '#b85863', 12); break;
-      case 'beat': c.strokeStyle = '#d9a43a'; ring(x, y, enemy.beatRadius); break;
+      case 'spin': this.text('↻', x, y - 18, '#b85863', 12); box(enemy.attackRange * 20, reach()); this.glyph('chevrons', enemy.attackRange * 10, 3, '» » »'); break;
+      case 'beat': tone = '#e0a83a'; ring(x, y, enemy.beatRadius); tone = TELL_RED; break;
       case 'thrust': case 'thrust2': {
         const length = (tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength) * 20, width = enemy.thrustWidth * 20;
-        c.fillStyle = 'rgba(0, 0, 0, 0)'; box(length, width); break;
+        box(length, width); break;
       }
       case 'doubleWave': case 'eliteWave': ring(x, y, enemy.attackRange + (tell.type === 'eliteWave' ? enemy.followupRadiusBonus : 0)); break;
       case 'march': {
@@ -826,11 +1034,11 @@ export class CanvasRenderer {
       case 'crane':
         // Rings first: the crates change the fill colour the rings share.
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.craneRadius);
-        for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170; if (!this.drawFxFrame('crate', 0, dx * 20, top + 16)) { this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); this.rect(dx * 20 - 8, top, 16, 3, '#c79a5e'); } }
+        this.overlay(() => { for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170; if (!this.drawFxFrame('crate', 0, dx * 20, top + 16)) { this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); this.rect(dx * 20 - 8, top, 16, 3, '#c79a5e'); } } });
         break;
       case 'crateToss':
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.crateTossRadius);
-        for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170, art = this.mapImages?.get(HAZARD_ART.crate); if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, dx * 20 - 12, top - 10, 24, 26); c.restore(); } else this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); }
+        this.overlay(() => { for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170, art = this.mapImages?.get(HAZARD_ART.crate); if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, dx * 20 - 12, top - 10, 24, 26); c.restore(); } else this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); } });
         break;
       case 'parade':
         c.setLineDash([]); c.strokeStyle = '#c43c36'; c.fillStyle = 'rgba(196, 60, 54, 0.22)'; c.lineWidth = 3;
@@ -858,15 +1066,23 @@ export class CanvasRenderer {
     const hub = ['hub', 'registration', 'returned', 'opening'].includes(s.mode);
     const map = hub ? g.hubMap : g.map, mapImage = map && this.mapImages?.get(map.background), size = map?.size || SCREEN_UNITS;
     // Panels over the hub show the spot the player will stand on; everywhere else follows the body.
-    const focus = hub && !g.village ? map?.spawn : g.p;
+    const body = hub && !g.village ? map?.spawn : g.p;
+    // In a fight the view leans a little the way F2 aims (as in Hades), easing over a quarter second, so more of what
+    // is being hit is on screen. Nothing leans in town, in talk, or with reduced motion.
+    const lead = this.lead ??= { x: 0, y: 0 }, fighting = ['combat', 'practice'].includes(s.mode) && !this.talking && !s.profile.settings.reducedMotion;
+    const want = fighting ? { x: Math.cos(g.p.angle) * CAMERA_LEAD[0], y: Math.sin(g.p.angle) * CAMERA_LEAD[1] } : { x: 0, y: 0 }, ease = 1 - Math.exp(-delta / CAMERA_LEAD_SECONDS);
+    lead.x += (want.x - lead.x) * ease; lead.y += (want.y - lead.y) * ease;
+    const focus = body && fighting ? { x: body.x + lead.x, y: body.y + lead.y } : body;
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
     const [shakeX, shakeY] = this.shakeOffset();
     // The canvas is backed at screen resolution; k maps the 1120x640 layout onto it, so nothing is stretched twice.
-    const pulseLeft = Math.max(0, (this.pulseUntil || 0) - performance.now()) / CRIT_PULSE_MS, lean = 1 + CRIT_ZOOM * pulseLeft;
+    const pulseLeft = Math.max(0, (this.pulseUntil || 0) - performance.now()) / CRIT_PULSE_MS, punch = this.fusionLeft(FUSION_ZOOM_MS);
+    // A fusion's lean in rises and settles back within its time.
+    const lean = 1 + CRIT_ZOOM * pulseLeft + (punch > 0 ? FUSION_ZOOM * Math.sin(Math.PI * (1 - punch)) : 0);
     const k = this.backing, zoom = 2 * CAMERA_ZOOM * k * lean;
     if (this.letters) { const t = this.letters.getContext('2d'); t.setTransform(1, 0, 0, 1, 0, 0); t.clearRect(0, 0, this.letters.width, this.letters.height); }
     // A crit leans in toward the middle of the screen.
-    const centreX = pulseLeft ? this.canvas.width / 2 * (1 - lean) : 0, centreY = pulseLeft ? this.canvas.height / 2 * (1 - lean) : 0;
+    const centreX = lean !== 1 ? this.canvas.width / 2 * (1 - lean) : 0, centreY = lean !== 1 ? this.canvas.height / 2 * (1 - lean) : 0;
     c.setTransform(zoom, 0, 0, zoom, Math.round((-this.camera.x * PIXELS_PER_UNIT + shakeX) * k * lean + centreX), Math.round((-this.camera.y * PIXELS_PER_UNIT + shakeY) * k * lean + centreY));
     // Painted backgrounds are resampled smoothly; sprites below stay on hard pixels.
     if (mapImage) {
@@ -878,6 +1094,9 @@ export class CanvasRenderer {
       if (x1 > x0 && y1 > y0) c.drawImage(mapImage, x0 * ux, y0 * uy, (x1 - x0) * ux, (y1 - y0) * uy, x0 * 20, y0 * 20, (x1 - x0) * 20, (y1 - y0) * 20);
     } else this.scenery(hub);
     c.imageSmoothingEnabled = false;
+    // A fusion dims the floor for a moment, so the blast and the bodies stand out against it.
+    const dim = this.fusionLeft(FUSION_DIM_MS);
+    if (dim > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = FUSION_DIM * Math.min(1, dim * 2); c.fillStyle = '#0d1020'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (s.mode === 'shop' && !mapImage) { this.building(217, 113, 110, 69, '#d9c49a', '볼트의 부품 상점', '#88aaa0'); this.drawDoll(273, 212, { type: 'moru', color: '#c7a968' }); }
     const yardExit = s.mode === 'practice' ? map?.exit.at : null;
     const goal = s.mode === 'route' ? g.portal : yardExit ? { x: yardExit[0], y: yardExit[1] } : ['intro', 'registration'].includes(s.mode) ? g.tutorial.goal : null;
@@ -889,15 +1108,23 @@ export class CanvasRenderer {
     for (const spot of [portal, goal, streetPortal]) if (spot) this.marker(spot);
     this.minimapPlace = { map, mapImage, size, goal: goal || portal || streetPortal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     this.overlays = [];
+    // The floor, bottom to top: flat hazards (plates, saw rails), where F2's fusions and ground skills reach, and over
+    // them every enemy warning, so a blast of F2's own never hides what is about to hit her.
+    for (const h of g.roomHazards) if (!h.gone && GROUND.has(h.kind)) this.drawHazard(h);
+    for (const fx of castFx) if (fx.effect.ground) this.drawCastEffect(fx);
+    // Reaches painted on the floor stop where the floor does: not over planters, walls or stalls.
+    const floorClip = this.clipToFloor(mapImage && map);
+    this.drawFusionFloors();
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
     // Marks painted on the floor (where a skill lands, a blast's reach, a hatch) lie under every body, like the tells.
     for (const fx of s.effects) if (fx.type === 'friendlyTell' || fx.type === 'danger') { const fraction = Math.min(1, (s.time - fx.created) / fx.duration); if (fx.type === 'danger') this.drawDanger(fx, fx.x * 20, fx.y * 20, fraction); else this.drawLandingMark(fx, fx.x * 20, fx.y * 20, fraction); }
+    if (floorClip) c.restore();
     // Bodies hastened and hardened by the drum: a gold ring at the feet and red arrows rising while it lasts.
+    for (const fx of s.effects) if (fx.look && GROUND_LOOKS.has(fx.look)) { c.save(); this.drawLook(fx, fx.x * 20, fx.y * 20, Math.min(1, (s.time - fx.created) / fx.duration)); c.restore(); }
     for (const enemy of s.enemies) if (enemy.hp > 0 && enemy.beatUntil > s.time) this.drawFxFrame('drumBuff', this.visualTime * 12 + enemy.x, enemy.x * 20, enemy.y * 20, { alpha: 0.9 });
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
+    for (const cast of s.casts) if (cast.shape === 'crescent') this.drawCrescentFrost(cast);
     for (const cast of s.casts) {
-      // Shards broken off a frost bolt: small spinning ice chips.
-      if (cast.shape === 'projectile') for (const bit of cast.projectiles) if (bit.shard && !bit.done) { if (this.drawFxFrame('frostBolt', this.visualTime * 12, bit.x * 20, bit.y * 20 - 8, { angle: bit.angle, sx: 0.55, sy: 0.55 })) continue; const x = bit.x * 20, y = bit.y * 20 - 8, r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore(); }
       if (cast.shape === 'patch') {
         // A fire patch from the ember trail: a low flickering flame on the floor, fading as its pulses run out.
         const x = cast.x * 20, y = cast.y * 20, life = 1 - cast.pulse / cast.hits, flick = Math.sin(this.visualTime * 18 + cast.x * 7) * 1.5;
@@ -909,9 +1136,11 @@ export class CanvasRenderer {
         // A charge left on an enemy: a ring that closes in as the burst comes.
         const left = Math.max(0, cast.next - cast.age), share = left / (cast.delayed?.delay || 3) || left / 3, x = cast.x * 20, y = cast.y * 20 - 10;
         // A brass dial over the body whose gold hand sweeps round to the burst; a closing ring while the dial is missing.
-        if (this.drawMark('dial', x, y - 28, 18)) { const a = -Math.PI / 2 + TAU * (1 - Math.min(1, share)); c.save(); c.lineCap = 'round'; for (const [w, col] of [[3, '#2b3345'], [1.5, '#ffe086']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, y - 28); c.lineTo(x + Math.cos(a) * 6, y - 28 + Math.sin(a) * 6); c.stroke(); } c.restore(); }
-        else { c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore(); }
-        if (!this.drawFxFrame('chargeArcs', this.visualTime * 12, x, y - 8)) { c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); }
+        this.overlay(() => {
+          if (this.drawMark('dial', x, y - 28, 18)) { const a = -Math.PI / 2 + TAU * (1 - Math.min(1, share)); c.save(); c.lineCap = 'round'; for (const [w, col] of [[3, '#2b3345'], [1.5, '#ffe086']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, y - 28); c.lineTo(x + Math.cos(a) * 6, y - 28 + Math.sin(a) * 6); c.stroke(); } c.restore(); }
+          else { c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore(); }
+          if (!this.drawFxFrame('chargeArcs', this.visualTime * 12, x, y - 8)) { c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); }
+        });
       }
       if(cast.shape==='clamp'){
         const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
@@ -942,12 +1171,10 @@ export class CanvasRenderer {
         if (!this.drawFxFrame('stompRing', this.visualTime * 12, cast.x * 20, cast.y * 20, { sx: k, sy: k * 0.62 / 0.4, alpha })) { c.save(); c.globalAlpha = alpha; c.strokeStyle = '#c46a2b'; c.lineWidth = 4; c.beginPath(); c.ellipse(cast.x * 20, cast.y * 20, r, r * 0.62, 0, 0, TAU); c.stroke(); c.restore(); }
       }
       if (cast.shape === 'stickerFall') {
-        // Where the next sticker lands: a ring closing in until it hits.
-        const x = cast.x * 20, y = cast.y * 20, left = 1 - Math.min(1, cast.age / cast.warn);
-        // The striped warning ring where it lands (a dashed circle while the picture is missing), and a ring closing in.
-        const marked = this.drawMark('danger', x, y, cast.radius * 40, { flat: 0.55, alpha: 0.55 + 0.35 * (1 - left) });
-        c.save(); c.strokeStyle = '#b85863'; c.lineWidth = 1.5; if (!marked) { c.setLineDash([4, 3]); c.beginPath(); c.arc(x, y, cast.radius * 20, 0, TAU); c.stroke(); }
-        c.setLineDash([]); c.lineWidth = 2; c.beginPath(); if (marked) c.ellipse(x, y, cast.radius * 20 * (0.25 + left * 0.75), cast.radius * 11 * (0.25 + left * 0.75), 0, 0, TAU); else c.arc(x, y, cast.radius * 20 * (0.25 + left * 0.75), 0, TAU); c.stroke(); c.restore();
+        // Where the next sticker lands: the red danger disc, filling until it hits.
+        const clipped = this.clipToFloor(mapImage && map);
+        this.dangerDisc(cast.x * 20, cast.y * 20, cast.radius * 20, Math.min(1, cast.age / cast.warn));
+        if (clipped) c.restore();
       }
       if (cast.shape === 'sticker') {
         // A paper 'defective' label stuck to the floor, fading as it peels.
@@ -966,12 +1193,6 @@ export class CanvasRenderer {
           for (let i = 0; i < 3; i++) { c.strokeStyle = '#9d74a1'; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, ((cast.age + i * 0.5) % 1.5) / 1.5 * cast.radius * 20, 0, TAU); c.stroke(); }
         }
       }
-      for (const bullet of cast.projectiles || []) if (!bullet.done) {
-        // Frost bolts fly as ice lances pointed along their path; their broken-off shards are drawn above.
-        if (bullet.shard) continue;
-        if (cast.skillId === 'frostBolt' && this.drawFxFrame('frostBolt', this.visualTime * 12, bullet.x * 20, bullet.y * 20 - 8, { angle: bullet.angle })) continue;
-        this.circle(bullet.x * 20, bullet.y * 20, 4, cast.color); this.rect(bullet.x * 20 - 2, bullet.y * 20 - 2, 4, 4, '#e7fbec');
-      }
     }
     const onScreen = ({ polygon }) => polygon.some(([x, y]) => x > this.camera.x - 4 && x < this.camera.x + SCREEN_UNITS[0] + 4 && y > this.camera.y - 4 && y < this.camera.y + SCREEN_UNITS[1] + 4);
     const occluders = mapImage ? (map.occluders || []).filter(onScreen).map(o => ({ y: o.baseY, occluder: o })) : [];
@@ -980,17 +1201,26 @@ export class CanvasRenderer {
     let playerHidden = 0;
     const props = mapImage ? (map.props || []).map(prop => ({ y: prop.y, prop })) : [];
         // Effects sort just ahead of a body at the same spot, so a burst never covers the caster's arms and legs; ground effects lie under everyone.
-    const effects = castFx.map(fx => ({ y: fx.effect.ground ? -Infinity : fx.y - 0.01, fx }));
+    const effects = castFx.filter(fx => !fx.effect.ground).map(fx => ({ y: fx.y - 0.01, fx }));
+    // F2's shots fly at body height, so they pass in front of bodies behind them and behind bodies in front.
+    const bolts = s.casts.flatMap(cast => (cast.projectiles || []).filter(bullet => !bullet.done).map(bullet => ({ y: bullet.y, bolt: bullet, cast })));
     const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null }).map(npc => ({ y: npc.y, npc })) : [];
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
     // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
-    const hazards = g.roomHazards.filter(h => !h.gone).map(h => ({ y: GROUND.has(h.kind) ? -Infinity : h.y, hazard: h }));
-    const actors = [...hazards, ...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
+    const hazards = g.roomHazards.filter(h => !h.gone && !GROUND.has(h.kind)).map(h => ({ y: h.y, hazard: h }));
+    const actors = [...hazards, ...bolts, ...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
+    actors.push(...this.marchers().map(marcher => ({ y: marcher.y, marcher })), ...s.casts.filter(cast => cast.shape === 'crescent' && cast.age >= (cast.delay || 0) && !cast.done).map(cast => ({ y: cast.y, crescent: cast })));
+    actors.sort((a, b) => a.y - b.y);
+    // Health bars, statuses and trait names are drawn after every body and effect, so nothing walks or bursts over them.
+    const labels = [];
     for (const actor of actors) {
+      if (actor.marcher) { this.drawMarcher(actor.marcher); continue; }
+      if (actor.crescent) { this.drawCrescent(actor.crescent); continue; }
       if (actor.occluder) { this.drawOccluder(mapImage, actor.occluder.polygon, size); continue; }
       if (actor.hazard) { this.drawHazard(actor.hazard); continue; }
       if (actor.prop) { this.drawProp(actor.prop); this.coverBody(depthMask, actor.prop.x, actor.prop.y, 2, 2.6); continue; }
       if (actor.fx) { this.drawCastEffect(actor.fx); continue; }
+      if (actor.bolt) { this.drawBolt(actor.bolt, actor.cast); continue; }
       if (actor.dummy) { this.drawDummy(actor, map.dummyImage); continue; }
       if (actor.npc) { this.drawNpc(actor.npc, depthMask); continue; }
       if (actor.hubPlayer) { this.drawSprite(map.spawn.x * 20, map.spawn.y * 20, this.animator.static(-2.4), this.sprites, false, PLAYER_SCALE); this.coverBody(depthMask, map.spawn.x, map.spawn.y); continue; }
@@ -1015,25 +1245,29 @@ export class CanvasRenderer {
       }
       if (!actor.player && actor.affixes?.length && actor.hp > 0) this.drawAffixAura(actor);
       if (!actor.player && actor.affixes?.length && actor.hp > 0 && mobPose) this.drawOutline(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.boss ? BOSS_SPRITE_SCALE : 1, this.affixColors(actor));
-      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, actor.flashUntil > s.time || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
+      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20, mobPose, this.mobSprites, this.hitWhite(actor) || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       c.globalAlpha = 1;
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
-      if (!actor.player && actor.hp > 0) {
+      if (!actor.player && actor.hp > 0) labels.push(() => {
         const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) * BODY_SCALE / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
         if (!actor.boss) { const left = actor.x * 20 - width / 2; this.rect(left - 1, yy - 1, width + 2, 6, '#2b3345'); this.rect(left, yy, width, 4, '#5e4a52'); this.rect(left, yy, width * Math.max(0, actor.hp / actor.maxHp), 4, '#e0564c'); }
         if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
         if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
         this.drawStatuses(actor, actor.boss ? yy + 11 : yy - 13);
         if (actor.affixes?.length) this.drawAffixTags(actor, yy - (this.statusBadges(actor).length ? 27 : 14));
-      }
+      });
     }
-    for (const enemy of s.enemies.filter(e => e.hp > 0 && e.tell && !e.boss)) {
-      const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction);
-      this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54));
+    // A body that has just noticed F2 pops a '!' over its head and lets it fade; its attacks are warned on the floor.
+    for (const enemy of s.enemies.filter(e => e.hp > 0 && !e.boss && e.noticedAt != null && s.time - e.noticedAt < NOTICE_SECONDS)) {
+      const pose = mobPoses?.get(enemy.id), clip = pose && this.mobSprites.clip(pose.action, pose.direction), t = (s.time - enemy.noticedAt) / NOTICE_SECONDS;
+      const pop = t < 0.12 ? 0.5 + 0.7 * t / 0.12 : t < 0.2 ? 1.2 - 0.2 * (t - 0.12) / 0.08 : 1, hop = Math.sin(Math.min(1, t / 0.3) * Math.PI) * 4;
+      c.save(); c.globalAlpha = t > 0.75 ? (1 - t) / 0.25 : 1;
+      this.drawAlert(enemy, enemy.y * 20 - (clip ? clip.bodyHeight * BODY_SCALE / 2 + 21 : 54) - hop, pop);
+      c.restore();
     }
     for (const draw of this.overlays) draw();
-    this.drawColumn(); this.drawParades(); this.drawBossState();
+    this.drawBossState();
     const note = this.mapImages?.get(NOTE_ART);
     for (const bullet of s.projectiles) {
       const bx = bullet.x * 20, by = bullet.y * 20;
@@ -1058,9 +1292,9 @@ export class CanvasRenderer {
       if (spriteFx && ['crosscut', 'iceClamp'].includes(fx.type)) continue;
       // A skill with its own animated picture (every fusion, and the element skills that have one) needs no plain ring on each pulse.
       if (spriteFx && fx.type === 'ring' && fx.skill && this.castEffects.effects?.[fx.skill]) continue;
-      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
+      if (s.profile.settings.reducedMotion && ['dodge', 'hurt', 'scrap', 'parts', 'spark', 'impact', 'dust'].includes(fx.type)) continue;
       const fraction = Math.min(1, (s.time - fx.created) / fx.duration), x = fx.x * 20, y = fx.y * 20;
-      if (fx.type === 'friendlyTell' || fx.type === 'danger') continue;
+      if (fx.type === 'friendlyTell' || fx.type === 'danger' || (fx.look && GROUND_LOOKS.has(fx.look))) continue;
       // Sparks of a blow, a hurt and a dodge: painted stills that pop and fade; the old gear shape while they are missing.
       if (['spark', 'hurt', 'dodge'].includes(fx.type) && !fx.look) {
         const name = fx.type === 'spark' ? 'sparkHit' : fx.type === 'hurt' ? 'sparkHurt' : 'dust', pop = Math.min(1, fraction * 4);
@@ -1077,6 +1311,7 @@ export class CanvasRenderer {
       if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
       if (fx.type === 'beam') this.line(x, y, fx.targetX * 20, fx.targetY * 20, fx.color, 4);
       if (fx.type === 'dodge' || fx.type === 'hurt' || fx.type === 'spark') this.gear(x, y - 10, fx.value * 10 * (1 + fraction), fx.color, fraction);
+      if (fx.type === 'parts') { this.drawParts(fx, x, y, fraction); continue; }
       // Scrap flies up and out, then falls: bits of the body's colour and grey bolts.
       if (fx.type === 'scrap') for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + i * 0.37, out = fraction * (18 + (i % 3) * 7), lift = fraction * 34 - fraction * fraction * 44; this.rect(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.55 - lift, i % 4 ? 3 : 4, i % 4 ? 3 : 2, i % 3 ? fx.color : '#8a8f9c'); }
       // A blow lands: a flash and short rays along the swing, gone in a few frames.
@@ -1095,6 +1330,7 @@ export class CanvasRenderer {
       if (fx.type === 'impact') { const r = fx.value * 10 * (0.6 + fraction); c.globalAlpha *= 1 - fraction; if (!this.drawMark('sparkHit', x, y, r * 2.2 * (1 - fraction * 0.4), { angle: (fx.angle || 0) + fraction, smooth: true })) this.circle(x, y, r * 0.55 * (1 - fraction * 0.5), fx.color); for (let i = -2; i <= 2; i++) { const a = (fx.angle || 0) + i * 0.45; this.line(x + Math.cos(a) * r * 0.6, y + Math.sin(a) * r * 0.6, x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3, fx.color, 2); } }
       c.restore();
     }
+    for (const draw of labels) draw();
     if (s.mode === 'unwind') {
       const x = (this.camera.x + 18) * 20, y = (this.camera.y + 8.55) * 20;
       this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4); this.text(this.game.room?.boss === 'captainBrass' ? 'G · 태엽 감아 깨우기' : 'G · 회로 뽑기', x, y + 30, '#5c7462', 10);
@@ -1137,6 +1373,17 @@ export class CanvasRenderer {
     // The drum board goes over the room, under the screen-wide flashes.
     if (this.drumBoard) { this.drawDrumBoard(...this.drumBoard); this.drumBoard = null; }
     if (pulseLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.16 * pulseLeft; c.fillStyle = '#ffd257'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
+    // A fusion lights the screen's edges in its two elements, one from each side, fading out.
+    const edge = this.fusionLeft(FUSION_EDGE_MS);
+    if (edge > 0 && this.fusionTints?.length) {
+      const W = this.canvas.width, H = this.canvas.height, depth = H * 0.4, [left, right = left] = this.fusionTints;
+      c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.8 * edge; c.globalCompositeOperation = 'lighter';
+      for (const [x0, x1, color] of [[0, depth, left], [W, W - depth, right]]) { const g = c.createLinearGradient(x0, 0, x1, 0); g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(Math.min(x0, x1), 0, depth, H); }
+      // Top and bottom: the left element's colour on the left half, the right one's on the right, blending at the middle.
+      c.drawImage(this.fusionBand(W, Math.round(depth * 0.6), left, right), 0, 0);
+      c.save(); c.translate(0, H); c.scale(1, -1); c.drawImage(this.fusionBand(W, Math.round(depth * 0.6), left, right), 0, 0); c.restore();
+      c.restore();
+    }
     const flashLeft = (this.flashUntil || 0) - performance.now();
     if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (this.view) {

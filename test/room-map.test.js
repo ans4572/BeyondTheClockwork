@@ -114,6 +114,13 @@ test('entering the room spreads the first wave over reachable floor, away from t
   assert.equal(g.obstacles.length, g.s.hazards.filter(h => ['crate', 'fence', 'musicbox'].includes(h.kind)).length);
 });
 
+test('a waiting body notes when it notices the player, for the warning mark over its head', () => {
+  const g = run(), enemy = g.s.enemies[0];
+  assert.equal(enemy.noticedAt, undefined);
+  g.s.time = 5; g.rouse(enemy);
+  assert.equal(enemy.aggro, true); assert.equal(enemy.noticedAt, 5);
+});
+
 test('bodies stop at the walkable edge in every direction', () => {
   const g = run(), radius = slice.arena.playerRadius;
   for (let i = 0; i < 16; i++) {
@@ -150,7 +157,8 @@ test('scenery repaints over a body behind it and not over one in front', () => {
   r.drawDoll = () => calls.push('player');
   const occludersAfterPlayer = () => calls.slice(calls.indexOf('player')).filter(name => name === 'clip').length;
   g.p.y = 5; order();
-  assert.equal(calls.filter(name => name === 'clip').length, map.occluders.length);
+  // One clip keeps the danger floors on the walkable floor; the rest are the occluders.
+  assert.equal(calls.filter(name => name === 'clip').length, map.occluders.length + 1);
   const behind = occludersAfterPlayer();
   g.p.y = 14.5; order();
   assert.ok(behind > occludersAfterPlayer());

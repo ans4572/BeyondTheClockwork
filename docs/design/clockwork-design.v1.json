@@ -33,31 +33,31 @@
     "hurtInvulnerability": 0.55,
     "dodge": {
       "distance": 3,
-      "duration": 0.18,
+      "duration": 0.2,
       "invincibility": 0.16,
-      "cooldown": 0.75,
+      "cooldown": 0.45,
       "charges": 1
     },
     "combo": [
       {
         "damage": 16,
-        "windup": 0.12,
-        "active": 0.15,
-        "recovery": 0.15,
+        "windup": 0.106,
+        "active": 0.132,
+        "recovery": 0.132,
         "range": 2.15
       },
       {
         "damage": 18,
-        "windup": 0.135,
-        "active": 0.165,
-        "recovery": 0.18,
+        "windup": 0.119,
+        "active": 0.145,
+        "recovery": 0.158,
         "range": 2.15
       },
       {
         "damage": 28,
-        "windup": 0.21,
-        "active": 0.21,
-        "recovery": 0.3,
+        "windup": 0.185,
+        "active": 0.185,
+        "recovery": 0.264,
         "range": 2.55
       }
     ]
@@ -1237,7 +1237,7 @@
       "hits": 4,
       "damagePerHit": 24,
       "totalDirectDamage": 96,
-      "radius": 3,
+      "radius": 3.6,
       "effect": "고온·냉각을 번갈아 터뜨리는 원형 4연타; 화상과 둔화",
       "pairKey": "fire+ice"
     },
@@ -1386,26 +1386,25 @@
       "name": "빙풍 절단",
       "cooldown": 22,
       "energyCost": 65,
-      "hits": 2,
-      "damagePerHit": 50,
+      "hits": 1,
+      "damagePerHit": 100,
       "totalDirectDamage": 100,
-      "radius": 0.45,
-      "effect": "빈 왼손에서 두 초승달 칼날을 한 번에 X자로 동시 방출; 둔화와 풍압",
+      "radius": 1.4,
+      "effect": "두꺼운 얼음 초승달 하나를 바람에 실어 앞으로 날림; 지나는 길의 적을 한 번씩 벰; 둔화와 풍압",
       "pairKey": "ice+wind",
-      "range": 5,
+      "range": 6,
       "legacyIds": [
         "blizzardFan"
       ],
       "behavior": {
-        "shape": "crosscut",
-        "range": 5,
-        "startDistance": 0.32,
-        "spread": 1.6,
-        "halfWidth": 0.45,
+        "shape": "crescent",
+        "range": 6,
+        "startDistance": 0.4,
+        "speed": 14,
+        "halfWidth": 1.4,
+        "thickness": 0.7,
         "interval": 0,
-        "delay": 0.18,
-        "startSide": -0.2,
-        "splitDistance": 1.2
+        "delay": 0.18
       }
     },
     {
@@ -2004,11 +2003,6 @@
         "id": "skillCooldownReduction",
         "perRank": 0.05,
         "maxRank": 4
-      },
-      {
-        "id": "dodgeCooldownReduction",
-        "perRank": 0.15,
-        "maxRank": 2
       },
       {
         "id": "statusDamage",

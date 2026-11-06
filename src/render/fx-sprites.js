@@ -18,6 +18,9 @@ export const FX = {
   electricHit: { sheet: 'art/fx/electric-hit.png', w: 45, h: 34, cols: 4, frames: 10, anchor: [18, 14] },
   frostBolt: { sheet: 'art/fx/frost-bolt.png', w: 52, h: 26, cols: 3, frames: 8, anchor: [41, 13] },
   frostShatter: { sheet: 'art/fx/frost-shatter.png', w: 39, h: 50, cols: 4, frames: 10, anchor: [20, 19] },
+  // 빙풍 절단 (PixelLab): the ice crescent flying to the right with its wind trail, and the same crescent breaking up.
+  frostCrescent: { sheet: 'art/fx/frost-crescent-v1.png', w: 128, h: 128, cols: 4, frames: 8, anchor: [86, 64] },
+  frostCrescentBreak: { sheet: 'art/fx/frost-crescent-break-v1.png', w: 128, h: 128, cols: 4, frames: 8, anchor: [86, 64] },
   groundFire: { sheet: 'art/fx/ground-fire.png', w: 35, h: 27, cols: 3, frames: 8, anchor: [18, 18] },
   groundShockwave: { sheet: 'art/fx/ground-shockwave.png', w: 94, h: 40, cols: 4, frames: 10, anchor: [47, 20] },
   guardThrust: { sheet: 'art/fx/guard-thrust.png', w: 42, h: 20, cols: 3, frames: 7, anchor: [4, 10] },
@@ -39,11 +42,12 @@ export const NOTE_ART = 'art/fx/note.png';
 /** Marks redrawn after a first try in the game (prompt 12); a new name so browsers never show the cached first one. */
 const REDRAWN = new Set(['glyph-stomp', 'glyph-suction', 'mark-land-lightning', 'mark-land-fire']);
 export const MARKS = Object.fromEntries(Object.entries({
-  landLightning: 'mark-land-lightning', landIce: 'mark-land-ice', landFire: 'mark-land-fire', danger: 'mark-danger',
-  gearRing: 'mark-gear-ring', spawn: 'mark-spawn-hatch', dial: 'mark-charge-dial', dangerPaint: 'tile-danger-paint',
+  landLightning: 'mark-land-lightning', landIce: 'mark-land-ice', landFire: 'mark-land-fire',
+  gearRing: 'mark-gear-ring', spawn: 'mark-spawn-hatch', dial: 'mark-charge-dial',
   suction: 'glyph-suction', magnet: 'glyph-magnet', stomp: 'glyph-stomp', bell: 'glyph-bell', gap: 'glyph-gap',
   alert: 'glyph-alert', chevrons: 'glyph-chevrons', sticker: 'glyph-sticker',
   affixShield: 'affix-shield',
+  ringFire: 'ring-fusion-fire', ringIce: 'ring-fusion-ice', ringLightning: 'ring-fusion-lightning', ringWind: 'ring-fusion-wind',
   sparkHit: 'spark-hit', sparkHurt: 'spark-hurt', dust: 'puff-dust', pelletEnemy: 'pellet-enemy', pelletFriendly: 'pellet-friendly',
 }).map(([key, file]) => [key, `art/fx/marks/${file}-${REDRAWN.has(file) ? 'v2' : 'v1'}.png`]));
 /** Loot flies home as the coin and gear of the HUD (art/ui/icons/px). */

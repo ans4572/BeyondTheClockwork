@@ -57,6 +57,8 @@ export const SFX = {
   portal: { synth: 'portal', volume: 0.6 },
   cards: { code: ['cards', 0], volume: 1.19 },
   pick: { code: ['pick', 0], volume: 0.62 },
+  // The title's disposal stamp (coded.js stamp; candidate chosen on sounds.html).
+  stamp: { code: ['stamp', 0], volume: 0.45 },
   loot: { code: ['loot', 1], volume: 0.43 },
   fail: { synth: 'sadHorn', volume: 0.25 },
   // Bosses' attacks, by pattern (boss-<pattern>)

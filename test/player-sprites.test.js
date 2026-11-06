@@ -51,7 +51,7 @@ test('animator follows dodge, attack, hit and movement in that priority', () => 
   assert.deepEqual([a.pose.action, a.pose.direction], ['run', 'east']);
   g.effect('hurt', g.p.x, g.p.y, '#fff', 0.25, 0.8);
   assert.equal(step().action, 'hit');
-  g.p.attack = { phase: 2, elapsed: 0.36, angle: Math.PI / 2, recovery: g.c.player.combo[2].recovery };
+  g.p.attack = { phase: 2, elapsed: (({ windup, active, recovery }) => (windup + active + recovery) / 2)(g.c.player.combo[2]), angle: Math.PI / 2, recovery: g.c.player.combo[2].recovery };
   assert.deepEqual([step().action, a.pose.direction], ['attack-3', 'south']);
   assert.equal(a.pose.frame, frameAtProgress(library.clip('attack-3', 'south'), 0.5));
   g.p.dodge = { elapsed: 0.09, angle: Math.PI };
@@ -95,7 +95,7 @@ test('renderer crops the current frame, and draws the doll without sprites', () 
   renderer.render();
   assert.ok(!calls.some(call => call[0] === 'drawImage'));
   renderer.useSprites(library); calls.length = 0;
-  g.p.attack = { phase: 0, elapsed: 0.21, angle: Math.PI / 2, recovery: g.c.player.combo[0].recovery };
+  g.p.attack = { phase: 0, elapsed: (({ windup, active, recovery }) => (windup + active + recovery) / 2)(g.c.player.combo[0]), angle: Math.PI / 2, recovery: g.c.player.combo[0].recovery };
   renderer.render(1 / 60);
   const draw = calls.find(call => call[0] === 'drawImage'), clip = library.clip('attack-1', 'south'), frame = frameAtProgress(clip, 0.5);
   assert.equal(draw[1].fake, true);

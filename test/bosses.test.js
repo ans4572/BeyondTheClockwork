@@ -38,13 +38,13 @@ test('Roco suction drags the player in and spits them out; stickers slow but nev
   assert.ok(slowed < (h.p.x - x1) * 0.7, 'a sticker underfoot slows'); assert.equal(h.p.hp, 100);
   assert.ok(data.slice.bossAI.collectorRoco.magnetRadius >= 3.5);
 });
-test('Roco stops at half health behind a shield; three cans batted back break it, running out of time heals him', () => {
+test('Roco stops at half health behind a shield; enough cans batted back break it, running out of time heals him', () => {
   const rule = data.slice.bossAI.collectorRoco.phaseBreaks[0];
   const [g, e] = boss('collectorRoco'); g.p.x = 17; g.p.y = 8; e.hp = e.maxHp * 0.52;
   g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * rule.at); assert.ok(e.breaking);
   g.hitEnemy(e, 50); assert.equal(e.hp, e.maxHp * rule.at, 'the shield takes nothing');
-  // Feed three cans straight back.
-  for (let i = 0; i < 3; i++) e.breaking.cans.push({ id: 'c' + i, x: e.x + 1.5, y: e.y, back: true, spin: 0 });
+  // Feed the cans straight back.
+  for (let i = 0; i < rule.cans; i++) e.breaking.cans.push({ id: 'c' + i, x: e.x + 1.5, y: e.y, back: true, spin: 0 });
   for (let i = 0; i < 30 && e.breaking; i++) g.update(1 / 60, {});
   assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]); assert.ok(e.vulnerableUntil > g.s.time);
   const before = e.hp; g.hitEnemy(e, 10); assert.ok(before - e.hp > 10, 'takes more while stunned');
@@ -54,6 +54,22 @@ test('Roco stops at half health behind a shield; three cans batted back break it
   assert.equal(hp - h.p.hp, rule.failDamage); assert.equal(r.breaking, null); assert.deepEqual(r.breaksDone, []);
   assert.ok(Math.abs(r.hp - r.maxHp * (rule.at + rule.failHeal)) < 1e-6);
   r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999); assert.ok(r.breaking, 'has to be broken again');
+});
+test('Roco mixes in bomb cans: one batted back refills a can of shield, one left alone blows up on F2', () => {
+  const rule = data.slice.bossAI.collectorRoco.phaseBreaks[0];
+  const [g, e] = boss('collectorRoco'); g.p.x = 17; g.p.y = 8; e.hp = e.maxHp * 0.52; g.hitEnemy(e, 999);
+  e.breaking.fed = 2; e.breaking.nextCan = Infinity;
+  e.breaking.cans.push({ id: 'b', x: e.x + 1.2, y: e.y, back: true, spin: 0, bomb: true });
+  for (let i = 0; i < 20; i++) g.update(1 / 60, {});
+  assert.equal(e.breaking.fed, 1, 'a bomb in the mouth undoes one can');
+  // A can batted back the wrong way misses the mouth and is gone.
+  e.breaking.cans.push({ id: 'm', x: e.x + 2, y: e.y, back: true, spin: 0, dir: 0 });
+  for (let i = 0; i < 90; i++) g.update(1 / 60, {});
+  assert.equal(e.breaking.fed, 1); assert.equal(e.breaking.cans.length, 0);
+  // A bomb reaching F2 hurts more than a plain can.
+  const hp = g.p.hp; e.breaking.cans.push({ id: 'h', x: g.p.x - 0.3, y: g.p.y, back: false, spin: 0, bomb: true }); g.update(1 / 60, {});
+  assert.equal(hp - g.p.hp, rule.bombDamage);
+  assert.ok(rule.cans >= 5 && rule.bombShare > 0 && rule.sway > 0);
 });
 test('Brass breaks twice: drums struck in the shown order at 66%, flag bearers knocked down at 33%', () => {
   const [g, e] = boss('captainBrass'), [drums, flags] = data.slice.bossAI.captainBrass.phaseBreaks; g.p.x = 20; g.p.y = 8;

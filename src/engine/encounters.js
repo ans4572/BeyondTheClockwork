@@ -24,7 +24,20 @@ export const OPENINGS = ['spread', 'camps'];
 export const ARRIVALS = ['spread', 'flank', 'pincer', 'ring'];
 /** How far a wave's weight may drift from the designed one. */
 const WEIGHT_SLACK = 0.12;
-const TOTAL = [15, 24];
+const TOTAL = [15, 26];
+/**
+ * How a room's fight is cut, dealt per room per run. Most rooms come in two big waves (fewer lulls, crowds worth a
+ * fusion); some keep three smaller ones; from the rooms with elites on, a few are only elites in one wave.
+ * The first fights are always two waves, at the designed total; later ones carry a little more.
+ */
+export const SHAPES = { early: { two: 1 }, plain: { two: 0.7, three: 0.3 }, elite: { two: 0.55, three: 0.25, elite: 0.2 } };
+const EARLY_FIGHTS = 3, GROW = 1.08;
+/** The next wave is called while this many are still standing: big waves overlap a little so no gap opens. */
+export const CALL_AT = { two: 3, three: 1, elite: 0 };
+/** An elite-only room: one more elite than the design had, between these. */
+const ELITE_ROOM = [4, 6];
+/** A wave of at least this many lets each kind's cap (MOST) grow by half. */
+const BIG_WAVE = 10;
 /** How far from the player a side group, and a ring, gathers: far enough that a wave still gives a moment to turn. */
 const ARRIVAL_REACH = 10.5, RING_REACH = 9;
 
@@ -42,14 +55,16 @@ function weighted(entries, random) {
 }
 
 /** One wave: the designed wave's weight and elites, a fresh mix of `pool` around them. */
-export function dealWave(template, pool, hp, random, size = template.length) {
+export function dealWave(template, pool, hp, random, size = template.length, grow = false) {
   const elites = template.filter(type => type === 'elite');
-  const budget = template.reduce((sum, type) => sum + hp[type], 0);
+  // A wave dealt bigger than its template (two waves made of three) keeps the template's weight per body.
+  const budget = template.reduce((sum, type) => sum + hp[type], 0) * (grow ? size / template.length : 1);
+  const most = type => Math.round((MOST[type] ?? Infinity) * (size >= BIG_WAVE ? 1.5 : 1));
   const kinds = pool.filter(type => type !== 'elite');
   const themes = Object.keys(THEMES).filter(theme => theme === 'mixed' || kinds.some(type => THEMES[theme][roleOf(type)] > 1));
   const theme = pick(themes, random), pull = THEMES[theme];
   const wave = [...elites];
-  const room = type => (MOST[type] ?? Infinity) > wave.filter(t => t === type).length;
+  const room = type => most(type) > wave.filter(t => t === type).length;
   while (wave.length < size) {
     const open = kinds.filter(room);
     if (!open.length) break;
@@ -79,9 +94,24 @@ function shuffle(list, random) {
  * The fights for one room in one run: { waves, themes, formations }. The pool is the room's own kinds plus the
  * kinds met in the room before it, so a room keeps its character and new kinds still arrive where they are introduced.
  */
-export function dealRoom(room, before, hp, random) {
+export function dealRoom(room, before, hp, random, fight = EARLY_FIGHTS) {
   const own = [...new Set(room.waves.flat())], earlier = before?.waves ? [...new Set(before.waves.flat())] : [];
   const pool = [...new Set([...own, ...earlier])];
+  const elites = room.waves.flat().filter(type => type === 'elite').length;
+  const shape = weighted(Object.entries(fight < EARLY_FIGHTS ? SHAPES.early : elites ? SHAPES.elite : SHAPES.plain), random);
+  if (shape === 'elite') {
+    const count = Math.max(ELITE_ROOM[0], Math.min(ELITE_ROOM[1], elites + 1));
+    return { shape, callAt: CALL_AT.elite, waves: [Array(count).fill('elite')], themes: ['elite'], formations: [pick(OPENINGS, random)] };
+  }
+  if (shape === 'two') {
+    // The designed waves laid end to end and cut in half: each half keeps its elites and its weight per body.
+    const all = room.waves.flat(), half = Math.ceil(all.length / 2), templates = [all.slice(0, half), all.slice(half)];
+    let total = Math.round(all.length * (fight < EARLY_FIGHTS ? 1 : GROW) + Math.floor(random() * 3) - 1);
+    total = Math.max(TOTAL[0], Math.min(TOTAL[1], total));
+    const sizes = [Math.floor(total / 2), Math.ceil(total / 2)];
+    const dealt = templates.map((template, i) => dealWave(template, pool, hp, random, Math.max(template.filter(t => t === 'elite').length + 3, sizes[i]), true));
+    return { shape, callAt: CALL_AT.two, waves: dealt.map(d => d.wave), themes: dealt.map(d => d.theme), formations: dealt.map((_, i) => pick(i === 0 ? OPENINGS : ARRIVALS, random)) };
+  }
   // Sizes drift by one body a wave, kept inside the game's room limits.
   const sizes = room.waves.map(w => w.length + Math.floor(random() * 3) - 1);
   let total = sizes.reduce((a, b) => a + b, 0);
@@ -89,6 +119,7 @@ export function dealRoom(room, before, hp, random) {
   for (let i = 0; total > TOTAL[1]; i = (i + 1) % sizes.length) { sizes[i]--; total--; }
   const dealt = room.waves.map((template, i) => dealWave(template, pool, hp, random, Math.max(3, sizes[i])));
   return {
+    shape, callAt: CALL_AT.three,
     waves: dealt.map(d => d.wave),
     themes: dealt.map(d => d.theme),
     formations: dealt.map((_, i) => pick(i === 0 ? OPENINGS : ARRIVALS, random))
@@ -115,10 +146,10 @@ export function dealAffixes(waves, count, list, random) {
 export function dealRun(rooms, enemies, seed, affixes) {
   const random = dealer(seed), hp = Object.fromEntries(Object.entries(enemies).map(([type, e]) => [type, e.hp]));
   const ids = rooms.map(room => room.id), one = affixes ? ids.indexOf(affixes.oneFrom) : -1;
-  let before = null;
+  let before = null, fight = 0;
   return rooms.map((room, i) => {
     if (!room.waves) return null;
-    const dealt = dealRoom(room, before, hp, random);
+    const dealt = dealRoom(room, before, hp, random, fight++);
     // One trait per elite at most: two at once read as clutter and the second rarely changed how the fight played.
     const count = one >= 0 && i >= one ? 1 : 0;
     if (count) dealt.affixes = dealAffixes(dealt.waves, count, affixes.list, random);

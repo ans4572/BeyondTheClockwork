@@ -28,7 +28,7 @@ const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
 // Boss fields that act on the player rather than on enemies.
 const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker', 'stompRing'];
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
-const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.35, FEEL_LIMIT = 64;
+const CRIT_RED = '#e8433a', JOLT_SECONDS = 0.12, LIGHT_KNOCKBACK = 0.15, HEAVY_KNOCKBACK = 0.5, KNOCKBACK_SECONDS = 0.12, FEEL_LIMIT = 64;
 /** How far each blow carries the body forward (units), and how close an enemy in front stops it. */
 const LUNGE = [0.25, 0.25, 0.5], LUNGE_STOP = 1.2;
 
@@ -110,7 +110,7 @@ export class Game {
     const stats = this.stats, spawn = this.config.arena.spawn;
     this.s.player = { ...spawn, hp: this.c.player.maxHp + (stats.maxHp || 0), maxHp: this.c.player.maxHp + (stats.maxHp || 0), energy: 0, angle: 0, moveAngle: 0, attack: null, combo: 0, comboExpires: 0, invulnerableUntil: 0, dodge: null, dodgeReady: 0, cooldowns: {}, fusionReady: 0 };
   }
-  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; }
+  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; this.p.buffer = {}; }
   /** `wake` opens on the player getting up, with the world held until they stand. */
   beginIntro({ wake = false, lesson = false } = {}) {
     if (!['opening', 'introDeath'].includes(this.s.mode)) return false;
@@ -191,8 +191,8 @@ export class Game {
     this.s.mode = 'practice'; this.s.practice = { slots: this.loadoutSlots, resetCooldowns: false };
     const yard = this.map;
     Object.assign(this.p, yard.spawn, { energy: this.c.player.maxEnergy });
-    this.spawnEnemy('dummy', yard.dummy).dummy = true;
-    this.s.enemies[0].held = true;
+    // The first dummy and four more round it, so a skill that hits several bodies can be tried too.
+    for (const spot of [yard.dummy, ...(yard.moreDummies || [])]) { const dummy = this.spawnEnemy('dummy', spot); dummy.dummy = true; dummy.held = true; }
     this.save(); return true;
   }
   togglePracticeReset() {
@@ -201,8 +201,9 @@ export class Game {
   }
   tickPractice() {
     if (this.s.mode !== 'practice') return;
-    const { p } = this, [dummy] = this.s.enemies, { x, y } = this.map.dummy;
-    p.energy = this.c.player.maxEnergy; dummy.x = x; dummy.y = y;
+    const { p } = this;
+    p.energy = this.c.player.maxEnergy;
+    for (const dummy of this.s.enemies) if (dummy.dummy) { dummy.x = dummy.home.x; dummy.y = dummy.home.y; }
     if (this.s.practice.resetCooldowns) { p.cooldowns = {}; p.fusionReady = 0; }
     if (pointInPolygon(p.x, p.y, this.map.exit.polygon)) this.leavePractice();
   }
@@ -280,6 +281,7 @@ export class Game {
       const spots = this.formation(plan.formations?.[0], room.waves[0]);
       room.waves[0].forEach((type, i) => this.spawnWaveEnemy(type, spots[i], plan.affixes?.[0]?.[i]));
       this.notify(roomTitle(room));
+      if (plan.shape === 'elite') this.notify('정예만 모인 방! 한 번에 몰려온다');
     }
     // Nobody strikes while the player is still walking in.
     if (this.s.entry) for (const e of this.s.enemies) e.ready = Math.max(e.ready || 0, this.s.entry.until + 0.4);
@@ -338,7 +340,8 @@ export class Game {
       const a = Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x); this.move(enemy, Math.cos(a) * gust.knockback, Math.sin(a) * gust.knockback);
       this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: a });
     }
-    this.p.dodgeReady = this.s.time + Math.max(this.c.caps.minDodgeCooldown, d.cooldown * (1 - (this.stats.dodgeCooldown || 0)) * (1 - this.upgradeAmount('dodgeCooldownReduction')));
+    // The dodge's wait is the same for everyone: no reward or stat shortens it.
+    this.p.dodgeReady = this.s.time + d.cooldown;
     this.p.invulnerableUntil = Math.max(this.p.invulnerableUntil, this.s.time + d.invincibility);
     this.sense({ kind: 'dodge' });
     if (this.active) this.tutorial.onDodge();
@@ -379,7 +382,7 @@ export class Game {
   hitEnemy(enemy, base, options = {}) {
     if (enemy.hp <= 0 || enemy.hidden) return { crit: false, killed: false };
     if (!enemy.aggro) this.rouse(enemy);
-    const crit = !options.dot && this.rollCrit();
+    const crit = !options.dot && !options.exact && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
     if (guarded) this.sense({ kind: 'block' });
     // A trait shield gives way after a few blocked blows.
@@ -389,12 +392,12 @@ export class Game {
     // A boss behind its phase-break shield takes nothing; one just broken out of it takes more.
     if (enemy.breaking) { this.effect('spark', enemy.x, enemy.y - enemy.radius, '#7fc7e0', 0.2, 0.6); this.sense({ kind: 'block' }); return { crit: false, killed: false }; }
     const opened = enemy.vulnerableUntil > this.s.time ? 1 + enemy.vulnerableBonus : 1;
-    const amount = opened * base * (options.dot ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    const amount = (options.exact ? 1 : opened) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(enemy.damage)) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.45, 1, { targetX: this.p.x, targetY: this.p.y, look: 'thrust' });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     const beaten = !options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1;
-    enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.09;
+    enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + 0.12;
     this.checkPhaseBreak(enemy); if (enemy.boss) this.checkCarpets(enemy);
     // A blow to Roco's back shakes a confiscated skill out of his bag.
     if (enemy.type === 'collectorRoco' && !options.dot && this.p.confiscated && this.isConfiscated(this.p.confiscated.index)
@@ -407,7 +410,9 @@ export class Game {
     const held = enemy.statuses.windPressure > this.s.time ? this.trait('galeHold')?.stunMultiplier || 1 : 1;
     if (!enemy.boss && options.stagger) enemy.stunUntil = Math.max(enemy.stunUntil, this.s.time + this.config.rules.normalHitStun * held);
     if (enemy.hp <= 0) {
-      enemy.tell = null; this.effect('scrap', enemy.x, enemy.y, enemy.color || '#dbbc6b', 0.6, 1);
+      // The body bursts into parts thrown away from F2: a few for the wrench, more for a skill, most for a fusion.
+      const parts = options.source === 'fusion' ? PARTS.fusion : options.source === 'skill' ? PARTS.skill : PARTS.wrench;
+      enemy.tell = null; this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const embers = this.trait('emberSpread');
       if (embers && enemy.burnStacks?.some(t => t > this.s.time)) {
@@ -439,7 +444,8 @@ export class Game {
     // A small burst of light where the wrench meets the body; the third blow throws a bigger one.
     this.effect('impact', enemy.x, enemy.y - 0.7, heavy ? '#ffd257' : '#fff4d6', heavy ? 0.22 : 0.14, heavy ? 1.3 : 0.8, { angle: attack.angle });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
-    if (!enemy.boss && !enemy.dummy && !enemy.stationary && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; this.move(enemy, cos * push, sin * push); }
+    // The body is shoved back over a short slide (fast, then slowing), not moved in one jump.
+    if (!enemy.boss && !enemy.dummy && !enemy.stationary && enemy.hp > 0) { const push = heavy ? HEAVY_KNOCKBACK : LIGHT_KNOCKBACK; enemy.shove = { x: cos * push, y: sin * push, elapsed: 0 }; }
   }
   addStagger(enemy, amount, applyPressure = true) {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;
@@ -513,14 +519,13 @@ export class Game {
         this.triggerShock(enemy);
         if (!a.energyGiven) { this.addEnergy(this.c.player.energyPerBasicPhase * (1 + (this.stats.energyGain || 0))); a.energyGiven = true; }
         if (a.phase === 2) {
-          if (this.wrenchMod('windupRecoil') && this.p.dodgeReady > this.s.time) { this.p.dodgeReady = this.s.time; this.effect('spark', this.p.x, this.p.y, '#badbd3', 0.6, 1, { look: 'ready', follow: true }); }
           if (this.wrenchMod('elementalCharge') && enemy.hp > 0) { a.statusCast ??= { id: this.id('wrench'), staggerUsed: {}, fusion: false }; for (const slot of this.slots) this.applyStatus(enemy, slot.element, a.statusCast); if (this.slots.length) this.effect('spark', enemy.x, enemy.y, '#ffd257', 0.6, 1, { look: 'ready' }); }
         }
       }
       const deflect = this.wrenchMod('deflect');
       if (deflect) {
         const mod = deflect;
-        for (const bullet of this.s.projectiles) if (!bullet.friendly && inCone(this.p, bullet, a.angle, range + deflect.reach, this.config.rules.comboArcDegrees)) { bullet.friendly = true; bullet.angle = a.angle; bullet.damage = mod.reflectedDamage; bullet.speed = mod.reflectedSpeed; this.effect('spark', bullet.x, bullet.y, '#86c0ac', 0.5, 1, { look: 'deflect' }); }
+        for (const bullet of this.s.projectiles) if (!bullet.friendly && inCone(this.p, bullet, a.angle, range + deflect.reach, this.config.rules.comboArcDegrees)) { bullet.friendly = true; bullet.angle = a.angle; bullet.damage = this.damageTaken(bullet.damage); bullet.exact = true; bullet.speed = mod.reflectedSpeed; this.effect('spark', bullet.x, bullet.y, '#86c0ac', 0.5, 1, { look: 'deflect' }); }
       }
       if (a.phase === 2 && !a.wave && this.s.run?.mods.includes('shockwave')) {
         a.wave = true; const mod = this.config.mods.find(m => m.id === 'shockwave');
@@ -573,7 +578,7 @@ export class Game {
     this.p.fusionReady = this.s.time + fusion.cooldown * this.cooldownFactor;
     const rarityKeys = Object.keys(this.c.balance.rarityDamage);
     const slot = { level: Math.min(...this.slots.map(s => s.level)), rarity: rarityKeys[Math.min(...this.slots.map(s => rarityKeys.indexOf(s.rarity)))] };
-    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.notify(fusion.name); this.sense({ kind: 'cast', id: fusion.id });
+    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.notify(fusion.name); this.sense({ kind: 'cast', id: fusion.id, fusion: true, pair: fusion.pair });
     if (!this.s.profile.discoveredFusions.includes(fusion.id)) this.s.profile.discoveredFusions.push(fusion.id);
     return true;
   }
@@ -604,7 +609,8 @@ export class Game {
     this.applySkillMods(cast);
     const bounds = this.bounds;
     cast.x = clamp(cast.x, bounds.left, bounds.right); cast.y = clamp(cast.y, bounds.top, bounds.bottom);
-    if (cast.shape === 'self' || cast.shape === 'moving' || cast.shape === 'cone' || cast.shape === 'dash' || cast.shape === 'crosscut') { cast.x = this.p.x; cast.y = this.p.y; }
+    if (cast.shape === 'self' || cast.shape === 'moving' || cast.shape === 'cone' || cast.shape === 'dash' || cast.shape === 'crosscut' || cast.shape === 'crescent') { cast.x = this.p.x; cast.y = this.p.y; }
+    if (cast.shape === 'crescent') cast.travel = cast.startDistance || 0;
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
     if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
     if (cast.shape === 'projectile') {
@@ -621,7 +627,7 @@ export class Game {
     this.p.lastCast = { id: cast.id, skillId: skill.id, at: this.s.time, angle };
   }
   castHit(cast, enemy, damage = cast.damage) {
-    const hit = this.hitEnemy(enemy, damage, { slot: cast.slot, color: cast.color });
+    const hit = this.hitEnemy(enemy, damage, { slot: cast.slot, color: cast.color, source: cast.fusion ? 'fusion' : 'skill' });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
     // A cast that lands many times is felt once, on its first contact.
     if (!cast.felt) { cast.felt = true; this.sense({ kind: cast.fusion ? 'fusion' : 'skill', crit: hit.crit }); }
@@ -666,6 +672,17 @@ export class Game {
           if (distance(before, bullet) < step * 0.5 || bullet.travelled >= (bullet.reach || cast.range)) bullet.done = true;
         }
         cast.done = cast.projectiles.every(p => p.done); continue;
+      }
+      // 빙풍 절단: one wide ice crescent carried forward on the wind; everything it passes over is cut once.
+      if (cast.shape === 'crescent') {
+        if (cast.age < (cast.delay || 0)) continue;
+        const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), from = cast.travel, to = Math.min(cast.range, from + cast.speed * dt);
+        cast.travel = to; cast.x = cast.startX + fx * to; cast.y = cast.startY + fy * to;
+        const crossed = target => { const dx = target.x - cast.startX, dy = target.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = target.radius || 0.4; return along >= from - cast.thickness - r && along <= to + cast.thickness + r && side <= cast.halfWidth + r; };
+        this.elementOnHazards(cast, crossed);
+        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && crossed(enemy)) { cast.hit.push(enemy.id); this.castHit(cast, enemy); }
+        if (to >= cast.range) { cast.done = true; this.effect('ring', cast.x, cast.y, '#bfe9f4', 0.5, 1.2, { look: 'frostCrescentBreak', angle: cast.angle }); }
+        continue;
       }
       if (cast.shape === 'dash') {
         const before = { x: this.p.x, y: this.p.y };
@@ -723,10 +740,12 @@ export class Game {
     }
     this.s.casts = this.s.casts.filter(c => !c.done);
   }
+  /** What a blow of `amount` takes off F2 after armour and perks (a reflected bullet carries this same number). */
+  damageTaken(amount) { return amount * (1 - (this.stats.damageReduction || 0)) * (1 + (this.perk('overheatEngine')?.damageTaken || 0)); }
   hurt(amount) {
     if (!this.active || this.s.time + 1e-7 < this.p.invulnerableUntil) return false;
     // The first lesson in the scrapyard teaches the dodge: a hit still flashes and stuns, but costs no health.
-    amount *= this.s.mode === 'intro' ? 0 : (1 - (this.stats.damageReduction || 0)) * (1 + (this.perk('overheatEngine')?.damageTaken || 0));
+    amount = this.s.mode === 'intro' ? 0 : this.damageTaken(amount);
     this.p.hp = Math.max(0, this.p.hp - amount);
     if (this.s.run) this.s.run.damageTaken += amount;
     this.p.invulnerableUntil = this.s.time + this.c.player.hurtInvulnerability;
@@ -771,7 +790,7 @@ export class Game {
     if (rule.kind !== 'cans' && enemy.home) Object.assign(enemy, enemy.home);
     const b = enemy.breaking = { index, kind: rule.kind, started: now, until: now + rule.seconds, angle, failAt: null };
     this.sense({ kind: 'phase' });
-    if (rule.kind === 'cans') { Object.assign(b, { fed: 0, nextCan: now + 0.6, cans: [] }); this.notify('보호막! 날아오는 깡통을 렌치로 쳐서 로코 입에 되돌려 주세요.'); }
+    if (rule.kind === 'cans') { Object.assign(b, { fed: 0, nextCan: now + 0.6, cans: [], home: { x: enemy.x, y: enemy.y } }); this.notify('보호막! 은색 깡통만 렌치로 쳐서 움직이는 로코 입에 넣으세요. 불꽃 튀는 폭탄 깡통은 피하세요.'); }
     if (rule.kind === 'drums') {
       // Four drums round the boss; they light in an order to copy, while a march lane keeps coming down on the player.
       const spots = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => this.floorSpot(enemy, sx * rule.spreadX, sy * rule.spreadY));
@@ -827,19 +846,37 @@ export class Game {
     if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; b.lanes = []; }
   }
   /** Roco: a wide suction draws in tin cans; three batted back into its mouth overload the shield. */
+  /**
+   * Roco's break: cans fly in from the edge of his cone. A plain can batted back flies straight from where it was hit,
+   * so with his mouth sliding side to side the swing has to be timed; a bomb can (sparking fuse) batted back fills the
+   * shield again by one can, and one left alone blows up on whoever it reaches.
+   */
   updateCans(enemy, rule, dt) {
     const b = enemy.breaking, p = this.p, now = this.s.time;
+    if (rule.sway && b.home) { const want = b.home.x + Math.sin((now - b.started) / rule.swaySeconds * Math.PI * 2) * rule.sway; this.move(enemy, want - enemy.x, 0); }
     if (!p.dodge && distance(p, enemy) > enemy.radius + 1 && inCone(enemy, p, b.angle, rule.range, rule.degrees)) { const a = Math.atan2(enemy.y - p.y, enemy.x - p.x); this.move(p, Math.cos(a) * rule.pull * dt, Math.sin(a) * rule.pull * dt); }
     if (now >= b.nextCan) {
       const a = b.angle + (this.random() - 0.5) * rule.degrees * Math.PI / 180;
-      b.cans.push({ id: this.id('can'), x: enemy.x + Math.cos(a) * rule.range, y: enemy.y + Math.sin(a) * rule.range, back: false, spin: 0 });
+      b.cans.push({ id: this.id('can'), x: enemy.x + Math.cos(a) * rule.range, y: enemy.y + Math.sin(a) * rule.range, back: false, spin: 0, bomb: this.random() < (rule.bombShare || 0) });
       b.nextCan = now + rule.canEvery;
     }
     for (const can of b.cans) {
-      const a = Math.atan2(enemy.y - can.y, enemy.x - can.x), speed = rule.canSpeed * (can.back ? 2.2 : 1);
+      const a = can.back && can.dir !== undefined ? can.dir : Math.atan2(enemy.y - can.y, enemy.x - can.x), speed = can.back ? (rule.backSpeed || rule.canSpeed * 2.2) : rule.canSpeed;
       can.x += Math.cos(a) * speed * dt; can.y += Math.sin(a) * speed * dt; can.spin += dt * 10;
-      if (!can.back && distance(can, p) < rule.canRadius + this.config.arena.playerRadius) { can.done = true; this.hurt(rule.canDamage); if (!this.active) return; continue; }
-      if (distance(can, enemy) < enemy.radius) { can.done = true; if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); } }
+      if (!can.back && distance(can, p) < rule.canRadius + this.config.arena.playerRadius) {
+        can.done = true;
+        if (can.bomb) { this.effect('ring', can.x, can.y, '#e0564c', 0.5, rule.bombRadius || 1.4, { look: 'boom' }); this.hurt(rule.bombDamage || rule.canDamage); }
+        else this.hurt(rule.canDamage);
+        if (!this.active) return; continue;
+      }
+      if (distance(can, enemy) < enemy.radius + (can.back ? 0.3 : 0)) {
+        can.done = true;
+        if (can.back && can.bomb) { b.fed = Math.max(0, b.fed - 1); this.effect('ring', enemy.x, enemy.y, '#e0564c', 0.5, 1.4, { look: 'boom' }); this.notify('폭탄 깡통! 보호막이 깡통 하나만큼 다시 찼어요.'); this.sense({ kind: 'hurt' }); }
+        else if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); }
+        continue;
+      }
+      // A can batted back that misses the mouth sails on and is gone.
+      if (can.back && distance(can, enemy) > rule.range + 1.5) { can.done = true; this.effect('dust', can.x, can.y, '#c9c2ad', 0.3, 0.6); }
     }
     b.cans = b.cans.filter(can => !can.done);
   }
@@ -872,7 +909,7 @@ export class Game {
     const reach = target => inCone(this.p, target, a.angle, range + 0.3, this.config.rules.comboArcDegrees);
     for (const enemy of this.s.enemies) {
       const b = enemy.breaking; if (!b) continue;
-      for (const can of b.cans || []) if (!can.back && reach(can)) { can.back = true; this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' }); }
+      for (const can of b.cans || []) if (!can.back && reach(can)) { can.back = true; can.dir = Math.atan2(enemy.y - can.y, enemy.x - can.x); this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' }); }
       if (b.drums && !a.drumStruck) { const i = b.drums.findIndex(drum => reach(drum)); if (i >= 0) { a.drumStruck = true; this.strikeDrum(enemy, i); } }
       for (const s of b.soldiers || []) if (!s.down && reach(s)) { if (s.flag) { s.down = true; this.effect('scrap', s.x, s.y, '#ffd257', 0.5, 1); this.sense({ kind: 'kill' }); } else this.effect('spark', s.x, s.y, '#d8dde2', 0.2, 0.5); }
     }
@@ -1033,7 +1070,7 @@ export class Game {
       case 'spin': enemy.spin = { angle: tell.angle, until: this.s.time + enemy.spinSeconds, hitReady: 0 }; break;
       // Drummer: no damage of its own; nearby soldiers move faster and shrug off hits for a while.
       case 'beat':
-        for (const ally of this.s.enemies) if (ally !== enemy && !ally.boss && ally.hp > 0 && distance(ally, enemy) <= enemy.beatRadius) { ally.beatUntil = this.s.time + enemy.beatSeconds; ally.aggro = true; }
+        for (const ally of this.s.enemies) if (ally !== enemy && !ally.boss && ally.hp > 0 && distance(ally, enemy) <= enemy.beatRadius) { ally.beatUntil = this.s.time + enemy.beatSeconds; if (!ally.aggro) ally.noticedAt = this.s.time; ally.aggro = true; }
         this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.85, enemy.beatRadius, { look: 'drumBeat' }); break;
       // Pikeman: a long thrust, then a shorter one re-aimed at where the player went.
       case 'thrust': case 'thrust2': {
@@ -1160,6 +1197,11 @@ export class Game {
     let activeMelee = this.s.enemies.filter(e => !e.boss && (e.tell || e.dash) && e.attack !== 'shot').length;
     for (const enemy of this.s.enemies) {
       if (enemy.hp <= 0) continue;
+      if (enemy.shove) {
+        const ease = u => 1 - (1 - u) ** 2, s = enemy.shove, from = ease(Math.min(1, s.elapsed / KNOCKBACK_SECONDS)), to = ease(Math.min(1, (s.elapsed + dt) / KNOCKBACK_SECONDS));
+        this.move(enemy, s.x * (to - from), s.y * (to - from)); s.elapsed += dt;
+        if (s.elapsed >= KNOCKBACK_SECONDS) enemy.shove = null;
+      }
       enemy.burnStacks = enemy.burnStacks.filter(t => t > this.s.time);
       if (enemy.burnStacks.length && this.s.time >= enemy.burnTick) {
         const info = this.c.statuses.find(s => s.id === 'burn');
@@ -1210,7 +1252,8 @@ export class Game {
       if (distance(before, b) < step * 0.6) { b.until = 0; this.shotStopped(b); }
       if (b.friendly) {
         const target = this.s.enemies.find(e => e.hp > 0 && segmentDistance(e, before, b) < e.radius + b.radius);
-        if (target) { this.hitEnemy(target, b.damage); b.until = 0; }
+        // A bullet the wrench turned round hits for exactly what it would have taken off F2: no crit, no damage bonus.
+        if (target) { this.hitEnemy(target, b.damage, { exact: !!b.exact }); b.until = 0; }
       } else if (segmentDistance(this.p, before, b) <= this.config.arena.playerRadius + b.radius) { this.hurt(b.damage); b.until = 0; }
       if (!this.active) return;
     }
@@ -1230,10 +1273,14 @@ export class Game {
     else if (this.s.mode === 'hub' && this.readyToLeave) { p.y -= LEAVE_REFUSED_UNITS; this.s.panel = 'difficulty'; }
     else if (this.s.mode === 'hub') { p.y -= LEAVE_REFUSED_UNITS; this.notify('모루에게 속성 2개를 고른 뒤 출발하세요.'); }
   }
-  /** One step of a dodge already under way. */
+  /**
+   * One step of a dodge already under way. The slide bursts out fast and eases off to about walking pace at its end
+   * (not a flat speed that stops dead), so it flows into the walk that follows; the distance covered is the same.
+   */
   moveDodge(dt, radius) {
-    const p = this.p, d = this.c.player.dodge, stepTime = Math.min(dt, d.duration - p.dodge.elapsed), reach = d.distance * (p.dodge.boost || 1);
-    this.move(p, Math.cos(p.dodge.angle) * reach / d.duration * stepTime, Math.sin(p.dodge.angle) * reach / d.duration * stepTime, radius);
+    const p = this.p, d = this.c.player.dodge, reach = d.distance * (p.dodge.boost || 1), ease = u => u + DODGE_EASE * u * (1 - u);
+    const from = ease(Math.min(1, p.dodge.elapsed / d.duration)), to = ease(Math.min(1, (p.dodge.elapsed + dt) / d.duration)), step = reach * (to - from);
+    this.move(p, Math.cos(p.dodge.angle) * step, Math.sin(p.dodge.angle) * step, radius);
     p.dodge.elapsed += dt; if (p.dodge.elapsed >= d.duration - 1e-7) p.dodge = null;
   }
   /** Out of a fight the body still dodges; after a cleared room the wrench still swings, in town it does not. */
@@ -1297,7 +1344,7 @@ export class Game {
         this.effect('scrap', place.x, place.y, '#dbbc6b', 0.4, 0.6);
       }
       if (id === 'volatile') {
-        (this.s.blasts ??= []).push({ x: enemy.x, y: enemy.y, at: this.s.time + rule.delay, radius: rule.radius, damage: Math.round(rule.damage * (this.room?.power || 1)), enemyDamage: rule.enemyDamage });
+        (this.s.blasts ??= []).push({ x: enemy.x, y: enemy.y, at: this.s.time + rule.delay, radius: rule.radius, damage: rule.damage });
         this.effect('danger', enemy.x, enemy.y, '#d8423c', rule.delay, rule.radius);
       }
     }
@@ -1373,7 +1420,7 @@ export class Game {
       if (blast.at > this.s.time) return true;
       this.effect('ring', blast.x, blast.y, '#e8914e', 0.6, blast.radius, { look: 'boom' }); this.sense({ kind: 'burst' });
       if (!this.p.dodge && distance(blast, this.p) < blast.radius + this.config.arena.playerRadius) this.hurt(blast.damage);
-      for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(blast, e) < blast.radius) this.hitEnemy(e, blast.enemyDamage, { dot: true, color: '#e8914e' });
+      // A volatile elite's blast hurts only F2 (a flat amount in every room); the other mobs stand in it unharmed.
       for (const h of this.s.hazards || []) if (distance(blast, h) < blast.radius) this.lightCrate(h, this.config.hazards.crate.chain);
       return false;
     });
@@ -1383,10 +1430,11 @@ export class Game {
     const { spreadMinUnits, spreadGapUnits } = this.config.rules, map = this.map, { arena } = this.config, radius = 0.6;
     const [width, height] = map?.size || [arena.width, arena.height], taken = [...this.s.enemies.filter(e => e.hp > 0), ...(this.s.run?.arrivals || []), ...extra], flow = this.flowField;
     flow?.update(this.p.x, this.p.y);
-    for (let tries = 0; tries < 80; tries++) {
+    // A big wave on a small floor may not find room at the full gap: it then stands closer rather than off the floor.
+    for (const gap of [spreadGapUnits, spreadGapUnits * 0.6, 1]) for (let tries = 0; tries < 80; tries++) {
       const spot = { x: this.random() * width, y: this.random() * height };
       const floor = map?.walkable ? fitsMap(spot.x, spot.y, radius, map) : spot.x > arena.bounds.left && spot.x < arena.bounds.right && spot.y > arena.bounds.top && spot.y < arena.bounds.bottom;
-      if (floor && !this.inSolid(spot.x, spot.y, radius) && (!flow || flow.reachable(spot.x, spot.y)) && distance(spot, this.p) >= spreadMinUnits && taken.every(other => distance(spot, other) >= spreadGapUnits)) return spot;
+      if (floor && !this.inSolid(spot.x, spot.y, radius) && (!flow || flow.reachable(spot.x, spot.y)) && distance(spot, this.p) >= spreadMinUnits && taken.every(other => distance(spot, other) >= gap)) return spot;
     }
     return this.arrivalSpot();
   }
@@ -1401,10 +1449,11 @@ export class Game {
   /** A waiting body notices the player, and so do the ones standing beside it. */
   rouse(enemy) {
     const { aggroLinkUnits, } = this.config.rules, woken = [enemy];
-    enemy.aggro = true; enemy.ready = Math.max(enemy.ready, this.s.time + this.config.rules.enemyInitialDelay);
+    // noticedAt: when it saw F2, for the '!' over its head.
+    enemy.aggro = true; enemy.noticedAt = this.s.time; enemy.ready = Math.max(enemy.ready, this.s.time + this.config.rules.enemyInitialDelay);
     while (woken.length) {
       const from = woken.pop();
-      for (const other of this.s.enemies) if (!other.aggro && other.hp > 0 && distance(from, other) <= aggroLinkUnits) { other.aggro = true; other.ready = Math.max(other.ready, this.s.time + this.config.rules.enemyInitialDelay); woken.push(other); }
+      for (const other of this.s.enemies) if (!other.aggro && other.hp > 0 && distance(from, other) <= aggroLinkUnits) { other.aggro = true; other.noticedAt = this.s.time; other.ready = Math.max(other.ready, this.s.time + this.config.rules.enemyInitialDelay); woken.push(other); }
     }
   }
   /** Somewhere on the floor, off the player's feet but close enough to arrive soon. */
@@ -1439,7 +1488,7 @@ export class Game {
     run.arrivals = run.arrivals.filter(({ type, x, y, at, affixes }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }, affixes); return false; });
     if (run.arrivals.length < waiting) this.sense({ kind: 'summon' });
     const living = this.s.enemies.filter(e => e.hp > 0).length;
-    if (!run.arrivals.length && run.wave < this.room.waves.length - 1 && living <= this.config.rules.waveCallsAtLiving) this.callWave();
+    if (!run.arrivals.length && run.wave < this.room.waves.length - 1 && living <= (run.plan?.[run.node]?.callAt ?? this.config.rules.waveCallsAtLiving)) this.callWave();
   }
   /** The portal only takes someone walking into it, so a player already standing there is not whisked away. */
   walkToPortal(dt, input) {
@@ -1475,7 +1524,14 @@ export class Game {
     const length = Math.hypot(dx, dy);
     if (length > 0) { dx /= Math.max(1, length); dy /= Math.max(1, length); p.moveAngle = Math.atan2(dy, dx); }
     else if (!p.dodge) p.moveAngle = p.angle;
-    if (input.dodge) this.dodge();
+    // A press that cannot act yet (mid-dodge, mid-swing, a moment before a wait runs out) is kept for INPUT_BUFFER seconds
+    // and acts on the first step it can, so a dodge, swing or skill pressed a little early is never lost.
+    const held = p.buffer ??= {}, now = this.s.time;
+    if (input.dodge) held.dodge = now + INPUT_BUFFER;
+    if (input.basic) held.basic = now + INPUT_BUFFER;
+    if (input.skill !== undefined) held.skill = { index: input.skill, until: now + INPUT_BUFFER };
+    if (input.fusion) held.fusion = now + INPUT_BUFFER;
+    if (held.dodge > now && this.dodge()) held.dodge = 0;
     if (p.dodge) {
       this.moveDodge(dt);
       const slip = this.trait('slipstream');
@@ -1486,9 +1542,9 @@ export class Game {
       const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0)) * (stuck ? 1 - stuck.slow : 1);
       this.move(p, dx * speed * dt, dy * speed * dt);
     }
-    if (input.basic) this.basicAttack();
-    if (input.skill !== undefined) this.castSkill(input.skill, input.aim);
-    if (input.fusion) this.castFusion(input.aim);
+    if (held.basic > now && this.basicAttack()) held.basic = 0;
+    if (held.skill?.until > now && this.castSkill(held.skill.index, input.aim)) held.skill = null;
+    if (held.fusion > now && this.castFusion(input.aim)) held.fusion = 0;
     this.updateBasic(dt);
     // Hostile fields (magnet, suction, stickers) use the same paused simulation clock but no friendly cast path.
     for (const cast of this.s.casts.filter(c => c.shape === 'suction')) {
@@ -1716,8 +1772,9 @@ export class Game {
     }
     if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
+    // The pick, in order, for the pause menu's 이번 원정 tab: the stop it was taken at and what it was.
+    (run.picks ??= []).push({ node: run.node, kind: reward.kind, id: reward.id ?? null, amount: reward.amount ?? null, rarity: reward.rarity ?? null, element: reward.kind === 'level' ? this.slots[reward.id]?.element ?? null : null });
     run.rewardChoices = []; run.rerolledCards = []; this.sense({ kind: 'pick' });
-    if (this.fusion) this.notify(`${this.fusion.name} 연결 · 축전 ${this.fusion.energyCost}을 모으면 융합`);
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
     else this.s.mode = 'route';
     this.save(); return true;
@@ -1781,3 +1838,9 @@ export class Game {
 }
 import {crosscutSegment,clampContains} from './fusion-geometry.js';
 import { cleanNickname } from './nickname.js';
+/** How front-loaded a dodge is: 0 is a flat speed; 0.7 starts at 1.7× the average and ends at 0.3× (about walking pace). */
+const DODGE_EASE = 0.7;
+/** Seconds an early press of dodge, wrench, skill or fusion is remembered (see the combat step). */
+const INPUT_BUFFER = 0.15;
+/** Parts a body bursts into when it falls (how many pieces by what struck it), and how long they fly and bounce. */
+const PARTS = { wrench: 7, skill: 10, fusion: 14, seconds: 0.9 };

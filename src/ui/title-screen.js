@@ -1,4 +1,5 @@
-const F2_SHEET = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
+// The title's own F2: the idle pose redrawn cleaner and larger (PixelLab, 192 px), shown at 2x on the form.
+const F2_TITLE = 'art/ui/title/f2-title-v3.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
 const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
 const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
@@ -62,7 +63,8 @@ function drawForm(c, f2) {
   c.drawImage(pixelText('웃음거리 품질관리국 · 불량 판정서', 12, INK), 88, 176);
   rule(88, 216, 936);
   c.fillStyle = '#d7e4d6'; c.fillRect(100, 238, 320, 350);
-  c.drawImage(f2, 0, 0, 128, 128, 260 - 64 * 3, 580 - 105 * 3, 384, 384);
+  // Centred on the photo (x 260), feet on its bottom (y 580): the figure spans x 35-142, y 29-161 of the 192 px picture.
+  c.drawImage(f2, 0, 0, 192, 192, 260 - 88 * 2, 580 - 161 * 2, 384, 384);
   c.fillStyle = INK; for (const [x, y, w, h] of [[100, 238, 320, 4], [100, 584, 320, 4], [100, 238, 4, 350], [416, 238, 4, 350]]) c.fillRect(x, y, w, h);
   c.fillStyle = '#c79a3e'; c.fillRect(240, 222, 44, 40); c.fillStyle = PAPER; c.fillRect(250, 232, 24, 20);
   // The value starts after its label, however wide the lettering runs.
@@ -94,7 +96,7 @@ export class TitleScreen {
       if (delta) { e.preventDefault(); this.move(delta); }
     });
     addEventListener('resize', () => this.fit());
-    this.ready = load(F2_SHEET).then(f2 => {
+    this.ready = load(F2_TITLE).then(f2 => {
       const c = root.querySelector('.title-form').getContext('2d'); c.imageSmoothingEnabled = false; drawForm(c, f2);
       const stamp = stampImage(MARK_SIZE), mark = this.mark.getContext('2d');
       this.mark.width = stamp.width; this.mark.height = stamp.height; mark.drawImage(stamp, 0, 0);

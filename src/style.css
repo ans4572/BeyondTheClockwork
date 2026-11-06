@@ -41,6 +41,12 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .panel .divider { height: 2px; background: var(--ink); opacity: .25; margin: 12px 0; }
 .actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
 .transfer-code { font-size: 26px !important; font-weight: 700; letter-spacing: 3px; margin: 6px 0 0 !important; user-select: all; }
+.run-picks-head { font-weight: 700; margin: 4px 0 8px; }
+.run-picks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 52vh; overflow-y: auto; }
+.run-picks li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; padding: 6px 8px; background: var(--paper-low); }
+.run-picks .pick-no { display: grid; place-items: center; width: 24px; height: 24px; background: var(--ink); color: var(--paper); font-weight: 700; font-size: 12px; }
+.run-picks .pick-meta { color: var(--label); font-size: 12px; }
+.run-picks p { margin: 2px 0 0; font-size: 13px; }
 .nickname-row { align-items: center; }
 .nickname-row label { font-weight: 700; }
 .nickname-row input { width: 10em; padding: 7px 10px; border: 0; border-radius: 0; box-shadow: inset 0 0 0 2px var(--ink); background: #fffaf0; color: var(--ink); font: inherit; font-size: 16px; font-weight: 700; -webkit-user-select: text; user-select: text; }

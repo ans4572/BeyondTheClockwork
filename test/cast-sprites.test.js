@@ -34,13 +34,13 @@ test('every skill and fusion in the combat data has an action in eight direction
 });
 
 test('every fusion has an effect sheet of the declared size, and only real frames play', () => {
-  for (const { id } of data.combat.fusions) {
+  for (const { id } of data.combat.fusions.filter(f => f.id !== 'frostCrosscut')) {
     const effect = clips.castEffects[id], [width, height] = pngSize(new URL(`..${effect.sheet}`, import.meta.url));
     assert.equal(width, effect.frameWidth * effect.columns, id);
     assert.equal(height % effect.frameHeight, 0, id);
     assert.ok(Math.max(...effect.playback) < width / effect.frameWidth * height / effect.frameHeight, id);
   }
-  assert.deepEqual(clips.castEffects.frostCrosscut.playback, [0, 1, 8, 9, 10, 18, 19, 20]);
+  assert.equal(clips.castEffects.frostCrosscut, undefined, 'the ice crescent is drawn in code');
 });
 
 test('skill clips play at their authored speed and the same character size as movement', () => {
@@ -133,16 +133,18 @@ test('effects appear at the point the cast damages, after the hand releases', ()
   assert.equal(shown.effect, clips.castEffects.arcFurnace);
 });
 
-test('the storm orb hovers, and the crosscut travels out to its range', () => {
+test('the storm orb hovers, and the ice crescent travels out to its range', () => {
   const g = battle(), fx = new CastEffects(library), orb = cast(g, 'stormFloat');
   pass(g, 0.5);
   assert.equal(fx.update(g)[0].lift, orb.hoverHeight);
-  const h = battle(), cuts = new CastEffects(library), cut = cast(h, 'frostCrosscut');
-  pass(h, 0.3);
-  const near = cuts.update(h)[0].x;
-  pass(h, 0.7);
-  const far = cuts.update(h)[0].x;
-  assert.ok(far > near && far <= h.p.x + cut.range);
+  const h = battle(), cut = cast(h, 'frostCrosscut');
+  const run = seconds => { for (let t = 0; t < seconds; t += 1 / 60) h.update(1 / 60, {}); };
+  run(0.3);
+  const near = cut.x;
+  run(0.15);
+  assert.ok(cut.x > near && cut.x <= cut.startX + cut.range + 1e-9);
+  run(0.5);
+  assert.ok(cut.done);
 });
 
 test('an effect outlives its cast, follows a moving one, and ends with the room', () => {
@@ -171,7 +173,7 @@ test('renderer draws the effect frame and drops the code shapes it replaces', ()
   const effect = clips.castEffects.stormFloat, draw = calls.find(call => call[0] === 'drawImage' && call[1].fake === effect.sheet);
   assert.ok(draw);
   assert.deepEqual(draw.slice(4, 6), [effect.frameWidth, effect.frameHeight]);
-  assert.deepEqual(draw.slice(8), [effect.frameWidth / 2, effect.frameHeight / 2]);
+  assert.deepEqual(draw.slice(8), [effect.frameWidth * (effect.scale || 1) / 2, effect.frameHeight * (effect.scale || 1) / 2]);
 });
 
 test('the second skills cast PixelLab bodies in all eight directions, with an effect at the cast', () => {

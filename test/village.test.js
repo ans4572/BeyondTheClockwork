@@ -36,7 +36,8 @@ const imageSize = file => {
 test('each mask matches the declared map size, and each background is drawn at twice that for sharp screens', () => {
   for (const place of places) {
     assert.deepEqual(imageSize(new URL(`..${place.mask}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
-    // The painting ships at map size x 40 and the game enlarges it x pixelScale with hard pixel edges.
+    // The painting ships at map size x 40 and the game enlarges it x pixelScale with hard pixel edges, or ships already
+    // at x 80 (the court, upscaled with Real-ESRGAN) with no pixelScale.
     assert.deepEqual(imageSize(new URL(`..${place.background}`, import.meta.url)).map(n => n * (place.pixelScale || 1)), place.size.map(units => Math.round(units * 80)));
   }
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
@@ -397,6 +398,7 @@ test('the back yard gives a dummy that never falls, and cooldowns only clear whi
   const g = atHub(), yard = maps.practice;
   assert.equal(g.enterPractice(), true); assert.equal(g.s.mode, 'practice'); assert.ok(g.active); assert.equal(g.slots.length, 2);
   const [dummy] = g.s.enemies, skill = g.skillSlots[0].skill;
+  assert.equal(g.s.enemies.filter(e => e.dummy).length, 1 + yard.moreDummies.length, 'five dummies stand in the yard');
   g.hitEnemy(dummy, 1e6); assert.equal(dummy.hp, dummy.maxHp);
   step(g, 2); assert.deepEqual([dummy.x, dummy.y], [yard.dummy.x, yard.dummy.y]); assert.equal(g.p.hp, g.p.maxHp);
   assert.equal(g.p.energy, data.combat.player.maxEnergy);

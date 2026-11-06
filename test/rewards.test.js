@@ -20,7 +20,7 @@ test('every element offers as many element cards (skill mods and traits) as ever
   assert.ok(traits.every(n => n === traits[0]), `traits per element: ${traits}`);
   const cards = data.combat.elements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
   assert.ok(cards.every(n => n === cards[0]), `element cards per element: ${cards}`);
-  assert.equal(data.slice.mods.length, 9);
+  assert.equal(data.slice.mods.length, 8);
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);
 });
 
@@ -185,10 +185,6 @@ test('scrap harvest speeds attacks after a kill', () => {
   g.basicAttack(); g.updateBasic(0.1); assert.ok(Math.abs(g.p.attack.elapsed - 0.12) < 1e-9);
 });
 
-test('windup recoil readies the dodge on a third-hit connection', () => {
-  const g = arena(); g.s.run.mods = ['windupRecoil']; dummy(g); g.p.dodgeReady = g.s.time + 50; swing(g, 2);
-  assert.ok(g.p.dodgeReady <= g.s.time);
-});
 
 test('the shockwave reaches enemies the third swing does not', () => {
   const g = arena(), behind = dummy(g, 6, 8); g.s.run.mods = ['shockwave'];
@@ -197,16 +193,19 @@ test('the shockwave reaches enemies the third swing does not', () => {
   const h = arena(), still = dummy(h, 6, 8); dummy(h); swing(h, 2); assert.equal(still.hp, still.maxHp);
 });
 
-test('deflect turns a bullet round on every swing, a little beyond the wrench', () => {
-  const shot = (mods, phase) => {
-    const g = arena(), trumpet = dummy(g, 14, 8, 'trumpet'); g.s.run.mods = mods;
+test('deflect turns a bullet round on every swing, a little beyond the wrench, for what it would have done to F2', () => {
+  const shot = (mods, phase, armour = 0) => {
+    const g = arena(), trumpet = dummy(g, 14, 8, 'trumpet'); g.s.run.mods = mods; g.s.run.upgrades.basicDamage = 4; g.s.profile.stats.damageReduction = armour;
     g.p.combo = phase; g.p.comboExpires = g.s.time + 9; g.basicAttack();
     g.fireBullet(trumpet, Math.PI, 5.5); g.s.projectiles.at(-1).x = g.p.x + 2.1;
     step(g, 1.5); return [trumpet.maxHp - trumpet.hp, g.p.hp === g.p.maxHp];
   };
-  assert.deepEqual(shot(['deflect'], 1), [data.slice.mods.find(m => m.id === 'deflect').reflectedDamage, true]);
+  const bullet = dummy(arena(), 14, 8, 'trumpet').damage;
+  assert.deepEqual(shot(['deflect'], 1), [bullet, true], 'the wrench bonus does not apply');
   assert.deepEqual(shot([], 1), [0, false]);
-  assert.deepEqual(shot(['deflect'], 0), [data.slice.mods.find(m => m.id === 'deflect').reflectedDamage, true]);
+  assert.deepEqual(shot(['deflect'], 0), [bullet, true]);
+  const [armoured] = shot(['deflect'], 0, 5), cut = data.slice.permanentStats.find(s => s.id === 'damageReduction').perRank * 5;
+  assert.ok(Math.abs(armoured - bullet * (1 - cut)) < 1e-9, 'the same number F2 would lose');
 });
 
 test('the light grip shortens only the third recovery', () => {
@@ -242,4 +241,12 @@ test('piercing dash goes through enemies and leaves them behind the player', () 
 test('a run takes only one mod per skill', () => {
   const g = arena(); g.s.run.skillMods = ['overload'];
   assert.ok(!g.buildRewards().some(r => r.kind === 'skillMod' && data.slice.skillMods.find(m => m.id === r.id).skill === 'heatSwing'));
+});
+
+test('every reward picked on a run is written down in order, with the stop it was taken at', () => {
+  const g = arena(); g.s.run.node = 2; g.s.mode = 'reward';
+  g.s.run.rewardChoices = [{ kind: 'heal', id: 'patch' }]; g.p.hp = 10; assert.ok(g.chooseReward(0));
+  g.s.mode = 'reward'; g.s.run.node = 4; g.s.run.rewardChoices = [{ kind: 'level', id: 0 }]; assert.ok(g.chooseReward(0));
+  assert.deepEqual(g.s.run.picks.map(p => [p.node, p.kind, p.id]), [[2, 'heal', 'patch'], [4, 'level', 0]]);
+  assert.equal(g.s.run.picks[1].element, g.slots[0].element);
 });

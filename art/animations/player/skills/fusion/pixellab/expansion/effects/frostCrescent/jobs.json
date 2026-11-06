@@ -1,0 +1,6 @@
+{
+  "concept": { "tool": "create_object_pro_flash", "object": "8bd90461-6c1d-4270-9aef-a3f849644864", "size": [128, 128], "seed": 51202 },
+  "fly": { "tool": "animate_image_pixminimax", "job": "5f6fca97-65cc-4a87-9fb4-c8c07a1a75b5", "frames": "0-7 (loop, first = last)", "seed": 51301 },
+  "break": { "tool": "animate_image_pixminimax", "job": "4441a8c7-0d16-4fe2-8e78-498a5be3f775", "frames": "1-8 (0 is the input)", "seed": 51302 },
+  "game": ["art/fx/frost-crescent-v1.png", "art/fx/frost-crescent-break-v1.png"]
+}

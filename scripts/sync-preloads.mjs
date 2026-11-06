@@ -1,6 +1,6 @@
 // The game is plain ES modules with no bundler, so a browser only learns of a module after the one importing it has
 // arrived: on a slow connection the ~40 files came one wave after another. index.html lists them all up front
-// (modulepreload) together with the data, the fonts and the title's F2 sheet, so they download side by side.
+// (modulepreload) together with the data, the fonts and the title's F2 picture, so they download side by side.
 // `node scripts/sync-preloads.mjs` rewrites the list; `--check` fails when it is out of date (npm run check).
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -11,8 +11,8 @@ const EXTRA = [
   '<link rel="preload" href="art/fonts/Galmuri11.woff2" as="font" type="font/woff2" crossorigin>',
   '<link rel="preload" href="art/fonts/Galmuri11-Bold.woff2" as="font" type="font/woff2" crossorigin>',
   '<link rel="preload" href="art/fonts/NeoDunggeunmoPro.woff2" as="font" type="font/woff2" crossorigin>',
-  // The title's F2 stands on this sheet; the loading card waits for it.
-  '<link rel="preload" href="art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp" as="image">',
+  // The title's F2 picture; the loading card waits for it.
+  '<link rel="preload" href="art/ui/title/f2-title-v3.png" as="image">',
   ...['combat', 'progression', 'slice', 'maps', 'dialogue'].map(name => `<link rel="preload" href="src/data/${name}.json" as="fetch" crossorigin>`)
 ];
 
@@ -36,7 +36,8 @@ export async function preloadBlock() {
 }
 
 if (process.argv[1]?.endsWith('sync-preloads.mjs')) {
-  const html = await readFile('index.html', 'utf8'), block = await preloadBlock();
+  // Compared and written with plain line ends; a checkout with Windows line ends is not a difference.
+  const html = (await readFile('index.html', 'utf8')).replace(/\r\n/g, '\n'), block = await preloadBlock();
   const at = html.indexOf(`  ${START}`), end = html.indexOf(END);
   const next = at >= 0 ? html.slice(0, at) + block + html.slice(end + END.length) : html.replace('  <link rel="stylesheet" href="src/style.css">', `${block}\n  <link rel="stylesheet" href="src/style.css">`);
   if (process.argv.includes('--check')) { if (next !== html) { console.error('index.html preloads are out of date: run node scripts/sync-preloads.mjs'); process.exit(1); } console.log('Verified index.html preloads'); }

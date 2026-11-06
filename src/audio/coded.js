@@ -303,6 +303,13 @@ export const WORLD_CANDIDATES = {
     ['착 + 짠', (a, o) => { whoosh(a, o, { from: 1500, to: 4000, dur: 0.1, q: 0.8, peak: 0.6 }); notes(a, o, [[523, 0.08], [784, 0.08], [1047, 0.08]], { dur: 0.3, peak: 0.25 }); }],
     ['카드 세 장', (a, o) => [0, 0.07, 0.14].forEach(at => hiss(a, o, { freq: 3000, q: 1.2, dur: 0.035, peak: 0.7, at }))]
   ],
+  // The title's disposal stamp coming down on the form: a heavy 쾅 rather than a soft thud.
+  stamp: [
+    ['묵직한 쾅', (a, o) => { tone(a, o, { from: 110, to: 38, glide: 0.18, dur: 0.42, peak: 1 }); hiss(a, o, { type: 'lowpass', freq: 1400, to: 180, dur: 0.28, peak: 0.75 }); hiss(a, o, { freq: 2600, q: 1.5, dur: 0.018, peak: 0.55 }); }],
+    ['책상 쾅 + 울림', (a, o) => { tone(a, o, { from: 140, to: 48, glide: 0.12, dur: 0.32, peak: 0.95 }); hiss(a, o, { freq: 420, q: 3, dur: 0.13, peak: 0.8 }); tone(a, o, { type: 'triangle', from: 196, to: 180, dur: 0.38, peak: 0.22, at: 0.01 }); hiss(a, o, { type: 'lowpass', freq: 700, dur: 0.65, attack: 0.02, peak: 0.16, at: 0.03 }); }],
+    ['쇠도장 쾅 + 쨍', (a, o) => { tone(a, o, { from: 120, to: 42, glide: 0.15, dur: 0.36, peak: 0.95 }); hiss(a, o, { type: 'lowpass', freq: 1800, to: 250, dur: 0.2, peak: 0.6 }); ring(a, o, { base: 330, dur: 0.7, peak: 0.28, at: 0.005, partials: [1, 2.76, 5.4, 8.93] }); }],
+    ['쾅 + 종이 펄럭', (a, o) => { tone(a, o, { from: 100, to: 36, glide: 0.2, dur: 0.45, peak: 1 }); hiss(a, o, { type: 'highpass', freq: 1500, dur: 0.06, peak: 0.6 }); hiss(a, o, { type: 'lowpass', freq: 900, to: 200, dur: 0.22, peak: 0.6 }); tone(a, o, { from: 80, to: 40, dur: 0.18, peak: 0.35, at: 0.11 }); whoosh(a, o, { from: 2500, to: 900, dur: 0.25, q: 0.6, peak: 0.18, at: 0.06 }); }]
+  ],
   pick: [
     ['확정 두 음', (a, o) => { const f = soft(a, o, 3000); tone(a, f, { type: 'square', from: 660, dur: 0.07, peak: 0.25 }); tone(a, f, { type: 'square', from: 990, dur: 0.14, peak: 0.25, at: 0.07 }); }],
     ['도장 탁 + 띵', (a, o) => { tone(a, o, { from: 150, to: 70, dur: 0.07, peak: 0.8 }); hiss(a, o, { freq: 1200, q: 2, dur: 0.03, peak: 0.6 }); tone(a, o, { type: 'triangle', from: 1319, dur: 0.25, peak: 0.3, at: 0.05 }); }]

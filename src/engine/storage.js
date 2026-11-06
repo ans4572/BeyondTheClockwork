@@ -18,6 +18,10 @@ export function saveSummary(state, savedAt, data, now = new Date()) {
   return `${place} · ${day} ${clock}`;
 }
 export function encodeSave(state) { return JSON.stringify({ version: 1, savedAt: new Date().toISOString(), state }); }
+/** Permanent stats that were removed, with the prices they were bought at, so a save gets its gears back. */
+const REMOVED_STATS = { dodgeCooldown: { baseCost: 10, costStep: 5 } };
+/** Run rewards that were removed: a run saved holding one simply loses it (it only shortened the dodge's wait). */
+const REMOVED_REWARDS = { mod: ['windupRecoil'], upgrade: ['dodgeCooldownReduction'] };
 const LEGACY_ROW_COSTS = { chassis: [20, 35, 55, 80, 110], strike: [20, 35, 55, 80, 110], repair: [30, 70, 130], safety: [120, 300] };
 
 export function decodeSave(raw, data) {
@@ -37,6 +41,13 @@ export function decodeSave(raw, data) {
     }
     delete s.profile.rows;
     s.profile.stats = Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0]));
+  }
+  // Stats taken off the board (the dodge's wait, 2026-11-06) give back every gear spent on them.
+  for (const [id, { baseCost, costStep }] of Object.entries(REMOVED_STATS)) {
+    const rank = s.profile.stats?.[id];
+    if (rank === undefined) continue;
+    if (integerIn(rank, 0, 1000)) for (let r = 0; r < rank; r++) s.profile.freeGears += baseCost + costStep * r;
+    delete s.profile.stats[id];
   }
   for (const stat of data.slice.permanentStats) if (!integerIn(s.profile.stats?.[stat.id], 0, stat.maxRank)) throw new Error('저장된 스탯 레벨이 올바르지 않습니다.');
   const modes = ['opening', 'intro', 'introDeath', 'registration', 'hub', 'combat', 'reward', 'route', 'shop', 'unwind', 'complete', 'returned', 'practice'];
@@ -74,6 +85,9 @@ export function decodeSave(raw, data) {
     if (!integerIn(run.node, 0, data.slice.rooms.length - 1) || !Array.isArray(run.slots) || run.slots.length > 2) fail('저장된 원정이 올바르지 않습니다.');
     if (new Set(run.slots.map(slot => slot.element)).size !== run.slots.length || run.slots.some(slot => !data.slice.elements.includes(slot.element) || !integerIn(slot.level, 1, data.combat.balance.skillMaxLevel) || !Object.hasOwn(data.combat.balance.rarityDamage, slot.rarity))) fail('저장된 속성 슬롯이 올바르지 않습니다.');
     if (!Array.isArray(run.plan) || run.plan.length !== data.slice.rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (data.slice.rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');
+    if (Array.isArray(run.mods)) run.mods = run.mods.filter(id => !REMOVED_REWARDS.mod.includes(id));
+    if (run.upgrades) for (const id of REMOVED_REWARDS.upgrade) delete run.upgrades[id];
+    if (Array.isArray(run.rewardChoices)) run.rewardChoices = run.rewardChoices.filter(reward => !REMOVED_REWARDS[reward.kind]?.includes(reward.id));
     if (!validNumber(run.coins) || !validNumber(run.elapsed) || !Array.isArray(run.clears) || !Array.isArray(run.shopBought) || !Array.isArray(run.mods) || !run.upgrades || !Array.isArray(run.rewardChoices)) fail('저장된 원정 보상이 올바르지 않습니다.');
     for (const reward of run.rewardChoices) {
       const valid = reward.kind === 'element' ? data.slice.elements.includes(reward.id) && Object.hasOwn(data.combat.balance.rarityDamage, reward.rarity)

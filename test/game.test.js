@@ -22,7 +22,7 @@ function pick(g, kind) { const index = kind ? g.s.run.rewardChoices.findIndex(r 
 test('source data retains the full 8 elements / 28 fusions while runtime selects 18.1', async () => {
   const source = JSON.parse(await readFile(new URL('../docs/design/clockwork-design.v1.json', import.meta.url), 'utf8'));
   assert.equal(source.elements.length, 8); assert.equal(source.fusions.length, 28);
-  assert.equal(data.combat.fusions.length, 6); assert.equal(data.slice.permanentStats.length, 13);
+  assert.equal(data.combat.fusions.length, 6); assert.equal(data.slice.permanentStats.length, 12);
   assert.deepEqual(data.combat.player, source.player);
   const keys = new Set(source.fusions.map(f => [...f.pair].sort().join('+'))); assert.equal(keys.size, 28);
 });
@@ -77,8 +77,8 @@ test('crits use the cap and multiplier, and never touch damage over time', () =>
   g.random = () => 0.11; g.hitEnemy(enemy, 100); assert.equal(enemy.hp, 1e5 - 700);
 });
 test('the new economy, dodge, energy and status stats each do their job', () => {
-  const g = arena(); g.s.profile.stats.dodgeCooldown = 20; g.dodge();
-  assert.ok(Math.abs(g.p.dodgeReady - g.s.time - 0.45) < 1e-9);
+  const g = arena(); g.dodge();
+  assert.ok(Math.abs(g.p.dodgeReady - g.s.time - 0.45) < 1e-9, 'the dodge waits 0.45s, with nothing to shorten it');
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
@@ -122,11 +122,26 @@ test('diagonal movement has the same speed as cardinal movement', () => {
   const start = { ...g.p }; step(g, 1, { x: 1 }); step(h, 1, { x: 1, y: 1 });
   assert.ok(Math.abs(distance(g.p, start) - distance(h.p, start)) < 1e-8); assert.ok(Math.abs(distance(g.p, start) - 3.5) < 1e-8);
 });
-test('dodge lasts 0.18s, travels 3 units, and grants only 0.16s invulnerability', () => {
+test('dodge lasts 0.2s, travels 3 units fast-then-slowing, and grants only 0.16s invulnerability', () => {
   const g = arena(); inert(g, 'guard', { x: 25, y: 14 }); const start = { ...g.p }; g.dodge();
   assert.ok(Math.abs(g.p.invulnerableUntil - 0.16) < 1e-8); assert.equal(g.hurt(10), false);
-  step(g, 0.2); assert.ok(Math.abs(distance(g.p, start) - 3) < 1e-8); assert.equal(g.p.dodge, null);
+  step(g, 0.1); assert.ok(distance(g.p, start) > 1.9, 'more than half the way in the first half');
+  step(g, 0.15); assert.ok(Math.abs(distance(g.p, start) - 3) < 1e-8); assert.equal(g.p.dodge, null);
   assert.equal(g.hurt(10), true); assert.equal(g.hurt(10), false); assert.equal(g.dodge(), false);
+});
+test('a wrench, skill or dodge pressed a moment early is kept and acts as soon as it can', () => {
+  const g = arena(); inert(g, 'guard', { x: 25, y: 14 }); g.dodge();
+  for (let i = 0; i < 6; i++) g.update(1 / 60, {});
+  g.update(1 / 60, { basic: true }); assert.equal(g.p.attack, null, 'not during the dodge');
+  for (let i = 0; i < 12 && !g.p.attack; i++) g.update(1 / 60, {});
+  assert.ok(g.p.attack, 'the swing comes out when the dodge ends');
+  const h = arena(); inert(h, 'guard', { x: 25, y: 14 }); h.dodge(); h.p.dodge = null; h.p.dodgeReady = h.s.time + 0.1;
+  h.update(1 / 60, { dodge: true }); assert.equal(h.p.dodge, null);
+  for (let i = 0; i < 10 && !h.p.dodge; i++) h.update(1 / 60, {});
+  assert.ok(h.p.dodge, 'a dodge pressed 0.1s early still happens');
+  const k = arena(); inert(k, 'guard', { x: 25, y: 14 }); k.dodge(); k.p.dodge = null; k.p.dodgeReady = k.s.time + 0.3;
+  k.update(1 / 60, { dodge: true }); for (let i = 0; i < 30; i++) k.update(1 / 60, {});
+  assert.equal(k.p.dodge, null, 'but not one pressed far too early');
 });
 test('collision clamps dashes at obstacles and arena walls', () => {
   const g = arena(); inert(g, 'guard', { x: 25, y: 14 });
@@ -281,16 +296,14 @@ test('same seed pre-generates the same thirteen stage layouts and encounters', (
   const resumed = new Game(data, decodeSave(encodeSave(g.s), data)); assert.deepEqual(resumed.s.run.plan, g.s.run.plan);
 });
 
-test('frost crosscut uses two intersecting narrow cuts rather than a full forward cone',()=>{
- const g=arena(),center=inert(g,'guard',{x:10.8,y:8}),off=inert(g,'guard',{x:12,y:10.5});center.hp=center.maxHp=1000;off.hp=off.maxHp=1000;
- g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion(center),true);step(g,.15);assert.equal(center.hp,1000);step(g,.06);assert.equal(center.hp,900);step(g,.2);assert.equal(center.hp,900);assert.equal(off.hp,1000);step(g,.5);assert.equal(center.hp,900);assert.equal(g.p.energy,35);
-});
-
-test('frost launch and crossed path hit each enemy only once per blade',()=>{
- const g=arena(),near=inert(g,'guard',{x:8.65,y:7.8}),joint=inert(g,'guard',{x:9.2,y:9.6});
- for(const e of [near,joint])e.hp=e.maxHp=1000;
- g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;g.castFusion({x:13,y:8});step(g,.21);
- assert.equal(near.hp,900);assert.equal(joint.hp,950);
+test('frost crosscut flies one wide ice crescent forward that cuts each enemy in its band once',()=>{
+ const g=arena(),center=inert(g,'guard',{x:10.8,y:8}),side=inert(g,'guard',{x:11,y:9.2}),off=inert(g,'guard',{x:12,y:10.5}),beyond=inert(g,'guard',{x:15.6,y:8});
+ for(const e of [center,side,off,beyond])e.hp=e.maxHp=1000;
+ g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion(center),true);
+ step(g,.15);assert.equal(center.hp,1000,'nothing before the blade leaves the hand');
+ step(g,.35);assert.equal(center.hp,900);assert.equal(side.hp,900,'the band is wide');
+ step(g,1);assert.equal(center.hp,900,'one cut per enemy');assert.equal(side.hp,900);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
+ assert.equal(g.s.casts.length,0);assert.equal(g.p.energy,35);
 });
 
 test('fire cyclone starts in front of its caster, moves forward and cannot spawn through an obstacle',()=>{
@@ -384,16 +397,31 @@ test('every combat room runs two or three waves of fifteen to twenty-four enemie
   for (let i = 1; i < rooms.length; i++) assert.ok(weight(rooms[i]) > weight(rooms[i - 1]), rooms[i].id);
 });
 
-test('the next wave is warned about, arrives when one enemy is left, and only the last one clears the room', () => {
-  const g = hub(); g.startRun(11); const { waves, power } = g.room;
-  assert.equal(g.s.enemies.length, waves[0].length); assert.equal(g.s.enemies[0].maxHp, Math.round(data.slice.enemies.guard.hp * power)); assert.equal(g.s.enemies[0].damage, Math.round(data.slice.enemies.guard.damage * power * data.slice.rules.waveDamageShare));
+test('the next wave is warned about, arrives when the dealt number are left, and only the last one clears the room', () => {
+  const g = hub(); g.startRun(11); const { waves, power } = g.room, plan = g.s.run.plan[g.s.run.node];
+  assert.equal(plan.shape, 'two'); assert.equal(waves.length, 2); assert.equal(plan.callAt, 3);
+  assert.equal(g.s.enemies.length, waves[0].length); assert.equal(g.s.enemies[0].maxHp, Math.round(data.slice.enemies[g.s.enemies[0].type].hp * power));
   g.s.enemies.forEach(e => { e.ready = 1e9; });
-  g.s.enemies.slice(0, -2).forEach(e => { e.hp = 0; }); step(g, 0.1); assert.equal(g.s.run.wave, 0);
-  g.s.enemies.at(-2).hp = 0; step(g, 0.1); assert.equal(g.s.run.wave, 1);
+  // A big wave calls the next while three still stand.
+  g.s.enemies.slice(0, -4).forEach(e => { e.hp = 0; }); step(g, 0.1); assert.equal(g.s.run.wave, 0);
+  g.s.enemies.at(-4).hp = 0; step(g, 0.1); assert.equal(g.s.run.wave, 1);
   assert.equal(g.s.run.arrivals.length, waves[1].length);
   const before = g.s.enemies.length; step(g, 1); assert.equal(g.s.enemies.length, before + waves[1].length); assert.equal(g.s.run.arrivals.length, 0);
+  assert.equal(g.s.mode, 'combat');
   for (const e of g.s.enemies) e.hp = 0;
-  step(g, 0.1); assert.equal(g.s.run.wave, 2); step(g, 1.1); assert.equal(g.s.mode, 'combat');
+  step(g, 1.2); assert.equal(g.s.mode, 'reward');
+});
+
+test('a room dealt in three waves calls each when one is left; an elite room is one wave of elites', () => {
+  const g = hub(); g.startRun(11); const node = g.s.run.node, deal = changes => { g.s.run.plan[node] = { ...g.s.run.plan[node], ...changes }; };
+  deal({ shape: 'three', callAt: 1, waves: [['guard', 'guard', 'guard'], ['rat', 'rat', 'rat'], ['guard', 'guard', 'guard']], formations: ['spread', 'spread', 'spread'] });
+  g.enterNode(); g.s.enemies.forEach(e => { e.ready = 1e9; });
+  g.s.enemies.slice(0, -2).forEach(e => { e.hp = 0; }); step(g, 0.1); assert.equal(g.s.run.wave, 0);
+  g.s.enemies.at(-2).hp = 0; step(g, 0.1); assert.equal(g.s.run.wave, 1);
+  deal({ shape: 'elite', callAt: 0, waves: [['elite', 'elite', 'elite', 'elite']], formations: ['spread'] });
+  g.enterNode();
+  assert.deepEqual(g.s.enemies.map(e => e.type), ['elite', 'elite', 'elite', 'elite']);
+  assert.ok(g.s.notices.some(n => n.text.startsWith('정예만')));
   for (const e of g.s.enemies) e.hp = 0;
   step(g, 1.2); assert.equal(g.s.mode, 'reward');
 });

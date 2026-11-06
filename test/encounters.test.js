@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game, distance } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
-import { dealRun, formationSpots, dealer } from '../src/engine/encounters.js';
+import { dealRun, formationSpots, dealer, CALL_AT } from '../src/engine/encounters.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
 const { rooms, enemies } = data.slice;
@@ -15,20 +15,42 @@ test('each run deals new waves for every fight, near the designed weight, with t
     const dealt = dealRun(rooms, enemies, seed);
     rooms.forEach((room, i) => {
       if (!room.waves) return assert.equal(dealt[i], null);
-      const { waves, formations, themes } = dealt[i];
-      assert.equal(waves.length, room.waves.length, room.id);
+      const { waves, formations, themes, shape, callAt } = dealt[i];
       assert.equal(formations.length, waves.length); assert.equal(themes.length, waves.length);
-      const total = waves.flat().length; assert.ok(total >= 15 && total <= 24, `${room.id} has ${total}`);
+      assert.equal(callAt, CALL_AT[shape]);
+      const elites = room.waves.flat().filter(t => t === 'elite').length;
+      if (shape === 'elite') {
+        assert.equal(waves.length, 1); assert.ok(waves[0].every(t => t === 'elite') && waves[0].length >= 4 && waves[0].length <= 6, room.id);
+        return;
+      }
+      const total = waves.flat().length; assert.ok(total >= 15 && total <= 26, `${room.id} has ${total}`);
+      assert.equal(waves.flat().filter(t => t === 'elite').length, elites, `${room.id} elites`);
+      // Two waves are the design cut in half; three keep the design's own waves.
+      const designs = shape === 'two' ? (all => [all.slice(0, Math.ceil(all.length / 2)), all.slice(Math.ceil(all.length / 2))])(room.waves.flat()) : room.waves;
+      assert.equal(waves.length, designs.length, room.id);
       waves.forEach((wave, w) => {
-        const designed = room.waves[w];
-        assert.equal(wave.filter(t => t === 'elite').length, designed.filter(t => t === 'elite').length, `${room.id} wave ${w} elites`);
-        const drift = weight(wave) / weight(designed);
-        assert.ok(drift > 0.7 && drift < 1.35, `${room.id} wave ${w} weighs ${drift.toFixed(2)} of the design`);
-        assert.ok(wave.filter(t => t === 'drummer').length <= 1);
+        const designed = designs[w];
+        const drift = (weight(wave) / wave.length) / (weight(designed) / designed.length);
+        assert.ok(drift > 0.6 && drift < 1.5, `${room.id} wave ${w} weighs ${drift.toFixed(2)} of the design per body`);
+        assert.ok(wave.filter(t => t === 'drummer').length <= (wave.length >= 10 ? 2 : 1));
         for (const type of wave) assert.ok(enemies[type], type);
       });
     });
   }
+});
+
+test('fights come in two waves mostly, sometimes three, and from the elite rooms on sometimes elites alone', () => {
+  const counts = { two: 0, three: 0, elite: 0 }, fights = rooms.map((room, i) => room.waves ? i : -1).filter(i => i >= 0);
+  for (let seed = 1; seed <= 200; seed++) {
+    const dealt = dealRun(rooms, enemies, seed);
+    fights.forEach((i, n) => {
+      const { shape, waves } = dealt[i]; counts[shape]++;
+      if (n < 3) { assert.equal(shape, 'two'); assert.ok(waves.flat().length <= 18, `${rooms[i].id} starts small`); }
+      if (shape === 'elite') assert.ok(rooms[i].waves.flat().includes('elite'), `${rooms[i].id} has no elites to fill a room`);
+      if (shape === 'two') assert.ok(waves.every(w => w.length >= 7), `${rooms[i].id} two waves of ${waves.map(w => w.length)}`);
+    });
+  }
+  assert.ok(counts.two > counts.three && counts.three > 0 && counts.elite > 0, JSON.stringify(counts));
 });
 
 test('the same seed deals the same fights, and different seeds deal different ones', () => {
@@ -100,8 +122,10 @@ test('each trait does what its tag says', () => {
   const bomb = g.spawnWaveEnemy('elite', { ...at }, [{ id: 'volatile' }]), near = g.spawnWaveEnemy('guard', { x: at.x + 0.5, y: at.y });
   const guardHp = near.hp; g.hitEnemy(bomb, 1e6, { dot: true });
   assert.equal(g.s.blasts.length, 1); assert.equal(near.hp, guardHp);
+  // The blast takes a flat 15 off F2 standing in it and leaves every mob untouched.
+  g.p.x = at.x + 0.5; g.p.y = at.y; g.p.dodge = null; g.p.invulnerable = 0; g.p.hp = g.p.maxHp ?? g.p.hp; const hp = g.p.hp;
   g.s.time += affixRules.list.find(a => a.id === 'volatile').delay + 0.01; g.tickBlasts();
-  assert.equal(g.s.blasts.length, 0); assert.ok(near.hp < guardHp);
+  assert.equal(g.s.blasts.length, 0); assert.equal(near.hp, guardHp); assert.equal(hp - g.p.hp, 15);
 });
 
 test('a brass shield blocks the front until it has taken enough blows', () => {

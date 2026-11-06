@@ -110,7 +110,7 @@
         "arcFurnace": "노린 곳에서 불붙은 전기 폭발이 네 번 이어집니다.",
         "fireCyclone": "앞에서 생긴 작은 불 회오리가 천천히 나아가며 적을 빨아들입니다.",
         "magneticIceClamp": "노린 곳에 얼음 집게가 닫히며 가운데 적을 세 번 때립니다.",
-        "frostCrosscut": "얼음 칼날 두 개를 X자로 날려 앞쪽을 가릅니다.",
+        "frostCrosscut": "두꺼운 얼음 초승달을 바람에 실어 앞으로 날립니다. 지나가는 길의 적을 모두 벱니다.",
         "stormFloat": "노린 곳에 번개 구슬을 띄우고 잠시 뒤 터뜨려 주변 적을 밀어냅니다."
       },
       "statuses": {
@@ -373,10 +373,10 @@
       "phaseBreaks": [
         {
           "at": 0.5,
-          "seconds": 15,
-          "cans": 3,
-          "canEvery": 1.1,
-          "canSpeed": 4.2,
+          "seconds": 18,
+          "cans": 5,
+          "canEvery": 0.9,
+          "canSpeed": 5,
           "canDamage": 8,
           "canRadius": 0.35,
           "range": 7.5,
@@ -387,7 +387,13 @@
           "failWarn": 1.2,
           "failDamage": 40,
           "failHeal": 0.05,
-          "kind": "cans"
+          "kind": "cans",
+          "bombShare": 0.35,
+          "bombDamage": 16,
+          "bombRadius": 1.6,
+          "sway": 2.2,
+          "swaySeconds": 4.5,
+          "backSpeed": 11
         }
       ]
     },
@@ -590,15 +596,14 @@
       "startDistance": 2.6
     },
     "frostCrosscut": {
-      "shape": "crosscut",
-      "range": 5,
-      "startDistance": 0.32,
-      "spread": 1.6,
-      "halfWidth": 0.45,
+      "shape": "crescent",
+      "range": 6,
+      "startDistance": 0.4,
+      "speed": 14,
+      "halfWidth": 1.4,
+      "thickness": 0.7,
       "interval": 0,
-      "delay": 0.18,
-      "startSide": -0.2,
-      "splitDistance": 1.2
+      "delay": 0.18
     },
     "stormFloat": {
       "shape": "orb",
@@ -634,7 +639,6 @@
       "id": "deflect",
       "name": "반사 톱니",
       "description": "렌치의 모든 타격이 일반 탄환을 되돌리고, 탄환에 닿는 거리가 늘어난다.",
-      "reflectedDamage": 18,
       "reflectedSpeed": 9,
       "reach": 0.6,
       "tier": "rare"
@@ -674,12 +678,6 @@
       "duration": 3,
       "speedBonus": 0.2,
       "tier": "rare"
-    },
-    {
-      "id": "windupRecoil",
-      "name": "태엽 반동",
-      "description": "3타가 적중하면 회피가 바로 준비된다.",
-      "tier": "common"
     },
     {
       "id": "spinSlash",
@@ -1126,11 +1124,6 @@
       "description": "속성 기술과 융합 스킬의 대기시간이 줄어든다.",
       "tier": "common"
     },
-    "dodgeCooldownReduction": {
-      "name": "윤활 나사",
-      "description": "회피 후 다음 회피가 빨리 준비된다.",
-      "tier": "common"
-    },
     "statusDamage": {
       "name": "오래 타는 코일",
       "description": "화상이 주는 지속 피해가 강해진다.",
@@ -1238,16 +1231,6 @@
       "name": "치명타 피해",
       "description": "치명타의 피해 배율이 늘어난다.",
       "perRank": 0.025,
-      "unit": "percent",
-      "maxRank": 30,
-      "baseCost": 10,
-      "costStep": 5
-    },
-    {
-      "id": "dodgeCooldown",
-      "name": "회피 대기시간 감소",
-      "description": "회피의 대기시간이 줄어들어 더 자주 쓴다.",
-      "perRank": 0.02,
       "unit": "percent",
       "maxRank": 30,
       "baseCost": 10,
@@ -1570,7 +1553,7 @@
       { "id": "brassShield", "name": "황동 방패", "color": "#96551a", "frontGuard": 0.6, "guardArcDegrees": 120, "breakHits": 4 },
       { "id": "splitter", "name": "분열", "color": "#6e7890", "spawn": "rat", "count": 2 },
       { "id": "coated", "name": "코팅", "color": "#3f8fc4", "elements": ["fire", "ice", "lightning", "wind"] },
-      { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 18, "enemyDamage": 120 }
+      { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 15 }
     ]
   },
   "difficulty": {
