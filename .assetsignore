@@ -18,3 +18,5 @@ art/fx/marks/src
 art/world-map/smile-street-road-reference.png
 *.prompt.txt
 *-submission.txt
+# The key art masters (the page shares the 1200×630 JPEG only).
+art/ui/key-art/*.png

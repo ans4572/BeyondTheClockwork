@@ -11,6 +11,7 @@ import { clamp, distance, floorDistance, angleDiff, inCone, segmentDistance } fr
 import { enemyActions } from './enemy-actions.js';
 import { roomWaves } from './room-waves.js';
 import { rewardDraws } from './reward-draws.js';
+import { noteRecord } from './records.js';
 
 export { clamp, distance, segmentDistance };
 
@@ -1057,6 +1058,7 @@ export class Game {
     if (reason === 'defeat') this.sense({ kind: 'fail' });
     this.s.result = { reason, difficulty: run.difficulty || 'normal', node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
+    noteRecord(profile.records ??= {}, this.s.result);
     this.onRun('runEnd', { run: run.id, difficulty: run.difficulty || 'normal', elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
   }

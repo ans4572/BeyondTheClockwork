@@ -19,7 +19,8 @@ import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
-import { browserReporter, mailbox, PING_SECONDS } from './ui/stats-report.js';
+import { browserReporter, mailbox, fetchRecords, PING_SECONDS } from './ui/stats-report.js';
+import { mergeMine, formatClock } from './engine/records.js';
 import { callName, fillName, NICKNAME_MAX } from './engine/nickname.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
@@ -33,6 +34,8 @@ const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른
 const HOME_NAME = '웃음 마을';
 /** The F9 room jumper works only on this computer's dev server, never on the deployed sites. */
 const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+// Two taps closer than this are a double tap, which phones would turn into a page zoom.
+const DOUBLE_TAP_MS = 350;
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
@@ -114,6 +117,22 @@ try {
   game.onRun = report; report.opened();
   const isTouch = navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches;
   document.body.classList.toggle('touch', isTouch);
+  // Phones zoom the page on a quick double tap or a pinch whatever the viewport tag says (iOS ignores user-scalable=no).
+  // The game is never zoomed: a second tap close after the first is kept from zooming, and still presses the button it
+  // landed on (the browser drops that click once the zoom is refused); pinches are refused. Text boxes keep their own taps.
+  if (isTouch) {
+    let lastTap = 0;
+    document.addEventListener('touchend', e => {
+      const now = e.timeStamp, quick = now - lastTap < DOUBLE_TAP_MS;
+      lastTap = now;
+      if (!quick || e.touches.length || e.target.closest?.('input, textarea, select')) return;
+      e.preventDefault();
+      e.target.closest?.('button, a, label, [data-action], [data-do]')?.click();
+    }, { passive: false });
+    document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    for (const type of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(type, e => e.preventDefault(), { passive: false });
+  }
+  document.addEventListener('dblclick', e => e.preventDefault());
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
   const MAX_BACKING_WIDTH = 2560;
   const fitCanvas = () => {
@@ -485,10 +504,35 @@ try {
    * furniture by the difficulty's scale, every kill's loot by its loot share); the last pick is offered first.
    */
   const DIFFICULTY_COLORS = { easy: '#5f9a6e', normal: '#c79a3e', hard: '#a92f2b' };
+  // The server's records, asked for each time the cards open (at most every RECORDS_REFRESH_MS); the cards show the
+  // save's own records at once and the server's line once it answers.
+  const RECORDS_REFRESH_MS = 30000;
+  let serverRecords = null, recordsState = 'idle', recordsAskedAt = -Infinity;
+  function askRecords() {
+    if (recordsState === 'loading' || performance.now() - recordsAskedAt < RECORDS_REFRESH_MS) return;
+    recordsState = 'loading'; recordsAskedAt = performance.now();
+    fetchRecords({ storage: localStorage, hostname: location.hostname, protocol: location.protocol }).then(found => {
+      if (found) serverRecords = found;
+      recordsState = serverRecords ? 'ready' : 'offline';
+      if (game.s.panel === 'difficulty') renderOverlay(true);
+    });
+  }
+  /** A difficulty card's clear record: this device's best (time and element pair) and the server's fastest clear. */
+  function recordBlock(id) {
+    const mine = mergeMine(game.s.profile.records?.[id], serverRecords?.[id]?.me), top = serverRecords?.[id]?.top;
+    const pair = list => `<span class="rec-els" title="${list?.length ? list.map(e => data.combat.elements.find(x => x.id === e)?.name || e).join(' + ') : '렌치만'}">${list?.length ? list.map(e => elementIcon(e, 'rec-el')).join('') : '<i>렌치만</i>'}</span>`;
+    const quiet = text => `<b class="rec-none">${text}</b>`;
+    const me = mine.best !== null ? `<b>${formatClock(mine.best)}</b>${pair(mine.elements)}` : `${quiet('아직 없음')}<span class="rec-els"><i>${mine.furthest ? `${mine.furthest}구간까지` : ''}</i></span>`;
+    const server = top ? `<b>${formatClock(top.seconds)}</b>${pair(top.elements)}<small class="rec-who">${ico('crown')}${top.mine ? '나' : escapeHTML(top.name || '이름 없는 인형')}</small>`
+      : quiet(recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
+    return `<div class="rec"><div class="rec-head"><span>클리어 기록</span>${top?.mine ? '<em class="rec-mine">내가 서버 1위!</em>' : ''}</div>`
+      + `<div class="rec-row${mine.best !== null && top?.mine ? ' top' : ''}"><span>내 최고</span>${me}</div><div class="rec-row top"><span>서버 1위</span>${server}</div></div>`;
+  }
   function difficultyPanel() {
+    askRecords();
     const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
-    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}"`, 'pick')}</article>`).join('');
+    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}"`, 'pick')}</article>`).join('');
     return panel(`<h2>어떤 난이도로 떠날까요?</h2><p>원정 중에는 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p><div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
   }
   function rewardsPanel() {

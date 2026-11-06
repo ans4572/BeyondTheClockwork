@@ -177,3 +177,19 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .f2-row small { grid-column: 1 / 3; color: #8a7f6a; font-size: 11px; margin-top: -2px; }
 body.cramped .f2-card { grid-template-columns: 150px 1fr; gap: 12px; }
 body.cramped .f2-face { width: 120px; height: 120px; background-position: -60px -30px; background-size: 960px 480px; }
+
+/* Clear records on the difficulty cards (main.js recordBlock): this device's best and the server's fastest clear. */
+.rec { margin: 0 0 12px; border-top: 2px solid var(--ink); padding-top: 6px; font-size: 13px; }
+.rec-head { display: flex; justify-content: space-between; align-items: baseline; color: var(--label); font-size: 12px; margin-bottom: 3px; }
+.rec-row { display: grid; grid-template-columns: 58px 1fr auto; gap: 0 6px; align-items: center; padding: 4px 0; border-bottom: 1px dashed #cdbf9f; }
+.rec-row:last-child { border-bottom: 0; }
+.rec-row > span:first-child { color: var(--label); }
+.rec-row b { font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: 0.5px; }
+.rec-row.top b { color: var(--accent); }
+.rec-row b.rec-none { color: var(--label); font-weight: 400; font-size: 13px; }
+.rec-els { display: inline-flex; gap: 3px; align-items: center; }
+.rec-els .rec-el { width: 22px; height: 22px; image-rendering: pixelated; background: var(--ink); padding: 1px; }
+.rec-els i { font-style: normal; color: var(--label); font-size: 11px; }
+.rec-who { grid-column: 2 / 4; display: inline-flex; gap: 3px; align-items: center; font-size: 12px; margin-top: 1px; }
+.rec-who .ico { width: 14px; height: 14px; }
+.rec-mine { background: var(--accent); color: var(--paper); font-size: 11px; padding: 0 5px; font-style: normal; }

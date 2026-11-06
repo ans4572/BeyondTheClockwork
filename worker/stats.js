@@ -1,6 +1,7 @@
 // Play statistics kept in Cloudflare D1 (binding STATS): the game posts small events, the admin page reads a summary.
 //   POST /api/stats                 one event (src/engine/stats.js cleanEvent) -> 204, or for a ping { mail: [gifts] }
 //   POST /api/mail/claim            { device, ids }  the game took these gifts                   -> { ok }
+//   GET  /api/records?device=       per difficulty: the server's fastest clear, and this device's own   -> { easy: { top, me }, … }
 // Admin routes (Authorization: Bearer <ADMIN_TOKEN>):
 //   GET    /api/admin/stats?days=7|30|0&difficulty=   the summary below
 //   GET    /api/admin/users?q=               players (devices), most recently seen first
@@ -10,6 +11,7 @@
 //   DELETE /api/admin/gifts/:id              take back a gift that has not arrived yet
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
 import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
+import { MIN_CLEAR_SECONDS, comboElements } from '../src/engine/records.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
 const SCHEMA = [
@@ -169,6 +171,30 @@ export async function summary(db, days = 30, now = Date.now(), difficulty = '') 
   };
 }
 
+/**
+ * The difficulty cards' records, from the runs already kept: per difficulty the fastest clear on the server (its time,
+ * element pair and the ledger name of whoever made it, never their device id) and, when a device is named, that
+ * device's own best, clear count and furthest stop. Clears under MIN_CLEAR_SECONDS are not real runs and are skipped.
+ */
+export async function records(db, device = '') {
+  await ensure(db);
+  const mine = isDeviceId(device) ? device : '';
+  const tops = DIFFICULTIES.map(id => db.prepare(`SELECT r.seconds, r.combo, r.device, d.nickname FROM runs r LEFT JOIN devices d ON d.id = r.device
+    WHERE r.reason = 'clear' AND r.difficulty = ?1 AND r.seconds >= ?2 ORDER BY r.seconds, r.ended_at LIMIT 1`).bind(id, MIN_CLEAR_SECONDS));
+  const own = mine ? DIFFICULTIES.flatMap(id => [
+    db.prepare(`SELECT seconds, combo FROM runs WHERE device = ?1 AND difficulty = ?2 AND reason = 'clear' AND seconds >= ?3 ORDER BY seconds LIMIT 1`).bind(mine, id, MIN_CLEAR_SECONDS),
+    db.prepare(`SELECT SUM(reason = 'clear') AS clears, MAX(node) AS furthest FROM runs WHERE device = ?1 AND difficulty = ?2`).bind(mine, id)
+  ]) : [];
+  const out = await db.batch([...tops, ...own]), rows = result => result?.results?.[0] || null;
+  return Object.fromEntries(DIFFICULTIES.map((id, i) => {
+    const top = rows(out[i]), best = mine ? rows(out[DIFFICULTIES.length + i * 2]) : null, totals = mine ? rows(out[DIFFICULTIES.length + i * 2 + 1]) : null;
+    return [id, {
+      top: top ? { seconds: top.seconds, elements: comboElements(top.combo), name: top.nickname || '', mine: !!mine && top.device === mine } : null,
+      me: mine ? { best: best?.seconds ?? null, elements: comboElements(best?.combo), clears: Number(totals?.clears) || 0, furthest: Number(totals?.furthest) || 0 } : null
+    }];
+  }));
+}
+
 /** Whether a request carries the admin token, compared through fixed-length digests so timing says nothing. */
 export async function isAdmin(request, token) {
   const sent = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
@@ -199,6 +225,10 @@ export async function statsApi(request, url, env, reply, cors = {}) {
     let sent = null;
     try { sent = text.length <= EVENT_BYTES ? JSON.parse(text) : null; } catch {}
     return (await claimGifts(env.STATS, sent?.device, sent?.ids)) ? reply({ ok: true }) : reply({ error: 'bad' }, 400);
+  }
+  if (path === '/api/records' && method === 'GET') {
+    if (!env.STATS) return reply({ error: 'unavailable' }, 503);
+    return reply(await records(env.STATS, url.searchParams.get('device') || ''));
   }
   if (!path.startsWith('/api/admin/')) return null;
   // A short token would be guessable, so the admin routes stay shut until a long one is set.

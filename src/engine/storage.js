@@ -1,5 +1,6 @@
 import { roomTitle } from './room-title.js';
 import { cleanNickname } from './nickname.js';
+import { cleanRecords } from './records.js';
 export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 /** True once there is anything worth loading; a save still on the opening has none. */
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
@@ -56,6 +57,8 @@ export function decodeSave(raw, data) {
   for (const key of ['notices']) if (!Array.isArray(s[key])) fail('저장된 알림 상태가 올바르지 않습니다.');
   for (const key of ['bossRecords', 'blueprints', 'discoveredFusions', 'history']) if (!Array.isArray(s.profile[key])) fail('저장된 영구 기록이 올바르지 않습니다.');
   for (const key of ['runs', 'wins', 'combatClears']) if (!integerIn(s.profile[key], 0, Number.MAX_SAFE_INTEGER)) fail('저장된 진행 기록이 올바르지 않습니다.');
+  // Clear records per difficulty (records.js): older saves start from their last ten expeditions, odd values are dropped.
+  s.profile.records = cleanRecords(s.profile.records, s.profile.history);
   // Saves from before background music get it switched on at the default volume.
   if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; }
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');

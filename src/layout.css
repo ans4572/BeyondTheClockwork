@@ -207,6 +207,7 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 #rotate { display: none; }
 #touch { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
 #touch[hidden] { display: none; }
+html:has(body.touch) { touch-action: manipulation; }
 body.touch, body.touch #app { touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 body.touch #skills, body.touch details.keys, body.touch .hud-tools kbd { display: none; }
 body.touch .panel { touch-action: pan-y; }

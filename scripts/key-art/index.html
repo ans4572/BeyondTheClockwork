@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>대표 이미지 · 태엽 밖으로</title>
+<!--
+  The game's key art (art/ui/key-art/), laid out from the game's own pictures and fonts so it matches the game:
+  the island map behind, F2's title picture in front, and the title screen's 불량 판정서 slip with its 폐기 stamp.
+  Open at 127.0.0.1 through scripts/serve.mjs and screenshot the #art box at 1200×630 (scale 2 for the large file).
+-->
+<style>
+  @font-face { font-family: "NeoDunggeunmo Pro"; src: url(../../art/fonts/NeoDunggeunmoPro.woff2) format("woff2"); }
+  @font-face { font-family: Galmuri11; src: url(../../art/fonts/Galmuri11.woff2) format("woff2"); }
+  @font-face { font-family: Galmuri11; font-weight: bold; src: url(../../art/fonts/Galmuri11-Bold.woff2) format("woff2"); }
+  :root { --ink: #2b3345; --paper: #f6ecd2; --red: #c43c36; --rule: #cdbf9f; }
+  html, body { margin: 0; background: #11151f; }
+  #art { position: relative; width: 1200px; height: 630px; overflow: hidden; background: #8fc7e6; }
+  .island { position: absolute; left: -40px; top: -70px; width: 1340px; height: auto; image-rendering: auto; }
+  /* A cool shade along the left so the slip sits on sky, not on busy roofs. */
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(43, 51, 69, 0.45) 0, rgba(43, 51, 69, 0.2) 40%, rgba(43, 51, 69, 0) 58%); }
+  .slip { position: absolute; left: 50px; top: 52px; width: 540px; padding: 24px 32px 22px; background: var(--paper); color: var(--ink);
+    box-shadow: 8px 8px 0 #11151f; transform: rotate(-1.5deg); }
+  .slip .office { font: 18px Galmuri11, sans-serif; letter-spacing: 0.5px; padding-bottom: 10px; border-bottom: 3px solid var(--ink); }
+  .slip h1 { margin: 18px 0 4px; font: 92px/1 "NeoDunggeunmo Pro", sans-serif; letter-spacing: 1px; white-space: nowrap; }
+  .slip .en { font: bold 20px Galmuri11, sans-serif; letter-spacing: 3px; color: #4f5872; }
+  .slip .rows { margin-top: 16px; font: 20px/1 Galmuri11, sans-serif; }
+  .slip .row { display: grid; grid-template-columns: 112px 1fr; padding: 10px 0; border-bottom: 2px solid var(--rule); }
+  .slip .row span { color: #6b5c45; }
+  .slip .row b { font-weight: bold; }
+  .slip .tag { margin: 16px 0 0; font: 22px/1.55 Galmuri11, sans-serif; }
+  .f2 { position: absolute; left: 600px; bottom: -36px; width: 600px; height: 600px; image-rendering: pixelated; filter: drop-shadow(10px 10px 0 rgba(17, 21, 31, 0.55)); }
+  .stamp { position: absolute; left: 445px; top: 300px; width: 200px; height: 112px; display: grid; place-items: center; border: 8px solid var(--red); color: var(--red);
+    font: 76px/1 "NeoDunggeunmo Pro", sans-serif; transform: rotate(-11deg); opacity: 0.92; mix-blend-mode: multiply; }
+</style>
+</head>
+<body>
+<div id="art">
+  <img class="island" src="../../art/world-map/clockwork-island-v3.png" alt="">
+  <div class="shade"></div>
+  <section class="slip">
+    <div class="office">웃음거리 품질관리국 · 불량 판정서</div>
+    <h1>태엽 밖으로</h1>
+    <div class="en">BEYOND THE CLOCKWORK</div>
+    <div class="rows">
+      <div class="row"><span>제품 번호</span><b>F2</b></div>
+      <div class="row"><span>판정 사유</span><b>스스로 생각함</b></div>
+    </div>
+    <p class="tag">모두가 행복하도록 만들어진 마을.<br>당신은 고장 나서, 자유로워졌다.</p>
+  </section>
+  <div class="stamp">폐기</div>
+  <img class="f2" src="../../art/ui/title/f2-title-v3.png" alt="">
+</div>
+</body>
+</html>
