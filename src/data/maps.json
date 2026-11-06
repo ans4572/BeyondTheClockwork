@@ -403,42 +403,42 @@
       "lanes": [
         [
           [
-            17.25,
-            5.88
+            18.03,
+            5.81
           ],
           [
-            5.38,
-            12.88
+            4.86,
+            13.2
           ]
         ],
         [
           [
-            21.75,
-            7.38
+            22.41,
+            7.04
           ],
           [
-            9.75,
-            14.62
+            9.16,
+            14.97
           ]
         ],
         [
           [
-            27,
-            8
+            26.38,
+            8.45
           ],
           [
-            14,
-            16.75
+            12.79,
+            17.44
           ]
         ],
         [
           [
-            31.75,
-            9.88
+            30.81,
+            10.01
           ],
           [
-            18.5,
-            19.38
+            17.94,
+            19.18
           ]
         ]
       ],
@@ -464,7 +464,11 @@
           ]
         ]
       },
-      "entrySide": "south"
+      "entrySide": "south",
+      "laneEnd": [
+        0.956,
+        0.292
+      ]
     }
   },
   "hub": {
@@ -2010,6 +2014,54 @@
             [
               32,
               6.5
+            ]
+          ]
+        }
+      ],
+      "seeThrough": [
+        {
+          "note": "The round arch at the bottom left: bodies walk under and behind it, so it is drawn over them only faintly.",
+          "alpha": 0.3,
+          "polygon": [
+            [
+              10.0,
+              16.4
+            ],
+            [
+              16.1,
+              16.4
+            ],
+            [
+              16.1,
+              19.3
+            ],
+            [
+              14.8,
+              19.6
+            ],
+            [
+              14.8,
+              23.0
+            ],
+            [
+              13.7,
+              23.0
+            ],
+            [
+              13.7,
+              19.6
+            ],
+            [
+              11.8,
+              19.6
+            ],
+            [
+              11.8,
+              21.25
+            ],
+            [
+              10.0,
+              21.25
             ]
           ]
         }
@@ -4191,7 +4243,7 @@
     },
     "marchGround": {
       "background": "/art/smile-street/maps/march-gate/background-q92.webp",
-      "mask": "/art/smile-street/maps/march-gate/mask-1x.png",
+      "mask": "/art/smile-street/maps/march-gate/mask-v3.png",
       "size": [
         38.4,
         25.6

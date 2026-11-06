@@ -9,18 +9,25 @@ import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
 import { FX, NOTE_ART, MARKS, LOOT_ART, HAZARD_ART } from './fx-sprites.js';
 import { floorMarks, ELEMENT_TINTS } from './floor-marks.js';
+import { FLOOR_FLAT } from '../engine/math.js';
 import { GROUND, sawAt, plateState } from '../engine/hazards.js';
 /** The music box's notes are drawn a little under their art size so a volley reads as shots, not as clutter. */
 const NOTE_SCALE = 0.8;
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 /** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
 export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
+/** Brass's flag bearers in his second phase break: PixelLab, drawn like the wooden guard, one still per direction. */
+export const FLAG_BEARER_ART = Object.fromEntries(['south', 'south-east', 'east', 'north-east', 'north', 'north-west', 'west', 'south-west'].map(d => [d, `art/bosses/brass/flag-bearer-v1/${d}.png`]));
 // Bosses are drawn larger than their sheets so they tower over the room's other bodies.
 const NAME_SIZE = 8, NAME_GAP = 3, ACTION_GOLD = '#ffd257', ENEMY_ARROW = '#e0564c', SHAKE_MS = 150, HURT_EDGE_MS = 180, JOLT_PX = 1.5, NUMBER_SIZE = 10, CRIT_NUMBER_SIZE = 12;
 const COLUMN_SPACING_UNITS = 1.4, BADGE_SIZE = 12, BADGE_GAP = 1, COUNT_WIDTH = 9, COUNT_SIZE = 6, FROZEN_LOOK = 'saturate(0.2) brightness(1.4)';
 /** Effect looks that lie flat on the floor: drawn under the bodies with the other floor marks. */
 /** The ice crescent's sheet is drawn at this share of its pixels (its blade then spans the cut's width), this far off the floor. */
 const CRESCENT_SCALE = 0.65, CRESCENT_LIFT = 14;
+/** Elite trait tags over the head, drawn at this share of their old size (2026-11-06: they crowded the fight). */
+const AFFIX_TAG_SCALE = 0.6;
+/** Roco's PixelLab cans (32px pictures) drawn at this share, about the size of the old drawn ones. */
+const CAN_SCALE = 0.75;
 /** Must match how long the rules keep a struck enemy's flashUntil (game.js hitEnemy). */
 const HIT_FLASH_SECONDS = 0.12;
 /** A struck body's sheen: how see-through-white at its strongest, and how far across the body it reaches (1 = corner to corner). */
@@ -256,12 +263,16 @@ export class CanvasRenderer {
     const tags = enemy.affixes.map(({ id, element }) => { const rule = rules.find(r => r.id === id); return rule && { text: element ? `${names[element]} ${rule.name}` : rule.name, color: element ? this.game.config.presentation.colors[element] : rule.color }; }).filter(Boolean);
     const ink = this.ink(); ink.font = `700 ${TAG_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
     const widths = tags.map(tag => Math.ceil(ink.measureText(tag.text).width) + 9), total = widths.reduce((a, b) => a + b, 0) + (tags.length - 1) * 2;
+    // Drawn smaller than the rest of the lettering, shrunk round the tags' bottom middle so they stay just over the head.
+    const c = this.ctx, cx = enemy.x * 20, bottom = y + TAG_SIZE + 4;
+    c.save(); c.translate(cx, bottom); c.scale(AFFIX_TAG_SCALE, AFFIX_TAG_SCALE); c.translate(-cx, -bottom);
     let x = Math.round(enemy.x * 20 - total / 2);
     tags.forEach((tag, i) => {
       this.rect(x - 1, y - 1, widths[i] + 2, TAG_SIZE + 5, '#f6ecd2'); this.rect(x, y, widths[i], TAG_SIZE + 3, '#2b3345'); this.rect(x, y, 3, TAG_SIZE + 3, tag.color);
       this.text(tag.text, x + 3 + (widths[i] - 3) / 2, y + TAG_SIZE + 0.5, '#fff4d6', TAG_SIZE);
       x += widths[i] + 2;
     });
+    c.restore(); this.ink();
   }
   /** Each trait's colour, in order: an element coating takes its element's colour. */
   affixColors(enemy) {
@@ -305,6 +316,12 @@ export class CanvasRenderer {
     this.drawStatuses(enemy, enemy.y * 20 - 70);
   }
   /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
+  /** The whole frame in the ink colour, copied to the screen; the minimap hides until the picture is in. */
+  drawWaiting() {
+    const c = this.ctx; this.minimapPlace = null; this.overlays = [];
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1c2230'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore();
+    if (this.view) { const v = this.view.getContext('2d'); v.imageSmoothingEnabled = false; v.drawImage(this.canvas, 0, 0, this.view.width, this.view.height); }
+  }
   drawMinimap(target) {
     const place = this.minimapPlace, g = this.game, s = g.s;
     if (!place?.mapImage || !place.map) return false;
@@ -362,8 +379,14 @@ export class CanvasRenderer {
         c.save(); c.translate(can.x * 20, can.y * 20 - 6); c.rotate(can.spin);
         if (can.back) { c.fillStyle = can.bomb ? '#e0564c66' : '#ffd25766'; c.beginPath(); c.arc(0, 0, 9, 0, TAU); c.fill(); }
         // A bomb can: a red body with a sparking fuse, so it reads apart from the silver ones at a glance.
-        if (can.bomb) { c.rotate(-can.spin); this.rect(-5, -6, 10, 12, '#2b3345'); this.rect(-4, -5, 8, 10, '#c8463c'); this.rect(-4, -1, 8, 2, '#f6ecd2'); const spark = Math.floor(now * 16) % 2; this.rect(-1, -10, 2, 4, '#5c4630'); this.circle(0, -11, spark ? 3 : 2, spark ? '#ffd257' : '#ff8a3c'); c.restore(); continue; }
-        if (!this.drawFxFrame('rocoCan', now * 8 + can.x, 0, 0)) { this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); }
+        if (can.bomb) {
+          // The bomb stays upright so its fuse reads; its spark flickers.
+          c.rotate(-can.spin);
+          if (!this.drawFxFrame('rocoCanBomb', 0, 0, 0, { sx: CAN_SCALE, sy: CAN_SCALE })) { this.rect(-5, -6, 10, 12, '#2b3345'); this.rect(-4, -5, 8, 10, '#c8463c'); this.rect(-4, -1, 8, 2, '#f6ecd2'); this.rect(-1, -10, 2, 4, '#5c4630'); }
+          const spark = Math.floor(now * 16) % 2; this.circle(4.5, -9.5, spark ? 2.5 : 1.5, spark ? '#ffd257' : '#ff8a3c');
+          c.restore(); continue;
+        }
+        if (!this.drawFxFrame('rocoCanSilver', 0, 0, 0, { sx: CAN_SCALE, sy: CAN_SCALE }) && !this.drawFxFrame('rocoCan', now * 8 + can.x, 0, 0)) { this.rect(-4, -5, 8, 10, '#9aa3b5'); this.rect(-4, -2, 8, 3, '#a92f2b'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(-4, -5, 8, 10); }
         c.restore();
       }
     }
@@ -398,12 +421,8 @@ export class CanvasRenderer {
       this.drumBoard = [b, rule, now, drumArt];
     }
     if (b.kind === 'flags') {
-      for (const s of b.soldiers) {
-        if (s.down) continue;
-        const sx = s.x * 20, sy = s.y * 20;
-        this.rect(sx - 4, sy - 13, 8, 10, s.flag ? '#c79a3e' : '#a92f2b'); this.rect(sx - 4, sy - 18, 8, 5, '#2b3345'); this.rect(sx - 4, sy - 3, 3, 4, '#2b3345'); this.rect(sx + 1, sy - 3, 3, 4, '#2b3345');
-        if (s.flag) { this.line(sx + 4, sy - 13, sx + 4, sy - 28, '#2b3345', 1.5); c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(sx + 4, sy - 28); c.lineTo(sx + 13, sy - 25); c.lineTo(sx + 4, sy - 22); c.fill(); }
-      }
+      // The soldiers themselves walk among the bodies (marchers); the floor only rings the three to knock down in gold.
+      for (const s of b.soldiers) if (s.flag && !s.down) { c.save(); c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.globalAlpha = 0.6 + 0.3 * Math.sin(now * 6); c.beginPath(); c.ellipse(s.x * 20, s.y * 20, 13, 13 * FLOOR_FLAT, 0, 0, TAU); c.stroke(); c.restore(); }
     }
     c.strokeStyle = '#3f8fb0'; c.lineWidth = 2.5; c.setLineDash([8, 4]); c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.stroke(); c.setLineDash([]);
     c.globalAlpha = 0.15; c.fillStyle = '#7fc7e0'; c.beginPath(); c.ellipse(x, y - 12, 34, 38, 0, 0, TAU); c.fill(); c.globalAlpha = 1;
@@ -767,10 +786,13 @@ export class CanvasRenderer {
    */
   marchers() {
     const g = this.game, out = [];
-    for (const parade of g.s.parades || []) for (const body of g.paradeBodies(parade)) out.push({ x: body.x, y: body.y, direction: nearestDirection(body.heading) });
-    const line = g.columnLine;
-    if (line) {
-      const { a, b, gapA, gapB } = line, { start, end } = g.s.column, direction = nearestDirection(Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]));
+    // The ring of soldiers round Brass in his second break, walking their circle; the flag bearers carry their flags.
+    for (const enemy of g.s.enemies) {
+      const b = enemy.breaking, rule = b?.kind === 'flags' && g.config.bossAI[enemy.type].phaseBreaks[b.index];
+      if (rule) for (const s of b.soldiers) if (!s.down) { const a = b.turn + s.slot / rule.soldiers * Math.PI * 2; out.push({ x: s.x, y: s.y, direction: nearestDirection(Math.atan2(Math.cos(a) * rule.ry, -Math.sin(a) * rule.rx)), flag: s.flag }); }
+    }
+    for (const line of g.rankLines) {
+      const { a, b, gapA, gapB } = line, { start, end } = line.rank, direction = nearestDirection(Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]));
       for (const [from, to] of [[a, gapA], [gapB, b]]) {
         const length = Math.hypot(to[0] - from[0], to[1] - from[1]), count = Math.max(1, Math.round(length / COLUMN_SPACING_UNITS));
         for (let i = 0; i <= count; i++) out.push({ x: from[0] + (to[0] - from[0]) * i / count, y: from[1] + (to[1] - from[1]) * i / count, direction });
@@ -801,7 +823,10 @@ export class CanvasRenderer {
       for (const side of [-0.6, 0, 0.6]) { const k = (d * 7 + side * 13) % 1; c.fillStyle = `rgba(233, 251, 255, ${Math.min(0.85, left)})`; c.fillRect(Math.round((cast.startX + fx * d - fy * side * cast.halfWidth * (0.6 + k * 0.4)) * 20), Math.round((cast.startY + fy * d + fx * side * cast.halfWidth * (0.6 + k * 0.4)) * 20), 3, 2); }
     }
   }
-  drawMarcher({ x, y, direction }) {
+  drawMarcher({ x, y, direction, flag }) {
+    const bearer = flag && this.mapImages?.get(FLAG_BEARER_ART[direction]);
+    // A flag bearer is one still per direction (feet at 64, 108 of its 128px picture), bobbing as it walks.
+    if (bearer) { const c = this.ctx, bob = Math.abs(Math.sin(this.visualTime * 9)) * 1.5; c.save(); c.imageSmoothingEnabled = false; c.drawImage(bearer, x * 20 - 32, y * 20 - 54 - bob, 64, 64); c.restore(); return; }
     const clip = this.mobSprites?.clip('guard-move', direction), frame = clip ? Math.floor(this.visualTime * 10) % clip.frameCount : 0;
     if (!(clip && this.drawSprite(x * 20, y * 20, { action: 'guard-move', direction, frame }, this.mobSprites))) this.rect(x * 20 - 7, y * 20 - 26, 14, 26, '#dc8b83');
   }
@@ -838,6 +863,9 @@ export class CanvasRenderer {
     const mobPoses = this.mobAnimator?.update(delta, g), castFx = this.castEffects?.update(g) || [], spriteFx = !!this.castEffects;
     const hub = ['hub', 'registration', 'returned', 'opening'].includes(s.mode);
     const map = hub ? g.hubMap : g.map, mapImage = map && this.mapImages?.get(map.background), size = map?.size || SCREEN_UNITS;
+    // A painted place whose picture is still on its way shows a plain dark frame for that moment, not the old code-drawn
+    // street (2026-11-06: the stand-in flashed up between places and looked broken). It is usually a frame or two.
+    if (map?.background && !mapImage) { this.drawWaiting(); return; }
     // Panels over the hub show the spot the player will stand on; everywhere else follows the body.
     const body = hub && !g.village ? map?.spawn : g.p;
     // In a fight the view leans a little the way F2 aims (as in Hades), easing over a quarter second, so more of what
@@ -939,9 +967,11 @@ export class CanvasRenderer {
         }
       }
       if (cast.shape === 'stompRing' && cast.age >= 0) {
-        // A shock ring spreading over the floor, thinning as it goes.
-        const r = cast.age * cast.speed * 20, alpha = Math.max(0.2, 1 - r / (cast.reach * 20)), k = Math.max(0.05, r / 50);
-        if (!this.drawFxFrame('stompRing', this.visualTime * 12, cast.x * 20, cast.y * 20, { sx: k, sy: k * 0.62 / 0.4, alpha })) { c.save(); c.globalAlpha = alpha; c.strokeStyle = '#c46a2b'; c.lineWidth = 4; c.beginPath(); c.ellipse(cast.x * 20, cast.y * 20, r, r * 0.62, 0, 0, TAU); c.stroke(); c.restore(); }
+        // A shock ring spreading over the floor as a thin ellipse, the same line all the way out (the stretched sheet thickened
+        // as it grew), fading as it goes. Its hit is the same ellipse (floorDistance).
+        const r = cast.age * cast.speed * 20, alpha = Math.max(0.25, 1 - r / (cast.reach * 20)), x = cast.x * 20, y = cast.y * 20;
+        c.save(); c.globalAlpha = alpha * 0.5; c.strokeStyle = '#2b3345'; c.lineWidth = 4; c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke();
+        c.globalAlpha = alpha; c.strokeStyle = '#ff9a4a'; c.lineWidth = 2; c.stroke(); c.restore();
       }
       if (cast.shape === 'stickerFall') {
         // Where the next sticker lands: the red danger disc, filling until it hits.
@@ -952,7 +982,8 @@ export class CanvasRenderer {
       if (cast.shape === 'sticker') {
         // A paper 'defective' label stuck to the floor, fading as it peels.
         const x = cast.x * 20, y = cast.y * 20, fade = Math.min(1, (cast.duration - cast.age) / 0.6);
-        c.save(); c.globalAlpha = 0.22 * fade; this.circle(x, y, cast.radius * 20, '#b85863'); c.restore();
+        // The sticky patch lies flat on the floor, the same ellipse its slow uses (floorDistance).
+        c.save(); c.globalAlpha = 0.22 * fade; c.fillStyle = '#b85863'; c.beginPath(); c.ellipse(x, y, cast.radius * 20, cast.radius * 20 * FLOOR_FLAT, 0, 0, TAU); c.fill(); c.restore();
         // The label drops and slaps onto the floor (PixelLab sheet), then stays as its last frame until it peels.
         if (!this.drawFxFrame('rocoSticker', Math.min(FX.rocoSticker.frames - 1, cast.age * 14), x, y, { alpha: fade })) {
           c.save(); c.globalAlpha = fade; c.translate(x, y); c.rotate(cast.tilt); this.rect(-11, -7, 22, 14, '#f3e6c8'); c.strokeStyle = '#a92f2b'; c.lineWidth = 1.5; c.strokeRect(-11, -7, 22, 14); this.text('불량', 0, 3, '#a92f2b', 8); c.restore();
@@ -962,7 +993,7 @@ export class CanvasRenderer {
         // Roco's magnet: a purple field turning on the floor, pulling sparks in (PixelLab loop, sized to the pull).
         const k = cast.radius * 20 / 42;
         if (!this.drawFxFrame('magnetField', this.visualTime * 12, cast.x * 20, cast.y * 20, { sx: k, sy: k, alpha: 0.9 })) {
-          c.save(); c.globalAlpha = 0.18; this.circle(cast.x * 20, cast.y * 20, cast.radius * 20, '#8c638f'); c.restore();
+          c.save(); c.globalAlpha = 0.18; c.fillStyle = '#8c638f'; c.beginPath(); c.ellipse(cast.x * 20, cast.y * 20, cast.radius * 20, cast.radius * 20 * FLOOR_FLAT, 0, 0, TAU); c.fill(); c.restore();
           for (let i = 0; i < 3; i++) { c.strokeStyle = '#9d74a1'; c.beginPath(); c.arc(cast.x * 20, cast.y * 20, ((cast.age + i * 0.5) % 1.5) / 1.5 * cast.radius * 20, 0, TAU); c.stroke(); }
         }
       }
@@ -1025,8 +1056,7 @@ export class CanvasRenderer {
       if (!actor.player && actor.hp > 0) labels.push(() => {
         const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) * BODY_SCALE / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
         if (!actor.boss) { const left = actor.x * 20 - width / 2; this.rect(left - 1, yy - 1, width + 2, 6, '#2b3345'); this.rect(left, yy, width, 4, '#5e4a52'); this.rect(left, yy, width * Math.max(0, actor.hp / actor.maxHp), 4, '#e0564c'); }
-        if (actor.boss) { const threshold = g.c.balance.bossStaggerThreshold[actor.kind]; this.rect(actor.x * 20 - width / 2, yy + 5, width * actor.stagger / threshold, 2, '#cca453'); }
-        if (actor.exposedUntil > s.time) this.text('태엽 노출', actor.x * 20, yy - 17, '#af8345', 8);
+        if (actor.exposedUntil > s.time) this.text('기절', actor.x * 20, yy - 17, '#af8345', 8);
         this.drawStatuses(actor, actor.boss ? yy + 11 : yy - 13);
         if (actor.affixes?.length) this.drawAffixTags(actor, yy - (this.statusBadges(actor).length ? 27 : 14));
       });
@@ -1078,7 +1108,7 @@ export class CanvasRenderer {
       c.save(); c.globalAlpha = Math.max(0, 1 - fraction); c.strokeStyle = fx.color; c.lineWidth = fx.type === 'ring' ? 3 : 2;
       // Critical hits show in red, a little larger.
       if (fx.type === 'number') this.text(String(Math.round(fx.value)), x, y - fraction * 20 - 15, fx.color, fx.crit ? CRIT_NUMBER_SIZE : NUMBER_SIZE);
-      if (fx.type === 'ring' || fx.type === 'friendlyTell') { c.beginPath(); c.arc(x, y, fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1), 0, TAU); c.stroke(); }
+      if (fx.type === 'ring' || fx.type === 'friendlyTell') { const r = fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1); c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke(); }
       if (fx.type === 'swing') this.drawSwing(fx, x, y, fraction);
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }
       if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}

@@ -71,7 +71,7 @@ export function createMapLoader({ data, game, renderer, firstFiles = [], canStar
     if (!depthWorker) return here();
     const id = ++depthIds, url = file => new URL(assetUrl(file), location.href).href;
     depthJobs.set(id, { done: finish, fallback: here });
-    depthWorker.postMessage({ id, imageUrl: url(background), maskUrl: url(village.mask), size: village.size, overhead: village.overhead || [] });
+    depthWorker.postMessage({ id, imageUrl: url(background), maskUrl: url(village.mask), size: village.size, overhead: village.overhead || [], seeThrough: village.seeThrough || [] });
   };
 
   // Map art comes in order of need: the place underfoot and the one after it are loaded and decoded first.

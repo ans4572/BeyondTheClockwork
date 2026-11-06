@@ -50,9 +50,10 @@ export function raiseDepths(depths, width, height, perUnit, polygon, baseY) {
 /**
  * Reads a place's picture and its mask into what DepthMask needs: the map's pixels, each pixel's ground line, and the
  * deepest ground line per block. Pure arithmetic on pixels, so it runs in a worker (src/render/depth-worker.js) as well
- * as here. `overhead` regions hang above their true ground line, so their depth is set by hand.
+ * as here. `overhead` regions hang above their true ground line, so their depth is set by hand. `seeThrough` regions
+ * (an arch to walk under) still go in front of a body but only at their `alpha`, so the body shows through them.
  */
-export function computeDepth(image, maskImage, { size, overhead = [] }, createCanvas) {
+export function computeDepth(image, maskImage, { size, overhead = [], seeThrough = [] }, createCanvas) {
   // Read at most 1920 px wide: sharper 2x map art needs no finer depth, and phones keep the memory.
   const shrink = Math.min(1, DEPTH_MAX_WIDTH / image.width), [width, height] = [Math.round(image.width * shrink), Math.round(image.height * shrink)], read = picture => {
     const context = createCanvas(width, height).getContext('2d', { willReadFrequently: true });
@@ -63,18 +64,36 @@ export function computeDepth(image, maskImage, { size, overhead = [] }, createCa
   for (let p = 0; p < alpha.length; p++) alpha[p] = marks[p * 4] > 127 ? 255 : 0;
   const depths = closeSlivers(columnDepths(alpha, width, height), width, height);
   for (const { polygon, baseY } of overhead) raiseDepths(depths, width, height, perUnit, polygon, baseY);
+  const veil = seeThroughAlpha(depths, width, height, perUnit, seeThrough);
   // The deepest ground line in each 16x16 block, so a body standing in front of everything near it is passed over
   // without reading its whole patch, as most bodies are on most frames.
   const B = BLOCK_PIXELS, blocksWide = Math.ceil(width / B), deepest = new Uint16Array(blocksWide * Math.ceil(height / B));
   for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) { const d = depths[y * width + x], b = Math.floor(y / B) * blocksWide + Math.floor(x / B); if (d > deepest[b]) deepest[b] = d; }
-  return { width, height, perUnit, pixels, depths, deepest, blocksWide };
+  return { width, height, perUnit, pixels, depths, deepest, blocksWide, veil };
+}
+
+/**
+ * How opaque each scenery pixel is when repainted over a body: 255 everywhere but inside `regions`, where it is that
+ * region's `alpha` (0 to 1). Null when there are no such regions, so most maps carry no extra array.
+ */
+export function seeThroughAlpha(depths, width, height, perUnit, regions = []) {
+  if (!regions.length) return null;
+  const veil = new Uint8Array(width * height).fill(255);
+  for (const { polygon, alpha } of regions) {
+    const xs = polygon.map(point => point[0] * perUnit), ys = polygon.map(point => point[1] * perUnit), byte = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
+    for (let y = Math.max(0, Math.floor(Math.min(...ys))); y < Math.min(height, Math.ceil(Math.max(...ys))); y++) for (let x = Math.max(0, Math.floor(Math.min(...xs))); x < Math.min(width, Math.ceil(Math.max(...xs))); x++) {
+      const p = y * width + x;
+      if (depths[p] && pointInPolygon(x / perUnit, y / perUnit, polygon)) veil[p] = byte;
+    }
+  }
+  return veil;
 }
 
 /** Repaints the scenery standing in front of a body, so the map behaves like separate objects. `depth` is computeDepth's result. */
 export class DepthMask {
-  constructor({ width, height, perUnit, pixels, depths, deepest, blocksWide }, createCanvas) {
+  constructor({ width, height, perUnit, pixels, depths, deepest, blocksWide, veil = null }, createCanvas) {
     this.kept = new Map(); this.seen = new Set(); this.patches = new Map();
-    Object.assign(this, { width, height, perUnit, pixels, depths, deepest, blocksWide, createCanvas });
+    Object.assign(this, { width, height, perUnit, pixels, depths, deepest, blocksWide, veil, createCanvas });
     this.pixels32 = new Uint32Array(pixels.buffer, pixels.byteOffset, pixels.length / 4);
   }
   /** `x`, `y` are the feet in units; `halfWidth` and `tall` bound the body above them. Returns the share of the body hidden. */
@@ -95,7 +114,7 @@ export class DepthMask {
     let slot = this.patches.get(w * 4096 + h);
     if (!slot) { const image = this.scratchContext.createImageData(w, h); slot = { image, words: new Uint32Array(image.data.buffer), dirty: null }; this.patches.set(w * 4096 + h, slot); }
     else if (slot.dirty) { const { x0, y0, x1, y1 } = slot.dirty; for (let y = y0; y <= y1; y++) slot.words.fill(0, y * w + x0, y * w + x1 + 1); slot.dirty = null; }
-    const patch = slot.image, words = slot.words, source = this.pixels32;
+    const patch = slot.image, words = slot.words, source = this.pixels32, veil = this.veil;
     let dx0 = w, dy0 = h, dx1 = -1, dy1 = -1;
     const bodyLeft = (x - BODY_HALF_UNITS) * perUnit, bodyRight = (x + BODY_HALF_UNITS) * perUnit, bodyTop = (y - BODY_UNITS) * perUnit;
     let found = false, inBody = 0, hidden = 0;
@@ -109,11 +128,13 @@ export class DepthMask {
       for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
         const p = y * width + x;
         if (depths[p] <= feet) continue;
-        if (x >= bodyLeft && x <= bodyRight && y >= bodyTop) hidden++;
+        // Scenery the body shows through (veil) does not hide it, so no ghost is called for.
+        if (x >= bodyLeft && x <= bodyRight && y >= bodyTop && (!veil || veil[p] === 255)) hidden++;
         const px = x - left, py = y - top;
         if (px < dx0) dx0 = px; if (px > dx1) dx1 = px; if (py < dy0) dy0 = py; if (py > dy1) dy1 = py;
-        // One word per pixel, made fully opaque (the alpha byte is the high byte on every platform the game runs on).
-        words[py * w + px] = source[p] | 0xff000000;
+        // One word per pixel, made fully opaque (the alpha byte is the high byte on every platform the game runs on),
+        // or as opaque as its see-through region allows.
+        words[py * w + px] = veil ? (source[p] & 0xffffff) | (veil[p] << 24) : source[p] | 0xff000000;
         found = true;
       }
     }

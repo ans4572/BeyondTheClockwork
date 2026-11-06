@@ -5,6 +5,9 @@ export const FX = {
   drumBuff: { sheet: 'art/fx/drum-buff.png', w: 56, h: 72, cols: 4, frames: 12, anchor: [28, 60] },
   rocoSticker: { sheet: 'art/fx/roco-sticker.png', w: 60, h: 70, cols: 4, frames: 12, anchor: [30, 57] },
   rocoCan: { sheet: 'art/fx/roco-can.png', w: 16, h: 18, cols: 2, frames: 4, anchor: [8, 9] },
+  // Roco's cans in his phase break, drawn with PixelLab (2026-11-06): a silver one to bat back, a red bomb to avoid.
+  rocoCanSilver: { sheet: 'art/fx/roco-can-silver-v1.png', w: 32, h: 32, cols: 1, frames: 1, anchor: [16, 18] },
+  rocoCanBomb: { sheet: 'art/fx/roco-can-bomb-v1.png', w: 32, h: 32, cols: 1, frames: 1, anchor: [16, 16] },
   crate: { sheet: 'art/fx/crate.png', w: 20, h: 18, cols: 1, frames: 1, anchor: [10, 16] },
   crateCrash: { sheet: 'art/fx/crate-crash.png', w: 70, h: 32, cols: 3, frames: 9, anchor: [35, 16] },
   magnetField: { sheet: 'art/fx/magnet-field.png', w: 100, h: 42, cols: 4, frames: 12, anchor: [50, 20] },

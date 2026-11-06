@@ -165,9 +165,10 @@ test('scenery repaints over a body behind it and not over one in front', () => {
   assert.equal(occludersAfterPlayer(), map.occluders.filter(o => o.baseY > 14.5).length);
 });
 
-test('the room still draws in code before its image has loaded', () => {
+test('a painted room waits on a plain dark frame until its picture has loaded, with no stand-in street', () => {
   const g = run(), calls = [];
-  const context = new Proxy({}, { get: (_, name) => () => { calls.push(name); }, set: () => true });
-  new CanvasRenderer({ getContext: () => context }, g).render(1 / 60);
-  assert.ok(!calls.includes('drawImage') && !calls.includes('clip'));
+  const context = new Proxy({}, { get: (_, name) => (...args) => { calls.push(name); }, set: () => true });
+  const r = new CanvasRenderer({ getContext: () => context }, g); r.scenery = () => calls.push('scenery'); r.render(1 / 60);
+  assert.ok(!calls.includes('drawImage') && !calls.includes('clip') && !calls.includes('scenery'));
+  assert.deepEqual(calls.filter(name => name === 'fillRect').length, 1);
 });

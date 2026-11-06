@@ -380,7 +380,7 @@
           "canDamage": 8,
           "canRadius": 0.35,
           "range": 7.5,
-          "degrees": 90,
+          "degrees": 120,
           "pull": 1.6,
           "stunSeconds": 4,
           "vulnerable": 0.5,
@@ -423,6 +423,9 @@
       "waveSpeed": 5.5,
       "waveCount": 9,
       "waveGapDegrees": 65,
+      "waveVolleys": 3,
+      "waveVolleyGap": 0.5,
+      "waveTurnDegrees": 28,
       "phasePatterns": [
         {
           "pattern": "bell",
@@ -451,10 +454,7 @@
         { "below": 0.33, "count": 4 }
       ],
       "laneOrder": [1, 2, 0, 3],
-      "paradeSoldiers": 7,
-      "paradeSpacing": 1.25,
       "paradeSpeed": 4.2,
-      "paradeRadius": 0.45,
       "drillStepSeconds": 1.3,
       "drillStillUnits": 0.3,
       "drillMoveUnits": 1.6,
@@ -471,6 +471,8 @@
       "columnSpeed": 4.5,
       "columnGapUnits": 3.5,
       "columnWidth": 0.5,
+      "ranks": 3,
+      "rankGapSeconds": 1.3,
       "carpetSafeWidth": 1.1,
       "stompRings": 3,
       "stompGap": 0.6,

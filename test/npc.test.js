@@ -218,10 +218,10 @@ test('the shop shows Bolt on the village map instead of the old building and dol
   assert.deepEqual(calls.filter(call => call[0] === 'doll').map(call => call[1]), ['player']);
 });
 
-test('without the map image the old scenery still draws', () => {
+test('without the map image the town waits on a plain frame instead of the old code-drawn street', () => {
   const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub';
   const { r, labels } = renderer(g); r.mapImages = new Map(); r.render(1 / 60);
-  assert.ok(labels.includes('작은 수리점'));
+  assert.ok(!labels.includes('작은 수리점'));
 });
 
 test('a newcomer hears the bell early, then the town keeps its long gap', () => {

@@ -1,5 +1,5 @@
 import { fitsMap } from './map-geometry.js';
-import { distance, inCone, segmentDistance } from './math.js';
+import { distance, floorDistance, inCone, segmentDistance } from './math.js';
 
 /**
  * What enemies and bosses do once awake: warning a blow (beginEnemyTell), carrying it out (executeEnemy), the bosses'
@@ -8,6 +8,8 @@ import { distance, inCone, segmentDistance } from './math.js';
  */
 const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
 const KNOCKBACK_SECONDS = 0.12, DIRECT_UNITS = 2, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
+/** How far a parade rank reaches past the outer carpets on each side, so it cannot be walked round. */
+const RANK_OVERHANG_UNITS = 1.5;
 
 export const enemyActions = {
   beginEnemyTell(enemy, type, delay = null) {
@@ -18,7 +20,8 @@ export const enemyActions = {
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
     if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.config.bossAI[enemy.type].crateTossCount);
-    if (type === 'parade') { const live = this.marchLanes(enemy), n = this.liveLaneCount(enemy) >= 4 ? 2 : 1, order = live.map((_, i) => i).sort(() => this.random() - 0.5); enemy.tell.lanes = order.slice(0, n).map(i => live[i]); }
+    // Both soldier patterns show where their ranks will come from, and which way they will walk.
+    if (type === 'parade' || type === 'column') enemy.tell.path = this.rankPath(type);
     enemy.state = 'tell';
   },
   /** A boss with phase breaks stops at each threshold, raises a shield and has to be broken out of it before losing more. */
@@ -29,7 +32,7 @@ export const enemyActions = {
     const index = rules.findIndex((rule, i) => !enemy.breaksDone.includes(i) && enemy.hp <= enemy.maxHp * rule.at);
     if (index < 0) return;
     const rule = rules[index], now = this.s.time;
-    enemy.hp = Math.max(enemy.hp, enemy.maxHp * rule.at); enemy.tell = null; enemy.spin = null; enemy.dash = null; enemy.followup = null; enemy.alarmUntil = 0; enemy.bellUntil = 0;
+    enemy.hp = Math.max(enemy.hp, enemy.maxHp * rule.at); enemy.tell = null; enemy.noteVolleys = null; enemy.spin = null; enemy.dash = null; enemy.followup = null; enemy.alarmUntil = 0; enemy.bellUntil = 0;
     this.s.casts = this.s.casts.filter(c => c.owner !== enemy.id);
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
     enemy.facing = angle;
@@ -85,10 +88,11 @@ export const enemyActions = {
     }
     const solved = b.kind === 'cans' ? b.fed >= rule.cans : b.kind === 'drums' ? b.next >= b.order.length : b.soldiers.filter(s => s.flag && s.down).length >= rule.flags;
     if (solved) {
-      // The shield breaks: the boss stands stunned and open, and the next phase begins.
+      // The shield breaks and the next phase begins at once: the boss is not stunned any more (2026-11-06), only open to
+      // harder blows for a moment (vulnerable).
       enemy.breaking = null; enemy.breaksDone.push(b.index);
-      enemy.exposedUntil = now + rule.stunSeconds; enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = now + rule.stunSeconds;
-      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.8, 3, { look: 'shieldBreak' }); this.notify(`보호막이 깨졌습니다! ${enemy.name}이(가) 멈췄습니다.`); return;
+      enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = Math.max(enemy.ready, now + enemy.recovery);
+      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.8, 3, { look: 'shieldBreak' }); this.notify(`보호막이 깨졌습니다! 잠시 ${enemy.name}이(가) 더 큰 피해를 받습니다.`); return;
     }
     if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; b.lanes = []; }
   },
@@ -209,11 +213,53 @@ export const enemyActions = {
     const near = lanes.map((_, i) => i).filter(i => away[i] <= reach);
     return near.length ? near[Math.floor(this.random() * near.length)] : away.indexOf(Math.min(...away));
   },
-  startColumn(enemy) {
-    const ai = this.config.bossAI[enemy.type], { left, right, top, bottom } = this.config.arena.bounds;
-    const { start, end } = this.map?.column || { start: [[left, top], [left, bottom]], end: [[right, top], [right, bottom]] };
-    const span = Math.hypot(start[1][0] - start[0][0], start[1][1] - start[0][1]), travel = Math.hypot(end[0][0] - start[0][0], end[0][1] - start[0][1]), gapShare = ai.columnGapUnits / span;
-    this.s.column = { start, end, at: 0, seconds: travel / ai.columnSpeed, gapFrom: gapShare / 2 + this.random() * (1 - gapShare * 2), gapShare, damage: enemy.damage, width: ai.columnWidth, spent: false };
+  /**
+   * Where a rank of soldiers starts and stops: two lines, `start` and `end`, whose first and second points pair up.
+   * The column crosses the square as the map sets out; the parade runs down the carpets as one wide rank spanning all
+   * of them, from either end, so it can only be passed through its gap (2026-11-06: a single file down one carpet was
+   * dodged by stepping aside).
+   */
+  rankPath(kind) {
+    const { left, right, top, bottom } = this.config.arena.bounds, lanes = this.map?.lanes;
+    if (kind === 'parade' && lanes?.length >= 2) {
+      const [first, last] = [lanes[0], lanes[lanes.length - 1]];
+      const widen = ([a, b], by) => { const dx = b[0] - a[0], dy = b[1] - a[1], k = by / Math.hypot(dx, dy); return [[a[0] - dx * k, a[1] - dy * k], [b[0] + dx * k, b[1] + dy * k]]; };
+      const near = widen([first[0], last[0]], RANK_OVERHANG_UNITS), far = widen([first[1], last[1]], RANK_OVERHANG_UNITS);
+      return this.random() < 0.5 ? { start: near, end: far } : { start: far, end: near };
+    }
+    return this.map?.column || { start: [[left, top], [left, bottom]], end: [[right, top], [right, bottom]] };
+  },
+  /**
+   * Sends ranks of soldiers from `path.start` to `path.end`, one after another, each with its gap somewhere else, so the
+   * player has to move to the next gap for every rank.
+   */
+  sendRanks(enemy, path, speed) {
+    const ai = this.config.bossAI[enemy.type], { start, end } = path;
+    const span = Math.hypot(start[1][0] - start[0][0], start[1][1] - start[0][1]), travel = Math.hypot(end[0][0] - start[0][0], end[0][1] - start[0][1]);
+    const gapShare = ai.columnGapUnits / span, seconds = travel / speed, gaps = [];
+    // Each gap is drawn from what is left of the line once a stretch round the last gap is set aside.
+    const low = gapShare / 2, high = 1 - gapShare * 1.5, away = gapShare * 1.5;
+    for (let i = 0; i < ai.ranks; i++) {
+      const last = gaps.at(-1), spans = last === undefined ? [[low, high]] : [[low, Math.min(high, last - away)], [Math.max(low, last + away), high]].filter(([from, to]) => to > from);
+      const total = spans.reduce((sum, [from, to]) => sum + to - from, 0);
+      let pick = this.random() * total, gap = low;
+      for (const [from, to] of spans) { if (pick <= to - from) { gap = from + pick; break; } pick -= to - from; }
+      gaps.push(spans.length ? gap : low + this.random() * (high - low));
+    }
+    this.s.ranks = [...(this.s.ranks || []), ...gaps.map((gapFrom, i) => ({ start, end, at: -i * ai.rankGapSeconds / seconds, seconds, gapFrom, gapShare, damage: enemy.damage, width: ai.columnWidth, spent: false }))];
+    enemy.ready = Math.max(enemy.ready, this.s.time + (ai.ranks - 1) * ai.rankGapSeconds + enemy.recovery);
+  },
+  startColumn(enemy, path = this.rankPath('column')) { this.sendRanks(enemy, path, this.config.bossAI[enemy.type].columnSpeed); },
+  /** Where a rank stands now, as the two stretches either side of its gap. */
+  /** One ring of trumpet notes round the boss, its gap centred on `safeAngle`. */
+  trumpetRing(enemy, safeAngle) {
+    const ai = this.config.bossAI[enemy.type], gap = ai.waveGapDegrees * Math.PI / 180;
+    for (let i = 0; i < ai.waveCount; i++) { const angle = safeAngle + gap / 2 + (Math.PI * 2 - gap) * i / (ai.waveCount - 1); this.fireBullet(enemy, angle, ai.waveSpeed); }
+  },
+  rankLine(rank) {
+    const { start, end, at, gapFrom, gapShare } = rank, lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const a = lerp(start[0], end[0], at), b = lerp(start[1], end[1], at);
+    return { a, b, gapA: lerp(a, b, gapFrom), gapB: lerp(a, b, gapFrom + gapShare) };
   },
   tickBossHazards(dt) {
     const { s, p } = this, bell = s.enemies.find(e => e.bellUntil > s.time);
@@ -231,31 +277,16 @@ export const enemyActions = {
         else Object.assign(d, { until: s.time + d.rules.seconds, from: { x: p.x, y: p.y }, moved: 0, failed: false });
       }
     }
-    if (s.parades?.length) {
-      for (const parade of s.parades) {
-        parade.at += parade.speed * dt;
-        if (!parade.spent && this.paradeBodies(parade).some(body => Math.hypot(body.x - p.x, body.y - p.y) < parade.radius + this.config.arena.playerRadius) && this.hurt(parade.damage)) parade.spent = true;
-        if (!this.active) return;
-      }
-      s.parades = s.parades.filter(parade => parade.at - (parade.count + 1) * parade.spacing < Math.hypot(parade.b[0] - parade.a[0], parade.b[1] - parade.a[1]));
+    if (!s.ranks?.length) return;
+    // Each rank walking across hits once, anywhere but its gap; a rank still waiting to set off (at < 0) does nothing.
+    for (const rank of s.ranks) {
+      rank.at += dt / rank.seconds;
+      if (rank.at < 0 || rank.at >= 1) continue;
+      const { a, b, gapA, gapB } = this.rankLine(rank), near = (from, to) => this.onLane([from, to], rank.width);
+      if (!rank.spent && (near(a, gapA) || near(gapB, b)) && this.hurt(rank.damage)) rank.spent = true;
+      if (!this.active) return;
     }
-    const column = s.column;
-    if (!column) return;
-    column.at += dt / column.seconds;
-    if (column.at >= 1) { s.column = null; return; }
-    const { a, b, gapA, gapB } = this.columnLine, near = (from, to) => this.onLane([from, to], column.width);
-    if (!column.spent && (near(a, gapA) || near(gapB, b)) && this.hurt(column.damage)) column.spent = true;
-  },
-  /** Where each soldier of a parade is now: a file walking from the lane's start, one place left empty. */
-  paradeBodies(parade) {
-    const [ax, ay] = parade.a, [bx, by] = parade.b, length = Math.hypot(bx - ax, by - ay), bodies = [];
-    for (let i = 0; i < parade.count; i++) {
-      if (i === parade.gap) continue;
-      const along = parade.at - i * parade.spacing;
-      if (along < 0 || along > length) continue;
-      bodies.push({ x: ax + (bx - ax) * along / length, y: ay + (by - ay) * along / length, heading: Math.atan2(by - ay, bx - ax) });
-    }
-    return bodies;
+    s.ranks = s.ranks.filter(rank => rank.at < 1);
   },
   executeEnemy(enemy) {
     const tell = enemy.tell; enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + enemy.recovery;
@@ -272,7 +303,7 @@ export const enemyActions = {
         // A rat that bursts still counts as beaten: its share of the room's loot and any heal-on-kill.
         if (this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
         this.payKill(enemy);
-        if (distance(tell, p) < enemy.burstRadius + this.config.arena.playerRadius) damage(); break;
+        if (floorDistance(tell, p) < enemy.burstRadius + this.config.arena.playerRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
       case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed); break;
       // Music box: a ring of shots, turned a little each volley so the gaps move.
@@ -289,7 +320,7 @@ export const enemyActions = {
         if (!this.map?.walkable || fitsMap(spot.x, spot.y, enemy.radius, this.map)) Object.assign(enemy, spot);
         enemy.hidden = false; this.sense({ kind: 'pop' });
         this.effect('ring', spot.x, spot.y, '#e8914e', 0.7, enemy.popRadius, { look: 'quake' });
-        if (distance(spot, p) < enemy.popRadius) damage(); break;
+        if (floorDistance(spot, p) < enemy.popRadius) damage(); break;
       }
       // Spinning top: rolls off in a straight line and bounces from walls until it winds down.
       case 'spin': enemy.spin = { angle: tell.angle, until: this.s.time + enemy.spinSeconds, hitReady: 0 }; break;
@@ -306,10 +337,10 @@ export const enemyActions = {
         break;
       }
       case 'doubleWave':
-        if (distance(tell, p) < enemy.attackRange) damage();
+        if (floorDistance(tell, p) < enemy.attackRange) damage();
         this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange, { look: 'quake' });
         enemy.followup = { type: 'eliteWave', at: this.s.time + enemy.followupDelay }; break;
-      case 'eliteWave': if (distance(tell, p) < enemy.attackRange + enemy.followupRadiusBonus) damage(); this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange + enemy.followupRadiusBonus, { look: 'quake' }); break;
+      case 'eliteWave': if (floorDistance(tell, p) < enemy.attackRange + enemy.followupRadiusBonus) damage(); this.effect('ring', tell.x, tell.y, '#d86e76', 0.7, enemy.attackRange + enemy.followupRadiusBonus, { look: 'quake' }); break;
       case 'claw': {
         const end = { x: tell.x + Math.cos(tell.angle) * ai.clawLength, y: tell.y + Math.sin(tell.angle) * ai.clawLength };
         if (segmentDistance(p, tell, end) <= ai.clawWidth + this.config.arena.playerRadius && damage() && ai.confiscateSeconds && this.skillSlots.length && !(this.p.confiscated?.until > this.s.time)) {
@@ -342,7 +373,7 @@ export const enemyActions = {
       case 'chargeHorn':
         if (inCone(tell, p, tell.angle, ai.hornRange, ai.hornDegrees)) damage();
         this.effect('swing', tell.x, tell.y, '#e0a068', 0.85, ai.hornRange, { angle: tell.angle, phase: 2, arc: ai.hornDegrees, look: 'wave' }); break;
-      case 'overcharge': if (distance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.7, ai.overchargeRadius, { look: 'quake' }); enemy.ready = this.s.time + ai.overchargeRecovery; break;
+      case 'overcharge': if (floorDistance(tell, p) <= ai.overchargeRadius + this.config.arena.playerRadius) damage(); this.effect('ring', tell.x, tell.y, '#e0a068', 0.7, ai.overchargeRadius, { look: 'quake' }); enemy.ready = this.s.time + ai.overchargeRecovery; break;
       case 'fan':
       case 'fanSecond':
         if (inCone(tell, p, tell.angle, ai.fanRange, ai.fanDegrees)) damage();
@@ -355,12 +386,12 @@ export const enemyActions = {
       }
       case 'alarm': enemy.alarmUntil = this.s.time + ai.alarmSeconds; enemy.ready = enemy.alarmUntil + enemy.recovery; break;
       case 'crane':
-        if (tell.drops.some(drop => distance(drop, p) <= ai.craneRadius + this.config.arena.playerRadius)) damage();
+        if (tell.drops.some(drop => floorDistance(drop, p) <= ai.craneRadius + this.config.arena.playerRadius)) damage();
         for (const { x, y } of tell.drops) { this.effect('ring', x, y, '#c9a66b', 0.7, ai.craneRadius, { look: 'crateCrash' }); this.effect('scrap', x, y, '#c9a66b', 0.5, 1); }
         break;
       // Roco throws crates: under one is a hit, and the crates stay. One blown up next to Roco knocks him out for a moment.
       case 'crateToss': {
-        if (tell.drops.some(drop => distance(drop, p) <= ai.crateTossRadius + this.config.arena.playerRadius)) damage();
+        if (tell.drops.some(drop => floorDistance(drop, p) <= ai.crateTossRadius + this.config.arena.playerRadius)) damage();
         const crates = (this.s.hazards ??= []);
         for (const { x, y } of tell.drops) {
           if (this.map?.walkable && !fitsMap(x, y, 0.45, this.map)) continue;
@@ -371,13 +402,8 @@ export const enemyActions = {
         while (thrown.length > ai.crateTossMax) { const old = thrown.shift(); old.gone = true; this.effect('scrap', old.x, old.y, '#b0783e', 0.4, 0.8); }
         break;
       }
-      // Parade: toy soldiers march down one or two live carpets in a long file; step off, or let the gap pass you.
-      case 'parade':
-        for (const lane of tell.lanes) {
-          const [[ax, ay], [bx, by]] = this.random() < 0.5 ? lane : [lane[1], lane[0]];
-          this.s.parades = [...(this.s.parades || []), { a: [ax, ay], b: [bx, by], at: 0, gap: 1 + Math.floor(this.random() * (ai.paradeSoldiers - 2)), speed: ai.paradeSpeed, spacing: ai.paradeSpacing, count: ai.paradeSoldiers, radius: ai.paradeRadius, damage: enemy.damage, spent: false }];
-        }
-        break;
+      // Parade: wide ranks of toy soldiers march down the carpets, one after another; slip through each rank's gap.
+      case 'parade': this.sendRanks(enemy, tell.path, ai.paradeSpeed); break;
       // Drill: Brass calls the steps: freeze on "멈춰!", walk on "앞으로!". Getting either wrong costs a hit.
       case 'drill': {
         const steps = this.liveLaneCount(enemy) >= 4 ? ['still', 'move', 'still'] : ['still', 'move'];
@@ -387,16 +413,19 @@ export const enemyActions = {
       case 'bell':
         enemy.bellUntil = this.s.time + ai.bellSeconds; enemy.ready = enemy.bellUntil + enemy.recovery;
         this.s.bellWatch = { x: p.x, y: p.y, at: this.s.time }; break;
-      case 'column': this.startColumn(enemy); break;
+      case 'column': this.startColumn(enemy, tell.path); break;
       case 'carpet': {
         const lanes = this.marchLanes(enemy, true);
         if (!this.onLane(lanes[tell.safe], ai.carpetSafeWidth)) damage();
         lanes.forEach(([[ax, ay], [bx, by]], i) => { if (i !== tell.safe) this.effect('beam', ax, ay, '#cf767a', 0.8, 1, { targetX: bx, targetY: by, look: 'march' }); });
         break;
       }
+      // Trumpet: a ring of notes with one gap, blown three times in a row (2026-11-06); each later ring turns its gap a
+      // little, one way then the other, so standing still in the first gap is not enough.
       case 'trumpetWave': {
-        const safeAngle = tell.angle, gap = ai.waveGapDegrees * Math.PI / 180;
-        for (let i = 0; i < ai.waveCount; i++) { const angle = safeAngle + gap / 2 + (Math.PI * 2 - gap) * i / (ai.waveCount - 1); this.fireBullet(enemy, angle, ai.waveSpeed); }
+        this.trumpetRing(enemy, tell.angle);
+        const volleys = ai.waveVolleys || 1;
+        if (volleys > 1) { enemy.noteVolleys = { left: volleys - 1, next: this.s.time + ai.waveVolleyGap, angle: tell.angle, turn: 1 }; enemy.ready = Math.max(enemy.ready, this.s.time + (volleys - 1) * ai.waveVolleyGap + enemy.recovery); }
         break;
       }
     }
@@ -443,6 +472,11 @@ export const enemyActions = {
         d.elapsed += dt; if (d.elapsed >= enemy.dashDuration) { enemy.dash = null; if (d.then) enemy.followup = { type: d.then, at: this.s.time + this.config.bossAI[enemy.type].hornDelay }; } continue;
       }
       if (enemy.spin) { this.spinEnemy(enemy, dt); if (!this.active) return; continue; }
+      if (enemy.noteVolleys && this.s.time >= enemy.noteVolleys.next) {
+        const v = enemy.noteVolleys, ai = this.config.bossAI[enemy.type];
+        this.trumpetRing(enemy, v.angle + v.turn * ai.waveTurnDegrees * Math.PI / 180);
+        v.turn = -v.turn; v.left--; v.next = this.s.time + ai.waveVolleyGap; if (v.left <= 0) enemy.noteVolleys = null;
+      }
       if (enemy.tell) { if (this.s.time >= enemy.tell.until) this.executeEnemy(enemy); if (!this.active) return; continue; }
       if (enemy.followup) {
         const next = enemy.followup; enemy.followup = null;

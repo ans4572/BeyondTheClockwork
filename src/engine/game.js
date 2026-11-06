@@ -7,7 +7,7 @@ import { Tutorial } from './tutorial.js';
 import { FlowField } from './flow-field.js';
 import { dealRun } from './encounters.js';
 import { dealHazards, SOLID, hazardBox } from './hazards.js';
-import { clamp, distance, angleDiff, inCone, segmentDistance } from './math.js';
+import { clamp, distance, floorDistance, angleDiff, inCone, segmentDistance } from './math.js';
 import { enemyActions } from './enemy-actions.js';
 import { roomWaves } from './room-waves.js';
 import { rewardDraws } from './reward-draws.js';
@@ -16,6 +16,8 @@ export { clamp, distance, segmentDistance };
 
 /** Modes in which the player is still in a run room (fighting, choosing a reward, walking to the portal). */
 const ROOM_MODES = new Set(['combat', 'reward', 'route', 'unwind']);
+/** How long F2 lies fallen in the room before a lost run goes home (the fall plays first). */
+const DOWN_SECONDS = 1.8;
 const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, LEAVE_REFUSED_UNITS = 1.5, LAST_WAVE_ALREADY_PLAYED = 99;
 /** The floor mark a placed skill shows before it lands: fire first (the furnace), then frost, then lightning. */
 const floorMark = (elements = []) => ['fire', 'ice', 'lightning'].find(e => elements.includes(e)) || null;
@@ -91,7 +93,9 @@ export class Game {
     const map = this.village || this.map, [width, height] = map?.size || [this.config.arena.width, this.config.arena.height];
     return map ? { left: 0, right: width, top: 0, bottom: height } : this.config.arena.bounds;
   }
-  get active() { return ['intro', 'combat', 'practice'].includes(this.s.mode) && !this.s.paused; }
+  get active() { return ['intro', 'combat', 'practice'].includes(this.s.mode) && !this.s.paused && !this.s.downUntil; }
+  /** F2 has fallen on a run and lies still for a moment before the run ends. */
+  get down() { return !!this.s.downUntil; }
   id(prefix) { return `${prefix}-${++this.s.sequence}`; }
   random() {
     let n = this.s.rng | 0; n ^= n << 13; n ^= n >>> 17; n ^= n << 5;
@@ -106,7 +110,7 @@ export class Game {
     const stats = this.stats, spawn = this.config.arena.spawn;
     this.s.player = { ...spawn, hp: this.c.player.maxHp + (stats.maxHp || 0), maxHp: this.c.player.maxHp + (stats.maxHp || 0), energy: 0, angle: 0, moveAngle: 0, attack: null, combo: 0, comboExpires: 0, invulnerableUntil: 0, dodge: null, dodgeReady: 0, cooldowns: {}, fusionReady: 0 };
   }
-  clearCombat() { this.s.clearAt = null; this.s.column = null; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; this.p.buffer = {}; }
+  clearCombat() { this.s.clearAt = null; this.s.ranks = []; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; this.p.buffer = {}; }
   /** `wake` opens on the player getting up, with the world held until they stand. */
   beginIntro({ wake = false, lesson = false } = {}) {
     if (!['opening', 'introDeath'].includes(this.s.mode)) return false;
@@ -445,12 +449,9 @@ export class Game {
   }
   addStagger(enemy, amount, applyPressure = true) {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;
-    enemy.stagger += amount * (applyPressure && enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1);
-    if (enemy.stagger >= this.c.balance.bossStaggerThreshold[enemy.kind]) {
-      enemy.stagger = 0; enemy.exposedUntil = this.s.time + this.c.caps.bossStaggerWindowSeconds;
-      enemy.staggerLock = enemy.exposedUntil + this.c.caps.bossStaggerReapplyLockSeconds;
-      enemy.tell = null; enemy.followup = null; enemy.ready = enemy.exposedUntil + this.config.rules.postExposureRecovery; this.notify('태엽 노출! 지금이 공격 기회입니다.');
-    }
+    // Stagger is still counted (skills are tuned by it), but a full gauge no longer opens a 'wound-spring exposed' window:
+    // it made bosses too easy (2026-11-06). Only a solved phase break stuns a boss now.
+    enemy.stagger = Math.min(this.c.balance.bossStaggerThreshold[enemy.kind], enemy.stagger + amount * (applyPressure && enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1));
   }
   applyStatus(enemy, element, cast) {
     const status = this.c.elements.find(e => e.id === element)?.status;
@@ -574,7 +575,7 @@ export class Game {
     this.p.fusionReady = this.s.time + fusion.cooldown * this.cooldownFactor;
     const rarityKeys = Object.keys(this.c.balance.rarityDamage);
     const slot = { level: Math.min(...this.slots.map(s => s.level)), rarity: rarityKeys[Math.min(...this.slots.map(s => rarityKeys.indexOf(s.rarity)))] };
-    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.notify(fusion.name); this.sense({ kind: 'cast', id: fusion.id, fusion: true, pair: fusion.pair });
+    this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.sense({ kind: 'cast', id: fusion.id, fusion: true, pair: fusion.pair });
     if (!this.s.profile.discoveredFusions.includes(fusion.id)) this.s.profile.discoveredFusions.push(fusion.id);
     return true;
   }
@@ -752,6 +753,8 @@ export class Game {
       this.sense({ kind: 'down' });
       if (this.tutorial.step) this.tutorial.rise();
       else if (this.s.mode === 'intro') { this.s.mode = 'introDeath'; this.clearCombat(); this.save(); }
+      // On a run F2 falls where she stood, lies still a moment, and only then is carried home (2026-11-06).
+      else if (this.s.run) { this.s.downUntil = this.s.time + DOWN_SECONDS; this.p.attack = null; this.p.dodge = null; }
       else this.returnToHub('defeat');
     }
     return true;
@@ -759,14 +762,8 @@ export class Game {
   effect(type, x, y, color, duration, value, extra = {}) {
     this.s.effects.push({ id: this.id('fx'), type, x, y, color, created: this.s.time, until: this.s.time + duration, duration, value, ...extra });
   }
-  /** Where the marching line stands now, as the two stretches either side of its gap. */
-  get columnLine() {
-    const column = this.s.column;
-    if (!column) return null;
-    const { start, end, at, gapFrom, gapShare } = column, lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
-    const a = lerp(start[0], end[0], at), b = lerp(start[1], end[1], at);
-    return { a, b, gapA: lerp(a, b, gapFrom), gapB: lerp(a, b, gapFrom + gapShare) };
-  }
+  /** The ranks of soldiers walking now (not those still waiting to set off), each with its line and gap. */
+  get rankLines() { return (this.s.ranks || []).filter(rank => rank.at >= 0 && rank.at < 1).map(rank => ({ rank, ...this.rankLine(rank) })); }
   /** A line for the player to read while a boss pattern is running. */
   get bossWarning() {
     const { time } = this.s, boss = this.s.enemies.find(e => e.boss && e.hp > 0);
@@ -774,8 +771,7 @@ export class Game {
     if (boss.alarmUntil > time || boss.tell?.type === 'alarm') return '경보! 공격을 멈추세요';
     if (boss.bellUntil > time || boss.tell?.type === 'bell') return '종이 울립니다! 움직이지 마세요';
     if (boss.tell?.type === 'carpet') return '초록 카펫 위로 이동하세요';
-    if (boss.tell?.type === 'column' || this.s.column) return '대열의 틈으로 지나가세요';
-    if (boss.tell?.type === 'parade' || this.s.parades?.length) return '퍼레이드! 카펫에서 비키거나 빈자리를 기다리세요';
+    if (['column', 'parade'].includes(boss.tell?.type) || this.s.ranks?.length) return '병정 대열이 세 줄 옵니다! 줄마다 틈으로 지나가세요';
     if (boss.tell?.type === 'drill') return '구령 훈련! 구령을 따르세요';
     if (this.s.drill) return this.s.drill.steps[this.s.drill.index] === 'still' ? '구령: 멈춰!' : '구령: 앞으로! 계속 걸으세요';
     if (boss.tell?.type === 'crateToss') return '상자가 떨어집니다! 로코 옆에서 터뜨리면 기절합니다';
@@ -837,12 +833,17 @@ export class Game {
   }
   /** The last enemy gets a moment to fall before anything covers the room. */
   holdClear() {
-    this.s.projectiles = this.s.projectiles.filter(b => b.friendly); this.s.column = null;
+    this.s.projectiles = this.s.projectiles.filter(b => b.friendly); this.s.ranks = [];
     this.s.casts = this.s.casts.filter(c => !HOSTILE_SHAPES.includes(c.shape));
     this.s.clearAt ??= this.s.time + CLEAR_HOLD_SECONDS;
     if (this.s.time >= this.s.clearAt) this.finishCombat();
   }
   update(dt, input = {}) {
+    if (this.s.downUntil && !this.s.paused) {
+      this.s.time += Math.min(dt, 1 / 30);
+      if (this.s.time >= this.s.downUntil) { this.s.downUntil = null; this.returnToHub('defeat'); }
+      return;
+    }
     if (this.walking) return this.walk(dt, input);
     if (this.leaving) return this.walkToPortal(dt, input);
     if (!this.active) return;
@@ -876,7 +877,7 @@ export class Game {
       if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) { if (!(enemy.statuses.windPressure > this.s.time)) this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: p.moveAngle }); enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration; }
     // A wrench swing plants the feet: the player stands still until the swing and its recovery end.
     } else if (!p.attack && !this.s.casts.some(c => c.shape === 'dash')) {
-      const stuck = this.s.casts.find(c => c.shape === 'sticker' && distance(p, c) < c.radius);
+      const stuck = this.s.casts.find(c => c.shape === 'sticker' && floorDistance(p, c) < c.radius);
       const speed = this.c.player.speed * (1 + (this.stats.moveSpeed || 0)) * (stuck ? 1 - stuck.slow : 1);
       this.move(p, dx * speed * dt, dy * speed * dt);
     }
@@ -898,7 +899,7 @@ export class Game {
     }
     for (const cast of this.s.casts.filter(c => c.shape === 'stompRing')) {
       cast.age += dt; if (cast.age < 0) continue;
-      const r = cast.age * cast.speed, d = distance(p, cast);
+      const r = cast.age * cast.speed, d = floorDistance(p, cast);
       if (!cast.passed && Math.abs(d - r) < cast.width + this.config.arena.playerRadius) { cast.passed = true; this.hurt(cast.enemyDamage); if (!this.active) return; }
       if (r > cast.reach) cast.done = true;
     }
@@ -914,7 +915,7 @@ export class Game {
     for (const cast of this.s.casts.filter(c => c.shape === 'sticker')) { cast.age += dt; if (cast.age >= cast.duration) cast.done = true; }
     for (const cast of this.s.casts.filter(c => c.shape === 'magnet')) {
       cast.age += dt;
-      if (distance(p, cast) < cast.radius) {
+      if (floorDistance(p, cast) < cast.radius) {
         const angle = Math.atan2(cast.y - p.y, cast.x - p.x); this.move(p, Math.cos(angle) * cast.pull * dt, Math.sin(angle) * cast.pull * dt);
         if (!cast.struck && cast.age >= cast.damageAt) { this.hurt(cast.enemyDamage); cast.struck = true; }
         if (!this.active) return;
@@ -1026,6 +1027,7 @@ export class Game {
   }
   returnToHub(reason = 'abandon') {
     if (!this.s.run || !['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(this.s.mode)) return false;
+    this.s.downUntil = null;
     const run = this.s.run, profile = this.s.profile, economy = this.data.progression.economy;
     let bonus = 0;
     if (run.clears.length && !profile.firstReturnClaimed) { bonus = economy.firstReturnBonus; profile.freeGears += bonus; profile.firstReturnClaimed = true; }

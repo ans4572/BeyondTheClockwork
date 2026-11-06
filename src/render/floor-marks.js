@@ -1,4 +1,5 @@
 import { FX, HAZARD_ART } from './fx-sprites.js';
+import { FLOOR_FLAT } from '../engine/math.js';
 
 /**
  * What the renderer paints on the floor under the bodies: where a skill will land, the danger floors of enemy attacks
@@ -8,6 +9,12 @@ import { FX, HAZARD_ART } from './fx-sprites.js';
 const TAU = Math.PI * 2;
 /** Fusion shapes that strike an area of floor, drawn under their pictures (see drawFusionFloors); a shockwave lasts this long. */
 const FLOOR_SHAPES = new Set(['self', 'target', 'moving', 'orb', 'clamp']), FLOOR_WAVE_SECONDS = 0.28, FLOOR_FLASH_SECONDS = 0.22;
+/**
+ * A fusion's rings lie on the painted floor, which is seen at a slant: squashed to this share of their height, like the
+ * landing marks. The opening flash bursts from FLASH_FROM to FLASH_TO of the reach (it shows the cast, not the reach);
+ * each later blow's ring still runs out to the rim.
+ */
+const RING_FLAT = FLOOR_FLAT, FLASH_FROM = 0.4, FLASH_TO = 0.78;
 /**
  * Enemy danger floors, as Lost Ark paints them: one red multiplied into the floor (its pattern shows through), no
  * hatching or outline; a deeper red fills from the attacker outward and the blow lands as it reaches the edge.
@@ -63,8 +70,8 @@ export const floorMarks = {
   /** A round danger floor `r` pixels wide around (x, y), its deeper red grown to `progress` (0 to 1) of the way out. */
   dangerDisc(x, y, r, progress) {
     const c = this.ctx;
-    c.beginPath(); c.arc(x, y, r, 0, TAU); this.washFloor(TELL_WASH);
-    if (progress > 0) { c.beginPath(); c.arc(x, y, r * Math.min(1, progress), 0, TAU); this.washFloor(TELL_FILL); }
+    c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); this.washFloor(TELL_WASH);
+    if (progress > 0) { const k = Math.min(1, progress); c.beginPath(); c.ellipse(x, y, r * k, r * k * FLOOR_FLAT, 0, 0, TAU); this.washFloor(TELL_FILL); }
   },
   /**
    * A blast about to go off (a lit crate, a volatile elite's death): a true circle, as the blast hits, washed red like
@@ -90,7 +97,7 @@ export const floorMarks = {
       const since = cast.pulse > 0 ? cast.age - (cast.next - (cast.interval || 0)) : Infinity, wave = Math.min(1, since / FLOOR_WAVE_SECONDS);
       // The rings of this frame: the opening flash (both elements, with a brief glow on the floor), then each blow's wave.
       const bursts = [];
-      if (flash < 1) bursts.push({ grow: 0.55 + 0.45 * ease(flash), alpha: 1 - flash * flash, both: true, glow: 0.2 * (1 - flash) });
+      if (flash < 1) bursts.push({ grow: FLASH_FROM + (FLASH_TO - FLASH_FROM) * ease(flash), alpha: 1 - flash * flash, both: true, glow: 0.2 * (1 - flash) });
       else if (wave < 1) bursts.push({ grow: 0.3 + 0.7 * ease(wave), alpha: 0.45 * (1 - wave) });
       if (!bursts.length) continue;
       // A round reach uses the PixelLab rings (art/fx/marks/ring-fusion-*): the first element's outside, the second's inside.
@@ -98,15 +105,16 @@ export const floorMarks = {
       if (cast.shape !== 'clamp' && rings.length) {
         const [outer, inner = outer] = rings, r = cast.radius * 20, size = 2 * r * RING_SPAN;
         for (const { grow, alpha, both, glow } of bursts) {
-          if (glow) { c.save(); c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.arc(x, y, r * grow, 0, TAU); c.fill(); c.restore(); }
-          this.drawMark(outer, x, y, size * grow, { alpha });
-          if (both && inner !== outer) this.drawMark(inner, x, y, size * RING_INNER * grow, { alpha: 0.85 * alpha });
+          if (glow) { c.save(); c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.ellipse(x, y, r * grow, r * grow * RING_FLAT, 0, 0, TAU); c.fill(); c.restore(); }
+          this.drawMark(outer, x, y, size * grow, { alpha, flat: RING_FLAT });
+          if (both && inner !== outer) this.drawMark(inner, x, y, size * RING_INNER * grow, { alpha: 0.85 * alpha, flat: RING_FLAT });
         }
         continue;
       }
       // The clamp's box (and any ring still loading): flat-colour lines, as the pixel art around it.
+      // A round reach lies flat like the rings; the clamp's box keeps its true shape, matching the clamp drawn over it.
       c.save(); c.translate(x, y);
-      if (cast.shape === 'clamp') c.rotate(cast.angle);
+      if (cast.shape === 'clamp') c.rotate(cast.angle); else c.scale(1, RING_FLAT);
       const outline = grow => {
         c.beginPath();
         if (cast.shape === 'clamp') { const l = cast.halfLength * 20 * grow, w = cast.halfWidth * 20 * grow; c.rect(-l, -w, l * 2, w * 2); }
@@ -123,20 +131,29 @@ export const floorMarks = {
   },
   /** A long band along a line, filled and outlined in the current colours. */
   lanePath([[ax, ay], [bx, by]], halfWidth, fill) {
-    const c = this.ctx, width = halfWidth * 20, length = Math.hypot(bx - ax, by - ay) * 20;
-    c.save(); c.translate(ax * 20, ay * 20); c.rotate(Math.atan2(by - ay, bx - ax));
+    const c = this.ctx, width = halfWidth * 20, length = Math.hypot(bx - ax, by - ay) * 20, angle = Math.atan2(by - ay, bx - ax);
+    // The painted carpets end along the stairs and the front fence, not square to the carpet: the map gives that edge's
+    // direction (laneEnd), and the strip's two ends are cut along it so they lie on the carpet's own ends.
+    const [ex, ey] = this.game.map?.laneEnd || [-Math.sin(angle), Math.cos(angle)], along = ex * Math.cos(angle) + ey * Math.sin(angle), across = -ex * Math.sin(angle) + ey * Math.cos(angle);
+    const skew = Math.abs(across) > 0.2 ? along / across : 0;
+    c.save(); c.translate(ax * 20, ay * 20); c.rotate(angle);
     // A lane about to be marched: a red carpet strip with gold chevrons running along it (scrolling tile).
-    if (fill && !this.drawLaneTiles(length, width)) c.fillRect(0, -width, length, width * 2);
-    c.strokeRect(0, -width, length, width * 2); c.restore();
+    if (fill && !this.drawLaneTiles(length, width, skew)) { this.stripPath(length, width, skew); c.fill(); }
+    this.stripPath(length, width, skew); c.stroke(); c.restore();
+  },
+  /** The strip from 0 to `length` along x, `width` either side, its ends slanted by `skew` (x per unit of y). */
+  stripPath(length, width, skew = 0) {
+    const c = this.ctx;
+    c.beginPath(); c.moveTo(-width * skew, -width); c.lineTo(length - width * skew, -width); c.lineTo(length + width * skew, width); c.lineTo(width * skew, width); c.closePath();
   },
   /** Lays the march-lane tile along the x axis from 0 to `length`, `width` either side; false while its sheet loads. */
-  drawLaneTiles(length, width) {
+  drawLaneTiles(length, width, skew = 0) {
     const fx = FX.marchLane, image = this.mapImages?.get(fx.sheet);
     if (!image) return false;
     const c = this.ctx, sy = width * 2 / fx.h, scroll = Math.floor(this.visualTime * 24) % fx.w;
-    c.save(); c.globalAlpha *= 0.75; c.beginPath(); c.rect(0, -width, length, width * 2); c.clip();
+    c.save(); c.globalAlpha *= 0.75; this.stripPath(length, width, skew); c.clip();
     // The chevrons march along the lane: the tile row slides forward and wraps.
-    for (let x = scroll - fx.w; x < length; x += fx.w) c.drawImage(image, 0, 0, fx.w, fx.h, x, -width, fx.w, fx.h * sy);
+    for (let x = scroll - fx.w - Math.ceil(Math.abs(width * skew)); x < length + Math.abs(width * skew); x += fx.w) c.drawImage(image, 0, 0, fx.w, fx.h, x, -width, fx.w, fx.h * sy);
     c.restore(); return true;
   },
   /** Everywhere that will be hit, in a wash that deepens as the blow comes. */
@@ -146,11 +163,24 @@ export const floorMarks = {
     c.save(); c.setLineDash([]); c.fillStyle = `rgba(190, 81, 95, ${0.1 + progress * 0.2})`; c.beginPath();
     points.forEach(([x, y], i) => (i ? c.lineTo(x * 20, y * 20) : c.moveTo(x * 20, y * 20))); c.closePath(); c.fill(); c.restore();
   },
-  columnPreview() {
-    const g = this.game, ai = g.config.bossAI.captainBrass, { start } = g.map?.column || {}, { left, top, bottom } = g.config.arena.bounds;
-    const [a, b] = start || [[left, top], [left, bottom]];
-    this.line(a[0] * 20, a[1] * 20, b[0] * 20, b[1] * 20, '#b85863', 2); this.text(`대열 행진`, (a[0] + b[0]) * 10, (a[1] + b[1]) * 10 - 8, '#b85863', 10);
-    return ai;
+  /**
+   * Where a soldier pattern's ranks will come from: their starting line washed red, with arrows pointing the way they
+   * will walk, and a label. `path` is the engine's rankPath.
+   */
+  rankPreview(path, label) {
+    const c = this.ctx, [a, b] = path.start, [e, f] = path.end, mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], far = [(e[0] + f[0]) / 2, (e[1] + f[1]) / 2];
+    const heading = Math.atan2(far[1] - mid[1], far[0] - mid[0]), across = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    c.save(); c.setLineDash([]); c.lineCap = 'round';
+    c.strokeStyle = 'rgba(224, 48, 60, 0.55)'; c.lineWidth = 16; c.beginPath(); c.moveTo(a[0] * 20, a[1] * 20); c.lineTo(b[0] * 20, b[1] * 20); c.stroke();
+    c.strokeStyle = '#b85863'; c.lineWidth = 2.5; c.stroke();
+    // Chevrons along the line, all pointing where the ranks will walk.
+    c.fillStyle = '#e0303c';
+    for (let i = 1, n = Math.max(2, Math.round(across / 3)); i < n; i++) {
+      const t = i / n, px = (a[0] + (b[0] - a[0]) * t) * 20 + Math.cos(heading) * 22, py = (a[1] + (b[1] - a[1]) * t) * 20 + Math.sin(heading) * 22;
+      c.save(); c.translate(px, py); c.rotate(heading); c.beginPath(); c.moveTo(9, 0); c.lineTo(-5, -7); c.lineTo(-1, 0); c.lineTo(-5, 7); c.closePath(); c.fill(); c.restore();
+    }
+    c.restore();
+    this.text(label, mid[0] * 20 - Math.cos(heading) * 20, mid[1] * 20 - Math.sin(heading) * 20 - 6, '#b85863', 11);
   },
   drawTell(enemy) {
     const tell = enemy.tell;
@@ -167,7 +197,8 @@ export const floorMarks = {
     const box = (length, width) => { c.translate(x, y); c.rotate(tell.angle); c.beginPath(); c.rect(0, -width, length, width * 2); paint(); fillTo(() => c.rect(0, -width, length * progress, width * 2)); };
     // How wide a body's path hurts: its own radius and the player's.
     const reach = (radius = enemy.radius) => (radius + g.config.arena.playerRadius) * 20;
-    const ring = (cx, cy, radius) => { c.beginPath(); c.arc(cx, cy, radius * 20, 0, TAU); paint(); fillTo(() => c.arc(cx, cy, radius * 20 * progress, 0, TAU)); };
+    // Round reaches lie on the floor as ellipses (FLOOR_FLAT), the same shape their hits use (floorDistance).
+    const ring = (cx, cy, radius) => { c.beginPath(); c.ellipse(cx, cy, radius * 20, radius * 20 * FLOOR_FLAT, 0, 0, TAU); paint(); fillTo(() => c.ellipse(cx, cy, radius * 20 * progress, radius * 20 * progress * FLOOR_FLAT, 0, 0, TAU)); };
     // A count beside a glyph: '×3' stomps, '×5' stickers.
     const counted = (name, fallback, count, gx, gy) => { if (this.mark(name)) { this.overlay(() => this.drawMark(name, gx - 7, gy - 4, 24)); this.text(`×${count}`, gx + 6, gy + 2, '#b85863', 10, 'left'); } else this.text(fallback, gx, gy, '#b85863', 11); };
     switch (tell.type) {
@@ -204,7 +235,7 @@ export const floorMarks = {
       }
       case 'alarm': ring(x, y, 1.6); this.glyph('alert', x, y - 44, '!', '#b85863', 15); break;
       case 'bell': ring(x, y, 1.6); this.glyph('bell', x, y - 44, '종', '#b85863', 12); break;
-      case 'column': this.columnPreview(); break;
+      case 'column': this.rankPreview(tell.path, '대열 행진 ×3'); break;
       case 'crane':
         // Rings first: the crates change the fill colour the rings share.
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.craneRadius);
@@ -214,10 +245,7 @@ export const floorMarks = {
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.crateTossRadius);
         this.overlay(() => { for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170, art = this.mapImages?.get(HAZARD_ART.crate); if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, dx * 20 - 12, top - 10, 24, 26); c.restore(); } else this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); } });
         break;
-      case 'parade':
-        c.setLineDash([]); c.strokeStyle = '#c43c36'; c.fillStyle = 'rgba(196, 60, 54, 0.22)'; c.lineWidth = 3;
-        for (const lane of tell.lanes) this.lanePath(lane, ai.paradeRadius + 0.3, true);
-        this.text('퍼레이드!', x, y - 70, '#b85863', 12); break;
+      case 'parade': this.rankPreview(tell.path, '퍼레이드 ×3'); this.text('퍼레이드!', x, y - 70, '#b85863', 12); break;
       case 'drill': ring(x, y, 1.6); this.text('구령 준비!', x, y - 70, '#b85863', 12); break;
       case 'carpet': {
         const lanes = g.marchLanes(enemy, true);
@@ -226,7 +254,7 @@ export const floorMarks = {
         break;
       }
       case 'trumpetWave':
-        ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 72, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.glyph('gap', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '틈', '#67805b', 8); break;
+        ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.ellipse(x, y, 72, 72 * FLOOR_FLAT, 0, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.glyph('gap', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '틈', '#67805b', 8); break;
     }
     c.restore();
   },

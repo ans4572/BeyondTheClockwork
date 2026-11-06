@@ -1,7 +1,7 @@
 import { fitsMap } from './map-geometry.js';
 import { formationSpots, ARRIVAL_NOTES } from './encounters.js';
 import { SOLID, hazardBox, sawAt, plateState } from './hazards.js';
-import { distance, inCone, segmentDistance } from './math.js';
+import { distance, floorDistance, inCone, segmentDistance } from './math.js';
 
 /**
  * A fight room's course: waves arriving and waking, elite affixes, the room's crates, saws and plates, and the walk to
@@ -86,8 +86,8 @@ export const roomWaves = {
   blowCrate(h) {
     const rule = this.config.hazards.crate; h.gone = true;
     this.effect('ring', h.x, h.y, '#e8914e', 0.6, rule.radius, { look: 'boom' }); this.effect('scrap', h.x, h.y, '#b0783e', 0.6, 1); this.sense({ kind: 'burst' });
-    if (!this.p.dodge && distance(h, this.p) < rule.radius + this.config.arena.playerRadius) this.hurt(rule.damage);
-    for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && distance(h, e) < rule.radius + e.radius) {
+    if (!this.p.dodge && floorDistance(h, this.p) < rule.radius + this.config.arena.playerRadius) this.hurt(rule.damage);
+    for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && floorDistance(h, e) < rule.radius + e.radius) {
       this.hitEnemy(e, rule.enemyDamage, { dot: true, color: '#e8914e' });
       const stun = e.boss && !e.breaking && this.config.bossAI[e.type]?.crateStunSeconds;
       if (stun && e.hp > 0) { e.tell = null; e.exposedUntil = Math.max(e.exposedUntil, this.s.time + stun); e.ready = Math.max(e.ready, e.exposedUntil + 0.4); this.notify('로코가 폭발에 휘청거립니다! 지금 공격하세요.'); }
@@ -120,7 +120,7 @@ export const roomWaves = {
     this.s.blasts = this.s.blasts.filter(blast => {
       if (blast.at > this.s.time) return true;
       this.effect('ring', blast.x, blast.y, '#e8914e', 0.6, blast.radius, { look: 'boom' }); this.sense({ kind: 'burst' });
-      if (!this.p.dodge && distance(blast, this.p) < blast.radius + this.config.arena.playerRadius) this.hurt(blast.damage);
+      if (!this.p.dodge && floorDistance(blast, this.p) < blast.radius + this.config.arena.playerRadius) this.hurt(blast.damage);
       // A volatile elite's blast hurts only F2 (a flat amount in every room); the other mobs stand in it unharmed.
       for (const h of this.s.hazards || []) if (distance(blast, h) < blast.radius) this.lightCrate(h, this.config.hazards.crate.chain);
       return false;

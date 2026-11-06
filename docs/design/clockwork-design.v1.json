@@ -1776,7 +1776,7 @@
       "name": "회수관 로코",
       "kind": "miniboss",
       "hp": 2340,
-      "damage": 14,
+      "damage": 13,
       "minimumTell": 0.7,
       "region": "smileStreet",
       "concept": "집게팔과 자석을 단 수거 인형"
@@ -1786,7 +1786,7 @@
       "name": "행진대장 브라스",
       "kind": "regionBoss",
       "hp": 3900,
-      "damage": 17,
+      "damage": 15,
       "minimumTell": 0.8,
       "region": "smileStreet",
       "concept": "주민들의 걸음을 지휘하는 금관 병정"

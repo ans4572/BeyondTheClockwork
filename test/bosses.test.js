@@ -112,11 +112,18 @@ test('Brass fan followup is separately telegraphed and trumpet wave preserves th
     const difference = Math.abs(Math.atan2(Math.sin(projectile.angle - safeAngle), Math.cos(projectile.angle - safeAngle)));
     assert.ok(difference >= data.slice.bossAI.captainBrass.waveGapDegrees * Math.PI / 360 - 1e-8);
   }
+  // Two more rings follow, half a second apart, each with its gap turned the other way.
+  const ai = data.slice.bossAI.captainBrass;
+  for (let i = 0; i < 120 && g.s.projectiles.length < 9 * ai.waveVolleys; i++) { g.s.time += 1 / 60; e.ready = 1e9; g.updateEnemies(1 / 60); }
+  assert.equal(g.s.projectiles.length, 9 * ai.waveVolleys);
 });
 test('death inside a magnet field leaves no hostile objects in the repaired hub', () => {
   const [g, e] = boss('collectorRoco'); g.beginEnemyTell(e, 'magnet'); g.executeEnemy(e);
   const field = g.s.casts[0]; field.damageAt = 0; g.p.hp = 1;
-  g.update(1 / 60); assert.equal(g.s.mode, 'returned'); assert.equal(g.s.casts.length, 0); assert.equal(g.s.enemies.length, 0); assert.equal(g.p.hp, 100);
+  // F2 falls first and lies still for a moment; nothing hurts or moves her meanwhile, then the run ends.
+  g.update(1 / 60); assert.ok(g.down); assert.equal(g.s.mode, 'combat'); assert.equal(g.active, false);
+  for (let i = 0; i < 200 && g.s.mode !== 'returned'; i++) g.update(1 / 60);
+  assert.equal(g.s.mode, 'returned'); assert.ok(!g.down); assert.equal(g.s.casts.length, 0); assert.equal(g.s.enemies.length, 0); assert.equal(g.p.hp, 100);
 });
 
 const onMaps = { ...data, maps: JSON.parse(await readFile(new URL('../src/data/maps.json', import.meta.url), 'utf8')) };
@@ -178,15 +185,18 @@ test('a carpet rolls out when Brass enters a new phase', () => {
   g.checkCarpets(brass); assert.equal(g.s.effects.filter(fx => fx.look === 'carpetRoll').length, 1);
 });
 
-test('a parade walks down a live carpet and hits whoever stands in its file', () => {
-  const [g, brass] = bossAt(11, 0.5); const full = g.p.hp;
-  g.beginEnemyTell(brass, 'parade'); const [lane] = brass.tell.lanes; until(g, brass.tell); g.executeEnemy(brass);
-  assert.equal(g.s.parades.length, 1);
-  const [[ax, ay], [bx, by]] = lane; g.p.x = (ax + bx) / 2; g.p.y = (ay + by) / 2; g.p.invulnerableUntil = 0;
-  for (let i = 0; i < 300 && g.p.hp === full; i++) { g.s.time += 1 / 60; g.tickBossHazards(1 / 60); }
-  assert.ok(g.p.hp < full);
-  for (let i = 0; i < 900 && g.s.parades.length; i++) { g.s.time += 1 / 60; g.tickBossHazards(1 / 60); }
-  assert.equal(g.s.parades.length, 0);
+test('a parade sends three wide ranks down the carpets, each with its gap somewhere else', () => {
+  const [g, brass] = bossAt(11, 0.5), ai = data.slice.bossAI.captainBrass;
+  g.beginEnemyTell(brass, 'parade'); const { path } = brass.tell; until(g, brass.tell); g.executeEnemy(brass);
+  assert.equal(g.s.ranks.length, ai.ranks);
+  // The rank spans every carpet (and a little past the outer ones), so it cannot be walked round.
+  const span = Math.hypot(path.start[1][0] - path.start[0][0], path.start[1][1] - path.start[0][1]), lanes = g.map.lanes;
+  assert.ok(span > Math.hypot(lanes.at(-1)[0][0] - lanes[0][0][0], lanes.at(-1)[0][1] - lanes[0][0][1]));
+  for (let i = 1; i < g.s.ranks.length; i++) assert.ok(Math.abs(g.s.ranks[i].gapFrom - g.s.ranks[i - 1].gapFrom) >= g.s.ranks[i].gapShare * 1.5 - 1e-9, 'the next gap is somewhere else');
+  // Standing still in the middle of the carpets is hit.
+  const full = g.p.hp; g.p.x = 19; g.p.y = 12; g.p.invulnerableUntil = 0;
+  for (let i = 0; i < 900 && g.s.ranks.length; i++) { g.s.time += 1 / 60; g.tickBossHazards(1 / 60); }
+  assert.ok(g.p.hp < full); assert.equal(g.s.ranks.length, 0);
 });
 
 test('the drill hurts moving on "halt" and standing on "march", and nothing when obeyed', () => {
@@ -232,15 +242,17 @@ test('only the green carpet is safe, and it can always be reached', () => {
   h.p.x = (cx + dx) / 2 + 2; h.p.y = (cy + dy) / 2 + 2; until(h, other.tell); h.executeEnemy(other); assert.equal(h.p.hp, full - other.damage);
 });
 
-test('the column hits once, spares the gap, and leaves when it has crossed', () => {
+test('the column comes in three ranks: following each gap is safe, standing in the line is not', () => {
   const pass = place => {
-    const [g, brass] = bossAt(11, 0.4); g.startColumn(brass); const hp = g.p.hp, seconds = g.s.column.seconds;
+    const [g, brass] = bossAt(11, 0.4); g.startColumn(brass); const hp = g.p.hp, seconds = Math.max(...g.s.ranks.map(rank => rank.seconds * (1 - rank.at)));
+    assert.equal(g.s.ranks.length, data.slice.bossAI.captainBrass.ranks);
     place(g); for (let i = 0; i < seconds * 60 + 10; i++) { g.tickBossHazards(1 / 60); g.s.time += 1 / 60; place(g); }
-    return [hp - g.p.hp, g.s.column, brass.damage];
+    return [hp - g.p.hp, g.s.ranks.length, brass.damage];
   };
   const middle = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-  const [through, gone, damage] = pass(g => { const line = g.columnLine; if (!line) return; const [x, y] = middle(line.gapA, line.gapB); g.p.x = x; g.p.y = y; });
-  assert.equal(through, 0); assert.equal(gone, null);
-  const [struck] = pass(g => { g.p.x = 20; g.p.y = 12; const line = g.columnLine; if (line && g.s.column.gapFrom > 0.5) { g.p.x = line.a[0] + 0; g.p.y = line.a[1]; } else if (line) { g.p.x = line.b[0]; g.p.y = line.b[1]; } });
-  assert.equal(struck, damage);
+  // Slipping through the gap of whichever rank is crossing now.
+  const [through, left] = pass(g => { const [line] = g.rankLines; if (!line) return; const [x, y] = middle(line.gapA, line.gapB); g.p.x = x; g.p.y = y; });
+  assert.equal(through, 0); assert.equal(left, 0);
+  const [struck, , damage] = pass(g => { const [line] = g.rankLines; if (!line) return; const end = line.rank.gapFrom > 0.5 ? line.a : line.b; g.p.x = end[0]; g.p.y = end[1]; g.p.invulnerableUntil = 0; });
+  assert.ok(struck >= damage);
 });

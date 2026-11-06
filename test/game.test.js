@@ -205,10 +205,9 @@ test('burn uses independent stack expiry; status application is throttled per ca
   g.applyStatus(e, 'fire', { ...cast, id: 'other' }); assert.equal(e.burnStacks.length, 3);
   step(g, 3.8); assert.equal(e.burnStacks.length, 2); step(g, 0.3); assert.equal(e.burnStacks.length, 0);
 });
-test('boss stagger exposes for 1.5s and locks reapplication for eight more seconds', () => {
-  const g = arena(), e = inert(g, 'collectorRoco'); g.addStagger(e, 100);
-  assert.equal(e.exposedUntil, 1.5); assert.equal(e.staggerLock, 9.5); g.addStagger(e, 1000); assert.equal(e.stagger, 0);
-  step(g, 2); g.addStagger(e, 1000); assert.equal(e.stagger, 0);
+test('a full stagger gauge no longer exposes a boss: it keeps attacking', () => {
+  const g = arena(), e = inert(g, 'collectorRoco'); g.addStagger(e, 1e6);
+  assert.ok(!(e.exposedUntil > g.s.time)); assert.equal(e.stagger, data.combat.balance.bossStaggerThreshold[e.kind]);
 });
 test('bosses do not move when vortex pulls normal enemies', () => {
   const g = arena(), e = inert(g, 'collectorRoco', { x: 10, y: 8 }), normal = inert(g, 'guard', { x: 11.8, y: 8 });

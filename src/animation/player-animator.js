@@ -59,7 +59,7 @@ export class PlayerAnimator {
   }
   choose(delta, game, reducedMotion) {
     const { s, p, c } = game;
-    if (s.mode === 'introDeath') {
+    if (s.mode === 'introDeath' || s.downUntil) {
       this.deathElapsed += delta;
       return this.oneShot('death', this.facing, this.deathElapsed / (this.library.clip('death', this.facing).durationMs / 1000));
     }

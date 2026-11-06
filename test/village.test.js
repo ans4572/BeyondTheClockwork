@@ -6,7 +6,7 @@ import { Game } from '../src/engine/game.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { fitsMap, cameraFor, placeOf, pointInPolygon, VIEW_UNITS } from '../src/engine/map-geometry.js';
 import { LANE_UNITS } from '../src/animation/npc-director.js';
-import { closeSlivers, columnDepths, ghostFor, raiseDepths } from '../src/render/depth-mask.js';
+import { closeSlivers, columnDepths, ghostFor, raiseDepths, seeThroughAlpha } from '../src/render/depth-mask.js';
 
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
 const [combat, progression, slice, maps, dialogue] = await Promise.all(['combat', 'progression', 'slice', 'maps', 'dialogue'].map(name => json(`../src/data/${name}.json`)));
@@ -193,6 +193,15 @@ test('overhead regions take the depth of their true ground line', () => {
   const depths = new Uint16Array([5, 0, 5, 5]);
   raiseDepths(depths, 2, 2, 1, [[0, 0], [2, 0], [2, 1], [0, 1]], 9);
   assert.deepEqual([...depths], [9, 0, 5, 5]);
+});
+
+test('a see-through region repaints its scenery over a body only faintly, and only where there is scenery', () => {
+  // A 2x2 map at one pixel per unit: the arch covers the top row, whose left pixel is scenery and right pixel is floor.
+  const veil = seeThroughAlpha(new Uint16Array([5, 0, 5, 5]), 2, 2, 1, [{ polygon: [[0, 0], [2, 0], [2, 1], [0, 1]], alpha: 0.3 }]);
+  assert.deepEqual([...veil], [77, 255, 255, 255]);
+  assert.equal(seeThroughAlpha(new Uint16Array(4), 2, 2, 1, []), null, 'maps without such regions carry no extra array');
+  const { seeThrough, size } = maps.villages.court;
+  assert.ok(seeThrough.every(({ alpha, polygon }) => alpha > 0 && alpha < 1 && polygon.every(([x, y]) => x >= 0 && y >= 0 && x <= size[0] && y <= size[1])));
 });
 
 test('the player only shows through scenery that hides most of them', () => {

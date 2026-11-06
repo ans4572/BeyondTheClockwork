@@ -5,7 +5,7 @@ import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { PIXELS_PER_UNIT } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
-import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART } from './render/canvas.js';
+import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART, FLAG_BEARER_ART } from './render/canvas.js';
 import { FX_FILES } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
 import { createMapLoader } from './render/map-loader.js';
@@ -28,8 +28,8 @@ const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;
 /** Total play time as hours and minutes: "12시간 5분", "5분", or "1분 미만". */
 const formatPlayTime = seconds => { const minutes = Math.floor(seconds / 60), hours = Math.floor(minutes / 60); return hours ? `${hours}시간 ${minutes % 60}분` : minutes ? `${minutes}분` : '1분 미만'; };
 const formatTime = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
-const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM' };
-const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도' };
+const defaultBindings = { up: 'KeyW', left: 'KeyA', down: 'KeyS', right: 'KeyD', dodge: 'Space', skill0: 'KeyQ', skill1: 'KeyE', skill2: 'KeyR', skill3: 'KeyF', interact: 'KeyG', codex: 'Tab', map: 'KeyM', stats: 'KeyC' };
+const bindingNames = { up: '위', left: '왼쪽', down: '아래', right: '오른쪽', dodge: '회피', skill0: '기술 1', skill1: '기술 2', skill2: '기술 3', skill3: '기술 4', interact: '상호작용', codex: '도감', map: '지도', stats: 'F2 정보' };
 const HOME_NAME = '웃음 마을';
 /** The F9 room jumper works only on this computer's dev server, never on the deployed sites. */
 const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
@@ -58,8 +58,8 @@ const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" s
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
 // Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck. Skills shake and fusions hold and slow (2026-11-06):
 // they hit harder than the wrench and should feel it.
-const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.08, shake: 6 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0.03, shake: 4 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const FUSION_SLOW_MS = 150, MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.015, CRIT_SHAKE = 3, SLOW_RATE = 0.3, LAST_SLOW_MS = 450, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
+const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.05, shake: 6 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const FUSION_SLOW_MS = 100, MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.01, CRIT_SHAKE = 3, SLOW_RATE = 0.3, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 /**
  * The loading card waits only for what the title shows: its paper form and song. Everything else is held back until
  * then so it does not share the connection: F2's sheets start once the title is drawn (titleDrawn), and the skill
@@ -140,12 +140,14 @@ try {
   };
   addEventListener('resize', fitHud); document.addEventListener('fullscreenchange', fitHud); fitHud();
   const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
+  // The face in the corner opens F2 정보 (Moru points it out once the first part is fitted).
+  $('hud-face').addEventListener('click', () => { if (!saveBlocked && !onTitle && !screen && game.s.profile.registered) { openAudio(); pause('stats'); } });
   hudFace.imageSmoothingEnabled = false;
   portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
   portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
   // Each place's art, in order of need (src/render/map-loader.js); nothing starts before the title is drawn.
   const mapArt = createMapLoader({ data, game, renderer, slots: IMAGE_SLOTS, canStart: () => titleIsDrawn,
-    firstFiles: [...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(HAZARD_ART), ...FX_FILES] });
+    firstFiles: [...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(FLAG_BEARER_ART), ...Object.values(HAZARD_ART), ...FX_FILES] });
   const { introPlace, fetchImages, bringPlaceForward, placeArtReady } = mapArt;
   fetchImages();
   const gameViewport = $('overlay').parentElement;
@@ -378,7 +380,9 @@ try {
     // Catching several enemies in one swing holds the frame a little longer for each.
     const struck = hits.filter(hit => hit.kind === 'hit' || hit.kind === 'heavy').length, crowd = Math.min(MULTI_STOP_CAP, MULTI_STOP * Math.max(0, struck - 1));
     for (const hit of hits) {
-      const kind = FEEL[hit.kind] || NO_FEEL;
+      // An ordinary kill no longer holds the frame on top of the blow that made it (2026-11-06: it read as a slow-down);
+      // only a boss's fall still does.
+      const kind = hit.kind === 'kill' && !hit.boss ? { ...FEEL.kill, stop: 0 } : FEEL[hit.kind] || NO_FEEL;
       hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0) + (hit.angle !== undefined ? crowd : 0));
       const shake = Math.max(kind.shake || 0, hit.crit ? CRIT_SHAKE : 0);
       // A wrench blow pushes the view the way it was swung; everything else shakes.
@@ -386,9 +390,8 @@ try {
       if (hit.crit && !calm) renderer.critPulse();
       if (hit.kind === 'hurt' && !calm) renderer.wince();
     }
-    // The last enemy, and a boss above all, falls in slow motion.
-    const finisher = hits.find(hit => hit.kind === 'kill' && (hit.boss || hit.last));
-    if (finisher && !calm) slowUntil = performance.now() + (finisher.boss ? BOSS_SLOW_MS : LAST_SLOW_MS);
+    // Only a boss falls in slow motion; ordinary enemies, even a room's last, drop at full speed (2026-11-06).
+    if (hits.some(hit => hit.kind === 'kill' && hit.boss) && !calm) slowUntil = performance.now() + BOSS_SLOW_MS;
     if (hits.some(hit => hit.kind === 'phase') && !calm) renderer.flash();
     // A fusion going off: the screen's edges light in its two elements, the floor dims and the view leans in;
     // its first blow then holds and slows the world for a moment.
@@ -521,14 +524,39 @@ try {
     }).join('');
     return `${head}<ol class="run-picks">${rows}</ol>`;
   }
+  /**
+   * F2 정보: what F2's body can do right now, the moru tuning and this run's parts together. Opened from the HUD face,
+   * the C key, or the pause menu's tab. The wrench shows its three blows' real damage, not a percentage.
+   */
+  function statsBody() {
+    const p = game.p, st = game.stats, c = data.combat, prof = game.s.profile, rank = id => prof.stats?.[id] || 0;
+    const pct = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 1000) / 10}%`;
+    const damage = (1 + Math.min(c.caps.permanentConditionalDamageBonus, st.attackDamage || 0)) * (1 + Math.min(c.caps.runDamageBonus, game.upgradeAmount('basicDamage') || 0));
+    const crit = (c.player.critChance || 0) + (st.critChance || 0), critHit = c.caps.critMultiplier + (st.critDamage || 0);
+    const groups = [
+      ['외장', [['체력', `${Math.round(p.hp)} / ${p.maxHp}`, `조율 ${rank('maxHp')}단계`], ['방어력', pct(st.damageReduction || 0), '받는 피해가 줄어듭니다'], ['이동속도', pct(st.moveSpeed || 0), `기본 초당 ${c.player.speed}칸`]]],
+      ['렌치', [['공격력', c.player.combo.map(blow => Math.round(blow.damage * damage)).join(' · '), '1·2·3타 피해'], ['공격속도', pct(st.attackSpeed || 0), ''], ['치명타', `${Math.round(crit * 100)}%`, `맞으면 피해 ×${Math.round(critHit * 100) / 100}`]]],
+      ['회로', [['스킬 대기시간', pct(-(st.cooldownReduction || 0)), ''], ['축전 획득량', pct(st.energyGain || 0), ''], ['상태이상 위력', pct(st.statusPower || 0), '']]],
+      ['주머니', [['자유 톱니 획득', pct(st.gearGain || 0), ''], ['동전 획득', pct(st.coinGain || 0), '']]]
+    ];
+    const loadout = (prof.loadout || []).map(id => `${elementIcon(id, 'inline-element')}${escapeHTML(data.combat.elements.find(e => e.id === id)?.name || id)}`).join('<span class="f2-plus">+</span>');
+    const rows = groups.map(([name, list]) => `<div class="f2-group"><h3>${name}</h3>${list.map(([label, value, note]) => `<div class="f2-row"><span>${label}</span><b>${value}</b>${note ? `<small>${note}</small>` : ''}</div>`).join('')}</div>`).join('');
+    return `<div class="f2-card"><div class="f2-who"><div class="f2-face" role="img" aria-label="F2"></div><b>${escapeHTML(callName(prof))}</b><small>제품 번호 F2 · 태엽 인형</small>`
+      + `<div class="f2-hp"><i style="width:${Math.round(Math.max(0, p.hp) / p.maxHp * 100)}%"></i></div><small>체력 ${Math.round(p.hp)} / ${p.maxHp}</small>`
+      + `<div class="f2-loadout">장착 속성<br>${loadout || '없음'}${game.fusion ? `<br>융합 <b>${escapeHTML(game.fusion.name)}</b>` : ''}</div></div>`
+      + `<div><div class="f2-groups">${rows}</div><p class="notice">모루의 조율판(영구)과 ${game.s.run ? '이번 원정에서 얻은 부품' : '원정에서 얻는 부품'}이 합쳐진 값입니다.</p></div></div>`;
+  }
+  function statsPanel() {
+    return panel(`<div class="panel-header"><div><h2>F2 정보</h2></div>${button('닫기', 'resume', '', 'primary')}</div>${statsBody()}`, 'wide f2-info');
+  }
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
-    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="actions">${button('속성 도감', 'codex')}</div><div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}${button('원정 포기', 'abandon', game.s.run ? '' : 'disabled', 'danger')}</div>`}`;
     const keys = `<p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     const onRun = !onTitle && !!game.s.run, current = settingsTab === 'run' && !onRun ? 'general' : settingsTab;
-    const body = current === 'run' ? runPicks() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -562,10 +590,29 @@ try {
       : `<strong>${ico('home')} ${HOME_NAME}</strong><em>원정 출발지</em>`;
     return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
   }
+  /** Where each scrolled box in `root` stands, keyed by its tag, classes and place among boxes like it. */
+  function scrollPlaces(root) {
+    const places = new Map(), count = new Map();
+    for (const box of [root, ...root.querySelectorAll('*')]) {
+      const name = `${box.tagName}.${box.className}`, n = count.get(name) || 0; count.set(name, n + 1);
+      if (box.scrollTop > 0) places.set(`${name}#${n}`, box.scrollTop);
+    }
+    return places;
+  }
+  function restoreScroll(root, places) {
+    if (!places.size) return;
+    const count = new Map();
+    for (const box of [root, ...root.querySelectorAll('*')]) {
+      const name = `${box.tagName}.${box.className}`, n = count.get(name) || 0; count.set(name, n + 1);
+      const top = places.get(`${name}#${n}`); if (top) box.scrollTop = top;
+    }
+  }
   function renderOverlay(force = false) {
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
     const key = `${mode}:${s.run?.node}`;
     if (!force && key === overlayKey) return;
+    // Redrawing the same sheet (buying a rank, toggling a part) keeps every list where the player had scrolled it.
+    const scrolled = key === overlayKey ? scrollPlaces($('overlay')) : null;
     overlayKey = key;
     let html = '';
     if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>새 게임으로 바꾸기 전까지 기존 저장은 그대로 둡니다.</p><div class="actions">${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div>`, 'compact');
@@ -595,6 +642,7 @@ try {
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
+    if (mode === 'stats') html = statsPanel();
     if (mode === 'map') html = mapPanel();
     if (html && storageError && mode !== 'pause') html = html.replace('</section>', `<p class="error">${escapeHTML(storageError)}</p></section>`);
     // Re-rendering a sheet must not throw the keyboard back to its first button.
@@ -603,6 +651,8 @@ try {
     if (onTitle) $('title').inert = !!html;
     // Headings are cut to hard pixels like the title, so every sheet reads as the same form.
     for (const heading of $('overlay').querySelectorAll('h2')) { heading.setAttribute('aria-label', heading.textContent); heading.replaceChildren(pixelText(heading.textContent, 15, '#2b3345')); }
+    // Restored once the headings are drawn: the lists only take their final height then, and an earlier value is cut short.
+    if (scrolled) restoreScroll($('overlay'), scrolled);
     if (html) { clearInput(); ((same && $('overlay').querySelector(`${same}:not(:disabled)`)) || $('overlay').querySelector('button:not(:disabled)'))?.focus({ preventScroll: true }); }
   }
 
@@ -610,7 +660,6 @@ try {
     const keys = bindings(), lesson = game.tutorial, moveWord = isTouch ? '왼쪽을 끌어' : `${['up', 'left', 'down', 'right'].map(key => keyName(keys[key])).join(' ')} 키로`;
     if (!screen && game.s.mode === 'route' && game.s.run.node === 0) return '노란 표시로 걸어 나가세요';
     if (!screen && game.s.mode === 'combat' && game.bossWarning) return game.bossWarning;
-    if (!screen && game.s.mode === 'practice') return '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다';
     if (screen || !['intro', 'registration'].includes(game.s.mode) || game.wakeProgress !== null) return '';
     return {
       walk: `${moveWord} 노란 표시까지 걸어가세요`,
@@ -739,9 +788,10 @@ try {
     const hint = lessonHint();
     put($('hint'), 'text', hint);
     put($('hint'), 'hidden', !hint);
-    const notice = s.notices.at(-1);
+    // The back yard's standing instruction sits in the notice line at the top centre, under any fresh notice.
+    const notice = s.notices.at(-1)?.text || (!screen && s.mode === 'practice' ? '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다' : '');
     $('toast').classList.toggle('visible', !!notice && game.onFoot);
-    put($('toast'), 'text', notice?.text || '');
+    put($('toast'), 'text', notice);
   }
 
   /**
@@ -958,6 +1008,7 @@ try {
     if (e.repeat) return;
     if (key === 'codex') { if (!saveBlocked) screen === 'codex' ? resume() : pause('codex'); return; }
     if (key === 'map') { if (!saveBlocked) screen === 'map' ? resume() : pause('map'); return; }
+    if (key === 'stats') { if (!saveBlocked && game.s.profile.registered) screen === 'stats' ? resume() : pause('stats'); return; }
     if (screen) return;
     if (key === 'interact' || (game.village && key === 'skill1')) { interact(); return; }
     if (!game.onFoot) {
