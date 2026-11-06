@@ -23,18 +23,31 @@ const BODIES = {
 };
 // The painted pixel icons (art/ui/icons/px, each a 24, 32 or 48 pixel grid). A name found here is shown as its picture;
 // the drawn bodies above stay for the few marks that have no painted icon yet (home, spark).
-const ART = new Set(['gear', 'coin', 'crown', 'charge', 'map', 'settings', 'fullscreen', 'fullscreen-exit', 'lock', 'action-wrench', 'action-dodge',
+const ART = new Set(['gear', 'coin', 'crown', 'charge', 'lock', 'action-wrench', 'action-dodge',
   ...['wrench-damage', 'max-hp', 'skill-cooldown', 'dodge-cooldown', 'move-speed', 'status-damage', 'crit', 'attack-speed', 'kill-heal', 'armor',
     'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`)]);
+// The three HUD buttons (full screen, map, settings) are smooth painted icons on a 24 unit grid, not pixels: brass and
+// cream bodies with a navy outline, one shade and one highlight, in the colours of the painted town and its minimap.
+const N = '#2b3345', BRASS = '#d9a441', LIGHT = '#f3cd6a', SHADE = '#9a6a24', CREAM = '#f6ecd2', FOLD = '#e3cf9f', RED = '#c8463c';
+const brackets = (path, highlight) => `<path d="${path}" fill="none" stroke="${N}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="${path}" fill="none" stroke="${BRASS}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="${highlight}" fill="none" stroke="${LIGHT}" stroke-width="1" stroke-linecap="round"/>`;
+const MAP_EDGE = 'M3 6.5 8.5 4.3 15.5 6.8 21 4.8v12.7l-5.5 2.2-7-2.5L3 19.2z';
+const knob = (x, y) => `<circle cx="${x}" cy="${y}" r="3" fill="${BRASS}" stroke="${N}" stroke-width="1.5"/><path d="M${x - 1.6} ${y + 1.3}a2.1 2.1 0 0 0 3.2 .3" fill="none" stroke="${SHADE}" stroke-width="1"/><circle cx="${x - 0.9}" cy="${y - 0.9}" r=".8" fill="${LIGHT}"/>`;
+const SMOOTH = {
+  fullscreen: brackets('M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15', 'M5.2 8V5.8a.6.6 0 0 1 .6-.6H8'),
+  'fullscreen-exit': brackets('M9 4v3.5A1.5 1.5 0 0 1 7.5 9H4M20 9h-3.5A1.5 1.5 0 0 1 15 7.5V4M15 20v-3.5a1.5 1.5 0 0 1 1.5-1.5H20M4 15h3.5A1.5 1.5 0 0 1 9 16.5V20', 'M8 5v2.4a.6.6 0 0 1-.6.6H5.2'),
+  map: `<path d="M3 6.5 8.5 4.3v13.2L3 19.2z" fill="${CREAM}"/><path d="M8.5 4.3l7 2.5v12.9l-7-2.2z" fill="${FOLD}"/><path d="M15.5 6.8 21 4.8v12.7l-5.5 2.2z" fill="${CREAM}"/><path d="${MAP_EDGE}" fill="none" stroke="${N}" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 4.3v13.2M15.5 6.8v12.9" stroke="${N}" stroke-width="1.2"/><path d="M5 15.5c1.8-.4 2.6-3 5-3.2s3.2 1.8 5.4.4" fill="none" stroke="${SHADE}" stroke-width="1.3" stroke-dasharray="1.6 1.4" stroke-linecap="round"/><path d="M16.6 9.3l2.4 2.4M19 9.3l-2.4 2.4" stroke="${RED}" stroke-width="2" stroke-linecap="round"/>`,
+  settings: `<path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="${N}" stroke-width="2.6" stroke-linecap="round"/>${knob(9, 6.5)}${knob(15.5, 12)}${knob(7.5, 17.5)}`
+};
+const smooth = (name, cls) => `<svg class="${cls} smooth-icon" data-icon="${name}" viewBox="0 0 24 24" aria-hidden="true">${SMOOTH[name]}</svg>`;
 // A redrawn icon gets a new file name (browsers keep the old picture at the old path).
 const FILES = { 'action-dodge': 'action-dodge-v7' };
 export const iconUrl = name => `art/ui/icons/px/${FILES[name] || name}.png`;
 export const ICON_FILES = [...ART].map(iconUrl);
-const svg = (name, cls) => ART.has(name)
+const svg = (name, cls) => SMOOTH[name] ? smooth(name, cls) : ART.has(name)
   ? `<img class="${cls} px-icon" src="${iconUrl(name)}" alt="" draggable="false">`
   : `<svg class="${cls}" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${BODIES[name]}</svg>`;
 /** The tool buttons and wallet: sized by their own CSS. */
-export const TOOL_ICONS = Object.fromEntries([...Object.keys(BODIES), ...ART].map(name => [name, svg(name, 'tool-icon')]));
+export const TOOL_ICONS = Object.fromEntries([...Object.keys(BODIES), ...ART, ...Object.keys(SMOOTH)].map(name => [name, svg(name, 'tool-icon')]));
 /** An icon set in a line of text, one letter tall. */
 export const ico = name => svg(name, 'ico');
 /** A skill slot's picture: the painted action icons by name, every other slot by its skill's own icon. */
@@ -43,7 +56,7 @@ export const skillIcon = id => iconUrl(`skill-${id}`);
 export const slotArt = art => (ART.has(art) ? iconUrl(art) : skillIcon(art));
 /** Shows the enter or the leave picture on a full-screen button, whichever the next press will do. */
 export function syncFullscreenIcon(button) {
-  const image = button?.querySelector('img.px-icon'); if (!image) return;
-  const src = iconUrl(document.fullscreenElement ? 'fullscreen-exit' : 'fullscreen');
-  if (!image.src.endsWith(src)) image.src = src;
+  const icon = button?.querySelector('svg.smooth-icon'); if (!icon) return;
+  const name = document.fullscreenElement ? 'fullscreen-exit' : 'fullscreen';
+  if (icon.dataset.icon !== name) icon.outerHTML = smooth(name, [...icon.classList].filter(c => c !== 'smooth-icon').join(' '));
 }

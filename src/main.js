@@ -606,6 +606,20 @@ try {
   function statsPanel() {
     return panel(`<div class="panel-header"><div><h2>F2 정보</h2></div>${button('닫기', 'resume', '', 'primary')}</div>${statsBody()}`, 'wide f2-info');
   }
+  /** The first choice of a new game, right after waking: walk with the keys or with the mouse. Both ways stay in the settings. */
+  function controlsPanel() {
+    const settings = game.s.profile.settings, byMouse = settings.controls === 'mouse';
+    const keyboardKeys = { ...defaultBindings, ...settings.bindings }, mouseKeys = { ...mouseBindings, ...settings.mouseBindings };
+    const cap = (code, kind = '') => `<i class="${kind}">${code ? keyName(code) : ''}</i>`;
+    const mouse = (right, rightKind) => `<div class="cs-mouse-wrap"><div class="cs-mouse"><span></span><span class="${rightKind}"></span></div><div class="cs-mouse-cap"><em></em>좌 렌치<br><em class="${rightKind}"></em>우 ${right}</div></div>`;
+    const card = (id, name, art, rows) => `<button class="cs-card" data-action="controls" data-id="${id}" aria-pressed="${(id === 'mouse') === byMouse}"><span class="cs-name">${name}<span class="cs-picked">선택됨</span></span><span class="cs-art">${art}</span><span class="cs-rows">${rows.map(([what, how]) => `<span><span>${what}</span>${how}</span>`).join('')}</span></button>`;
+    const skills = keys => [0, 1, 2, 3].map(i => keyName(keys['skill' + i])).join(' ');
+    const k = keyboardKeys, m = mouseKeys;
+    const keyboardArt = `<span class="cs-keys">${cap(k.skill0, 'skill')}${cap(k.up, 'move')}${cap(k.skill1, 'skill')}${cap(k.skill2, 'skill')}${cap(k.left, 'move')}${cap(k.down, 'move')}${cap(k.right, 'move')}${cap(k.skill3, 'skill')}</span>${mouse('융합', 'skill')}`;
+    const mouseArt = `${mouse('이동', 'move')}<span class="cs-keys">${cap(m.skill0, 'skill')}${cap(m.skill1, 'skill')}${cap(m.skill2, 'skill')}${cap(m.skill3, 'skill')}${cap('', 'blank')}${cap('', 'blank')}${cap('', 'blank')}${cap(m.fusion, 'skill')}</span>`;
+    const common = `<span><b>${keyName(k.dodge)}</b> 회피</span><span><b>${keyName(k.interact)}</b> 말 걸기</span><span><b>Esc</b> 멈춤</span>`;
+    return panel(`<h2>어떻게 움직일까요?</h2><p>손에 맞는 쪽을 고르세요. 고른 방식으로 튜토리얼이 이어집니다.</p><div class="cs-cards">${card('keys', '키보드로 걷기', keyboardArt, [['이동', [k.up, k.left, k.down, k.right].map(keyName).join(' ')], ['기술', skills(k)], ['렌치', '왼쪽 클릭'], ['융합', '오른쪽 클릭']])}${card('mouse', '마우스로 걷기', mouseArt, [['이동', '오른쪽 클릭 (누르면 따라감)'], ['기술', skills(m)], ['렌치', '왼쪽 클릭'], ['융합', keyName(m.fusion)]])}</div><div class="cs-common">두 방식 공통 ${common}</div><div class="actions cs-foot"><p class="notice">환경설정 › 조작 키에서 언제든 바꿀 수 있어요.</p>${button('이걸로 시작', 'controls-start', '', 'primary')}</div>`, 'wide controls-choice');
+  }
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
@@ -679,6 +693,7 @@ try {
     if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 연결되어 그 뒤로는 저절로 이어집니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
     if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
+    if (mode === 'controls') html = controlsPanel();
     if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-give"><span>자유 톱니 ${ico('gear')} ${Math.floor(game.s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}${s.run ? `<span>동전 ${ico('coin')} ${s.run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}` : ''}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : tuningPanel();
@@ -972,6 +987,7 @@ try {
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings[mouseMove() ? 'mouseBindings' : 'bindings'] = {}; game.save(); }
     if (name === 'controls') { game.s.profile.settings.controls = d.id === 'mouse' ? 'mouse' : 'keys'; game.save(); }
+    if (name === 'controls-start') { resume(); return; }
     if (name.startsWith('transfer-')) { sfx('click'); await transferAction(name); return; }
     if (name.startsWith('sync-')) { sfx('click'); await syncAction(name); return; }
     // Purchases answer with coins or a refusal; picking a reward and equipping have their own sounds; every other button clicks.
@@ -1063,7 +1079,8 @@ try {
     if (sheet && sheetKeys(e, sheet)) return;
     if (e.code === 'Escape') { e.preventDefault(); if (e.repeat || saveBlocked || screen === 'title') return; if (screen) resume(); else if (game.s.panel) { game.closePanel(); renderOverlay(); } else pause(); return; }
     if (e.code === 'F9' && DEBUG_ALLOWED) { e.preventDefault(); if (e.repeat || saveBlocked) return; if (screen === 'debug') resume(); else pause('debug'); return; }
-    if (screen === 'title') return;
+    // The first choice of controls waits for a click or Esc; the map and codex keys do not skip it.
+    if (screen === 'title' || screen === 'controls') return;
     const map = bindings(), key = Object.keys(map).find(key => map[key] === e.code);
     if (!key && e.code === 'KeyT' && !e.repeat && !screen) game.togglePracticeReset();
     if (!key) return;
@@ -1185,7 +1202,8 @@ try {
     // After Brass, F2 says what the title means: the spring stays, but who winds it changes.
     if (!screen && game.s.mode === 'complete' && !game.s.profile.bossTalks?.includes('ending')) playEnding();
     if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0)) meetBoss(boss);
-    if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening');
+    // After the waking lines, before the first step: how F2 is moved (touch has one way and skips it).
+    if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening').then(() => { if (!isTouch && game.s.mode === 'intro') { pause('controls'); $('overlay').querySelector('[data-action="controls-start"]')?.focus({ preventScroll: true }); } });
     const pad = pollGamepad(), map = bindings();
     if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.enemies); }
     if (pad?.dodge) pending.dodge = true;

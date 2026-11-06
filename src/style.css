@@ -196,3 +196,32 @@ body.cramped .f2-face { width: 120px; height: 120px; background-position: -60px 
 .rec-who { grid-column: 2 / 4; display: inline-flex; gap: 3px; align-items: center; font-size: 12px; margin-top: 1px; }
 .rec-who .ico { width: 14px; height: 14px; }
 .rec-mine { background: var(--accent); color: var(--paper); font-size: 11px; padding: 0 5px; font-style: normal; }
+
+/* The first choice after waking (main.js controlsPanel): two cards, keys or mouse, each with its keys drawn. */
+.controls-choice .cs-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+.panel .cs-card { display: flex; flex-direction: column; gap: 8px; text-align: left; padding: 10px 12px 12px; background: var(--paper-low); color: var(--ink); border: 2px solid var(--ink); font: inherit; cursor: pointer; }
+.panel .cs-card:hover:not(:disabled) { background: #f3e7c8; color: var(--ink); }
+.panel .cs-card[aria-pressed="true"]:not(:disabled) { background: #fffaf0; color: var(--ink); box-shadow: inset 0 0 0 2px var(--gold), 4px 4px 0 var(--ink); }
+.cs-name { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 15px; }
+.cs-picked { font-size: 11px; font-weight: normal; background: var(--ink); color: var(--paper); padding: 1px 6px; }
+.cs-card[aria-pressed="false"] .cs-picked { visibility: hidden; }
+.cs-art { display: flex; gap: 18px; align-items: center; justify-content: center; min-height: 88px; padding: 8px; background: #e4d6b2; }
+.cs-keys { display: grid; grid-template-columns: repeat(4, 24px); gap: 3px; }
+.cs-keys i { display: grid; place-items: center; height: 24px; font: bold 12px Galmuri11, sans-serif; font-style: normal; background: var(--paper); border: 2px solid var(--ink); border-bottom-width: 4px; }
+.cs-keys i.blank { visibility: hidden; }
+.cs-art .move { background: var(--sage); }
+.cs-art .skill { background: #f2d98f; }
+.cs-mouse-wrap { display: flex; gap: 8px; align-items: center; }
+.cs-mouse { position: relative; display: flex; width: 40px; height: 58px; overflow: hidden; background: var(--paper); border: 2px solid var(--ink); border-radius: 20px 20px 18px 18px; }
+.cs-mouse span { width: 50%; height: 24px; background: var(--paper); }
+.cs-mouse span:first-child { border-right: 2px solid var(--ink); }
+.cs-mouse-cap { font-size: 11px; line-height: 1.5; }
+.cs-mouse-cap em { display: inline-block; width: 9px; height: 9px; margin-right: 3px; vertical-align: -1px; background: var(--paper); border: 1px solid var(--ink); }
+.cs-rows { display: flex; flex-direction: column; font-size: 12px; }
+.cs-rows > span { display: grid; grid-template-columns: 60px 1fr; padding: 3px 0; border-bottom: 1px dashed #cdbf9f; }
+.cs-rows > span:last-child { border-bottom: 0; }
+.cs-rows > span > span { color: var(--label); }
+.cs-common { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--label); }
+.cs-common b { padding: 0 5px; color: var(--ink); background: var(--paper-low); border: 1px solid var(--ink); }
+.cs-foot { justify-content: space-between; margin-top: 12px; }
+.panel .cs-foot p { margin: 0; }
