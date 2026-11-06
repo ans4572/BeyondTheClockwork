@@ -18,5 +18,6 @@ test('a skilled bot falls early with the wrench alone, and at rank 16 gets past 
     if (strong.mode === 'complete' || strong.node >= 7) cleared++;
   }
   // 2026-11-05: bosses 1500 / 2500, mobs 10% faster and 1.5x damage; one seed in three may now stop rank 16 early.
+  // 2026-11-06: bosses 1800 / 3000 (+20%), then 2340 / 3900 (x1.3).
   assert.ok(cleared >= 2, `only ${cleared} of 3 seeds got past Roco at rank 16`);
 });

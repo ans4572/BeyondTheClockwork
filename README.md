@@ -233,6 +233,7 @@ test/                                 자동 테스트
 - 배포 업로드에서 게임이 받지 않는 원본 1080개(17.2MB) 제외(`.assetsignore`): 애니메이션 시트 PNG 원본(게임은 WebP만 받음), 바닥 표시 원본(`art/fx/marks/src`), 맵 참고 그림, 프롬프트 텍스트. 저장소에는 그대로 남음.
 - 안 쓰는 파일·코드 정리: 바닥 경고를 바꾸며 쓰지 않게 된 `mark-danger-v1.png`·`tile-danger-paint-v1.png`, 예전 마을 배경 `background-q92.webp`를 휴지통으로 옮김. 쓰이지 않던 `iconAt`, 변수 `playerReady`·`spawns` 등 삭제.
 - 리팩토링(동작 변화 없음, 테스트 296개 통과): `main.js`의 맵 불러오기·깊이 계산·미리 받기를 `src/render/map-loader.js`로, `canvas.js`의 바닥 경고·위험 원·융합 고리·착지 표시를 `src/render/floor-marks.js`로, `game.js`의 몹·보스 행동을 `enemy-actions.js`, 웨이브·장애물을 `room-waves.js`, 보상 카드를 `reward-draws.js`로, 공용 계산(`distance` 등)을 `math.js`로 나눔. `game.js` 1846→1071줄, `canvas.js` 1395→1171줄, `main.js` 1256→1140줄. `HAZARD_ART`는 `fx-sprites.js`로 옮김(기존 import는 그대로 동작).
+- 보스 체력 상향(20% 뒤 다시 1.3배, 합계 1.56배): 회수관 로코 1500 → 2340, 행진대장 브라스 2500 → 3900(`clockwork-design.v1.json` → `data:sync`). 난이도 배율은 그대로 곱해져 쉬움(0.54)·보통(0.9)·어려움(1.26)에서 로코 1264·2106·2948, 브라스 2106·3510·4914.
 
 ### 2026-11-05
 

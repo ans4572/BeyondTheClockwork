@@ -73,12 +73,13 @@ test('Roco mixes in bomb cans: one batted back refills a can of shield, one left
 });
 test('Brass breaks twice: drums struck in the shown order at 66%, flag bearers knocked down at 33%', () => {
   const [g, e] = boss('captainBrass'), [drums, flags] = data.slice.bossAI.captainBrass.phaseBreaks; g.p.x = 20; g.p.y = 8;
-  e.hp = e.maxHp * 0.7; g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * drums.at); assert.equal(e.breaking.kind, 'drums');
+  // Each blow is big enough to cross the next break line whatever Brass's health is tuned to.
+  e.hp = e.maxHp * 0.7; g.hitEnemy(e, e.maxHp); assert.equal(e.hp, e.maxHp * drums.at); assert.equal(e.breaking.kind, 'drums');
   const b = e.breaking; b.phase = 'play';
   g.strikeDrum(e, b.order[1]); assert.equal(b.phase, 'show', 'a wrong drum replays the order'); b.phase = 'play';
   for (const i of b.order) g.strikeDrum(e, i);
   g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]);
-  e.exposedUntil = 0; e.vulnerableUntil = 0; g.hitEnemy(e, 999); assert.equal(e.hp, e.maxHp * flags.at); assert.equal(e.breaking.kind, 'flags');
+  e.exposedUntil = 0; e.vulnerableUntil = 0; g.hitEnemy(e, e.maxHp); assert.equal(e.hp, e.maxHp * flags.at); assert.equal(e.breaking.kind, 'flags');
   g.p.x = 2; g.p.y = 2;
   for (const s of e.breaking.soldiers.filter(x => x.flag)) s.down = true;
   g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0, 1]);
