@@ -1,7 +1,7 @@
 // The title's own F2: the idle pose redrawn cleaner and larger (PixelLab, 192 px), shown at 2x on the form.
 const F2_TITLE = 'art/ui/title/f2-title-v3.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
-const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
+const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, LINE_READ_MS = 700, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
 const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
 const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
 
@@ -144,10 +144,19 @@ export class TitleScreen {
     }
     await this.wait(STAMP_HOLD_MS);
   }
-  /** The three opening sentences on black. Any key or click skips the rest. */
+  /**
+   * The three opening sentences on black. A click or key brings the next sentence early, but only once the one on
+   * screen has stood for LINE_READ_MS (2026-11-06: one click used to throw all three away); Esc skips the rest.
+   */
   async opening(lines, { stamp }) {
     this.root.hidden = false; this.skipped = false; this.stage.inert = true;
-    const skip = e => { if (e.type === 'keydown' && e.repeat) return; e.preventDefault(); this.skipped = true; this.resume?.(); };
+    let shownAt = performance.now();
+    const skip = e => {
+      if (e.type === 'keydown' && e.repeat) return;
+      e.preventDefault();
+      if (e.type === 'keydown' && e.key === 'Escape') { this.skipped = true; this.resume?.(); return; }
+      if (performance.now() - shownAt >= LINE_READ_MS) this.resume?.();
+    };
     addEventListener('keydown', skip, true); addEventListener('pointerdown', skip, true);
     if (stamp) await this.stamp();
     this.dark.hidden = false; this.dark.replaceChildren();
@@ -157,7 +166,7 @@ export class TitleScreen {
     for (const [i, line] of lines.entries()) {
       if (this.skipped) break;
       const last = i === lines.length - 1, text = pixelText(line, OPENING_SIZE, last ? '#e0564c' : '#f3e6c8', scale);
-      this.dark.append(text);
+      this.dark.append(text); shownAt = performance.now();
       if (last) this.onThud();
       await this.wait(last ? LAST_LINE_MS : LINE_MS);
     }

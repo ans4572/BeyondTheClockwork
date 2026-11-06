@@ -46,7 +46,8 @@ test('each kill pays the difficulty’s share of the room’s loot', () => {
     const g = runOn(id), before = { gears: g.s.profile.freeGears, coins: g.s.run.coins };
     for (let i = 0; i < g.room.waves.flat().length; i++) g.payKill(g.s.enemies[0]);
     paid[id] = g.s.run.coins - before.coins + g.s.profile.freeGears - before.gears;
-    const full = g.roomLoot(), base = new Game(data).data.progression.economy.runCoinRewards.normal;
+    // The first stop sets its own (smaller) pay; the difficulty multiplies it.
+    const full = g.roomLoot(), base = g.room.rewards?.coins ?? new Game(data).data.progression.economy.runCoinRewards.normal;
     assert.equal(full.coins, Math.round(base * g.difficulty.loot * (1 + (g.stats.coinGain || 0))), id);
   }
   assert.ok(paid.easy < paid.normal && paid.normal < paid.hard, JSON.stringify(paid));

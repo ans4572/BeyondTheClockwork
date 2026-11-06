@@ -31,6 +31,7 @@
     }
   },
   "rules": {
+    "merchantAfterRoom": "stop-12",
     "comboReset": 0.7,
     "comboArcDegrees": 115,
     "rearSectorDegrees": 120,
@@ -691,6 +692,7 @@
   "rooms": [
     {
       "id": "stop-02",
+      "rewards": { "gears": 8, "coins": 12 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "첫 걸음 광장 A",
@@ -724,6 +726,7 @@
     },
     {
       "id": "stop-03",
+      "rewards": { "gears": 9, "coins": 13 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕 수레마당 C",
@@ -758,6 +761,7 @@
     },
     {
       "id": "stop-04",
+      "rewards": { "gears": 10, "coins": 15 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "장난감 수선길 A",
@@ -793,6 +797,7 @@
     },
     {
       "id": "stop-05",
+      "rewards": { "gears": 11, "coins": 16 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "리본 교차골목 D",
@@ -844,6 +849,7 @@
     },
     {
       "id": "stop-08",
+      "rewards": { "gears": 16, "coins": 23 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "태엽 적재마당 C",
@@ -883,6 +889,7 @@
     },
     {
       "id": "stop-09",
+      "rewards": { "gears": 18, "coins": 26 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "분수 우회광장 C",
@@ -923,6 +930,7 @@
     },
     {
       "id": "stop-10",
+      "rewards": { "gears": 19, "coins": 28 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "깃발 검문광장 C",
@@ -965,6 +973,7 @@
     },
     {
       "id": "stop-11",
+      "rewards": { "gears": 21, "coins": 31 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕색 골목 A",
@@ -1006,6 +1015,7 @@
     },
     {
       "id": "stop-12",
+      "rewards": { "gears": 23, "coins": 34 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "행진 적재뜰 D",
@@ -1559,12 +1569,12 @@
     ]
   },
   "difficulty": {
-    "note": "Chosen at the town portal for each expedition. scale multiplies every enemy's and boss's health and attack and the number of room furniture pieces; loot multiplies what each kill and clear pays (gears and coins). 1.0 is the tuning before difficulties existed; easy and hard sit 40% below and above normal.",
+    "note": "Chosen at the town portal for each expedition. scale multiplies every enemy's and boss's health and attack and the number of room furniture pieces; loot multiplies what each kill and clear pays (gears and coins). 1.0 is the tuning before difficulties existed; easy and hard sit 40% below and above normal. bossRepeats sets how many times Roco and Brass repeat a pattern (stickers, crates, soldier ranks, note rings, stomp rings) on that level.",
     "default": "normal",
     "levels": [
-      { "id": "easy", "name": "쉬움", "scale": 0.54, "loot": 0.54, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다." },
-      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "웃음거리의 기본 원정입니다." },
-      { "id": "hard", "name": "어려움", "scale": 1.26, "loot": 1.26, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다." }
+      { "id": "easy", "name": "쉬움", "scale": 0.54, "loot": 0.54, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다.", "bossRepeats": { "stickerCount": 5, "crateTossCount": 1, "ranks": 2, "waveVolleys": 2, "stompRings": 2 }, "phaseBreaks": { "cans": { "cans": 4, "bombShare": 0.2, "canEvery": 1.0, "seconds": 20 }, "drums": { "drums": 3, "showStep": 0.85, "laneEvery": 3.8, "seconds": 20 }, "flags": { "flags": 2, "turn": 0.35, "seconds": 20 } } },
+      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "웃음거리의 기본 원정입니다.", "bossRepeats": { "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 }, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } } },
+      { "id": "hard", "name": "어려움", "scale": 1.26, "loot": 1.26, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "bossRepeats": { "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 }, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } } }
     ]
   },
   "hazards": {

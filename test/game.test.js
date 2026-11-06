@@ -82,7 +82,8 @@ test('the new economy, dodge, energy and status stats each do their job', () => 
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
-  assert.equal(j.s.run.baseGears, 21); assert.equal(j.s.run.coins, 31);
+  // The first stop pays 8 gears and 12 coins (slice.json rooms[].rewards), each raised 40% by the two stats.
+  assert.equal(j.s.run.baseGears, 11); assert.equal(j.s.run.coins, 17);
   assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.5) < 1e-9);
   const b = arena(), burned = inert(b); burned.hp = burned.maxHp = 1000; b.s.profile.stats.statusPower = 20; burned.burnStacks = [b.s.time + 4]; burned.burnTick = b.s.time; b.updateEnemies(1 / 60);
   assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.5)) < 1e-9);
@@ -226,8 +227,8 @@ test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', ()
 });
 test('first return without a cleared combat gives no bonus; valid return gives it once', () => {
   const g = hub(); g.startRun(4); g.returnToHub(); assert.equal(g.s.profile.freeGears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
-  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 30);
-  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 45);
+  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 23);
+  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 31);
 });
 test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choices', () => {
   const g = arena(); inert(g); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }]; g.castSkill(0, { x: 10, y: 8 }); step(g, 0.05);
@@ -239,6 +240,14 @@ test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choi
   assert.deepEqual(resumed.s.run.rewardChoices, choices); resumed.offerRewards(); assert.deepEqual(resumed.s.run.rewardChoices, choices);
   assert.equal(resumed.finishCombat(), false); assert.equal(resumed.s.profile.freeGears, gears); pick(resumed); assert.equal(resumed.chooseReward(0), false);
 });
+test('a travelling merchant waits once after the last street before the boss, with its own once-only stock', () => {
+  const g = hub(); g.startRun(123); const node = data.slice.rooms.findIndex(r => r.id === data.slice.rules.merchantAfterRoom);
+  g.s.run.node = node; g.enterNode(); completeRoom(g); pick(g);
+  assert.equal(g.s.mode, 'merchant'); g.s.run.coins = 500; g.s.run.shopBought = ['persistentGears'];
+  const gears = g.s.profile.freeGears; assert.equal(g.buyShop('persistentGears'), true, 'the night market buy does not block it');
+  assert.equal(g.s.profile.freeGears, gears + 20); assert.equal(g.buyShop('persistentGears'), false, 'once at the merchant');
+  assert.equal(g.leaveMerchant(), true); assert.equal(g.s.mode, 'route'); assert.ok(g.leaving);
+});
 test('twelve-stage completion pays exactly 270 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
   const g = hub(); g.startRun(123); const seen = [], last = data.slice.rooms.length - 1;
   assert.equal(g.s.mode, 'combat');
@@ -249,6 +258,8 @@ test('twelve-stage completion pays exactly 270 base gears and records bosses onl
       completeRoom(g);
       if (wasBoss) assert.equal(g.unwind(), false);
       if (node < last) pick(g, g.room.guaranteedMod ? 'mod' : undefined);
+      // The travelling merchant waits after the last street before Brass; leaving it starts the walk on.
+      if (g.s.mode === 'merchant') { assert.equal(g.room.id, data.slice.rules.merchantAfterRoom); assert.equal(g.leaveMerchant(), true); }
     }
     if (node < last) assert.equal(g.nextNode(0), true);
   }
@@ -425,6 +436,13 @@ test('a room dealt in three waves calls each when one is left; an elite room is 
   step(g, 1.2); assert.equal(g.s.mode, 'reward');
 });
 
+test('the first wave of a room is summoned: hatches open as F2 walks in, the bodies appear after, unseen and still until then', () => {
+  const g = hub(); g.startRun(4711); const [e] = g.s.enemies;
+  assert.ok(e.summonUntil > g.s.time); assert.ok(g.s.effects.some(fx => fx.type === 'friendlyTell' && fx.mark === 'spawn'));
+  const where = [e.x, e.y]; g.s.entry = null; for (let i = 0; i < 20; i++) g.update(1 / 60, {});
+  assert.deepEqual([e.x, e.y], where, 'still while summoning');
+  g.s.time = e.summonUntil; g.update(1 / 60, {}); assert.equal(e.summonUntil, 0);
+});
 test('a run saved before waves existed can finish the room it is in', () => {
   const g = hub(); g.startRun(5); delete g.s.run.wave; delete g.s.run.arrivals;
   const resumed = new Game(data, g.s);
@@ -435,7 +453,9 @@ test('a run saved before waves existed can finish the room it is in', () => {
 test('each fallen enemy pays its share of the room at once, and the clear pays only what is left', () => {
   const g = hub(); g.startRun(4711);
   const room = g.room, planned = room.waves.flat().length, total = g.roomLoot(), gears0 = g.s.profile.freeGears;
+  // The first wave climbs out of its hatches first; until then it cannot be struck.
   const first = g.s.enemies.find(e => e.hp > 0);
+  assert.equal(g.hitEnemy(first, 1e6).killed, false); g.s.time = first.summonUntil;
   g.hitEnemy(first, 1e6);
   assert.equal(g.s.run.coins, Math.round(total.coins / planned));
   assert.equal(g.s.profile.freeGears - gears0, Math.round(total.gears / planned));

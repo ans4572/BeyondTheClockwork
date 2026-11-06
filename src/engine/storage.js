@@ -5,7 +5,7 @@ export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
 /** What the title's continue button says about a save: where it stands and when it was written, e.g. "원정 · 장난감 진열대 · 오늘 14:20". */
 export function saveSummary(state, savedAt, data, now = new Date()) {
-  const RUN_MODES = ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'];
+  const RUN_MODES = ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'];
   const room = state.run && data.slice.rooms[state.run.node];
   const place = room ? `원정 · ${roomTitle(room)}`
     : state.mode === 'practice' ? '연습장'
@@ -50,7 +50,7 @@ export function decodeSave(raw, data) {
     delete s.profile.stats[id];
   }
   for (const stat of data.slice.permanentStats) if (!integerIn(s.profile.stats?.[stat.id], 0, stat.maxRank)) throw new Error('저장된 스탯 레벨이 올바르지 않습니다.');
-  const modes = ['opening', 'intro', 'introDeath', 'registration', 'hub', 'combat', 'reward', 'route', 'shop', 'unwind', 'complete', 'returned', 'practice'];
+  const modes = ['opening', 'intro', 'introDeath', 'registration', 'hub', 'combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete', 'returned', 'practice'];
   if (!modes.includes(s.mode) || !Number.isFinite(s.time) || !Number.isFinite(s.player.hp) || !Number.isFinite(s.player.x) || !Number.isFinite(s.player.y)) throw new Error('저장된 게임 상태가 올바르지 않습니다.');
   if (!Array.isArray(s.enemies) || !Array.isArray(s.casts) || !Array.isArray(s.projectiles) || !Array.isArray(s.effects)) throw new Error('저장된 전투 상태가 올바르지 않습니다.');
   for (const key of ['notices']) if (!Array.isArray(s[key])) fail('저장된 알림 상태가 올바르지 않습니다.');
@@ -75,7 +75,7 @@ export function decodeSave(raw, data) {
   if (p.attack && (!integerIn(p.attack.phase, 0, 2) || !validNumber(p.attack.elapsed) || !Array.isArray(p.attack.hit))) fail('저장된 렌치 동작이 올바르지 않습니다.');
   // A run saved on an older route cannot resume on this one; permanent progress stays.
   if (s.run && s.run.plan?.length !== data.slice.rooms.length) { s.run = null; s.mode = 'hub'; s.enemies = []; s.casts = []; s.projectiles = []; s.effects = []; p.attack = null; p.dodge = null; p.lastCast = null; }
-  const runModes = ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'];
+  const runModes = ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'];
   if (runModes.includes(s.mode) !== !!s.run) fail('저장된 원정과 화면 상태가 일치하지 않습니다.');
   if (s.run) {
     // Runs saved before difficulties existed play on as the default; anything unknown is reset the same way.

@@ -191,6 +191,16 @@ test('plates heat on a cycle, saws run end to end, and solid pieces have a box',
 const mapData = { ...data, maps };
 const roomFight = seed => { const g = new Game(mapData); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(seed); for (let i = 0; i < 300 && g.s.entry; i++) g.update(1 / 60, {}); return g; };
 
+test('a hot plate burns F2 with her feet on its edge, and a burn blocked by invulnerability comes on the next step', () => {
+  const g = roomFight(21), rules = data.slice.hazards.plate; g.s.enemies = [];
+  // A plate that is hot right now, with F2 standing just past its tip: her centre is off it, her feet are on it.
+  const plate = { id: 'p', kind: 'plate', x: g.p.x - rules.half - 0.15, y: g.p.y, half: rules.half, depth: rules.depth, offset: rules.cycle - rules.hot - g.s.time % rules.cycle + 0.1 };
+  g.s.hazards = [plate]; assert.equal(plateState(plate, g.s.time, rules), 'hot');
+  const hp = g.p.hp; g.p.invulnerableUntil = g.s.time + 0.05; g.tickHazards(); assert.equal(g.p.hp, hp, 'still invulnerable');
+  g.s.time += 0.06; g.tickHazards(); assert.ok(g.p.hp < hp, 'burns as soon as the invulnerability ends');
+  assert.ok(g.s.effects.some(fx => fx.type === 'ring' && fx.color === '#ff7a2c'));
+});
+
 test('a crate struck by the wrench blows up a moment later and hurts what stands near it', () => {
   const g = roomFight(21); g.s.enemies = [];
   const crate = { id: 'c', kind: 'crate', x: g.p.x + 1.2, y: g.p.y, size: 0.9 };
@@ -202,12 +212,15 @@ test('a crate struck by the wrench blows up a moment later and hurts what stands
   assert.ok(guard.hp < hp); assert.equal(g.s.hazards.length, 0);
 });
 
-test('a music box mends once', () => {
+test('a music box is picked up by walking onto it, mends once, waits while F2 is whole, and never blocks', () => {
   const g = roomFight(21); g.s.enemies = [];
-  g.s.hazards = [{ id: 'm', kind: 'musicbox', x: g.p.x - 1.2, y: g.p.y, size: 0.8 }];
-  g.p.hp = 10;
-  g.strikeHazards(Math.PI, 2, 120); const healed = g.p.hp;
-  assert.ok(healed > 10); g.strikeHazards(Math.PI, 2, 120); assert.equal(g.p.hp, healed);
+  const box = { id: 'm', kind: 'musicbox', x: g.p.x - 1.2, y: g.p.y, size: 0.8 };
+  g.s.hazards = [box];
+  assert.equal(g.obstacles.length, 0, 'not solid');
+  g.strikeHazards(Math.PI, 2, 120); g.p.hp = 10; g.strikeHazards(Math.PI, 2, 120); assert.equal(g.p.hp, 10, 'a swing does nothing');
+  g.p.hp = g.p.maxHp; g.p.x = box.x; g.tickHazards(); assert.ok(!box.gone, 'left for later at full health');
+  g.p.hp = 10; g.tickHazards(); const healed = g.p.hp;
+  assert.ok(healed > 10 && box.gone); g.tickHazards(); assert.equal(g.p.hp, healed);
 });
 
 test('a fence stops enemy shots and breaks after enough of them', () => {

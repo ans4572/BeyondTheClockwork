@@ -214,8 +214,8 @@ export const floorMarks = {
       case 'shot': this.overlay(() => this.circle(x, y - 14, 1 + progress * 3, '#ffd257')); box(enemy.attackRange * 20, reach(g.config.rules.enemyProjectileRadius)); break;
       case 'magnet': ring(tell.targetX * 20, tell.targetY * 20, ai.magnetRadius); this.glyph('magnet', tell.targetX * 20, tell.targetY * 20 + 3, '↓ 吸 ↓', '#b85863', 10); break;
       case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.glyph('suction', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '‹ ‹ 吸'); break;
-      case 'stickers': counted('sticker', '불량 ×' + ai.stickerCount, ai.stickerCount, x, y - 46); break;
-      case 'stomp': ring(x, y, 1.2); counted('stomp', '쿵 ×' + ai.stompRings, ai.stompRings, x, y - 46); break;
+      case 'stickers': { const n = g.bossRepeat(enemy, 'stickerCount'); counted('sticker', '불량 ×' + n, n, x, y - 46); break; }
+      case 'stomp': { const n = g.bossRepeat(enemy, 'stompRings'); ring(x, y, 1.2); counted('stomp', '쿵 ×' + n, n, x, y - 46); break; }
       case 'charge': box(ai.chargeLength * 20, ai.chargeWidth * 20); this.glyph('chevrons', ai.chargeLength * 10, 3, '» » »'); break;
       case 'chargeHorn': sector(ai.hornRange, ai.hornDegrees); break;
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.glyph('alert', x, y - 12, '!', '#b85863', 15); break;
@@ -235,7 +235,7 @@ export const floorMarks = {
       }
       case 'alarm': ring(x, y, 1.6); this.glyph('alert', x, y - 44, '!', '#b85863', 15); break;
       case 'bell': ring(x, y, 1.6); this.glyph('bell', x, y - 44, '종', '#b85863', 12); break;
-      case 'column': this.rankPreview(tell.path, '대열 행진 ×3'); break;
+      case 'column': this.rankPreview(tell.path, `대열 행진 ×${g.bossRepeat(enemy, 'ranks')}`); break;
       case 'crane':
         // Rings first: the crates change the fill colour the rings share.
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.craneRadius);
@@ -245,7 +245,7 @@ export const floorMarks = {
         for (const { x: dx, y: dy } of tell.drops) ring(dx * 20, dy * 20, ai.crateTossRadius);
         this.overlay(() => { for (const { x: dx, y: dy } of tell.drops) { const top = dy * 20 - 16 - (1 - progress) * 170, art = this.mapImages?.get(HAZARD_ART.crate); if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, dx * 20 - 12, top - 10, 24, 26); c.restore(); } else this.rect(dx * 20 - 8, top, 16, 14, '#a36f3d'); } });
         break;
-      case 'parade': this.rankPreview(tell.path, '퍼레이드 ×3'); this.text('퍼레이드!', x, y - 70, '#b85863', 12); break;
+      case 'parade': this.rankPreview(tell.path, `퍼레이드 ×${g.bossRepeat(enemy, 'ranks')}`); this.text('퍼레이드!', x, y - 70, '#b85863', 12); break;
       case 'drill': ring(x, y, 1.6); this.text('구령 준비!', x, y - 70, '#b85863', 12); break;
       case 'carpet': {
         const lanes = g.marchLanes(enemy, true);

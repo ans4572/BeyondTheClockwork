@@ -111,7 +111,7 @@ test('entering the room spreads the first wave over reachable floor, away from t
     assert.ok(flow.reachable(enemy.x, enemy.y)); assert.ok(Math.hypot(enemy.x - spawn.x, enemy.y - spawn.y) >= spreadMinUnits); assert.equal(enemy.aggro, false);
   }
   // The old square layouts no longer apply on a painted map: only the run's own crates, fences and music boxes stand in the way.
-  assert.equal(g.obstacles.length, g.s.hazards.filter(h => ['crate', 'fence', 'musicbox'].includes(h.kind)).length);
+  assert.equal(g.obstacles.length, g.s.hazards.filter(h => ['crate', 'fence'].includes(h.kind)).length);
 });
 
 test('a waiting body notes when it notices the player, for the warning mark over its head', () => {

@@ -242,6 +242,29 @@ test('only the green carpet is safe, and it can always be reached', () => {
   h.p.x = (cx + dx) / 2 + 2; h.p.y = (cy + dy) / 2 + 2; until(h, other.tell); h.executeEnemy(other); assert.equal(h.p.hp, full - other.damage);
 });
 
+test('the difficulty sets how often a boss repeats a pattern: ranks, note rings, stomp rings, stickers, crates', () => {
+  const levels = Object.fromEntries(data.slice.difficulty.levels.map(l => [l.id, l.bossRepeats]));
+  for (const id of ['easy', 'normal', 'hard']) {
+    const [g, brass] = bossAt(11, 0.4); g.s.run.difficulty = id;
+    g.startColumn(brass); assert.equal(g.s.ranks.length, levels[id].ranks, id);
+    g.beginEnemyTell(brass, 'stomp'); g.s.time = brass.tell.until; g.executeEnemy(brass);
+    assert.equal(g.s.casts.filter(c => c.shape === 'stompRing').length, levels[id].stompRings, id);
+    assert.equal(g.bossRepeat(brass, 'crateTossCount'), levels[id].crateTossCount);
+  }
+  assert.deepEqual(['easy', 'normal', 'hard'].map(id => levels[id].crateTossCount), [1, 2, 4], 'crates double each level');
+});
+test('the difficulty sets each phase break: cans and bombs, drums to copy, flag bearers, and the time allowed', () => {
+  const levels = Object.fromEntries(data.slice.difficulty.levels.map(l => [l.id, l.phaseBreaks]));
+  assert.deepEqual(['easy', 'normal', 'hard'].map(id => levels[id].cans.bombShare), [0.2, 0.3, 0.4]);
+  for (const id of ['easy', 'normal', 'hard']) {
+    const [g, brass] = bossAt(11, 0.7); g.s.run.difficulty = id; g.p.x = 20; g.p.y = 8;
+    g.hitEnemy(brass, brass.maxHp); assert.equal(brass.breaking.kind, 'drums');
+    assert.equal(brass.breaking.drums.length, levels[id].drums.drums, id); assert.equal(brass.breaking.order.length, levels[id].drums.drums);
+    assert.equal(brass.breaking.until - brass.breaking.started, levels[id].drums.seconds);
+    const [h, roco] = boss('collectorRoco'); h.s.run && (h.s.run.difficulty = id);
+    assert.equal(h.breakRule(roco, 0).cans, h.s.run ? levels[id].cans.cans : data.slice.bossAI.collectorRoco.phaseBreaks[0].cans);
+  }
+});
 test('the column comes in three ranks: following each gap is safe, standing in the line is not', () => {
   const pass = place => {
     const [g, brass] = bossAt(11, 0.4); g.startColumn(brass); const hp = g.p.hp, seconds = Math.max(...g.s.ranks.map(rank => rank.seconds * (1 - rank.at)));

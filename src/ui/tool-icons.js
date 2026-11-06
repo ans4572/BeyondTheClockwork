@@ -22,8 +22,8 @@ const BODIES = {
   home: '<path d="M7 1h2v1h1v1h1v1h1v1h1v1h1v1h1v2h-1v6H2V9H1V7h1V6h1V5h1V4h1V3h1V2h1z" fill="#2b3345"/><path d="M7 3h2v1h1v1h1v1h1v1h1v1H3V7h1V6h1V5h1V4h1z" fill="#c43c36"/><path d="M3 9h10v5H3z" fill="#f6ecd2"/><path d="M7 11h2v3H7z" fill="#2b3345"/>'
 };
 // The painted pixel icons (art/ui/icons/px, each a 24, 32 or 48 pixel grid). A name found here is shown as its picture;
-// the drawn bodies above stay for the few marks that have no painted icon yet (crown, home, spark).
-const ART = new Set(['gear', 'coin', 'charge', 'map', 'settings', 'fullscreen', 'fullscreen-exit', 'lock', 'action-wrench', 'action-dodge',
+// the drawn bodies above stay for the few marks that have no painted icon yet (home, spark).
+const ART = new Set(['gear', 'coin', 'crown', 'charge', 'map', 'settings', 'fullscreen', 'fullscreen-exit', 'lock', 'action-wrench', 'action-dodge',
   ...['wrench-damage', 'max-hp', 'skill-cooldown', 'dodge-cooldown', 'move-speed', 'status-damage', 'crit', 'attack-speed', 'kill-heal', 'armor',
     'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`)]);
 // A redrawn icon gets a new file name (browsers keep the old picture at the old path).

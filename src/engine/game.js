@@ -16,6 +16,8 @@ export { clamp, distance, segmentDistance };
 
 /** Modes in which the player is still in a run room (fighting, choosing a reward, walking to the portal). */
 const ROOM_MODES = new Set(['combat', 'reward', 'route', 'unwind']);
+/** How long before a summoned body appears its rift starts to open (the renderer's summonRift reaches its light column then). */
+export const SUMMON_RISE_SECONDS = 9 / 14;
 /** How long F2 lies fallen in the room before a lost run goes home (the fall plays first). */
 const DOWN_SECONDS = 1.8;
 const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, LEAVE_REFUSED_UNITS = 1.5, LAST_WAVE_ALREADY_PLAYED = 99;
@@ -278,8 +280,18 @@ export class Game {
         this.s.hazards = plan.hazards.map(h => ({ ...h }));
       }
       Object.assign(this.s.run, { wave: 0, arrivals: [] });
-      const spots = this.formation(plan.formations?.[0], room.waves[0]);
-      room.waves[0].forEach((type, i) => this.spawnWaveEnemy(type, spots[i], plan.affixes?.[0]?.[i]));
+      // The first wave is summoned like the later ones (2026-11-06): hatch marks open on the floor as F2 walks in and the
+      // bodies climb out a moment after she stops, instead of standing there already waiting.
+      // The bodies are in the room from the start (they count, they can be paid for) but are still climbing out: unseen,
+      // still and unhittable until `summonUntil` (see updateEnemies, hitEnemy and the renderer).
+      const spots = this.formation(plan.formations?.[0], room.waves[0]), { waveWarnSeconds } = this.config.rules;
+      const arrive = Math.max(this.s.time, this.s.entry?.until ?? this.s.time) + waveWarnSeconds;
+      room.waves[0].forEach((type, i) => {
+        const enemy = this.spawnWaveEnemy(type, spots[i], plan.affixes?.[0]?.[i]);
+        enemy.summonUntil = arrive; enemy.summonedAt = arrive; enemy.ready = Math.max(enemy.ready, arrive + this.config.rules.enemyInitialDelay);
+        // The hatch mark marks the spot while F2 walks in; the summon rift takes over for its last moments (renderer).
+        this.effect('friendlyTell', spots[i].x, spots[i].y, '#e0a03c', Math.max(0.1, arrive - this.s.time - SUMMON_RISE_SECONDS), 0.7, { mark: 'spawn' });
+      });
       this.notify(roomTitle(room));
       if (plan.shape === 'elite') this.notify('정예만 모인 방! 한 번에 몰려온다');
     }
@@ -380,7 +392,7 @@ export class Game {
     return Math.abs(angleDiff(Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x), enemy.facing)) * 360 / Math.PI <= enemy.guardArcDegrees;
   }
   hitEnemy(enemy, base, options = {}) {
-    if (enemy.hp <= 0 || enemy.hidden) return { crit: false, killed: false };
+    if (enemy.hp <= 0 || enemy.hidden || enemy.summonUntil > this.s.time) return { crit: false, killed: false };
     if (!enemy.aggro) this.rouse(enemy);
     const crit = !options.dot && !options.exact && this.rollCrit();
     const guarded = !options.dot && this.shieldHolds(enemy);
@@ -438,7 +450,8 @@ export class Game {
   /** A wrench blow lands: the body jolts and light enemies give ground. */
   punch(enemy, attack, hit) {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
-    this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit, angle: attack.angle });
+    // `swing` names the blow, so the frame holds once per swing however many bodies it catches, frame after frame.
+    this.sense({ kind: heavy ? 'heavy' : 'hit', crit: hit.crit, angle: attack.angle, swing: attack });
     // The third blow lands with a ring and a puff of dust where it first strikes.
     if (heavy && !attack.waveShown) { attack.waveShown = true; this.effect('ring', enemy.x, enemy.y, '#fff4d6', 0.4, 1.2, { look: 'quake' }); this.effect('dust', enemy.x, enemy.y + enemy.radius * 0.6, '#b49f78', 0.45, 1); }
     // A small burst of light where the wrench meets the body; the third blow throws a bigger one.
@@ -532,7 +545,9 @@ export class Game {
     }
     if (a.elapsed >= info.windup + info.active + a.recovery) { this.p.attack = null; this.p.comboExpires = this.s.time + this.config.rules.comboReset; }
   }
-  get slots() { return this.s.run?.slots || this.s.practice?.slots || []; }
+  // In town (no run, no back yard) the equipped elements still fill the skill bar, so the player sees what they set;
+  // nothing can be cast there, since town is never `active` (2026-11-06: the bar stood empty).
+  get slots() { return this.s.run?.slots || this.s.practice?.slots || this.loadoutSlots; }
   /** A whole-run perk the player picked (coins, risk), or null. */
   perk(id) { return this.s.run?.perks?.includes(id) ? this.config.perks.find(perk => perk.id === id) : null; }
   wrenchMod(id) { return this.s.run?.mods.includes(id) ? this.config.mods.find(m => m.id === id) : null; }
@@ -937,8 +952,10 @@ export class Game {
   /** What clearing the current room is worth in all: free gears kept for good, and coins for this run. */
   roomLoot() {
     const region = this.data.progression.region, kind = this.room.kind;
-    const gears = kind === 'miniboss' ? region.miniReward : kind === 'regionBoss' ? region.bossReward : region.normalReward;
-    const coins = this.data.progression.economy.runCoinRewards[kind === 'normal' ? 'normal' : kind];
+    // A room may set its own pay (slice.json rooms[].rewards): the early street pays less and the stretch after the night
+    // market more, so a run is worth most for going deep (2026-11-06); others take the region's flat amounts.
+    const gears = this.room.rewards?.gears ?? (kind === 'miniboss' ? region.miniReward : kind === 'regionBoss' ? region.bossReward : region.normalReward);
+    const coins = this.room.rewards?.coins ?? this.data.progression.economy.runCoinRewards[kind === 'normal' ? 'normal' : kind];
     const loot = this.difficulty.loot;
     return { gears: Math.round(gears * loot * (1 + (this.stats.gearGain || 0))), coins: Math.round(coins * loot * (1 + (this.stats.coinGain || 0))) };
   }
@@ -1012,10 +1029,11 @@ export class Game {
     if (room.variants) plan.variant = (plan.variant + branch) % room.variants.length;
     this.enterNode(); return true;
   }
+  /** The night market's shop, and the travelling merchant before the boss (its own once-per-visit list). */
   buyShop(id) {
-    if (this.s.mode !== 'shop') return false;
-    const item = this.data.progression.economy.shop.find(i => i.id === id), run = this.s.run;
-    if (!item || !['heal', 'skillLevel', 'persistentGears'].includes(id) || run.coins < item.cost || (item.oncePerShop && run.shopBought.includes(id))) return false;
+    if (this.s.mode !== 'shop' && this.s.mode !== 'merchant') return false;
+    const item = this.data.progression.economy.shop.find(i => i.id === id), run = this.s.run, bought = this.s.mode === 'merchant' ? (run.merchantBought ??= []) : run.shopBought;
+    if (!item || !['heal', 'skillLevel', 'persistentGears'].includes(id) || run.coins < item.cost || (item.oncePerShop && bought.includes(id))) return false;
     if (id === 'heal' && this.p.hp >= this.p.maxHp) return false;
     const slot = this.slots.find(s => s.level < this.c.balance.skillMaxLevel);
     if (id === 'skillLevel' && !slot) return false;
@@ -1023,10 +1041,15 @@ export class Game {
     if (id === 'heal') this.heal(item.amount);
     if (id === 'skillLevel') slot.level++;
     if (id === 'persistentGears') this.s.profile.freeGears += item.amount;
-    run.shopBought.push(id); this.save(); return true;
+    bought.push(id); this.save(); return true;
+  }
+  /** Leaving the travelling merchant: the walk to the boss's portal. */
+  leaveMerchant() {
+    if (this.s.mode !== 'merchant') return false;
+    this.s.mode = 'route'; this.save(); return true;
   }
   returnToHub(reason = 'abandon') {
-    if (!this.s.run || !['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(this.s.mode)) return false;
+    if (!this.s.run || !['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'].includes(this.s.mode)) return false;
     this.s.downUntil = null;
     const run = this.s.run, profile = this.s.profile, economy = this.data.progression.economy;
     let bonus = 0;

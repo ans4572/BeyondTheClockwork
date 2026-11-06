@@ -1,0 +1,145 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Clockwork summon rift",
+ "fps": 14,
+ "frame_ms": 71,
+ "frames": 22,
+ "loop": false,
+ "canvas": {
+  "w": 73,
+  "h": 111
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 36,
+  "y": 94
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 22,
+   "frame": {
+    "w": 67,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 22,
+     "columns": 5,
+     "rows": 5
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -73
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 22,
+   "frame": {
+    "w": 67,
+    "h": 105
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 22,
+     "columns": 5,
+     "rows": 5
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -91
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 21,
+   "frame": {
+    "w": 67,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 21,
+     "columns": 5,
+     "rows": 5
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -73
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 19,
+   "frame": {
+    "w": 36,
+    "h": 55
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 19,
+     "columns": 5,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -17,
+    "y": -47
+   }
+  },
+  {
+   "name": "part-spawn_rift",
+   "title": "the spawn rift part",
+   "part": "spawn_rift",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 22,
+   "frame": {
+    "w": 67,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "part-spawn_rift.png",
+     "first_frame": 0,
+     "frames": 22,
+     "columns": 5,
+     "rows": 5
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -73
+   }
+  }
+ ]
+}

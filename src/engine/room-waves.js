@@ -1,13 +1,15 @@
 import { fitsMap } from './map-geometry.js';
 import { formationSpots, ARRIVAL_NOTES } from './encounters.js';
 import { SOLID, hazardBox, sawAt, plateState } from './hazards.js';
-import { distance, floorDistance, inCone, segmentDistance } from './math.js';
+import { distance, floorDistance, inCone, segmentDistance, FLOOR_FLAT } from './math.js';
 
 /**
  * A fight room's course: waves arriving and waking, elite affixes, the room's crates, saws and plates, and the walk to
  * the portal once it is clear. Installed on Game.prototype (game.js), so `this` is the game.
  */
 const PORTAL_REACH_UNITS = 1;
+/** How far past a hot plate's edge F2's feet still touch it. */
+const PLATE_FEET_UNITS = 0.3;
 
 export const roomWaves = {
   spawnWaveEnemy(type, spot, affixes) {
@@ -58,10 +60,16 @@ export const roomWaves = {
     const { p } = this, t = this.s.time, playerR = this.config.arena.playerRadius;
     for (const h of list) {
       if (h.gone) continue;
+      if (h.kind === 'musicbox') this.pickUpMusicBoxes();
       if (h.kind === 'crate' && h.fuseAt !== undefined && t >= h.fuseAt) this.blowCrate(h);
       if (h.kind === 'plate' && !(h.cooledUntil > t) && plateState(h, t, rules.plate) === 'hot') {
-        const depth = h.depth ?? rules.plate.depth, inside = body => Math.abs(body.x - h.x) / h.half + Math.abs(body.y - h.y) / depth <= 1;
-        if (inside(p) && !p.dodge && t >= (p.plateNext || 0)) { p.plateNext = t + rules.plate.tick; this.hurt(rules.plate.damage); }
+        const depth = h.depth ?? rules.plate.depth, inside = (body, reach = 0) => Math.abs(body.x - h.x) / (h.half + reach) + Math.abs(body.y - h.y) / (depth + reach * FLOOR_FLAT) <= 1;
+        // F2 burns once her feet are on the grate, not only her centre (2026-11-06: standing on its edge did nothing), and
+        // a burn blocked by a moment of invulnerability is tried again next step instead of waiting a whole tick.
+        if (inside(p, PLATE_FEET_UNITS) && !p.dodge && t >= (p.plateNext || 0) && this.hurt(rules.plate.damage)) {
+          p.plateNext = t + rules.plate.tick;
+          this.effect('ring', p.x, p.y, '#ff7a2c', 0.35, 0.8); this.effect('spark', p.x, p.y - 0.2, '#ff9a4a', 0.3, 1.1);
+        }
         h.cast ??= { id: `plate-${h.id}`, staggerUsed: {}, fusion: false, statusAt: {} };
         for (const e of this.s.enemies) if (e.hp > 0 && !e.boss && inside(e)) this.applyStatus(e, 'fire', h.cast);
       }
@@ -94,15 +102,24 @@ export const roomWaves = {
     }
     for (const other of this.s.hazards) if (other !== h && distance(h, other) < rule.radius) this.lightCrate(other, rule.chain);
   },
-  /** A wrench swing: crates get lit, a music box plays its mending tune once. */
+  /** A wrench swing: crates get lit. */
   strikeHazards(angle, range, arc) {
     for (const h of this.s.hazards || []) {
       if (h.gone || !inCone(this.p, h, angle, range + 0.4, arc)) continue;
       if (h.kind === 'crate') this.lightCrate(h);
-      if (h.kind === 'musicbox' && !h.used) {
-        h.used = true; this.heal(this.p.maxHp * this.config.hazards.musicbox.heal);
-        this.effect('ring', h.x, h.y, '#8fd8b0', 0.8, 1.6, { look: 'notes' }); this.effect('spark', this.p.x, this.p.y, '#8fd8b0', 0.6, 1, { look: 'ready', follow: true });
-      }
+    }
+  },
+  /**
+   * The mending music box is picked up by walking onto it, like a health pickup: it plays its tune, mends F2 and is gone.
+   * At full health it waits on the floor for later.
+   */
+  pickUpMusicBoxes() {
+    const p = this.p;
+    for (const h of this.s.hazards || []) {
+      if (h.kind !== 'musicbox' || h.gone || h.used || p.hp >= p.maxHp || distance(p, h) > h.size * 0.6 + this.config.arena.playerRadius) continue;
+      h.used = true; h.gone = true; this.heal(p.maxHp * this.config.hazards.musicbox.heal);
+      this.effect('ring', h.x, h.y, '#8fd8b0', 0.8, 1.6, { look: 'notes' }); this.effect('spark', p.x, p.y, '#8fd8b0', 0.6, 1, { look: 'ready', follow: true });
+      this.sense({ kind: 'mend' });
     }
   },
   /** A shot stopped by something solid: a fence takes the blow, a crate caught by the player's shot is lit. */
@@ -182,7 +199,7 @@ export const roomWaves = {
     const { run } = this.s;
     if (this.s.mode !== 'combat' || !this.room?.waves) return;
     const waiting = run.arrivals.length;
-    run.arrivals = run.arrivals.filter(({ type, x, y, at, affixes }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }, affixes); return false; });
+    run.arrivals = run.arrivals.filter(({ type, x, y, at, affixes }) => { if (at > this.s.time) return true; this.spawnWaveEnemy(type, { x, y }, affixes).summonedAt = at; return false; });
     if (run.arrivals.length < waiting) this.sense({ kind: 'summon' });
     const living = this.s.enemies.filter(e => e.hp > 0).length;
     if (!run.arrivals.length && run.wave < this.room.waves.length - 1 && living <= (run.plan?.[run.node]?.callAt ?? this.config.rules.waveCallsAtLiving)) this.callWave();
@@ -190,6 +207,8 @@ export const roomWaves = {
   /** The portal only takes someone walking into it, so a player already standing there is not whisked away. */
   walkToPortal(dt, input) {
     this.stepFeet(dt, input, this.config.arena.playerRadius, true);
+    // A music box left in the cleared room can still be picked up on the way out.
+    this.pickUpMusicBoxes();
     const near = distance(this.p, this.portal) <= PORTAL_REACH_UNITS, run = this.s.run;
     if (!near) run.portalArmed = true;
     else if (run.portalArmed) { run.portalArmed = false; this.nextNode(0); }

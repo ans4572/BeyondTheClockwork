@@ -7,9 +7,10 @@ import { NpcDirector } from '../animation/npc-director.js';
 import { cameraFor, VIEW_UNITS, CAMERA_ZOOM, PIXELS_PER_UNIT } from '../engine/map-geometry.js';
 import { ghostFor } from './depth-mask.js';
 import { Lighting } from './lighting.js';
-import { FX, NOTE_ART, MARKS, LOOT_ART, HAZARD_ART } from './fx-sprites.js';
+import { FX, NOTE_ART, MARKS, LOOT_ART, HAZARD_ART, DEBRIS_ART, BOSS_UNWIND_ART } from './fx-sprites.js';
 import { floorMarks, ELEMENT_TINTS } from './floor-marks.js';
 import { FLOOR_FLAT } from '../engine/math.js';
+import { SUMMON_RISE_SECONDS } from '../engine/game.js';
 import { GROUND, sawAt, plateState } from '../engine/hazards.js';
 /** The music box's notes are drawn a little under their art size so a volley reads as shots, not as clutter. */
 const NOTE_SCALE = 0.8;
@@ -352,9 +353,11 @@ export class CanvasRenderer {
   drawDrumBoard(b, rule, now, drumArt) {
     const c = this.ctx, cell = 11, gap = 2, cx = this.camera.x * 20 + 6 + cell + gap * 2, top = this.camera.y * 20 + 40;
     const xs = b.drums.map(d => d.x), ys = b.drums.map(d => d.y), midX = (Math.min(...xs) + Math.max(...xs)) / 2, midY = (Math.min(...ys) + Math.max(...ys)) / 2;
-    c.save(); c.globalAlpha = 0.92; this.rect(cx - cell - gap * 2, top - gap, cell * 2 + gap * 4, cell * 2 + gap * 3, '#f6ecd2'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(Math.round(cx - cell - gap * 2), Math.round(top - gap), Math.round(cell * 2 + gap * 4), Math.round(cell * 2 + gap * 3)); c.globalAlpha = 1;
+    // The board copies the drums' layout: two columns, or three when a drum stands in the middle (hard: five drums).
+    const middle = drum => Math.abs(drum.x - midX) < 0.6, cols = b.drums.some(middle) ? 3 : 2, w = cell * cols + gap * (cols + 2);
+    c.save(); c.globalAlpha = 0.92; this.rect(cx - cell - gap * 2, top - gap, w, cell * 2 + gap * 3, '#f6ecd2'); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.strokeRect(Math.round(cx - cell - gap * 2), Math.round(top - gap), Math.round(w), Math.round(cell * 2 + gap * 3)); c.globalAlpha = 1;
     for (const drum of b.drums) {
-      const col = drum.x > midX ? 1 : 0, row = drum.y > midY ? 1 : 0, x = cx - cell - gap + col * (cell + gap * 2), y = top + row * (cell + gap);
+      const col = middle(drum) ? 1 : drum.x > midX ? cols - 1 : 0, row = drum.y > midY ? 1 : 0, x = cx - cell - gap + col * (cell + gap * 2), y = top + row * (cell + gap);
       const glow = drum.flash > now && !drum.done ? Math.min(1, (drum.flash - now) / (rule.showStep * 0.8) / 0.35) : 0;
       if (glow) { c.fillStyle = `rgba(255, 210, 87, ${0.9 * glow})`; c.fillRect(Math.round(x - 2), Math.round(y - 2), cell + 4, cell + 4); }
       if (drumArt) c.drawImage(drumArt, Math.round(x), Math.round(y - (glow ? 2 : 0)), cell, cell); else this.rect(x + 3, y + 5, cell - 6, cell - 8, '#c43c36');
@@ -364,7 +367,7 @@ export class CanvasRenderer {
     c.restore();
   }
   drawPhaseBreak(enemy) {
-    const c = this.ctx, g = this.game, b = enemy.breaking, rule = g.config.bossAI[enemy.type].phaseBreaks[b.index], x = enemy.x * 20, y = enemy.y * 20, now = g.s.time;
+    const c = this.ctx, g = this.game, b = enemy.breaking, rule = g.breakRule(enemy, b.index), x = enemy.x * 20, y = enemy.y * 20, now = g.s.time;
     c.save();
     if (b.failAt !== null) {
       const left = Math.max(0, (b.failAt - now) / rule.failWarn);
@@ -641,7 +644,9 @@ export class CanvasRenderer {
       const first = 0.55, hop = (t - first) / 0.25;
       const lift = t < first ? 4 * height * (t / first) * (1 - t / first) : t < 0.8 ? 4 * height * 0.22 * hop * (1 - hop) : 0;
       const px = x + Math.cos(dir) * d, py = y - 12 * scale * (1 - travel) + Math.sin(dir) * d * 0.55 - lift, turn = spin * Math.min(t, 0.8);
-      const kind = i % 4;
+      const kind = i % 4, art = this.mapImages?.get(DEBRIS_ART[kind]);
+      // The PixelLab part (cog, bolt, spring, casing plate), turning as it flies; the old drawn shapes while it loads.
+      if (art) { const size = 7 * scale; c.save(); c.translate(px, py); c.rotate(turn); c.imageSmoothingEnabled = false; c.drawImage(art, -size / 2, -size / 2, size, size); c.restore(); continue; }
       if (kind === 0) { this.gear(px, py, 2.6 * scale, '#c79a3e', turn); continue; }
       c.save(); c.translate(px, py); c.rotate(turn);
       if (kind === 1) { this.rect(-2.5 * scale, -1 * scale, 5 * scale, 2 * scale, '#8a8f9c'); this.rect(-3 * scale, -1.5 * scale, 1.5 * scale, 3 * scale, '#5c6170'); }
@@ -788,7 +793,7 @@ export class CanvasRenderer {
     const g = this.game, out = [];
     // The ring of soldiers round Brass in his second break, walking their circle; the flag bearers carry their flags.
     for (const enemy of g.s.enemies) {
-      const b = enemy.breaking, rule = b?.kind === 'flags' && g.config.bossAI[enemy.type].phaseBreaks[b.index];
+      const b = enemy.breaking, rule = b?.kind === 'flags' && g.breakRule(enemy, b.index);
       if (rule) for (const s of b.soldiers) if (!s.down) { const a = b.turn + s.slot / rule.soldiers * Math.PI * 2; out.push({ x: s.x, y: s.y, direction: nearestDirection(Math.atan2(Math.cos(a) * rule.ry, -Math.sin(a) * rule.rx)), flag: s.flag }); }
     }
     for (const line of g.rankLines) {
@@ -865,6 +870,8 @@ export class CanvasRenderer {
     const map = hub ? g.hubMap : g.map, mapImage = map && this.mapImages?.get(map.background), size = map?.size || SCREEN_UNITS;
     // A painted place whose picture is still on its way shows a plain dark frame for that moment, not the old code-drawn
     // street (2026-11-06: the stand-in flashed up between places and looked broken). It is usually a frame or two.
+    // Every frame starts from a clean drawing state, so nothing a draw forgot to put back can carry into the next one.
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; c.filter = 'none';
     if (map?.background && !mapImage) { this.drawWaiting(); return; }
     // Panels over the hub show the spot the player will stand on; everywhere else follows the body.
     const body = hub && !g.village ? map?.spawn : g.p;
@@ -875,7 +882,14 @@ export class CanvasRenderer {
     lead.x += (want.x - lead.x) * ease; lead.y += (want.y - lead.y) * ease;
     const focus = body && fighting ? { x: body.x + lead.x, y: body.y + lead.y } : body;
     this.camera = mapImage ? cameraFor(focus, size) : { x: 0, y: 0 };
-    const [shakeX, shakeY] = this.shakeOffset();
+    // A shake never shows past the map's edge: the camera already stops there, so the shake is cut to what is left of
+    // the painting on each side (it used to show a black strip beside the map).
+    let [shakeX, shakeY] = this.shakeOffset();
+    if (mapImage) {
+      const room = (at, length, view) => [at * PIXELS_PER_UNIT - Math.max(0, length - view) * PIXELS_PER_UNIT, at * PIXELS_PER_UNIT];
+      const [minX, maxX] = room(this.camera.x, size[0], SCREEN_UNITS[0]), [minY, maxY] = room(this.camera.y, size[1], SCREEN_UNITS[1]);
+      shakeX = Math.max(minX, Math.min(maxX, shakeX)); shakeY = Math.max(minY, Math.min(maxY, shakeY));
+    }
     // The canvas is backed at screen resolution; k maps the 1120x640 layout onto it, so nothing is stretched twice.
     const pulseLeft = Math.max(0, (this.pulseUntil || 0) - performance.now()) / CRIT_PULSE_MS, punch = this.fusionLeft(FUSION_ZOOM_MS);
     // A fusion's lean in rises and settles back within its time.
@@ -924,6 +938,13 @@ export class CanvasRenderer {
     for (const fx of s.effects) if (fx.look && GROUND_LOOKS.has(fx.look)) { c.save(); this.drawLook(fx, fx.x * 20, fx.y * 20, Math.min(1, (s.time - fx.created) / fx.duration)); c.restore(); }
     for (const enemy of s.enemies) if (enemy.hp > 0 && enemy.beatUntil > s.time) this.drawFxFrame('drumBuff', this.visualTime * 12 + enemy.x, enemy.x * 20, enemy.y * 20, { alpha: 0.9 });
     for (const enemy of s.enemies.filter(e => e.hp > 0 && e.breaking)) this.drawPhaseBreak(enemy);
+    // Bodies being summoned (the first wave as F2 walks in, and later waves): the rift opens on the floor, its light
+    // column rises as the body appears, then smoke and the seal. Waiting arrivals and freshly summoned bodies both play it.
+    const summons = [...(s.run?.arrivals || []).map(a => ({ x: a.x, y: a.y, at: a.at })), ...s.enemies.filter(e => e.summonedAt).map(e => ({ x: e.home?.x ?? e.x, y: e.home?.y ?? e.y, at: e.summonedAt }))];
+    for (const { x: sx, y: sy, at } of summons) {
+      const frame = (s.time - (at - SUMMON_RISE_SECONDS)) * 14;
+      if (frame >= 0 && frame < FX.summonRift.frames) this.drawFxFrame('summonRift', frame, sx * 20, sy * 20, { sx: 0.5, sy: 0.5 });
+    }
     for (const cast of s.casts) if (cast.shape === 'crescent') this.drawCrescentFrost(cast);
     for (const cast of s.casts) {
       if (cast.shape === 'patch') {
@@ -1012,7 +1033,7 @@ export class CanvasRenderer {
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
     // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
     const hazards = g.roomHazards.filter(h => !h.gone && !GROUND.has(h.kind)).map(h => ({ y: h.y, hazard: h }));
-    const actors = [...hazards, ...bolts, ...s.enemies.filter(e => e.hp > 0 || mobPoses?.has(e.id)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
+    const actors = [...hazards, ...bolts, ...s.enemies.filter(e => (e.hp > 0 || mobPoses?.has(e.id)) && !(e.summonUntil > s.time)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
     actors.push(...this.marchers().map(marcher => ({ y: marcher.y, marcher })), ...s.casts.filter(cast => cast.shape === 'crescent' && cast.age >= (cast.delay || 0) && !cast.done).map(cast => ({ y: cast.y, crescent: cast })));
     actors.sort((a, b) => a.y - b.y);
     // Health bars, statuses and trait names are drawn after every body and effect, so nothing walks or bursts over them.
@@ -1114,7 +1135,9 @@ export class CanvasRenderer {
       if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
       if (fx.type === 'beam') this.line(x, y, fx.targetX * 20, fx.targetY * 20, fx.color, 4);
       if (fx.type === 'dodge' || fx.type === 'hurt' || fx.type === 'spark') this.gear(x, y - 10, fx.value * 10 * (1 + fraction), fx.color, fraction);
-      if (fx.type === 'parts') { this.drawParts(fx, x, y, fraction); continue; }
+      // No `continue` here: it skipped the restore below, so every frame a fallen body's parts flew, the fading alpha leaked
+      // into the next frame and the whole room was drawn see-through over the last one (2026-11-06: the 'slow zoom' on kills).
+      if (fx.type === 'parts') this.drawParts(fx, x, y, fraction);
       // Scrap flies up and out, then falls: bits of the body's colour and grey bolts.
       if (fx.type === 'scrap') for (let i = 0; i < 12; i++) { const a = i * TAU / 12 + i * 0.37, out = fraction * (18 + (i % 3) * 7), lift = fraction * 34 - fraction * fraction * 44; this.rect(x + Math.cos(a) * out, y + Math.sin(a) * out * 0.55 - lift, i % 4 ? 3 : 4, i % 4 ? 3 : 2, i % 3 ? fx.color : '#8a8f9c'); }
       // A blow lands: a flash and short rays along the swing, gone in a few frames.
@@ -1136,7 +1159,10 @@ export class CanvasRenderer {
     for (const draw of labels) draw();
     if (s.mode === 'unwind') {
       const x = (this.camera.x + 18) * 20, y = (this.camera.y + 8.55) * 20;
-      this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4); this.text(this.game.room?.boss === 'captainBrass' ? 'G · 태엽 감아 깨우기' : 'G · 회로 뽑기', x, y + 30, '#5c7462', 10);
+      // Roco's command circuit to pull out, or Brass's wind-up key to turn (PixelLab), bobbing; the old drawn gear while it loads.
+      const boss = this.game.room?.boss, art = this.mapImages?.get(BOSS_UNWIND_ART[boss]), bob = s.profile.settings.reducedMotion ? 0 : Math.sin(this.visualTime * 3) * 3;
+      if (art) { c.save(); c.imageSmoothingEnabled = false; c.drawImage(art, Math.round(x - 24), Math.round(y - 28 + bob), 48, 48); c.restore(); } else this.gear(x, y, 13, '#d0a854', this.visualTime * 0.4);
+      this.text(boss === 'captainBrass' ? 'G · 태엽 감아 깨우기' : 'G · 명령 회로 뽑기', x, y + 30, '#5c7462', 10);
     }
     // A player lost behind scenery shows through it, after every body so nothing repaints over them.
     // ... and through a body standing in front of it: an enemy just below F2 on screen and close beside it covers the sprite.

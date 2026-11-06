@@ -19,7 +19,7 @@ export const enemyActions = {
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
     if (type === 'crane') enemy.tell.drops = this.craneDrops(enemy);
     if (type === 'carpet') enemy.tell.safe = this.safeCarpet(enemy, tellTime);
-    if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.config.bossAI[enemy.type].crateTossCount);
+    if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.bossRepeat(enemy, 'crateTossCount'));
     // Both soldier patterns show where their ranks will come from, and which way they will walk.
     if (type === 'parade' || type === 'column') enemy.tell.path = this.rankPath(type);
     enemy.state = 'tell';
@@ -31,7 +31,7 @@ export const enemyActions = {
     enemy.breaksDone ??= [];
     const index = rules.findIndex((rule, i) => !enemy.breaksDone.includes(i) && enemy.hp <= enemy.maxHp * rule.at);
     if (index < 0) return;
-    const rule = rules[index], now = this.s.time;
+    const rule = this.breakRule(enemy, index), now = this.s.time;
     enemy.hp = Math.max(enemy.hp, enemy.maxHp * rule.at); enemy.tell = null; enemy.noteVolleys = null; enemy.spin = null; enemy.dash = null; enemy.followup = null; enemy.alarmUntil = 0; enemy.bellUntil = 0;
     this.s.casts = this.s.casts.filter(c => c.owner !== enemy.id);
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
@@ -42,9 +42,10 @@ export const enemyActions = {
     this.sense({ kind: 'phase' });
     if (rule.kind === 'cans') { Object.assign(b, { fed: 0, nextCan: now + 0.6, cans: [], home: { x: enemy.x, y: enemy.y } }); this.notify('보호막! 은색 깡통만 렌치로 쳐서 움직이는 로코 입에 넣으세요. 불꽃 튀는 폭탄 깡통은 피하세요.'); }
     if (rule.kind === 'drums') {
-      // Four drums round the boss; they light in an order to copy, while a march lane keeps coming down on the player.
-      const spots = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => this.floorSpot(enemy, sx * rule.spreadX, sy * rule.spreadY));
-      const order = [0, 1, 2, 3]; for (let i = 3; i > 0; i--) { const j = Math.floor(this.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+      // Drums round the boss (three to five by difficulty); they light in an order to copy, while a march lane keeps coming
+      // down on the player.
+      const spots = [[-1, -1], [1, -1], [-1, 1], [1, 1], [0, 1.3]].slice(0, rule.drums).map(([sx, sy]) => this.floorSpot(enemy, sx * rule.spreadX, sy * rule.spreadY));
+      const order = spots.map((_, i) => i); for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
       Object.assign(b, { drums: spots.map(s => ({ ...s, flash: 0, done: false })), order, phase: 'show', step: 0, stepAt: now + 0.6, next: 0, lanes: [], nextLane: now + 2 });
       this.notify('보호막! 북이 빛나는 순서를 기억했다가 같은 순서로 두드리세요.');
     }
@@ -53,7 +54,7 @@ export const enemyActions = {
       const flags = new Set(); while (flags.size < rule.flags) flags.add(Math.floor(this.random() * rule.soldiers));
       Object.assign(b, { turn: 0, soldiers: Array.from({ length: rule.soldiers }, (_, i) => ({ slot: i, flag: flags.has(i), down: false, x: enemy.x, y: enemy.y })) });
       this.placeSoldiers(enemy, rule);
-      this.notify('보호막! 깃발을 든 병정 3기를 쓰러뜨리세요.');
+      this.notify(`보호막! 깃발을 든 병정 ${rule.flags}기를 쓰러뜨리세요.`);
     }
   },
   /** A spot near the boss that lies on the floor, pulled toward the boss until it does. */
@@ -71,7 +72,7 @@ export const enemyActions = {
   },
   /** Each frame of a break: its own mechanics, then success, or the burst and heal when time runs out. */
   updatePhaseBreak(enemy, dt) {
-    const rule = this.config.bossAI[enemy.type].phaseBreaks[enemy.breaking.index], b = enemy.breaking, p = this.p, now = this.s.time;
+    const rule = this.breakRule(enemy, enemy.breaking.index), b = enemy.breaking, p = this.p, now = this.s.time;
     if (b.failAt !== null) {
       // Out of time: a burst from the whole body, then the shield drops, the boss patches itself and the break waits again.
       if (now < b.failAt) return;
@@ -148,7 +149,7 @@ export const enemyActions = {
   },
   /** A drum struck while Brass waits for the order: the right one counts, a wrong one starts the showing again. */
   strikeDrum(enemy, i) {
-    const b = enemy.breaking, now = this.s.time, rule = this.config.bossAI[enemy.type].phaseBreaks[b.index];
+    const b = enemy.breaking, now = this.s.time, rule = this.breakRule(enemy, b.index);
     if (b.phase !== 'play' || b.drums[i].done) return;
     if (b.order[b.next] === i) { b.drums[i].done = true; b.drums[i].flash = now + 0.3; b.next++; this.sense({ kind: 'hit' }); return; }
     for (const drum of b.drums) drum.done = false;
@@ -239,7 +240,8 @@ export const enemyActions = {
     const gapShare = ai.columnGapUnits / span, seconds = travel / speed, gaps = [];
     // Each gap is drawn from what is left of the line once a stretch round the last gap is set aside.
     const low = gapShare / 2, high = 1 - gapShare * 1.5, away = gapShare * 1.5;
-    for (let i = 0; i < ai.ranks; i++) {
+    const ranks = this.bossRepeat(enemy, 'ranks');
+    for (let i = 0; i < ranks; i++) {
       const last = gaps.at(-1), spans = last === undefined ? [[low, high]] : [[low, Math.min(high, last - away)], [Math.max(low, last + away), high]].filter(([from, to]) => to > from);
       const total = spans.reduce((sum, [from, to]) => sum + to - from, 0);
       let pick = this.random() * total, gap = low;
@@ -247,7 +249,7 @@ export const enemyActions = {
       gaps.push(spans.length ? gap : low + this.random() * (high - low));
     }
     this.s.ranks = [...(this.s.ranks || []), ...gaps.map((gapFrom, i) => ({ start, end, at: -i * ai.rankGapSeconds / seconds, seconds, gapFrom, gapShare, damage: enemy.damage, width: ai.columnWidth, spent: false }))];
-    enemy.ready = Math.max(enemy.ready, this.s.time + (ai.ranks - 1) * ai.rankGapSeconds + enemy.recovery);
+    enemy.ready = Math.max(enemy.ready, this.s.time + (ranks - 1) * ai.rankGapSeconds + enemy.recovery);
   },
   startColumn(enemy, path = this.rankPath('column')) { this.sendRanks(enemy, path, this.config.bossAI[enemy.type].columnSpeed); },
   /** Where a rank stands now, as the two stretches either side of its gap. */
@@ -256,6 +258,16 @@ export const enemyActions = {
     const ai = this.config.bossAI[enemy.type], gap = ai.waveGapDegrees * Math.PI / 180;
     for (let i = 0; i < ai.waveCount; i++) { const angle = safeAngle + gap / 2 + (Math.PI * 2 - gap) * i / (ai.waveCount - 1); this.fireBullet(enemy, angle, ai.waveSpeed); }
   },
+  /**
+   * How many times a boss repeats one of its patterns (stickers, crates, ranks, note rings, stomp rings) on this run's
+   * difficulty: slice.json difficulty.levels[].bossRepeats, or the pattern's own count where the level sets none.
+   */
+  /** A phase break's rules on this run's difficulty: the boss's own, with difficulty.levels[].phaseBreaks[kind] laid over. */
+  breakRule(enemy, index) {
+    const base = this.config.bossAI[enemy.type].phaseBreaks[index];
+    return { ...base, ...(this.difficulty.phaseBreaks?.[base.kind] || {}) };
+  },
+  bossRepeat(enemy, key) { return this.difficulty.bossRepeats?.[key] ?? this.config.bossAI[enemy.type]?.[key]; },
   rankLine(rank) {
     const { start, end, at, gapFrom, gapShare } = rank, lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
     const a = lerp(start[0], end[0], at), b = lerp(start[1], end[1], at);
@@ -360,12 +372,12 @@ export const enemyActions = {
       // Stickers: seven 'defective' labels thrown one after another at wherever the player is standing then.
       // Each is marked before it lands; on the floor it slows the player, then peels off a moment later.
       case 'stickers':
-        this.s.casts.push({ id: this.id('stickers'), shape: 'stickerVolley', owner: enemy.id, x: enemy.x, y: enemy.y, age: 0, left: ai.stickerCount, next: 0, gap: ai.stickerGap, warn: ai.stickerWarn, radius: ai.stickerRadius, duration: ai.stickerSeconds, slow: ai.stickerSlow });
-        enemy.ready = this.s.time + ai.stickerCount * ai.stickerGap + enemy.recovery; break;
+        this.s.casts.push({ id: this.id('stickers'), shape: 'stickerVolley', owner: enemy.id, x: enemy.x, y: enemy.y, age: 0, left: this.bossRepeat(enemy, 'stickerCount'), next: 0, gap: ai.stickerGap, warn: ai.stickerWarn, radius: ai.stickerRadius, duration: ai.stickerSeconds, slow: ai.stickerSlow });
+        enemy.ready = this.s.time + this.bossRepeat(enemy, 'stickerCount') * ai.stickerGap + enemy.recovery; break;
       // Stomp: rings of shock spread from Brass on the beat; dodge through each as it passes.
       case 'stomp':
-        for (let i = 0; i < ai.stompRings; i++) this.s.casts.push({ id: this.id('stomp'), shape: 'stompRing', owner: enemy.id, x: enemy.x, y: enemy.y, age: -i * ai.stompGap, speed: ai.stompSpeed, reach: ai.stompReach, width: ai.stompWidth, enemyDamage: enemy.damage, passed: false });
-        enemy.ready = this.s.time + ai.stompRings * ai.stompGap + enemy.recovery; break;
+        for (let i = 0, rings = this.bossRepeat(enemy, 'stompRings'); i < rings; i++) this.s.casts.push({ id: this.id('stomp'), shape: 'stompRing', owner: enemy.id, x: enemy.x, y: enemy.y, age: -i * ai.stompGap, speed: ai.stompSpeed, reach: ai.stompReach, width: ai.stompWidth, enemyDamage: enemy.damage, passed: false });
+        enemy.ready = this.s.time + this.bossRepeat(enemy, 'stompRings') * ai.stompGap + enemy.recovery; break;
       // Charge: a straight run along the marked line, then a trumpet blast ahead where it stops.
       case 'charge':
         enemy.dashDistance = ai.chargeLength; enemy.dashDuration = ai.chargeSeconds; enemy.dash = { angle: tell.angle, elapsed: 0, then: 'chargeHorn' };
@@ -424,7 +436,7 @@ export const enemyActions = {
       // little, one way then the other, so standing still in the first gap is not enough.
       case 'trumpetWave': {
         this.trumpetRing(enemy, tell.angle);
-        const volleys = ai.waveVolleys || 1;
+        const volleys = this.bossRepeat(enemy, 'waveVolleys') || 1;
         if (volleys > 1) { enemy.noteVolleys = { left: volleys - 1, next: this.s.time + ai.waveVolleyGap, angle: tell.angle, turn: 1 }; enemy.ready = Math.max(enemy.ready, this.s.time + (volleys - 1) * ai.waveVolleyGap + enemy.recovery); }
         break;
       }
@@ -451,6 +463,11 @@ export const enemyActions = {
     let activeMelee = this.s.enemies.filter(e => !e.boss && (e.tell || e.dash) && e.attack !== 'shot').length;
     for (const enemy of this.s.enemies) {
       if (enemy.hp <= 0) continue;
+      // A first-wave body still climbing out of its hatch does nothing; it pops out with a puff when its time comes.
+      if (enemy.summonUntil) {
+        if (this.s.time < enemy.summonUntil) continue;
+        enemy.summonUntil = 0; this.effect('dodge', enemy.x, enemy.y, '#e0a03c', 0.3, 1.2); this.sense({ kind: 'summon' });
+      }
       if (enemy.shove) {
         const ease = u => 1 - (1 - u) ** 2, s = enemy.shove, from = ease(Math.min(1, s.elapsed / KNOCKBACK_SECONDS)), to = ease(Math.min(1, (s.elapsed + dt) / KNOCKBACK_SECONDS));
         this.move(enemy, s.x * (to - from), s.y * (to - from)); s.elapsed += dt;

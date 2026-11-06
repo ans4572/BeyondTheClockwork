@@ -176,7 +176,7 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
 #hud.talking > :not(#dialogue) { display: none; }
-#dialogue { position: absolute; inset: 0; pointer-events: auto; font: 400 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#dialogue { position: absolute; inset: 0; pointer-events: auto; user-select: none; -webkit-user-select: none; font: 400 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #dialogue[hidden] { display: none; }
 .talk-box { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: #f6ecd2; box-shadow: 0 -4px 0 #2b3345, 0 -8px 0 #c79a3e; }
 .talk-who { position: absolute; z-index: 1; image-rendering: pixelated; transition: filter .12s, transform .12s; }

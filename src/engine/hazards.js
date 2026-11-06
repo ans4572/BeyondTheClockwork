@@ -6,7 +6,8 @@ import { dealer } from './encounters.js';
 import { FlowField } from './flow-field.js';
 
 /** Kinds that bodies and shots cannot pass through. */
-export const SOLID = new Set(['crate', 'fence', 'musicbox']);
+// The mending music box is picked up by walking onto it (2026-11-06), so it no longer blocks the way.
+export const SOLID = new Set(['crate', 'fence']);
 /** Kinds drawn flat on the floor, under everyone. */
 export const GROUND = new Set(['plate', 'rail']);
 

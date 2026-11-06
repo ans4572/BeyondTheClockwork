@@ -20,6 +20,7 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     }
     if (game.s.mode === 'route') { game.nextNode(0); continue; }
     if (game.s.mode === 'shop') { game.buyShop('heal'); game.nextNode(); continue; }
+    if (game.s.mode === 'merchant') { game.buyShop('heal'); game.buyShop('skillLevel'); game.leaveMerchant(); continue; }
     if (game.s.mode === 'unwind') { game.unwind(); continue; }
     const boss = game.s.enemies.find(e => e.boss && e.hp > 0), now = game.s.time, tellType = boss?.tell?.type;
     // The bot obeys the boss's warnings the way a player reading them would.
@@ -55,10 +56,11 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     // Stomp rings: dodge through one that is about to reach the player.
     const ring = game.s.casts.find(c => c.shape === 'stompRing' && c.age >= 0 && !c.passed && distance(game.p, c) - c.age * c.speed > 0 && distance(game.p, c) - c.age * c.speed < 0.9);
     if (ring) { game.update(1 / 60, { dodge: true, x: Math.cos(Math.atan2(game.p.y - ring.y, game.p.x - ring.x)), y: Math.sin(Math.atan2(game.p.y - ring.y, game.p.x - ring.x)) }); continue; }
-    const calm = !(boss?.alarmUntil > now), line = game.columnLine;
+    // A rank of soldiers about to reach the bot: dodge through it, the way it walks (Brass's parade and column ranks).
+    const calm = !(boss?.alarmUntil > now), line = game.rankLines?.find(l => { const { start, end } = l.rank, h = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]); return Math.abs((game.p.x - l.a[0]) * Math.cos(h) + (game.p.y - l.a[1]) * Math.sin(h)) < 1.1; });
     if (line) {
-      const { start, end } = game.s.column, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]), ahead = (game.p.x - line.a[0]) * Math.cos(heading) + (game.p.y - line.a[1]) * Math.sin(heading);
-      if (Math.abs(ahead) < 1.1) { game.update(1 / 60, { x: Math.cos(heading), y: Math.sin(heading), dodge: true }); continue; }
+      const { start, end } = line.rank, heading = Math.atan2(end[0][1] - start[0][1], end[0][0] - start[0][0]);
+      game.update(1 / 60, { x: Math.cos(heading), y: Math.sin(heading), dodge: true }); continue;
     }
     const enemies = game.s.enemies.filter(e => e.hp > 0), target = enemies.sort((a, b) => distance(game.p, a) - distance(game.p, b))[0];
     if (!target) { game.update(1 / 60, {}); continue; }

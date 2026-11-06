@@ -59,7 +59,7 @@ const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" s
 // Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck. Skills shake and fusions hold and slow (2026-11-06):
 // they hit harder than the wrench and should feel it.
 const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.05, shake: 6 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
-const FUSION_SLOW_MS = 100, MULTI_STOP = 0.01, MULTI_STOP_CAP = 0.03, CRIT_STOP = 0.01, CRIT_SHAKE = 3, SLOW_RATE = 0.3, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
+const FUSION_SLOW_MS = 100, MULTI_STOP = 0.005, MULTI_STOP_CAP = 0.015, CRIT_STOP = 0.01, CRIT_SHAKE = 3, SLOW_RATE = 0.3, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 /**
  * The loading card waits only for what the title shows: its paper form and song. Everything else is held back until
  * then so it does not share the connection: F2's sheets start once the title is drawn (titleDrawn), and the skill
@@ -369,7 +369,7 @@ try {
     phase: () => sfx('heavy'),
     boss: hit => sfx(`boss-${hit.id}`)
   };
-  let hitstop = 0, slowUntil = 0, landedAt = 0, pendingWhoosh = null;
+  let hitstop = 0, slowUntil = 0, landedAt = 0, pendingWhoosh = null, feltSwing = null;
   // Lowest to highest: when several things happen in one step, only the last of these that happened is heard.
   const SOUND_RANK = ['dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'mob', 'block', 'hit', 'boss', 'cast', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
@@ -380,9 +380,15 @@ try {
     // Catching several enemies in one swing holds the frame a little longer for each.
     const struck = hits.filter(hit => hit.kind === 'hit' || hit.kind === 'heavy').length, crowd = Math.min(MULTI_STOP_CAP, MULTI_STOP * Math.max(0, struck - 1));
     for (const hit of hits) {
+      // One swing holds the frame once: a wrench still sweeping into more bodies on the next frames used to hold again
+      // and again, which read as slow motion in a crowd (2026-11-06).
+      const repeat = hit.swing && hit.swing === feltSwing;
+      if (hit.swing) feltSwing = hit.swing;
+      if (repeat) continue;
       // An ordinary kill no longer holds the frame on top of the blow that made it (2026-11-06: it read as a slow-down);
       // only a boss's fall still does.
-      const kind = hit.kind === 'kill' && !hit.boss ? { ...FEEL.kill, stop: 0 } : FEEL[hit.kind] || NO_FEEL;
+      // Nor does it shake the screen: the blow's own kick is enough, and the extra shake on every kill read as a zoom.
+      const kind = hit.kind === 'kill' && !hit.boss ? NO_FEEL : FEEL[hit.kind] || NO_FEEL;
       hitstop = Math.max(hitstop, kind.stop + (hit.crit ? CRIT_STOP : 0) + (hit.angle !== undefined ? crowd : 0));
       const shake = Math.max(kind.shake || 0, hit.crit ? CRIT_SHAKE : 0);
       // A wrench blow pushes the view the way it was swung; everything else shakes.
@@ -624,14 +630,15 @@ try {
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
-    if (mode === 'shop') html = panel(`<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
-      const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && s.run.shopBought.includes(id);
+    // The night market's shop and the travelling merchant before Brass sell the same things; each has its own once-only list.
+    if (mode === 'shop' || mode === 'merchant') html = panel(`${mode === 'merchant' ? '<h2>행진 전에, 하나 챙겨 가.</h2><p>떠돌이 수리상이 브라스의 광장 앞에서 짐을 풀었습니다. 남은 동전을 여기서 쓰세요.</p>' : '<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p>'}<p class="notice">${ico('coin')} 남은 동전 ${s.run.coins}</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
+      const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && (mode === 'merchant' ? s.run.merchantBought || [] : s.run.shopBought).includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
       return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
-    }).join('')}</div><div class="actions">${button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
+    }).join('')}</div><div class="actions">${mode === 'merchant' ? button('브라스에게 가기', 'merchant-leave', '', 'primary') : button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
-      const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감아 깨우기' : '회로 뽑기';
+      const brass = game.room.boss === 'captainBrass', verb = brass ? '태엽 감아 깨우기' : '명령 회로 뽑기';
       html = panel((brass ? `<h2>일어나, 이번엔 네 박자로.</h2><p>멈춘 태엽을 한 바퀴씩 감아 줍니다.<br>머릿속에서 북을 치던 회로는 다시 넣지 않습니다.</p>` : `<h2>이제 무엇을 주울지는 네가 정해.</h2><p>로코의 집게에 꽂힌 명령 회로를 뽑아냅니다.<br>모으는 손은 남고, 고르는 명령만 사라집니다.</p>`)
         + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
     }
@@ -741,7 +748,7 @@ try {
         $('boss-marks').innerHTML = bossPhaseMarks(data.slice.bossAI[boss.type]).map(at => `<i style="left:calc(3px + (100% - 6px) * ${at})"></i>`).join('');
       }
       put($('boss-fill'), 'width', `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`);
-      const breaking = boss.breaking, rule = breaking && data.slice.bossAI[boss.type].phaseBreaks[breaking.index];
+      const breaking = boss.breaking, rule = breaking && game.breakRule(boss, breaking.index);
       $('boss-bar').classList.toggle('shielded', !!breaking);
       put($('boss-note'), 'text', breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}`} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.vulnerableUntil > s.time ? '과부하 · 무방비' : '');
     }
@@ -894,6 +901,7 @@ try {
     if (name === 'reroll-card') { bought = game.rerollRewardCard(Number(d.index)); }
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
+    if (name === 'merchant-leave') game.leaveMerchant();
     if (name === 'unwind') game.unwind();
     if (name === 'nickname-save') { saveNickname(); return; }
     if (name === 'return-complete') game.returnToHub('clear');
@@ -1133,7 +1141,7 @@ try {
     if (pendingWhoosh && performance.now() >= pendingWhoosh.at) { const { heavy } = pendingWhoosh; pendingWhoosh = null; sfx(heavy ? 'swingHeavy' : 'swing', () => noise(0.07, 0.035, heavy ? 600 : 900, 0.7)); }
     playMusic(); wipeIn();
     // The hour of the place: bright street, the night market and everything after it at dusk, Brass's square at night.
-    const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
+    const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
     renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
     mapArt.prepareNextFloor();
     renderer.talkKey = isTouch ? '▸' : keyName(map.skill1); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);

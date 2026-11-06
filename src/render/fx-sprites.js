@@ -6,6 +6,9 @@ export const FX = {
   rocoSticker: { sheet: 'art/fx/roco-sticker.png', w: 60, h: 70, cols: 4, frames: 12, anchor: [30, 57] },
   rocoCan: { sheet: 'art/fx/roco-can.png', w: 16, h: 18, cols: 2, frames: 4, anchor: [8, 9] },
   // Roco's cans in his phase break, drawn with PixelLab (2026-11-06): a silver one to bat back, a red bomb to avoid.
+  // A body summoned into a room (PixelLab VFX 'Clockwork summon rift'): a gold rift opens, a light column rises as the
+  // body appears (frame 9 of 22 at 14 fps), then smoke and the seal. Drawn at half size, as sprites are.
+  summonRift: { sheet: 'art/fx/summon-rift-v1.png', w: 67, h: 87, cols: 5, frames: 22, anchor: [33, 73] },
   rocoCanSilver: { sheet: 'art/fx/roco-can-silver-v1.png', w: 32, h: 32, cols: 1, frames: 1, anchor: [16, 18] },
   rocoCanBomb: { sheet: 'art/fx/roco-can-bomb-v1.png', w: 32, h: 32, cols: 1, frames: 1, anchor: [16, 16] },
   crate: { sheet: 'art/fx/crate.png', w: 20, h: 18, cols: 1, frames: 1, anchor: [10, 16] },
@@ -55,6 +58,10 @@ export const MARKS = Object.fromEntries(Object.entries({
 }).map(([key, file]) => [key, `art/fx/marks/${file}-${REDRAWN.has(file) ? 'v2' : 'v1'}.png`]));
 /** Loot flies home as the coin and gear of the HUD (art/ui/icons/px). */
 export const LOOT_ART = { coin: 'art/ui/icons/px/coin.png', gear: 'art/ui/icons/px/gear.png' };
-export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART, ...Object.values(MARKS), ...Object.values(LOOT_ART)];
+/** A fallen body's parts (PixelLab, 32px each): cog, bolt, spring and a plate of its casing, in the order drawParts deals them. */
+export const DEBRIS_ART = ['debris-gear', 'debris-bolt', 'debris-spring', 'debris-plate'].map(name => `art/fx/${name}-v1.png`);
+/** Over a beaten boss: Roco's command circuit to pull out, Brass's wind-up key to turn (PixelLab, 48px). */
+export const BOSS_UNWIND_ART = { collectorRoco: 'art/fx/boss-circuit-v1.png', captainBrass: 'art/fx/boss-windup-key-v1.png' };
+export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART, ...Object.values(MARKS), ...Object.values(LOOT_ART), ...DEBRIS_ART, ...Object.values(BOSS_UNWIND_ART)];
 /** The room hazards' painted sprites (src/engine/hazards.js places them; drawHazard adds their states). */
 export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', musicbox: 'musicbox', plate: 'plate', saw: 'saw', fenceAcross: 'fence-across', fenceUpright: 'fence-upright' }).map(([key, file]) => [key, `art/smile-street/hazards/${file}-v1.png`]));

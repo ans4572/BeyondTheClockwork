@@ -115,6 +115,8 @@ export const rewardDraws = {
     (run.picks ??= []).push({ node: run.node, kind: reward.kind, id: reward.id ?? null, amount: reward.amount ?? null, rarity: reward.rarity ?? null, element: reward.kind === 'level' ? this.slots[reward.id]?.element ?? null : null });
     run.rewardChoices = []; run.rerolledCards = []; this.sense({ kind: 'pick' });
     if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
+    // After the last street before the boss a travelling merchant waits once, so the coins of the second half have a use.
+    else if (this.room.id === this.config.rules.merchantAfterRoom && !run.merchantMet) { this.s.mode = 'merchant'; run.merchantMet = true; run.merchantBought = []; }
     else this.s.mode = 'route';
     this.save(); return true;
   },
