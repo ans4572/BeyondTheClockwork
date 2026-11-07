@@ -449,7 +449,7 @@ export class Game {
     if (enemy.hp <= 0) {
       // The body bursts into parts thrown away from F2: a few for the wrench, more for a skill, most for a fusion.
       const parts = options.source === 'fusion' ? PARTS.fusion : options.source === 'skill' ? PARTS.skill : PARTS.wrench;
-      enemy.tell = null; this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
+      enemy.tell = null; enemy.dash = null; enemy.spin = null; this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const embers = this.trait('emberSpread');
       if (embers && enemy.burnStacks?.some(t => t > this.s.time)) {

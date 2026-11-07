@@ -524,3 +524,11 @@ test('the six balancing cards: more strikes, an ice burst, a vortex blast, froze
   const near = inert(g, 'guard', { x: 10, y: 8 }); e.burnStacks = [1e9]; g.hitEnemy(e, 1e6, {});
   assert.ok(Object.keys(near.statusApplied).length > 0, 'the burn passed on');
 });
+test('a rabbit beaten mid-dash no longer holds a melee slot, so a jack-in-the-box still surfaces', () => {
+  const g = arena(), jack = g.spawnEnemy('jackbox', { x: 12, y: 8 });
+  for (let k = 0; k < 3; k++) { const rabbit = g.spawnEnemy('rabbit', { x: 10, y: 6 + k }); rabbit.dash = { angle: 0, elapsed: 0 }; g.hitEnemy(rabbit, 1e6, {}); assert.equal(rabbit.dash, null); }
+  inert(g, 'guard', { x: 20, y: 20 });
+  let surfaced = false;
+  for (let i = 0; i < 600 && !surfaced; i++) { g.p.hp = g.p.maxHp; g.update(1 / 60, {}); if (jack.tell?.type === 'ambush' || (i > 60 && !jack.hidden)) surfaced = true; }
+  assert.ok(surfaced);
+});

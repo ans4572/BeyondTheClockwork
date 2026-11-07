@@ -460,7 +460,9 @@ export const enemyActions = {
     if (!this.active) return;
     const flow = this.flowField;
     flow?.update(this.p.x, this.p.y);
-    let activeMelee = this.s.enemies.filter(e => !e.boss && (e.tell || e.dash) && e.attack !== 'shot').length;
+    // Only the living count: a rabbit beaten mid-dash keeps its dash on the body, and three of those once held every melee
+    // slot for the rest of the room (2026-11-07: a jack-in-the-box stayed underground and unhittable beside F2).
+    let activeMelee = this.s.enemies.filter(e => e.hp > 0 && !e.boss && (e.tell || e.dash) && e.attack !== 'shot').length;
     for (const enemy of this.s.enemies) {
       if (enemy.hp <= 0) continue;
       // A first-wave body still climbing out of its hatch does nothing; it pops out with a puff when its time comes.
