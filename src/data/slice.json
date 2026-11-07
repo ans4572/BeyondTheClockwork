@@ -1062,6 +1062,441 @@
       "short": "브라스"
     }
   ],
+  "chapters": [
+    {
+      "id": "smile-street",
+      "number": 1,
+      "name": "웃음거리",
+      "description": "모두가 같은 박자로 웃는 거리. 행진 대장 브라스가 기다립니다."
+    },
+    {
+      "id": "silent-factory",
+      "number": 2,
+      "name": "무음공장",
+      "after": "smile-street",
+      "description": "불량 판정을 받은 인형이 생각을 지우러 실려 가는 공장.",
+      "note": "Chapter 2 is playable end to end on chapter 1 enemies and bosses (Roco at the inspection room, Brass at the forming hall) until its own are made. scale multiplies every difficulty's enemy health, attack and furniture; loot multiplies its pay. affixesFrom: elites carry a trait from this stop on; merchantAfterRoom: the travelling merchant waits after this stop.",
+      "scale": 1.2,
+      "loot": 1.3,
+      "affixesFrom": "factory-03",
+      "merchantAfterRoom": "factory-11",
+      "rooms": [
+        {
+          "id": "factory-01",
+          "rewards": {
+            "gears": 16,
+            "coins": 23
+          },
+          "kind": "normal",
+          "name": "정문 검수대",
+          "description": "들어오는 모든 것을 검사하는 문",
+          "short": "검수대",
+          "waves": [
+            [
+              "spintop",
+              "guard",
+              "guard",
+              "trumpet",
+              "guard",
+              "guard",
+              "elite"
+            ],
+            [
+              "jackbox",
+              "musicbox",
+              "rat",
+              "rat",
+              "rabbit",
+              "rat",
+              "rat",
+              "guard",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "musicbox",
+              "trumpet",
+              "nutcracker",
+              "trumpet",
+              "elite"
+            ]
+          ],
+          "power": 1.0
+        },
+        {
+          "id": "factory-02",
+          "rewards": {
+            "gears": 18,
+            "coins": 26
+          },
+          "kind": "normal",
+          "name": "포장 벨트",
+          "description": "웃음을 상자에 담아 묶는 곳",
+          "short": "포장",
+          "waves": [
+            [
+              "drummer",
+              "musicbox",
+              "rabbit",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "pikeman",
+              "guard",
+              "musicbox",
+              "rat",
+              "nutcracker",
+              "guard",
+              "guard",
+              "elite"
+            ],
+            [
+              "musicbox",
+              "rabbit",
+              "trumpet",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ]
+          ],
+          "power": 1.05
+        },
+        {
+          "id": "factory-03",
+          "rewards": {
+            "gears": 19,
+            "coins": 28
+          },
+          "kind": "normal",
+          "name": "부품 창고",
+          "description": "갈아 끼울 부품이 쌓인 선반 골목",
+          "short": "창고",
+          "waves": [
+            [
+              "spintop",
+              "guard",
+              "guard",
+              "trumpet",
+              "trumpet",
+              "guard",
+              "guard",
+              "guard",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "nutcracker",
+              "jackbox",
+              "musicbox",
+              "rat",
+              "nutcracker",
+              "nutcracker",
+              "rat",
+              "elite"
+            ],
+            [
+              "pikeman",
+              "musicbox",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ]
+          ],
+          "power": 1.1,
+          "guaranteedMod": true
+        },
+        {
+          "id": "factory-04",
+          "rewards": {
+            "gears": 21,
+            "coins": 31
+          },
+          "kind": "normal",
+          "name": "도장 라인",
+          "description": "똑같은 웃음을 찍어 내는 기계",
+          "short": "도장",
+          "waves": [
+            [
+              "jackbox",
+              "jackbox",
+              "elite",
+              "musicbox",
+              "rat",
+              "rat",
+              "guard",
+              "guard"
+            ],
+            [
+              "nutcracker",
+              "elite",
+              "guard",
+              "trumpet",
+              "trumpet",
+              "nutcracker",
+              "guard",
+              "guard"
+            ],
+            [
+              "guard",
+              "elite",
+              "musicbox",
+              "musicbox",
+              "trumpet",
+              "guard",
+              "rabbit",
+              "rabbit"
+            ]
+          ],
+          "power": 1.15
+        },
+        {
+          "id": "factory-05",
+          "kind": "miniboss",
+          "name": "검수실",
+          "description": "검수관 자리를 회수원이 대신 지킵니다.",
+          "boss": "collectorRoco",
+          "short": "검수실"
+        },
+        {
+          "id": "factory-06",
+          "kind": "shop",
+          "name": "불량품 보관창고",
+          "description": "불량 판정을 받은 장난감들이 숨어 지냅니다.",
+          "short": "쉼터"
+        },
+        {
+          "id": "factory-07",
+          "rewards": {
+            "gears": 18,
+            "coins": 26
+          },
+          "kind": "normal",
+          "name": "압축 창고",
+          "description": "버려진 것을 눌러 담는 곳",
+          "short": "압축",
+          "waves": [
+            [
+              "drummer",
+              "musicbox",
+              "rabbit",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "pikeman",
+              "guard",
+              "musicbox",
+              "rat",
+              "nutcracker",
+              "guard",
+              "guard",
+              "elite"
+            ],
+            [
+              "musicbox",
+              "rabbit",
+              "trumpet",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ]
+          ],
+          "power": 1.2
+        },
+        {
+          "id": "factory-08",
+          "rewards": {
+            "gears": 19,
+            "coins": 28
+          },
+          "kind": "normal",
+          "name": "소거 라인",
+          "description": "생각을 지우는 조용한 줄",
+          "short": "소거",
+          "waves": [
+            [
+              "spintop",
+              "guard",
+              "guard",
+              "trumpet",
+              "trumpet",
+              "guard",
+              "guard",
+              "guard",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "nutcracker",
+              "jackbox",
+              "musicbox",
+              "rat",
+              "nutcracker",
+              "nutcracker",
+              "rat",
+              "elite"
+            ],
+            [
+              "pikeman",
+              "musicbox",
+              "trumpet",
+              "rabbit",
+              "rabbit",
+              "elite"
+            ]
+          ],
+          "power": 1.25
+        },
+        {
+          "id": "factory-09",
+          "rewards": {
+            "gears": 21,
+            "coins": 31
+          },
+          "kind": "normal",
+          "name": "크레인 적재장",
+          "description": "머리 위로 짐이 지나가는 마당",
+          "short": "크레인",
+          "waves": [
+            [
+              "jackbox",
+              "jackbox",
+              "elite",
+              "musicbox",
+              "rat",
+              "rat",
+              "guard",
+              "guard"
+            ],
+            [
+              "nutcracker",
+              "elite",
+              "guard",
+              "trumpet",
+              "trumpet",
+              "nutcracker",
+              "guard",
+              "guard"
+            ],
+            [
+              "guard",
+              "elite",
+              "musicbox",
+              "musicbox",
+              "trumpet",
+              "guard",
+              "rabbit",
+              "rabbit"
+            ]
+          ],
+          "power": 1.3,
+          "guaranteedMod": true
+        },
+        {
+          "id": "factory-10",
+          "rewards": {
+            "gears": 23,
+            "coins": 34
+          },
+          "kind": "normal",
+          "name": "증기 보일러실",
+          "description": "공장의 심장이 끓는 방",
+          "short": "보일러",
+          "waves": [
+            [
+              "spintop",
+              "pikeman",
+              "trumpet",
+              "trumpet",
+              "elite",
+              "elite",
+              "guard",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "guard",
+              "jackbox",
+              "elite",
+              "musicbox",
+              "nutcracker",
+              "nutcracker",
+              "rat"
+            ],
+            [
+              "drummer",
+              "elite",
+              "trumpet",
+              "elite",
+              "musicbox",
+              "elite"
+            ]
+          ],
+          "power": 1.35
+        },
+        {
+          "id": "factory-11",
+          "rewards": {
+            "gears": 23,
+            "coins": 34
+          },
+          "kind": "normal",
+          "name": "신호선 배전실",
+          "description": "시계탑 신호가 모이는 곳",
+          "short": "배전실",
+          "waves": [
+            [
+              "spintop",
+              "pikeman",
+              "trumpet",
+              "trumpet",
+              "elite",
+              "elite",
+              "guard",
+              "elite"
+            ],
+            [
+              "nutcracker",
+              "guard",
+              "jackbox",
+              "elite",
+              "musicbox",
+              "nutcracker",
+              "nutcracker",
+              "rat"
+            ],
+            [
+              "drummer",
+              "elite",
+              "trumpet",
+              "elite",
+              "musicbox",
+              "elite"
+            ]
+          ],
+          "power": 1.4
+        },
+        {
+          "id": "factory-12",
+          "kind": "regionBoss",
+          "name": "정형실",
+          "description": "모든 것을 같은 모양으로 누릅니다. 틀에 맞추십시오.",
+          "boss": "captainBrass",
+          "short": "정형실"
+        }
+      ]
+    }
+  ],
   "roomLayouts": [
     {
       "id": "square",
@@ -1573,7 +2008,7 @@
     "default": "normal",
     "levels": [
       { "id": "easy", "name": "쉬움", "scale": 0.54, "loot": 0.54, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다.", "bossRepeats": { "stickerCount": 5, "crateTossCount": 1, "ranks": 2, "waveVolleys": 2, "stompRings": 2 }, "phaseBreaks": { "cans": { "cans": 4, "bombShare": 0.2, "canEvery": 1.0, "seconds": 20 }, "drums": { "drums": 3, "showStep": 0.85, "laneEvery": 3.8, "seconds": 20 }, "flags": { "flags": 2, "turn": 0.35, "seconds": 20 } } },
-      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "웃음거리의 기본 원정입니다.", "bossRepeats": { "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 }, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } } },
+      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "이 장의 기본 원정입니다.", "bossRepeats": { "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 }, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } } },
       { "id": "hard", "name": "어려움", "scale": 1.26, "loot": 1.26, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "bossRepeats": { "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 }, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } } }
     ]
   },

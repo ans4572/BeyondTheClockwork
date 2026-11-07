@@ -114,9 +114,9 @@ export const rewardDraws = {
     // The pick, in order, for the pause menu's 이번 원정 tab: the stop it was taken at and what it was.
     (run.picks ??= []).push({ node: run.node, kind: reward.kind, id: reward.id ?? null, amount: reward.amount ?? null, rarity: reward.rarity ?? null, element: reward.kind === 'level' ? this.slots[reward.id]?.element ?? null : null });
     run.rewardChoices = []; run.rerolledCards = []; this.sense({ kind: 'pick' });
-    if (run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
+    if (run.node === this.rooms.length - 1) this.finishChapter();
     // After the last street before the boss a travelling merchant waits once, so the coins of the second half have a use.
-    else if (this.room.id === this.config.rules.merchantAfterRoom && !run.merchantMet) { this.s.mode = 'merchant'; run.merchantMet = true; run.merchantBought = []; }
+    else if (this.room.id === (this.chapter.merchantAfterRoom ?? this.config.rules.merchantAfterRoom) && !run.merchantMet) { this.s.mode = 'merchant'; run.merchantMet = true; run.merchantBought = []; }
     else this.s.mode = 'route';
     this.save(); return true;
   },

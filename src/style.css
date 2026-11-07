@@ -113,6 +113,13 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 .codex-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
 .panel .codex-tabs button.on { background: var(--ink); color: var(--paper); }
+/* The departure popup's chapter tabs: the chapter number small above its name; a locked one is greyed with its padlock. */
+.chapter-tabs { margin: 0 0 8px; }
+.panel .chapter-tabs .chapter-tab { display: inline-flex; align-items: center; gap: 6px; }
+.chapter-tab small { font-size: 11px; opacity: .75; }
+.panel .chapter-tabs .chapter-tab:disabled { opacity: .55; cursor: not-allowed; }
+.chapter-about { margin: 0 0 6px; }
+.debug-chapter { margin: 10px 0 4px; font-weight: 700; }
 .reward-card .replace-note { margin: 8px 0 0; font-weight: 700; }
 /* The codex reads at the pause menu's size (2026-11-06): 13px headings, 12px text, 11px tags. */
 .codex-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }

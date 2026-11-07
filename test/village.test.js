@@ -369,11 +369,12 @@ test('a cleared room holds for a second, then rewards, then opens a portal to wa
 test('every room has a portal the player can reach from its entrance', () => {
   for (const [id, place] of Object.entries(maps.maps)) {
     if (id === 'stop-07') continue;
-    const map = placeOf(maps, place);
+    // A rest stop is left through its exit (its portal sits inside it).
+    const map = placeOf(maps, place), portal = map.portal || map.exit.portal;
     const radius = data.slice.arena.playerRadius, unit = 0.25, key = (x, y) => `${x},${y}`, start = [Math.round(map.spawn.x / unit), Math.round(map.spawn.y / unit)], seen = new Set([key(...start)]), queue = [start];
     let reached = false;
     while (queue.length && !reached) {
-      const [x, y] = queue.shift(); reached = Math.hypot(x * unit - map.portal.x, y * unit - map.portal.y) <= 1;
+      const [x, y] = queue.shift(); reached = Math.hypot(x * unit - portal.x, y * unit - portal.y) <= 1;
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!seen.has(key(x + dx, y + dy)) && fitsMap((x + dx) * unit, (y + dy) * unit, radius, map)) { seen.add(key(x + dx, y + dy)); queue.push([x + dx, y + dy]); }
     }
     assert.ok(reached, id);

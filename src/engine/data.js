@@ -1,4 +1,5 @@
 import { fitsMap, placeOf } from './map-geometry.js';
+import { chapterList, chapterRooms, allRooms } from './chapters.js';
 
 export function validateData(data) {
   const { combat: c, progression: p, slice: s, maps } = data;
@@ -16,16 +17,22 @@ export function validateData(data) {
     keys.add(key);
   }
   for (const skill of c.skills) assert(s.skillBehavior[skill.id] && skill.cooldown > 0, `기술 실행 규칙: ${skill.id}`);
-  assert(s.rooms.length === 12 && s.rooms[0].kind === 'normal' && s.rooms[5].kind === 'shop', '12구간 구조');
+  for (const chapter of chapterList(s)) {
+    const rooms = chapterRooms(s, chapter.id);
+    assert(rooms.length === 12 && rooms[0].kind === 'normal' && rooms[5].kind === 'shop' && rooms[11].boss, `12구간 구조: ${chapter.id}`);
+    assert(!chapter.after || chapterList(s).some(c => c.id === chapter.after), `앞 장 없음: ${chapter.id}`);
+  }
+  const roomIds = allRooms(s).map(r => r.id);
+  assert(new Set(roomIds).size === roomIds.length, '방 ID 중복');
   assert(s.permanentStats.length >= 4, '영구 스탯');
   assert(s.statChapters?.ranksPerChapter > 0, '챕터별 스탯 한도');
   for (const [room, place] of Object.entries(maps?.maps || {})) {
-    assert(s.rooms.some(r => r.id === room), `맵의 방 없음: ${room}`);
+    assert(roomIds.includes(room), `맵의 방 없음: ${room}`);
     const map = placeOf(maps, place);
     if (map.walkable) for (const point of [map.spawn, ...map.enemySpawns]) assert(fitsMap(point.x, point.y, map.bodyRadius ?? s.arena.playerRadius, map), `맵 시작 위치가 이동 영역 밖: ${room}`);
   }
   for (const [room, list] of Object.entries(maps?.alternates || {})) {
-    const owner = s.rooms.find(r => r.id === room);
+    const owner = allRooms(s).find(r => r.id === room);
     assert(owner && (owner.variants?.length || 1) === list.length + 1, `방의 그림 수와 맵 수가 다름: ${room}`);
     for (const place of list) { const map = placeOf(maps, place); for (const point of [map.spawn, ...map.enemySpawns]) assert(fitsMap(point.x, point.y, map.bodyRadius ?? s.arena.playerRadius, map), `두 번째 맵 시작 위치가 이동 영역 밖: ${room}`); }
   }

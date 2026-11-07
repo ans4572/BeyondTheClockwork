@@ -121,7 +121,7 @@ export function createMapLoader({ data, game, renderer, firstFiles = [], canStar
     if (place?.background === placeLoaded) return;
     placeLoaded = place?.background;
     // In town the next place is the first stop; on a run it is the stop after this one.
-    const next = game.s.run ? roomPlace(data.maps, data.slice.rooms[game.s.run.node + 1]?.id, game.s.run.plan?.[game.s.run.node + 1]?.variant || 0) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
+    const next = game.s.run ? roomPlace(data.maps, game.rooms[game.s.run.node + 1]?.id, game.s.run.plan?.[game.s.run.node + 1]?.variant || 0) : firstRoom, wanted = [...artOf(place), ...artOf(next)];
     // The next floor's clearance grid is built a few milliseconds per frame from now on, so entering it costs nothing.
     nextFloor = next;
     // Places left behind are let go: a run passes a dozen of them, and keeping every enlarged map and its depth in memory

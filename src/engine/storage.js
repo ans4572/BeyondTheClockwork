@@ -1,13 +1,14 @@
 import { roomTitle } from './room-title.js';
 import { cleanNickname } from './nickname.js';
 import { cleanRecords } from './records.js';
+import { chapterList, chapterOf, chapterRooms } from './chapters.js';
 export const SAVE_KEY = 'beyond-the-clockwork.vertical-slice.v1';
 /** True once there is anything worth loading; a save still on the opening has none. */
 export const hasProgress = state => !!state.profile.registered || state.profile.runs > 0 || state.mode !== 'opening';
 /** What the title's continue button says about a save: where it stands and when it was written, e.g. "원정 · 장난감 진열대 · 오늘 14:20". */
 export function saveSummary(state, savedAt, data, now = new Date()) {
   const RUN_MODES = ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'];
-  const room = state.run && data.slice.rooms[state.run.node];
+  const room = state.run && chapterRooms(data.slice, state.run.chapter)[state.run.node];
   const place = room ? `원정 · ${roomTitle(room)}`
     : state.mode === 'practice' ? '연습장'
     : ['opening', 'intro', 'introDeath', 'registration'].includes(state.mode) ? '첫 장면'
@@ -58,7 +59,13 @@ export function decodeSave(raw, data) {
   for (const key of ['bossRecords', 'blueprints', 'discoveredFusions', 'history']) if (!Array.isArray(s.profile[key])) fail('저장된 영구 기록이 올바르지 않습니다.');
   for (const key of ['runs', 'wins', 'combatClears']) if (!integerIn(s.profile[key], 0, Number.MAX_SAFE_INTEGER)) fail('저장된 진행 기록이 올바르지 않습니다.');
   // Clear records per difficulty (records.js): older saves start from their last ten expeditions, odd values are dropped.
-  s.profile.records = cleanRecords(s.profile.records, s.profile.history);
+  s.profile.records = cleanRecords(s.profile.records, s.profile.history.filter(result => !result?.chapter || result.chapter === chapterList(data.slice)[0].id));
+  // Chapters beaten, and the records of every chapter after the first: unknown chapters and odd values are dropped.
+  const chapterIds = chapterList(data.slice).map(chapter => chapter.id);
+  s.profile.cleared = Array.isArray(s.profile.cleared) ? [...new Set(s.profile.cleared.filter(id => chapterIds.includes(id)))] : [];
+  const kept = s.profile.chapterRecords && typeof s.profile.chapterRecords === 'object' ? s.profile.chapterRecords : {};
+  s.profile.chapterRecords = Object.fromEntries(chapterIds.slice(1).filter(id => kept[id] && typeof kept[id] === 'object').map(id => [id, cleanRecords(kept[id])]));
+  if (!chapterIds.includes(s.profile.lastChapter)) delete s.profile.lastChapter;
   // Saves from before background music get it switched on at the default volume.
   if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; }
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
@@ -81,17 +88,18 @@ export function decodeSave(raw, data) {
   if (p.maxHp <= 0 || p.hp > p.maxHp || p.energy > data.combat.player.maxEnergy || !p.cooldowns || !Object.values(p.cooldowns).every(validNumber)) fail('저장된 플레이어 수치가 범위를 벗어났습니다.');
   if (p.attack && (!integerIn(p.attack.phase, 0, 2) || !validNumber(p.attack.elapsed) || !Array.isArray(p.attack.hit))) fail('저장된 렌치 동작이 올바르지 않습니다.');
   // A run saved on an older route cannot resume on this one; permanent progress stays.
-  if (s.run && s.run.plan?.length !== data.slice.rooms.length) { s.run = null; s.mode = 'hub'; s.enemies = []; s.casts = []; s.projectiles = []; s.effects = []; p.attack = null; p.dodge = null; p.lastCast = null; }
+  // A run of a chapter this version does not have is dropped the same way.
+  if (s.run && (chapterOf(data.slice, s.run.chapter).id !== (s.run.chapter ?? chapterList(data.slice)[0].id) || s.run.plan?.length !== chapterRooms(data.slice, s.run.chapter).length)) { s.run = null; s.mode = 'hub'; s.enemies = []; s.casts = []; s.projectiles = []; s.effects = []; p.attack = null; p.dodge = null; p.lastCast = null; }
   const runModes = ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'];
   if (runModes.includes(s.mode) !== !!s.run) fail('저장된 원정과 화면 상태가 일치하지 않습니다.');
   if (s.run) {
     // Runs saved before difficulties existed play on as the default; anything unknown is reset the same way.
     if (!(data.slice.difficulty?.levels || []).some(level => level.id === s.run.difficulty)) s.run.difficulty = data.slice.difficulty?.default || 'normal';
-    const run = s.run;
+    const run = s.run, rooms = chapterRooms(data.slice, run.chapter);
     for (const slot of Array.isArray(run.slots) ? run.slots : []) if (Number.isInteger(slot?.level)) slot.level = Math.min(slot.level, data.combat.balance.skillMaxLevel);
-    if (!integerIn(run.node, 0, data.slice.rooms.length - 1) || !Array.isArray(run.slots) || run.slots.length > 2) fail('저장된 원정이 올바르지 않습니다.');
+    if (!integerIn(run.node, 0, rooms.length - 1) || !Array.isArray(run.slots) || run.slots.length > 2) fail('저장된 원정이 올바르지 않습니다.');
     if (new Set(run.slots.map(slot => slot.element)).size !== run.slots.length || run.slots.some(slot => !data.slice.elements.includes(slot.element) || !integerIn(slot.level, 1, data.combat.balance.skillMaxLevel) || !Object.hasOwn(data.combat.balance.rarityDamage, slot.rarity))) fail('저장된 속성 슬롯이 올바르지 않습니다.');
-    if (!Array.isArray(run.plan) || run.plan.length !== data.slice.rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (data.slice.rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');
+    if (!Array.isArray(run.plan) || run.plan.length !== rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');
     if (Array.isArray(run.mods)) run.mods = run.mods.filter(id => !REMOVED_REWARDS.mod.includes(id));
     if (run.upgrades) for (const id of REMOVED_REWARDS.upgrade) delete run.upgrades[id];
     if (Array.isArray(run.rewardChoices)) run.rewardChoices = run.rewardChoices.filter(reward => !REMOVED_REWARDS[reward.kind]?.includes(reward.id));

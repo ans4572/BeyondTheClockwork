@@ -21,6 +21,7 @@ import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
 import { browserReporter, mailbox, fetchRecords, PING_SECONDS } from './ui/stats-report.js';
 import { mergeMine, formatClock } from './engine/records.js';
+import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, NICKNAME_MAX } from './engine/nickname.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
@@ -180,7 +181,7 @@ try {
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
   let lastPlayWrite = 0, lastPlayUpload = -Infinity, link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, rightHeld = false, moveHeld = false, moveTarget = null, lastMouse = null, stuckSteps = 0, movedIn = null, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
-  let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null, settingsTab = 'general';
+  let audio = null, lastSoundId = null, codexTab = 'elements', mapPick = null, settingsTab = 'general', departChapter = null;
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -301,7 +302,7 @@ try {
   // Browsers only allow sound after the player touches the page; the first touch or key anywhere, the title included, opens it.
   for (const type of ['pointerdown', 'keydown', 'click', 'touchend']) window.addEventListener(type, () => openAudio(), { capture: true });
   // The rest stop splits the run: before it the street is bright, from it on the light is going.
-  const REST_INDEX = data.slice.rooms.findIndex(room => room.kind === 'shop');
+  const REST_INDEX = data.slice.rooms.findIndex(room => room.kind === 'shop'); // the sixth stop in every chapter (data.js)
   /** The background track for what is on screen; silent when music is switched off. */
   /** `now` starts the wanted song even before the sound context reports it is running: used inside the first tap. */
   function playMusic(now = false) {
@@ -520,22 +521,44 @@ try {
     });
   }
   /** A difficulty card's clear record: this device's best (time and element pair) and the server's fastest clear. */
-  function recordBlock(id) {
-    const mine = mergeMine(game.s.profile.records?.[id], serverRecords?.[id]?.me), top = serverRecords?.[id]?.top;
+  function recordBlock(id, chapter = FIRST_CHAPTER) {
+    // The server keeps chapter 1's board only for now (game.js report): a later chapter shows this device's record alone.
+    const first = chapter === FIRST_CHAPTER, local = chapterRecords(game.s.profile, chapter)[id];
+    const mine = first ? mergeMine(local, serverRecords?.[id]?.me) : mergeMine(local), top = first ? serverRecords?.[id]?.top : null;
     const pair = list => `<span class="rec-els" title="${list?.length ? list.map(e => data.combat.elements.find(x => x.id === e)?.name || e).join(' + ') : '렌치만'}">${list?.length ? list.map(e => elementIcon(e, 'rec-el')).join('') : '<i>렌치만</i>'}</span>`;
     const quiet = text => `<b class="rec-none">${text}</b>`;
     const me = mine.best !== null ? `<b>${formatClock(mine.best)}</b>${pair(mine.elements)}` : `${quiet('아직 없음')}<span class="rec-els"><i>${mine.furthest ? `${mine.furthest}구간까지` : ''}</i></span>`;
     const server = top ? `<b>${formatClock(top.seconds)}</b>${pair(top.elements)}<small class="rec-who">${ico('crown')}${top.mine ? '나' : escapeHTML(top.name || '이름 없는 인형')}</small>`
-      : quiet(recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
+      : quiet(!first ? '준비 중' : recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
     return `<div class="rec"><div class="rec-head"><span>클리어 기록</span>${top?.mine ? '<em class="rec-mine">내가 서버 1위!</em>' : ''}</div>`
       + `<div class="rec-row${mine.best !== null && top?.mine ? ' top' : ''}"><span>내 최고</span>${me}</div><div class="rec-row top"><span>서버 1위</span>${server}</div></div>`;
   }
+  /** The chapter the departure popup shows: the one last picked there, else the last one set out for, if it is open. */
+  function shownChapter() {
+    const profile = game.s.profile, wanted = departChapter || profile.lastChapter || FIRST_CHAPTER;
+    return chapterOpen(data.slice, profile, wanted) ? chapterOf(data.slice, wanted).id : FIRST_CHAPTER;
+  }
+  /** One tab per chapter above the difficulty cards; a chapter not open yet says which one opens it. */
+  function chapterTabs(current) {
+    const list = chapterList(data.slice);
+    if (list.length < 2) return '';
+    const tabs = list.map(chapter => {
+      const open = chapterOpen(data.slice, game.s.profile, chapter.id), on = chapter.id === current, done = chapterCleared(game.s.profile, chapter.id);
+      const label = `<small>${chapter.number}장</small>${escapeHTML(chapter.name)}${done ? ` ${ico('crown')}` : open ? '' : ` ${ico('lock')}`}`;
+      const why = open ? '' : `${chapterOf(data.slice, chapter.after).name}을(를) 끝내면 열립니다`;
+      return button(label, 'depart-chapter', `data-id="${chapter.id}" aria-pressed="${on}"${open ? '' : ` disabled title="${why}"`}`, on ? 'tab on chapter-tab' : 'tab chapter-tab');
+    }).join('');
+    return `<div class="codex-tabs chapter-tabs" role="group" aria-label="장 고르기">${tabs}</div>`;
+  }
   function difficultyPanel() {
     askRecords();
+    const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
     const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
-    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}"`, 'pick')}</article>`).join('');
-    return panel(`<h2>어떤 난이도로 떠날까요?</h2><p>원정 중에는 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p><div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
+    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
+    const harder = info.scale && info.scale !== 1 ? ` 이 장의 적은 1장보다 ${Math.round((info.scale - 1) * 100)}% 강하고, 보상은 ${Math.round(((info.loot || 1) - 1) * 100)}% 많습니다.` : '';
+    const about = many ? `<p class="chapter-about"><b>${info.number}장 · ${escapeHTML(info.name)}</b> ${escapeHTML(info.description || '')}${harder}</p>` : '';
+    return panel(`<h2>${many ? '어디로, 어떤 난이도로 떠날까요?' : '어떤 난이도로 떠날까요?'}</h2>${chapterTabs(chapter)}${about}<p>원정 중에는 장과 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p><div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
   }
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
@@ -564,7 +587,7 @@ try {
   }
   /** This run's rewards in the order they were picked: the stop, the card's tier and name, and what it does. */
   function runPicks() {
-    const run = game.s.run, picks = run?.picks || [], rooms = data.slice.rooms;
+    const run = game.s.run, picks = run?.picks || [], rooms = game.rooms;
     const head = `<p class="run-picks-head">${escapeHTML(roomTitle(rooms[run.node]))} · ${run.node + 1}번째 정거장 · 고른 보상 ${picks.length}개</p>`;
     if (!picks.length) return `${head}<p class="notice">아직 고른 보상이 없습니다. 구간을 깨면 보상 카드를 고를 수 있어요.</p>`;
     const elementName = id => data.combat.elements.find(e => e.id === id)?.name || '';
@@ -622,9 +645,10 @@ try {
     const byMouse = mouseMove(), scheme = (id, label) => button(label, 'controls', `data-id="${id}" aria-pressed="${(id === 'mouse') === byMouse}"`, (id === 'mouse') === byMouse ? 'tab on' : 'tab');
     const mouseNote = byMouse ? '마우스: 오른쪽 클릭 이동 (누르고 있으면 커서를 따라감), 왼쪽 클릭 렌치' : '마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합';
     const keys = `<div class="actions control-scheme"><span>이동 방식</span>${scheme('keys', '키보드 이동 (WASD)')}${scheme('mouse', '마우스 이동 (우클릭)')}</div><p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(byMouse ? mouseBindings : defaultBindings).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">${mouseNote}<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
-    const onRun = !onTitle && !!game.s.run, current = settingsTab === 'run' && !onRun ? 'general' : settingsTab;
+    // A touch screen moves with its on-screen pad: there are no keys to change, so it has no keys tab.
+    const onRun = !onTitle && !!game.s.run, current = (settingsTab === 'run' && !onRun) || (settingsTab === 'keys' && isTouch) ? 'general' : settingsTab;
     const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -648,7 +672,7 @@ try {
   }
   /** The region drawn like a world map: each stop is a small view of its own art, joined by the road walked in order. */
   function mapPanel() {
-    const s = game.s, rooms = data.slice.rooms, node = s.run?.node ?? -1;
+    const s = game.s, rooms = game.rooms, node = s.run?.node ?? -1;
     const picked = mapPick ?? (s.run ? rooms[node]?.id : 'town');
     const stops = [{ id: 'town', icon: 'home', label: HOME_NAME, state: s.run ? 'done' : 'current', kind: 'town' },
       ...rooms.map((room, i) => ({ id: room.id, icon: room.kind === 'shop' ? 'coin' : room.boss ? 'crown' : i + 1, label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
@@ -656,7 +680,7 @@ try {
     const detail = room
       ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
       : `<strong>${ico('home')} ${HOME_NAME}</strong><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked)}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked, { chapter: game.chapter.id, factoryOpen: chapterOpen(data.slice, s.profile, 'silent-factory') })}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
   }
   /** Where each scrolled box in `root` stands, keyed by its tag, classes and place among boxes like it. */
   function scrollPlaces(root) {
@@ -689,7 +713,7 @@ try {
     if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 장착 속성·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'controls') html = controlsPanel();
-    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-give"><span>자유 톱니 ${ico('gear')} ${Math.floor(game.s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}${s.run ? `<span>동전 ${ico('coin')} ${s.run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}` : ''}</div><div class="debug-rooms">${data.slice.rooms.map((room, i) => `<button class="${s.run?.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div><p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
+    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-give"><span>자유 톱니 ${ico('gear')} ${Math.floor(game.s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}${s.run ? `<span>동전 ${ico('coin')} ${s.run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}` : ''}</div>${chapterList(data.slice).map(chapter => `<p class="debug-chapter">${chapter.number}장 · ${escapeHTML(chapter.name)}</p><div class="debug-rooms">${chapterRooms(data.slice, chapter.id).map((room, i) => `<button class="${s.run && game.chapter.id === chapter.id && s.run.node === i ? 'current' : ''}" data-action="debug-room" data-room="${i}" data-chapter="${chapter.id}"><small>${String(i + 1).padStart(2, '0')}</small>${room.name}</button>`).join('')}</div>`).join('')}<p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
@@ -705,10 +729,12 @@ try {
       html = panel((brass ? `<h2>일어나, 이번엔 네 박자로.</h2><p>멈춘 태엽을 한 바퀴씩 감아 줍니다.<br>머릿속에서 북을 치던 회로는 다시 넣지 않습니다.</p>` : `<h2>이제 무엇을 주울지는 네가 정해.</h2><p>로코의 집게에 꽂힌 명령 회로를 뽑아냅니다.<br>모으는 손은 남고, 고르는 명령만 사라집니다.</p>`)
         + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
     }
-    if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p><h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.</p><div class="result-stats"><span><b>${data.slice.rooms.length} / ${data.slice.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
+    if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p>${game.chapter.id === FIRST_CHAPTER
+      ? '<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다. 원정 창에서 2장을 고를 수 있습니다.</p>'
+      : '<h2>2장 · 무음공장 끝</h2><p>정형실의 틀을 멈췄습니다.<br>지금 2장은 시험판입니다. 공장의 적과 보스는 만드는 중이라 1장의 적이 대신 나옵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;
-      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${data.slice.rooms.length}</b>${escapeHTML((data.slice.rooms[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>장착 속성·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${chapterRooms(data.slice, result.chapter).length}</b>${escapeHTML((chapterRooms(data.slice, result.chapter)[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
@@ -945,11 +971,12 @@ try {
       if (name === 'debug-gears') game.s.profile.freeGears += amount; else if (game.s.run) game.s.run.coins += amount;
       game.save(); updateHUD(); renderOverlay(true); return;
     }
-    if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room)); resume(); }
+    if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room), d.chapter || FIRST_CHAPTER); resume(); }
     if (name === 'intro') game.beginIntro();
     if (name === 'register') game.register();
     if (name === 'close-panel') game.closePanel();
-    if (name === 'depart' && game.depart(d.id)) { resume(); renderOverlay(true); updateHUD(); return; }
+    if (name === 'depart-chapter') { departChapter = d.id; renderOverlay(true); return; }
+    if (name === 'depart' && game.depart(d.id, d.chapter || FIRST_CHAPTER)) { departChapter = null; resume(); renderOverlay(true); updateHUD(); return; }
     let bought = null;
     if (name === 'element') { game.toggleElement(d.id); sfx('equip'); }
     if (name === 'buy-element') {
@@ -1195,7 +1222,7 @@ try {
     if (!screen && game.tutorial.takeCall()) moruCalls();
     const boss = game.room?.boss;
     // After Brass, F2 says what the title means: the spring stays, but who winds it changes.
-    if (!screen && game.s.mode === 'complete' && !game.s.profile.bossTalks?.includes('ending')) playEnding();
+    if (!screen && game.s.mode === 'complete' && game.chapter.id === FIRST_CHAPTER && !game.s.profile.bossTalks?.includes('ending')) playEnding();
     if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0)) meetBoss(boss);
     // After the waking lines, before the first step: how F2 is moved (touch has one way and skips it).
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening').then(() => { if (!isTouch && game.s.mode === 'intro') { pause('controls'); $('overlay').querySelector('[data-action="controls-start"]')?.focus({ preventScroll: true }); } });
@@ -1230,7 +1257,7 @@ try {
     playMusic(); wipeIn();
     // The hour of the place: bright street, the night market and everything after it at dusk, Brass's square at night.
     const roomNow = game.s.run && ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'].includes(game.s.mode) ? game.s.run.node : -1;
-    renderer.mood = roomNow < 0 ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
+    renderer.mood = roomNow < 0 || game.chapter.id !== FIRST_CHAPTER ? 'day' : game.room?.kind === 'regionBoss' || roomNow === REST_INDEX ? 'night' : roomNow > REST_INDEX ? 'dusk' : 'day';
     mapArt.prepareNextFloor();
     const controlsLabel = mouseMove() ? '우클릭 이동, 마우스 조준, 좌클릭 공격, QWER 기술, Space 회피' : 'WASD 이동, 마우스 조준, 좌클릭 공격, Space 회피';
     if ($('game').getAttribute('aria-label') !== controlsLabel) $('game').setAttribute('aria-label', controlsLabel);

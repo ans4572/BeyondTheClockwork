@@ -1,4 +1,5 @@
-import { createProfile, permanentStats, buyRank, refundAll } from './progression.js';
+import { createProfile, permanentStats, buyRank, refundAll, enterChapter } from './progression.js';
+import { chapterOf, chapterRooms, chapterOpen, clearChapter, chapterRecords, FIRST_CHAPTER } from './chapters.js';
 import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf, roomPlace } from './map-geometry.js';
 // How far back from the spawn point the player starts, walking in from the map's edge.
@@ -64,10 +65,14 @@ export class Game {
     for (const id of RUN_STATS) stats[id] = (stats[id] || 0) + this.upgradeAmount(id);
     return stats;
   }
+  /** The chapter of the expedition under way (chapter 1 outside one). */
+  get chapter() { return chapterOf(this.config, this.s.run?.chapter); }
+  /** The stops of that chapter, in order. */
+  get rooms() { return chapterRooms(this.config, this.s.run?.chapter); }
   /** The room the run stands in, with the waves this run dealt for it (a run saved before dealing keeps the designed ones). */
   get room() {
     const run = this.s.run; if (!run) return null;
-    const base = this.config.rooms[run.node], dealt = run.plan?.[run.node];
+    const base = this.rooms[run.node], dealt = run.plan?.[run.node];
     if (!base.waves || !dealt?.waves) return base;
     if (this.dealtRoom?.base !== base || this.dealtRoom.dealt !== dealt) this.dealtRoom = { base, dealt, room: { ...base, waves: dealt.waves } };
     return this.dealtRoom.room;
@@ -138,9 +143,11 @@ export class Game {
     this.clearCombat(); this.s.run = null; this.s.result = null; this.s.profile.registered = false; this.resetPlayer(); this.s.mode = 'opening'; this.save(); return true;
   }
   /** Debug only: enter any stage directly, starting a run first if none is active. */
-  debugJump(node) {
-    if (!Number.isInteger(node) || !this.config.rooms[node]) return false;
-    if (!this.s.run) { this.clearCombat(); this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.startRun(); }
+  debugJump(node, chapter = FIRST_CHAPTER) {
+    if (!Number.isInteger(node) || !chapterRooms(this.config, chapter)[node]) return false;
+    // A jump into another chapter starts a fresh run there.
+    if (this.s.run && this.chapter.id !== chapter) { this.clearCombat(); this.s.run = null; }
+    if (!this.s.run) { this.clearCombat(); this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.startRun(undefined, undefined, chapter); }
     this.s.run.node = node; this.s.run.rewardChoices = []; this.enterNode(); return true;
   }
   register() {
@@ -225,26 +232,41 @@ export class Game {
   /** The expedition's difficulty (slice.json difficulty): a run saved before difficulties existed plays as the default. */
   get difficulty() {
     const rules = this.config.difficulty, id = this.s.run?.difficulty || rules?.default;
-    return rules?.levels.find(level => level.id === id) || { id: 'normal', scale: 1, loot: 1 };
+    const level = rules?.levels.find(level => level.id === id) || { id: 'normal', scale: 1, loot: 1 };
+    // A later chapter is harder and pays more at every difficulty (slice.json chapters[].scale and .loot).
+    const { scale = 1, loot = 1 } = this.s.run ? this.chapter : {};
+    return scale === 1 && loot === 1 ? level : { ...level, scale: level.scale * scale, loot: level.loot * loot };
   }
   /** Setting out from the town portal: the difficulty picked in the popup, remembered as the next one offered. */
-  depart(difficulty) {
+  depart(difficulty, chapter = FIRST_CHAPTER) {
     if (this.s.mode !== 'hub' || this.s.panel !== 'difficulty' || !this.config.difficulty?.levels.some(level => level.id === difficulty)) return false;
-    this.s.panel = null; this.s.profile.lastDifficulty = difficulty;
-    return this.startRun(undefined, difficulty);
+    if (chapterOf(this.config, chapter).id !== chapter || !chapterOpen(this.config, this.s.profile, chapter)) return false;
+    this.s.panel = null; this.s.profile.lastDifficulty = difficulty; this.s.profile.lastChapter = chapter;
+    return this.startRun(undefined, difficulty, chapter);
   }
-  startRun(seed = Date.now() >>> 0, difficulty = this.config.difficulty?.default) {
+  startRun(seed = Date.now() >>> 0, difficulty = this.config.difficulty?.default, chapter = FIRST_CHAPTER) {
     if (this.s.mode !== 'hub' || !this.s.profile.registered) return false;
     this.s.rng = seed || 1; this.s.profile.runs++;
     this.s.run = { id: `run-${this.s.profile.runs}-${seed}`, seed, node: 0, startedAt: this.s.time, elapsed: 0, coins: 0, slots: this.loadoutSlots, upgrades: {}, mods: [], skillMods: [], traits: [], clears: [], rewardChoices: [], shopBought: [], branches: [], damageTaken: 0, baseGears: 0, difficulty: difficulty || 'normal' };
+    if (chapter !== FIRST_CHAPTER) this.s.run.chapter = chapter;
+    enterChapter(this.s.profile, this.chapter.number || 1);
     // Generate the whole route once; resuming never rerolls layouts or encounters.
-    this.s.run.plan = this.config.rooms.map(room => ({ variant: room.variants ? Math.floor(this.random() * room.variants.length) : 0, layout: room.boss || room.kind === 'shop' ? 2 : Math.floor(this.random() * this.config.roomLayouts.length) }));
-    // Every run deals its own mix and formation for each fight, at the designed weight (see encounters.js).
-    dealRun(this.config.rooms, this.config.enemies, seed, this.config.eliteAffixes).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
+    this.s.run.plan = this.rooms.map(room => ({ variant: room.variants ? Math.floor(this.random() * room.variants.length) : 0, layout: room.boss || room.kind === 'shop' ? 2 : Math.floor(this.random() * this.config.roomLayouts.length) }));
+    // Every run deals its own mix and formation for each fight, at the designed weight (see encounters.js). A chapter
+    // may say from which stop elites carry a trait (chapters[].affixesFrom).
+    const affixes = this.config.eliteAffixes && this.chapter.affixesFrom ? { ...this.config.eliteAffixes, oneFrom: this.chapter.affixesFrom } : this.config.eliteAffixes;
+    dealRun(this.rooms, this.config.enemies, seed, affixes).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
     this.resetPlayer(); this.enterNode();
-    this.onRun('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element), difficulty: this.s.run.difficulty });
+    this.report('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element), difficulty: this.s.run.difficulty });
     return true;
   }
+  /**
+   * Play statistics go to the server for chapter 1 only for now: chapter 2 still borrows chapter 1's enemies and bosses,
+   * so its runs would only blur the clear board and the admin figures.
+   */
+  report(kind, event) { if (this.chapter.id === FIRST_CHAPTER) this.onRun(kind, event); }
+  /** The chapter's last boss is down: the run ends in the chapter's ending. */
+  finishChapter() { this.s.mode = 'complete'; this.s.profile.wins++; clearChapter(this.s.profile, this.chapter.id); }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
     const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
@@ -276,7 +298,7 @@ export class Game {
       const rules = this.config.hazards;
       if (rules && map?.walkable && map.size) {
         // Which fight of the run this is: the first three ease the furniture in (slice.json hazards.ramp).
-        const step = this.config.rooms.slice(0, this.s.run.node).filter(r => r.waves).length;
+        const step = this.rooms.slice(0, this.s.run.node).filter(r => r.waves).length;
         plan.hazards ??= dealHazards(map, rules, (this.s.run.seed * 31 + this.s.run.node * 7919) >>> 0, step, this.difficulty.scale);
         this.s.hazards = plan.hazards.map(h => ({ ...h }));
       }
@@ -1017,7 +1039,7 @@ export class Game {
       if (boss === 'captainBrass') this.s.profile.blueprints.push('patrolBlueprint');
     }
     // The last boss of the slice ends the run here: the story takes over instead of a reward pick.
-    if (this.s.run.node === this.config.rooms.length - 1) { this.s.mode = 'complete'; this.s.profile.wins++; }
+    if (this.s.run.node === this.rooms.length - 1) this.finishChapter();
     else this.offerRewards();
     this.save(); return true;
   }
@@ -1056,10 +1078,10 @@ export class Game {
     let bonus = 0;
     if (run.clears.length && !profile.firstReturnClaimed) { bonus = economy.firstReturnBonus; profile.freeGears += bonus; profile.firstReturnClaimed = true; }
     if (reason === 'defeat') this.sense({ kind: 'fail' });
-    this.s.result = { reason, difficulty: run.difficulty || 'normal', node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
+    this.s.result = { reason, chapter: this.chapter.id, difficulty: run.difficulty || 'normal', node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
-    noteRecord(profile.records ??= {}, this.s.result);
-    this.onRun('runEnd', { run: run.id, difficulty: run.difficulty || 'normal', elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
+    noteRecord(chapterRecords(profile, this.chapter.id), this.s.result);
+    this.report('runEnd', { run: run.id, difficulty: run.difficulty || 'normal', elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
     this.clearCombat(); this.s.run = null; this.resetPlayer(); this.s.mode = 'returned'; this.save(); return true;
   }
   /**
