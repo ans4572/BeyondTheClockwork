@@ -184,7 +184,7 @@ export class CanvasRenderer {
     return badges;
   }
   /**
-   * One room hazard: its painted sprite (art/smile-street/hazards), with its state drawn over it in code: a plate's
+   * One room hazard: its painted sprite (art/chapters/1-smile-street/hazards), with its state drawn over it in code: a plate's
    * warning and heat, a crate's blinking fuse, the saw running along its groove, a spent music box.
    */
   drawHazard(h) {

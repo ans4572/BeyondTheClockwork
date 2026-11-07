@@ -892,7 +892,7 @@
   },
   "villages": {
     "court": {
-      "background": "/art/smile-street/maps/village-court/background-esr2x-q92.webp",
+      "background": "/art/chapters/1-smile-street/maps/00-village-court/background-esr2x-q92.webp",
       "size": [
         48,
         32
@@ -1973,7 +1973,7 @@
           "minValue": 0.3
         }
       },
-      "mask": "/art/smile-street/maps/village-court/mask-v10.png",
+      "mask": "/art/chapters/1-smile-street/maps/00-village-court/mask-v10.png",
       "overhead": [
         {
           "baseY": 20.4,
@@ -2068,7 +2068,7 @@
       ]
     },
     "market": {
-      "background": "/art/smile-street/maps/night-market/background-q92.webp",
+      "background": "/art/chapters/1-smile-street/maps/06-night-market/background-q92.webp",
       "bodyRadius": 0.5,
       "size": [
         38.4,
@@ -2267,7 +2267,7 @@
         ]
       ],
       "crowd": "market",
-      "mask": "/art/smile-street/maps/night-market/mask-compact.png",
+      "mask": "/art/chapters/1-smile-street/maps/06-night-market/mask-compact.png",
       "overhead": [],
       "scenery": [
         [
@@ -2308,8 +2308,8 @@
       "pixelScale": 2
     },
     "scrapyard": {
-      "background": "/art/smile-street/maps/scrapyard/background-q92.webp",
-      "mask": "/art/smile-street/maps/scrapyard/mask-v2.png",
+      "background": "/art/chapters/1-smile-street/maps/00-scrapyard/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/00-scrapyard/mask-v2.png",
       "size": [
         38.4,
         25.6
@@ -2424,8 +2424,8 @@
       "pixelScale": 2
     },
     "firstStep": {
-      "background": "/art/smile-street/maps/first-step-a/background-q92.webp",
-      "mask": "/art/smile-street/maps/first-step-a/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/01-first-step-plaza/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/01-first-step-plaza/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -2667,8 +2667,8 @@
       ]
     },
     "candyYard": {
-      "background": "/art/smile-street/maps/ribbon-alley-c/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-c/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/02-candy-cart-yard/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/02-candy-cart-yard/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -2839,8 +2839,8 @@
       ]
     },
     "repairRoad": {
-      "background": "/art/smile-street/maps/workshop-road-a/background-q92.webp",
-      "mask": "/art/smile-street/maps/workshop-road-a/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/03-toy-repair-road/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/03-toy-repair-road/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -2963,8 +2963,8 @@
       ]
     },
     "ribbonCross": {
-      "background": "/art/smile-street/maps/ribbon-alley-d/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-d/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/04-ribbon-crossing/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/04-ribbon-crossing/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -3163,8 +3163,8 @@
       ]
     },
     "lostFound": {
-      "background": "/art/smile-street/maps/lost-and-found/background-q92.webp",
-      "mask": "/art/smile-street/maps/lost-and-found/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/05-lost-and-found/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/05-lost-and-found/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -3350,8 +3350,8 @@
       "pixelScale": 2
     },
     "loadingYard": {
-      "background": "/art/smile-street/maps/workshop-road-c/background-q92.webp",
-      "mask": "/art/smile-street/maps/workshop-road-c/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/07-wind-up-loading-yard/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/07-wind-up-loading-yard/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -3486,8 +3486,8 @@
       ]
     },
     "fountainRing": {
-      "background": "/art/smile-street/maps/first-step-c/background-q92.webp",
-      "mask": "/art/smile-street/maps/first-step-c/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/08-fountain-ring/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/08-fountain-ring/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -3686,8 +3686,8 @@
       ]
     },
     "checkpoint": {
-      "background": "/art/smile-street/maps/parade-approach-c/background-q92.webp",
-      "mask": "/art/smile-street/maps/parade-approach-c/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/09-flag-checkpoint/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/09-flag-checkpoint/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -3910,8 +3910,8 @@
       ]
     },
     "sweetAlley": {
-      "background": "/art/smile-street/maps/ribbon-alley-a/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-a/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/10-sweet-alley/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/10-sweet-alley/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -4074,8 +4074,8 @@
       ]
     },
     "paradeYard": {
-      "background": "/art/smile-street/maps/parade-approach-d/background-q92.webp",
-      "mask": "/art/smile-street/maps/parade-approach-d/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/11-parade-yard/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/11-parade-yard/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -4242,8 +4242,8 @@
       ]
     },
     "marchGround": {
-      "background": "/art/smile-street/maps/march-gate/background-q92.webp",
-      "mask": "/art/smile-street/maps/march-gate/mask-v3.png",
+      "background": "/art/chapters/1-smile-street/maps/12-march-gate/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/12-march-gate/mask-v3.png",
       "size": [
         38.4,
         25.6
@@ -4380,8 +4380,8 @@
       "pixelScale": 2
     },
     "firstStepB": {
-      "background": "/art/smile-street/maps/first-step-a2/background-q92.webp",
-      "mask": "/art/smile-street/maps/first-step-a2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/01-first-step-plaza-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/01-first-step-plaza-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -4757,8 +4757,8 @@
       ]
     },
     "checkpointB": {
-      "background": "/art/smile-street/maps/parade-approach-c2/background-q92.webp",
-      "mask": "/art/smile-street/maps/parade-approach-c2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/09-flag-checkpoint-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/09-flag-checkpoint-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -5045,8 +5045,8 @@
       ]
     },
     "sweetAlleyB": {
-      "background": "/art/smile-street/maps/ribbon-alley-a2/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-a2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/10-sweet-alley-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/10-sweet-alley-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -5396,8 +5396,8 @@
       ]
     },
     "paradeYardB": {
-      "background": "/art/smile-street/maps/parade-approach-d2/background-q92.webp",
-      "mask": "/art/smile-street/maps/parade-approach-d2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/11-parade-yard-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/11-parade-yard-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -5664,8 +5664,8 @@
       ]
     },
     "fountainRingB": {
-      "background": "/art/smile-street/maps/first-step-c2/background-q92.webp",
-      "mask": "/art/smile-street/maps/first-step-c2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/08-fountain-ring-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/08-fountain-ring-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -6015,8 +6015,8 @@
       ]
     },
     "ribbonCrossB": {
-      "background": "/art/smile-street/maps/ribbon-alley-d2/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-d2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/04-ribbon-crossing-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/04-ribbon-crossing-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -6366,8 +6366,8 @@
       ]
     },
     "candyYardB": {
-      "background": "/art/smile-street/maps/ribbon-alley-c2/background-q92.webp",
-      "mask": "/art/smile-street/maps/ribbon-alley-c2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/02-candy-cart-yard-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/02-candy-cart-yard-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -6706,8 +6706,8 @@
       ]
     },
     "loadingYardB": {
-      "background": "/art/smile-street/maps/workshop-road-c2/background-q92.webp",
-      "mask": "/art/smile-street/maps/workshop-road-c2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/07-wind-up-loading-yard-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/07-wind-up-loading-yard-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -7034,8 +7034,8 @@
       ]
     },
     "repairRoadB": {
-      "background": "/art/smile-street/maps/workshop-road-a2/background-q92.webp",
-      "mask": "/art/smile-street/maps/workshop-road-a2/mask-1x.png",
+      "background": "/art/chapters/1-smile-street/maps/03-toy-repair-road-b/background-q92.webp",
+      "mask": "/art/chapters/1-smile-street/maps/03-toy-repair-road-b/mask-1x.png",
       "size": [
         38.4,
         25.6
@@ -7504,7 +7504,7 @@
         "y": 16.8
       }
     ],
-    "dummyImage": "/art/smile-street/maps/scrapyard/training-dummy.png",
+    "dummyImage": "/art/chapters/1-smile-street/maps/00-scrapyard/training-dummy.png",
     "enemySpawns": [],
     "exit": {
       "polygon": [

@@ -245,6 +245,7 @@ try {
   const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet' };
   async function meetBoss(boss) {
     (game.s.profile.bossTalks ??= []).push(boss); game.save();
+    if (boss === 'captainBrass') new Image().src = TOWER_ART; // the ending scene shows it right after this fight
     game.s.paused = true; await talk(BOSS_TALKS[boss]); game.s.paused = false;
     bossCard(boss);
   }
@@ -260,14 +261,8 @@ try {
     await talk('ordenScene');
     scene.hidden = true; renderOverlay(true);
   }
-  function towerScene() {
-    const ticks = Array.from({ length: 12 }, (_, i) => `<rect x="-5" y="-150" width="10" height="${i % 3 ? 18 : 30}" fill="#2b3345" transform="rotate(${i * 30})"/>`).join('');
-    const stars = Array.from({ length: 40 }, (_, i) => `<rect x="${(i * 197) % 1120}" y="${(i * 89) % 300}" width="${i % 5 ? 3 : 5}" height="${i % 5 ? 3 : 5}" fill="#f6ecd2" opacity="${0.3 + (i % 4) * 0.15}"/>`).join('');
-    return `<svg viewBox="0 0 1120 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1120" height="640" fill="#141b2b"/>${stars}`
-      + `<g transform="translate(560 290)"><circle r="196" fill="#0e121a"/><circle r="172" fill="#e8c26a"/><circle r="160" fill="#f6ecd2"/>${ticks}<rect x="-5" y="-110" width="10" height="114" fill="#2b3345" transform="rotate(-20)"/><rect x="-4" y="-140" width="8" height="144" fill="#a92f2b" transform="rotate(118)"/><circle r="12" fill="#2b3345"/></g>`
-      + `<path d="M0 640V470h120v-40h80v40h70V380h60v-30h40v30h60v260zM1120 640V450h-110v-50h-70v50h-80V360h-50v-30h-40v30h-70v280z" fill="#0e121a"/>`
-      + `<path d="M260 640V520h600v120z" fill="#0e121a"/><rect x="260" y="514" width="600" height="10" fill="#c79a3e"/></svg><b>중앙시계탑 · 꼭대기</b>`;
-  }
+  const TOWER_ART = '/art/scenes/clocktower-summit/background-v2-q92.webp';
+  function towerScene() { return `<img src="${TOWER_ART}" alt=""><b>중앙시계탑 · 꼭대기</b>`; }
   /** The boss's name across the screen as the fight begins. */
   function bossCard(boss) {
     const info = data.combat.bosses.find(b => b.id === boss), card = $('boss-card');

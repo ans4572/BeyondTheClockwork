@@ -5,7 +5,7 @@
     "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
     "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
     "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/frost-shatter.png",
-    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+    "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
     "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
   ],
   "commonPrompt": "Use case: stylized-concept. Asset type: ONE static pixel-art GAME VFX FLOOR MARK for Beyond the Clockwork, cute wind-up toy-town roguelite.\nInput images are STYLE REFERENCES ONLY. Some effect references are sprite sheets showing many stages and ellipses: do NOT reproduce a sprite sheet, do NOT copy their perspective. Draw ONE mark only. Match deliberate hand-placed pixel clusters, restrained warm materials, top-left hard pixel highlights, thin one-logical-pixel NAVY #2b3345 edging where needed. Clean readable gameplay VFX, not a painted scene or UI button.\nCRITICAL VIEW: STRAIGHT ORTHOGRAPHIC TOP VIEW, a PERFECT CIRCLE with EQUAL horizontal and vertical diameter. NO isometric tilt, ellipse, foreshortening, perspective thickness or floor shadow. The game squashes the circle later. Mostly OPEN RING with TRANSPARENT EMPTY CENTRE and a few inward marks, so floor/characters show through. Do not fill the circle interior.\nPixel art on the specified logical grid, exact square blocks in final PNG. Hard flat pixel clusters and stepped curves, no antialiasing, smoothing, half opacity, blur, glow halo, bloom, gradients, texture noise or shadow. All visible pixels FULLY OPAQUE; all empty area true ALPHA ZERO. Centered circle inside square canvas, at least2logicalpixelsclear margin. Keep all glints and small features inside the main circle's outer extent so its bounding box stays square.\nNo text, letters, numbers, runes, characters, icons floating above the ring, background tile, plate behind the whole circle, ground, scenery, watermarks or animation. ONE separate cohesive mark, not a contact sheet or multiple frames.",
@@ -20,7 +20,7 @@
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
       ],
       "palette": [
@@ -45,7 +45,7 @@
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/frost-shatter.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
       ],
       "palette": [
@@ -71,7 +71,7 @@
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/electric-hit.png",
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
       ],
       "palette": [
@@ -117,7 +117,7 @@
       "scale": 8,
       "refs": [
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png",
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png"
       ],
       "palette": [
@@ -137,7 +137,7 @@
       "grid": 32,
       "scale": 8,
       "refs": [
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/ground-shockwave.png"
       ],
@@ -160,7 +160,7 @@
       "grid": 24,
       "scale": 16,
       "refs": [
-        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/smile-street/hazards/plate-v1.png",
+        "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/chapters/1-smile-street/hazards/plate-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/ui/icons/action-wrench-v1.png",
         "C:/Users/ans45/OneDrive/바탕 화면/Beyond the Clockwork/art/fx/drum-beat.png"
       ],

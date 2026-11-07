@@ -1,0 +1,25 @@
+Clocktower summit — story scene background (plays after Captain Brass falls, before "To be continued")
+Output: 1536x1024 opaque PNG, full-bleed. Save as background-v1-raw.png (original) and background-v1.png.
+Reference images: art/ui/key-art/key-art-v1.png (style, the cream-and-gold clock tower at upper left), art/world-map/clockwork-island-v3.png (the same Central Clock Tower seen from outside).
+
+Use case: story-scene backdrop for a dialogue. Two character portraits are laid over it later (left and right), plus a dialogue box along the bottom. Draw NO characters, NO people, NO dolls.
+
+Scene: the topmost chamber of the Central Clock Tower of a floating clockwork toy island, at night. We stand INSIDE the tower, looking out through the back of an enormous round clock face that fills the upper-middle of the picture. The dial glass is pale cream and softly lit from outside by the moon, so the twelve hour marks and the two big hands show as dark silhouettes from behind (no numerals, no letters). The hands point to about 11:58 — almost midnight. Gold brass rim, rivets, a thick central axle running back into the room.
+
+In front of the dial: the clock's working heart — large interlocking brass gears, a slow pendulum, and a tall tuning-fork-shaped "conductor's" instrument on a small round dais at center. From it, thin glowing CYAN signal wires run out through gaps in the stonework toward the town (the same cyan signal wires as on the world map). The wires are the only cold bright color in the room.
+
+Through two tall arched side windows (left and right of the dial) we see the island at night far below: Smile Street's pink roofs with a few warm lights going out one by one, festival banners hanging still, and in the right window, beyond the hills, the dark grey bulk of the Silent Factory with tall chimneys and every window unlit — silent and asleep.
+
+Mood: quiet, cold, orderly, a little ominous. Not horror. A tidy, too-perfect control room watching over a cheerful town.
+Palette: deep night navy (#141b2b) and slate (#2b3345) for the room and sky; cream (#f6ecd2) dial glow; antique gold brass (#c79a3e, #e8c26a); a single accent of cyan wire glow; a small deep red (#a92f2b) only on the minute hand tip.
+Style: the game's hand-painted cel-shaded look — clean dark outlines, soft painted shading, toy-like rounded shapes, same as the key art and world map. Not photoreal, not pixel art, not grimdark.
+
+Composition rules (important):
+- Front-facing, symmetrical, eye level, slightly low camera looking up at the dial.
+- Keep the clock face and the dais in the center 60% of the width.
+- Lower-left and lower-right corners (each about 30% wide, lower 55% tall): calm, darker, low-detail stone floor and wall — portraits stand there.
+- Bottom 28%: simple dark floor with a gold-trimmed edge, no small detail — the dialogue box covers it.
+- Top-left corner (about 25% x 12%): plain dark wall — a place-name label sits there.
+- Top and bottom 8% may be cropped on wide screens; nothing important there.
+
+Do NOT include: any text, numerals, letters, logos, signatures, UI, frames, borders, characters, faces, dolls, birds, lens flares, watermarks.

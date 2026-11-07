@@ -64,4 +64,4 @@ export const DEBRIS_ART = ['debris-gear', 'debris-bolt', 'debris-spring', 'debri
 export const BOSS_UNWIND_ART = { collectorRoco: 'art/fx/boss-circuit-v1.png', captainBrass: 'art/fx/boss-windup-key-v1.png' };
 export const FX_FILES = [...Object.values(FX).map(fx => fx.sheet), NOTE_ART, ...Object.values(MARKS), ...Object.values(LOOT_ART), ...DEBRIS_ART, ...Object.values(BOSS_UNWIND_ART)];
 /** The room hazards' painted sprites (src/engine/hazards.js places them; drawHazard adds their states). */
-export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', musicbox: 'musicbox', plate: 'plate', saw: 'saw', fenceAcross: 'fence-across', fenceUpright: 'fence-upright' }).map(([key, file]) => [key, `art/smile-street/hazards/${file}-v1.png`]));
+export const HAZARD_ART = Object.fromEntries(Object.entries({ crate: 'crate', musicbox: 'musicbox', plate: 'plate', saw: 'saw', fenceAcross: 'fence-across', fenceUpright: 'fence-upright' }).map(([key, file]) => [key, `art/chapters/1-smile-street/hazards/${file}-v1.png`]));

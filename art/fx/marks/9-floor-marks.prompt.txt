@@ -6,7 +6,7 @@ Draw 8 FLOOR MARKS for Beyond the Clockwork, a cute wind-up toy-town roguelite s
 
 STYLE REFERENCES (match these exactly)
 - art\fx\ground-shockwave.png, art\fx\drum-beat.png, art\fx\electric-hit.png, art\fx\frost-shatter.png: the game's effect art.
-- art\smile-street\hazards\plate-v1.png and art\ui\icons\action-wrench-v1.png: the outline and shading.
+- art\chapters\1-smile-street\hazards\plate-v1.png and art\ui\icons\action-wrench-v1.png: the outline and shading.
 Crisp hand-placed pixel clusters, 1 grid pixel dark navy outline (#2b3345) where a shape needs edging, top-left light.
 Element colours: fire #ef8a61 / #e8742f, ice #79cbd1 / #66bde8, lightning #e9bd59 / #ffe086, danger red #d8423c, brass #c79a3e, cream #fff4d6.
 

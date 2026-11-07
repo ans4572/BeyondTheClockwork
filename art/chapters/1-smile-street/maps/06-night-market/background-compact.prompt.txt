@@ -7,9 +7,9 @@ Create ONE static production game environment background for Beyond the Clockwor
 REFERENCES
 - WORLD MAP: art\world-map\smile-street-road-reference.png
   This stop sits where a side road climbs north between the two pink-tiled plazas. Take its look from there: cream stone road with pink-tiled plazas, pastel shop fronts with striped awnings and wind-up keys on the roofs, smile-face banners, brass lamps, round planters.
-- CURRENT ROOM: art\smile-street\maps\night-market\background-v2.webp
+- CURRENT ROOM: art\chapters\1-smile-street\maps\06-night-market\background-v2.webp
   Keep its style, materials, pixel density, object scale, camera and market mood, and REDESIGN IT SMALLER to match the new compact rooms.
-SAVE: art\smile-street\maps\night-market\background-compact-v1.png
+SAVE: art\chapters\1-smile-street\maps\06-night-market\background-compact-v1.png
 
 RENDERING AND SCALE
 - Landscape 3:2, OUTPUT 2304x1536 pixels. Opaque full-bleed background.

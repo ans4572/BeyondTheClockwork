@@ -7,11 +7,11 @@ Create ONE static production game environment background for Beyond the Clockwor
 REFERENCES
 - WORLD MAP: art\world-map\clockwork-island.webp
   The scrapyard is painted there at the upper left, just behind Moru's repair shop: a sunken pit of purple-grey rock and packed earth, a big copper pipe coming out of the cliff and dumping into a steel chute with yellow-and-black hazard stripes, heaps of broken gears and a cracked grey ball, a rope fence on brass posts, a wire net. Take the place, its props and its mood from there.
-- CURRENT MAP: art\smile-street\maps\scrapyard\background-v1.png
+- CURRENT MAP: art\chapters\1-smile-street\maps\00-scrapyard\background-v1.png
   The tutorial's current scene. Keep its rendering style, camera and the way the open floor works; redesign the place to match the world map.
-- QUALITY TARGET: art\smile-street\maps\first-step-a\background-compact-v1.png
+- QUALITY TARGET: art\chapters\1-smile-street\maps\01-first-step-plaza\background-compact-v1.png
   Match this street map's rendering quality, pixel density and object scale: same size doors, crates, lanterns and paving stones in pixels.
-SAVE: art\smile-street\maps\scrapyard\background-v2.png
+SAVE: art\chapters\1-smile-street\maps\00-scrapyard\background-v2.png
 
 OUTPUT SIZE: EXACTLY 1792x1024 pixels (landscape 7:4), opaque full-bleed, drawn natively so one picture pixel is one screen pixel. If the tool cannot return 1792x1024, return 1536x1024 instead and say so. Never upscale.
 

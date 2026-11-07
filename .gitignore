@@ -14,12 +14,12 @@ art/mob-concepts/
 art/status-icon-concepts/
 art/player-f2/fusion-concepts/
 art/player-f2/state-concepts/
-art/smile-street/boss-pose-concepts/
-art/smile-street/boss-pixellab-concepts/
-art/smile-street/mob-pixellab-concepts/
-art/smile-street/concepts/
-art/smile-street/map-concepts/*
-!art/smile-street/map-concepts/navigation-proposals.json
+art/chapters/1-smile-street/boss-pose-concepts/
+art/chapters/1-smile-street/boss-pixellab-concepts/
+art/chapters/1-smile-street/mob-pixellab-concepts/
+art/chapters/1-smile-street/concepts/
+art/chapters/1-smile-street/map-concepts/*
+!art/chapters/1-smile-street/map-concepts/navigation-proposals.json
 art/**/background-wide-v*
 art/**/background-v1*
 art/**/*.zip
@@ -31,4 +31,6 @@ art/world-map/clockwork-island-v*.png
 tmp/
 # Full-size painted map markers; the game uses the small .webp beside them.
 art/world-map/icons/*-v*.png
-art/smile-street/maps/scrapyard/background-v2.png
+art/chapters/1-smile-street/maps/00-scrapyard/background-v2.png
+art/scenes/**/background-v*.png
+art/chapters/*/maps/**/background-v*.png

@@ -10,7 +10,7 @@ The characters and maps stay pixel art; only these UI icons become smooth.
 REFERENCES
 - art\ui\icons\gear-v1.png, coin-v1.png, map-v1.png, settings-v1.png, fullscreen-v1.png, fullscreen-exit-v1.png:
   the current pixel versions. Keep each one's idea and silhouette; redraw it smoothly.
-- art\smile-street\maps\village-court\background-wide-v7.png: the game's painted town. Take its warm brass, cream and
+- art\chapters\1-smile-street\maps\00-village-court\background-wide-v7.png: the game's painted town. Take its warm brass, cream and
   crimson materials and soft top-left sunlight from here.
 Palette: navy ink #2b3345 for outlines and line icons, polished brass and gold (#d9a441, #f3cd6a highlight, #9a6a24 shade),
 warm cream #f6ecd2, a touch of crimson #c8463c. The buttons behind them are cream #f6ecd2 with a navy edge.
