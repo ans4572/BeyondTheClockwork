@@ -40,6 +40,8 @@ export class Game {
     this.onSave = onSave;
     /** Told when an expedition sets out and when it comes back (play statistics, src/ui/stats-report.js). */
     this.onRun = () => {};
+    /** Chapters still being made (slice.json chapters[].preview) can be set out for: on for the local dev server only. */
+    this.previews = false;
     // Hits the screen should feel (stop, shake, sound). The browser drains it; the rules never wait on it.
     this.feel = [];
     this.tutorial = new Tutorial(this);
@@ -240,7 +242,7 @@ export class Game {
   /** Setting out from the town portal: the difficulty picked in the popup, remembered as the next one offered. */
   depart(difficulty, chapter = FIRST_CHAPTER) {
     if (this.s.mode !== 'hub' || this.s.panel !== 'difficulty' || !this.config.difficulty?.levels.some(level => level.id === difficulty)) return false;
-    if (chapterOf(this.config, chapter).id !== chapter || !chapterOpen(this.config, this.s.profile, chapter)) return false;
+    if (chapterOf(this.config, chapter).id !== chapter || !chapterOpen(this.config, this.s.profile, chapter, this.previews)) return false;
     this.s.panel = null; this.s.profile.lastDifficulty = difficulty; this.s.profile.lastChapter = chapter;
     return this.startRun(undefined, difficulty, chapter);
   }

@@ -20,8 +20,16 @@ export function chapterCleared(profile, id) {
   if (profile?.cleared?.includes(id)) return true;
   return id === FIRST_CHAPTER && ((profile?.wins || 0) > 0 || !!profile?.bossTalks?.includes('ending'));
 }
-/** A chapter opens once the one it follows (chapters[].after) is beaten. */
-export const chapterOpen = (slice, profile, id) => { const after = chapterOf(slice, id).after; return !after || chapterCleared(profile, after); };
+/**
+ * A chapter still being made (chapters[].preview) is shown only where previews are on (the local dev server, main.js);
+ * everywhere else the game has chapter 1 alone.
+ */
+export const chapterShown = (slice, id, previews = false) => previews || !chapterOf(slice, id).preview;
+/** A chapter opens once the one it follows (chapters[].after) is beaten, and only if it is shown. */
+export const chapterOpen = (slice, profile, id, previews = false) => {
+  const after = chapterOf(slice, id).after;
+  return chapterShown(slice, id, previews) && (!after || chapterCleared(profile, after));
+};
 
 /** Marks a chapter beaten in the save. */
 export function clearChapter(profile, id) {

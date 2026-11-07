@@ -1074,6 +1074,7 @@
       "number": 2,
       "name": "무음공장",
       "after": "smile-street",
+      "preview": true,
       "description": "불량 판정을 받은 인형이 생각을 지우러 실려 가는 공장.",
       "note": "Chapter 2 is playable end to end on chapter 1 enemies and bosses (Roco at the inspection room, Brass at the forming hall) until its own are made. scale multiplies every difficulty's enemy health, attack and furniture; loot multiplies its pay. affixesFrom: elites carry a trait from this stop on; merchantAfterRoom: the travelling merchant waits after this stop.",
       "scale": 1.2,

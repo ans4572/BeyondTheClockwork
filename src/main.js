@@ -21,7 +21,7 @@ import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
 import { browserReporter, mailbox, fetchRecords, PING_SECONDS } from './ui/stats-report.js';
 import { mergeMine, formatClock } from './engine/records.js';
-import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
+import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, NICKNAME_MAX } from './engine/nickname.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
@@ -96,6 +96,8 @@ try {
     try { localStorage.setItem(SAVE_KEY, encodeSave(state)); }
     catch { storageError = '브라우저 저장 공간을 사용할 수 없습니다. 설정의 이동 코드로 다른 기기에 옮겨 두세요.'; }
   });
+  // Chapter 2 is still being made: only the local dev server (F9's debug host) can set out for it.
+  game.previews = DEBUG_ALLOWED;
   // The game is drawn in full detail off screen, then set on a 640-pixel grid (see CanvasRenderer).
   const detail = document.createElement('canvas');
   const renderer = new CanvasRenderer(detail, game, { view: $('game'), letters: $('letters') });
@@ -536,23 +538,25 @@ try {
   /** The chapter the departure popup shows: the one last picked there, else the last one set out for, if it is open. */
   function shownChapter() {
     const profile = game.s.profile, wanted = departChapter || profile.lastChapter || FIRST_CHAPTER;
-    return chapterOpen(data.slice, profile, wanted) ? chapterOf(data.slice, wanted).id : FIRST_CHAPTER;
+    return chapterOpen(data.slice, profile, wanted, game.previews) ? chapterOf(data.slice, wanted).id : FIRST_CHAPTER;
   }
   /** One tab per chapter above the difficulty cards; a chapter not open yet says which one opens it. */
   function chapterTabs(current) {
-    const list = chapterList(data.slice);
+    const list = shownChapters();
     if (list.length < 2) return '';
     const tabs = list.map(chapter => {
-      const open = chapterOpen(data.slice, game.s.profile, chapter.id), on = chapter.id === current, done = chapterCleared(game.s.profile, chapter.id);
+      const open = chapterOpen(data.slice, game.s.profile, chapter.id, game.previews), on = chapter.id === current, done = chapterCleared(game.s.profile, chapter.id);
       const label = `<small>${chapter.number}장</small>${escapeHTML(chapter.name)}${done ? ` ${ico('crown')}` : open ? '' : ` ${ico('lock')}`}`;
       const why = open ? '' : `${chapterOf(data.slice, chapter.after).name}을(를) 끝내면 열립니다`;
       return button(label, 'depart-chapter', `data-id="${chapter.id}" aria-pressed="${on}"${open ? '' : ` disabled title="${why}"`}`, on ? 'tab on chapter-tab' : 'tab chapter-tab');
     }).join('');
     return `<div class="codex-tabs chapter-tabs" role="group" aria-label="장 고르기">${tabs}</div>`;
   }
+  /** The chapters this copy of the game shows (one still being made only on the local dev server). */
+  const shownChapters = () => chapterList(data.slice).filter(chapter => chapterShown(data.slice, chapter.id, game.previews));
   function difficultyPanel() {
     askRecords();
-    const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
+    const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = shownChapters().length > 1;
     const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
     const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
@@ -680,7 +684,7 @@ try {
     const detail = room
       ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
       : `<strong>${ico('home')} ${HOME_NAME}</strong><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked, { chapter: game.chapter.id, factoryOpen: chapterOpen(data.slice, s.profile, 'silent-factory') })}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked, { chapter: game.chapter.id, factoryOpen: chapterOpen(data.slice, s.profile, 'silent-factory', game.previews) })}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
   }
   /** Where each scrolled box in `root` stands, keyed by its tag, classes and place among boxes like it. */
   function scrollPlaces(root) {
@@ -730,7 +734,7 @@ try {
         + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
     }
     if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p>${game.chapter.id === FIRST_CHAPTER
-      ? '<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다. 원정 창에서 2장을 고를 수 있습니다.</p>'
+      ? `<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.${shownChapters().length > 1 ? ' 원정 창에서 2장을 고를 수 있습니다.' : ''}</p>`
       : '<h2>2장 · 무음공장 끝</h2><p>정형실의 틀을 멈췄습니다.<br>지금 2장은 시험판입니다. 공장의 적과 보스는 만드는 중이라 1장의 적이 대신 나옵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;

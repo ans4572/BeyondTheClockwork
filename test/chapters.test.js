@@ -9,7 +9,7 @@ import { chapterOpen, chapterCleared, chapterRooms } from '../src/engine/chapter
 const load = async name => JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'));
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice', 'maps'].map(async name => [name, await load(name)]))));
 const FACTORY = 'silent-factory';
-const atPortal = (edit = () => {}) => { const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.s.panel = 'difficulty'; edit(g.s.profile); return g; };
+const atPortal = (edit = () => {}, previews = true) => { const g = new Game(data); g.previews = previews; g.s.profile.registered = true; g.s.mode = 'hub'; g.s.panel = 'difficulty'; edit(g.s.profile); return g; };
 const reload = g => new Game(data, decodeSave(encodeSave(g.s), data));
 
 test('chapter 2 has its own twelve stops: fights, the inspection room, a rest stop and the forming hall', () => {
@@ -21,11 +21,12 @@ test('chapter 2 has its own twelve stops: fights, the inspection room, a rest st
 
 test('chapter 2 opens once chapter 1 is beaten, and a save from before chapters that has a win counts as beaten', () => {
   const fresh = atPortal();
-  assert.equal(chapterOpen(data.slice, fresh.s.profile, FACTORY), false);
+  assert.equal(chapterOpen(data.slice, fresh.s.profile, FACTORY, true), false);
   assert.equal(fresh.depart('normal', FACTORY), false, 'locked');
   assert.equal(fresh.s.run, null);
   const old = atPortal(p => { p.wins = 1; delete p.cleared; });
   assert.ok(chapterCleared(old.s.profile, 'smile-street'));
+  assert.ok(chapterOpen(data.slice, old.s.profile, FACTORY, true));
   assert.ok(old.depart('normal', FACTORY));
   assert.equal(old.s.run.chapter, FACTORY);
   assert.equal(old.room.id, 'factory-01');
@@ -65,4 +66,12 @@ test('a chapter 1 run is unchanged: no chapter on the run, records where they we
   assert.equal(g.s.run.chapter, undefined); assert.equal(g.room.id, 'stop-02');
   g.returnToHub('abandon');
   assert.equal(g.s.profile.records.easy.furthest, 1);
+});
+
+test('chapter 2 is still a preview: without previews it stays shut even after chapter 1 is beaten', () => {
+  const live = atPortal(p => { p.cleared = ['smile-street']; }, false);
+  assert.equal(chapterOpen(data.slice, live.s.profile, FACTORY), false);
+  assert.equal(live.depart('normal', FACTORY), false);
+  assert.equal(live.s.run, null);
+  assert.ok(chapterOpen(data.slice, live.s.profile, FACTORY, true), 'open on the dev server');
 });
