@@ -332,11 +332,11 @@
       "name": "물대포",
       "cooldown": 5,
       "hits": 3,
-      "damagePerHit": 19,
-      "totalDirectDamage": 57,
+      "damagePerHit": 20,
+      "totalDirectDamage": 60,
       "range": 6,
       "radius": 0,
-      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 19, 가까이서 셋 다 맞으면 57); 발마다 일반 적 0.25 밀침; 젖음"
+      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 20, 가까이서 셋 다 맞으면 60); 발마다 일반 적 0.25 밀침; 젖음"
     },
     {
       "id": "hydroJet",
@@ -709,7 +709,7 @@
     },
     {
       "id": "wet",
-      "duration": 4,
+      "duration": 6,
       "attackCut": 0.2
     }
   ],
@@ -748,7 +748,7 @@
       "id": "directorPress",
       "name": "총감독 프레스",
       "kind": "regionBoss",
-      "hp": 10000,
+      "hp": 9000,
       "damage": 29,
       "minimumTell": 0.8,
       "region": "silentFactory",

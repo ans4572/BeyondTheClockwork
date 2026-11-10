@@ -99,8 +99,8 @@ test('water cannon: three narrow-spread shots pass through every body, soak them
   const shot = cast(g, 'waterCannon', { x: 14, y: 8 });
   assert.equal(shot.projectiles.length, 3);
   step(g, 0.6);
-  assert.equal(lost(a), 57, 'close by, all three shots land (3 × 19)');
-  assert.ok(lost(b) >= 19 && lost(b) < 57, `further on, the fan has opened: ${lost(b)}`);
+  assert.equal(lost(a), 60, 'close by, all three shots land (3 × 20)');
+  assert.ok(lost(b) >= 20 && lost(b) < 60, `further on, the fan has opened: ${lost(b)}`);
   assert.ok(g.wet(a) && g.wet(b));
   assert.ok(a.x > 10.5 && b.x > 12.2);
 });
