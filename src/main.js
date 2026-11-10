@@ -48,7 +48,7 @@ const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.host
 // Two taps closer than this are a double tap, which phones would turn into a page zoom.
 const DOUBLE_TAP_MS = 350;
 /** How long the back yard's "use your skills on the dummies" line stays up after F2 walks in. */
-const PRACTICE_TIP_SECONDS = 5;
+const PRACTICE_TIP_SECONDS = 2;
 let practiceSince = null;
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
