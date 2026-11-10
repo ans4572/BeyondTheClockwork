@@ -88,8 +88,13 @@ body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom
 .title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
 .title-stage button::before { content: ""; width: 20px; height: 20px; flex: none; box-shadow: inset 0 0 0 3px currentColor; }
 .title-stage button:focus { outline: none; }
-.title-stage button:hover:not(:disabled), .title-stage button:focus { color: #a92f2b; }
-.title-stage button:hover:not(:disabled)::before, .title-stage button:focus::before { background: #c43c36; box-shadow: inset 0 0 0 3px currentColor, inset 0 0 0 6px #f6ecd2; }
+.title-stage button:focus { color: #a92f2b; }
+.title-stage button:focus::before { background: #c43c36; box-shadow: inset 0 0 0 3px currentColor, inset 0 0 0 6px #f6ecd2; }
+/* Hover only where a pointer hovers: an iPhone took the first tap on a menu line as a hover and sent no click (2026-11-10). */
+@media (hover: hover) {
+  .title-stage button:hover:not(:disabled) { color: #a92f2b; }
+  .title-stage button:hover:not(:disabled)::before { background: #c43c36; box-shadow: inset 0 0 0 3px currentColor, inset 0 0 0 6px #f6ecd2; }
+}
 .title-stage button:disabled { color: #a8a596; cursor: default; }
 .title-stage .save-note { font-size: .62em; font-weight: 700; color: #5d6476; white-space: nowrap; }
 .title-stage button:disabled .save-note { color: inherit; }

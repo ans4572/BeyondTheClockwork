@@ -148,7 +148,7 @@ try {
     document.addEventListener('touchend', e => {
       const now = e.timeStamp, quick = now - lastTap < DOUBLE_TAP_MS;
       lastTap = now;
-      if (!quick || e.touches.length || e.target.closest?.('input, textarea, select')) return;
+      if (!quick || e.defaultPrevented || e.touches.length || e.target.closest?.('input, textarea, select')) return;
       e.preventDefault();
       e.target.closest?.('button, a, label, [data-action], [data-do]')?.click();
     }, { passive: false });

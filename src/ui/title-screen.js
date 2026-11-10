@@ -86,9 +86,19 @@ export class TitleScreen {
     Object.assign(this.tool.style, { left: `${MARK_CENTER[0] - 140}px`, top: `${MARK_CENTER[1] + 70 - 300}px` });
     Object.assign(this.burst.style, { left: `${MARK_CENTER[0] - 200}px`, top: `${MARK_CENTER[1] - 170}px` });
     const actions = { new: onNew, load: onLoad, settings: onSettings };
+    // A phone answers the lifted finger itself (2026-11-10): an iPhone took the first tap on a menu line as a hover (the
+    // line focused and turned red) and sent no click, so a choice needed two taps. The pointer that hovers still moves
+    // the focus as it passes over a line.
+    const hovers = matchMedia('(hover: hover)').matches;
     this.buttons.forEach(button => {
       button.addEventListener('click', () => actions[button.dataset.do]());
-      button.addEventListener('mouseenter', () => { if (!button.disabled) button.focus(); });
+      if (hovers) button.addEventListener('mouseenter', () => { if (!button.disabled) button.focus(); });
+      button.addEventListener('touchend', e => {
+        if (button.disabled || e.touches.length) return;
+        const touch = e.changedTouches[0], at = touch && document.elementFromPoint(touch.clientX, touch.clientY);
+        if (at !== button && !button.contains(at)) return;
+        e.preventDefault(); actions[button.dataset.do]();
+      }, { passive: false });
     });
     document.addEventListener('keydown', e => {
       if (this.root.hidden || this.root.inert || this.stage.inert || !this.dark.hidden) return;
