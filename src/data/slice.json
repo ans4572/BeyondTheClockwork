@@ -40,7 +40,8 @@
   "rules": {
     "merchantAfterRoom": "stop-12",
     "comboReset": 0.7,
-    "eliteRoom": { "waves": [5, 4], "hpShare": 0.9, "most": 2.5, "note": "An elite-only room (one in five of the rooms with elites, from the fourth fight on): elites in these waves, the next called when one is left, each elite made tougher so the room weighs hpShare of an ordinary deal of it (at most most times). A chapter with a heavier elite sets its own eliteRoomWaves. 2026-11-09: was 4-6 elites in one wave, about a quarter of an ordinary room; then 4/3/3 (chapter 2 3/2/2), now two waves 5/4 (chapter 2 4/3) at the user's word." },
+    "waveTrim": { "bodies": 3, "keep": 2, "note": "2026-11-10, at the user's word: every fight wave is dealt with this many bodies fewer (ordinary ones first; an elite-only room keeps its count), never below keep. Easy's fewerEnemies comes on top." },
+    "eliteRoom": { "waves": [4, 4], "hpShare": 0.9, "most": 2.5, "note": "An elite-only room (one in five of the rooms with elites, from the fourth fight on): elites in these waves, the next called when one is left, each elite made tougher so the room weighs hpShare of an ordinary deal of it (at most most times). A chapter with a heavier elite sets its own eliteRoomWaves. 2026-11-09: was 4-6 elites in one wave, about a quarter of an ordinary room; then 4/3/3 (chapter 2 3/2/2), then two waves 5/4 (chapter 2 4/3), now 4/4 (chapter 2 3/3) at the user's word (2026-11-10)." },
     "comboArcDegrees": 115,
     "rearSectorDegrees": 120,
     "reviveHpFraction": 0.25,
@@ -113,7 +114,7 @@
         "coolingField": "노린 곳에 냉기 바닥을 깔아 그 위의 적을 계속 느리게 합니다.",
         "conductiveSpanner": "앞의 적을 때리면 전기가 근처 적 둘에게 더 튑니다.",
         "capacitorStrike": "잠깐 예고한 뒤 노린 곳에 번개가 세 번 떨어집니다.",
-        "pressureDash": "짧게 돌진하며 부딪힌 적을 밀어냅니다. 돌진 중에도 피해는 받습니다.",
+        "pressureDash": "짧게 돌진하며 부딪힌 적을 밀어냅니다. 돌진하는 동안은 피해를 받지 않습니다.",
         "vortexIntake": "노린 곳에 회오리를 만들어 적을 끌어모은 뒤 마지막에 한 번 더 때립니다.",
       "ringPalm": "왼손바닥으로 앞쪽을 짧게 울려 적을 밀어냅니다. 공명이 걸린 적에게는 더 세게 들어가고 공명이 두 겹 쌓입니다.",
       "roar": "누르고 있으면 소리를 모으고, 놓으면 앞쪽으로 곧은 음파를 쏩니다. 오래 모을수록 셉니다. 맞은 적에게 공명이 한 겹 걸립니다. 회피하면 취소됩니다.",
@@ -182,7 +183,7 @@
         ],
         "windPressure": [
           "풍압",
-          "4초 동안 렌치에 맞으면 두 배 멀리 밀리고, 경직이 1.5배로 길어집니다."
+          "4초 동안 렌치에 맞으면 1.5배 멀리 밀리고 경직이 1.5배로 길어집니다. 밀려서 벽·장애물·다른 적에 부딪히면 벽꽝! 부딪힌 몸 모두 피해 15를 받고 0.5초 기절합니다(보스는 밀리지 않습니다)."
         ],
         "resonance": [
           "공명",
@@ -206,7 +207,7 @@
   "enemies": {
     "rat": {
       "name": "태엽 쥐",
-      "hp": 70,
+      "hp": 60,
       "damage": 9,
       "speed": 3.52,
       "radius": 0.3,
@@ -219,7 +220,7 @@
     },
     "nutcracker": {
       "name": "방패 호두까기",
-      "hp": 540,
+      "hp": 480,
       "damage": 13,
       "speed": 1.65,
       "radius": 0.55,
@@ -245,7 +246,7 @@
     },
     "guard": {
       "name": "목각 경비",
-      "hp": 230,
+      "hp": 200,
       "damage": 8,
       "speed": 2.31,
       "radius": 0.4,
@@ -257,7 +258,7 @@
     },
     "rabbit": {
       "name": "스프링 토끼",
-      "hp": 200,
+      "hp": 180,
       "damage": 10,
       "speed": 3.19,
       "radius": 0.35,
@@ -271,7 +272,7 @@
     },
     "trumpet": {
       "name": "나팔 사수",
-      "hp": 270,
+      "hp": 240,
       "damage": 6,
       "speed": 1.43,
       "radius": 0.4,
@@ -284,7 +285,7 @@
     },
     "elite": {
       "name": "정예 목각 경비",
-      "hp": 360,
+      "hp": 320,
       "damage": 13,
       "speed": 2.2,
       "radius": 0.5,
@@ -298,7 +299,7 @@
     },
     "musicbox": {
       "name": "오르골 포탑",
-      "hp": 220,
+      "hp": 190,
       "damage": 5,
       "speed": 0,
       "radius": 0.5,
@@ -309,13 +310,13 @@
       "attack": "spiral",
       "stationary": true,
       "bullets": 8,
-      "volleys": 3,
+      "volleys": 2,
       "volleyGap": 0.35,
       "projectileSpeed": 4.5
     },
     "jackbox": {
       "name": "깜짝 상자",
-      "hp": 190,
+      "hp": 170,
       "damage": 12,
       "speed": 3.74,
       "radius": 0.45,
@@ -328,7 +329,7 @@
     },
     "spintop": {
       "name": "팽이 병정",
-      "hp": 250,
+      "hp": 220,
       "damage": 9,
       "speed": 2.2,
       "radius": 0.45,
@@ -343,7 +344,7 @@
     },
     "drummer": {
       "name": "북치기 인형",
-      "hp": 210,
+      "hp": 180,
       "damage": 0,
       "speed": 1.76,
       "radius": 0.4,
@@ -359,7 +360,7 @@
     },
     "pikeman": {
       "name": "태엽 창병",
-      "hp": 270,
+      "hp": 240,
       "damage": 11,
       "speed": 2.09,
       "radius": 0.42,
@@ -372,15 +373,15 @@
       "followupDelay": 0.45,
       "followupLength": 2.4
     },
-    "clampCarrier": {"name": "집게 운반공", "hp": 350, "damage": 11, "speed": 2.0, "radius": 0.42, "attackRange": 3, "tell": 0.8, "recovery": 1.5, "color": "#c8743a", "attack": "grab", "grabWidth": 0.5, "holdSeconds": 1, "throwUnits": 2.5},
-    "stampInspector": {"name": "도장 검사원", "hp": 300, "damage": 11, "speed": 2.6, "radius": 0.42, "attackRange": 5, "tell": 0.9, "recovery": 1.6, "color": "#8e3f3a", "attack": "leap", "leapRadius": 1.3, "markRadius": 1.1, "markSeconds": 6, "markSlow": 0.4, "stuckSeconds": 1.2},
-    "pressGuard": {"name": "압축 경비", "hp": 450, "damage": 13, "speed": 1.5, "radius": 0.55, "attackRange": 6, "tell": 1.0, "recovery": 1.8, "color": "#3e4a66", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true},
-    "lensInspector": {"name": "렌즈 검수원", "hp": 270, "damage": 11, "speed": 2.4, "radius": 0.4, "attackRange": 7, "tell": 1.0, "recovery": 1.8, "color": "#4d6b5e", "attack": "searchlight", "beamWidth": 0.3, "coneDegrees": 40, "turnDegrees": 45, "markSeconds": 3, "markBonus": 0.2},
-    "riveter": {"name": "리벳 사수", "hp": 320, "damage": 8, "speed": 1.8, "radius": 0.42, "attackRange": 8, "tell": 0.7, "recovery": 2.0, "color": "#6d6a3e", "attack": "rivets", "bullets": 3, "projectileSpeed": 7, "spreadDegrees": 30, "screwSeconds": 3, "screwDamage": 4, "plantSeconds": 1.5},
-    "tapePacker": {"name": "테이프 포장공", "hp": 270, "damage": 7, "speed": 3.2, "radius": 0.4, "attackRange": 7, "tell": 0.6, "recovery": 2.0, "color": "#b46a7a", "attack": "dash", "dashDistance": 7, "dashDuration": 1.6, "trail": "tape", "tapeSeconds": 8, "tapeSlow": 0.45, "tapeWidth": 0.45},
-    "oiler": {"name": "기름칠공", "hp": 270, "damage": 7, "speed": 2.2, "radius": 0.4, "attackRange": 6, "tell": 0.7, "recovery": 2.2, "color": "#6b5a48", "attack": "oil", "oilRadius": 1.3, "oilSeconds": 8, "oilMax": 2, "burnSeconds": 3, "burnDamage": 8, "burnTick": 0.5},
-    "partsSupplier": {"name": "부품 보급공", "hp": 250, "damage": 0, "speed": 2.3, "radius": 0.45, "attackRange": 6, "tell": 1.0, "recovery": 3.0, "color": "#5d7489", "attack": "supply", "supplyRadius": 4, "supplyCount": 2, "coatSeconds": 4, "coatArmor": 0.3, "spillCoins": 2},
-    "pressCaptain": {"name": "압축 경비대장", "hp": 630, "damage": 16, "speed": 1.6, "radius": 0.6, "attackRange": 6, "tell": 1.0, "recovery": 1.6, "color": "#2f3a57", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true, "dashTwice": 0.5}
+    "clampCarrier": {"name": "집게 운반공", "hp": 310, "damage": 11, "speed": 2.0, "radius": 0.42, "attackRange": 3, "tell": 0.8, "recovery": 1.5, "color": "#c8743a", "attack": "grab", "grabWidth": 0.5, "holdSeconds": 1, "throwUnits": 2.5},
+    "stampInspector": {"name": "도장 검사원", "hp": 270, "damage": 11, "speed": 2.6, "radius": 0.42, "attackRange": 5, "tell": 0.9, "recovery": 1.6, "color": "#8e3f3a", "attack": "leap", "leapRadius": 1.3, "markRadius": 1.1, "markSeconds": 6, "markSlow": 0.4, "stuckSeconds": 1.2},
+    "pressGuard": {"name": "압축 경비", "hp": 400, "damage": 13, "speed": 1.5, "radius": 0.55, "attackRange": 6, "tell": 1.0, "recovery": 1.8, "color": "#3e4a66", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true},
+    "lensInspector": {"name": "렌즈 검수원", "hp": 240, "damage": 11, "speed": 2.4, "radius": 0.4, "attackRange": 7, "tell": 1.0, "recovery": 1.8, "color": "#4d6b5e", "attack": "searchlight", "beamWidth": 0.3, "coneDegrees": 40, "turnDegrees": 45, "markSeconds": 3, "markBonus": 0.2},
+    "riveter": {"name": "리벳 사수", "hp": 280, "damage": 8, "speed": 1.8, "radius": 0.42, "attackRange": 8, "tell": 0.7, "recovery": 2.0, "color": "#6d6a3e", "attack": "rivets", "bullets": 3, "projectileSpeed": 7, "spreadDegrees": 30, "screwSeconds": 3, "screwDamage": 4, "plantSeconds": 1.5},
+    "tapePacker": {"name": "테이프 포장공", "hp": 240, "damage": 7, "speed": 3.2, "radius": 0.4, "attackRange": 7, "tell": 0.6, "recovery": 2.0, "color": "#b46a7a", "attack": "dash", "dashDistance": 7, "dashDuration": 1.6, "trail": "tape", "tapeSeconds": 8, "tapeSlow": 0.45, "tapeWidth": 0.45},
+    "oiler": {"name": "기름칠공", "hp": 240, "damage": 7, "speed": 2.2, "radius": 0.4, "attackRange": 6, "tell": 0.7, "recovery": 2.2, "color": "#6b5a48", "attack": "oil", "oilRadius": 1.3, "oilSeconds": 8, "oilMax": 2, "burnSeconds": 3, "burnDamage": 8, "burnTick": 0.5},
+    "partsSupplier": {"name": "부품 보급공", "hp": 220, "damage": 0, "speed": 2.3, "radius": 0.45, "attackRange": 6, "tell": 1.0, "recovery": 3.0, "color": "#5d7489", "attack": "supply", "supplyRadius": 4, "supplyCount": 2, "coatSeconds": 4, "coatArmor": 0.3, "spillCoins": 2},
+    "pressCaptain": {"name": "압축 경비대장", "hp": 560, "damage": 16, "speed": 1.6, "radius": 0.6, "attackRange": 6, "tell": 1.0, "recovery": 1.6, "color": "#2f3a57", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true, "dashTwice": 0.5}
   },
   "bossAI": {
     "inspectorIris": {"note": "Chapter 2 midboss (docs/design/silent-factory-plan.md 7.1, src/engine/factory-bosses.js).", "radius": 0.6, "speed": 1.8, "recovery": 0.96, "attackRange": 9, "patterns": ["irisLaser", "rejectStamps", "verdict", "tapeMeasure", "irisLaser", "decoys"], "phasePatterns": [{"pattern": "crossLaser", "below": 0.5}, {"pattern": "gridCheck", "below": 0.5}], "castPatterns": ["irisLaser", "crossLaser", "gridCheck", "decoys"], "tellSeconds": {"irisLaser": 1.0, "rejectStamps": 1.0, "verdict": 1.2, "tapeMeasure": 0.8, "decoys": 4.0, "crossLaser": 1.2, "gridCheck": 1.5}, "laserLength": 10, "laserWidth": 0.5, "coneDegrees": 40, "turnDegrees": 50, "stampCount": 3, "stampCountPhaseTwo": 5, "stampRadius": 1.3, "stampGap": 0.35, "stampWarn": 0.8, "markSeconds": 5, "markSlow": 0.4, "passSeconds": 6, "passRadius": 1.1, "failStacks": 3, "failBlast": 35, "failBlastDelay": 1.5, "failSeconds": 10, "verdictWindow": 0.5, "verdictRange": 3.5, "verdictDegrees": 120, "verdictStun": 2.5, "measureLength": 7, "measureWidth": 0.45, "measureFront": 1.5, "decoySpread": 6.5, "decoySpreadNote": "Units between Iris and each decoy (4.5 until 2026-11-09, widened at the user's word). Near a wall the row is tried shorter (80%, 65%) and turned.", "decoyStun": 1, "decoyStunNote": "Striking a decoy stuns F2 this many seconds (no step, swing, dodge or skill). 2026-11-09: 0.5, then 1 at the user's word.", "crossSeconds": 3, "crossTurnDegrees": 40, "crossWidth": 0.45, "crossLength": 12, "gridShow": 1.5, "gridDelay": 1, "gridReach": 0.5, "gridReachNote": "The inspection rings cover the whole hall from its middle (2026-11-09), so a safe piece can be across it: they show this many seconds longer (1, then 0.5 at the user's word: a little sooner).", "gridDamage": 23, "phaseTwoSummon": {"type": "lensInspector", "count": 2}, "phaseBreaks": [{"at": 0.5, "kind": "mirrors", "seconds": 18, "mirrors": 3, "mirrorReach": 5.5, "sweepDegrees": 45, "beamWidth": 0.5, "beamDamage": 11, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
@@ -676,6 +677,7 @@
       "shape": "dash",
       "duration": 0.2,
       "knockback": 1.4,
+      "invulnerable": 0.3,
         "bossStagger": 30,
       "interval": 0,
       "delay": 0
@@ -791,11 +793,11 @@
     },
     "fireCyclone": {
       "shape": "moving",
-      "speed": 2.2,
+      "speed": 1.0,
       "pull": 1.2,
       "interval": 0.3,
       "delay": 0,
-      "startDistance": 2.6
+      "startDistance": 1.2
     },
     "frostCrosscut": {
       "shape": "crescent",
@@ -1279,7 +1281,7 @@
       "note": "Chapter 2 is playable end to end on chapter 1 enemies and bosses (Roco at the inspection room, Brass at the forming hall) until its own are made. scale multiplies every difficulty's enemy health, attack and furniture; loot multiplies its pay. affixesFrom: elites carry a trait from this stop on; merchantAfterRoom: the travelling merchant waits after this stop.",
       "scale": 1.0,
       "loot": 1.3,
-      "affixesFrom": "factory-03", "eliteType": "pressCaptain", "eliteRoomWaves": [4, 3], "eliteNote": "Waves write the elite slot as \"elite\" (encounters deal and trait it); in this chapter that body is the compression captain.",
+      "affixesFrom": "factory-03", "eliteType": "pressCaptain", "eliteRoomWaves": [3, 3], "eliteNote": "Waves write the elite slot as \"elite\" (encounters deal and trait it); in this chapter that body is the compression captain.",
       "merchantAfterRoom": "factory-11",
       "merchant": { "boss": "프레스", "place": "프레스의 정형실", "title": "정형실에 들어가기 전에, 하나 챙겨 가." },
       "hazards": { "note": "Chapter 2 keeps only chapter 1's crates (they blow up) and music boxes (they mend); the factory's own devices (conveyor belt, press pillar, inspection laser door, steam pipe, parts crane; plan 6) replace the plates, saw rails and fences as they are made. counts here replace chapter 1's full counts (no ramp: chapter 2 is entered after chapter 1, so its first rooms get the full counts at once).", "ramp": [], "musicboxesPerRun": 3, "only": ["crate", "musicbox", "belt", "press", "laser", "steam", "crane"], "counts": { "crate": [2, 2], "musicbox": [0, 0], "belt": [0, 0], "press": [0, 0], "laser": [0, 0], "steam": [0, 0], "crane": [0, 0] }, "roomNote": "Each stop adds its own devices on top (rooms[].hazardCounts): the belt hall its belts, the stamping line and the compression store their presses, the boiler room its steam, the crane yard two cranes." },

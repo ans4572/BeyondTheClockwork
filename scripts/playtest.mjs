@@ -7,17 +7,17 @@ const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'sli
 /** Deterministic input bot. Uses the same public actions as the UI; no stat or damage cheats. */
 /** `loadout` picks the two elements; `stats` sets permanent tuning ranks by id, as a returning player would have them. */
 /** `chapter` and `difficulty` pick the expedition (chapter 2 needs previews, as on the dev server). */
-export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice'], stats = {}, chapter, difficulty } = {}) {
+export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice'], stats = {}, chapter, difficulty, potion } = {}) {
   const game = new Game(data);
   if (chapter) { game.previews = true; game.unlockChapters = true; }
-  game.s.mode = 'hub'; game.s.profile.registered = true; game.s.profile.loadout = [...loadout]; Object.assign(game.s.profile.stats, stats); game.startRun(seed, difficulty, chapter);
-  const roomSeconds = [], hurtBy = {}; let roomStart = 0, lastNode = -1, lastHp = game.p.hp;
+  game.s.mode = 'hub'; game.s.profile.registered = true; game.s.profile.loadout = [...loadout]; Object.assign(game.s.profile.stats, stats); if (potion) game.s.profile.potion = potion; game.startRun(seed, difficulty, chapter);
+  const roomSeconds = [], hurtBy = {}, entryHp = {}; let roomStart = 0, lastNode = -1, lastHp = game.p.hp;
   let tick = 0, stuckFrames = 0, previous = { ...game.p };
   const routes = {};
   while (tick++ < maxSeconds * 60 && !['complete', 'returned'].includes(game.s.mode)) {
     // Per room: how long it took; per source: how much health the bot lost to it (a boss pattern, or 'other').
     const node = game.s.run?.node ?? -1;
-    if (node !== lastNode) { if (lastNode >= 0) roomSeconds.push([lastNode + 1, Math.round(game.s.time - roomStart)]); lastNode = node; roomStart = game.s.time; }
+    if (node !== lastNode) { entryHp[node + 1] = Math.round(100 * game.p.hp / game.p.maxHp); if (lastNode >= 0) roomSeconds.push([lastNode + 1, Math.round(game.s.time - roomStart)]); lastNode = node; roomStart = game.s.time; }
     if (game.p.hp < lastHp) { const b = game.s.enemies.find(e => e.boss && e.hp > 0), src = b ? (b.breaking ? `break:${b.breaking.kind}` : b.tell?.type || (game.s.bossFields || []).filter(f => !f.done).map(f => f.kind).join('+') || 'boss-other') : 'room'; hurtBy[src] = Math.round((hurtBy[src] || 0) + lastHp - game.p.hp); }
     lastHp = game.p.hp;
     if (game.s.mode === 'reward') {
@@ -108,7 +108,11 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     const map = game.map, route = map?.walkable && d > 1.5 ? (routes[map.id] ??= new FlowField(map, map.size)) : null;
     route?.setBlocks(game.obstacles); route?.update(target.x, target.y);
     // Against a wall the bot's own cell may be too tight to map; the nearest open cell gives the way instead.
-    const open = route && route.nearestOpen(...route.cell(game.p.x, game.p.y)), way = route && (route.heading(game.p.x, game.p.y) ?? (open && route.heading((open[0] + 0.5) * 0.5, (open[1] + 0.5) * 0.5)));
+    const open = route && route.nearestOpen(...route.cell(game.p.x, game.p.y)), way = route && (route.heading(game.p.x, game.p.y) ?? (open && (() => {
+      // Wedged where the grid has no way (a side step off a charge can end in a notch of the wall): walk to that open cell first.
+      const ox = (open[0] + 0.5) * 0.5, oy = (open[1] + 0.5) * 0.5;
+      return Math.hypot(ox - game.p.x, oy - game.p.y) > 0.2 ? Math.atan2(oy - game.p.y, ox - game.p.x) : route.heading(ox, oy);
+    })()));
     let move = d > 1.3 ? way ?? angle : angle + Math.PI / 2, speed = d > 1.3 ? 1 : 0;
     let dodge = false;
     // A player reads a tell from as far as that enemy can reach, not from a fixed distance.
@@ -134,7 +138,8 @@ export function playtest(seed = 123, maxSeconds = 600, { loadout = ['fire', 'ice
     if (stuckFrames >= 30) move += Math.PI / 2 * (stuckFrames / 30);
     game.update(1 / 60, { x: Math.cos(move) * speed, y: Math.sin(move) * speed, aim: target, basic: !danger && !windingUp && calm && d < 1.6 + (target.radius || 0), dodge, skill: calm ? tick % 4 : undefined, skillHeld: calm ? [0, 1, 2, 3] : [], fusion: calm });
   }
-  return { roomSeconds, hurtBy, seed, mode: game.s.mode, node: game.s.run ? game.s.run.node + 1 : game.s.result?.node, seconds: Math.round(game.s.run?.elapsed || game.s.result?.elapsed || 0), hp: Math.round(game.p.hp), damageTaken: Math.round(game.s.run?.damageTaken || game.s.result?.damageTaken || 0), baseGears: game.s.run?.baseGears || game.s.result?.baseGears || 0, upgrades: game.s.profile.stats };
+  const boss = game.s.enemies?.find(e => e.boss);
+  return { roomSeconds, hurtBy, entryHp, bossLeft: boss ? Math.round(100 * Math.max(0, boss.hp) / boss.maxHp) : null, seed, mode: game.s.mode, node: game.s.run ? game.s.run.node + 1 : game.s.result?.node, seconds: Math.round(game.s.run?.elapsed || game.s.result?.elapsed || 0), hp: Math.round(game.p.hp), damageTaken: Math.round(game.s.run?.damageTaken || game.s.result?.damageTaken || 0), baseGears: game.s.run?.baseGears || game.s.result?.baseGears || 0, upgrades: game.s.profile.stats };
 }
 if (process.argv[1]?.endsWith('playtest.mjs')) {
   const seeds = process.argv.slice(2).map(Number);

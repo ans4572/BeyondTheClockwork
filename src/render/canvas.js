@@ -916,7 +916,8 @@ export class CanvasRenderer {
       case 'quake': { const k = fx.value * 20 / 44; return this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: k, sy: k, alpha: 0.85 }); }
       case 'boom': { const k = Math.max(1, fx.value * 20 / 20); return this.drawFxFrame('ratExplosion', frameAt('ratExplosion'), x, y + 4, { sx: k, sy: k }); }
       case 'wave': { const k = Math.max(0.7, fx.value * 20 / 84); return this.drawFxFrame('trumpetWave', frameAt('trumpetWave'), x, y - 10, { angle: fx.angle, sx: k, sy: k }); }
-      case 'heatSwing': return this.drawFxFrame('heatSwing', frameAt('heatSwing'), x, y - 10, { angle: fx.angle, sx: 1.6, sy: 1.6 });
+      // The flame sweep grows with the skill's reach: 1.6 at the old 3 units (2026-11-10: reach 3 -> 3.4, picture kept to it).
+      case 'heatSwing': { const k = 1.6 * (fx.value || 3) / 3; return this.drawFxFrame('heatSwing', frameAt('heatSwing'), x, y - 10, { angle: fx.angle, sx: k, sy: k }); }
       case 'deflect': return this.drawFxFrame('deflectFlash', frameAt('deflectFlash'), x, y - 8);
       case 'ready': { const at = fx.follow ? g.p : fx; return this.drawFxFrame('readyPop', frameAt('readyPop'), at.x * 20, at.y * 20 - 34); }
       // Drawn a little smaller than the blast's reach (asked 2026-11-09); the damage radius is unchanged.

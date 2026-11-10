@@ -190,7 +190,7 @@ test('every fusion actually deals its direct damage', () => {
     if (!film) assert.ok(e.stagger <= data.combat.balance.fusionStaggerPerCastCap, `${fusion.id} exceeded stagger budget`);
   }
 });
-test('all eight individual skills hit; pressure dash grants no invulnerability', () => {
+test('all eight individual skills hit; pressure dash is untouchable while it runs', () => {
   for (const skill of data.combat.skills) {
     const g = arena(), e = inert(g, 'captainBrass', { x: 9.1, y: 8 }); e.hp = e.maxHp = 100000;
     g.s.run.slots = [{ element: skill.element, level: 1, rarity: 'common' }]; g.p.energy = 100;
@@ -201,7 +201,7 @@ test('all eight individual skills hit; pressure dash grants no invulnerability',
     const bonus = data.slice.skillBehavior[skill.id].bossStagger || 0;
     assert.ok(e.stagger <= data.combat.balance.skillStaggerPerCastCap + bonus, `${skill.id} exceeded per-cast stagger`);
     if (bonus) assert.ok(e.stagger > data.combat.balance.skillStaggerPerCastCap, 'pressure dash staggers bosses harder');
-    if (skill.id === 'pressureDash') assert.equal(g.p.invulnerableUntil, 0);
+    if (skill.id === 'pressureDash') assert.ok(g.p.invulnerableUntil > 0, 'pressure dash is untouchable');
   }
 });
 test('element replacement preserves slot level, skill cooldowns, energy and fusion cooldown', () => {
@@ -341,8 +341,8 @@ test('frost crosscut flies one wide ice crescent forward that cuts each enemy in
 test('fire cyclone starts in front of its caster, moves forward and cannot spawn through an obstacle',()=>{
  const g=arena();inert(g,'guard',{x:20,y:14});
  g.s.run.slots=['fire','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;g.castFusion({x:13,y:8});
- const cast=g.s.casts[0];assert.ok(Math.abs(cast.x-10.6)<1e-8);assert.equal(cast.y,8);assert.equal(g.p.x,8);
- step(g,.1);assert.ok(Math.abs(cast.x-10.82)<1e-8);
+ const cast=g.s.casts[0],b=data.slice.fusionBehavior.fireCyclone;assert.ok(Math.abs(cast.x-(8+b.startDistance))<1e-8);assert.equal(cast.y,8);assert.equal(g.p.x,8);
+ step(g,.1);assert.ok(Math.abs(cast.x-(8+b.startDistance+b.speed*.1))<1e-8);
  const h=arena();h.s.run.plan[0].layout=0;const wall=h.obstacles[0];h.p.x=wall.x-.6;h.p.y=wall.y+wall.h/2;h.p.angle=0;
  h.makeCast(data.combat.fusions.find(f=>f.id==='fireCyclone'),data.slice.fusionBehavior.fireCyclone,{},h.p,true);
  assert.ok(h.s.casts[0].x<=wall.x-.2+1e-8);

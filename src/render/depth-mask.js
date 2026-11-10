@@ -96,6 +96,12 @@ export class DepthMask {
     Object.assign(this, { width, height, perUnit, pixels, depths, deepest, blocksWide, veil, createCanvas });
     this.pixels32 = new Uint32Array(pixels.buffer, pixels.byteOffset, pixels.length / 4);
   }
+  /** Lets go of the small repainted pieces and the scratch canvas at once (a phone keeps a canvas's memory until it is collected). */
+  free() {
+    for (const { canvas } of this.kept.values()) if (canvas && typeof canvas.getContext === 'function') { canvas.width = 0; canvas.height = 0; }
+    if (this.scratch) { this.scratch.width = 0; this.scratch.height = 0; this.scratch = null; this.scratchContext = null; }
+    this.kept.clear(); this.patches.clear(); this.seen.clear();
+  }
   /** `x`, `y` are the feet in units; `halfWidth` and `tall` bound the body above them. Returns the share of the body hidden. */
   cover(context, x, y, halfWidth, tall) {
     const { perUnit, width, height, depths, pixels } = this, feet = Math.round(y * perUnit);

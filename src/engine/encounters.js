@@ -38,11 +38,11 @@ const EARLY_FIGHTS = 3, GROW = 1.08;
  */
 export const CALL_AT = { two: 3, three: 1, elite: 1 };
 /**
- * An elite-only room (2026-11-09): elites in two waves, 5 then 4 (slice.json rules.eliteRoom.waves, a chapter's own eliteRoomWaves
+ * An elite-only room (2026-11-09): elites in two waves, 4 and 4 (slice.json rules.eliteRoom.waves, a chapter's own eliteRoomWaves
  * for heavier elites), each made tougher so the whole room weighs `hpShare` of an ordinary deal of the same room. It used
  * to be four to six elites in one wave, a quarter of an ordinary room's health, and played easier than the rooms around it.
  */
-const ELITE_ROOM = { waves: [5, 4], hpShare: 0.9, most: 2.5 };
+const ELITE_ROOM = { waves: [4, 4], hpShare: 0.9, most: 2.5 };
 /** What an ordinary deal of `room` weighs in health: two and three waves averaged by their odds, dealt off a fixed seed. */
 function ordinaryWeight(room, before, hp, eliteHp) {
   const weigh = shape => {
@@ -172,6 +172,12 @@ export function dealRun(rooms, enemies, seed, affixes, level = {}, eliteRoom = {
   return rooms.map((room, i) => {
     if (!room.waves) return null;
     const dealt = dealRoom(room, before, hp, random, fight++, null, eliteRoom);
+    // Every wave a few bodies lighter (rules.waveTrim), ordinary ones first. An elite-only room keeps its count: its
+    // elites were made tougher for the full count, and trimming it made the room far lighter than those around it.
+    if (dealt.shape !== 'elite') for (const wave of dealt.waves) for (let n = level.waveTrim?.bodies || 0; n > 0 && wave.length > (level.waveTrim.keep ?? 2); n--) {
+      const at = wave.findLastIndex(type => type !== 'elite');
+      wave.splice(at >= 0 ? at : wave.length - 1, 1);
+    }
     for (let n = level.fewerEnemies || 0; n > 0; n--) {
       const biggest = dealt.waves.reduce((best, wave) => (wave.length > best.length ? wave : best), []), at = biggest.findLastIndex(type => type !== 'elite');
       if (biggest.length > 2 && at >= 0) biggest.splice(at, 1);

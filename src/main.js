@@ -310,7 +310,8 @@ try {
     atTower = true;
     await new Promise(done => setTimeout(done, game.s.profile.settings.reducedMotion ? 0 : 1400));
     await talk(ending.tower);
-    atTower = false; scene.hidden = true; renderOverlay(true);
+    // The summit painting is let go once the scene ends (it stayed decoded in the page for the rest of the visit).
+    atTower = false; scene.hidden = true; scene.replaceChildren(); renderOverlay(true);
   }
   const TOWER_ART = '/art/scenes/clocktower-summit/background-v2-q92.webp';
   function towerScene() { return `<img src="${TOWER_ART}" alt=""><b>중앙시계탑 · 꼭대기</b>`; }
@@ -571,7 +572,13 @@ try {
       const element = data.combat.elements.find(e => e.id === reward.id), skills = data.combat.skills.filter(s => s.element === element.id);
       return { name: element.device, art: element.id, label: game.s.profile.ownedElements.includes(element.id) ? `${element.name} 속성 부품` : `${element.name} 속성 모듈 · 이번 원정 체험`, description: `${skills.map(s => s.name).join(' · ')}<br>${element.role}`, value: skills.map(s => `${s.totalDirectDamage} 피해 · 축전 ${s.energyCost} · ${s.cooldown}초`).join('<br>'), color: data.slice.presentation.colors[element.id], rarity: { common: '일반', rare: '희귀', special: '특제' }[reward.rarity] };
     }
-    if (reward.kind === 'mod') { const mod = data.slice.mods.find(m => m.id === reward.id); return { name: mod.name, icon: ico('reward-wrench-mod'), label: '렌치 개조', description: mod.description, value: '이 원정에 유지 · 최대 2개' }; }
+    if (reward.kind === 'mod') {
+      const mod = data.slice.mods.find(m => m.id === reward.id);
+      // The elemental charger names what its third blow will put on, from the elements fitted now (2026-11-10).
+      const charges = mod.id === 'elementalCharge' ? game.slots.map(slot => `${data.combat.elements.find(e => e.id === slot.element)?.name} → ${data.slice.presentation.codex.statuses[data.combat.elements.find(e => e.id === slot.element)?.status]?.[0] || ''}`) : null;
+      const extra = charges ? `<br><b>지금 걸리는 것: ${charges.length ? charges.join(' · ') : '장착한 속성이 없어 아직 없음'}</b>` : '';
+      return { name: mod.name, icon: ico('reward-wrench-mod'), label: '렌치 개조', description: mod.description + extra, value: '이 원정에 유지 · 최대 2개' };
+    }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, skills: [skill.id], label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element] }; }
     if (reward.kind === 'perk') { const perk = data.slice.perks.find(p => p.id === reward.id); return { name: perk.name, icon: ico(PERK_ICONS[perk.id] || 'spark'), label: '원정 특전', description: perk.description, value: '이 원정에 유지 · 한 번만' }; }
     if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, art: trait.element, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element] }; }
@@ -746,7 +753,7 @@ try {
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
-    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label><label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}</div>`}`;
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label>${isTouch ? `<label><input type="checkbox" data-setting="autoAim" ${settings.autoAim !== false ? 'checked' : ''}> 자동 조준</label>` : ''}<label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}</div>`}`;
     const byMouse = mouseMove(), now = scheme(), schemeButton = (id, label) => button(label, 'controls', `data-id="${id}" aria-pressed="${id === now}"`, id === now ? 'tab on' : 'tab');
     const mouseNote = arrowMove() ? '마우스 없이: 방향키 이동, Space 렌치, Shift 회피. 렌치와 기술은 가장 가까운 적을 자동으로 노립니다' : byMouse ? '마우스: 오른쪽 클릭 이동 (누르고 있으면 커서를 따라감), 왼쪽 클릭 렌치' : '마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합';
     const keys = `<div class="actions control-scheme"><span>이동 방식</span>${schemeButton('keys', '키보드 이동 (WASD)')}${schemeButton('mouse', '마우스 이동 (우클릭)')}${schemeButton('arrows', '방향키 (Space 공격)')}</div><p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(SCHEME_KEYS[now]()).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">${mouseNote}<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
@@ -1390,7 +1397,8 @@ try {
     // After the waking lines, before the first step: how F2 is moved (touch has one way and skips it).
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening').then(() => { if (!isTouch && game.s.mode === 'intro') { pause('controls'); $('overlay').querySelector('[data-action="controls-start"]')?.focus({ preventScroll: true }); } });
     const pad = pollGamepad(), map = bindings();
-    if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.enemies); }
+    // Phones aim at the nearest enemy unless that is switched off in the settings (2026-11-10); then F2 aims the way it faces.
+    if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.s.enemies); }
     else if (arrowMove()) pointer = autoAim(game.p, game.s.enemies);
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;

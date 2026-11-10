@@ -343,11 +343,13 @@ export const enemyActions = {
         this.payKill(enemy);
         if (floorDistance(tell, p) < enemy.burstRadius + this.config.arena.playerRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
-      case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed); break;
+      // A trumpet's note fades where its range ends too (2026-11-10, like the music box).
+      case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed, enemy.attackRange); break;
       // Music box: a ring of shots, turned a little each volley so the gaps move.
       case 'spiral': {
         enemy.spiralTurn = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets;
-        for (let i = 0; i < enemy.bullets; i++) this.fireBullet(enemy, enemy.spiralTurn + i * TAU_ENEMY / enemy.bullets, enemy.projectileSpeed);
+        // The notes fade where the music box's range ends (2026-11-10: they flew on across the whole room).
+        for (let i = 0; i < enemy.bullets; i++) this.fireBullet(enemy, enemy.spiralTurn + i * TAU_ENEMY / enemy.bullets, enemy.projectileSpeed, enemy.attackRange);
         enemy.volleyLeft = (enemy.volleyLeft ?? enemy.volleys) - 1;
         if (enemy.volleyLeft > 0) { enemy.followup = { type: 'spiral', at: this.s.time + enemy.volleyGap }; enemy.ready = this.s.time; } else enemy.volleyLeft = undefined;
         break;
@@ -486,7 +488,8 @@ export const enemyActions = {
     const near = this.s.enemies.find(e => e !== enemy && e.hp > 0 && e.standardRadius && distance(e, enemy) <= e.standardRadius);
     return near ? near.standardFactor : 1;
   },
-  fireBullet(enemy, angle, speed) { this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: this.weakened(enemy, enemy.damage), friendly: false, until: this.s.time + this.config.rules.enemyProjectileLifetime }); },
+  /** `reach` (units) ends a shot where its attack range ends instead of at the usual lifetime. */
+  fireBullet(enemy, angle, speed, reach) { const life = this.config.rules.enemyProjectileLifetime; this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: this.weakened(enemy, enemy.damage), friendly: false, until: this.s.time + (reach && speed ? Math.min(life, reach / speed) : life) }); },
   updateEnemies(dt) {
     this.tickBossHazards(dt);
     if (!this.active) return;
@@ -504,7 +507,7 @@ export const enemyActions = {
       }
       if (enemy.shove) {
         const ease = u => 1 - (1 - u) ** 2, s = enemy.shove, from = ease(Math.min(1, s.elapsed / KNOCKBACK_SECONDS)), to = ease(Math.min(1, (s.elapsed + dt) / KNOCKBACK_SECONDS));
-        this.move(enemy, s.x * (to - from), s.y * (to - from)); s.elapsed += dt;
+        this.pushEnemy(enemy, s.x * (to - from), s.y * (to - from)); s.elapsed += dt;
         if (s.elapsed >= KNOCKBACK_SECONDS) enemy.shove = null;
       }
       enemy.burnStacks = enemy.burnStacks.filter(t => t > this.s.time);

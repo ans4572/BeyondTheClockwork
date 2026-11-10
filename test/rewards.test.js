@@ -271,13 +271,23 @@ test('backflow pushes after the last blast lands, so the blast it pushes with st
   assert.ok(e.maxHp - e.hp >= 54, `all three blasts landed: ${e.maxHp - e.hp}`); assert.ok(e.x > 10.5, 'and it was thrown');
 });
 
-test('wind pressure: the wrench throws a pressed body twice as far and stuns it half again as long', () => {
+test('wind pressure: the wrench throws a pressed body half again as far and stuns it half again as long', () => {
   const moved = pressed => { const g = arena(['wind', 'fire']), e = dummy(g); if (pressed) e.statuses.windPressure = g.s.time + 4; swing(g, 0); return e.x - 9; };
   const dry = moved(false), wet = moved(true);
-  assert.ok(Math.abs(wet / dry - 2) < 0.15, `${wet} vs ${dry}`);
+  assert.ok(Math.abs(wet / dry - 1.5) < 0.15, `${wet} vs ${dry}`);
   const g = arena(['wind', 'fire']), e = dummy(g); e.statuses.windPressure = g.s.time + 4;
   g.hitEnemy(e, 1, { stagger: 1 }); assert.ok(Math.abs(e.stunUntil - g.s.time - g.config.rules.normalHitStun * 1.5) < 1e-9);
   g.s.run.traits = ['galeHold']; g.hitEnemy(e, 1, { stagger: 1 }); assert.ok(Math.abs(e.stunUntil - g.s.time - g.config.rules.normalHitStun * 3) < 1e-9);
+});
+
+test('wind pressure slam: a pressed body driven into another body hurts and stuns both, once', () => {
+  const g = arena(['wind', 'fire']), a = dummy(g, 9, 8), b = dummy(g, 9.6, 8), info = data.combat.statuses.find(s => s.id === 'windPressure');
+  a.statuses.windPressure = g.s.time + 4;
+  g.pushEnemy(a, 0.3, 0);
+  assert.ok(a.hp < a.maxHp && b.hp < b.maxHp, 'both bodies take the slam');
+  assert.ok(a.stunUntil >= g.s.time + info.slamStun - 1e-9 && b.stunUntil >= g.s.time + info.slamStun - 1e-9);
+  const hp = a.hp; g.pushEnemy(a, 0.3, 0); assert.equal(a.hp, hp, 'not again straight away');
+  const c = dummy(g, 3, 3), d = dummy(g, 3.6, 3); g.pushEnemy(c, 0.3, 0); assert.equal(d.hp, d.maxHp, 'no pressure, no slam');
 });
 
 test('frozen cracks: the wrench does 20% more to a chilled body and 40% more to a frozen one', () => {

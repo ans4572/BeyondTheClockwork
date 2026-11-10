@@ -307,7 +307,7 @@ export class Game {
     const affixes = traits && this.chapter.affixesFrom ? { ...traits, oneFrom: this.chapter.affixesFrom } : traits;
     // An elite-only room's waves and the chapter's own elite (its health sets how much tougher they are made).
     const eliteKind = this.chapter?.eliteType || 'elite', eliteRoom = { ...this.config.rules.eliteRoom, ...(this.chapter?.eliteRoomWaves && { waves: this.chapter.eliteRoomWaves }), hp: this.config.enemies[eliteKind]?.hp };
-    dealRun(this.rooms, this.config.enemies, seed, affixes, this.difficulty, eliteRoom).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
+    dealRun(this.rooms, this.config.enemies, seed, affixes, { ...this.difficulty, waveTrim: this.config.rules.waveTrim }, eliteRoom).forEach((dealt, i) => { if (dealt) Object.assign(this.s.run.plan[i], dealt); });
     this.resetPlayer(); if (this.potion?.fullEnergy) this.p.energy = this.c.player.maxEnergy; this.enterNode();
     this.report('runStart', { run: this.s.run.id, elements: this.s.run.slots.map(s => s.element), difficulty: this.s.run.difficulty, chapter: this.chapter.id });
     return true;
@@ -417,6 +417,27 @@ export class Game {
       if (!blocked(x, body.y)) body.x = x;
       const y = clamp(body.y + dy / steps, top, bottom);
       if (!blocked(body.x, y)) body.y = y;
+    }
+  }
+  /**
+   * Pushes an ordinary body by (dx, dy). A body under wind pressure that is stopped by a wall or an obstacle, or driven
+   * into another body, is slammed (2026-11-10, 벽꽝): both take the pressure's slamDamage and are stunned for slamStun,
+   * at most once every slamEvery seconds each.
+   */
+  pushEnemy(enemy, dx, dy) {
+    const from = { x: enemy.x, y: enemy.y }, wanted = Math.hypot(dx, dy);
+    this.move(enemy, dx, dy);
+    const info = this.status('windPressure');
+    if (!info?.slamDamage || !(enemy.statuses.windPressure > this.s.time) || wanted < 0.02 || enemy.hp <= 0 || enemy.boss) return;
+    const ux = dx / wanted, uy = dy / wanted, moved = (enemy.x - from.x) * ux + (enemy.y - from.y) * uy;
+    const ready = body => !(body.slamReady > this.s.time);
+    const other = this.s.enemies.find(e => e !== enemy && e.hp > 0 && !e.dummy && Math.hypot(e.x - enemy.x, e.y - enemy.y) < (e.radius + enemy.radius) * 0.9 && (e.x - enemy.x) * ux + (e.y - enemy.y) * uy > 0);
+    if (!(moved < wanted * 0.4 || other) || !ready(enemy)) return;
+    for (const body of [enemy, other].filter(b => b && ready(b))) {
+      body.slamReady = this.s.time + info.slamEvery;
+      this.hitEnemy(body, info.slamDamage * this.statusPower, { dot: true, color: '#badbd3' });
+      if (!body.boss && body.hp > 0) body.stunUntil = Math.max(body.stunUntil, this.s.time + info.slamStun);
+      this.effect('ring', body.x, body.y, '#badbd3', 0.35, 0.8, { look: 'quake' });
     }
   }
   upgradeAmount(id) {
@@ -930,7 +951,7 @@ export class Game {
             // 물대포 shoves ordinary bodies along its path.
             if (cast.knockback && !target.boss && !target.dummy && !target.stationary && target.hp > 0) {
               const from = { x: target.x, y: target.y };
-              this.move(target, Math.cos(bullet.angle) * cast.knockback, Math.sin(bullet.angle) * cast.knockback);
+              this.pushEnemy(target, Math.cos(bullet.angle) * cast.knockback, Math.sin(bullet.angle) * cast.knockback);
               // 벽치기 물살: a body the water slams against a wall is dazed for a moment.
               if (cast.wallDaze && distance(from, target) < cast.knockback * 0.6) { target.stunUntil = Math.max(target.stunUntil, this.s.time + cast.wallDaze); target.dazedUntil = this.s.time + cast.wallDaze; target.dazedBonus = 0; this.effect('ring', target.x, target.y, '#ffd257', 0.4, 0.8, { look: 'quake' }); }
             }
@@ -1000,7 +1021,9 @@ export class Game {
         const before = { x: this.p.x, y: this.p.y };
         this.move(this.p, Math.cos(cast.angle) * cast.range / cast.duration * dt, Math.sin(cast.angle) * cast.range / cast.duration * dt);
         this.elementOnHazards(cast, h => segmentDistance(h, before, this.p) <= cast.radius + 0.6);
-        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (enemy.boss && cast.bossStagger) this.addStagger(enemy, cast.bossStagger, false); if (!enemy.boss && !cast.pierceDash) this.move(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
+        for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && segmentDistance(enemy, before, this.p) <= cast.radius + enemy.radius) { cast.hit.push(enemy.id); this.castHit(cast, enemy); if (enemy.boss && cast.bossStagger) this.addStagger(enemy, cast.bossStagger, false); if (!enemy.boss && !cast.pierceDash) this.pushEnemy(enemy, Math.cos(cast.angle) * cast.knockback, Math.sin(cast.angle) * cast.knockback); }
+        // 압축 돌진 is untouchable for its own length and a moment after (2026-11-10: dashing through a crowd cost wind its runs).
+        if (!cast.streaked && cast.invulnerable) this.p.invulnerableUntil = Math.max(this.p.invulnerableUntil, this.s.time + cast.invulnerable);
         if (!cast.streaked) { cast.streaked = true; this.effect('dodge', this.p.x, this.p.y, cast.color, cast.duration + 0.15, cast.radius, { look: 'dash', angle: cast.angle, follow: true }); }
         if (cast.age + 1e-7 >= (cast.trailNext ?? 0)) { cast.trailNext = cast.age + 0.05; this.effect('dodge', this.p.x, this.p.y, '#badbd3', 0.4, 1, { look: 'gust', angle: cast.angle }); }
         cast.done = cast.age >= cast.duration;

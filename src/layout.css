@@ -500,3 +500,7 @@ body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4
 #app img, #title img { -webkit-user-drag: none; }
 #app input, #app textarea, #title input { -webkit-user-select: text; user-select: text; }
 #app .transfer-code { -webkit-user-select: all; user-select: all; }
+
+/* Three choices sit side by side and wrap (2026-11-10: Bolt's two-line greeting with three choices one under another ran
+   past the bottom of the speech box on a phone). Four or more keep their two columns. */
+.talk-choices:has(button:nth-child(3)):not(:has(button:nth-child(4))) { display: flex; flex-wrap: wrap; gap: 2px 18px; }

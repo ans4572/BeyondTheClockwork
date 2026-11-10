@@ -197,7 +197,7 @@
       "hits": 1,
       "damagePerHit": 46,
       "totalDirectDamage": 46,
-      "range": 3,
+      "range": 3.4,
       "radius": 0,
       "effect": "전방 100도 부채꼴; 화상 1중첩"
     },
@@ -275,11 +275,11 @@
       "name": "압축 돌진",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 28,
-      "totalDirectDamage": 28,
-      "range": 2.5,
+      "damagePerHit": 40,
+      "totalDirectDamage": 40,
+      "range": 3,
       "radius": 0.7,
-      "effect": "0.2초 전진 타격; 풍압; 무적 없음"
+      "effect": "0.2초 전진 타격; 풍압; 돌진 중 무적(0.3초)"
     },
     {
       "id": "vortexIntake",
@@ -288,12 +288,12 @@
       "name": "회오리 흡입",
       "cooldown": 10,
       "hits": 6,
-      "damagePerHit": 8,
-      "totalDirectDamage": 64,
+      "damagePerHit": 10,
+      "totalDirectDamage": 80,
       "range": 5,
       "radius": 3,
-      "effect": "0.25초 간격 6타 후 16 피해 마무리; 일반 적 약한 흡입; 풍압",
-      "finisherDamage": 16
+      "effect": "0.25초 간격 6타 후 20 피해 마무리; 일반 적 약한 흡입; 풍압",
+      "finisherDamage": 20
     },
     {
       "id": "ringPalm",
@@ -304,9 +304,9 @@
       "hits": 1,
       "damagePerHit": 52,
       "totalDirectDamage": 52,
-      "range": 2.4,
+      "range": 3,
       "radius": 0,
-      "effect": "앞쪽 110도 부채꼴(거리 2.4) 공명 충격; 공명 1; 일반 적 0.8 밀침; 공명이 걸린 적에게는 1.5배와 공명 2",
+      "effect": "앞쪽 110도 부채꼴(거리 3) 공명 충격; 공명 1; 일반 적 0.8 밀침; 공명이 걸린 적에게는 1.5배와 공명 2",
       "resonantMultiplier": 1.5,
       "resonantStacks": 2
     },
@@ -392,21 +392,21 @@
         "wind"
       ],
       "name": "화염 회오리",
-      "cooldown": 22,
+      "cooldown": 20,
       "energyCost": 65,
       "hits": 8,
       "damagePerHit": 14,
       "totalDirectDamage": 112,
       "radius": 3,
-      "effect": "전방 2.6에서 생성되어 전진하는 소형 불 회오리; 약한 흡입; 화상과 풍압",
+      "effect": "전방 1.2에서 생겨 천천히 나아가는 소형 불 회오리; 약한 흡입; 화상과 풍압",
       "pairKey": "fire+wind",
       "behavior": {
         "shape": "moving",
-        "speed": 2.2,
+        "speed": 1,
         "pull": 1.2,
         "interval": 0.3,
         "delay": 0,
-        "startDistance": 2.6
+        "startDistance": 1.2
       }
     },
     {
@@ -483,7 +483,7 @@
         "wind"
       ],
       "name": "빙풍 절단",
-      "cooldown": 22,
+      "cooldown": 20,
       "energyCost": 65,
       "hits": 1,
       "damagePerHit": 115,
@@ -691,7 +691,10 @@
       "id": "windPressure",
       "duration": 4,
       "staggerTakenBonus": 0.1,
-      "wrenchKnockback": 2,
+      "slamDamage": 15,
+      "slamStun": 0.5,
+      "slamEvery": 0.5,
+      "wrenchKnockback": 1.5,
       "wrenchStun": 1.5
     },
     {
@@ -714,7 +717,7 @@
       "id": "collectorRoco",
       "name": "회수관 로코",
       "kind": "miniboss",
-      "hp": 2100,
+      "hp": 3100,
       "damage": 12,
       "minimumTell": 0.7,
       "region": "smileStreet",
@@ -724,7 +727,7 @@
       "id": "captainBrass",
       "name": "행진대장 브라스",
       "kind": "regionBoss",
-      "hp": 3500,
+      "hp": 6000,
       "damage": 14,
       "minimumTell": 0.8,
       "region": "smileStreet",
@@ -734,7 +737,7 @@
       "id": "inspectorIris",
       "name": "검수관 아이리스",
       "kind": "miniboss",
-      "hp": 4300,
+      "hp": 6400,
       "damage": 22,
       "minimumTell": 0.65,
       "region": "silentFactory",
@@ -744,7 +747,7 @@
       "id": "directorPress",
       "name": "총감독 프레스",
       "kind": "regionBoss",
-      "hp": 7000,
+      "hp": 10000,
       "damage": 29,
       "minimumTell": 0.8,
       "region": "silentFactory",

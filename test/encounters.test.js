@@ -20,8 +20,8 @@ test('each run deals new waves for every fight, near the designed weight, with t
       assert.equal(callAt, CALL_AT[shape]);
       const elites = room.waves.flat().filter(t => t === 'elite').length;
       if (shape === 'elite') {
-        // Elites only, in two waves (5, 4), each made tougher so the room weighs about 90% of an ordinary deal.
-        assert.deepEqual(waves.map(w => w.length), [5, 4], room.id); assert.ok(waves.flat().every(t => t === 'elite'), room.id);
+        // Elites only, in two waves (4, 4), each made tougher so the room weighs about 90% of an ordinary deal.
+        assert.deepEqual(waves.map(w => w.length), [4, 4], room.id); assert.ok(waves.flat().every(t => t === 'elite'), room.id);
         const hp = Object.fromEntries(Object.entries(enemies).map(([t, e]) => [t, e.hp])), ordinary = dealRoom(room, rooms[i - 1], hp, dealer(seed), 5, 'two').waves.flat().reduce((sum, t) => sum + enemies[t].hp, 0);
         const weight = waves.flat().length * enemies.elite.hp * dealt[i].eliteHp;
         assert.ok(dealt[i].eliteHp >= 1 && dealt[i].eliteHp <= 2.5 && weight / ordinary > 0.7 && weight / ordinary < 1.15, `${room.id} elite room weighs ${(weight / ordinary).toFixed(2)} of an ordinary one`);

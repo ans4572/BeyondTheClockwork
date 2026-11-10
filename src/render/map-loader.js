@@ -48,7 +48,12 @@ export function createMapLoader({ data, game, renderer, firstFiles = [], canStar
   // back took a quarter of a second on a desktop and froze phones mid-fight while the next place was prepared.
   const originals = new Map(), buildingDepth = new Set();
   // A picture let go is closed at once where it is an ImageBitmap, rather than left for the garbage collector to find.
-  const release = file => { const picture = renderer.mapImages.get(file); renderer.mapImages.delete(file); picture?.close?.(); };
+  // An enlarged copy made on a canvas (phones whose browser cannot enlarge with square pixels, such as iPhones) is
+  // shrunk to nothing: Safari keeps a canvas's memory until it is collected, and a run's dozen let-go maps filled its
+  // canvas budget, so the town stuttered after a run (2026-11-10).
+  const freeCanvas = picture => { if (picture && typeof picture.getContext === 'function') { picture.width = 0; picture.height = 0; } };
+  const release = file => { const picture = renderer.mapImages.get(file); renderer.mapImages.delete(file); picture?.close?.(); freeCanvas(picture); };
+  const dropDepth = file => { renderer.depthMasks.get(file)?.free?.(); renderer.depthMasks.delete(file); };
   // The depth is worked out in a worker where the browser allows it (OffscreenCanvas in workers); otherwise right here.
   let depthWorker = null, depthIds = 0;
   const depthJobs = new Map();
@@ -130,7 +135,7 @@ export function createMapLoader({ data, game, renderer, firstFiles = [], canStar
     const keep = new Set([...wanted, ...artOf(game.hubMap), ...(game.s.profile.registered ? [] : artOf(introPlace))]);
     for (const village of villages()) for (const file of artOf(village)) {
       if (keep.has(file) || !requested.has(file)) continue;
-      release(file); renderer.depthMasks.delete(file); originals.delete(file); requested.delete(file);
+      release(file); dropDepth(file); originals.delete(file); requested.delete(file);
       imageQueue = imageQueue.filter(queued => queued !== file);
     }
     const fresh = wanted.filter(file => !requested.has(file)); fresh.forEach(file => requested.add(file));
