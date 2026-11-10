@@ -433,3 +433,10 @@ body.cramped .panel.difficulty > .actions button { padding: 4px 10px; }
 body.cramped .panel.difficulty .rec-row { grid-template-columns: 50px auto auto 1fr; }
 body.cramped .panel.difficulty .rec-who { font-size: 11px; }
 body.cramped .panel.difficulty .rec-els .rec-el { width: 18px; height: 18px; }
+
+/* ---- Element shop on a phone (2026-11-10) ---- */
+/* The buy / equip buttons were the full touch height (44 px) under every card, taller than the skills above them, and
+   the shelf no longer fitted a landscape phone: they are a slim bar now, still easy to tap across the card's width. */
+body.touch .panel.element-panel .element-card .pick { min-height: 28px; padding: 2px 6px; font-size: 12px; line-height: 1.2; }
+body.cramped .panel.element-panel .reward-grid.element-grid { gap: 6px; }
+body.cramped .panel.element-panel > .actions { margin-top: 6px; }

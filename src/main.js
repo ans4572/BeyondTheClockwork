@@ -1143,7 +1143,9 @@ try {
   $('overlay').addEventListener('change', e => {
     const setting = e.target.dataset.setting;
     if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
-    if (e.target.matches('[data-codex-filter]')) { codexFilter = e.target.value; renderOverlay(true); $('overlay').querySelector('[data-codex-filter]')?.focus({ preventScroll: true }); return; }
+    // The redrawn filter takes the keyboard focus back on a computer only: a phone opens its picker again on focus
+    // (2026-11-10: picking an element reopened the list).
+    if (e.target.matches('[data-codex-filter]')) { codexFilter = e.target.value; renderOverlay(true); if (!isTouch) $('overlay').querySelector('[data-codex-filter]')?.focus({ preventScroll: true }); return; }
     if (e.target.dataset.volume) { game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; game.save(); return; }
   });
   // The row under the pointer or the keyboard explains itself in the line below the list.
