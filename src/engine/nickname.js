@@ -32,6 +32,12 @@ export function endsInConsonant(word) {
  * Fills a dialogue line: {name} becomes the player's name, and {name|이라고|라고} the name with the particle that fits
  * (the first form after a final consonant, the second after a vowel).
  */
+/**
+ * A word with the particle that fits it (2026-11-10: notices showed 이(가), 을(를) as written): josa('로코', '이', '가')
+ * gives 로코가, josa('굉음', '을', '를') gives 굉음을.
+ */
+export const josa = (word, consonant, vowel) => `${word}${endsInConsonant(word) ? consonant : vowel}`;
+
 export const fillName = (text, profile) => String(text).replace(/\{name(?:\|([^|}]*)\|([^}]*))?\}/g, (_, consonant, vowel) => {
   const name = callName(profile);
   return consonant === undefined ? name : name + (endsInConsonant(name) ? consonant : vowel);

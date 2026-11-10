@@ -367,7 +367,9 @@ test('a cleared room holds for a second, then rewards, then opens a portal to wa
 });
 
 test('every room has a portal the player can reach from its entrance', () => {
-  for (const [id, place] of Object.entries(maps.maps)) {
+  // Each room's second picture too (alternates, chapter 1 and chapter 2's B rooms).
+  const alternates = Object.entries(maps.alternates || {}).flatMap(([id, list]) => list.map((place, i) => [`${id} B${i + 1}`, place]));
+  for (const [id, place] of [...Object.entries(maps.maps), ...alternates]) {
     if (id === 'stop-07') continue;
     // A rest stop is left through its exit (its portal sits inside it).
     const map = placeOf(maps, place), portal = map.portal || map.exit.portal;

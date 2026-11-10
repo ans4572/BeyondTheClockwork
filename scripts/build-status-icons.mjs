@@ -7,7 +7,7 @@ import os from 'node:os';
 const require = createRequire(import.meta.url);
 const sharp = require(path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp'));
 const SOURCE = 'art/status-icon-concepts', OUTPUT = 'art/ui/status-icons', SIZE = 24, INK = [43, 51, 69], SOLID = 128;
-const ICONS = { burn: 'c-burn', chill: 'c-chill', frozen: 'c-frozen', shock: 'c-shock', windPressure: 'c-wind' };
+const ICONS = { burn: 'c-burn', chill: 'c-chill', frozen: 'c-frozen', shock: 'c-shock', windPressure: 'c-wind', resonance: 'c-resonance', wet: 'c-wet' };
 
 await mkdir(OUTPUT, { recursive: true });
 for (const [id, name] of Object.entries(ICONS)) {

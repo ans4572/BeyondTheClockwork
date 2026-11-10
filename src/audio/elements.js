@@ -1,10 +1,11 @@
+import { attackTime, pitch, grains } from './synthesis.js';
 // Element sounds built from filtered noise and simple tones, so wind sounds like moving air and fire like flame,
 // not like a game-console chirp; also the failed-run horn. Each recipe draws into `out` (a gain node) starting now; all levels are relative.
 
 let whiteNoise = null;
 function noise(audio) {
-  if (!whiteNoise) {
-    whiteNoise = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
+  if (!whiteNoise || whiteNoise.sampleRate !== audio.sampleRate) {
+    whiteNoise = audio.createBuffer(1, Math.ceil(audio.sampleRate * 2), audio.sampleRate);
     const d = whiteNoise.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   }
@@ -21,7 +22,8 @@ function envelope(param, start, attack, hold, release, peak) {
 }
 function filtered(audio, out, type, frequency, q, { at = 0, attack, hold = 0, release, peak }) {
   const start = audio.currentTime + at, source = noise(audio), filter = audio.createBiquadFilter(), gain = audio.createGain();
-  filter.type = type; filter.frequency.value = frequency; filter.Q.value = q;
+  filter.type = type; filter.frequency.value = frequency * pitch(audio); filter.Q.value = q;
+  attack = attackTime(audio, attack);
   const end = envelope(gain.gain, start, attack, hold, release, peak);
   source.connect(filter).connect(gain).connect(out); source.start(start); source.stop(end + 0.05);
   return filter;
@@ -50,23 +52,23 @@ function hiss(audio, out, { dur, cutoff = 3500, attack = 0.03, peak = 1 }) {
 }
 /** Embers popping or sparks jumping: many tiny bright clicks at random moments. */
 function crackle(audio, out, { dur, count, low = 1500, high = 4500, peak = 1 }) {
-  for (let i = 0; i < count; i++) filtered(audio, out, 'bandpass', low + Math.random() * (high - low), 3, { at: Math.random() * dur, attack: 0.002, release: 0.02 + Math.random() * 0.03, peak: peak * (0.4 + Math.random() * 0.6) });
+  grains(audio, out, Array.from({ length: count }, () => ({ freq: Math.min(5200, low + Math.random() * (high - low)), q: 2.5, at: Math.random() * dur, dur: 0.025 + Math.random() * 0.03, peak: peak * (low < 2000 ? 0.3 : 0.8) * (0.4 + Math.random() * 0.6) })));
 }
 /** The crack at the front of a lightning strike. */
-function snap(audio, out, { peak = 1 } = {}) { filtered(audio, out, 'highpass', 2500, 0.7, { attack: 0.002, release: 0.08, peak }); }
+function snap(audio, out, { peak = 1 } = {}) { filtered(audio, out, 'highpass', 2500, 0.7, { attack: 0.008, release: 0.08, peak }); }
 /** Weight under a blast: a falling tone. */
 function thump(audio, out, { from, to, dur, peak = 1 }) {
   const osc = audio.createOscillator(), gain = audio.createGain(), start = audio.currentTime;
   osc.frequency.setValueAtTime(from, start); osc.frequency.exponentialRampToValueAtTime(to, start + dur);
-  envelope(gain.gain, start, 0.005, 0, dur, peak); osc.connect(gain).connect(out); osc.start(); osc.stop(start + dur + 0.05);
+  envelope(gain.gain, start, 0.006, 0, dur, peak); osc.connect(gain).connect(out); osc.start(); osc.stop(start + dur + 0.05);
 }
 /** Electric hum: a buzzy tone that flutters. */
 function buzz(audio, out, { dur, freq, peak = 1 }) {
   const osc = audio.createOscillator(), flutter = audio.createOscillator(), depth = audio.createGain(), filter = audio.createBiquadFilter(), gain = audio.createGain(), start = audio.currentTime;
-  osc.type = 'sawtooth'; osc.frequency.value = freq; flutter.type = 'square'; flutter.frequency.value = 37; depth.gain.value = 0.5;
-  filter.type = 'highpass'; filter.frequency.value = 600;
-  envelope(gain.gain, start, 0.01, dur * 0.4, dur * 0.6, peak); flutter.connect(depth).connect(gain.gain);
-  osc.connect(filter).connect(gain).connect(out); osc.start(); flutter.start(); osc.stop(start + dur + 0.05); flutter.stop(start + dur + 0.05);
+  osc.type = 'sawtooth'; osc.frequency.value = freq * pitch(audio); flutter.type = 'sine'; flutter.frequency.value = 37; depth.gain.value = 0.18;
+  filter.type = 'lowpass'; filter.frequency.value = 2600;
+  envelope(gain.gain, start, 0.01, dur * 0.4, dur * 0.6, peak); const am = audio.createGain(); am.gain.value = 0.8; flutter.connect(depth).connect(am.gain);
+  osc.connect(filter).connect(am).connect(gain).connect(out); osc.start(); flutter.start(); osc.stop(start + dur + 0.05); flutter.stop(start + dur + 0.05);
 }
 
 /** A toy horn note: a buzzy tone through a soft filter, with a wobble that deepens on long notes. */
@@ -92,12 +94,12 @@ export const ELEMENT_SOUNDS = {
   // The dodge: a quick rush of air that falls in pitch, the usual dash 'whoosh', with no metal in it.
   dash: (a, o) => { gust(a, o, { dur: 0.2, from: 2600, to: 520, q: 0.9, attack: 0.18, peak: 1 }); gust(a, o, { dur: 0.14, from: 5200, to: 1800, q: 1.4, attack: 0.1, peak: 0.35 }); },
   // Two slow strokes of the town bell: a fundamental with two fading overtones.
-  bell: (a, o) => { for (const stroke of [0, 0.9]) for (const [freq, peak] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) { const osc = a.createOscillator(), g = a.createGain(), at = a.currentTime + stroke; osc.frequency.value = freq; g.gain.setValueAtTime(peak, at); g.gain.exponentialRampToValueAtTime(0.001, at + 1.6); osc.connect(g).connect(o); osc.start(at); osc.stop(at + 1.6); } },
+  bell: (a, o) => { for (const stroke of [0, 0.9]) for (const [freq, peak] of [[392, 0.06], [784, 0.03], [1176, 0.012]]) { const osc = a.createOscillator(), g = a.createGain(), at = a.currentTime + stroke; osc.frequency.value = freq * pitch(a); g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(peak, at + 0.008); g.gain.exponentialRampToValueAtTime(0.001, at + 1.6); osc.connect(g).connect(o); osc.start(at); osc.stop(at + 1.6); } },
   // Stepping through a portal: air drawn in and swept upward ("whoom"), with a soft rising shimmer on top.
   portal: (a, o) => {
     gust(a, o, { dur: 0.7, from: 220, to: 2600, q: 0.8, attack: 0.55, peak: 1 });
     gust(a, o, { dur: 0.5, from: 1800, to: 6000, q: 2.5, attack: 0.7, peak: 0.25, at: 0.15 });
-    for (const [at, freq] of [[0.18, 784], [0.3, 1047], [0.42, 1319]]) { const osc = a.createOscillator(), g = a.createGain(), t = a.currentTime + at; osc.type = 'sine'; osc.frequency.value = freq; g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5); osc.connect(g).connect(o); osc.start(t); osc.stop(t + 0.55); }
+    for (const [at, freq] of [[0.18, 784], [0.3, 1047], [0.42, 1319]]) { const osc = a.createOscillator(), g = a.createGain(), t = a.currentTime + at; osc.type = 'sine'; osc.frequency.value = freq * pitch(a); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.05, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5); osc.connect(g).connect(o); osc.start(t); osc.stop(t + 0.55); }
   },
   pressureDash: (a, o) => { gust(a, o, { dur: 0.34, from: 450, to: 2000, q: 1.1, attack: 0.25, peak: 1 }); roar(a, o, { dur: 0.3, cutoff: 350, attack: 0.05, peak: 0.35 }); },
   vortexIntake: (a, o) => { swirl(a, o, { dur: 1.0, center: 650, depth: 350, rate: 6, peak: 1 }); roar(a, o, { dur: 1.0, cutoff: 260, attack: 0.3, peak: 0.45 }); },

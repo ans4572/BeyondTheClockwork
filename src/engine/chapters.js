@@ -26,9 +26,10 @@ export function chapterCleared(profile, id) {
  */
 export const chapterShown = (slice, id, previews = false) => previews || !chapterOf(slice, id).preview;
 /** A chapter opens once the one it follows (chapters[].after) is beaten, and only if it is shown. */
-export const chapterOpen = (slice, profile, id, previews = false) => {
+// `unlock` (the local test server) opens every shown chapter without beating the one before it.
+export const chapterOpen = (slice, profile, id, previews = false, unlock = false) => {
   const after = chapterOf(slice, id).after;
-  return chapterShown(slice, id, previews) && (!after || chapterCleared(profile, after));
+  return chapterShown(slice, id, previews) && (unlock || !after || chapterCleared(profile, after));
 };
 
 /** Marks a chapter beaten in the save. */

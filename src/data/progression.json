@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "docs/design/clockwork-design.v1.json",
-  "contentVersion": "clockwork-design-0.3-magnetic-ice-clamp",
+  "contentVersion": "clockwork-design-0.5-sound-water-fusions",
   "economy": {
     "firstReturnBonus": 15,
     "firstReturnBonusRequiresClearedCombat": true,
@@ -12,16 +12,16 @@
     "sharedCoreTotal": 5480,
     "elementTotal": 7200,
     "runCoinRewards": {
-      "normal": 22,
-      "miniboss": 38,
-      "regionBoss": 60
+      "normal": 20,
+      "miniboss": 34,
+      "regionBoss": 54
     },
     "baseCoinsBeforeFinalBoss": 500,
     "shop": [
       {
         "id": "heal",
         "cost": 45,
-        "amount": 25,
+        "amount": 40,
         "oncePerShop": true
       },
       {
@@ -59,9 +59,9 @@
     "id": "smileStreet",
     "name": "웃음거리",
     "index": 1,
-    "normalReward": 15,
-    "miniReward": 45,
-    "bossReward": 90,
+    "normalReward": 14,
+    "miniReward": 41,
+    "bossReward": 81,
     "miniboss": "collectorRoco",
     "boss": "captainBrass",
     "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"

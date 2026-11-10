@@ -1,3 +1,4 @@
+import { attackTime, pitch, grains } from './synthesis.js';
 // Sounds built in code (Web Audio): two or three candidates per sound; sfx.js names the one the game plays.
 // Each recipe draws into `out` (a gain node) from now on; levels are relative and the comparison page matches loudness.
 // The wrench is meant to land like a melee weapon in an action game: a low thump for weight, a short bright click for
@@ -6,7 +7,7 @@
 let white = null;
 function noise(audio) {
   if (!white || white.sampleRate !== audio.sampleRate) {
-    white = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
+    white = audio.createBuffer(1, Math.ceil(audio.sampleRate * 2), audio.sampleRate);
     const d = white.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   }
@@ -20,12 +21,18 @@ function decay(audio, at, attack, dur, peak) {
 }
 /** A tone whose pitch slides from `from` to `to` over `glide`: the low thump of an impact when it drops fast. */
 function tone(audio, out, { type = 'sine', from, to = from, glide, dur, attack = 0.002, peak = 1, at = 0 }) {
+  attack = attackTime(audio, attack);
+  from *= pitch(audio); to *= pitch(audio);
   const t = audio.currentTime + at, osc = audio.createOscillator(), g = decay(audio, at, attack, dur, peak);
   osc.type = type; osc.frequency.setValueAtTime(from, t); osc.frequency.exponentialRampToValueAtTime(to, t + (glide ?? dur));
-  osc.connect(g).connect(out); osc.start(t); osc.stop(t + attack + dur + 0.05);
+  let body = osc;
+  if (!audio.sfxMenu && (type === 'square' || type === 'sawtooth')) { const f = audio.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2800; f.Q.value = 0.5; body = osc.connect(f); }
+  body.connect(g).connect(out); osc.start(t); osc.stop(t + attack + dur + 0.05);
 }
 /** Filtered noise with an optional sweep: clicks, crunches and the air of a swing. */
 function hiss(audio, out, { type = 'bandpass', freq, to = freq, q = 1, dur, attack = 0.001, peak = 1, at = 0, shape = null }) {
+  attack = attackTime(audio, attack);
+  freq *= pitch(audio); to *= pitch(audio);
   const t = audio.currentTime + at, src = noise(audio), f = audio.createBiquadFilter(), g = decay(audio, at, attack, dur, peak);
   f.type = type; f.Q.value = q; f.frequency.setValueAtTime(freq, t); f.frequency.exponentialRampToValueAtTime(to, t + attack + dur);
   let chain = src.connect(f);
@@ -34,14 +41,17 @@ function hiss(audio, out, { type = 'bandpass', freq, to = freq, q = 1, dur, atta
 }
 /** A swing's air: noise that swells as the band sweeps, then lets go. */
 function whoosh(audio, out, { from, to, dur, q = 1.2, swell = 0.45, peak = 1, at = 0 }) {
+  from *= pitch(audio); to *= pitch(audio);
   const t = audio.currentTime + at, src = noise(audio), f = audio.createBiquadFilter(), g = audio.createGain();
   f.type = 'bandpass'; f.Q.value = q; f.frequency.setValueAtTime(from, t); f.frequency.exponentialRampToValueAtTime(to, t + dur);
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + dur * swell); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + Math.max(0.008, dur * swell)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   src.connect(f).connect(g).connect(out); src.start(t, Math.random()); src.stop(t + dur + 0.05);
 }
 /** Struck metal: a few out-of-tune partials, the high ones dying first. */
 function ring(audio, out, { base, dur, peak = 1, at = 0, partials = [1, 2.76, 5.4, 8.93] }) {
-  partials.forEach((ratio, i) => tone(audio, out, { from: base * ratio, dur: dur / (1 + i * 0.8), peak: peak / (1 + i * 0.9), at }));
+  if (audio.sfxMenu) {
+    partials.forEach((ratio, i) => tone(audio, out, { from: base * ratio, dur: dur / (1 + i * 0.8), peak: peak / (1 + i * 0.9), at }));
+  } else grains(audio, out, partials.map((ratio, i) => ({ freq: base * ratio, dur: dur / (1 + i * 0.8), peak: peak / (1 + i * 0.9), at })), 'tone');
 }
 /** Soft clipping, for crunch. */
 function grit(audio, amount) {
@@ -148,7 +158,7 @@ function notes(audio, out, list, { type = 'triangle', dur = 0.25, peak = 0.4, at
 }
 /** A run of tiny clicks: a ratchet, a wind-up, paper slaps. */
 function clicks(audio, out, { count, gap, freq = 3000, q = 4, dur = 0.012, peak = 0.6, at = 0 }) {
-  for (let i = 0; i < count; i++) hiss(audio, out, { freq, q, dur, peak, at: at + i * gap });
+  grains(audio, out, Array.from({ length: count }, (_, i) => ({ freq, q, dur, peak: peak * 0.85, at: at + i * gap })));
 }
 /** A tone pushed through a closing low-pass: brass and horns. */
 function horn(audio, out, { from, to = from, dur, peak = 0.5, at = 0, bright = 2200 }) {
@@ -158,6 +168,7 @@ function horn(audio, out, { from, to = from, dur, peak = 0.5, at = 0, bright = 2
 }
 /** Air that circles: a band of noise wobbling `rate` times a second. */
 function whirl(audio, out, { center, depth, rate, dur, peak = 1, at = 0 }) {
+  center *= pitch(audio); depth *= pitch(audio);
   const t = audio.currentTime + at, src = noise(audio), f = audio.createBiquadFilter(), g = decay(audio, at, dur * 0.3, dur * 0.7, peak), lfo = audio.createOscillator(), amt = audio.createGain();
   f.type = 'bandpass'; f.Q.value = 3; f.frequency.value = center; lfo.frequency.value = rate; amt.gain.value = depth;
   lfo.connect(amt).connect(f.frequency); src.connect(f).connect(g).connect(out); src.start(t, Math.random()); lfo.start(t); src.stop(t + dur + 0.05); lfo.stop(t + dur + 0.05);
@@ -319,7 +330,7 @@ export const WORLD_CANDIDATES = {
 const GLASS = [1, 2.32, 4.25, 6.63];
 /** Frost settling: tiny high clicks scattered over `dur`, like ice crystals forming. */
 function crackle(audio, out, { count, dur, freq = 6000, peak = 0.35, at = 0 }) {
-  for (let i = 0; i < count; i++) hiss(audio, out, { type: 'highpass', freq: freq * (0.8 + Math.random() * 0.5), dur: 0.006 + Math.random() * 0.01, peak: peak * (0.5 + Math.random() * 0.5), at: at + Math.random() * dur });
+  grains(audio, out, Array.from({ length: count }, () => ({ freq: Math.min(5400, freq * (0.7 + Math.random() * 0.25)), q: 1.8, dur: 0.018 + Math.random() * 0.015, peak: peak * 0.65 * (0.5 + Math.random() * 0.5), at: at + Math.random() * dur })));
 }
 
 /** The ice skills: three coded candidates each; sfx.js names the one in use. */

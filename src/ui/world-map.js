@@ -1,9 +1,9 @@
-// The world map: the painted Clockwork Island (art/world-map/clockwork-island.webp) with the route drawn over it.
+// The world map: the painted Clockwork Island (art/world-map/clockwork-island-v6.webp, 2026-11-08: the three regions as equal thirds) with the route drawn over it.
 // Smile Street's stops sit on the painted walks between Moru's shop and the shops' square (see SMILE_STOPS). The Silent Factory and the Central
 // Clock Tower are painted too; until those regions exist they are greyed under a veil with locked `?` stops.
 // Every position below is in pixels of the painting (1672 x 941) and scaled to the SVG.
 
-export const WORLD_MAP_ART = 'art/world-map/clockwork-island.webp';
+export const WORLD_MAP_ART = 'art/world-map/clockwork-island-v6.webp';
 /** Painted stop markers (made to match the island painting); each stands on its stop with its foot on the road. */
 const MARKER = name => `art/world-map/icons/${name}.webp`;
 export const WORLD_MAP_MARKERS = ['town', 'market', 'boss', 'stop-ahead', 'stop-done', 'stop-current'].map(MARKER);
@@ -19,15 +19,18 @@ const f = n => n.toFixed(1);
  * Smile Street's stops, placed by hand where they were marked on the painting: out from the repair shop's door along
  * the outer road to Brass at its far end, just short of the brass gate, which is left for the factory's first stop.
  */
-const SMILE_STOPS = [[300, 628], [439, 644], [511, 680], [622, 688], [733, 676], [800, 660], [860, 636], [952, 676], [1042, 684], [1134, 676], [1225, 663], [1320, 644], [1394, 612]];
+const SMILE_STOPS = [[165, 648], [300, 668], [380, 680], [460, 688], [540, 692], [620, 694], [700, 692], [780, 688], [860, 680], [930, 668], [985, 645], [1025, 612], [1040, 578]];
 const STOP_IDS = ['town', 'stop-02', 'stop-03', 'stop-04', 'stop-05', 'stop-06', 'stop-07', 'stop-08', 'stop-09', 'stop-10', 'stop-11', 'stop-12', 'stop-13'];
 /** Smile Street's stops on the map, by stop id, in SVG units. */
 export const ATLAS_SPOTS = Object.fromEntries(SMILE_STOPS.map((p, i) => [STOP_IDS[i], px(p)]));
 
 // Later regions: their stops on the painted factory floor and up the clock tower's stairs, each ending at its boss.
 // The factory begins at the brass gate (its entrance stop), just past Brass.
-const FACTORY_WAY = [[1394, 612], [1405, 555]].map(px);
-const FACTORY = [[1408, 520], [1190, 395], [1290, 352], [1405, 336], [1505, 300], [1560, 232], [1450, 196]].map(px);
+const FACTORY_WAY = [[1040, 578], [1078, 548]].map(px);
+// 2026-11-08 map (v6): the factory is drawn cut open. Its stops zigzag up its floors, 1F left to right, 2F back, 3F across,
+// then down the lift into the two basement halls dug into the rock, the press last. The crane yard (09) is open to the sky,
+// so its stop stands on the roof deck between the crane's legs, not inside the 3rd floor.
+const FACTORY = [[1110, 548], [1220, 548], [1330, 548], [1470, 548], [1470, 452], [1300, 452], [1150, 452], [1150, 362], [1262, 262], [1470, 362], [1450, 650], [1290, 752]].map(px);
 /** Points spaced evenly along a path (the factory's twelve stops along its painted walk). */
 function along(pts, count) {
   const lengths = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1])), total = lengths.reduce((a, b) => a + b, 0);
@@ -39,15 +42,16 @@ function along(pts, count) {
   });
 }
 /** The Silent Factory's stops in order, from the brass gate to the forming hall, in SVG units. */
-const FACTORY_STOPS = along(FACTORY, 12);
+const FACTORY_STOPS = FACTORY.length === 12 ? FACTORY : along(FACTORY, 12);
 /** Where each chapter's stops stand: chapter 1 by stop id, a later chapter by stop order after the town. */
 const spotsOf = (chapter, stops) => chapter === 'silent-factory' ? stops.map((stop, i) => i ? FACTORY_STOPS[i - 1] : ATLAS_SPOTS.town) : stops.map(stop => ATLAS_SPOTS[stop.id]);
-const TOWER = [[880, 392], [905, 318], [850, 238], [852, 150]].map(px);
+// The tower's way: over the bridge from the factory roof, round its terrace and up its balconies to the bell.
+const TOWER = [[1095, 282], [830, 352], [650, 396], [470, 332], [545, 238]].map(px);
 /** The painted areas that stay greyed until their region exists. */
 const VEILS = {
-  factory: [[1085, 340], [1110, 200], [1240, 120], [1400, 80], [1530, 100], [1610, 170], [1652, 300], [1630, 420], [1510, 436], [1330, 432], [1200, 420], [1100, 392]],
+  factory: [[1048, 250], [1100, 190], [1190, 140], [1330, 130], [1460, 120], [1560, 190], [1605, 300], [1610, 560], [1560, 650], [1500, 780], [1300, 810], [1100, 790], [1070, 640], [1048, 520]],
   // The clock tower inside its great gear: the outline follows the ring, then the hill and stairs below it.
-  tower: [[795, 6], [905, 6], [965, 50], [992, 120], [995, 220], [985, 330], [930, 380], [780, 380], [712, 320], [705, 220], [710, 120], [737, 50]]
+  tower: [[345, 70], [395, 18], [470, 2], [610, 2], [690, 22], [738, 80], [760, 160], [790, 280], [835, 335], [835, 420], [700, 478], [450, 478], [355, 420], [332, 300], [335, 160]]
 };
 
 const path = (pts, close = false) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${f(x)},${f(y)}`).join('') + (close ? 'Z' : '');
@@ -67,7 +71,7 @@ function drawScenery(factoryOpen) {
   return `<defs>${veils}<filter id="wm-grey"><feColorMatrix type="saturate" values="0.15"/></filter></defs>
     <image href="${WORLD_MAP_ART}" width="${W}" height="${H}"/>${factoryOpen ? '' : grey('factory')}${grey('tower')}`;
 }
-const labels = factoryOpen => `${banner(420, 470, '웃음거리')}${banner(800, 72, '무음공장', 'dark')}${factoryOpen ? '' : soon(800, 98, '브라스 다음 · 준비 중')}${banner(360, 60, '중앙시계탑', 'blue')}${soon(360, 86, '무음공장 다음 · 준비 중')}`;
+const labels = factoryOpen => `${banner(300, 478, '웃음거리')}${banner(800, 52, '무음공장', 'dark')}${factoryOpen ? '' : soon(800, 78, '브라스 다음 · 준비 중')}${banner(130, 40, '중앙시계탑', 'blue')}${soon(130, 66, '무음공장 다음 · 준비 중')}`;
 
 /**
  * Stops: { id, icon, label, state: 'done'|'current'|'ahead', kind: ''|'boss'|'shop'|'town' }, the town first.

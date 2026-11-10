@@ -10,19 +10,34 @@ const TAU = Math.PI * 2;
 /** Fusion shapes that strike an area of floor, drawn under their pictures (see drawFusionFloors); a shockwave lasts this long. */
 const FLOOR_SHAPES = new Set(['self', 'target', 'moving', 'orb', 'clamp']), FLOOR_WAVE_SECONDS = 0.28, FLOOR_FLASH_SECONDS = 0.22;
 /**
+ * The sound and water fusions that strike round a spot get the same opening ring (2026-11-09): 과열 증기막, 고음 파쇄, 빙판,
+ * 공명 낙뢰, 감전 웅덩이, 물기둥 회오리, 수면 공명. 과열 공진 (marks on bodies) and 메아리 돌풍 (a travelling ring) have no
+ * one spot. Their own floor pictures carry the rest, so only the opening flash is drawn, not a ring for every blow.
+ */
+const FLASH_SHAPES = new Set(['veil', 'shatter', 'sheet', 'speaker', 'pool', 'spout', 'film']);
+/** Fusions whose ring waits for the blow: a landing first (target, orb), a note that breaks, a pool that fills. */
+const DELAYED_SHAPES = new Set(['target', 'orb', 'shatter', 'pool']);
+/**
  * A fusion's rings lie on the painted floor, which is seen at a slant: squashed to this share of their height, like the
  * landing marks. The opening flash bursts from FLASH_FROM to FLASH_TO of the reach (it shows the cast, not the reach);
  * each later blow's ring still runs out to the rim.
  */
 const RING_FLAT = FLOOR_FLAT, FLASH_FROM = 0.4, FLASH_TO = 0.78;
 /**
+ * Basic skills whose picture is smaller than what they strike: their element's reach ring lies faintly on the floor for
+ * as long as they last, so the whole reach reads (회오리 흡입's whirl is about 69 px across, its pull and blows 120; 2026-11-09).
+ */
+const BASIC_REACH = new Set(['vortexIntake']), REACH_ALPHA = 0.32, REACH_FADE = 0.15;
+/**
  * Enemy danger floors, as Lost Ark paints them: one red multiplied into the floor (its pattern shows through), no
  * hatching or outline; a deeper red fills from the attacker outward and the blow lands as it reaches the edge.
  */
 const TELL_RED = '#e0303c', TELL_WASH = 0.42, TELL_BOSS_WASH = 0.48, TELL_FILL = 0.35;
+/** The green of a safe floor, washed the same way as the red (2026-11-09). */
+const SAFE_GREEN = '#2fae63';
 /** Each element's reach ring (a MARKS name); a ring fills 124 of its 128 pixels, and the second element's sits inside. */
-const FUSION_RINGS = { fire: 'ringFire', ice: 'ringIce', lightning: 'ringLightning', wind: 'ringWind' }, RING_SPAN = 128 / 124, RING_INNER = 0.84;
-export const ELEMENT_TINTS = { fire: '#ff7a2f', ice: '#8fe3ff', lightning: '#ffe14d', wind: '#8ff5b4' };
+const FUSION_RINGS = { fire: 'ringFire', ice: 'ringIce', lightning: 'ringLightning', wind: 'ringWind', sound: 'ringSound', water: 'ringWater' }, RING_SPAN = 128 / 124, RING_INNER = 0.84;
+export const ELEMENT_TINTS = { fire: '#ff7a2f', ice: '#8fe3ff', lightning: '#ffe14d', wind: '#8ff5b4', sound: '#ffc15a', water: '#5cc8e6' };
 
 export const floorMarks = {
   /**
@@ -33,7 +48,7 @@ export const floorMarks = {
     const c = this.ctx, r = fx.value * 20, flat = 0.55;
     // With its element's floor mark painted (lightning, frost, embers, or the hatch an enemy climbs out of), the mark turns
     // slowly and firms up toward the hit; the closing ring still keeps the time.
-    const art = { lightning: 'landLightning', ice: 'landIce', fire: 'landFire', spawn: 'spawn' }[fx.mark];
+    const art = { lightning: 'landLightning', ice: 'landIce', fire: 'landFire', sound: 'landSound', water: 'landWater', spawn: 'spawn' }[fx.mark];
     if (art && this.mark(art)) {
       const grow = fx.mark === 'spawn' ? 0.6 + 0.4 * Math.min(1, fraction * 3) : 1;
       // A faint wash of the skill's colour under the mark, so the whole reach reads and not only its rim.
@@ -88,9 +103,11 @@ export const floorMarks = {
   drawFusionFloors() {
     const g = this.game, c = this.ctx, ease = t => 1 - (1 - t) ** 2;
     for (const cast of g.s.casts) {
-      if (!cast.fusion || cast.derived || cast.done || !FLOOR_SHAPES.has(cast.shape)) continue;
+      if (!cast.fusion && !cast.derived && !cast.done && BASIC_REACH.has(cast.skillId)) { this.drawBasicReach(cast); continue; }
+      const flashOnly = FLASH_SHAPES.has(cast.shape);
+      if (!cast.fusion || cast.derived || cast.done || !(FLOOR_SHAPES.has(cast.shape) || flashOnly)) continue;
       // Targeted fusions go off once they have gathered.
-      const start = ['target', 'orb'].includes(cast.shape) ? cast.delay || 0 : 0;
+      const start = DELAYED_SHAPES.has(cast.shape) ? cast.delay || 0 : 0;
       if (cast.age < start) continue;
       const [a, b = a] = (cast.elements || []).map(id => ELEMENT_TINTS[id] || '#fff4cd'), x = cast.x * 20, y = cast.y * 20;
       const flash = (cast.age - start) / FLOOR_FLASH_SECONDS;
@@ -98,7 +115,7 @@ export const floorMarks = {
       // The rings of this frame: the opening flash (both elements, with a brief glow on the floor), then each blow's wave.
       const bursts = [];
       if (flash < 1) bursts.push({ grow: FLASH_FROM + (FLASH_TO - FLASH_FROM) * ease(flash), alpha: 1 - flash * flash, both: true, glow: 0.2 * (1 - flash) });
-      else if (wave < 1) bursts.push({ grow: 0.3 + 0.7 * ease(wave), alpha: 0.45 * (1 - wave) });
+      else if (wave < 1 && !flashOnly) bursts.push({ grow: 0.3 + 0.7 * ease(wave), alpha: 0.45 * (1 - wave) });
       if (!bursts.length) continue;
       // A round reach uses the PixelLab rings (art/fx/marks/ring-fusion-*): the first element's outside, the second's inside.
       const rings = (cast.elements || []).map(id => FUSION_RINGS[id]).filter(name => name && this.mark(name));
@@ -111,7 +128,18 @@ export const floorMarks = {
         }
         continue;
       }
-      // The clamp's box (and any ring still loading): flat-colour lines, as the pixel art around it.
+      if (cast.shape === 'clamp' && rings.length) {
+        const [outer, inner = outer] = rings.map(name => this.mark(name)), l = cast.halfLength * 20, w = cast.halfWidth * 20;
+        for (const { grow, alpha, both, glow } of bursts) {
+          c.save(); c.translate(x, y); c.rotate(cast.angle); c.scale(1, w / l);
+          if (glow) { c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.arc(0, 0, l * grow, 0, TAU); c.fill(); }
+          const ring = (image, k, opacity) => { const size = 2 * l * RING_SPAN * grow * k; c.globalAlpha = opacity; c.imageSmoothingEnabled = false; c.drawImage(image, -size / 2, -size / 2, size, size * image.height / image.width); };
+          ring(outer, 1, alpha); if (both && inner !== outer) ring(inner, RING_INNER, 0.85 * alpha);
+          c.restore();
+        }
+        continue;
+      }
+      // Any ring still loading: flat-colour lines, as the pixel art around it.
       // A round reach lies flat like the rings; the clamp's box keeps its true shape, matching the clamp drawn over it.
       c.save(); c.translate(x, y);
       if (cast.shape === 'clamp') c.rotate(cast.angle); else c.scale(1, RING_FLAT);
@@ -129,6 +157,19 @@ export const floorMarks = {
       c.restore();
     }
   },
+  /**
+   * A basic skill's reach (BASIC_REACH): its element's ring at the true radius, faint and turning slowly, fading in as it
+   * starts and out as its last blow lands; each blow sends a fainter ring out to the rim, as a fusion's do.
+   */
+  drawBasicReach(cast) {
+    const name = FUSION_RINGS[cast.elements?.[0]];
+    if (!name || !this.mark(name)) return;
+    const x = cast.x * 20, y = cast.y * 20, size = 2 * cast.radius * 20 * RING_SPAN, end = (cast.hits || 1) * (cast.interval || 0) + (cast.delay || 0);
+    const fade = Math.max(0, Math.min(1, cast.age / REACH_FADE, (end - cast.age) / REACH_FADE));
+    this.drawMark(name, x, y, size, { alpha: REACH_ALPHA * fade, flat: RING_FLAT, angle: -this.visualTime * 1.2 });
+    const since = cast.pulse > 0 ? cast.age - (cast.next - (cast.interval || 0)) : Infinity, wave = Math.min(1, since / FLOOR_WAVE_SECONDS);
+    if (wave < 1) this.drawMark(name, x, y, size * (0.3 + 0.7 * (1 - (1 - wave) ** 2)), { alpha: 0.3 * (1 - wave), flat: RING_FLAT });
+  },
   /** A long band along a line, filled and outlined in the current colours. */
   lanePath([[ax, ay], [bx, by]], halfWidth, fill) {
     const c = this.ctx, width = halfWidth * 20, length = Math.hypot(bx - ax, by - ay) * 20, angle = Math.atan2(by - ay, bx - ax);
@@ -138,6 +179,8 @@ export const floorMarks = {
     const skew = Math.abs(across) > 0.2 ? along / across : 0;
     c.save(); c.translate(ax * 20, ay * 20); c.rotate(angle);
     // A lane about to be marched: a red carpet strip with gold chevrons running along it (scrolling tile).
+    // The safe lane (fill 'safe'): washed green into the carpet like the red warnings, no outline (2026-11-09).
+    if (fill === 'safe') { this.stripPath(length, width, skew); this.washFloor(TELL_BOSS_WASH, SAFE_GREEN); c.restore(); return; }
     if (fill && !this.drawLaneTiles(length, width, skew)) { this.stripPath(length, width, skew); c.fill(); }
     this.stripPath(length, width, skew); c.stroke(); c.restore();
   },
@@ -228,6 +271,43 @@ export const floorMarks = {
         const length = (tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength) * 20, width = enemy.thrustWidth * 20;
         box(length, width); break;
       }
+      // Chapter 2 bosses (src/engine/factory-bosses.js).
+      // Her searchlight (PixelLab cone) sweeping after F2; the red line is where the beam will run.
+      case 'irisLaser': if (!this.fbSearchCone(x, y, tell.angle, ai.laserLength, ai.coneDegrees, progress)) { tone = '#e8c860'; sector(ai.laserLength, ai.coneDegrees); tone = TELL_RED; } this.line(x, y, x + Math.cos(tell.angle) * ai.laserLength * 20, y + Math.sin(tell.angle) * ai.laserLength * 20, '#b85863', 2); break;
+      case 'verdict': sector(ai.verdictRange, ai.verdictDegrees); break;
+      case 'tapeMeasure': box(ai.measureLength * 20, ai.measureWidth * 20); break;
+      case 'crossLaser': for (let k = 0; k < 4; k++) { const a = tell.angle + Math.PI / 4 + k * Math.PI / 2; this.line(x, y, x + Math.cos(a) * ai.crossLength * 20, y + Math.sin(a) * ai.crossLength * 20, '#b85863', 1.5); } break;
+      // The same ring under all three, so the floor does not give the real one away.
+      case 'decoys': ring(x, y, 1.2); for (const d of enemy.decoys || []) if (!d.popped) { c.save(); ring(d.x * 20, d.y * 20, 1.2); c.restore(); } break;
+      case 'rejectStamps': case 'gridCheck': case 'rejectOne': ring(x, y, 0.8); break;
+      // Press's plates: hidden overhead, a growing shadow and a blinking red frame, then the plate falls (2026-11-08).
+      case 'plateDrop': if (this.mark('bossPlate') && this.fbPlateWarn) { for (const d of tell.drops || []) this.fbPlateWarn(d.x, d.y, progress, tell.until - g.s.time); break; } for (const d of tell.drops || []) { c.save(); c.globalAlpha = 0.25 + progress * 0.35; c.fillStyle = '#111522'; c.fillRect((d.x - ai.plateW / 2) * 20, (d.y - ai.plateH / 2) * 20, ai.plateW * 20, ai.plateH * 20); c.restore(); c.strokeRect((d.x - ai.plateW / 2) * 20, (d.y - ai.plateH / 2) * 20, ai.plateW * 20, ai.plateH * 20); } this.overlay(() => { for (const d of tell.drops || []) this.drawMark('bossPlate', d.x * 20, d.y * 20 - 4 - (1 - progress) * 170, ai.plateW * 20 + 4); }); break;
+      case 'armSlam': box(ai.armLength * 20, ai.armWidth * 20); this.glyph('chevrons', ai.armLength * 10, 3, '› › ›'); break;
+      // Two rows pressed, one spared: red washes for the pressed ones (deepening as they near), a green wash for the safe one.
+      case 'twoRows': for (const row of tell.rows || []) { const half = row.half ?? ai.rowWidth / 2, top = (row.y - half) * 20; c.beginPath(); c.rect(-2000, top, 6000, half * 40); if (row.safe) this.washFloor(TELL_BOSS_WASH, SAFE_GREEN); else { this.washFloor(TELL_BOSS_WASH); if (progress > 0) { c.beginPath(); c.rect(-2000, top + ai.rowWidth * 10 * (1 - progress), 6000, ai.rowWidth * 20 * progress); this.washFloor(TELL_FILL); } } } break;
+      case 'lineShift': case 'callGuards': case 'wallSqueeze': case 'twinPistons': ring(x, y, 1.4); break;
+      case 'finalPress': ring(x, y, 2.4); break;
+      // Factory mobs (src/engine/factory-mobs.js).
+      case 'grab': box(enemy.attackRange * 20, enemy.grabWidth * 20); this.glyph('chevrons', enemy.attackRange * 10, 3, '› › ›'); break;
+      case 'leap': ring(tell.targetX * 20, tell.targetY * 20, enemy.leapRadius); this.glyph('alert', tell.targetX * 20, tell.targetY * 20 + 4, '!', '#b85863', 14); break;
+      case 'searchlight': {
+        // The beam's lane turning after F2, washed red like any line attack (2026-11-09: the yellow cone looked green on
+        // the white floors and did not show that only the thin beam hurts).
+        box(enemy.attackRange * 20, reach(enemy.beamWidth));
+        break;
+      }
+      case 'rivets': {
+        const spread = enemy.spreadDegrees * Math.PI / 180;
+        for (let i = 0; i < enemy.bullets; i++) { const a = tell.angle + (i - (enemy.bullets - 1) / 2) * spread; this.line(x, y, x + Math.cos(a) * enemy.attackRange * 20, y + Math.sin(a) * enemy.attackRange * 20, '#b85863', 1.5); }
+        ring(x, y, 0.7); break;
+      }
+      case 'oil': ring(tell.targetX * 20, tell.targetY * 20, enemy.oilRadius); break;
+      case 'supply': {
+        tone = '#e0a83a'; ring(x, y, 0.8); tone = TELL_RED;
+        for (const ally of g.s.enemies) if (tell.allies?.includes(ally.id) && ally.hp > 0) this.line(x, y, ally.x * 20, ally.y * 20, '#e0a83a', 1.5);
+        break;
+      }
+      case 'dash2': box(enemy.dashDistance * 20, reach()); this.glyph('chevrons', enemy.dashDistance * 10, 3, '» » »'); break;
       case 'doubleWave': case 'eliteWave': ring(x, y, enemy.attackRange + (tell.type === 'eliteWave' ? enemy.followupRadiusBonus : 0)); break;
       case 'march': {
         for (const lane of g.marchLanes(enemy)) this.lanePath(lane, ai.marchWidth, true);
@@ -250,7 +330,7 @@ export const floorMarks = {
       case 'carpet': {
         const lanes = g.marchLanes(enemy, true);
         this.floorWash(progress);
-        c.setLineDash([]); c.strokeStyle = '#3fbf7f'; c.fillStyle = 'rgba(63, 191, 127, 0.3)'; c.lineWidth = 3; this.lanePath(lanes[tell.safe], ai.carpetSafeWidth, true);
+        c.setLineDash([]); this.lanePath(lanes[tell.safe], ai.carpetSafeWidth, 'safe');
         break;
       }
       case 'trumpetWave':

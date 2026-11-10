@@ -15,6 +15,7 @@ worker
 # animation sheet, the mark sources and their prompts, and the reference picture used to paint the maps.
 art/animations/**/*.png
 art/fx/marks/src
+art/chapters/*/hazards/src
 art/world-map/smile-street-road-reference.png
 *.prompt.txt
 *-submission.txt
@@ -22,3 +23,10 @@ art/world-map/smile-street-road-reference.png
 art/ui/key-art/*.png
 # The story-scene PNG masters (the game loads the WebP).
 art/scenes/**/*.png
+# Local tool settings (Claude's preview launcher).
+.claude
+# Kept in the repository but no longer used by the game (2026-11-10): the ESRGAN village picture (the game draws the
+# original with hard pixels) and two title songs the game went back from (it plays title.ogg).
+art/chapters/1-smile-street/maps/00-village-court/background-esr2x-q92.webp
+art/audio/bgm/title-v2.ogg
+art/audio/bgm/title-v3.ogg

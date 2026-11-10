@@ -19,10 +19,11 @@ const inert = (g, type = 'guard', position = { x: 9, y: 8 }) => { const e = g.sp
 function completeRoom(g) { for (const e of g.s.enemies) e.hp = 0; g.finishCombat(); if (g.s.mode === 'unwind') g.unwind(); }
 function pick(g, kind) { const index = kind ? g.s.run.rewardChoices.findIndex(r => r.kind === kind) : 0; assert.ok(index >= 0); assert.equal(g.chooseReward(index, 0), true); }
 
-test('source data retains the full 8 elements / 28 fusions while runtime selects 18.1', async () => {
+test('source data retains the full 8 elements / 28 fusions while runtime selects the built ones', async () => {
   const source = JSON.parse(await readFile(new URL('../docs/design/clockwork-design.v1.json', import.meta.url), 'utf8'));
   assert.equal(source.elements.length, 8); assert.equal(source.fusions.length, 28);
-  assert.equal(data.combat.fusions.length, 6); assert.equal(data.slice.permanentStats.length, 12);
+  // Six fusions of the first four elements and nine with sound or water (2026-11-08).
+  assert.equal(data.combat.fusions.length, 15); assert.equal(data.slice.permanentStats.length, 12);
   assert.deepEqual(data.combat.player, source.player);
   const keys = new Set(source.fusions.map(f => [...f.pair].sort().join('+'))); assert.equal(keys.size, 28);
 });
@@ -63,7 +64,18 @@ test('every stat changes what it says', () => {
   g.s.profile.stats.moveSpeed = 20; const x = g.p.x; step(g, 0.5, { x: 1 }); assert.ok(Math.abs(g.p.x - x - 3.5 * 1.4 * 0.5) < 0.2);
   g.s.profile.stats.attackSpeed = 20; g.p.attack = null; g.p.x = 8; assert.equal(g.basicAttack(), true); g.updateBasic(0.1); assert.ok(Math.abs(g.p.attack.elapsed - 0.14) < 1e-9);
   g.s.profile.stats.cooldownReduction = 20; assert.ok(Math.abs(g.cooldownFactor - 0.7) < 1e-9);
-  g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownFactor - 0.65) < 1e-9);
+  g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownFactor - 0.5) < 1e-9);
+});
+test('tuning, run parts and oil simply add up, with no cap over the sum', () => {
+  const g = arena();
+  // Crit: base 10% + 30 ranks (30%) + four sharpened-cog parts (28%).
+  g.s.profile.stats.critChance = 30; assert.ok(Math.abs(g.critChance - 0.4) < 1e-9);
+  g.s.run.upgrades.critChance = 4; assert.ok(Math.abs(g.critChance - 0.68) < 1e-9);
+  g.random = () => 0.6; assert.equal(g.rollCrit(), true);
+  // Cooldown: 30 ranks reach 45%; the run part's 20% goes on top.
+  g.s.profile.stats.cooldownReduction = 30; g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownReduction - 0.65) < 1e-9);
+  // Damage: 30 ranks of tuning (90%) and the red oil (+12%) both count.
+  g.s.profile.stats.attackDamage = 30; g.s.run.potion = 'attack'; assert.ok(Math.abs(g.attackBonus - 1.02) < 1e-9);
 });
 test('crits use the cap and multiplier, and never touch damage over time', () => {
   const g = arena(), enemy = inert(g); enemy.hp = enemy.maxHp = 1e5;
@@ -82,8 +94,8 @@ test('the new economy, dodge, energy and status stats each do their job', () => 
   const h = arena(), enemy = inert(h, 'guard', { x: 9, y: 8 }); enemy.hp = enemy.maxHp = 1e4; h.s.profile.stats.energyGain = 20;
   h.p.angle = 0; h.basicAttack(); step(h, 0.15); assert.ok(Math.abs(h.p.energy - 8 * 1.4) < 1e-9);
   const j = hub(); j.s.profile.stats.gearGain = 20; j.s.profile.stats.coinGain = 20; j.startRun(5); completeRoom(j);
-  // The first stop pays 8 gears and 12 coins (slice.json rooms[].rewards), each raised 40% by the two stats.
-  assert.equal(j.s.run.baseGears, 11); assert.equal(j.s.run.coins, 17);
+  // The first stop pays 7 gears and 11 coins (slice.json rooms[].rewards), each raised by the two stats.
+  assert.equal(j.s.run.baseGears, 10); assert.equal(j.s.run.coins, 15);
   assert.equal(j.statusPower, 1); j.s.profile.stats.statusPower = 20; assert.ok(Math.abs(j.statusPower - 1.5) < 1e-9);
   const b = arena(), burned = inert(b); burned.hp = burned.maxHp = 1000; b.s.profile.stats.statusPower = 20; burned.burnStacks = [b.s.time + 4]; burned.burnTick = b.s.time; b.updateEnemies(1 / 60);
   assert.ok(Math.abs(burned.hp - (1000 - 4 * 0.5 * 1.5)) < 1e-9);
@@ -166,13 +178,16 @@ test('fusion cost/cooldown and minimum slot level/rarity are respected', () => {
   assert.equal(g.s.casts[0].slot.level, 2); assert.equal(g.s.casts[0].slot.rarity, 'rare');
   assert.equal(g.p.fusionReady, 18); assert.equal(g.castFusion({ x: 9, y: 8 }), false);
 });
-test('all six fusion combinations actually deal their direct damage', () => {
+test('every fusion actually deals its direct damage', () => {
   for (const fusion of data.combat.fusions) {
     const g = arena(), e = inert(g, 'captainBrass', { x: fusion.id === 'frostCrosscut' ? 10.8 : fusion.id === 'fireCyclone' ? 12 : 9, y: 8 }); e.hp = e.maxHp = 100000;
     g.s.run.slots = fusion.pair.map(element => ({ element, level: 1, rarity: 'common' })); g.p.energy = 100;
-    assert.equal(g.castFusion(e), true); step(g, 3.5);
+    // 빙결 호스 breaks its ice two seconds after the stream ends; 수면 공명 rings only when a body on it is struck (here the wrench).
+    const film = data.slice.fusionBehavior[fusion.id].shape === 'film';
+    assert.equal(g.castFusion(e), true); step(g, 5, film ? { basic: true, aim: { x: e.x, y: e.y } } : {});
     assert.ok(100000 - e.hp >= fusion.totalDirectDamage - 0.001, `${fusion.id} did not deal the expected damage`);
-    assert.ok(e.stagger <= data.combat.balance.fusionStaggerPerCastCap, `${fusion.id} exceeded stagger budget`);
+    // (The wrench that rings the film staggers on its own.)
+    if (!film) assert.ok(e.stagger <= data.combat.balance.fusionStaggerPerCastCap, `${fusion.id} exceeded stagger budget`);
   }
 });
 test('all eight individual skills hit; pressure dash grants no invulnerability', () => {
@@ -227,8 +242,8 @@ test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', ()
 });
 test('first return without a cleared combat gives no bonus; valid return gives it once', () => {
   const g = hub(); g.startRun(4); g.returnToHub(); assert.equal(g.s.profile.freeGears, 0); assert.equal(g.s.profile.firstReturnClaimed, false);
-  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 23);
-  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 31);
+  g.acknowledgeReturn(); g.startRun(5); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 22);
+  g.acknowledgeReturn(); g.startRun(6); completeRoom(g); g.returnToHub(); assert.equal(g.s.profile.freeGears, 29);
 });
 test('save roundtrip preserves RNG, complete combat snapshots and unclaimed choices', () => {
   const g = arena(); inert(g); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }]; g.castSkill(0, { x: 10, y: 8 }); step(g, 0.05);
@@ -248,7 +263,7 @@ test('a travelling merchant waits once after the last street before the boss, wi
   assert.equal(g.s.profile.freeGears, gears + 20); assert.equal(g.buyShop('persistentGears'), false, 'once at the merchant');
   assert.equal(g.leaveMerchant(), true); assert.equal(g.s.mode, 'route'); assert.ok(g.leaving);
 });
-test('twelve-stage completion pays exactly 270 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
+test('twelve-stage completion pays exactly 243 base gears and records bosses only once, ending on the last boss without a reward pick', () => {
   const g = hub(); g.startRun(123); const seen = [], last = data.slice.rooms.length - 1;
   assert.equal(g.s.mode, 'combat');
   for (let node = 0; node <= last; node++) {
@@ -263,7 +278,7 @@ test('twelve-stage completion pays exactly 270 base gears and records bosses onl
     }
     if (node < last) assert.equal(g.nextNode(0), true);
   }
-  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 270);
+  assert.equal(new Set(seen).size, 12); assert.equal(g.s.mode, 'complete'); assert.equal(g.s.run.baseGears, 243);
   assert.equal(g.s.profile.combatClears, 11); assert.equal(g.s.profile.bossRecords.length, 2); assert.deepEqual(g.s.profile.blueprints, ['patrolBlueprint']);
   assert.equal(g.s.profile.wins, 1); g.returnToHub('clear'); assert.equal(g.s.profile.firstReturnClaimed, true); assert.equal(g.s.run, null); assert.equal(g.p.energy, 0); assert.equal(g.skillSlots.length, 0);
 });
@@ -278,6 +293,13 @@ test('debug restart returns to the opening and keeps permanent progress', () => 
   assert.equal(g.s.mode, 'opening'); assert.equal(g.s.run, null); assert.deepEqual(g.s.enemies, []); assert.equal(g.s.profile.freeGears, 40); assert.equal(g.s.profile.registered, false);
   assert.equal(g.beginIntro(), true); assert.equal(g.s.mode, 'intro');
 });
+test('debug jump runs on the difficulty picked; another one starts a fresh run, none keeps the run', () => {
+  const g = new Game(data);
+  assert.equal(g.debugJump(2, undefined, 'hard'), true); assert.equal(g.s.run.difficulty, 'hard'); assert.equal(g.difficulty.id, 'hard');
+  const id = g.s.run.id; assert.equal(g.debugJump(3, undefined, 'hard'), true); assert.equal(g.s.run.id, id, 'same difficulty keeps the run');
+  assert.equal(g.debugJump(3, undefined, 'easy'), true); assert.notEqual(g.s.run.id, id); assert.equal(g.s.run.difficulty, 'easy'); assert.equal(g.s.run.node, 3);
+  const easy = g.s.run.id; assert.equal(g.debugJump(4), true); assert.equal(g.s.run.id, easy, 'no pick keeps the run');
+});
 test('debug jump enters any stage, with or without a run', () => {
   const g = new Game(data);
   assert.equal(g.debugJump(99), false); assert.equal(g.s.run, null);
@@ -290,7 +312,7 @@ test('debug jump enters any stage, with or without a run', () => {
 });
 test('shop purchase is atomic, once-per-shop, and persisted across resume', () => {
   const g = arena(); g.s.run.node = 5; g.enterNode(); g.s.run.coins = 100; g.p.hp = 50;
-  assert.equal(g.buyShop('heal'), true); assert.equal(g.p.hp, 75); assert.equal(g.s.run.coins, 55);
+  assert.equal(g.buyShop('heal'), true); assert.equal(g.p.hp, 50 + data.progression.economy.shop.find(i => i.id === 'heal').amount); assert.equal(g.s.run.coins, 55);
   const h = new Game(data, decodeSave(encodeSave(g.s), data)); assert.equal(h.buyShop('heal'), false); assert.equal(h.s.run.coins, 55);
   assert.equal(h.buyShop('persistentGears'), false); h.s.run.coins = 60; assert.equal(h.buyShop('persistentGears'), true); assert.equal(h.s.run.coins, 0); assert.equal(h.s.profile.freeGears, 20);
 });
@@ -311,8 +333,8 @@ test('frost crosscut flies one wide ice crescent forward that cuts each enemy in
  for(const e of [center,side,off,beyond])e.hp=e.maxHp=1000;
  g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion(center),true);
  step(g,.15);assert.equal(center.hp,1000,'nothing before the blade leaves the hand');
- step(g,.35);assert.equal(center.hp,900);assert.equal(side.hp,900,'the band is wide');
- step(g,1);assert.equal(center.hp,900,'one cut per enemy');assert.equal(side.hp,900);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
+ step(g,.35);assert.equal(center.hp,885);assert.equal(side.hp,885,'the band is wide');
+ step(g,1);assert.equal(center.hp,885,'one cut per enemy');assert.equal(side.hp,885);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
  assert.equal(g.s.casts.length,0);assert.equal(g.p.energy,35);
 });
 
@@ -511,18 +533,15 @@ test('the spin wrench makes the third blow reach behind the player', () => {
   }
 });
 
-test('the six balancing cards: more strikes, an ice burst, a vortex blast, frozen cracks, a dodge gust and spreading embers', () => {
+test('the balancing cards: more strikes, an ice burst and frozen cracks', () => {
   const g = arena(); g.s.run.slots = [{ element: 'ice', level: 1, rarity: 'common' }, { element: 'lightning', level: 1, rarity: 'common' }];
-  g.s.run.skillMods = ['extraStrike', 'iceBurst']; g.s.run.traits = ['frostCrack', 'dodgeGust', 'emberSpread'];
+  g.s.run.skillMods = ['extraStrike', 'iceBurst']; g.s.run.traits = ['frostCrack'];
   const strike = data.combat.skills.find(s => s.id === 'capacitorStrike'), field = data.combat.skills.find(s => s.id === 'coolingField');
   g.makeCast(strike, data.slice.skillBehavior.capacitorStrike, { level: 1, rarity: 'common' });
   assert.equal(g.s.casts.at(-1).hits, strike.hits + 1);
   g.makeCast(field, data.slice.skillBehavior.coolingField, { level: 1, rarity: 'common' }); assert.equal(g.s.casts.at(-1).finisher, 24);
   const e = inert(g, 'guard', { x: 9, y: 8 }), plain = g.damageMultiplier(e, true); e.frozenUntil = 1e9;
   assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.4) < 1e-9);
-  const before = e.x; g.p.dodgeReady = 0; g.dodge(); assert.ok(e.x > before, 'the gust pushes the guard away');
-  const near = inert(g, 'guard', { x: 10, y: 8 }); e.burnStacks = [1e9]; g.hitEnemy(e, 1e6, {});
-  assert.ok(Object.keys(near.statusApplied).length > 0, 'the burn passed on');
 });
 test('a rabbit beaten mid-dash no longer holds a melee slot, so a jack-in-the-box still surfaces', () => {
   const g = arena(), jack = g.spawnEnemy('jackbox', { x: 12, y: 8 });

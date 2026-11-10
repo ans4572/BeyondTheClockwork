@@ -3,7 +3,8 @@
 // in Moru's repair ledger, if any.
 import { cleanNickname } from './nickname.js';
 
-export const ELEMENT_IDS = ['fire', 'ice', 'lightning', 'wind'];
+// Sound and water came later (2026-11-08); they go last so the keys of the older pairs ('fire+ice') never change.
+export const ELEMENT_IDS = ['fire', 'ice', 'lightning', 'wind', 'sound', 'water'];
 export const FORMS = ['phone', 'tablet', 'desktop'];
 export const SYSTEMS = ['ios', 'android', 'windows', 'mac', 'chromeos', 'linux', 'other'];
 export const BROWSERS = ['chrome', 'safari', 'samsung', 'whale', 'edge', 'firefox', 'inapp', 'other'];
@@ -19,7 +20,9 @@ export const GIFT_MAX_GEARS = 100000, GIFT_NOTE_MAX = 60, MEMO_MAX = 30;
 /** The longest event body the worker reads. */
 export const EVENT_BYTES = 2048;
 
-const DEVICE_ID = /^[a-z0-9]{16,32}$/, RUN_ID = /^run-\d{1,6}-\d{1,10}$/;
+const DEVICE_ID = /^[a-z0-9]{16,32}$/, RUN_ID = /^run-\d{1,6}-\d{1,10}$/, CHAPTER_ID = /^[a-z][a-z-]{0,31}$/;
+/** Runs reported before they carried their chapter (2026-11-09) were all chapter 1's: chapter 2 was not on the live site. */
+export const FIRST_CHAPTER_ID = 'smile-street';
 
 /** A short line of plain text: control characters dropped, spaces collapsed, cut to `max` characters. */
 export const plainText = (text, max) => (typeof text === 'string' ? [...text.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim()].slice(0, max).join('') : '');
@@ -73,7 +76,9 @@ export function cleanEvent(sent) {
   const combo = comboKey(sent.elements);
   if (typeof sent.run !== 'string' || !RUN_ID.test(sent.run) || combo === null) return null;
   const difficulty = DIFFICULTIES.includes(sent.difficulty) ? sent.difficulty : null;
-  if (kind === 'runStart') return { kind, device, run: sent.run, combo, difficulty };
+  // Which chapter the run was in (slice.json chapters[].id), so the admin page can tell chapter 1's runs from chapter 2's.
+  const chapter = typeof sent.chapter === 'string' && CHAPTER_ID.test(sent.chapter) ? sent.chapter : null;
+  if (kind === 'runStart') return { kind, device, run: sent.run, combo, difficulty, chapter };
   if (!END_REASONS.includes(sent.reason) || !whole(sent.node, 99) || sent.node < 1 || !whole(sent.seconds, 86400)) return null;
-  return { kind, device, run: sent.run, combo, difficulty, reason: sent.reason, node: sent.node, seconds: sent.seconds };
+  return { kind, device, run: sent.run, combo, difficulty, chapter, reason: sent.reason, node: sent.node, seconds: sent.seconds };
 }

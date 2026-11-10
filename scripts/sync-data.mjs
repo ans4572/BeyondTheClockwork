@@ -7,7 +7,7 @@ const slice = await read('src/data/slice.json');
 const ids = slice.elements;
 const provenance = { schemaVersion: 1, source: 'docs/design/clockwork-design.v1.json', contentVersion: source.contentVersion };
 const outputs = {
-  'combat.json': { ...provenance, units: source.units, player: source.player, caps: source.caps, balance: source.balance, elements: source.elements.filter(e => ids.includes(e.id)), skills: source.skills.filter(e => ids.includes(e.element)), fusions: source.fusions.filter(f => f.pair.every(e => ids.includes(e))), statuses: source.statuses.filter(s => source.elements.some(e => ids.includes(e.id) && e.status === s.id)), bosses: source.bosses.filter(b => slice.bosses.includes(b.id)) },
+  'combat.json': { ...provenance, units: source.units, player: source.player, caps: source.caps, balance: source.balance, elements: source.elements.filter(e => ids.includes(e.id)), skills: source.skills.filter(e => ids.includes(e.element)), fusions: source.fusions.filter(f => f.pair.every(e => ids.includes(e)) && slice.fusionBehavior[f.id]), statuses: source.statuses.filter(s => source.elements.some(e => ids.includes(e.id) && e.status === s.id)), bosses: source.bosses.filter(b => slice.bosses.includes(b.id)) },
   'progression.json': { ...provenance, economy: source.economy, intro: source.intro, region: source.regions[0], run: source.run }
 };
 await mkdir(new URL('src/data/', root), { recursive: true });

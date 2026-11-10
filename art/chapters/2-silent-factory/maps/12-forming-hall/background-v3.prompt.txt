@@ -1,0 +1,27 @@
+Use case: stylized-concept.
+Create ONE static production game environment background for Beyond the Clockwork, chapter 2 "the Silent Factory": a combat room inside the toy town's factory, where wind-up toy residents marked "defective" are brought to have their thoughts erased and be re-stamped identical. The game is cute and toy-like, the factory is quietly unsettling, never horror.
+Input image 1 is a chapter-1 combat room of the same game: match its rendering EXACTLY: polished richly detailed pixel-art toy materials, navy and brass trim, the SAME quarter-view isometric camera, the SAME pixel density, crisp pixel edges, no depth blur.
+Input image 2 is the previous, too-large version of THIS room: keep its floor material, colours, light and machines, but NOT its size, floor shape or exits. The new room is smaller with a different path through it.
+CRITICAL SCALE: input image 1 is at final game scale (1536x1024). After this picture is resized to 1152x1728, doors, crates, lamps, pipes and floor tiles must be the SAME SIZE IN PIXELS as in input image 1. Never bigger objects. Do not zoom in.
+Draw every object at 89% of its size in input image 1.
+Portrait 2:3 (taller than wide), OUTPUT 1024x1536 pixels. Opaque full-bleed background.
+FACTORY BASE (shared by every room, keep it subtle): riveted brass trim, painted steel, round toy-like machine shapes with chunky bolts, clean dark outlines. That is the ONLY shared kit. Everything else — floor material, floor colour, wall composition, foreground, light and palette — comes from ROOM IDENTITY below and must be clearly different from the other factory rooms.
+VARIETY RULES (strict):
+- NO doll heads, NO toy faces, NO robot faces, NO eyes on shelves, racks, machines or crates. Shelves hold parts, boxes, tools or materials instead. (Only the erasing line room may show dolls, and only faceless.)
+- At most ONE small smile pictogram in the whole picture. No smile faces on crates, banners or machines.
+- At most ONE wind-up key on top of a machine in the whole picture.
+- No row of three matching machines in mint / butter yellow / powder pink. Use the room's own palette only.
+- No glass-cylinder press with pipes along the bottom edge. The bottom edge uses the room's own FOREGROUND.
+- The floor is the room's own material and colour, not blue-grey steel plates (unless the room says so).
+- No elevator, lift cage or lift doors anywhere.
+COMPACT ROOM (most important): the room is compact and close, NOT a big hall. the walkable floor is a short entrance corridor (about 5 floor tiles wide, about a fifth of the picture tall) at the bottom centre that opens into ONE wide arena in the upper-middle part of the picture. The arena is a flat, empty, nearly rectangular floor about 70% of the picture width and about 32% of its height, with nothing inside it. A THICK band of scenery, at least a fifth of the picture deep, surrounds the floor on every side; machines, crates, racks and wall bases jut a little into the floor edge in places, like the plaza edges in input image 1. Everything outside the floor is solid scenery that cannot be walked on.
+PATH: the player walks up the corridor from the bottom centre into the arena where the boss waits. The arena must stay a clean open rectangle for the boss fight: no pillars, steps, pits or props inside it.
+EXITS: EXACTLY TWO wide open floor openings, each 3 to 4 floor tiles wide, no doors or barriers: one in the MIDDLE of the BOTTOM edge at the foot of the corridor where the player enters, and one in the MIDDLE of the TOP (back) wall, a wide arched gate directly under the giant press, where the player leaves after the boss. Every other part of the edge is solid wall or machinery. No third exit.
+Combat readability: the open floor has no thin props, clutter, cables, conveyor belts, hazards, puddles or scattered small objects. Calm low-contrast floor so characters read clearly. Every wall and machine has a clear solid base line where it meets the floor. The outermost picture edge is scenery, not floor.
+No UI, labels, text, letters, numbers, logos, watermarks, people, toy residents, enemies, player, characters, arrows, grids, debug overlays or animation. Doll heads and toys are inanimate objects only. Signs use pictograms only. Natural floor joints, no tactical grid. One cohesive detailed scene, not a contact sheet. Exact requested 1024x1536 native output if available.
+ROOM IDENTITY — Forming hall, final boss arena, deep underground. Cathedral scale above, but the floor itself is compact.
+FLOOR: polished black metal with gold inlay, one huge engraved circular mould seal centred in the arena (shallow, low contrast).
+WALL: a GIANT press machine with two jointed mechanical arms built into the TOP wall like a throne, straddling the arched top gate; tall gothic-arched steel columns along the LEFT and RIGHT walls; a row of empty body moulds (hollow shells, no faces) in wall niches; conveyor channels feeding the press inside the wall.
+CORRIDOR: the entrance corridor is lined on both sides by two massive gold-capped columns and low walls of stacked moulds.
+LIGHT: dramatic dark hall, strong cool spotlights on the arena from high above, a red-orange glow inside the press.
+PALETTE: black, gold, crimson, cold white spotlight.

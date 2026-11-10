@@ -1,0 +1,6811 @@
+{
+  "schemaVersion": 1,
+  "character": "mobs",
+  "directions": [
+    "east",
+    "south-east",
+    "south",
+    "south-west",
+    "west",
+    "north-west",
+    "north",
+    "north-east"
+  ],
+  "actions": [
+    "clampCarrier-idle",
+    "clampCarrier-move",
+    "clampCarrier-attack",
+    "stampInspector-idle",
+    "stampInspector-move",
+    "stampInspector-attack",
+    "pressGuard-idle",
+    "pressGuard-move",
+    "pressGuard-attack",
+    "lensInspector-idle",
+    "lensInspector-move",
+    "lensInspector-attack",
+    "riveter-idle",
+    "riveter-move",
+    "riveter-attack",
+    "tapePacker-idle",
+    "tapePacker-move",
+    "tapePacker-attack",
+    "oiler-idle",
+    "oiler-move",
+    "oiler-attack",
+    "partsSupplier-idle",
+    "partsSupplier-move",
+    "partsSupplier-attack",
+    "pressCaptain-idle",
+    "pressCaptain-move",
+    "pressCaptain-attack",
+    "inspectorIris-idle",
+    "inspectorIris-move",
+    "inspectorIris-attack",
+    "inspectorIris-cast",
+    "directorPress-idle",
+    "directorPress-move",
+    "directorPress-attack",
+    "directorPress-cast"
+  ],
+  "clips": {
+    "clampCarrier-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        68,
+        106
+      ],
+      "bodyHeight": 91
+    },
+    "clampCarrier-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        106
+      ],
+      "bodyHeight": 91
+    },
+    "clampCarrier-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        74,
+        112
+      ],
+      "bodyHeight": 91
+    },
+    "clampCarrier-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        54,
+        106
+      ],
+      "bodyHeight": 93
+    },
+    "clampCarrier-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 93
+    },
+    "clampCarrier-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        62,
+        114
+      ],
+      "bodyHeight": 93
+    },
+    "clampCarrier-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        49,
+        104
+      ],
+      "bodyHeight": 89
+    },
+    "clampCarrier-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        102
+      ],
+      "bodyHeight": 92
+    },
+    "clampCarrier-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        57,
+        112
+      ],
+      "bodyHeight": 89
+    },
+    "clampCarrier-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        50,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "clampCarrier-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        104
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 152,
+      "frameHeight": 152,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        500,
+        500,
+        500
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        62,
+        117
+      ],
+      "bodyHeight": 83
+    },
+    "clampCarrier-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        56,
+        104
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        104
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        500,
+        500,
+        500
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        56,
+        104
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        68,
+        103
+      ],
+      "bodyHeight": 82
+    },
+    "clampCarrier-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        103
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        68,
+        103
+      ],
+      "bodyHeight": 82
+    },
+    "clampCarrier-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        80,
+        104
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        67,
+        104
+      ],
+      "bodyHeight": 82
+    },
+    "clampCarrier-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 148,
+      "frameHeight": 148,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        90,
+        114
+      ],
+      "bodyHeight": 81
+    },
+    "clampCarrier-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/clampCarrier/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        77,
+        106
+      ],
+      "bodyHeight": 88
+    },
+    "clampCarrier-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        106
+      ],
+      "bodyHeight": 88
+    },
+    "clampCarrier-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/clampCarrier-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        375,
+        375,
+        375,
+        375
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 800,
+      "anchor": [
+        83,
+        112
+      ],
+      "bodyHeight": 88
+    },
+    "stampInspector-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        113
+      ],
+      "bodyHeight": 92
+    },
+    "stampInspector-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        109
+      ],
+      "bodyHeight": 88
+    },
+    "stampInspector-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        72,
+        119
+      ],
+      "bodyHeight": 92
+    },
+    "stampInspector-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        112
+      ],
+      "bodyHeight": 96
+    },
+    "stampInspector-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        106
+      ],
+      "bodyHeight": 94
+    },
+    "stampInspector-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        66,
+        118
+      ],
+      "bodyHeight": 96
+    },
+    "stampInspector-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        107
+      ],
+      "bodyHeight": 93
+    },
+    "stampInspector-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        103
+      ],
+      "bodyHeight": 96
+    },
+    "stampInspector-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        58,
+        113
+      ],
+      "bodyHeight": 93
+    },
+    "stampInspector-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        52,
+        110
+      ],
+      "bodyHeight": 94
+    },
+    "stampInspector-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 80
+    },
+    "stampInspector-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 136,
+      "frameHeight": 136,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        56,
+        114
+      ],
+      "bodyHeight": 94
+    },
+    "stampInspector-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        53,
+        108
+      ],
+      "bodyHeight": 84
+    },
+    "stampInspector-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 82
+    },
+    "stampInspector-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        53,
+        108
+      ],
+      "bodyHeight": 84
+    },
+    "stampInspector-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        106
+      ],
+      "bodyHeight": 81
+    },
+    "stampInspector-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        104
+      ],
+      "bodyHeight": 83
+    },
+    "stampInspector-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        61,
+        106
+      ],
+      "bodyHeight": 81
+    },
+    "stampInspector-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        69,
+        106
+      ],
+      "bodyHeight": 80
+    },
+    "stampInspector-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        104
+      ],
+      "bodyHeight": 80
+    },
+    "stampInspector-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        69,
+        106
+      ],
+      "bodyHeight": 80
+    },
+    "stampInspector-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/stampInspector/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        70,
+        110
+      ],
+      "bodyHeight": 91
+    },
+    "stampInspector-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        106
+      ],
+      "bodyHeight": 86
+    },
+    "stampInspector-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/stampInspector-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        225,
+        225,
+        225,
+        225,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2500,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 900,
+      "anchor": [
+        72,
+        112
+      ],
+      "bodyHeight": 91
+    },
+    "pressGuard-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        114
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        72,
+        122
+      ],
+      "bodyHeight": 99
+    },
+    "pressGuard-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        114
+      ],
+      "bodyHeight": 101
+    },
+    "pressGuard-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        71,
+        121
+      ],
+      "bodyHeight": 98
+    },
+    "pressGuard-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        69,
+        122
+      ],
+      "bodyHeight": 101
+    },
+    "pressGuard-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        56,
+        113
+      ],
+      "bodyHeight": 99
+    },
+    "pressGuard-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        57,
+        122
+      ],
+      "bodyHeight": 102
+    },
+    "pressGuard-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        62,
+        119
+      ],
+      "bodyHeight": 99
+    },
+    "pressGuard-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        114
+      ],
+      "bodyHeight": 101
+    },
+    "pressGuard-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        69,
+        122
+      ],
+      "bodyHeight": 102
+    },
+    "pressGuard-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        69,
+        122
+      ],
+      "bodyHeight": 101
+    },
+    "pressGuard-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        114
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        70,
+        122
+      ],
+      "bodyHeight": 101
+    },
+    "pressGuard-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        71,
+        122
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        113
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        75,
+        121
+      ],
+      "bodyHeight": 99
+    },
+    "pressGuard-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        72,
+        121
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        113
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        74,
+        123
+      ],
+      "bodyHeight": 102
+    },
+    "pressGuard-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        73,
+        121
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressGuard/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        113
+      ],
+      "bodyHeight": 100
+    },
+    "pressGuard-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        75,
+        122
+      ],
+      "bodyHeight": 102
+    },
+    "pressGuard-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressGuard-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        73,
+        121
+      ],
+      "bodyHeight": 100
+    },
+    "lensInspector-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 83
+    },
+    "lensInspector-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        107
+      ],
+      "bodyHeight": 83
+    },
+    "lensInspector-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 83
+    },
+    "lensInspector-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        106
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        62,
+        106
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        106
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        333,
+        334,
+        333,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        59,
+        106
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        107
+      ],
+      "bodyHeight": 86
+    },
+    "lensInspector-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        60,
+        107
+      ],
+      "bodyHeight": 86
+    },
+    "lensInspector-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        108
+      ],
+      "bodyHeight": 83
+    },
+    "lensInspector-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        59,
+        108
+      ],
+      "bodyHeight": 83
+    },
+    "lensInspector-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        107
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        106
+      ],
+      "bodyHeight": 88
+    },
+    "lensInspector-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        61,
+        107
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        107
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        65,
+        107
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/lensInspector/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "lensInspector-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        66,
+        108
+      ],
+      "bodyHeight": 87
+    },
+    "lensInspector-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/lensInspector-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        65,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "riveter-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        109
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        107
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        63,
+        111
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        109
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        61,
+        107
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        63,
+        111
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        106
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        60,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        109
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        107
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 5,
+      "frameDurationsMs": [
+        233,
+        234,
+        233,
+        800,
+        800
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        63,
+        111
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        109
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        107
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        111
+      ],
+      "bodyHeight": 89
+    },
+    "riveter-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 91
+    },
+    "riveter-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        62,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        107
+      ],
+      "bodyHeight": 87
+    },
+    "riveter-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        68,
+        105
+      ],
+      "bodyHeight": 86
+    },
+    "riveter-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 5,
+      "frameDurationsMs": [
+        233,
+        234,
+        233,
+        800,
+        800
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        66,
+        107
+      ],
+      "bodyHeight": 87
+    },
+    "riveter-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/riveter/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        106
+      ],
+      "bodyHeight": 88
+    },
+    "riveter-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/riveter-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 88
+    },
+    "tapePacker-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        107
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        63,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        61,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        57,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 86
+    },
+    "tapePacker-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        120,
+        120,
+        120,
+        120,
+        120,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        57,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        57,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        57,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        59,
+        108
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        105
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        106
+      ],
+      "bodyHeight": 82
+    },
+    "tapePacker-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 83
+    },
+    "tapePacker-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        66,
+        106
+      ],
+      "bodyHeight": 82
+    },
+    "tapePacker-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/tapePacker/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "tapePacker-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "tapePacker-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/tapePacker-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        150,
+        150,
+        150,
+        150,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 600,
+      "anchor": [
+        65,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        105
+      ],
+      "bodyHeight": 85
+    },
+    "oiler-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        105
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        64,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        64,
+        103
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        64,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        101
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        60,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        60,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        60,
+        106
+      ],
+      "bodyHeight": 84
+    },
+    "oiler-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        62,
+        103
+      ],
+      "bodyHeight": 81
+    },
+    "oiler-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        60,
+        103
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        61,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        102
+      ],
+      "bodyHeight": 85
+    },
+    "oiler-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        175,
+        175,
+        175,
+        175,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        63,
+        104
+      ],
+      "bodyHeight": 82
+    },
+    "oiler-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/oiler/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "oiler-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        65,
+        103
+      ],
+      "bodyHeight": 85
+    },
+    "oiler-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/oiler-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2300,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 700,
+      "anchor": [
+        66,
+        105
+      ],
+      "bodyHeight": 83
+    },
+    "partsSupplier-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        71,
+        112
+      ],
+      "bodyHeight": 98
+    },
+    "partsSupplier-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        74,
+        112
+      ],
+      "bodyHeight": 94
+    },
+    "partsSupplier-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        77,
+        118
+      ],
+      "bodyHeight": 98
+    },
+    "partsSupplier-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        75,
+        114
+      ],
+      "bodyHeight": 102
+    },
+    "partsSupplier-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        74,
+        119
+      ],
+      "bodyHeight": 104
+    },
+    "partsSupplier-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 148,
+      "frameHeight": 148,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        85,
+        124
+      ],
+      "bodyHeight": 102
+    },
+    "partsSupplier-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        54,
+        114
+      ],
+      "bodyHeight": 100
+    },
+    "partsSupplier-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        59,
+        114
+      ],
+      "bodyHeight": 99
+    },
+    "partsSupplier-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 144,
+      "frameHeight": 144,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        62,
+        122
+      ],
+      "bodyHeight": 100
+    },
+    "partsSupplier-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        46,
+        114
+      ],
+      "bodyHeight": 102
+    },
+    "partsSupplier-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        118
+      ],
+      "bodyHeight": 101
+    },
+    "partsSupplier-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 148,
+      "frameHeight": 148,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        56,
+        124
+      ],
+      "bodyHeight": 102
+    },
+    "partsSupplier-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        109
+      ],
+      "bodyHeight": 95
+    },
+    "partsSupplier-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        49,
+        108
+      ],
+      "bodyHeight": 91
+    },
+    "partsSupplier-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 140,
+      "frameHeight": 140,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        65,
+        115
+      ],
+      "bodyHeight": 95
+    },
+    "partsSupplier-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        65,
+        110
+      ],
+      "bodyHeight": 94
+    },
+    "partsSupplier-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        56,
+        110
+      ],
+      "bodyHeight": 94
+    },
+    "partsSupplier-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 136,
+      "frameHeight": 136,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        69,
+        114
+      ],
+      "bodyHeight": 94
+    },
+    "partsSupplier-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        109
+      ],
+      "bodyHeight": 91
+    },
+    "partsSupplier-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        68,
+        108
+      ],
+      "bodyHeight": 90
+    },
+    "partsSupplier-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 132,
+      "frameHeight": 132,
+      "columns": 6,
+      "frameCount": 5,
+      "frameDurationsMs": [
+        333,
+        334,
+        333,
+        800,
+        800
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        64,
+        111
+      ],
+      "bodyHeight": 91
+    },
+    "partsSupplier-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/partsSupplier/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        66,
+        109
+      ],
+      "bodyHeight": 93
+    },
+    "partsSupplier-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        69,
+        110
+      ],
+      "bodyHeight": 94
+    },
+    "partsSupplier-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/partsSupplier-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 136,
+      "frameHeight": 136,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        70,
+        113
+      ],
+      "bodyHeight": 93
+    },
+    "pressCaptain-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        123
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        75,
+        143
+      ],
+      "bodyHeight": 116
+    },
+    "pressCaptain-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 180,
+      "frameHeight": 180,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        87,
+        149
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        54,
+        120
+      ],
+      "bodyHeight": 116
+    },
+    "pressCaptain-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        82,
+        138
+      ],
+      "bodyHeight": 112
+    },
+    "pressCaptain-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        74,
+        140
+      ],
+      "bodyHeight": 116
+    },
+    "pressCaptain-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        59,
+        116
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 172,
+      "frameHeight": 172,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        88,
+        141
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 172,
+      "frameHeight": 172,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        81,
+        138
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        67,
+        121
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        84,
+        143
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 180,
+      "frameHeight": 180,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        533,
+        534,
+        533
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        93,
+        147
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        61,
+        123
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        85,
+        143
+      ],
+      "bodyHeight": 118
+    },
+    "pressCaptain-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        81,
+        143
+      ],
+      "bodyHeight": 117
+    },
+    "pressCaptain-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        54,
+        120
+      ],
+      "bodyHeight": 115
+    },
+    "pressCaptain-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        73,
+        140
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        74,
+        140
+      ],
+      "bodyHeight": 115
+    },
+    "pressCaptain-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        62,
+        117
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 172,
+      "frameHeight": 172,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        82,
+        141
+      ],
+      "bodyHeight": 115
+    },
+    "pressCaptain-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        82,
+        137
+      ],
+      "bodyHeight": 113
+    },
+    "pressCaptain-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/pressCaptain/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        71,
+        120
+      ],
+      "bodyHeight": 116
+    },
+    "pressCaptain-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 176,
+      "frameHeight": 176,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        95,
+        145
+      ],
+      "bodyHeight": 118
+    },
+    "pressCaptain-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/pressCaptain-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 168,
+      "frameHeight": 168,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        400,
+        400,
+        400,
+        400
+      ],
+      "durationMs": 2600,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        91,
+        140
+      ],
+      "bodyHeight": 116
+    },
+    "inspectorIris-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        77,
+        151
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        96,
+        173
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        99,
+        173
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-cast/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        325,
+        325,
+        325,
+        325,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        99,
+        173
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        73,
+        146
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 196,
+      "frameHeight": 196,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        94,
+        165
+      ],
+      "bodyHeight": 135
+    },
+    "inspectorIris-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 196,
+      "frameHeight": 196,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        91,
+        164
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-cast/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 196,
+      "frameHeight": 196,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        91,
+        164
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        70,
+        142
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        108,
+        171
+      ],
+      "bodyHeight": 140
+    },
+    "inspectorIris-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        92,
+        164
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-cast/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        433,
+        434,
+        433,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        92,
+        164
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        72,
+        146
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        91,
+        164
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        92,
+        166
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-cast/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        92,
+        166
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        75,
+        151
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        99,
+        173
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        97,
+        173
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-cast/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 204,
+      "frameHeight": 204,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        97,
+        173
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        78,
+        145
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        98,
+        166
+      ],
+      "bodyHeight": 138
+    },
+    "inspectorIris-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        98,
+        165
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-cast/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        98,
+        165
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        83,
+        141
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 208,
+      "frameHeight": 208,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        115,
+        168
+      ],
+      "bodyHeight": 138
+    },
+    "inspectorIris-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 208,
+      "frameHeight": 208,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250,
+        200,
+        200,
+        200,
+        200
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        107,
+        165
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-cast/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 208,
+      "frameHeight": 208,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        107,
+        165
+      ],
+      "bodyHeight": 134
+    },
+    "inspectorIris-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/inspectorIris/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        83,
+        145
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        105,
+        166
+      ],
+      "bodyHeight": 137
+    },
+    "inspectorIris-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 6,
+      "frameDurationsMs": [
+        333,
+        334,
+        333,
+        267,
+        266,
+        267
+      ],
+      "durationMs": 1800,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1000,
+      "anchor": [
+        103,
+        165
+      ],
+      "bodyHeight": 136
+    },
+    "inspectorIris-cast/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/inspectorIris-cast-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        260,
+        260,
+        260,
+        260,
+        260,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2200,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1300,
+      "anchor": [
+        103,
+        165
+      ],
+      "bodyHeight": 136
+    },
+    "directorPress-idle/east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        87,
+        144
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-move/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        95,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-attack/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        99,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-cast/east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        99,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-idle/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        80,
+        144
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-move/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        93,
+        156
+      ],
+      "bodyHeight": 128
+    },
+    "directorPress-attack/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        92,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-cast/south-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-south-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        92,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-idle/south": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/south.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        69,
+        142
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-move/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        84,
+        154
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-attack/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        81,
+        154
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-cast/south": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-south/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        81,
+        154
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-idle/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        69,
+        144
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-move/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        77,
+        153
+      ],
+      "bodyHeight": 128
+    },
+    "directorPress-attack/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        81,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-cast/south-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-south-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        81,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-idle/west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        67,
+        144
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-move/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        82,
+        156
+      ],
+      "bodyHeight": 130
+    },
+    "directorPress-attack/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        79,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-cast/west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        79,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-idle/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        72,
+        143
+      ],
+      "bodyHeight": 128
+    },
+    "directorPress-move/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        88,
+        153
+      ],
+      "bodyHeight": 125
+    },
+    "directorPress-attack/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        84,
+        155
+      ],
+      "bodyHeight": 128
+    },
+    "directorPress-cast/north-west": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-north-west/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        84,
+        155
+      ],
+      "bodyHeight": 128
+    },
+    "directorPress-idle/north": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/north.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        82,
+        142
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-move/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        84,
+        157
+      ],
+      "bodyHeight": 131
+    },
+    "directorPress-attack/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        220,
+        220,
+        220,
+        220,
+        220,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        94,
+        154
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-cast/north": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-north/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        94,
+        154
+      ],
+      "bodyHeight": 127
+    },
+    "directorPress-idle/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/rotations/directorPress/north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 160,
+      "frameHeight": 160,
+      "columns": 1,
+      "frameCount": 1,
+      "frameDurationsMs": [
+        0
+      ],
+      "durationMs": 0,
+      "loop": false,
+      "scale": 1,
+      "anchor": [
+        91,
+        144
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-move/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-move-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 8,
+      "frameDurationsMs": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "durationMs": 720,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        105,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-attack/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-attack-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 7,
+      "frameDurationsMs": [
+        275,
+        275,
+        275,
+        275,
+        300,
+        300,
+        300
+      ],
+      "durationMs": 2000,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1100,
+      "anchor": [
+        103,
+        156
+      ],
+      "bodyHeight": 129
+    },
+    "directorPress-cast/north-east": {
+      "sheet": "/art/animations/mobs/silent-factory/clips/directorPress-cast-north-east/sheet.webp",
+      "provider": "pixellab",
+      "frameWidth": 184,
+      "frameHeight": 184,
+      "columns": 6,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        300,
+        300,
+        300,
+        300,
+        300,
+        225,
+        225,
+        225,
+        225
+      ],
+      "durationMs": 2400,
+      "loop": false,
+      "scale": 1,
+      "lastEventMs": 1500,
+      "anchor": [
+        103,
+        156
+      ],
+      "bodyHeight": 129
+    }
+  }
+}

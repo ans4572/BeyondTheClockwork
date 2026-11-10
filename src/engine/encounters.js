@@ -5,13 +5,13 @@
 
 /** What each kind does in a fight, for themes and for where it stands in a formation. */
 export const ROLES = {
-  front: ['guard', 'pikeman', 'nutcracker', 'spintop'],
-  fast: ['rat', 'rabbit', 'jackbox'],
-  back: ['trumpet', 'musicbox', 'drummer']
+  front: ['guard', 'pikeman', 'nutcracker', 'spintop', 'clampCarrier', 'stampInspector', 'pressGuard'],
+  fast: ['rat', 'rabbit', 'jackbox', 'tapePacker'],
+  back: ['trumpet', 'musicbox', 'drummer', 'lensInspector', 'riveter', 'oiler', 'partsSupplier']
 };
 const roleOf = type => Object.keys(ROLES).find(role => ROLES[role].includes(type)) || 'front';
 /** The most of one kind in a wave: support and tricky kinds stay rare so a wave never turns into a wall of guns. */
-const MOST = { drummer: 1, spintop: 1, musicbox: 2, jackbox: 2, trumpet: 3, nutcracker: 3 };
+const MOST = { drummer: 1, spintop: 1, musicbox: 2, jackbox: 2, trumpet: 3, nutcracker: 3, partsSupplier: 1, oiler: 2, riveter: 2, lensInspector: 3, pressGuard: 3 };
 /** Each theme's pull toward a role; 1 is no preference. */
 const THEMES = {
   mixed: { front: 1, fast: 1, back: 1 },
@@ -32,10 +32,26 @@ const TOTAL = [15, 26];
  */
 export const SHAPES = { early: { two: 1 }, plain: { two: 0.7, three: 0.3 }, elite: { two: 0.55, three: 0.25, elite: 0.2 } };
 const EARLY_FIGHTS = 3, GROW = 1.08;
-/** The next wave is called while this many are still standing: big waves overlap a little so no gap opens. */
-export const CALL_AT = { two: 3, three: 1, elite: 0 };
-/** An elite-only room: one more elite than the design had, between these. */
-const ELITE_ROOM = [4, 6];
+/**
+ * The next wave is called while this many are still standing: big waves overlap a little so no gap opens. An elite-only
+ * room calls its next elites when one is left, so the pressure never lets up.
+ */
+export const CALL_AT = { two: 3, three: 1, elite: 1 };
+/**
+ * An elite-only room (2026-11-09): elites in two waves, 5 then 4 (slice.json rules.eliteRoom.waves, a chapter's own eliteRoomWaves
+ * for heavier elites), each made tougher so the whole room weighs `hpShare` of an ordinary deal of the same room. It used
+ * to be four to six elites in one wave, a quarter of an ordinary room's health, and played easier than the rooms around it.
+ */
+const ELITE_ROOM = { waves: [5, 4], hpShare: 0.9, most: 2.5 };
+/** What an ordinary deal of `room` weighs in health: two and three waves averaged by their odds, dealt off a fixed seed. */
+function ordinaryWeight(room, before, hp, eliteHp) {
+  const weigh = shape => {
+    const dealt = dealRoom(room, before, hp, dealer(7919), EARLY_FIGHTS, shape);
+    return dealt.waves.flat().reduce((sum, type) => sum + (type === 'elite' ? eliteHp : hp[type] || 0), 0);
+  };
+  const { two, three } = SHAPES.elite;
+  return (weigh('two') * two + weigh('three') * three) / (two + three);
+}
 /** A wave of at least this many lets each kind's cap (MOST) grow by half. */
 const BIG_WAVE = 10;
 /** How far from the player a side group, and a ring, gathers: far enough that a wave still gives a moment to turn. */
@@ -94,14 +110,16 @@ function shuffle(list, random) {
  * The fights for one room in one run: { waves, themes, formations }. The pool is the room's own kinds plus the
  * kinds met in the room before it, so a room keeps its character and new kinds still arrive where they are introduced.
  */
-export function dealRoom(room, before, hp, random, fight = EARLY_FIGHTS) {
+export function dealRoom(room, before, hp, random, fight = EARLY_FIGHTS, forced = null, eliteRoom = {}) {
   const own = [...new Set(room.waves.flat())], earlier = before?.waves ? [...new Set(before.waves.flat())] : [];
   const pool = [...new Set([...own, ...earlier])];
   const elites = room.waves.flat().filter(type => type === 'elite').length;
-  const shape = weighted(Object.entries(fight < EARLY_FIGHTS ? SHAPES.early : elites ? SHAPES.elite : SHAPES.plain), random);
+  const shape = forced ?? weighted(Object.entries(fight < EARLY_FIGHTS ? SHAPES.early : elites ? SHAPES.elite : SHAPES.plain), random);
   if (shape === 'elite') {
-    const count = Math.max(ELITE_ROOM[0], Math.min(ELITE_ROOM[1], elites + 1));
-    return { shape, callAt: CALL_AT.elite, waves: [Array(count).fill('elite')], themes: ['elite'], formations: [pick(OPENINGS, random)] };
+    const rule = { ...ELITE_ROOM, ...eliteRoom }, eliteHp = rule.hp ?? hp.elite, bodies = rule.waves.reduce((a, b) => a + b, 0);
+    // Each elite of this room is made tougher by `eliteHp` (room-waves.js spawnWaveEnemy), never weaker, at most `most`.
+    const toughen = Math.min(rule.most, Math.max(1, rule.hpShare * ordinaryWeight(room, before, hp, eliteHp) / (bodies * eliteHp)));
+    return { shape, callAt: CALL_AT.elite, waves: rule.waves.map(n => Array(n).fill('elite')), themes: rule.waves.map(() => 'elite'), formations: rule.waves.map((_, i) => pick(i === 0 ? OPENINGS : ARRIVALS, random)), eliteHp: +toughen.toFixed(3) };
   }
   if (shape === 'two') {
     // The designed waves laid end to end and cut in half: each half keeps its elites and its weight per body.
@@ -142,16 +160,24 @@ export function dealAffixes(waves, count, list, random) {
   }));
 }
 
-/** Every combat room of a run, in route order; rooms without waves get null. `affixes` is slice.json's eliteAffixes. */
-export function dealRun(rooms, enemies, seed, affixes) {
+/**
+ * Every combat room of a run, in route order; rooms without waves get null. `affixes` is slice.json's eliteAffixes.
+ * `level` is the run's difficulty (slice.json difficulty.levels[]): `fewerEnemies` takes that many ordinary bodies out of
+ * each room's biggest wave (easy), `eliteTraits` is how many traits an elite carries once traits begin (hard: two).
+ */
+export function dealRun(rooms, enemies, seed, affixes, level = {}, eliteRoom = {}) {
   const random = dealer(seed), hp = Object.fromEntries(Object.entries(enemies).map(([type, e]) => [type, e.hp]));
   const ids = rooms.map(room => room.id), one = affixes ? ids.indexOf(affixes.oneFrom) : -1;
   let before = null, fight = 0;
   return rooms.map((room, i) => {
     if (!room.waves) return null;
-    const dealt = dealRoom(room, before, hp, random, fight++);
-    // One trait per elite at most: two at once read as clutter and the second rarely changed how the fight played.
-    const count = one >= 0 && i >= one ? 1 : 0;
+    const dealt = dealRoom(room, before, hp, random, fight++, null, eliteRoom);
+    for (let n = level.fewerEnemies || 0; n > 0; n--) {
+      const biggest = dealt.waves.reduce((best, wave) => (wave.length > best.length ? wave : best), []), at = biggest.findLastIndex(type => type !== 'elite');
+      if (biggest.length > 2 && at >= 0) biggest.splice(at, 1);
+    }
+    // One trait per elite, except on hard (difficulty eliteTraits): two at once read as clutter on the other levels.
+    const count = one >= 0 && i >= one ? level.eliteTraits || 1 : 0;
     if (count) dealt.affixes = dealAffixes(dealt.waves, count, affixes.list, random);
     before = room;
     return dealt;

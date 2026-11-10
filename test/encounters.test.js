@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game, distance } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
-import { dealRun, formationSpots, dealer, CALL_AT } from '../src/engine/encounters.js';
+import { dealRun, dealRoom, formationSpots, dealer, CALL_AT } from '../src/engine/encounters.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
 const { rooms, enemies } = data.slice;
@@ -20,7 +20,11 @@ test('each run deals new waves for every fight, near the designed weight, with t
       assert.equal(callAt, CALL_AT[shape]);
       const elites = room.waves.flat().filter(t => t === 'elite').length;
       if (shape === 'elite') {
-        assert.equal(waves.length, 1); assert.ok(waves[0].every(t => t === 'elite') && waves[0].length >= 4 && waves[0].length <= 6, room.id);
+        // Elites only, in two waves (5, 4), each made tougher so the room weighs about 90% of an ordinary deal.
+        assert.deepEqual(waves.map(w => w.length), [5, 4], room.id); assert.ok(waves.flat().every(t => t === 'elite'), room.id);
+        const hp = Object.fromEntries(Object.entries(enemies).map(([t, e]) => [t, e.hp])), ordinary = dealRoom(room, rooms[i - 1], hp, dealer(seed), 5, 'two').waves.flat().reduce((sum, t) => sum + enemies[t].hp, 0);
+        const weight = waves.flat().length * enemies.elite.hp * dealt[i].eliteHp;
+        assert.ok(dealt[i].eliteHp >= 1 && dealt[i].eliteHp <= 2.5 && weight / ordinary > 0.7 && weight / ordinary < 1.15, `${room.id} elite room weighs ${(weight / ordinary).toFixed(2)} of an ordinary one`);
         return;
       }
       const total = waves.flat().length; assert.ok(total >= 15 && total <= 26, `${room.id} has ${total}`);
@@ -106,12 +110,24 @@ test('elites carry traits only after the rest stop, and never more than one', ()
   }
 });
 
+test('a coated elite shrugs off one of the two elements F2 carries this run, never one she left at home', () => {
+  const g = fight(9); g.s.enemies = []; g.s.run.slots = [{ element: 'fire', level: 1 }, { element: 'wind', level: 1 }];
+  const at = { x: g.p.x + 3, y: g.p.y };
+  for (const element of ['ice', 'lightning', 'fire', 'wind']) for (let i = 0; i < 6; i++) {
+    const e = g.spawnWaveEnemy('elite', { ...at }, [{ id: 'coated', element }]);
+    assert.ok(['fire', 'wind'].includes(e.affixes[0].element));
+    assert.equal(e.immuneTo, g.c.elements.find(x => x.id === e.affixes[0].element).status);
+    if (['fire', 'wind'].includes(element)) assert.equal(e.affixes[0].element, element, 'a carried element stays as dealt');
+  }
+});
+
 test('each trait does what its tag says', () => {
   const g = fight(9); g.s.enemies = [];
   const at = { x: g.p.x + 3, y: g.p.y };
   const base = g.spawnWaveEnemy('elite', { ...at });
   const fast = g.spawnWaveEnemy('elite', { ...at }, [{ id: 'overwound' }]);
   assert.ok(fast.speed > base.speed && fast.recovery < base.recovery);
+  g.s.run.slots = [{ element: 'ice', level: 1 }, { element: 'fire', level: 1 }];
   const coated = g.spawnWaveEnemy('elite', { ...at }, [{ id: 'coated', element: 'ice' }]);
   g.applyStatus(coated, 'ice', { id: 'c1', chillBonus: 0 }); assert.ok(!(coated.statuses.chill > g.s.time));
   g.applyStatus(coated, 'fire', { id: 'c2' }); assert.ok(coated.statuses.burn > g.s.time);
@@ -198,7 +214,7 @@ test('a hot plate burns F2 with her feet on its edge, and a burn blocked by invu
   g.s.hazards = [plate]; assert.equal(plateState(plate, g.s.time, rules), 'hot');
   const hp = g.p.hp; g.p.invulnerableUntil = g.s.time + 0.05; g.tickHazards(); assert.equal(g.p.hp, hp, 'still invulnerable');
   g.s.time += 0.06; g.tickHazards(); assert.ok(g.p.hp < hp, 'burns as soon as the invulnerability ends');
-  assert.ok(g.s.effects.some(fx => fx.type === 'ring' && fx.color === '#ff7a2c'));
+  assert.ok(g.s.effects.some(fx => fx.look === 'plateFlare' && fx.color === '#ff7a2c'));
 });
 
 test('a crate struck by the wrench blows up a moment later and hurts what stands near it', () => {
@@ -269,4 +285,65 @@ test('the room keeps its hazards through the reward and the walk to the portal, 
   const guard = h.spawnWaveEnemy('guard', { x: rail.x, y: rail.y }), hp = guard.hp;
   for (let i = 0; i < 120; i++) { h.s.time += 1 / 60; h.tickHazards(); }
   assert.equal(guard.hp, hp);
+});
+
+test('easy takes one ordinary body out of each fight room; hard gives each elite two different traits', () => {
+  const levels = Object.fromEntries(data.slice.difficulty.levels.map(l => [l.id, l])), ids = rooms.map(r => r.id), one = ids.indexOf(affixRules.oneFrom);
+  for (const seed of [3, 11, 101]) {
+    const normal = dealRun(rooms, enemies, seed, affixRules, levels.normal), easy = dealRun(rooms, enemies, seed, affixRules, levels.easy), hard = dealRun(rooms, enemies, seed, affixRules, levels.hard);
+    normal.forEach((dealt, i) => {
+      if (!dealt) return;
+      const bodies = d => d.waves.flat().length, elites = d => d.waves.flat().filter(t => t === 'elite').length;
+      const biggest = Math.max(...dealt.waves.map(w => w.length)), plain = dealt.waves.find(w => w.length === biggest).some(t => t !== 'elite');
+      assert.equal(bodies(easy[i]), bodies(dealt) - (biggest > 2 && plain ? 1 : 0), `${rooms[i].id} easy`);
+      assert.equal(elites(easy[i]), elites(dealt), 'elites stay');
+      hard[i].waves.forEach((wave, w) => wave.forEach((type, b) => {
+        if (type !== 'elite' || i < one) return;
+        const traits = hard[i].affixes[w][b]; assert.equal(traits.length, 2); assert.equal(new Set(traits.map(t => t.id)).size, 2);
+      }));
+    });
+  }
+});
+
+test('a small or narrow floor gets fewer crates, plates, fences and saw rails than a roomy one', async () => {
+  const { floorArea } = await import('../src/engine/hazards.js');
+  const rules = data.slice.hazards, place = id => placeOf(maps, maps.maps[id]);
+  const alley = place('stop-11'), plaza = place('stop-12');
+  assert.ok(floorArea(alley) < rules.roomyArea * 0.6 && floorArea(plaza) >= rules.roomyArea, `${floorArea(alley)} ${floorArea(plaza)}`);
+  const furniture = map => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reduce((sum, seed) => sum + dealHazards(map, rules, seed).filter(h => h.kind !== 'musicbox').length, 0) / 10;
+  assert.ok(furniture(alley) <= furniture(plaza) * 0.6, `${furniture(alley)} vs ${furniture(plaza)}`);
+  // A narrow floor: no fence and no saw rails, and the few crates and plates its map asks back (extraPieces).
+  for (let seed = 1; seed <= 10; seed++) {
+    const kinds = dealHazards(alley, rules, seed).map(h => h.kind);
+    assert.ok(!kinds.includes('fence') && !kinds.includes('rail') && kinds.filter(k => k === 'crate').length <= 3, kinds.join(' '));
+  }
+  const bare = { ...alley, extraPieces: 0 };
+  assert.ok(furniture(bare) + 1.5 <= furniture(alley), `${furniture(bare)} -> ${furniture(alley)}`);
+  // A roomy floor deals exactly as before.
+  assert.deepEqual(dealHazards(plaza, rules, 3), dealHazards(plaza, { ...rules, roomyArea: undefined }, 3));
+});
+
+test('every expedition finds 3 music boxes in either chapter, never in two rooms in a row, and not always the same rooms', async () => {
+  const { musicRooms } = await import('../src/engine/hazards.js');
+  const chapters = [[data.slice.hazards, data.slice.rooms], [{ ...data.slice.hazards, ...data.slice.chapters.find(c => c.id === 'silent-factory').hazards }, data.slice.chapters.find(c => c.id === 'silent-factory').rooms]];
+  for (const [base, stops] of chapters) {
+    const rulesOf = stop => (stop.hazardCounts ? { ...base, counts: { ...base.counts, ...stop.hazardCounts } } : base);
+    const fights = stops.map((stop, node) => ({ stop, node })).filter(f => f.stop.waves).map(({ stop, node }, i) => ({ stop, node, range: base.ramp?.[i]?.counts?.musicbox ?? rulesOf(stop).counts?.musicbox ?? [0, 0] }));
+    const seen = new Set();
+    for (let run = 1; run <= 12; run++) {
+      // Run seeds are spread over 32 bits, as a real run's are.
+      const seed = (run * 2654435761) >>> 0, boxes = musicRooms(fights, base, seed), nodes = [...boxes].sort((a, b) => a - b);
+      assert.equal(boxes.size, 3);
+      nodes.forEach((node, i) => { if (i) assert.ok(node - nodes[i - 1] > 1, `rooms in a row: ${nodes}`); });
+      seen.add(nodes.join(','));
+      // Every chosen room really lays its box, on the A or the B picture.
+      let laid = 0;
+      fights.forEach(({ stop, node }, step) => {
+        const entry = (run % 2 && maps.alternates[stop.id]?.[0]) || maps.maps[stop.id], map = placeOf(maps, entry);
+        laid += dealHazards(map, rulesOf(stop), run * 7 + step, step, 0.9, +boxes.has(node)).filter(h => h.kind === 'musicbox').length;
+      });
+      assert.equal(laid, 3, `run ${run}`);
+    }
+    assert.ok(seen.size >= 8, `only ${seen.size} different sets in 12 runs`);
+  }
 });

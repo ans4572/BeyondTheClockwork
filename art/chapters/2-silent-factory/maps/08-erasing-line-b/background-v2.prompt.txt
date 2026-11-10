@@ -1,0 +1,27 @@
+Use case: stylized-concept.
+Create ONE static production game environment background for Beyond the Clockwork, chapter 2 "the Silent Factory": a combat room inside the toy town's factory, where wind-up toy residents marked "defective" are brought to have their thoughts erased and be re-stamped identical. The game is cute and toy-like, the factory is quietly unsettling, never horror.
+Input image 1 is a chapter-1 combat room of the same game: match its rendering EXACTLY: polished richly detailed pixel-art toy materials, navy and brass trim, the SAME quarter-view isometric camera, the SAME pixel density, crisp pixel edges, no depth blur.
+Input image 2 is version A of THIS room: the same room, its floor material, colours, light, machines and object size. This picture is a DIFFERENT CORNER of the same room: a different wall composition, foreground and floor outline, but the exits on exactly the same edges and at the same positions as version A.
+CRITICAL SCALE: input image 1 is at final game scale (1536x1024). After this picture is resized to 1024x1536, doors, crates, lamps, pipes and floor tiles must be the SAME SIZE IN PIXELS as in input image 1. Never bigger objects. Do not zoom in.
+Draw every object at 100% of its size in input image 1.
+Portrait 2:3 (taller than wide), OUTPUT 1024x1536 pixels. Opaque full-bleed background.
+FACTORY BASE (shared by every room, keep it subtle): riveted brass trim, painted steel, round toy-like machine shapes with chunky bolts, clean dark outlines. That is the ONLY shared kit. Everything else — floor material, floor colour, wall composition, foreground, light and palette — comes from ROOM IDENTITY below and must be clearly different from the other factory rooms.
+VARIETY RULES (strict):
+- NO doll heads, NO toy faces, NO robot faces, NO eyes on shelves, racks, machines or crates. Shelves hold parts, boxes, tools or materials instead. (Only the erasing line room may show dolls, and only faceless.)
+- At most ONE small smile pictogram in the whole picture. No smile faces on crates, banners or machines.
+- At most ONE wind-up key on top of a machine in the whole picture.
+- No row of three matching machines in mint / butter yellow / powder pink. Use the room's own palette only.
+- No glass-cylinder press with pipes along the bottom edge. The bottom edge uses the room's own FOREGROUND.
+- The floor is the room's own material and colour, not blue-grey steel plates (unless the room says so).
+- No elevator, lift cage or lift doors anywhere.
+COMPACT ROOM (most important): the room is compact and close, NOT a big hall. the EMPTY fighting floor covers only about 56% of the picture width and 44% of its height in total. A THICK band of scenery, at least a fifth of the picture deep, surrounds the floor on every side; machines, crates, racks and wall bases jut a little into the floor edge in places, like the plaza edges in input image 1. Everything outside the floor is solid scenery that cannot be walked on.
+PATH: a TALL room walked from bottom to top: one open floor shaped like a rounded rectangle that is taller than wide, a little narrower at the two openings. The player walks in at the bottom centre and leaves at the top centre.
+EXITS: EXACTLY TWO wide open floor openings, each 3 to 4 floor tiles wide, no doors or barriers: one in the MIDDLE of the BOTTOM edge where the player enters (an opening in the foreground scenery), and one in the MIDDLE of the TOP (back) wall where the player leaves. Every other part of the edge is solid wall or machinery. No third exit.
+Combat readability: the open floor has no thin props, clutter, cables, conveyor belts, hazards, puddles or scattered small objects. Calm low-contrast floor so characters read clearly. Every wall and machine has a clear solid base line where it meets the floor. The outermost picture edge is scenery, not floor.
+No UI, labels, text, letters, numbers, logos, watermarks, people, toy residents, enemies, player, characters, arrows, grids, debug overlays or animation. Doll heads and toys are inanimate objects only. Signs use pictograms only. Natural floor joints, no tactical grid. One cohesive detailed scene, not a contact sheet. Exact requested 1024x1536 native output if available.
+ROOM IDENTITY — Erasing line, B: the end of the same line, where the erased come out.
+FLOOR: soft pale grey felt-like flooring, very smooth and quiet.
+WALL: along the LEFT and RIGHT walls a slow line of plain grey wrapped parcels moving up inside the walls (finished, re-stamped toys, no faces visible); big soft felt wiping drums; a small sorting desk with a desk lamp beside the top opening. Almost fully grey; one faint warm patch of light under the desk lamp is the only colour.
+FOREGROUND (bottom edge, on both sides of the entrance gap): stacks of folded grey cloths and a rack of empty hooks. No chairs this time.
+LIGHT: soft, flat, overcast-white light, no strong shadows.
+PALETTE: near-monochrome grey, lilac grey, chalk white.

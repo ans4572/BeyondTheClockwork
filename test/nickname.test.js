@@ -57,3 +57,11 @@ test('the check-in carries the ledger name, cleaned', () => {
   assert.equal(event.name, '민수');
   assert.equal(cleanEvent({ device: 'phone0000000000a', kind: 'ping', where: 'hub', node: 0, gears: 0, playSeconds: 0 }).name, '');
 });
+
+test('notices put the particle that fits after a name, never 이(가) or 을(를)', async () => {
+  const { josa } = await import('../src/engine/nickname.js');
+  assert.equal(josa('로코', '이', '가'), '로코가');
+  assert.equal(josa('굉음', '을', '를'), '굉음을');
+  assert.equal(josa('물대포', '을', '를'), '물대포를');
+  assert.equal(josa('과열 휘두르기 · 배기 폭발', '이', '가'), '과열 휘두르기 · 배기 폭발이');
+});

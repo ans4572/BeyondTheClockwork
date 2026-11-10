@@ -5,7 +5,7 @@ import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer } from '../src/render/canvas.js';
-import { PlayerAnimator } from '../src/animation/player-animator.js';
+import { PlayerAnimator, PLAYER_HELD_FRAME } from '../src/animation/player-animator.js';
 import { CastEffects } from '../src/animation/cast-effects.js';
 import { SpriteLibrary, frameAtProgress } from '../src/animation/sprite-library.js';
 
@@ -25,6 +25,8 @@ const cast = (g, id, target = { x: 14, y: 8 }) => {
 };
 const pass = (g, seconds) => { g.s.time += seconds; g.s.casts.forEach(c => { c.age += seconds; }); };
 
+// Two sound and water fusions draw in the FX table (과열 공진's marks, 메아리 돌풍's ring), not as a cast sheet.
+const FX_FUSIONS = ['frostCrosscut', 'overheatResonance', 'echoGust'];
 test('every skill and fusion in the combat data has an action in eight directions', () => {
   for (const { id } of [...data.combat.skills, ...data.combat.fusions]) {
     const action = clips.castActions[id];
@@ -34,7 +36,7 @@ test('every skill and fusion in the combat data has an action in eight direction
 });
 
 test('every fusion has an effect sheet of the declared size, and only real frames play', () => {
-  for (const { id } of data.combat.fusions.filter(f => f.id !== 'frostCrosscut')) {
+  for (const { id } of data.combat.fusions.filter(f => !FX_FUSIONS.includes(f.id))) {
     const effect = clips.castEffects[id], [width, height] = pngSize(new URL(`..${effect.sheet}`, import.meta.url));
     assert.equal(width, effect.frameWidth * effect.columns, id);
     assert.equal(height % effect.frameHeight, 0, id);
@@ -74,6 +76,21 @@ test('a fusion uses its family body', () => {
     a.update(1 / 60, g); cast(g, id);
     assert.equal(a.update(1 / 60, g).action, `cast-${family}`, id);
   }
+});
+
+test('sound and water skills cast with the shared empty left hand, like the other elements', () => {
+  for (const id of ['ringPalm', 'roar', 'waterCannon', 'hydroJet']) assert.equal(clips.castActions[id], 'cast-forwardCast', id);
+  const g = battle(), a = new PlayerAnimator(library);
+  a.update(1 / 60, g); cast(g, 'waterCannon');
+  assert.equal(a.update(1 / 60, g).action, 'cast-forwardCast');
+});
+
+test('고압 분사 keeps the left hand out while it sprays and turns with the stream', () => {
+  const g = battle(), a = new PlayerAnimator(library), jet = cast(g, 'hydroJet');
+  a.update(1 / 60, g); jet.angle = Math.PI / 2; g.s.time += 1;
+  assert.deepEqual(a.update(1 / 60, g), { action: 'cast-forwardCast', direction: 'south', frame: PLAYER_HELD_FRAME });
+  g.s.casts = []; g.s.time += 1;
+  assert.equal(a.update(1 / 60, g).action, 'idle');
 });
 
 test('walking releases a long cast once it has read, but a dash always plays', () => {

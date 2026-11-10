@@ -4,7 +4,7 @@ import test from 'node:test';
 import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
-import { CanvasRenderer } from '../src/render/canvas.js';
+import { CanvasRenderer, hitSquash } from '../src/render/canvas.js';
 import { MobAnimator } from '../src/animation/mob-animator.js';
 import { SpriteLibrary, frameAtProgress } from '../src/animation/sprite-library.js';
 
@@ -128,4 +128,14 @@ test('renderer draws body then effect, flashes on a hit, and draws bosses from t
   g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1; g.spawnEnemy('collectorRoco', { x: 18, y: 8 }); calls.length = 0; r.render(1 / 60);
   assert.ok(!calls.some(call => call[0] === 'doll' && call[1] === 'collectorRoco'));
   assert.ok(calls.some(call => call[0] === 'drawImage' && String(call[1].fake).includes('collectorRoco')));
+});
+
+test('a struck mob squashes wide and low, stretches a little, and is back in shape by 0.15 s', () => {
+  assert.equal(hitSquash(undefined - 0.12), null, 'never struck');
+  assert.equal(hitSquash(-0.01), null);
+  assert.deepEqual(hitSquash(0), [1.1, 0.9]);
+  const mid = hitSquash(0.075);
+  assert.ok(Math.abs(mid[0] - 0.96) < 1e-9 && Math.abs(mid[1] - 1.04) < 1e-9);
+  assert.ok(hitSquash(0.14)[1] > 1 && hitSquash(0.14)[1] < 1.04);
+  assert.equal(hitSquash(0.15), null);
 });

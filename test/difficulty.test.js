@@ -15,8 +15,8 @@ const runOn = (difficulty, node = 0) => {
   assert.ok(g.depart(difficulty)); g.s.run.node = node; g.enterNode(); return g;
 };
 
-test('three difficulties: normal 0.9 of the tuning, easy and hard 40% below and above it, with loot to match', () => {
-  assert.deepEqual(levels.map(l => [l.id, l.scale, l.loot]), [['easy', 0.54, 0.54], ['normal', 0.9, 0.9], ['hard', 1.26, 1.26]]);
+test('three difficulties: normal is the tuning (1.0), easy and hard 40% below and above it, with loot to match', () => {
+  assert.deepEqual(levels.map(l => [l.id, l.scale, l.loot]), [['easy', 0.6, 0.6], ['normal', 1, 1], ['hard', 1.4, 1.4]]);
   assert.equal(data.slice.difficulty.default, 'normal');
 });
 

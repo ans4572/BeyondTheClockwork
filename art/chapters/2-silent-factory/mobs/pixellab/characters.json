@@ -1,0 +1,291 @@
+{
+  "clampCarrier": {
+    "id": "2e660638-ae16-4511-b84b-fa3ff176748d",
+    "drop": {
+      "east": [
+        3
+      ],
+      "south-east": [
+        3
+      ],
+      "south": [
+        2
+      ],
+      "south-west": [
+        6,
+        7
+      ],
+      "west": [
+        1,
+        2
+      ],
+      "north-west": [
+        2
+      ],
+      "north": [
+        5
+      ],
+      "north-east": [
+        7
+      ]
+    },
+    "strikeMs": 800,
+    "attackMs": 2300
+  },
+  "stampInspector": {
+    "id": "7c69d26f-839b-4e70-b87a-1c3dfda23700",
+    "drop": {
+      "east": [
+        4,
+        5
+      ],
+      "south-east": [
+        4,
+        5
+      ],
+      "south": [
+        4,
+        5
+      ],
+      "south-west": [
+        4
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        5,
+        6,
+        7
+      ],
+      "north": [
+        4
+      ],
+      "north-east": [
+        4,
+        5
+      ]
+    },
+    "strikeMs": 900,
+    "attackMs": 2500
+  },
+  "pressGuard": {
+    "id": "485cd5f3-12c9-4707-96e6-81d05c117cb6",
+    "attackMs": 2600,
+    "strikeMs": 1000,
+    "drop": {
+      "south": [
+        3
+      ],
+      "south-west": [
+        6
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        4
+      ]
+    },
+    "clips": {
+      "move": [
+        "walk-shield"
+      ]
+    }
+  },
+  "lensInspector": {
+    "id": "c95857a0-f33a-427b-b1f9-ee17217fd36e",
+    "drop": {
+      "east": [
+        4,
+        5
+      ],
+      "south-east": [
+        5
+      ],
+      "south": [
+        3,
+        4,
+        5
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        4
+      ],
+      "north": [
+        5,
+        6
+      ],
+      "north-east": [
+        3,
+        4
+      ]
+    },
+    "strikeMs": 1000,
+    "attackMs": 2600
+  },
+  "riveter": {
+    "id": "97deb895-a594-4949-9564-a88bfbc1206d",
+    "drop": {
+      "east": [
+        4
+      ],
+      "south-east": [
+        4
+      ],
+      "south-west": [
+        2,
+        3,
+        5,
+        6
+      ],
+      "west": [
+        4,
+        5
+      ],
+      "north-west": [
+        5
+      ],
+      "north": [
+        3,
+        5,
+        6,
+        7
+      ],
+      "north-east": [
+        5,
+        6
+      ]
+    },
+    "strikeMs": 700,
+    "attackMs": 2300
+  },
+  "tapePacker": {
+    "id": "45a010dc-6d3e-4019-aa00-5ce8bc28322d",
+    "drop": {
+      "east": [
+        2
+      ],
+      "south-east": [
+        2,
+        3
+      ],
+      "south-west": [
+        3
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        5,
+        6
+      ],
+      "north": [
+        4,
+        5
+      ],
+      "north-east": [
+        4,
+        5
+      ]
+    },
+    "strikeMs": 600,
+    "attackMs": 2200
+  },
+  "oiler": {
+    "id": "01fe5cd7-0d8a-4298-ad7f-8392df746044",
+    "drop": {
+      "south-east": [
+        3
+      ],
+      "south-west": [
+        4
+      ],
+      "west": [
+        4
+      ],
+      "north": [
+        5
+      ]
+    },
+    "strikeMs": 700,
+    "attackMs": 2300
+  },
+  "partsSupplier": {
+    "id": "462d3515-c035-4597-a9c6-2bc1a843b430",
+    "drop": {
+      "east": [
+        8
+      ],
+      "south-east": [
+        7
+      ],
+      "south": [
+        7
+      ],
+      "south-west": [
+        7
+      ],
+      "west": [
+        7
+      ],
+      "north": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "north-east": [
+        7
+      ]
+    },
+    "strikeMs": 1000,
+    "attackMs": 2600
+  },
+  "pressCaptain": {
+    "id": "7f786f5c-45a5-4e27-b2fd-8ab8906f9cf8",
+    "attackMs": 2600,
+    "strikeMs": 1000,
+    "drop": {
+      "east": [
+        6
+      ],
+      "south-east": [
+        3,
+        4
+      ],
+      "south": [
+        5,
+        6
+      ],
+      "south-west": [
+        3,
+        4
+      ],
+      "west": [
+        5
+      ],
+      "north-west": [
+        5
+      ]
+    },
+    "clips": {
+      "move": [
+        "walk-fixed3",
+        "walk-fixed2",
+        "walk-fixed2-e02a5baa",
+        "walk-fixed",
+        "walk-shield",
+        "walk-shield-6572b8cc"
+      ],
+      "attack": [
+        "attack-fixed2",
+        "attack-fixed",
+        "attack"
+      ]
+    },
+    "stills": "art/chapters/2-silent-factory/mobs/pixellab/elite-fixed"
+  }
+}

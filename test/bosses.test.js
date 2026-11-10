@@ -46,8 +46,9 @@ test('Roco stops at half health behind a shield; enough cans batted back break i
   // Feed the cans straight back.
   for (let i = 0; i < rule.cans; i++) e.breaking.cans.push({ id: 'c' + i, x: e.x + 1.5, y: e.y, back: true, spin: 0 });
   for (let i = 0; i < 30 && e.breaking; i++) g.update(1 / 60, {});
-  assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]); assert.ok(e.vulnerableUntil > g.s.time);
-  const before = e.hp; g.hitEnemy(e, 10); assert.ok(before - e.hp > 10, 'takes more while stunned');
+  assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]);
+  // No damage bonus after a break (2026-11-09): the blow lands for what it is.
+  const before = e.hp; g.hitEnemy(e, 10, { dot: true }); assert.equal(before - e.hp, 10, 'no extra damage after the break');
   // A second Roco runs out of time: big hit, heals 5%, and the break comes back at half health.
   const [h, r] = boss('collectorRoco'); h.p.x = 25; h.p.y = 8; r.hp = r.maxHp * 0.51; h.hitEnemy(r, 999);
   h.s.time = r.breaking.until; h.updatePhaseBreak(r, 1 / 60); h.s.time = r.breaking.failAt; const hp = h.p.hp; h.updatePhaseBreak(r, 1 / 60);
@@ -79,7 +80,7 @@ test('Brass breaks twice: drums struck in the shown order at 66%, flag bearers k
   g.strikeDrum(e, b.order[1]); assert.equal(b.phase, 'show', 'a wrong drum replays the order'); b.phase = 'play';
   for (const i of b.order) g.strikeDrum(e, i);
   g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0]);
-  e.exposedUntil = 0; e.vulnerableUntil = 0; g.hitEnemy(e, e.maxHp); assert.equal(e.hp, e.maxHp * flags.at); assert.equal(e.breaking.kind, 'flags');
+  e.exposedUntil = 0; g.hitEnemy(e, e.maxHp); assert.equal(e.hp, e.maxHp * flags.at); assert.equal(e.breaking.kind, 'flags');
   g.p.x = 2; g.p.y = 2;
   for (const s of e.breaking.soldiers.filter(x => x.flag)) s.down = true;
   g.update(1 / 60, {}); assert.equal(e.breaking, null); assert.deepEqual(e.breaksDone, [0, 1]);

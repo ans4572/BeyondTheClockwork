@@ -65,7 +65,7 @@ test('the game tells the reporter when an expedition sets out and comes back, wi
   game.returnToHub('defeat');
   assert.deepEqual(heard.map(e => e.kind), ['runStart', 'runEnd']);
   assert.equal(heard[0].run, heard[1].run);
-  assert.deepEqual(heard[1], { kind: 'runEnd', run: heard[0].run, difficulty: 'normal', elements: ['wind', 'fire'], reason: 'defeat', node: 1, seconds: 0 });
+  assert.deepEqual(heard[1], { kind: 'runEnd', run: heard[0].run, difficulty: 'normal', chapter: 'smile-street', elements: ['wind', 'fire'], reason: 'defeat', node: 1, seconds: 0 });
   assert.ok(heard.every(e => cleanEvent({ device: phone, ...e })), 'every event the game makes passes the worker');
 });
 
@@ -206,4 +206,20 @@ test('expeditions are counted per difficulty, and the summary can be narrowed to
   assert.deepEqual([easy.totals.runs, easy.totals.clears, easy.combos[0].runs, easy.recent.length], [2, 1, 2, 2]);
   assert.ok(easy.recent.every(r => r.difficulty === 'easy'));
   assert.equal((await summary(db, 7, NOW, 'nonsense')).totals.runs, 5, 'an unknown filter shows everything');
+});
+
+test('the difficulty cards split by chapter; a run from before chapters were reported counts as chapter 1', async () => {
+  const db = d1();
+  await record(db, { device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }, NOW);
+  const go = async (run, difficulty, chapter, reason) => {
+    await record(db, { device: phone, kind: 'runStart', run, elements: ['fire'], difficulty, chapter }, NOW);
+    await record(db, { device: phone, kind: 'runEnd', run, elements: ['fire'], difficulty, chapter, reason, node: 3, seconds: 100 }, NOW);
+  };
+  await go('run-1-1', 'easy', 'smile-street', 'clear'); await go('run-2-1', 'easy', 'silent-factory', 'defeat');
+  await go('run-3-1', 'hard', 'silent-factory', 'defeat'); await go('run-4-1', 'normal', undefined, 'clear');
+  const { difficulties, difficultiesByChapter: by } = await summary(db, 7, NOW);
+  assert.deepEqual(difficulties.map(d => [d.difficulty, d.runs]), [['easy', 2], ['normal', 1], ['hard', 1]], 'every chapter together, as before');
+  assert.deepEqual(by['smile-street'].map(d => [d.difficulty, d.runs, d.clears]), [['easy', 1, 1], ['normal', 1, 1], ['hard', 0, 0]]);
+  assert.deepEqual(by['silent-factory'].map(d => [d.difficulty, d.runs, d.defeats]), [['easy', 1, 1], ['normal', 0, 0], ['hard', 1, 1]]);
+  assert.equal(cleanEvent({ device: phone, kind: 'runStart', run: 'run-9-9', elements: ['fire'], chapter: "x'; DROP" }).chapter, null, 'a chapter that is not an id is dropped');
 });

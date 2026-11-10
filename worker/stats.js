@@ -10,7 +10,7 @@
 //   POST   /api/admin/gifts                  { device, gears, note }     free gears the game hands over on its next ping
 //   DELETE /api/admin/gifts/:id              take back a gift that has not arrived yet
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
-import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
+import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, FIRST_CHAPTER_ID, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
 import { MIN_CLEAR_SECONDS, comboElements } from '../src/engine/records.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
@@ -25,7 +25,7 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS runs_day ON runs (day)`
 ];
 /** Columns added after the first tables went live; on a database that has them already the statement fails and is skipped. */
-const MIGRATIONS = [`ALTER TABLE runs ADD COLUMN difficulty TEXT`];
+const MIGRATIONS = [`ALTER TABLE runs ADD COLUMN difficulty TEXT`, `ALTER TABLE runs ADD COLUMN chapter TEXT`];
 const ready = new WeakMap();
 const setUp = async db => { await db.batch(SCHEMA.map(sql => db.prepare(sql))); for (const sql of MIGRATIONS) await db.prepare(sql).run().catch(() => {}); };
 const ensure = db => { if (!ready.has(db)) ready.set(db, setUp(db).catch(error => { ready.delete(db); throw error; })); return ready.get(db); };
@@ -53,12 +53,12 @@ export async function record(db, sent, now = Date.now()) {
       .bind(event.device, day, now, event.where, event.node, event.gears, event.playSeconds, event.name || null).run();
     return { mail: await waiting(db, event.device) };
   } else if (event.kind === 'runStart') {
-    await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at, difficulty) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`).bind(event.device, event.run, day, event.combo, now, event.difficulty).run();
+    await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at, difficulty, chapter) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`).bind(event.device, event.run, day, event.combo, now, event.difficulty, event.chapter).run();
   } else {
     // An end with no start (a run begun before statistics existed) still counts, on the day it came back.
-    await db.prepare(`INSERT INTO runs (device, run, day, combo, ended_at, reason, node, seconds, difficulty) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
-      ON CONFLICT (device, run) DO UPDATE SET ended_at = ?5, reason = ?6, node = ?7, seconds = ?8, difficulty = COALESCE(runs.difficulty, ?9)`)
-      .bind(event.device, event.run, day, event.combo, now, event.reason, event.node, event.seconds, event.difficulty).run();
+    await db.prepare(`INSERT INTO runs (device, run, day, combo, ended_at, reason, node, seconds, difficulty, chapter) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+      ON CONFLICT (device, run) DO UPDATE SET ended_at = ?5, reason = ?6, node = ?7, seconds = ?8, difficulty = COALESCE(runs.difficulty, ?9), chapter = COALESCE(runs.chapter, ?10)`)
+      .bind(event.device, event.run, day, event.combo, now, event.reason, event.node, event.seconds, event.difficulty, event.chapter).run();
   }
   return {};
 }
@@ -124,14 +124,15 @@ const daysFrom = (since, today) => { const out = []; for (let t = Date.parse(sin
 /**
  * `difficulty` ('easy' | 'normal' | 'hard', or '' for all) narrows every expedition figure (totals, days, pairs, stops,
  * recent runs) to runs set out on it; plays and devices stay as they are. `difficulties` always counts all of them,
- * runs from before difficulties existed as 'legacy'.
+ * runs from before difficulties existed as 'legacy'. `difficultiesByChapter` is the same per chapter (2026-11-09), runs
+ * from before they carried their chapter counted as chapter 1's.
  */
 export async function summary(db, days = 30, now = Date.now(), difficulty = '') {
   await ensure(db);
   const today = koreanDay(now), since = days > 0 ? koreanDay(now - (days - 1) * 86400000) : '0000-00-00', pick = DIFFICULTIES.includes(difficulty) ? difficulty : '';
   const all = (sql, ...args) => db.prepare(sql).bind(...args).all().then(r => r.results);
   const level = `(?2 = '' OR difficulty = ?2)`;
-  const [[devices], [sessionTotals], [runTotals], sessionDays, newDays, runDays, forms, systems, browsers, combos, depth, recent, levels] = await Promise.all([
+  const [[devices], [sessionTotals], [runTotals], sessionDays, newDays, runDays, forms, systems, browsers, combos, depth, recent, levels, chapterLevels] = await Promise.all([
     all(`SELECT COUNT(*) AS everyone, SUM(first_day >= ?1) AS fresh, SUM(installed) AS installed FROM devices`, since),
     all(`SELECT COUNT(*) AS sessions, COUNT(DISTINCT device) AS active FROM sessions WHERE day >= ?1`, since),
     all(`SELECT COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, SUM(reason IS NULL) AS open,
@@ -146,7 +147,9 @@ export async function summary(db, days = 30, now = Date.now(), difficulty = '') 
     all(`SELECT r.day, r.combo, r.reason, r.node, r.seconds, r.difficulty, d.form, d.os FROM runs r LEFT JOIN devices d ON d.id = r.device WHERE r.day >= ?1 AND (?2 = '' OR r.difficulty = ?2)
       ORDER BY COALESCE(r.ended_at, r.started_at) DESC LIMIT 20`, since, pick),
     all(`SELECT COALESCE(difficulty, 'legacy') AS difficulty, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, SUM(reason IS NULL) AS open,
-      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds, COUNT(DISTINCT device) AS devices FROM runs WHERE day >= ?1 GROUP BY 1`, since)
+      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds, COUNT(DISTINCT device) AS devices FROM runs WHERE day >= ?1 GROUP BY 1`, since),
+    all(`SELECT COALESCE(chapter, ?2) AS chapter, COALESCE(difficulty, 'legacy') AS difficulty, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, SUM(reason = 'defeat') AS defeats, SUM(reason = 'abandon') AS abandons, SUM(reason IS NULL) AS open,
+      AVG(CASE WHEN reason IS NOT NULL THEN node END) AS node, AVG(CASE WHEN reason IS NOT NULL THEN seconds END) AS seconds, COUNT(DISTINCT device) AS devices FROM runs WHERE day >= ?1 GROUP BY 1, 2`, since, FIRST_CHAPTER_ID)
   ]);
   const first = days > 0 ? since : [sessionDays[0]?.day, runDays[0]?.day, newDays[0]?.day].filter(Boolean).sort()[0] || today;
   const byDay = rows => new Map(rows.map(row => [row.day, row]));
@@ -164,11 +167,15 @@ export async function summary(db, days = 30, now = Date.now(), difficulty = '') 
     combos: combos.map(row => ({ combo: row.combo, runs: n(row.runs), clears: n(row.clears), defeats: n(row.defeats), abandons: n(row.abandons), averageNode: row.node === null ? null : Math.round(row.node * 10) / 10 })),
     depth: depth.map(row => ({ node: row.node, runs: n(row.runs), clears: n(row.clears) })),
     recent,
-    difficulties: ['easy', 'normal', 'hard', 'legacy'].map(id => levels.find(row => row.difficulty === id) || { difficulty: id }).map(row => ({
+    difficulties: levelRows(levels),
+    difficultiesByChapter: Object.fromEntries([...new Set(chapterLevels.map(row => row.chapter))].map(chapter => [chapter, levelRows(chapterLevels.filter(row => row.chapter === chapter))]))
+  };
+  function levelRows(rows) {
+    return ['easy', 'normal', 'hard', 'legacy'].map(id => rows.find(row => row.difficulty === id) || { difficulty: id }).map(row => ({
       difficulty: row.difficulty, runs: n(row.runs), devices: n(row.devices), clears: n(row.clears), defeats: n(row.defeats), abandons: n(row.abandons), unfinished: n(row.open),
       averageNode: row.node == null ? null : Math.round(row.node * 10) / 10, averageSeconds: row.seconds == null ? null : Math.round(row.seconds)
-    })).filter(row => row.difficulty !== 'legacy' || row.runs)
-  };
+    })).filter(row => row.difficulty !== 'legacy' || row.runs);
+  }
 }
 
 /**

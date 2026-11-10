@@ -6,7 +6,8 @@ export function validateData(data) {
   const assert = (condition, message) => { if (!condition) throw new Error(`게임 데이터 오류: ${message}`); };
   assert(c.schemaVersion === 1 && p.schemaVersion === 1 && s.schemaVersion === 1, '지원하지 않는 버전');
   assert(c.player.combo.length === 3 && c.player.maxHp > 0, '플레이어 기본값');
-  assert(c.elements.length === 4 && c.skills.length === 8 && c.fusions.length === 6, '수직 조각 콘텐츠 수');
+  // Fusions are only listed once they are built (scripts/sync-data.mjs keeps those with a fusionBehavior).
+  assert(c.elements.length === s.elements.length && c.skills.length === 2 * s.elements.length && c.fusions.length >= 6, '수직 조각 콘텐츠 수');
   const keys = new Set();
   for (const element of c.elements) assert(c.skills.filter(x => x.element === element.id).length === 2, `${element.id} 기술 수`);
   for (const fusion of c.fusions) {
@@ -17,6 +18,8 @@ export function validateData(data) {
     keys.add(key);
   }
   for (const skill of c.skills) assert(s.skillBehavior[skill.id] && skill.cooldown > 0, `기술 실행 규칙: ${skill.id}`);
+  // The codex says of every move whether it strikes one body or several (presentation.codex.targets).
+  for (const move of [...c.skills, ...c.fusions]) assert(['single', 'multi'].includes(s.presentation?.codex?.targets?.[move.id]?.[0]), `도감 단일/다수: ${move.id}`);
   for (const chapter of chapterList(s)) {
     const rooms = chapterRooms(s, chapter.id);
     assert(rooms.length === 12 && rooms[0].kind === 'normal' && rooms[5].kind === 'shop' && rooms[11].boss, `12구간 구조: ${chapter.id}`);

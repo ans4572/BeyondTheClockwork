@@ -12,6 +12,10 @@ art/hud-concepts/
 art/title-concepts/
 art/mob-concepts/
 art/status-icon-concepts/
+# Raw PixelLab frames and concepts of the sound and water effects (packed by build.py into effects/ and art/fx).
+art/animations/player/skills/sound-water/raw/
+art/animations/player/skills/sound-water/concepts/
+art/icon-concepts/
 art/player-f2/fusion-concepts/
 art/player-f2/state-concepts/
 art/chapters/1-smile-street/boss-pose-concepts/
@@ -22,6 +26,9 @@ art/chapters/1-smile-street/map-concepts/*
 !art/chapters/1-smile-street/map-concepts/navigation-proposals.json
 art/**/background-wide-v*
 art/**/background-v1*
+# Two chapter 2 B rooms still play on their first painting (maps.json): keep those in the repository.
+!art/chapters/2-silent-factory/maps/03-parts-warehouse-b/background-v1-q92.webp
+!art/chapters/2-silent-factory/maps/10-steam-boiler-room-b/background-v1-q92.webp
 art/**/*.zip
 art/**/concept.png
 _workspace/

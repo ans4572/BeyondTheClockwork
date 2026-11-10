@@ -1,0 +1,27 @@
+Use case: stylized-concept.
+Create ONE static production game environment background for Beyond the Clockwork, chapter 2 "the Silent Factory": a combat room inside the toy town's factory, where wind-up toy residents marked "defective" are brought to have their thoughts erased and be re-stamped identical. The game is cute and toy-like, the factory is quietly unsettling, never horror.
+Input image 1 is a chapter-1 combat room of the same game: match its rendering EXACTLY: polished richly detailed pixel-art toy materials, navy and brass trim, the SAME quarter-view isometric camera, the SAME pixel density, crisp pixel edges, no depth blur.
+Input image 2 is version A of THIS room: the same room, its floor material, colours, light, machines, object size and floor size. This picture is a DIFFERENT CORNER of the same room: a different wall composition, foreground and floor outline, but the exits on exactly the same edges and at the same positions as version A, and the open floor just as small.
+CRITICAL SCALE: input image 1 is at final game scale (1536x1024). After this picture is resized to 1536x1024, doors, crates, lamps, pipes and floor tiles must be the SAME SIZE IN PIXELS as in input image 1. Never bigger objects. Do not zoom in.
+Draw every object at 100% of its size in input image 1.
+Landscape 3:2, OUTPUT 1536x1024 pixels. Opaque full-bleed background.
+FACTORY BASE (shared by every room, keep it subtle): riveted brass trim, painted steel, round toy-like machine shapes with chunky bolts, clean dark outlines. That is the ONLY shared kit. Everything else — floor material, floor colour, wall composition, foreground, light and palette — comes from ROOM IDENTITY below and must be clearly different from the other factory rooms.
+VARIETY RULES (strict):
+- NO doll heads, NO toy faces, NO robot faces, NO eyes on shelves, racks, machines or crates. Shelves hold parts, boxes, tools or materials instead.
+- Smile stamps appear ONLY on the stamp heads and on the hanging paper sheets (this is the one room about smile stamps). No smile faces on crates, banners or other machines.
+- At most ONE wind-up key on top of a machine in the whole picture.
+- No row of three matching machines in mint / butter yellow / powder pink. Use the room's own palette only.
+- No glass-cylinder press with pipes along the bottom edge. The bottom edge uses the room's own FOREGROUND.
+- The floor is the room's own material and colour, not blue-grey steel plates (unless the room says so).
+- No elevator, lift cage or lift doors anywhere.
+SMALL ROOM (most important): the room is small and close, NOT a big hall. At its widest the EMPTY fighting floor spans only from about 22% to 78% of the picture width and from about 30% to 74% of its height. The empty floor covers only about a QUARTER of the picture in total. A THICK band of scenery, at least a quarter of the picture deep, surrounds the floor on every side. Big objects (machines, stacks, racks, crates, planters, trolleys) stand ON this scenery band along the walls, never out on the open floor; wall bases jut a little into the floor edge in places, like the plaza edges in input image 1. Everything outside the floor is solid scenery that cannot be walked on.
+PATH: a broad flat floor running DIAGONALLY from the upper-left entrance down to the lower-right exit. The upper-right corner and the lower-left corner of the picture are filled with tall scenery, so the floor reads as one wide diagonal band (never a thin corridor).
+EXITS: EXACTLY TWO wide open floor openings, each 3 to 4 floor tiles wide, no doors or barriers: one on the LEFT edge in the upper third (its centre at about 34% of the picture height) where the player enters, and one on the RIGHT edge in the lower part (its centre at about 68% of the picture height) where the player leaves. The right-hand exit ends in a short, flat, EMPTY landing that reaches the picture edge (the game adds its own lift door there; do not draw one). Every other part of the edge is solid wall or machinery. No third exit.
+Combat readability: the open floor has no thin props, clutter, cables, conveyor belts, hazards, puddles or scattered small objects. Calm low-contrast floor so characters read clearly. Every wall and machine has a clear solid base line where it meets the floor. The outermost picture edge is scenery, not floor.
+No UI, labels, text, letters, numbers, logos, watermarks, people, toy residents, enemies, player, characters, arrows, grids, debug overlays or animation. Signs use pictograms only. Natural floor joints, no tactical grid. One cohesive detailed scene, not a contact sheet. Exact requested 1536x1024 native output if available.
+ROOM IDENTITY — Stamping line, B: the ink room beside the same line.
+FLOOR: dark slate-grey rubber tiles with faint old ink rings (flat, calm).
+WALL: three big ink vats with small ladders and dripping taps along the TOP wall (red, indigo, black); in the upper-right corner tall drying racks of stamped paper sheets with smile stamps; a rack of rubber stamp heads on the LEFT wall.
+FOREGROUND (bottom edge and lower-left corner, deep): big rolls of blank paper and spare ink rollers on low stands, standing on the scenery band, not on the floor.
+LIGHT: flat white fluorescent strip lights, slightly harsh.
+PALETTE: ink indigo, stamp red, paper white, black rubber.

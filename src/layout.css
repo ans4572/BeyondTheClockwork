@@ -171,7 +171,29 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 #practice-reset { position: absolute; left: 14px; top: 96px; padding: 5px 14px; font-size: 13px; }
 #practice-reset[hidden] { display: none; }
 #practice-reset.on { background: #ffd257; }
-.reward-grid.four { grid-template-columns: repeat(4, 1fr); }
+/* Moru's parts shelf: six elements in three columns of two rows, each card short enough that the shelf never scrolls
+   (2026-11-08, when sound and water made six). A card's two skills sit side by side. */
+.panel.element-panel { width: min(1080px, 100%); }
+.element-panel .reward-grid.element-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+.element-panel .element-card { gap: 6px; padding: 8px 10px; }
+.element-panel .element-card .element-head .element-icon { width: 40px; height: 40px; }
+.element-panel .element-card .element-head h3 { font-size: 15px; }
+.element-panel .element-card .device { font-size: 11px; }
+.element-panel .element-card .element-role { padding: 1px 6px; font-size: 11px; }
+.element-panel .element-card .element-skills { grid-template-columns: 1fr 1fr; gap: 4px; }
+.element-panel .element-card .element-skills li { grid-template-columns: 26px 1fr; gap: 4px; padding: 3px; }
+.element-panel .element-card .element-skills img { width: 26px; height: 26px; }
+.element-panel .element-card .element-skills li > span { min-width: 0; }
+.element-panel .element-card .element-skills b, .element-panel .element-card .element-skills small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.element-panel .element-card .element-skills b { font-size: 11.5px; line-height: 1.25; letter-spacing: -0.3px; }
+.element-panel .element-card .element-skills small { font-size: 9px; line-height: 1.25; letter-spacing: -0.2px; }
+.element-panel .element-card .owned-badge { top: 8px; right: 8px; font-size: 10px; }
+.panel.element-panel .element-card .pick { padding-top: 5px; padding-bottom: 5px; font-size: 13px; }
+.panel.element-panel > p { margin: 6px 0 0; font-size: 13px; }
+/* A place for an element still to come: a black card with a lock. */
+.element-panel .element-card.future { display: grid; place-items: center; align-content: center; gap: 6px; background: #1f2430; border-top-color: #3a4152; box-shadow: inset 0 0 0 2px #0e121a; color: #6b7487; }
+.element-panel .element-card.future .ico { width: 34px; height: 34px; opacity: .55; filter: grayscale(1) brightness(.9); }
+.element-panel .element-card.future b { font-size: 15px; letter-spacing: 2px; }
 .reward-card.picked { outline: 3px solid var(--ink); }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
@@ -261,6 +283,10 @@ body.touch .panel button { min-height: 44px; }
 body.touch .panel .stat-row button { min-height: 36px; }
 #touch .touch-talk { position: absolute; right: calc(236px + env(safe-area-inset-right)); bottom: 20px; width: 84px; height: 48px; background: #ffd257; }
 #touch .touch-talk[hidden] { display: none; }
+/* Moru's back yard: the cooldown-reset switch, above the skill pad (the T key on a keyboard). */
+#touch .touch-practice { position: absolute; right: calc(10px + env(safe-area-inset-right)); bottom: 208px; min-width: 150px; height: 44px; padding: 0 12px; font-size: 14px; }
+#touch .touch-practice[hidden] { display: none; }
+#touch .touch-practice.on { background: #ffd257; }
 @media (orientation: portrait) {
   body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 }
@@ -336,3 +362,44 @@ body.cramped .panel .reward-card .reroll-one { margin-top: 4px; padding: 3px 6px
 /* A skill Roco confiscated: greyed, with the padlock icon over it until F2 wins it back. */
 .slot.locked img { filter: grayscale(1) brightness(.7); }
 .slot.locked::after { content: ''; position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; background: url('../art/ui/icons/px/lock.png') center / contain no-repeat; image-rendering: pixelated; }
+/* The parts shelf on a short screen (a phone held sideways): the role strip and the wait line go, the two skills stack so
+   their names fit whole, and the type stays big enough to read at the phone's panel zoom (2026-11-08). */
+body.cramped .element-panel .reward-grid.element-grid { gap: 6px; margin-top: 4px; }
+body.cramped .element-panel .element-card { gap: 4px; padding: 6px 8px; }
+body.cramped .element-panel .element-card .element-head { gap: 6px; }
+body.cramped .element-panel .element-card .element-head .element-icon { width: 30px; height: 30px; }
+body.cramped .element-panel .element-card .element-head h3 { font-size: 14px; line-height: 1.1; }
+body.cramped .element-panel .element-card .device { font-size: 10.5px; }
+body.cramped .element-panel .element-card .element-role { display: none; }
+body.cramped .element-panel .element-card .element-skills { grid-template-columns: 1fr; gap: 3px; }
+body.cramped .element-panel .element-card .element-skills li { grid-template-columns: 22px 1fr; gap: 4px; padding: 2px 3px; }
+body.cramped .element-panel .element-card .element-skills img { width: 22px; height: 22px; }
+body.cramped .element-panel .element-card .element-skills b { font-size: 12px; }
+body.cramped .element-panel .element-card .element-skills small { font-size: 10px; }
+body.cramped .element-panel .element-card .element-skills small + small { display: none; }
+body.cramped .panel.element-panel .element-card .pick { padding-top: 3px; padding-bottom: 3px; font-size: 12px; }
+body.cramped .panel.element-panel > p { margin-top: 4px; font-size: 12px; }
+body.cramped .element-panel .element-card.future .ico { width: 26px; height: 26px; }
+body.cramped .panel.element-panel .panel-header { align-items: center; padding-bottom: 3px; margin-bottom: 4px; }
+body.cramped .panel.element-panel .panel-header h2 { font-size: 18px; margin: 0; line-height: 1.2; }
+body.cramped .panel.element-panel .panel-header strong { font-size: 13px; }
+body.cramped .element-panel .element-card .element-head > div { display: flex; align-items: baseline; gap: 5px; min-width: 0; }
+body.cramped .element-panel .element-card .device { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.cramped .panel.element-panel .actions { margin-top: 6px; }
+/* The fusion line is the first thing to go when even this does not fit. */
+body.cramped .panel.element-panel > p { display: none; }
+body.cramped .panel.element-panel .panel-header h2 canvas { height: 30px; width: auto; }
+/* Room for the 장착 중 / 보유 badge, so the device name stops short of it. */
+body.cramped .element-panel .element-card.owned .element-head { padding-right: 50px; }
+body.cramped .element-panel .element-card .element-head h3 { flex: none; }
+body.cramped .element-panel .element-card .device { min-width: 0; }
+
+/* Nasa's oil shelf: short cards (icon beside the name, price beside the button) so five bottles fit without a scroll. */
+.panel.potions .reward-grid { gap: 8px; margin-top: 8px; }
+.panel.potions .reward-card { display: grid; grid-template-columns: 44px 1fr; grid-template-rows: auto 1fr auto; column-gap: 10px; align-items: start; padding: 8px 10px; border-top-width: 4px; }
+.panel.potions .reward-card .reward-icon { grid-row: 1 / 3; width: 44px; height: 44px; margin: 0; }
+.panel.potions .reward-card .reward-icon .ico.px-icon, .panel.potions .reward-card .reward-icon .ico { width: 36px; height: 36px; }
+.panel.potions .reward-card h3 { margin: 0 0 2px; font-size: 15px; }
+.panel.potions .reward-card p { margin: 0; line-height: 1.35; }
+.panel.potions .reward-card .values { grid-row: 3; grid-column: 1; align-self: center; margin: 6px 0 0; white-space: nowrap; }
+.panel.potions .reward-card .pick { grid-row: 3; grid-column: 2; margin-top: 6px; padding: 4px; }

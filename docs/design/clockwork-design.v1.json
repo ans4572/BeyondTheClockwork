@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "clockwork-design-0.3-magnetic-ice-clamp",
+  "contentVersion": "clockwork-design-0.5-sound-water-fusions",
   "title": "태엽 밖으로",
   "englishWorkingTitle": "Beyond the Clockwork",
   "date": "2026-10-29",
@@ -63,10 +63,10 @@
     ]
   },
   "caps": {
-    "permanentConditionalDamageBonus": 0.6,
-    "totalCooldownReduction": 0.35,
+    "permanentConditionalDamageBonus": 0.9,
+    "totalCooldownReduction": 0.45,
     "minDodgeCooldown": 0.45,
-    "critChance": 0.3,
+    "critChance": 0.4,
     "critMultiplier": 1.5,
     "shieldFractionMaxHp": 0.5,
     "lightHealBasePerRoom": 12,
@@ -87,16 +87,16 @@
     "sharedCoreTotal": 5480,
     "elementTotal": 7200,
     "runCoinRewards": {
-      "normal": 22,
-      "miniboss": 38,
-      "regionBoss": 60
+      "normal": 20,
+      "miniboss": 34,
+      "regionBoss": 54
     },
     "baseCoinsBeforeFinalBoss": 500,
     "shop": [
       {
         "id": "heal",
         "cost": 45,
-        "amount": 25,
+        "amount": 40,
         "oncePerShop": true
       },
       {
@@ -985,17 +985,17 @@
       "status": "windPressure"
     },
     {
-      "id": "earth",
-      "name": "대지",
-      "device": "압력 피스톤",
-      "role": "충격·보호막",
-      "status": "crack"
+      "id": "sound",
+      "name": "소리",
+      "device": "공명 장갑",
+      "role": "공명 쌓기·한 번에 붕괴",
+      "status": "resonance"
     },
     {
       "id": "water",
       "name": "물",
-      "device": "순환 펌프",
-      "role": "범위 제어·약화",
+      "device": "고압 호스",
+      "role": "계속 쏘는 줄기·젖음",
       "status": "wet"
     },
     {
@@ -1021,8 +1021,8 @@
       "name": "과열 휘두르기",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 36,
-      "totalDirectDamage": 36,
+      "damagePerHit": 46,
+      "totalDirectDamage": 46,
       "range": 3,
       "radius": 0,
       "effect": "전방 100도 부채꼴; 화상 1중첩"
@@ -1047,8 +1047,8 @@
       "name": "서리 볼트",
       "cooldown": 6,
       "hits": 3,
-      "damagePerHit": 14,
-      "totalDirectDamage": 42,
+      "damagePerHit": 27,
+      "totalDirectDamage": 81,
       "range": 7,
       "radius": 0,
       "effect": "좁은 3발 확산탄; 근거리 동시 명중 가능; 둔화"
@@ -1060,10 +1060,10 @@
       "name": "냉각 지대",
       "cooldown": 11,
       "hits": 5,
-      "damagePerHit": 10,
-      "totalDirectDamage": 50,
+      "damagePerHit": 18,
+      "totalDirectDamage": 90,
       "range": 6,
-      "radius": 2.8,
+      "radius": 3.3,
       "effect": "2.5초 장판; 0.5초마다 1회; 둔화"
     },
     {
@@ -1073,11 +1073,11 @@
       "name": "도전 스패너",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 32,
-      "totalDirectDamage": 32,
+      "damagePerHit": 42,
+      "totalDirectDamage": 42,
       "range": 6,
       "radius": 0,
-      "effect": "첫 대상 32, 다른 적 최대 2기에게 각 20; 감전; 같은 적 재연쇄 금지",
+      "effect": "첫 대상 42, 다른 적 최대 2기에게 각 20; 감전; 같은 적 재연쇄 금지",
       "secondaryDamage": 20,
       "secondaryTargets": 2
     },
@@ -1103,7 +1103,7 @@
       "hits": 1,
       "damagePerHit": 28,
       "totalDirectDamage": 28,
-      "range": 3.5,
+      "range": 2.5,
       "radius": 0.7,
       "effect": "0.2초 전진 타격; 풍압; 무적 없음"
     },
@@ -1114,62 +1114,68 @@
       "name": "회오리 흡입",
       "cooldown": 10,
       "hits": 6,
-      "damagePerHit": 6,
-      "totalDirectDamage": 48,
+      "damagePerHit": 8,
+      "totalDirectDamage": 64,
       "range": 5,
       "radius": 3,
-      "effect": "0.25초 간격 6타 후 12 피해 마무리; 일반 적 약한 흡입; 풍압",
-      "finisherDamage": 12
+      "effect": "0.25초 간격 6타 후 16 피해 마무리; 일반 적 약한 흡입; 풍압",
+      "finisherDamage": 16
     },
     {
-      "id": "groundImpact",
-      "element": "earth",
-      "name": "지반 타격",
-      "cooldown": 8,
-      "hits": 1,
-      "damagePerHit": 48,
-      "totalDirectDamage": 48,
-      "range": 4,
-      "radius": 0.8,
-      "effect": "선형 충격파; 균열; 큰 경직"
-    },
-    {
-      "id": "stoneGuard",
-      "element": "earth",
-      "name": "철석 가드",
-      "cooldown": 14,
-      "hits": 0,
-      "damagePerHit": 0,
-      "totalDirectDamage": 0,
-      "range": 0,
-      "radius": 0,
-      "effect": "5초간 보호막 25; 재적용 시 남은 양과 새 양 중 큰 값",
-      "shield": 25,
-      "duration": 5
-    },
-    {
-      "id": "pressureSpray",
-      "element": "water",
-      "name": "고압 분사",
+      "id": "ringPalm",
+      "energyCost": 20,
+      "element": "sound",
+      "name": "울림 손바닥",
       "cooldown": 6,
-      "hits": 5,
-      "damagePerHit": 8,
-      "totalDirectDamage": 40,
-      "range": 4,
+      "hits": 1,
+      "damagePerHit": 52,
+      "totalDirectDamage": 52,
+      "range": 2.4,
       "radius": 0,
-      "effect": "0.6초 분사 중 이동 속도 70%; 젖음"
+      "effect": "앞쪽 110도 부채꼴(거리 2.4) 공명 충격; 공명 1; 일반 적 0.8 밀침; 공명이 걸린 적에게는 1.5배와 공명 2",
+      "resonantMultiplier": 1.5,
+      "resonantStacks": 2
     },
     {
-      "id": "backwash",
-      "element": "water",
-      "name": "역류 파동",
+      "id": "roar",
+      "energyCost": 30,
+      "element": "sound",
+      "name": "굉음",
       "cooldown": 10,
       "hits": 1,
-      "damagePerHit": 40,
-      "totalDirectDamage": 40,
-      "range": 0,
-      "radius": 3,
-      "effect": "주변 적 밀치기; 젖음; 보스 강제 이동 없음"
+      "damagePerHit": 78,
+      "totalDirectDamage": 78,
+      "range": 6,
+      "radius": 0,
+      "effect": "누르고 있으면 최대 0.6초 모았다가 놓을 때 앞쪽 직선 6칸 음파 기둥; 피해 36~78(모은 시간 비례); 공명 1; 모으는 동안 이동 50%; 회피하면 취소되고 대기 절반",
+      "minDamage": 36,
+      "resonanceStacks": 1
+    },
+    {
+      "id": "waterCannon",
+      "energyCost": 20,
+      "element": "water",
+      "name": "물대포",
+      "cooldown": 5,
+      "hits": 3,
+      "damagePerHit": 17,
+      "totalDirectDamage": 51,
+      "range": 6,
+      "radius": 0,
+      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 17, 가까이서 셋 다 맞으면 51); 발마다 일반 적 0.25 밀침; 젖음"
+    },
+    {
+      "id": "hydroJet",
+      "energyCost": 30,
+      "element": "water",
+      "name": "고압 분사",
+      "cooldown": 10,
+      "hits": 15,
+      "damagePerHit": 6,
+      "totalDirectDamage": 90,
+      "range": 5,
+      "radius": 0,
+      "effect": "누르고 있는 동안 최대 1.5초 커서를 따라 도는 물줄기(0.1초마다 줄 위의 적 모두에게 6); 이동 60%; 벽에 닿으면 물보라; 젖음"
     },
     {
       "id": "prismPierce",
@@ -1282,35 +1288,38 @@
       }
     },
     {
-      "id": "furnaceHammer",
+      "id": "overheatResonance",
       "pair": [
         "fire",
-        "earth"
+        "sound"
       ],
-      "name": "용광 망치",
+      "name": "과열 공진",
       "cooldown": 20,
       "energyCost": 60,
-      "hits": 1,
-      "damagePerHit": 108,
-      "totalDirectDamage": 108,
-      "radius": 3,
-      "effect": "전방 강한 내려찍기; 화상과 균열",
-      "pairKey": "earth+fire"
+      "hits": 3,
+      "damagePerHit": 34,
+      "totalDirectDamage": 102,
+      "radius": 1.2,
+      "effect": "가까운 적 3기(적이 적으면 같은 적을 다시)의 몸속을 울려 달굼; 0.8초 뒤부터 0.3초 간격으로 차례로 터지고 터질 때 반지름 1.2 안이 함께 맞음(3 × 34); 화상과 공명",
+      "pairKey": "fire+sound"
     },
     {
-      "id": "steamPiston",
+      "id": "steamVeil",
       "pair": [
         "fire",
         "water"
       ],
-      "name": "증기 피스톤",
-      "cooldown": 18,
+      "name": "과열 증기막",
+      "cooldown": 20,
       "energyCost": 60,
-      "hits": 2,
-      "damagePerHit": 52,
+      "hits": 8,
+      "damagePerHit": 13,
       "totalDirectDamage": 104,
-      "radius": 2.6,
-      "effect": "전방으로 밀어내는 증기 2회; 화상과 젖음",
+      "radius": 2.2,
+      "effect": "F2 주변이 2초 동안 뜨거운 증기로 덮여 안의 적이 0.25초마다 데고 젖음(8 × 13); 증기막은 F2를 따라 움직임; 화상과 젖음",
+      "legacyIds": [
+        "steamCannon"
+      ],
       "pairKey": "fire+water"
     },
     {
@@ -1387,8 +1396,8 @@
       "cooldown": 22,
       "energyCost": 65,
       "hits": 1,
-      "damagePerHit": 100,
-      "totalDirectDamage": 100,
+      "damagePerHit": 115,
+      "totalDirectDamage": 115,
       "radius": 1.4,
       "effect": "두꺼운 얼음 초승달 하나를 바람에 실어 앞으로 날림; 지나는 길의 적을 한 번씩 벰; 둔화와 풍압",
       "pairKey": "ice+wind",
@@ -1408,35 +1417,40 @@
       }
     },
     {
-      "id": "glacierPress",
+      "id": "highNoteShatter",
       "pair": [
         "ice",
-        "earth"
+        "sound"
       ],
-      "name": "빙하 압착",
-      "cooldown": 22,
+      "name": "고음 파쇄",
+      "cooldown": 20,
       "energyCost": 65,
-      "hits": 4,
-      "damagePerHit": 24,
-      "totalDirectDamage": 96,
-      "radius": 2.8,
-      "effect": "얼음 기둥 4회 타격; 둔화와 균열",
-      "pairKey": "earth+ice"
+      "hits": 2,
+      "damagePerHit": 50,
+      "totalDirectDamage": 100,
+      "radius": 2.2,
+      "effect": "지정 반지름 2.2 안을 얼린(일반 적 0.8초) 뒤 높은 음으로 산산조각(45 + 55); 언 적은 깨질 때 1.3배; 둔화와 공명",
+      "pairKey": "ice+sound",
+      "range": 6
     },
     {
-      "id": "frozenCurrent",
+      "id": "iceSheet",
       "pair": [
         "ice",
         "water"
       ],
-      "name": "빙결 급류",
+      "name": "빙판",
       "cooldown": 20,
-      "energyCost": 60,
+      "energyCost": 65,
       "hits": 2,
-      "damagePerHit": 48,
-      "totalDirectDamage": 96,
-      "radius": 3,
-      "effect": "물결 뒤 얼음 파열; 둔화와 젖음",
+      "damagePerHit": 55,
+      "totalDirectDamage": 110,
+      "radius": 2.5,
+      "range": 6,
+      "effect": "노린 곳에 3초 동안 빙판(반지름 2.5): 깔릴 때 20, 위의 일반 적은 40% 느려지고, 3초 뒤 한꺼번에 깨지며 위의 적에게 90; 둔화와 젖음",
+      "legacyIds": [
+        "freezeHose"
+      ],
       "pairKey": "ice+water"
     },
     {
@@ -1500,35 +1514,40 @@
       }
     },
     {
-      "id": "magneticCrusher",
+      "id": "resonantBolt",
       "pair": [
         "lightning",
-        "earth"
+        "sound"
       ],
-      "name": "자력 분쇄",
-      "cooldown": 22,
+      "name": "공명 낙뢰",
+      "cooldown": 20,
       "energyCost": 65,
-      "hits": 2,
-      "damagePerHit": 54,
-      "totalDirectDamage": 108,
-      "radius": 3,
-      "effect": "일반 적을 모은 뒤 두 번 압착; 감전과 균열",
-      "pairKey": "earth+lightning"
+      "hits": 5,
+      "damagePerHit": 20,
+      "totalDirectDamage": 100,
+      "radius": 2.2,
+      "effect": "가장 가까운 적에게 낙뢰(40); 맞은 적이 2초 동안 스스로 울려 0.5초마다 반지름 2.2에 방전 음파(4 × 15); 그 적이 죽으면 남은 울림이 한 번에 터짐; 감전과 공명",
+      "pairKey": "lightning+sound",
+      "range": 7
     },
     {
-      "id": "conductiveFlood",
+      "id": "shockPool",
       "pair": [
         "lightning",
         "water"
       ],
-      "name": "전도 범람",
+      "name": "감전 웅덩이",
       "cooldown": 20,
       "energyCost": 65,
-      "hits": 4,
-      "damagePerHit": 24,
-      "totalDirectDamage": 96,
-      "radius": 3.5,
-      "effect": "젖은 지면으로 전기 4회 확산; 감전과 젖음",
+      "hits": 6,
+      "damagePerHit": 17,
+      "totalDirectDamage": 102,
+      "radius": 2.2,
+      "range": 6,
+      "effect": "노린 곳에 3초 동안 웅덩이(반지름 2.2), 0.5초마다 방전해 안의 적을 모두 때림(6 × 17); 안의 젖은 적 한 기마다 방전 피해 +10%(최대 +50%); 감전과 젖음",
+      "legacyIds": [
+        "shockStream"
+      ],
       "pairKey": "lightning+water"
     },
     {
@@ -1564,35 +1583,40 @@
       "pairKey": "lightning+shadow"
     },
     {
-      "id": "sandGear",
+      "id": "echoGust",
       "pair": [
         "wind",
-        "earth"
+        "sound"
       ],
-      "name": "모래 톱니",
+      "name": "메아리 돌풍",
       "cooldown": 20,
       "energyCost": 60,
-      "hits": 8,
-      "damagePerHit": 12,
-      "totalDirectDamage": 96,
-      "radius": 3,
-      "effect": "회전하는 파편 고리; 풍압과 균열",
-      "pairKey": "earth+wind"
+      "hits": 2,
+      "damagePerHit": 50,
+      "totalDirectDamage": 100,
+      "radius": 1.2,
+      "effect": "조준 방향으로 음파 고리가 날아가 벽이나 끝에 닿으면 되돌아옴; 오갈 때 한 번씩 맞음(2 × 50); 풍압과 공명",
+      "pairKey": "sound+wind",
+      "range": 6
     },
     {
-      "id": "currentVortex",
+      "id": "waterspout",
       "pair": [
         "wind",
         "water"
       ],
-      "name": "해류 소용돌이",
-      "cooldown": 22,
-      "energyCost": 65,
-      "hits": 9,
-      "damagePerHit": 12,
-      "totalDirectDamage": 108,
-      "radius": 3,
-      "effect": "지정 지점 물 회오리; 풍압과 젖음",
+      "name": "물기둥 회오리",
+      "cooldown": 20,
+      "energyCost": 60,
+      "hits": 5,
+      "damagePerHit": 10,
+      "totalDirectDamage": 110,
+      "radius": 2,
+      "range": 6,
+      "effect": "노린 곳에 물기둥이 서서 2초 동안 일반 적을 빨아올리고 0.4초마다 때림(5 × 10), 2초 뒤 한꺼번에 내리꽂아 안의 적에게 60(일반 적 0.6초 기절); 보스는 끌려가지 않음; 풍압과 젖음",
+      "legacyIds": [
+        "whirlSpray"
+      ],
       "pairKey": "water+wind"
     },
     {
@@ -1628,25 +1652,25 @@
       "pairKey": "shadow+wind"
     },
     {
-      "id": "mudHammer",
+      "id": "surfaceResonance",
       "pair": [
-        "earth",
+        "sound",
         "water"
       ],
-      "name": "진흙 해머",
+      "name": "수면 공명",
       "cooldown": 20,
       "energyCost": 60,
-      "hits": 1,
-      "damagePerHit": 104,
-      "totalDirectDamage": 104,
+      "hits": 6,
+      "damagePerHit": 17,
+      "totalDirectDamage": 102,
       "radius": 3,
-      "effect": "넓은 지면 충격; 균열과 젖음",
-      "pairKey": "earth+water"
+      "effect": "F2 앞에 4초 동안 얇은 물막(반지름 3); 그 위 적이 소리나 렌치에 맞을 때마다 물막 전체가 울려 물막 위 모든 적이 함께 맞음(최대 6번, 한 번에 17); 젖음과 공명",
+      "pairKey": "sound+water"
     },
     {
       "id": "crystalBastion",
       "pair": [
-        "earth",
+        "sound",
         "light"
       ],
       "name": "수정 보루",
@@ -1656,13 +1680,13 @@
       "damagePerHit": 72,
       "totalDirectDamage": 72,
       "radius": 3,
-      "effect": "주변 수정 폭발과 보호막 20; 균열과 현광",
-      "pairKey": "earth+light"
+      "effect": "주변 수정 폭발과 보호막 20; 균열과 현광 (대지 시절의 안: 소리로 바뀌어 다시 정해야 함)",
+      "pairKey": "light+sound"
     },
     {
       "id": "gravePress",
       "pair": [
-        "earth",
+        "sound",
         "shadow"
       ],
       "name": "심연 압착",
@@ -1672,8 +1696,8 @@
       "damagePerHit": 112,
       "totalDirectDamage": 112,
       "radius": 2.8,
-      "effect": "느린 예고 뒤 강한 압착; 균열과 침식",
-      "pairKey": "earth+shadow"
+      "effect": "느린 예고 뒤 강한 압착; 균열과 침식 (대지 시절의 안: 소리로 바뀌어 다시 정해야 함)",
+      "pairKey": "shadow+sound"
     },
     {
       "id": "reflectedCurrent",
@@ -1729,9 +1753,9 @@
       "id": "smileStreet",
       "name": "웃음거리",
       "index": 1,
-      "normalReward": 15,
-      "miniReward": 45,
-      "bossReward": 90,
+      "normalReward": 14,
+      "miniReward": 41,
+      "bossReward": 81,
       "miniboss": "collectorRoco",
       "boss": "captainBrass",
       "theme": "파스텔 상점과 행진 인형; 그 뒤의 회수 장치"
@@ -1775,8 +1799,8 @@
       "id": "collectorRoco",
       "name": "회수관 로코",
       "kind": "miniboss",
-      "hp": 2340,
-      "damage": 13,
+      "hp": 2100,
+      "damage": 12,
       "minimumTell": 0.7,
       "region": "smileStreet",
       "concept": "집게팔과 자석을 단 수거 인형"
@@ -1785,8 +1809,8 @@
       "id": "captainBrass",
       "name": "행진대장 브라스",
       "kind": "regionBoss",
-      "hp": 3900,
-      "damage": 15,
+      "hp": 3500,
+      "damage": 14,
       "minimumTell": 0.8,
       "region": "smileStreet",
       "concept": "주민들의 걸음을 지휘하는 금관 병정"
@@ -1815,8 +1839,8 @@
       "id": "inspectorIris",
       "name": "검수관 아이리스",
       "kind": "miniboss",
-      "hp": 820,
-      "damage": 20,
+      "hp": 4300,
+      "damage": 22,
       "minimumTell": 0.65,
       "region": "silentFactory",
       "concept": "렌즈와 도장을 단 검수기"
@@ -1825,8 +1849,8 @@
       "id": "directorPress",
       "name": "총감독 프레스",
       "kind": "regionBoss",
-      "hp": 2600,
-      "damage": 24,
+      "hp": 7000,
+      "damage": 29,
       "minimumTell": 0.8,
       "region": "silentFactory",
       "concept": "거대한 프레스와 정형 틀을 조종하는 생산 관리자"
@@ -1883,7 +1907,7 @@
     {
       "id": "chill",
       "duration": 3,
-      "slow": 0.25,
+      "slow": 0.4,
       "freezeAtApplications": 3,
       "normalFreezeDuration": 0.65,
       "freezeReapplyLock": 4,
@@ -1900,17 +1924,23 @@
     {
       "id": "windPressure",
       "duration": 4,
-      "staggerTakenBonus": 0.1
+      "staggerTakenBonus": 0.1,
+      "wrenchKnockback": 2,
+      "wrenchStun": 1.5
     },
     {
-      "id": "crack",
+      "id": "resonance",
       "duration": 4,
-      "basicDamageTakenBonus": 0.08
+      "damageTakenPerStack": 0.04,
+      "maxStacks": 3,
+      "collapseDamage": 30,
+      "spreadRadius": 1.2,
+      "spreadStacks": 1
     },
     {
       "id": "wet",
       "duration": 4,
-      "outgoingDamageReduction": 0.1
+      "attackCut": 0.2
     },
     {
       "id": "reveal",
@@ -1956,7 +1986,7 @@
     }
   },
   "balance": {
-    "damageFormula": "base * (1 + min(permanentApplicableSum, 0.60)) * (1 + min(runDamageBonus, 0.80)) * skillLevel * rarity * crit * targetVulnerability",
+    "damageFormula": "base * (1 + min(permanentTuning, 0.90) + oil) * (1 + min(runDamageBonus, 0.80)) * skillLevel * rarity * crit * targetVulnerability",
     "skillMaxLevel": 4,
     "skillLevelDamagePerLevel": 0.12,
     "rarityDamage": {
@@ -2046,5 +2076,5 @@
     "oneTimeEncounterReward": 10,
     "registrationBeforeCanonicalRecovery": true
   },
-  "updatedAt": "2026-10-30"
+  "updatedAt": "2026-11-08"
 }

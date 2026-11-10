@@ -21,6 +21,7 @@ const DAY_ROWS = 14;
 const app = document.getElementById('app'), tip = document.getElementById('tip');
 const state = {
   tab: sessionStorage.getItem('admin-tab') === 'users' ? 'users' : 'stats', days: [7, 30, 0].includes(Number(sessionStorage.getItem('admin-days') ?? 30)) ? Number(sessionStorage.getItem('admin-days') ?? 30) : 30, level: sessionStorage.getItem('admin-level') || '', data: null, names: null, allDays: false, at: null,
+  levelChapter: sessionStorage.getItem('admin-level-chapter') || '',
   people: null, q: '', onlineOnly: false, shown: 20, picked: null, detail: null, confirm: 0, said: ''
 };
 const PLACES = { title: '타이틀', hub: '마을', practice: '연습장' };
@@ -41,7 +42,7 @@ async function loadNames() {
   const elements = Object.fromEntries((combat.elements || []).map(e => [e.id, e.name]));
   const fusions = Object.fromEntries((combat.fusions || []).map(f => [[...f.pair].sort((a, b) => order.indexOf(a) - order.indexOf(b)).join('+'), f]));
   const firstSkill = Object.fromEntries((combat.elements || []).map(e => [e.id, (combat.skills || []).find(s => s.element === e.id)?.id]));
-  return { elements, fusions, firstSkill, colors: slice.presentation?.colors || {}, rooms: (slice.rooms || []).map(r => r.name) };
+  return { elements, fusions, firstSkill, colors: slice.presentation?.colors || {}, rooms: (slice.rooms || []).map(r => r.name), chapters: (slice.chapters || []).map(c => ({ id: c.id, number: c.number, name: c.name })) };
 }
 
 function comboCell(combo) {
@@ -149,6 +150,17 @@ function donut(rows, names, unit) {
 }
 const shareLine = (rows, names) => { const total = rows.reduce((sum, r) => sum + r.devices, 0); return rows.slice(0, 3).map(r => `${names[r.name] || '기타'} ${pct(r.devices, total)}%`).join(' · ') || '–'; };
 
+/** The difficulty cards' chapter: '' for every chapter, else a chapter id (2026-11-09). Runs from before chapters were reported count as chapter 1's. */
+function shownLevels() {
+  const by = state.data.difficultiesByChapter || {};
+  return state.levelChapter ? by[state.levelChapter] || [] : state.data.difficulties || [];
+}
+function chapterTabs() {
+  const chapters = state.names?.chapters || [];
+  if (chapters.length < 2) return '';
+  return `<div class="seg chapter-seg" role="group" aria-label="장">${[['', '전체'], ...chapters.map(c => [c.id, `${c.number}장 ${c.name}`])].map(([id, label]) => `<button data-levelchapter="${esc(id)}" aria-pressed="${(state.levelChapter || '') === id}">${esc(label)}</button>`).join('')}</div>`;
+}
+
 /** One card per difficulty: how many expeditions chose it (and its share), how they ended, how far and how long. */
 function levelCards(rows) {
   const total = rows.reduce((sum, row) => sum + row.runs, 0);
@@ -185,8 +197,8 @@ function render() {
         <div class="card tile"><div class="label">완주율</div><div class="value num">${pct(totals.clears, ended)}<small>%</small></div><div class="note">평균 ${totals.averageNode ?? '–'}번째 정거장 · ${clock(totals.averageSeconds)}</div></div>
       </section>
 
-      <div class="section"><h2>난이도</h2><span>${rangeLabel} · 원정을 떠날 때 고른 난이도 · 누르면 그 난이도만 봐요</span></div>
-      <section class="levels">${levelCards(state.data.difficulties || [])}</section>
+      <div class="section"><h2>난이도</h2><span>${rangeLabel} · 원정을 떠날 때 고른 난이도 · 누르면 그 난이도만 봐요</span>${chapterTabs()}</div>
+      <section class="levels">${levelCards(shownLevels())}</section>
 
       <div class="section"><h2>추세</h2><span>${rangeLabel} · 마우스를 올리면 그날 숫자</span></div>
       <section class="trend">
@@ -241,6 +253,7 @@ app.addEventListener('click', event => {
   if (button.dataset.act === 'memo') { saveMemo(); return; }
   if (button.dataset.act === 'more') { state.shown += 30; drawPeople(); return; }
   if (button.dataset.act === 'close') { state.picked = null; state.detail = null; drawDetail(); drawPeople(); return; }
+  if (button.dataset.levelchapter !== undefined) { state.levelChapter = button.dataset.levelchapter; sessionStorage.setItem('admin-level-chapter', state.levelChapter); render(); return; }
   if (button.dataset.level !== undefined) { state.level = button.dataset.level; state.allDays = false; sessionStorage.setItem('admin-level', state.level); load(); return; }
   if (button.dataset.days !== undefined) { state.days = Number(button.dataset.days); state.allDays = false; sessionStorage.setItem('admin-days', state.days); load(); }
   if (button.dataset.act === 'reload') load();

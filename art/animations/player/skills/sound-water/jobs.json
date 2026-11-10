@@ -1,0 +1,243 @@
+{
+  "note": "Sound and water effects, PixelLab 2026-11-08. Concept: create_image_pro_flash (style image in brackets). Frames: animate_image_pixminimax from the concept (raw/<name>/00 = the concept). Loops pin the last frame to the concept. Packed by build.py.",
+  "style": {
+    "field": "skills/basic/pixellab-second/effects/coolingField/concept.png",
+    "orb": "stormFloat sheet frame 0",
+    "vortex": "vortexIntake sheet frame 2",
+    "crescent": "art/fx/frost-crescent-v1.png frame 0"
+  },
+  "concepts": {
+    "film": {
+      "job": "36b46a04-603d-4014-b4f7-aaa279d9fcf0",
+      "seed": 7101,
+      "size": 256,
+      "style": "field"
+    },
+    "sheet": {
+      "job": "b5b48b3a-3e94-4a62-9368-f19dd0524497",
+      "seed": 7102,
+      "size": 256,
+      "style": "field"
+    },
+    "pool": {
+      "job": "17df9e83-20d1-4776-898b-cf72bf75b2e6",
+      "seed": 7103,
+      "size": 256,
+      "style": "field"
+    },
+    "veil": {
+      "job": "9630a534-da22-41c4-b50a-b6f1db546e61",
+      "seed": 7104,
+      "size": 256,
+      "style": "vortex"
+    },
+    "spout": {
+      "job": "ec86f10b-ec6d-413f-99be-3041c1f3de9e",
+      "seed": 7105,
+      "size": 256,
+      "style": "vortex"
+    },
+    "shatter": {
+      "job": "c42cffba-0459-44b3-bafc-f0da13d1f1d0",
+      "seed": 7106,
+      "size": 256,
+      "style": "field"
+    },
+    "speaker": {
+      "job": "a162680f-4517-499b-8a0a-4d10f664afee",
+      "seed": 7107,
+      "size": 256,
+      "style": "orb"
+    },
+    "echo": {
+      "job": "f914a07f-d1cb-4c83-a406-9dd242e936a6",
+      "seed": 7108,
+      "size": 128,
+      "style": "crescent"
+    },
+    "palm": {
+      "job": "30a8de03-fd01-4dec-ba55-54358b1df45d",
+      "seed": 7201,
+      "size": 128,
+      "style": "crescent"
+    },
+    "roar": {
+      "job": "aca4fb24-bb89-4731-b17e-1a2eb3c0ad1d",
+      "seed": 7202,
+      "size": [
+        256,
+        128
+      ],
+      "style": "crescent"
+    },
+    "shot": {
+      "job": "f464f591-c6c6-438d-82dd-9a134ac71e88",
+      "seed": 7203,
+      "size": 128,
+      "style": "crescent"
+    },
+    "splash": {
+      "job": "417020cf-dc1b-4609-8783-a661c9915338",
+      "seed": 7204,
+      "size": 128,
+      "style": "crescent"
+    },
+    "burst": {
+      "job": "e9fbb562-59db-4623-bffd-a81ee423796d",
+      "seed": 7205,
+      "size": 128,
+      "style": "crescent"
+    },
+    "overheat": {
+      "job": "da8a8b81-72d5-4f12-8e83-3aea4a7439a7",
+      "seed": 7206,
+      "size": 128,
+      "style": "crescent"
+    },
+    "stream": {
+      "job": "792a3782-9a04-4536-802c-4b4c1c664b2c",
+      "seed": 8602,
+      "size": [
+        256,
+        48
+      ],
+      "style": "water-shot-v1 frame 0 (cropped)",
+      "unused_alternative": "601b73b2-9a39-440a-a3f6-59cd5a588c4e"
+    },
+    "shatter2": {
+      "job": "50249920-faf5-4f9a-9ad4-1b5360cd2d57",
+      "seed": 8701,
+      "size": 256,
+      "style": "crescent",
+      "replaces": "shatter (a disc ringed with crystals, read like coolingField)",
+      "unused_alternative": "02eb4bd5-d17c-4074-b5ea-9864b5ccc87a"
+    }
+  },
+  "animations": {
+    "film": {
+      "job": "e41e2ec2-00fb-4861-857d-c7dcd5ba9b8e",
+      "frames": 8,
+      "loop": true
+    },
+    "sheet": {
+      "job": "c9db5205-7f66-41bc-8997-43aee1af6d99",
+      "frames": 8,
+      "loop": true
+    },
+    "pool": {
+      "job": "ad5b17e1-d830-4016-9595-72d98691067a",
+      "frames": 8,
+      "loop": true
+    },
+    "veil": {
+      "job": "85dcd284-d6a9-4236-a769-9e072a709821",
+      "frames": 8,
+      "loop": true
+    },
+    "spout": {
+      "job": "0730d7df-ffd2-472a-9435-7cdc55593787",
+      "frames": 8,
+      "loop": true
+    },
+    "speaker": {
+      "job": "4432589e-918e-4f05-9498-6f9c6c3d5af4",
+      "frames": 8,
+      "loop": true
+    },
+    "echo": {
+      "job": "fb19fda7-b067-40ae-8c48-dc2bb7fe9512",
+      "frames": 8,
+      "loop": true
+    },
+    "shot": {
+      "job": "540177a1-4dfc-4cd5-94da-e5e34c0054e8",
+      "frames": 8,
+      "loop": true
+    },
+    "shatter": {
+      "job": "91a03469-9437-4395-a44b-a356ea5fcf22",
+      "frames": 12
+    },
+    "sheetBreak": {
+      "job": "f55b8d4c-9903-4a05-8463-fe008e1ab4fd",
+      "frames": 8
+    },
+    "spoutSlam": {
+      "job": "01392f17-8d4e-469e-ba6c-baac4383f1a1",
+      "frames": 8
+    },
+    "palm": {
+      "job": "86c45ba4-8991-49ba-af0f-2c3eda8d4550",
+      "frames": 8
+    },
+    "roar": {
+      "job": "48f9ad18-ec6d-4d92-823e-1c7c66e93009",
+      "frames": 8
+    },
+    "splash": {
+      "job": "d35eeaf3-fb06-4620-a5a8-350de3d352b1",
+      "frames": 8
+    },
+    "burst": {
+      "job": "9fc5c96d-af2b-494d-9250-f50d50ba2e27",
+      "frames": 8
+    },
+    "overheat": {
+      "job": "b10f797f-99c5-4d8c-bba2-ccd87ab6fe51",
+      "frames": 8
+    },
+    "stream1": {
+      "job": "b0ee1566-4667-43c6-84cd-7095682396e7",
+      "frames": 8,
+      "loop": true,
+      "unused_alternative": "147d83c3-5492-4949-95d4-6206c0a3d3d3"
+    },
+    "shatter2b": {
+      "job": "fcc13114-de8b-486c-8cf9-70998aebc125",
+      "frames": 12,
+      "unused_alternative": "8d464fc5-954a-43f4-b883-08389e6e917d"
+    },
+    "shatter2Grow": {
+      "job": "3e986b14-43f4-4b90-b63b-2313c36af38b",
+      "frames": 8,
+      "note": "crystals sinking, played backwards as the grow-in"
+    }
+  },
+  "generations": 117,
+  "game": {
+    "castEffects (game-clips.json)": [
+      "surfaceResonance",
+      "iceSheet",
+      "shockPool",
+      "steamVeil",
+      "waterspout",
+      "highNoteShatter",
+      "resonantBolt"
+    ],
+    "FX (src/render/fx-sprites.js)": [
+      "ringPalm",
+      "roarBeam",
+      "waterShot",
+      "echoRing",
+      "waterSplash",
+      "resonanceBurst",
+      "overheatBurst",
+      "hydroStream"
+    ]
+  },
+  "icons": {
+    "note": "Fusion and status icons, create_image_pro_flash 48 px. Fusions styled on skill-steamShatter.png, statuses on art/status-icon-concepts/c-chill.png. Copies under art/icon-concepts/sound-water-pixellab/fusion/.",
+    "overheatResonance": "aea73538-1b9d-4f2f-82f1-e67ed09836d6",
+    "highNoteShatter": "726a296a-da0b-4419-b9ac-e1cf43636147",
+    "resonantBolt": "8dc7ffbc-7eed-4878-836b-522ee11e6653",
+    "echoGust": "5edb3505-218d-49b4-991b-c689852de751",
+    "surfaceResonance": "9f3cb420-da1b-4cb3-a772-4d77f5db8a0e",
+    "steamVeil": "1cba909c-f0f9-40c6-9413-897600692b0d",
+    "iceSheet": "bf1d9c48-cb19-46df-876d-7cca2ad46746",
+    "shockPool": "3a7ab667-4c2a-4eb9-837f-5e4301b87393",
+    "waterspout": "d8d57730-6d8e-4ad2-a381-e153e0c8955f",
+    "status-resonance": "340fbdda-d23b-42a5-b792-5eaa55e2f1e4",
+    "status-wet": "dac86acd-6268-4aff-b58f-4db4d8d496bc",
+    "generations": 55
+  }
+}

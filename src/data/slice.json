@@ -5,11 +5,20 @@
     "fire",
     "ice",
     "lightning",
-    "wind"
+    "wind",
+    "sound",
+    "water"
   ],
+  "elementUnlocks": {
+    "note": "Elements that are not on Moru's shelf from the start. after: the chapter that must be beaten first (the local test server's unlock switch skips it). preview: still being made, shown only where chapter previews are on (the local dev server), like chapters[].preview.",
+    "sound": { "after": "smile-street", "preview": true },
+    "water": { "after": "smile-street", "preview": true }
+  },
   "bosses": [
     "collectorRoco",
-    "captainBrass"
+    "captainBrass",
+    "inspectorIris",
+    "directorPress"
   ],
   "arena": {
     "width": 28,
@@ -33,6 +42,7 @@
   "rules": {
     "merchantAfterRoom": "stop-12",
     "comboReset": 0.7,
+    "eliteRoom": { "waves": [5, 4], "hpShare": 0.9, "most": 2.5, "note": "An elite-only room (one in five of the rooms with elites, from the fourth fight on): elites in these waves, the next called when one is left, each elite made tougher so the room weighs hpShare of an ordinary deal of it (at most most times). A chapter with a heavier elite sets its own eliteRoomWaves. 2026-11-09: was 4-6 elites in one wave, about a quarter of an ordinary room; then 4/3/3 (chapter 2 3/2/2), now two waves 5/4 (chapter 2 4/3) at the user's word." },
     "comboArcDegrees": 115,
     "rearSectorDegrees": 120,
     "reviveHpFraction": 0.25,
@@ -63,6 +73,8 @@
     "spreadGapUnits": 2.5,
     "elementPrices": [
       0,
+      50,
+      50,
       50,
       50,
       50
@@ -104,7 +116,11 @@
         "conductiveSpanner": "앞의 적을 때리면 전기가 근처 적 둘에게 더 튑니다.",
         "capacitorStrike": "잠깐 예고한 뒤 노린 곳에 번개가 세 번 떨어집니다.",
         "pressureDash": "짧게 돌진하며 부딪힌 적을 밀어냅니다. 돌진 중에도 피해는 받습니다.",
-        "vortexIntake": "노린 곳에 회오리를 만들어 적을 끌어모은 뒤 마지막에 한 번 더 때립니다."
+        "vortexIntake": "노린 곳에 회오리를 만들어 적을 끌어모은 뒤 마지막에 한 번 더 때립니다.",
+      "ringPalm": "왼손바닥으로 앞쪽을 짧게 울려 적을 밀어냅니다. 공명이 걸린 적에게는 더 세게 들어가고 공명이 두 겹 쌓입니다.",
+      "roar": "누르고 있으면 소리를 모으고, 놓으면 앞쪽으로 곧은 음파를 쏩니다. 오래 모을수록 셉니다. 맞은 적에게 공명이 한 겹 걸립니다. 회피하면 취소됩니다.",
+      "waterCannon": "물덩이 세 발을 좁게 퍼뜨려 쏩니다. 발마다 지나가는 길의 적을 모두 맞히고 조금 밀어냅니다. 가까이 있는 적은 세 발을 다 맞습니다.",
+      "hydroJet": "누르고 있는 동안 커서를 따라 도는 물줄기를 뿜습니다. 줄기 위의 적을 모두 맞힙니다. 뿜는 동안에는 느리게 걷습니다."
       },
       "fusions": {
         "steamShatter": "내 주변에서 뜨거운 김과 냉기가 번갈아 네 번 터집니다.",
@@ -112,7 +128,46 @@
         "fireCyclone": "앞에서 생긴 작은 불 회오리가 천천히 나아가며 적을 빨아들입니다.",
         "magneticIceClamp": "노린 곳에 얼음 집게가 닫히며 가운데 적을 세 번 때립니다.",
         "frostCrosscut": "두꺼운 얼음 초승달을 바람에 실어 앞으로 날립니다. 지나가는 길의 적을 모두 벱니다.",
-        "stormFloat": "노린 곳에 번개 구슬을 띄우고 잠시 뒤 터뜨려 주변 적을 밀어냅니다."
+        "stormFloat": "노린 곳에 번개 구슬을 띄우고 잠시 뒤 터뜨려 주변 적을 밀어냅니다.",
+        "overheatResonance": "가까운 적 셋의 몸속을 울려 달군 뒤 차례로 터뜨립니다. 터질 때 옆의 적도 함께 탑니다.",
+        "highNoteShatter": "노린 곳을 얼린 뒤 높은 음으로 산산조각 냅니다. 얼어 있던 적은 더 크게 깨집니다.",
+        "resonantBolt": "가장 가까운 적에게 낙뢰를 떨어뜨리면, 그 적이 2초 동안 스스로 울리며 주변에 방전 음파를 냅니다.",
+        "echoGust": "음파 고리를 날려 보내면 벽이나 끝에서 되돌아옵니다. 오갈 때 한 번씩 벱니다.",
+        "surfaceResonance": "앞에 얇은 물막을 깝니다. 그 위의 적을 렌치나 소리로 칠 때마다 물막 전체가 울려 위의 적이 모두 맞습니다.",
+        "steamVeil": "내 주변이 2초 동안 뜨거운 증기로 덮여, 안의 적이 계속 데고 젖습니다. 증기막은 나를 따라옵니다.",
+        "iceSheet": "노린 곳에 빙판을 깝니다. 위의 적은 느려지고, 3초 뒤 빙판이 한꺼번에 깨지며 크게 다칩니다.",
+        "shockPool": "노린 곳에 전기가 흐르는 웅덩이를 깝니다. 0.5초마다 방전하고, 젖은 적이 많을수록 셉니다.",
+        "waterspout": "노린 곳에 물기둥을 세워 적을 빨아올렸다가, 2초 뒤 한꺼번에 내리꽂습니다."
+      },
+      "targets": {
+        "note": "How many a move strikes, for the codex: single (one body) or multi (several), and how it reaches them.",
+        "heatSwing": ["multi", "부채꼴"],
+        "exhaustBurst": ["multi", "내 주변"],
+        "frostBolt": ["single", "3발"],
+        "coolingField": ["multi", "지점 범위"],
+        "conductiveSpanner": ["multi", "최대 3기 연쇄"],
+        "capacitorStrike": ["multi", "지점 범위"],
+        "pressureDash": ["multi", "돌진 경로"],
+        "vortexIntake": ["multi", "지점 범위"],
+        "ringPalm": ["multi", "부채꼴"],
+        "roar": ["multi", "직선"],
+        "waterCannon": ["multi", "3발 관통"],
+        "hydroJet": ["multi", "줄기 위 전체"],
+        "steamShatter": ["multi", "내 주변"],
+        "arcFurnace": ["multi", "지점 범위"],
+        "fireCyclone": ["multi", "나아가는 회오리"],
+        "overheatResonance": ["multi", "가까운 적 3기 폭발"],
+        "steamVeil": ["multi", "내 주변"],
+        "magneticIceClamp": ["multi", "지점 범위"],
+        "frostCrosscut": ["multi", "직선 칼날"],
+        "highNoteShatter": ["multi", "지점 범위"],
+        "iceSheet": ["multi", "지점 범위"],
+        "stormFloat": ["multi", "지점 범위"],
+        "resonantBolt": ["multi", "맞은 적 둘레"],
+        "shockPool": ["multi", "지점 범위"],
+        "echoGust": ["multi", "직선 왕복"],
+        "waterspout": ["multi", "지점 범위"],
+        "surfaceResonance": ["multi", "물막 위 전체"]
       },
       "statuses": {
         "burn": [
@@ -121,7 +176,7 @@
         ],
         "chill": [
           "둔화",
-          "3초 동안 25% 느려집니다. 세 번 걸리면 잠깐 얼어붙습니다."
+          "3초 동안 40% 느려집니다. 세 번 걸리면 잠깐 얼어붙습니다."
         ],
         "shock": [
           "감전",
@@ -129,7 +184,15 @@
         ],
         "windPressure": [
           "풍압",
-          "4초 동안 보스가 더 빨리 무너집니다."
+          "4초 동안 렌치에 맞으면 두 배 멀리 밀리고, 경직이 1.5배로 길어집니다."
+        ],
+        "resonance": [
+          "공명",
+          "4초 동안 받는 피해가 겹마다 4% 늘어납니다(3겹까지). 3겹에서 소리에 맞으면 공명 붕괴: 30 피해, 정예 방패·코팅이 벗겨지고 옆 적에게 공명이 옮겨 갑니다."
+        ],
+        "wet": [
+          "젖음",
+          "4초 동안 젖은 적이 나에게 주는 피해가 20% 줄어듭니다."
         ]
       }
     },
@@ -137,14 +200,16 @@
       "fire": "#ef8a61",
       "ice": "#79cbd1",
       "lightning": "#e9bd59",
-      "wind": "#89bea0"
+      "wind": "#89bea0",
+      "sound": "#e0a43c",
+      "water": "#3f9fb5"
     }
   },
   "enemies": {
     "rat": {
       "name": "태엽 쥐",
-      "hp": 80,
-      "damage": 10,
+      "hp": 70,
+      "damage": 9,
       "speed": 3.52,
       "radius": 0.3,
       "attackRange": 1.9,
@@ -156,8 +221,8 @@
     },
     "nutcracker": {
       "name": "방패 호두까기",
-      "hp": 600,
-      "damage": 14,
+      "hp": 540,
+      "damage": 13,
       "speed": 1.65,
       "radius": 0.55,
       "attackRange": 3.6,
@@ -182,8 +247,8 @@
     },
     "guard": {
       "name": "목각 경비",
-      "hp": 260,
-      "damage": 9,
+      "hp": 230,
+      "damage": 8,
       "speed": 2.31,
       "radius": 0.4,
       "attackRange": 2.4,
@@ -194,8 +259,8 @@
     },
     "rabbit": {
       "name": "스프링 토끼",
-      "hp": 226,
-      "damage": 11,
+      "hp": 200,
+      "damage": 10,
       "speed": 3.19,
       "radius": 0.35,
       "attackRange": 5.5,
@@ -208,8 +273,8 @@
     },
     "trumpet": {
       "name": "나팔 사수",
-      "hp": 300,
-      "damage": 7,
+      "hp": 270,
+      "damage": 6,
       "speed": 1.43,
       "radius": 0.4,
       "attackRange": 9,
@@ -221,8 +286,8 @@
     },
     "elite": {
       "name": "정예 목각 경비",
-      "hp": 400,
-      "damage": 14,
+      "hp": 360,
+      "damage": 13,
       "speed": 2.2,
       "radius": 0.5,
       "attackRange": 2.5,
@@ -235,8 +300,8 @@
     },
     "musicbox": {
       "name": "오르골 포탑",
-      "hp": 250,
-      "damage": 6,
+      "hp": 220,
+      "damage": 5,
       "speed": 0,
       "radius": 0.5,
       "attackRange": 8,
@@ -252,8 +317,8 @@
     },
     "jackbox": {
       "name": "깜짝 상자",
-      "hp": 220,
-      "damage": 13,
+      "hp": 190,
+      "damage": 12,
       "speed": 3.74,
       "radius": 0.45,
       "attackRange": 3.5,
@@ -265,8 +330,8 @@
     },
     "spintop": {
       "name": "팽이 병정",
-      "hp": 280,
-      "damage": 10,
+      "hp": 250,
+      "damage": 9,
       "speed": 2.2,
       "radius": 0.45,
       "attackRange": 6,
@@ -280,7 +345,7 @@
     },
     "drummer": {
       "name": "북치기 인형",
-      "hp": 240,
+      "hp": 210,
       "damage": 0,
       "speed": 1.76,
       "radius": 0.4,
@@ -296,8 +361,8 @@
     },
     "pikeman": {
       "name": "태엽 창병",
-      "hp": 300,
-      "damage": 12,
+      "hp": 270,
+      "damage": 11,
       "speed": 2.09,
       "radius": 0.42,
       "attackRange": 3.7,
@@ -308,9 +373,20 @@
       "thrustWidth": 0.45,
       "followupDelay": 0.45,
       "followupLength": 2.4
-    }
+    },
+    "clampCarrier": {"name": "집게 운반공", "hp": 350, "damage": 11, "speed": 2.0, "radius": 0.42, "attackRange": 3, "tell": 0.8, "recovery": 1.5, "color": "#c8743a", "attack": "grab", "grabWidth": 0.5, "holdSeconds": 1, "throwUnits": 2.5},
+    "stampInspector": {"name": "도장 검사원", "hp": 300, "damage": 11, "speed": 2.6, "radius": 0.42, "attackRange": 5, "tell": 0.9, "recovery": 1.6, "color": "#8e3f3a", "attack": "leap", "leapRadius": 1.3, "markRadius": 1.1, "markSeconds": 6, "markSlow": 0.4, "stuckSeconds": 1.2},
+    "pressGuard": {"name": "압축 경비", "hp": 450, "damage": 13, "speed": 1.5, "radius": 0.55, "attackRange": 6, "tell": 1.0, "recovery": 1.8, "color": "#3e4a66", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true},
+    "lensInspector": {"name": "렌즈 검수원", "hp": 270, "damage": 11, "speed": 2.4, "radius": 0.4, "attackRange": 7, "tell": 1.0, "recovery": 1.8, "color": "#4d6b5e", "attack": "searchlight", "beamWidth": 0.3, "coneDegrees": 40, "turnDegrees": 45, "markSeconds": 3, "markBonus": 0.2},
+    "riveter": {"name": "리벳 사수", "hp": 320, "damage": 8, "speed": 1.8, "radius": 0.42, "attackRange": 8, "tell": 0.7, "recovery": 2.0, "color": "#6d6a3e", "attack": "rivets", "bullets": 3, "projectileSpeed": 7, "spreadDegrees": 30, "screwSeconds": 3, "screwDamage": 4, "plantSeconds": 1.5},
+    "tapePacker": {"name": "테이프 포장공", "hp": 270, "damage": 7, "speed": 3.2, "radius": 0.4, "attackRange": 7, "tell": 0.6, "recovery": 2.0, "color": "#b46a7a", "attack": "dash", "dashDistance": 7, "dashDuration": 1.6, "trail": "tape", "tapeSeconds": 8, "tapeSlow": 0.45, "tapeWidth": 0.45},
+    "oiler": {"name": "기름칠공", "hp": 270, "damage": 7, "speed": 2.2, "radius": 0.4, "attackRange": 6, "tell": 0.7, "recovery": 2.2, "color": "#6b5a48", "attack": "oil", "oilRadius": 1.3, "oilSeconds": 8, "oilMax": 2, "burnSeconds": 3, "burnDamage": 8, "burnTick": 0.5},
+    "partsSupplier": {"name": "부품 보급공", "hp": 250, "damage": 0, "speed": 2.3, "radius": 0.45, "attackRange": 6, "tell": 1.0, "recovery": 3.0, "color": "#5d7489", "attack": "supply", "supplyRadius": 4, "supplyCount": 2, "coatSeconds": 4, "coatArmor": 0.3, "spillCoins": 2},
+    "pressCaptain": {"name": "압축 경비대장", "hp": 630, "damage": 16, "speed": 1.6, "radius": 0.6, "attackRange": 6, "tell": 1.0, "recovery": 1.6, "color": "#2f3a57", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true, "dashTwice": 0.5}
   },
   "bossAI": {
+    "inspectorIris": {"note": "Chapter 2 midboss (docs/design/silent-factory-plan.md 7.1, src/engine/factory-bosses.js).", "radius": 0.6, "speed": 1.8, "recovery": 0.96, "attackRange": 9, "patterns": ["irisLaser", "rejectStamps", "verdict", "tapeMeasure", "irisLaser", "decoys"], "phasePatterns": [{"pattern": "crossLaser", "below": 0.5}, {"pattern": "gridCheck", "below": 0.5}], "castPatterns": ["irisLaser", "crossLaser", "gridCheck", "decoys"], "tellSeconds": {"irisLaser": 1.0, "rejectStamps": 1.0, "verdict": 1.2, "tapeMeasure": 0.8, "decoys": 4.0, "crossLaser": 1.2, "gridCheck": 1.5}, "laserLength": 10, "laserWidth": 0.5, "coneDegrees": 40, "turnDegrees": 50, "stampCount": 3, "stampCountPhaseTwo": 5, "stampRadius": 1.3, "stampGap": 0.35, "stampWarn": 0.8, "markSeconds": 5, "markSlow": 0.4, "passSeconds": 6, "passRadius": 1.1, "failStacks": 3, "failBlast": 35, "failBlastDelay": 1.5, "failSeconds": 10, "verdictWindow": 0.5, "verdictRange": 3.5, "verdictDegrees": 120, "verdictStun": 2.5, "measureLength": 7, "measureWidth": 0.45, "measureFront": 1.5, "decoySpread": 6.5, "decoySpreadNote": "Units between Iris and each decoy (4.5 until 2026-11-09, widened at the user's word). Near a wall the row is tried shorter (80%, 65%) and turned.", "decoyStun": 1, "decoyStunNote": "Striking a decoy stuns F2 this many seconds (no step, swing, dodge or skill). 2026-11-09: 0.5, then 1 at the user's word.", "crossSeconds": 3, "crossTurnDegrees": 40, "crossWidth": 0.45, "crossLength": 12, "gridShow": 1.5, "gridDelay": 1, "gridReach": 0.5, "gridReachNote": "The inspection rings cover the whole hall from its middle (2026-11-09), so a safe piece can be across it: they show this many seconds longer (1, then 0.5 at the user's word: a little sooner).", "gridDamage": 23, "phaseTwoSummon": {"type": "lensInspector", "count": 2}, "phaseBreaks": [{"at": 0.5, "kind": "mirrors", "seconds": 18, "mirrors": 3, "mirrorReach": 5.5, "sweepDegrees": 45, "beamWidth": 0.5, "beamDamage": 11, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
+    "directorPress": {"note": "Chapter 2 region boss (docs/design/silent-factory-plan.md 7.2, src/engine/factory-bosses.js).", "radius": 1.0, "speed": 1.2, "recovery": 0.9, "attackRange": 9, "patterns": ["plateDrop", "armSlam", "lineShift", "craneGrab", "plateDrop", "callGuards", "armSlam"], "phasePatterns": [{"pattern": "twoRows", "below": 0.66}, {"pattern": "wallSqueeze", "below": 0.66}, {"pattern": "rhythmPress", "below": 0.66, "soon": true}, {"pattern": "twinPistons", "below": 0.33}, {"pattern": "finalPress", "below": 0.33}], "castPatterns": ["lineShift", "callGuards", "finalPress", "twinPistons", "rhythmPress", "craneGrab", "steamBurst"], "tellSeconds": {"plateDrop": 0.8, "armSlam": 1.0, "lineShift": 1.0, "callGuards": 0.9, "twoRows": 1.0, "wallSqueeze": 1.0, "twinPistons": 1.0, "rhythmPress": 1.0, "craneGrab": 0.4, "steamBurst": 1.5, "finalPress": 6.0}, "plates": 2, "plateW": 2.6, "plateH": 1.6, "plateBlock": 1.5, "plateSpread": 2.5, "armLength": 7, "armWidth": 0.8, "armStuck": 2, "flowSpeed": 2.6, "flowSeconds": 10, "flowFlip": 5, "flowWarn": 1, "guardType": "pressGuard", "guardMax": 3, "phaseThreeExtra": "partsSupplier", "rowWidth": 2.0, "rowGap": 2.4, "wallSeconds": 3, "wallHold": 1.2, "wallLeave": 3.4, "wallGap": 2.6, "wallGapSpeed": 2.2, "wallDamage": 30, "wallPush": 2, "moldCount": 5, "moldRadius": 1.0, "moldChoose": 2.6, "moldSpread": 4.5, "moldDamage": 27, "moldStun": 1, "rhythmLanes": 5, "rhythmLaneW": 0, "rhythmLaneWNote": "Unused since 2026-11-10: the lanes are the arena width split in rhythmLanes, no gaps", "rhythmBeats": 7, "rhythmBeat": 1.0, "rhythmCount": 1, "rhythmDamage": 21, "rhythmRest": 1.5, "craneChase": 4, "craneSpeed": 3.0, "craneWarn": 0.6, "craneRadius": 1.1, "craneCarry": 1.0, "craneHold": 1.2, "craneDamage": 30, "craneLock": 6, "craneEscape": 3, "craneStun": 2, "pressureFrom": 0.33, "pressurePerPattern": 25, "pressureCut": 2, "steamDamage": 54, "valveRadius": 1.6, "valveHits": 3, "valveOpen": 6, "twinSpeed": 2.6, "twinSide": 3, "twinSeconds": 9, "twinHits": 4, "twinStun": 2.5, "twinSlamEvery": 1.4, "twinSlamWarn": 0.9, "twinSlamRadius": 1.4, "finalNeed": 0.07, "finalDamage": 36, "finalStun": 1, "phaseBreaks": [{"at": 0.66, "kind": "pylons", "seconds": 18, "pylons": 4, "need": 3, "plateEvery": 1.5, "plateWarn": 0.8, "pylonRadius": 0.7, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}, {"at": 0.33, "kind": "molds", "seconds": 22, "need": 3, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
     "collectorRoco": {
       "radius": 0.8,
       "speed": 1.6,
@@ -384,7 +460,6 @@
           "degrees": 120,
           "pull": 1.6,
           "stunSeconds": 4,
-          "vulnerable": 0.5,
           "failWarn": 1.2,
           "failDamage": 40,
           "failHeal": 0.05,
@@ -501,7 +576,6 @@
           "laneDamage": 12,
           "seconds": 18,
           "stunSeconds": 4,
-          "vulnerable": 0.5,
           "failWarn": 1.2,
           "failDamage": 40,
           "failHeal": 0.05
@@ -518,7 +592,6 @@
           "soldierDamage": 12,
           "seconds": 18,
           "stunSeconds": 4,
-          "vulnerable": 0.5,
           "failWarn": 1.2,
           "failDamage": 40,
           "failHeal": 0.05
@@ -527,6 +600,44 @@
     }
   },
   "skillBehavior": {
+    "ringPalm": {
+      "shape": "cone",
+      "arc": 110,
+      "knockback": 0.8,
+      "interval": 0,
+      "delay": 0
+    },
+    "roar": {
+      "note": "Held: the button charges for up to charge seconds (feet at chargeMove speed, the wrench still swings); letting go, or a full charge, fires a straight sound column halfWidth either side. A dodge cancels it and the wait is half.",
+      "shape": "beam",
+      "charge": 0.6,
+      "chargeMove": 0.5,
+      "halfWidth": 0.7,
+      "interval": 0,
+      "delay": 0
+    },
+    "waterCannon": {
+      "shape": "projectile",
+      "spread": 0.22,
+      "speed": 13,
+      "width": 0.35,
+      "pierce": true,
+      "knockback": 0.25,
+      "interval": 0,
+      "delay": 0
+    },
+    "hydroJet": {
+      "note": "Held: a stream sprays while the button is held, for at least minDuration and at most duration seconds, turning toward the aim at turnRate radians a second. Every interval it strikes every body on its line (range, halfWidth; \"wide\" = damage share each), or splashes on a wall. Feet at move speed.",
+      "shape": "jet",
+      "wide": 1,
+      "duration": 1.5,
+      "minDuration": 0.4,
+      "turnRate": 3.5,
+      "halfWidth": 0.35,
+      "move": 0.6,
+      "interval": 0.1,
+      "delay": 0
+    },
     "heatSwing": {
       "shape": "cone",
       "arc": 100,
@@ -579,6 +690,96 @@
     }
   },
   "fusionBehavior": {
+    "overheatResonance": {
+      "note": "Marks up to targets nearest bodies in range (the same one again when there are fewer), each bursting in turn from delay, interval apart, hitting everything within the fusion radius of it.",
+      "shape": "marks",
+      "targets": 3,
+      "range": 6,
+      "interval": 0.3,
+      "delay": 0.8
+    },
+    "highNoteShatter": {
+      "note": "At the aimed spot: after delay a freeze (ordinary bodies frozenSeconds), then breakDelay later the shatter. damages are the two blows; a body still frozen takes frozenBonus times the second.",
+      "shape": "shatter",
+      "range": 6,
+      "damages": [
+        45,
+        55
+      ],
+      "frozenSeconds": 0.8,
+      "frozenBonus": 1.3,
+      "breakDelay": 0.8,
+      "interval": 0,
+      "delay": 0.3
+    },
+    "resonantBolt": {
+      "note": "A bolt (boltDamage) on the nearest body in range; it then rings pulses times, interval apart, hitting everything within the fusion radius for pulseDamage. If it falls first, the pulses left go off at once.",
+      "shape": "speaker",
+      "range": 7,
+      "boltDamage": 40,
+      "pulses": 4,
+      "pulseDamage": 15,
+      "interval": 0.5,
+      "delay": 0
+    },
+    "echoGust": {
+      "note": "A ring flies out at speed to range (or a wall) and comes back to F2, cutting each body once each way within halfWidth of its path.",
+      "shape": "echo",
+      "range": 6,
+      "speed": 10,
+      "halfWidth": 1.2,
+      "startDistance": 0.3,
+      "interval": 0,
+      "delay": 0.1
+    },
+    "surfaceResonance": {
+      "note": "A film of water forward units ahead of F2 for duration seconds. Each time a body on it takes a sound blow or the wrench, the whole film rings (at most once per ringGap) and every body on it takes a hit; hits rings at most.",
+      "shape": "film",
+      "forward": 2,
+      "duration": 4,
+      "ringGap": 0.3,
+      "interval": 0,
+      "delay": 0
+    },
+    "steamVeil": {
+      "note": "A cloud of hot steam round F2 (the fusion radius), following her for duration seconds; every interval it strikes every body in it.",
+      "shape": "veil",
+      "duration": 2,
+      "interval": 0.25,
+      "delay": 0
+    },
+    "iceSheet": {
+      "note": "An ice sheet at the aimed spot for duration seconds: firstDamage as it forms, ordinary bodies on it slowed by slow, then it breaks for breakDamage on everything on it.",
+      "shape": "sheet",
+      "range": 6,
+      "duration": 3,
+      "slow": 0.4,
+      "firstDamage": 20,
+      "breakDamage": 90,
+      "interval": 0,
+      "delay": 0
+    },
+    "shockPool": {
+      "note": "A charged puddle at the aimed spot for duration seconds; every interval from delay it discharges into every body in it, wetBonusPer more for each wet body in it (at most wetBonusMax).",
+      "shape": "pool",
+      "range": 6,
+      "duration": 3,
+      "wetBonusPer": 0.1,
+      "wetBonusMax": 0.5,
+      "interval": 0.5,
+      "delay": 0.2
+    },
+    "waterspout": {
+      "note": "A waterspout at the aimed spot: for slamAt seconds it draws ordinary bodies in (pull units a second) and lifts them, striking every body in it each interval; then it slams them down for slamDamage, stunning ordinary ones for stun. Bosses are not moved.",
+      "shape": "spout",
+      "range": 6,
+      "pull": 2.5,
+      "slamAt": 2,
+      "slamDamage": 60,
+      "stun": 0.6,
+      "interval": 0.4,
+      "delay": 0
+    },
     "steamShatter": {
       "shape": "self",
       "interval": 0.3,
@@ -649,7 +850,7 @@
     {
       "id": "quickThird",
       "name": "가벼운 손잡이",
-      "description": "3타의 회수 동작이 절반으로 짧아진다.",
+      "description": "3타 뒤 숨 고르는 동작이 절반으로 짧아진다.",
       "recoveryReduction": 0.15,
       "tier": "common"
     },
@@ -692,7 +893,7 @@
   "rooms": [
     {
       "id": "stop-02",
-      "rewards": { "gears": 8, "coins": 12 },
+      "rewards": { "gears": 7, "coins": 11 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "첫 걸음 광장 A",
@@ -726,7 +927,7 @@
     },
     {
       "id": "stop-03",
-      "rewards": { "gears": 9, "coins": 13 },
+      "rewards": { "gears": 8, "coins": 12 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕 수레마당 C",
@@ -761,7 +962,7 @@
     },
     {
       "id": "stop-04",
-      "rewards": { "gears": 10, "coins": 15 },
+      "rewards": { "gears": 9, "coins": 14 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "장난감 수선길 A",
@@ -797,7 +998,7 @@
     },
     {
       "id": "stop-05",
-      "rewards": { "gears": 11, "coins": 16 },
+      "rewards": { "gears": 10, "coins": 14 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "리본 교차골목 D",
@@ -849,7 +1050,7 @@
     },
     {
       "id": "stop-08",
-      "rewards": { "gears": 16, "coins": 23 },
+      "rewards": { "gears": 14, "coins": 21 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "태엽 적재마당 C",
@@ -889,7 +1090,7 @@
     },
     {
       "id": "stop-09",
-      "rewards": { "gears": 18, "coins": 26 },
+      "rewards": { "gears": 16, "coins": 23 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "분수 우회광장 C",
@@ -930,7 +1131,7 @@
     },
     {
       "id": "stop-10",
-      "rewards": { "gears": 19, "coins": 28 },
+      "rewards": { "gears": 17, "coins": 25 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "깃발 검문광장 C",
@@ -973,7 +1174,7 @@
     },
     {
       "id": "stop-11",
-      "rewards": { "gears": 21, "coins": 31 },
+      "rewards": { "gears": 19, "coins": 28 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "사탕색 골목 A",
@@ -1015,7 +1216,7 @@
     },
     {
       "id": "stop-12",
-      "rewards": { "gears": 23, "coins": 34 },
+      "rewards": { "gears": 21, "coins": 31 },
       "variants": ["A", "B"],
       "kind": "normal",
       "name": "행진 적재뜰 D",
@@ -1067,7 +1268,8 @@
       "id": "smile-street",
       "number": 1,
       "name": "웃음거리",
-      "description": "모두가 같은 박자로 웃는 거리. 행진 대장 브라스가 기다립니다."
+      "description": "모두가 같은 박자로 웃는 거리. 행진대장 브라스가 기다립니다.",
+      "merchant": { "boss": "브라스", "place": "브라스의 광장", "title": "행진 전에, 하나 챙겨 가." }
     },
     {
       "id": "silent-factory",
@@ -1077,191 +1279,72 @@
       "preview": true,
       "description": "불량 판정을 받은 인형이 생각을 지우러 실려 가는 공장.",
       "note": "Chapter 2 is playable end to end on chapter 1 enemies and bosses (Roco at the inspection room, Brass at the forming hall) until its own are made. scale multiplies every difficulty's enemy health, attack and furniture; loot multiplies its pay. affixesFrom: elites carry a trait from this stop on; merchantAfterRoom: the travelling merchant waits after this stop.",
-      "scale": 1.2,
+      "scale": 1.0,
       "loot": 1.3,
-      "affixesFrom": "factory-03",
+      "affixesFrom": "factory-03", "eliteType": "pressCaptain", "eliteRoomWaves": [4, 3], "eliteNote": "Waves write the elite slot as \"elite\" (encounters deal and trait it); in this chapter that body is the compression captain.",
       "merchantAfterRoom": "factory-11",
+      "merchant": { "boss": "프레스", "place": "프레스의 정형실", "title": "정형실에 들어가기 전에, 하나 챙겨 가." },
+      "hazards": { "note": "Chapter 2 keeps only chapter 1's crates (they blow up) and music boxes (they mend); the factory's own devices (conveyor belt, press pillar, inspection laser door, steam pipe, parts crane; plan 6) replace the plates, saw rails and fences as they are made. counts here replace chapter 1's full counts (no ramp: chapter 2 is entered after chapter 1, so its first rooms get the full counts at once).", "ramp": [], "musicboxesPerRun": 3, "only": ["crate", "musicbox", "belt", "press", "laser", "steam", "crane"], "counts": { "crate": [2, 2], "musicbox": [0, 0], "belt": [0, 0], "press": [0, 0], "laser": [0, 0], "steam": [0, 0], "crane": [0, 0] }, "roomNote": "Each stop adds its own devices on top (rooms[].hazardCounts): the belt hall its belts, the stamping line and the compression store their presses, the boiler room its steam, the crane yard two cranes." },
       "rooms": [
         {
-          "id": "factory-01",
+          "id": "factory-01", "variants": ["A", "B"], "hazardCounts": { "laser": [1, 2], "musicbox": [0, 1] },
           "rewards": {
-            "gears": 16,
-            "coins": 23
+            "gears": 14,
+            "coins": 21
           },
           "kind": "normal",
           "name": "정문 검수대",
           "description": "들어오는 모든 것을 검사하는 문",
           "short": "검수대",
-          "waves": [
-            [
-              "spintop",
-              "guard",
-              "guard",
-              "trumpet",
-              "guard",
-              "guard",
-              "elite"
-            ],
-            [
-              "jackbox",
-              "musicbox",
-              "rat",
-              "rat",
-              "rabbit",
-              "rat",
-              "rat",
-              "guard",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "musicbox",
-              "trumpet",
-              "nutcracker",
-              "trumpet",
-              "elite"
-            ]
-          ],
+          "waves": [["clampCarrier", "clampCarrier", "clampCarrier", "clampCarrier"], ["clampCarrier", "clampCarrier", "clampCarrier", "pressGuard"], ["clampCarrier", "clampCarrier", "pressGuard", "pressGuard"]],
           "power": 1.0
         },
         {
-          "id": "factory-02",
+          "id": "factory-02", "variants": ["A", "B"], "hazardCounts": { "press": [2, 2], "crate": [2, 3], "musicbox": [0, 1] },
           "rewards": {
-            "gears": 18,
-            "coins": 26
+            "gears": 16,
+            "coins": 23
           },
           "kind": "normal",
           "name": "포장 벨트",
           "description": "웃음을 상자에 담아 묶는 곳",
           "short": "포장",
-          "waves": [
-            [
-              "drummer",
-              "musicbox",
-              "rabbit",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "pikeman",
-              "guard",
-              "musicbox",
-              "rat",
-              "nutcracker",
-              "guard",
-              "guard",
-              "elite"
-            ],
-            [
-              "musicbox",
-              "rabbit",
-              "trumpet",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ]
-          ],
+          "waves": [["clampCarrier", "clampCarrier", "clampCarrier", "tapePacker"], ["tapePacker", "tapePacker", "clampCarrier", "clampCarrier", "clampCarrier"], ["pressGuard", "pressGuard", "tapePacker", "clampCarrier", "clampCarrier"]],
           "power": 1.05
         },
         {
-          "id": "factory-03",
+          "id": "factory-03", "variants": ["A", "B"], "hazardCounts": { "crane": [1, 2], "crate": [3, 3] },
           "rewards": {
-            "gears": 19,
-            "coins": 28
+            "gears": 17,
+            "coins": 25
           },
           "kind": "normal",
           "name": "부품 창고",
           "description": "갈아 끼울 부품이 쌓인 선반 골목",
           "short": "창고",
-          "waves": [
-            [
-              "spintop",
-              "guard",
-              "guard",
-              "trumpet",
-              "trumpet",
-              "guard",
-              "guard",
-              "guard",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "nutcracker",
-              "jackbox",
-              "musicbox",
-              "rat",
-              "nutcracker",
-              "nutcracker",
-              "rat",
-              "elite"
-            ],
-            [
-              "pikeman",
-              "musicbox",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ]
-          ],
+          "waves": [["clampCarrier", "clampCarrier", "clampCarrier", "lensInspector"], ["riveter", "riveter", "clampCarrier", "clampCarrier", "clampCarrier"], ["pressGuard", "lensInspector", "riveter", "clampCarrier", "clampCarrier"]],
           "power": 1.1,
           "guaranteedMod": true
         },
         {
-          "id": "factory-04",
+          "id": "factory-04", "variants": ["A", "B"], "hazardCounts": { "press": [2, 2], "musicbox": [0, 1] },
           "rewards": {
-            "gears": 21,
-            "coins": 31
+            "gears": 19,
+            "coins": 28
           },
           "kind": "normal",
           "name": "도장 라인",
           "description": "똑같은 웃음을 찍어 내는 기계",
           "short": "도장",
-          "waves": [
-            [
-              "jackbox",
-              "jackbox",
-              "elite",
-              "musicbox",
-              "rat",
-              "rat",
-              "guard",
-              "guard"
-            ],
-            [
-              "nutcracker",
-              "elite",
-              "guard",
-              "trumpet",
-              "trumpet",
-              "nutcracker",
-              "guard",
-              "guard"
-            ],
-            [
-              "guard",
-              "elite",
-              "musicbox",
-              "musicbox",
-              "trumpet",
-              "guard",
-              "rabbit",
-              "rabbit"
-            ]
-          ],
+          "waves": [["stampInspector", "stampInspector", "stampInspector", "clampCarrier", "clampCarrier"], ["stampInspector", "stampInspector", "lensInspector", "tapePacker", "tapePacker"], ["pressGuard", "pressGuard", "stampInspector", "stampInspector", "riveter"]],
           "power": 1.15
         },
         {
           "id": "factory-05",
           "kind": "miniboss",
           "name": "검수실",
-          "description": "검수관 자리를 회수원이 대신 지킵니다.",
-          "boss": "collectorRoco",
+          "description": "검수관 아이리스가 들어오는 모든 것을 잽니다.",
+          "boss": "inspectorIris",
           "short": "검수실"
         },
         {
@@ -1272,219 +1355,69 @@
           "short": "쉼터"
         },
         {
-          "id": "factory-07",
+          "id": "factory-07", "variants": ["A", "B"], "hazardCounts": { "press": [2, 2], "musicbox": [0, 1] },
           "rewards": {
-            "gears": 18,
-            "coins": 26
+            "gears": 16,
+            "coins": 23
           },
           "kind": "normal",
           "name": "압축 창고",
           "description": "버려진 것을 눌러 담는 곳",
           "short": "압축",
-          "waves": [
-            [
-              "drummer",
-              "musicbox",
-              "rabbit",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "pikeman",
-              "guard",
-              "musicbox",
-              "rat",
-              "nutcracker",
-              "guard",
-              "guard",
-              "elite"
-            ],
-            [
-              "musicbox",
-              "rabbit",
-              "trumpet",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ]
-          ],
+          "waves": [["pressGuard", "pressGuard", "pressGuard", "clampCarrier", "clampCarrier", "elite"], ["stampInspector", "stampInspector", "lensInspector", "lensInspector", "tapePacker", "tapePacker", "elite"], ["pressGuard", "pressGuard", "riveter", "riveter", "elite"]],
           "power": 1.2
         },
         {
-          "id": "factory-08",
+          "id": "factory-08", "variants": ["A", "B"], "hazardCounts": { "laser": [2, 2], "crate": [2, 3] },
           "rewards": {
-            "gears": 19,
-            "coins": 28
+            "gears": 17,
+            "coins": 25
           },
           "kind": "normal",
           "name": "소거 라인",
           "description": "생각을 지우는 조용한 줄",
           "short": "소거",
-          "waves": [
-            [
-              "spintop",
-              "guard",
-              "guard",
-              "trumpet",
-              "trumpet",
-              "guard",
-              "guard",
-              "guard",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "nutcracker",
-              "jackbox",
-              "musicbox",
-              "rat",
-              "nutcracker",
-              "nutcracker",
-              "rat",
-              "elite"
-            ],
-            [
-              "pikeman",
-              "musicbox",
-              "trumpet",
-              "rabbit",
-              "rabbit",
-              "elite"
-            ]
-          ],
+          "waves": [["tapePacker", "tapePacker", "lensInspector", "lensInspector", "clampCarrier", "clampCarrier", "elite"], ["pressGuard", "pressGuard", "stampInspector", "stampInspector", "riveter", "elite"], ["tapePacker", "tapePacker", "lensInspector", "clampCarrier", "clampCarrier"]],
           "power": 1.25
         },
         {
-          "id": "factory-09",
+          "id": "factory-09", "variants": ["A", "B"], "hazardCounts": { "crane": [2, 2], "crate": [3, 4], "musicbox": [0, 1] },
           "rewards": {
-            "gears": 21,
-            "coins": 31
+            "gears": 19,
+            "coins": 28
           },
           "kind": "normal",
           "name": "크레인 적재장",
           "description": "머리 위로 짐이 지나가는 마당",
           "short": "크레인",
-          "waves": [
-            [
-              "jackbox",
-              "jackbox",
-              "elite",
-              "musicbox",
-              "rat",
-              "rat",
-              "guard",
-              "guard"
-            ],
-            [
-              "nutcracker",
-              "elite",
-              "guard",
-              "trumpet",
-              "trumpet",
-              "nutcracker",
-              "guard",
-              "guard"
-            ],
-            [
-              "guard",
-              "elite",
-              "musicbox",
-              "musicbox",
-              "trumpet",
-              "guard",
-              "rabbit",
-              "rabbit"
-            ]
-          ],
+          "waves": [["pressGuard", "pressGuard", "partsSupplier", "riveter", "riveter", "clampCarrier", "clampCarrier"], ["stampInspector", "stampInspector", "stampInspector", "partsSupplier", "lensInspector", "lensInspector", "elite"], ["pressGuard", "pressGuard", "pressGuard", "partsSupplier", "elite"]],
           "power": 1.3,
           "guaranteedMod": true
         },
         {
-          "id": "factory-10",
+          "id": "factory-10", "variants": ["A", "B"], "hazardCounts": { "steam": [2, 3], "crate": [2, 3], "musicbox": [1, 1] },
           "rewards": {
-            "gears": 23,
-            "coins": 34
+            "gears": 21,
+            "coins": 31
           },
           "kind": "normal",
           "name": "증기 보일러실",
           "description": "공장의 심장이 끓는 방",
           "short": "보일러",
-          "waves": [
-            [
-              "spintop",
-              "pikeman",
-              "trumpet",
-              "trumpet",
-              "elite",
-              "elite",
-              "guard",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "guard",
-              "jackbox",
-              "elite",
-              "musicbox",
-              "nutcracker",
-              "nutcracker",
-              "rat"
-            ],
-            [
-              "drummer",
-              "elite",
-              "trumpet",
-              "elite",
-              "musicbox",
-              "elite"
-            ]
-          ],
+          "waves": [["oiler", "oiler", "clampCarrier", "clampCarrier", "clampCarrier"], ["oiler", "oiler", "pressGuard", "pressGuard", "lensInspector", "elite"], ["stampInspector", "stampInspector", "oiler", "riveter", "riveter"]],
           "power": 1.35
         },
         {
-          "id": "factory-11",
+          "id": "factory-11", "variants": ["A", "B"], "hazardCounts": { "laser": [1, 1], "steam": [1, 1], "press": [1, 1], "musicbox": [1, 1] },
           "rewards": {
-            "gears": 23,
-            "coins": 34
+            "gears": 21,
+            "coins": 31
           },
           "kind": "normal",
           "name": "신호선 배전실",
           "description": "시계탑 신호가 모이는 곳",
           "short": "배전실",
-          "waves": [
-            [
-              "spintop",
-              "pikeman",
-              "trumpet",
-              "trumpet",
-              "elite",
-              "elite",
-              "guard",
-              "elite"
-            ],
-            [
-              "nutcracker",
-              "guard",
-              "jackbox",
-              "elite",
-              "musicbox",
-              "nutcracker",
-              "nutcracker",
-              "rat"
-            ],
-            [
-              "drummer",
-              "elite",
-              "trumpet",
-              "elite",
-              "musicbox",
-              "elite"
-            ]
-          ],
+          "waves": [["pressGuard", "pressGuard", "tapePacker", "tapePacker", "lensInspector", "lensInspector", "elite"], ["partsSupplier", "elite", "elite", "stampInspector", "stampInspector", "riveter"], ["oiler", "oiler", "clampCarrier", "clampCarrier", "lensInspector", "elite"]],
           "power": 1.4
         },
         {
@@ -1492,7 +1425,7 @@
           "kind": "regionBoss",
           "name": "정형실",
           "description": "모든 것을 같은 모양으로 누릅니다. 틀에 맞추십시오.",
-          "boss": "captainBrass",
+          "boss": "directorPress",
           "short": "정형실"
         }
       ]
@@ -1569,7 +1502,7 @@
     },
     "skillCooldownReduction": {
       "name": "고속 배선",
-      "description": "속성 기술과 융합 스킬의 대기시간이 줄어든다.",
+      "description": "속성 기술과 융합 기술의 대기시간이 줄어든다.",
       "tier": "common"
     },
     "statusDamage": {
@@ -1656,8 +1589,8 @@
     },
     {
       "id": "cooldownReduction",
-      "name": "스킬 대기시간 감소",
-      "description": "속성 기술과 융합 스킬의 대기시간이 줄어들어 더 자주 쓴다.",
+      "name": "기술 대기시간 감소",
+      "description": "속성 기술과 융합 기술의 대기시간이 줄어들어 더 자주 쓴다.",
       "perRank": 0.015,
       "unit": "percent",
       "maxRank": 30,
@@ -1697,7 +1630,7 @@
     {
       "id": "statusPower",
       "name": "상태이상 위력",
-      "description": "화상, 둔화, 감전, 풍압이 강해진다.",
+      "description": "화상, 둔화, 감전, 풍압, 공명이 강해진다.",
       "perRank": 0.025,
       "unit": "percent",
       "maxRank": 30,
@@ -1753,7 +1686,7 @@
       "id": "flashFreeze",
       "skill": "coolingField",
       "name": "급랭",
-      "description": "장판의 둔화가 빙결을 두 배 빨리 쌓는다.",
+      "description": "장판의 둔화가 두 배로 쌓여 적이 더 빨리 얼어붙는다.",
       "chillBonus": 1,
       "tier": "rare"
     },
@@ -1793,12 +1726,12 @@
       "id": "emberTrail",
       "skill": "heatSwing",
       "name": "불꽃 궤적",
-      "description": "휘두른 자리에 불길이 2초 남아, 지나가는 적에게도 화상을 건다.",
+      "description": "휘두른 자리에 불길이 1초 남아, 지나가는 적에게도 화상을 건다(불길 피해 10%).",
       "spots": 3,
       "radius": 0.8,
-      "pulses": 4,
+      "pulses": 2,
       "interval": 0.5,
-      "damageShare": 0.2,
+      "damageShare": 0.1,
       "tier": "rare"
     },
     {
@@ -1826,7 +1759,7 @@
       "description": "전기가 바로 튀지 않고 맞은 적에게 남는다. 3초 뒤 크게 방전해 주변 적을 모두 때린다.",
       "delay": 3,
       "radius": 3,
-      "damageShare": 1.5,
+      "damageShare": 1,
       "tier": "rare"
     },
     {
@@ -1860,6 +1793,76 @@
       "description": "마지막 타격이 빨아들인 적을 바깥으로 튕겨 낸다. 보스는 밀리지 않는다.",
       "knockback": 1.4,
       "tier": "rare"
+    },
+    {
+      "id": "echoPalm",
+      "skill": "ringPalm",
+      "name": "되울림",
+      "description": "0.4초 뒤 같은 자리가 한 번 더 울린다(피해 50%, 공명 1겹).",
+      "delay": 0.4,
+      "damageShare": 0.5,
+      "tier": "rare"
+    },
+    {
+      "id": "tuningBeat",
+      "skill": "ringPalm",
+      "name": "조율 박자",
+      "description": "공명이 걸린 적을 치면 이 기술의 대기시간이 2초 줄어든다.",
+      "cooldownRefund": 2,
+      "tier": "rare"
+    },
+    {
+      "id": "fullVolume",
+      "skill": "roar",
+      "name": "최대 음량",
+      "description": "끝까지 모아 쏘면 공명이 1겹이 아니라 2겹 걸린다.",
+      "stacks": 2,
+      "tier": "rare"
+    },
+    {
+      "id": "shortBreath",
+      "skill": "roar",
+      "name": "짧은 숨",
+      "description": "모으는 시간이 0.3초로 줄고, 모으는 동안에도 평소 속도로 걷는다.",
+      "charge": 0.3,
+      "tier": "rare"
+    },
+    {
+      "id": "burstShot",
+      "skill": "waterCannon",
+      "name": "물폭탄",
+      "description": "끝이나 벽에 닿으면 터져 반지름 1.5 안의 적을 적신다(피해 50%).",
+      "radius": 1.5,
+      "damageShare": 0.5,
+      "tier": "rare"
+    },
+    {
+      "id": "wallSlam",
+      "skill": "waterCannon",
+      "name": "벽치기 물살",
+      "description": "발마다 밀치는 거리가 0.6칸으로 늘고(세 발 다 맞으면 1.8칸), 벽에 부딪힌 일반 적은 1초 기절한다.",
+      "knockback": 0.6,
+      "daze": 1,
+      "tier": "rare"
+    },
+    {
+      "id": "wideNozzle",
+      "skill": "hydroJet",
+      "name": "넓은 노즐",
+      "description": "물줄기가 두 배 넓어져(양옆 0.35 → 0.7칸) 옆으로 비낀 적까지 맞힌다.",
+      "halfWidth": 0.7,
+      "tier": "rare"
+    },
+    {
+      "id": "puddle",
+      "skill": "hydroJet",
+      "name": "물웅덩이",
+      "description": "물줄기가 닿은 바닥에 물웅덩이가 3초 남아, 위에 선 적을 적시고 20% 느리게 한다.",
+      "radius": 0.9,
+      "duration": 3,
+      "slow": 0.2,
+      "spacing": 0.7,
+      "tier": "rare"
     }
   ],
   "elementTraits": [
@@ -1867,8 +1870,8 @@
       "id": "emberStacks",
       "element": "fire",
       "name": "깊은 불씨",
-      "description": "화상 중첩 상한이 2, 지속시간이 2초 늘어난다.",
-      "extraStacks": 2,
+      "description": "화상 피해가 2배가 되고, 지속시간이 2초 늘어난다.",
+      "burnDamageMultiplier": 2,
       "extraDuration": 2,
       "tier": "special"
     },
@@ -1881,27 +1884,11 @@
       "tier": "rare"
     },
     {
-      "id": "quickFreeze",
-      "element": "ice",
-      "name": "순간 결빙",
-      "description": "빙결에 필요한 둔화 적중이 3회에서 2회로 줄어든다.",
-      "freezeReduction": 1,
-      "tier": "special"
-    },
-    {
       "id": "coldReap",
       "element": "ice",
       "name": "냉각 회수",
-      "description": "둔화 걸린 적을 처치하면 스킬 대기시간이 1초 줄어든다.",
+      "description": "둔화 걸린 적을 처치하면 기술 대기시간이 1초 줄어든다.",
       "cooldownRefund": 1,
-      "tier": "special"
-    },
-    {
-      "id": "arcRange",
-      "element": "lightning",
-      "name": "넓은 전극",
-      "description": "감전 방전 범위가 1 늘어난다.",
-      "radiusBonus": 1,
       "tier": "rare"
     },
     {
@@ -1924,7 +1911,7 @@
       "id": "galeHold",
       "element": "wind",
       "name": "돌풍 고정",
-      "description": "풍압 걸린 적이 렌치에 맞으면 경직이 3배가 되고, 보스 제압이 더 빨리 쌓인다.",
+      "description": "풍압 걸린 적이 렌치에 맞으면 경직이 1.5배가 아니라 3배가 된다.",
       "staggerBonus": 0.3,
       "stunMultiplier": 3,
       "tier": "special"
@@ -1938,28 +1925,47 @@
       "tier": "rare"
     },
     {
-      "id": "emberSpread",
-      "element": "fire",
-      "name": "불씨 전이",
-      "description": "화상 걸린 적이 쓰러지면 가까운 적들에게 화상이 옮는다.",
-      "range": 2.5,
-      "tier": "rare"
-    },
-    {
       "id": "frostCrack",
       "element": "ice",
       "name": "빙결 파쇄",
-      "description": "얼어붙은 적을 렌치로 치면 피해가 40% 늘어난다.",
+      "description": "둔화된 적을 렌치로 치면 피해가 20%, 얼어붙은 적이면 40% 늘어난다.",
       "damageBonus": 0.4,
+      "chilledBonus": 0.2,
       "tier": "special"
     },
     {
-      "id": "dodgeGust",
-      "element": "wind",
-      "name": "회피 돌풍",
-      "description": "회피할 때 주변의 일반 적을 밀어낸다.",
-      "radius": 1.8,
-      "knockback": 1,
+      "id": "longEcho",
+      "element": "sound",
+      "name": "긴 여운",
+      "description": "공명 지속시간이 2초 늘고, 겹마다 받는 피해가 4%에서 7%로 늘어난다.",
+      "extraDuration": 2,
+      "damageTakenPerStack": 0.07,
+      "tier": "special"
+    },
+    {
+      "id": "wrenchTune",
+      "element": "sound",
+      "name": "렌치 조율",
+      "description": "공명 걸린 적을 렌치로 치면 공명이 1겹 쌓인다(같은 적에게 1초에 한 번).",
+      "stacks": 1,
+      "lock": 1,
+      "tier": "rare"
+    },
+    {
+      "id": "soaked",
+      "element": "water",
+      "name": "흠뻑",
+      "description": "젖음 지속시간이 2초 늘고, 젖은 적은 15% 느려진다.",
+      "extraDuration": 2,
+      "slow": 0.15,
+      "tier": "special"
+    },
+    {
+      "id": "splashBack",
+      "element": "water",
+      "name": "물튀김",
+      "description": "젖은 적을 렌치로 치면 물이 튀어 반지름 1.5 안의 적도 젖는다.",
+      "radius": 1.5,
       "tier": "rare"
     }
   ],
@@ -2000,17 +2006,30 @@
       { "id": "overwound", "name": "가속", "color": "#d68c25", "speed": 1.35, "recovery": 0.65 },
       { "id": "brassShield", "name": "황동 방패", "color": "#96551a", "frontGuard": 0.6, "guardArcDegrees": 120, "breakHits": 4 },
       { "id": "splitter", "name": "분열", "color": "#6e7890", "spawn": "rat", "count": 2 },
-      { "id": "coated", "name": "코팅", "color": "#3f8fc4", "elements": ["fire", "ice", "lightning", "wind"] },
-      { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 15 }
+      { "id": "coated", "name": "코팅", "color": "#3f8fc4", "elements": ["fire", "ice", "lightning", "wind", "sound", "water"] },
+      { "id": "volatile", "name": "자폭", "color": "#bb123b", "delay": 1.0, "radius": 2.5, "damage": 15 },
+      { "id": "standardized", "name": "규격화", "chapter": "silent-factory", "color": "#c79a3e", "radius": 4, "factor": 0.7 },
+      { "id": "reinspect", "name": "재검사", "chapter": "silent-factory", "color": "#d8423c", "share": 0.3 }
+    ]
+  },
+  "potions": {
+    "note": "Nasa's oil shelf at Moru's workshop (2026-11-08): opens once chapter 2 is beaten. One bottle is bought with free gears in town and drunk on setting out; it lasts that expedition only, and only one goes along. Buying another swaps it, the first one refunded in full.",
+    "joinsAfter": "silent-factory",
+    "list": [
+      { "id": "attack", "name": "붉은 기름", "icon": "potion-attack", "cost": 40, "attackDamage": 0.12, "description": "렌치와 기술 피해 +12%" },
+      { "id": "boss", "name": "놋쇠 기름", "icon": "potion-boss", "cost": 50, "bossDamage": 0.2, "description": "보스와 정예에게 주는 피해 +20%" },
+      { "id": "health", "name": "초록 기름", "icon": "potion-health", "cost": 40, "maxHp": 25, "description": "최대 체력 +25" },
+      { "id": "energy", "name": "번개 기름", "icon": "potion-energy", "cost": 35, "energyGain": 0.15, "fullEnergy": true, "description": "축전이 가득 찬 채 출발, 축전 획득 +15%" },
+      { "id": "spare", "name": "예비 태엽", "icon": "potion-spare", "cost": 120, "revive": 0.2, "description": "한 번 쓰러지면 체력 20%로 다시 일어남" }
     ]
   },
   "difficulty": {
-    "note": "Chosen at the town portal for each expedition. scale multiplies every enemy's and boss's health and attack and the number of room furniture pieces; loot multiplies what each kill and clear pays (gears and coins). 1.0 is the tuning before difficulties existed; easy and hard sit 40% below and above normal. bossRepeats sets how many times Roco and Brass repeat a pattern (stickers, crates, soldier ranks, note rings, stomp rings) on that level.",
+    "note": "Chosen at the town portal for each expedition. scale multiplies every enemy's and boss's health and attack and the number of room furniture pieces; loot multiplies what each kill and clear pays (gears and coins). 1.0 is the tuning before difficulties existed; easy and hard sit 40% below and above normal. bossRepeats sets how many times Roco and Brass repeat a pattern (stickers, crates, soldier ranks, note rings, stomp rings) on that level. Chapter 2 (2026-11-08): Iris's reject stamps (stampCount, stampCountPhaseTwo) and Press's plates, moulds (moldCount) and guards (guardMax) too; phaseBreaks also tunes the mirrors, pylons and moulds. fewerEnemies (easy) takes one ordinary body out of each fight room's biggest wave; eliteTraits (hard) gives each elite two traits once traits begin. Their openings and memory times too: Iris's counter window (verdictWindow), grid showing time (gridShow), time to find the real one among her decoys (decoySeconds) and lens inspectors joining in phase 2 (lensHelpers); Press's stuck arm (armStuck) and the gap in his closing walls (wallGap).",
     "default": "normal",
     "levels": [
-      { "id": "easy", "name": "쉬움", "scale": 0.54, "loot": 0.54, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다.", "bossRepeats": { "stickerCount": 5, "crateTossCount": 1, "ranks": 2, "waveVolleys": 2, "stompRings": 2 }, "phaseBreaks": { "cans": { "cans": 4, "bombShare": 0.2, "canEvery": 1.0, "seconds": 20 }, "drums": { "drums": 3, "showStep": 0.85, "laneEvery": 3.8, "seconds": 20 }, "flags": { "flags": 2, "turn": 0.35, "seconds": 20 } } },
-      { "id": "normal", "name": "보통", "scale": 0.9, "loot": 0.9, "description": "이 장의 기본 원정입니다.", "bossRepeats": { "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 }, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } } },
-      { "id": "hard", "name": "어려움", "scale": 1.26, "loot": 1.26, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "bossRepeats": { "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 }, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } } }
+      { "id": "easy", "name": "쉬움", "scale": 0.6, "loot": 0.6, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다.", "fewerEnemies": 1, "bossRepeats": { "rhythmBeat": 1.3, "rhythmCount": 1, "valveOpen": 8,  "stickerCount": 5, "crateTossCount": 1, "ranks": 2, "waveVolleys": 2, "stompRings": 2 , "stampCount": 2, "stampCountPhaseTwo": 4, "plates": 1, "moldCount": 4, "guardMax": 2, "verdictWindow": 0.7, "armStuck": 2.5, "wallGap": 3.2, "gridShow": 2.0, "decoySeconds": 5, "lensHelpers": 3}, "phaseBreaks": { "cans": { "cans": 4, "bombShare": 0.2, "canEvery": 1.0, "seconds": 20 }, "drums": { "drums": 3, "showStep": 0.85, "laneEvery": 3.8, "seconds": 20 }, "flags": { "flags": 2, "turn": 0.35, "seconds": 20 } , "mirrors": {"seconds": 20, "sweepDegrees": 35}, "pylons": {"need": 2, "plateEvery": 1.8, "seconds": 20}, "molds": {"need": 2, "seconds": 24}} },
+      { "id": "normal", "name": "보통", "scale": 1.0, "loot": 1.0, "description": "이 장의 기본 원정입니다.", "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 2, "valveOpen": 6,  "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 , "stampCount": 3, "stampCountPhaseTwo": 5, "plates": 2, "moldCount": 5, "guardMax": 3, "verdictWindow": 0.5, "armStuck": 2, "wallGap": 2.6, "gridShow": 1.5, "decoySeconds": 4, "lensHelpers": 4}, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } , "mirrors": {"seconds": 18, "sweepDegrees": 45}, "pylons": {"need": 3, "plateEvery": 1.5, "seconds": 18}, "molds": {"need": 3, "seconds": 22}} },
+      { "id": "hard", "name": "어려움", "scale": 1.4, "loot": 1.4, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "eliteTraits": 2, "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 3, "valveOpen": 4,  "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 , "stampCount": 4, "stampCountPhaseTwo": 6, "plates": 3, "moldCount": 6, "guardMax": 4, "verdictWindow": 0.35, "armStuck": 1.5, "wallGap": 2.2, "gridShow": 1.0, "decoySeconds": 3, "lensHelpers": 5}, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } , "mirrors": {"seconds": 16, "sweepDegrees": 55}, "pylons": {"need": 4, "plateEvery": 1.2, "seconds": 16}, "molds": {"need": 4, "seconds": 20}} }
     ]
   },
   "hazards": {
@@ -2023,13 +2042,22 @@
     ],
     "counts": { "crate": [2, 3], "plate": [1, 2], "rail": [2, 3], "fence": [1, 1], "musicbox": [0, 1] },
     "spreadTries": 12,
+    "roomyArea": 300,
+    "musicboxesPerRun": 3,
+    "musicboxNote": "Every expedition finds exactly this many mending music boxes (chapter 1 and 2 alike, 2026-11-09), in fight rooms its seed picks among those whose musicbox count can be above 0, never two rooms in a row and different every run (hazards.js musicRooms). A room's own musicbox count now only says whether it may hold one. Before, each room rolled its own and a run found 3.5 on average. A chapter can set its own total (chapters[].hazards.musicboxesPerRun).",
+    "roomyNote": "A fight room whose open floor (walkable less solids, square units) is under roomyArea gets fewer crates and plates in proportion, rounded down, and under 90% of it (270) no fences and no saw rails (hazards.js dealHazards, 2026-11-09): the candy alley A, the repair road A and B, the ribbon crossing, the fountain ring and the candy alley B.",
     "doorClear": 3.5,
     "solidRoom": 1.6,
     "crate": { "size": 0.9, "fuse": 0.8, "radius": 2.2, "damage": 8, "enemyDamage": 15, "chain": 0.15 },
     "plate": { "half": 1.4, "depth": 0.82, "cycle": 5, "warn": 1, "hot": 1.5, "damage": 4, "tick": 0.7 },
     "rail": { "chance": 0.5, "speed": 2.6, "radius": 0.45, "damage": 5 },
     "fence": { "long": 1.9, "short": 0.45, "gap": 0.25, "hp": 4 },
-    "musicbox": { "size": 0.8, "heal": 0.18 }
+    "musicbox": { "size": 0.8, "heal": 0.18 },
+    "belt": { "note": "Chapter 2 conveyor belt: a strip of floor that carries F2 and enemies (bosses stay put) along it. It turns round every cycle seconds, its arrows flashing red for warn seconds first. Ice stops it for frostSeconds; wind doubles its speed for windSeconds.", "length": 8.8, "width": 1.1, "speed": 2.4, "cycle": 8, "warn": 1.2, "frostSeconds": 4, "windSeconds": 3, "windBoost": 2 },
+    "press": { "note": "Chapter 2 press pillar: a plate in the floor and a press head hidden in the ceiling above it. idle (only a faint plate shows), then warn (a red ring and a growing shadow; the head drops in its last moment), then it slams down and stands in the way for block seconds. Hurts F2 and every enemy on the plate once a slam and sets off crates on it. Lightning (and sound) brings the slam at once; ice makes it miss its next slam.", "w": 2.0, "h": 1.2, "idle": 3.5, "warn": 1, "block": 1.3, "damage": 14, "enemyDamage": 40, "shove": 1.2 },
+    "laser": { "note": "Chapter 2 inspection laser door: two lens posts (solid) gap apart with a beam between them that is off, then warns (dashed), then on. The beam hurts F2 every tick and each enemy once a beam, stopping it for stopSeconds. Lightning or water shorts it for shortSeconds; sound for soundSeconds.", "gap": 3.6, "post": 0.5, "off": 2, "warn": 0.6, "on": 2, "damage": 10, "tick": 0.5, "enemyDamage": 20, "stopSeconds": 0.6, "shortSeconds": 3, "soundSeconds": 1 },
+    "steam": { "note": "Chapter 2 steam pipe: a pipe overhead (out of the way) whose nozzle dumps steam on a round patch of floor: idle, warn (dashed ring), burst. A burst hurts F2 every tick and each enemy once, and pushes them out by push. Fire raises its damage for fireSeconds, ice clogs it for frostSeconds, water shortens the next burst to wetBurst, wind carries the steam windShift units away for windSeconds.", "radius": 1.3, "idle": 3.5, "warn": 0.8, "burst": 1.2, "damage": 6, "tick": 0.4, "push": 1.5, "enemyDamage": 12, "fireBoost": 1.5, "fireSeconds": 3, "frostSeconds": 5, "wetBurst": 0.6, "windShift": 2, "windSeconds": 3 },
+    "crane": { "note": "Chapter 2 parts crane: every `every` seconds it marks a ring near F2 and mark seconds later drops a parts crate there: it hurts F2 and enemies under it, sets off crates, and stays as a solid box for boxSeconds (boxHp wrench hits break it). Wind blows the mark windShift units; lightning holds the drop back shockDelay seconds.", "every": 7, "mark": 1.2, "radius": 1.2, "near": 1.5, "damage": 12, "enemyDamage": 30, "box": 1.5, "boxSeconds": 6, "boxHp": 3, "windShift": 2, "shockDelay": 4 }
   ,
     "elements": {
       "note": "What each element does to the room hazards (src/engine/game.js elementOnHazards).",

@@ -40,6 +40,13 @@ export class SpriteLibrary {
     library.rest = restAfter.catch(() => {}).then(() => Promise.all(rest.map(sheet => loadImage(sheet).then(image => library.images.set(sheet, image)).catch(() => {}))));
     return library;
   }
+  /** Takes in another library's clips (a chapter's own mobs); its sheets keep arriving into its own image map. */
+  merge(other) {
+    Object.assign(this.data.clips, other.data.clips);
+    const own = this.images;
+    this.images = { get: url => own.get(url) || other.images.get(url), set: (url, image) => own.set(url, image) };
+    return this;
+  }
   clip(action, direction) { return this.data.clips[`${action}/${direction}`] || null; }
   image(url) { return this.images.get(url) || null; }
 }

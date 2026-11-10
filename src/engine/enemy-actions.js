@@ -1,19 +1,22 @@
 import { fitsMap } from './map-geometry.js';
+import { FACTORY_BREAKS } from './factory-bosses.js';
 import { distance, floorDistance, inCone, segmentDistance } from './math.js';
+import { josa } from './nickname.js';
 
 /**
  * What enemies and bosses do once awake: warning a blow (beginEnemyTell), carrying it out (executeEnemy), the bosses'
  * patterns and phase breaks, their floor hazards, and the shots in the air. Installed on Game.prototype (game.js), so
  * `this` is the game.
  */
-const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat'];
+const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat', 'searchlight', 'rivets', 'oil', 'supply'];
 const KNOCKBACK_SECONDS = 0.12, DIRECT_UNITS = 2, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
 /** How far a parade rank reaches past the outer carpets on each side, so it cannot be walked round. */
 const RANK_OVERHANG_UNITS = 1.5;
 
 export const enemyActions = {
   beginEnemyTell(enemy, type, delay = null) {
-    const tellTime = delay ?? (enemy.tellSeconds?.[type] || enemy.minimumTell || enemy.tellDuration || this.config.enemies[enemy.type]?.tell || 0.7);
+    // Iris's decoys: how long there is to find the real one is set by the difficulty (bossRepeats.decoySeconds).
+    const tellTime = delay ?? ((type === 'decoys' && enemy.boss ? this.bossRepeat(enemy, 'decoySeconds') : 0) || enemy.tellSeconds?.[type] || enemy.minimumTell || enemy.tellDuration || this.config.enemies[enemy.type]?.tell || 0.7);
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
     enemy.facing = angle;
     enemy.tell = { type, x: enemy.x, y: enemy.y, targetX: this.p.x, targetY: this.p.y, angle, started: this.s.time, until: this.s.time + tellTime };
@@ -22,6 +25,7 @@ export const enemyActions = {
     if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.bossRepeat(enemy, 'crateTossCount'));
     // Both soldier patterns show where their ranks will come from, and which way they will walk.
     if (type === 'parade' || type === 'column') enemy.tell.path = this.rankPath(type);
+    this.factoryTell(enemy, enemy.tell);
     enemy.state = 'tell';
   },
   /** A boss with phase breaks stops at each threshold, raises a shield and has to be broken out of it before losing more. */
@@ -34,6 +38,16 @@ export const enemyActions = {
     const rule = this.breakRule(enemy, index), now = this.s.time;
     enemy.hp = Math.max(enemy.hp, enemy.maxHp * rule.at); enemy.tell = null; enemy.noteVolleys = null; enemy.spin = null; enemy.dash = null; enemy.followup = null; enemy.alarmUntil = 0; enemy.bellUntil = 0;
     this.s.casts = this.s.casts.filter(c => c.owner !== enemy.id);
+    // A shield starts on a clear floor (2026-11-10): every attack still under way goes with it: the floor patterns of
+    // chapter 2 (stamps, rings, walls, lanes, crane, pistons, rows), the moving line, plates and crates still lying,
+    // Brass's marching ranks, shots in the air, decoys, and the crane's hold on F2. The bodies the boss called stay, and
+    // so do Press's steam valves, a standing part of the fight from 33% on.
+    this.s.bossFields = (this.s.bossFields || []).filter(f => f.kind === 'valves');
+    this.s.flow = null; this.s.ranks = [];
+    this.s.projectiles = this.s.projectiles.filter(shot => shot.friendly);
+    this.s.hazards = (this.s.hazards || []).filter(h => h.kind !== 'bossPlate' && h.kind !== 'dropbox');
+    enemy.decoys = null;
+    if (this.p.grabbed?.crane) this.p.grabbed = null;
     const angle = Math.atan2(this.p.y - enemy.y, this.p.x - enemy.x);
     enemy.facing = angle;
     // Brass's breaks fill the square, so he marches back to where he first stood before laying them out.
@@ -56,6 +70,8 @@ export const enemyActions = {
       this.placeSoldiers(enemy, rule);
       this.notify(`보호막! 깃발을 든 병정 ${rule.flags}기를 쓰러뜨리세요.`);
     }
+    // Chapter 2's breaks (src/engine/factory-bosses.js).
+    this.fbBreakStart(enemy, b, rule);
   },
   /** A spot near the boss that lies on the floor, pulled toward the boss until it does. */
   floorSpot(enemy, dx, dy) {
@@ -78,22 +94,25 @@ export const enemyActions = {
       if (now < b.failAt) return;
       if (this.hurt(rule.failDamage)) this.effect('ring', enemy.x, enemy.y, '#a92f2b', 0.7, 9, { look: 'quake' });
       enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.maxHp * rule.failHeal);
+      // A chapter 2 shield says how it breaks once it has failed (factory-bosses.js fbBreakStart).
+      (enemy.breakFailed ??= {})[b.kind] = true;
       enemy.breaking = null; enemy.ready = now + enemy.recovery;
-      this.notify(`${enemy.name}이(가) 몸을 고쳤습니다. 다시 깎아서 보호막을 깨세요.`); return;
+      this.notify(`${josa(enemy.name, '이', '가')} 몸을 고쳤습니다. 다시 체력을 깎아 보호막을 깨세요.`); return;
     }
     if (b.kind === 'cans') { this.updateCans(enemy, rule, dt); if (!this.active) return; }
     if (b.kind === 'drums') { this.updateDrums(enemy, rule); if (!this.active) return; }
+    if (FACTORY_BREAKS.has(b.kind)) { this.fbBreak(enemy, rule, dt); if (!this.active) return; }
     if (b.kind === 'flags') {
       b.turn += rule.turn * dt; this.placeSoldiers(enemy, rule);
       if (b.soldiers.some(s => !s.down && distance(s, p) < rule.soldierRadius + this.config.arena.playerRadius)) { this.hurt(rule.soldierDamage); if (!this.active) return; }
     }
-    const solved = b.kind === 'cans' ? b.fed >= rule.cans : b.kind === 'drums' ? b.next >= b.order.length : b.soldiers.filter(s => s.flag && s.down).length >= rule.flags;
+    const solved = b.kind === 'cans' ? b.fed >= rule.cans : b.kind === 'drums' ? b.next >= b.order.length : b.kind === 'flags' ? b.soldiers.filter(s => s.flag && s.down).length >= rule.flags : !!b.solved;
     if (solved) {
-      // The shield breaks and the next phase begins at once: the boss is not stunned any more (2026-11-06), only open to
-      // harder blows for a moment (vulnerable).
+      // The shield breaks and the next phase begins at once: no stun (taken out 2026-11-06) and no damage bonus either
+      // (2026-11-09: bosses never take extra damage, it made the difficulty hard to tune).
       enemy.breaking = null; enemy.breaksDone.push(b.index);
-      enemy.vulnerableUntil = now + rule.stunSeconds; enemy.vulnerableBonus = rule.vulnerable; enemy.ready = Math.max(enemy.ready, now + enemy.recovery);
-      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.8, 3, { look: 'shieldBreak' }); this.notify(`보호막이 깨졌습니다! 잠시 ${enemy.name}이(가) 더 큰 피해를 받습니다.`); return;
+      enemy.ready = Math.max(enemy.ready, now + enemy.recovery);
+      this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.8, 3, { look: 'shieldBreak' }); this.notify('보호막이 깨졌습니다!'); return;
     }
     if (now >= b.until) { b.failAt = now + rule.failWarn; b.cans = []; b.lanes = []; }
   },
@@ -123,7 +142,7 @@ export const enemyActions = {
       }
       if (distance(can, enemy) < enemy.radius + (can.back ? 0.3 : 0)) {
         can.done = true;
-        if (can.back && can.bomb) { b.fed = Math.max(0, b.fed - 1); this.effect('ring', enemy.x, enemy.y, '#e0564c', 0.5, 1.4, { look: 'boom' }); this.notify('폭탄 깡통! 보호막이 깡통 하나만큼 다시 찼어요.'); this.sense({ kind: 'hurt' }); }
+        if (can.back && can.bomb) { b.fed = Math.max(0, b.fed - 1); this.effect('ring', enemy.x, enemy.y, '#e0564c', 0.5, 1.4, { look: 'boom' }); this.notify('폭탄 깡통! 보호막이 깡통 하나만큼 다시 찼습니다.'); this.sense({ kind: 'hurt' }); }
         else if (can.back) { b.fed++; this.effect('spark', enemy.x, enemy.y - enemy.radius, '#ffd257', 0.35, 1.2); this.sense({ kind: 'heavy' }); }
         continue;
       }
@@ -158,6 +177,7 @@ export const enemyActions = {
   },
   /** A swing during a break: bats cans back, strikes drums, knocks down soldiers it meets. */
   breakSwing(a, range) {
+    this.fbSwing(a, range);
     const reach = target => inCone(this.p, target, a.angle, range + 0.3, this.config.rules.comboArcDegrees);
     for (const enemy of this.s.enemies) {
       const b = enemy.breaking; if (!b) continue;
@@ -168,6 +188,10 @@ export const enemyActions = {
   },
   /** What the boss will do next: its usual round, plus what it has unlocked by being hurt. */
   nextBossPattern(enemy) {
+    // A phase pattern marked `soon` comes as the very next one the moment it unlocks, then joins the round
+    // (2026-11-09: Press's rhythm lanes, last of ten in his round, could take ten patterns to show up after 66%).
+    const due = (enemy.phasePatterns || []).find(({ below, soon, pattern }) => soon && enemy.hp <= enemy.maxHp * below && !(enemy.soonPlayed ??= []).includes(pattern));
+    if (due) { enemy.soonPlayed.push(due.pattern); return due.pattern; }
     const round = [...enemy.patterns, ...(enemy.phasePatterns || []).filter(({ below }) => enemy.hp <= enemy.maxHp * below).map(({ pattern }) => pattern)];
     return round[enemy.pattern++ % round.length];
   },
@@ -274,6 +298,8 @@ export const enemyActions = {
     return { a, b, gapA: lerp(a, b, gapFrom), gapB: lerp(a, b, gapFrom + gapShare) };
   },
   tickBossHazards(dt) {
+    this.tickFactoryBoss(dt);
+    if (!this.active) return;
     const { s, p } = this, bell = s.enemies.find(e => e.bellUntil > s.time);
     if (!bell) s.bellWatch = null;
     else if (s.bellWatch && (Math.hypot(p.x - s.bellWatch.x, p.y - s.bellWatch.y) > BELL_DRIFT_UNITS || p.attack || p.lastCast?.at >= s.bellWatch.at)) { s.bellWatch = null; this.hurt(bell.damage); if (!this.active) return; }
@@ -301,13 +327,13 @@ export const enemyActions = {
     s.ranks = s.ranks.filter(rank => rank.at < 1);
   },
   executeEnemy(enemy) {
-    const tell = enemy.tell; enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + enemy.recovery;
+    const tell = enemy.tell; enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + enemy.recovery * this.standardFactor(enemy);
     const p = this.p, ai = this.config.bossAI[enemy.type];
-    const damage = () => this.hurt(enemy.damage);
+    const damage = () => this.hurt(this.weakened(enemy, enemy.damage));
     if (!enemy.boss) this.sense({ kind: 'mob', id: enemy.type });
     // Each boss pattern has its own sound when it lands (the bell and alarm already ring at their warning).
     else if (tell?.type) this.sense({ kind: 'boss', id: tell.type });
-    switch (tell.type) {
+    if (!this.factoryExecute(enemy, tell)) switch (tell.type) {
       case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
         // The rat goes off where its warning ring was drawn, and the ring counts the player's body, not only its centre.
@@ -359,7 +385,7 @@ export const enemyActions = {
           // The claw that catches F2 takes a skill back to Roco's bag for a while: a blow to his back returns it.
           const index = Math.floor(this.random() * this.skillSlots.length);
           this.p.confiscated = { index, until: this.s.time + ai.confiscateSeconds };
-          this.notify(`로코가 ${this.skillSlots[index].skill.name}을(를) 압수했습니다! 등을 쳐서 되찾으세요.`);
+          this.notify(`로코가 ${josa(this.skillSlots[index].skill.name, '을', '를')} 압수했습니다! 등을 쳐서 되찾으세요.`);
         }
         this.effect('beam', tell.x, tell.y, '#cf767a', 0.45, 1, { targetX: end.x, targetY: end.y, look: 'thrust' }); break;
       }
@@ -451,10 +477,16 @@ export const enemyActions = {
       s.angle = [across, back, s.angle + Math.PI].find(angle => { const test = { ...enemy }; this.move(test, Math.cos(angle) * step, Math.sin(angle) * step); return distance(test, enemy) >= step * 0.5; }) ?? s.angle + Math.PI;
     }
     enemy.facing = s.angle;
-    if (this.s.time >= s.hitReady && distance(this.p, enemy) <= enemy.radius + this.config.arena.playerRadius && this.hurt(enemy.damage)) s.hitReady = this.s.time + enemy.spinHitGap;
+    if (this.s.time >= s.hitReady && distance(this.p, enemy) <= enemy.radius + this.config.arena.playerRadius && this.hurt(this.weakened(enemy, enemy.damage))) s.hitReady = this.s.time + enemy.spinHitGap;
     if (this.s.time >= s.until) { enemy.spin = null; enemy.ready = this.s.time + enemy.recovery; }
   },
-  fireBullet(enemy, angle, speed) { this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: enemy.damage, friendly: false, until: this.s.time + this.config.rules.enemyProjectileLifetime }); },
+  /** Recovery share for a body standing near an elite with the 'standardized' trait (slice.json eliteAffixes). */
+  standardFactor(enemy) {
+    if (enemy.boss) return 1;
+    const near = this.s.enemies.find(e => e !== enemy && e.hp > 0 && e.standardRadius && distance(e, enemy) <= e.standardRadius);
+    return near ? near.standardFactor : 1;
+  },
+  fireBullet(enemy, angle, speed) { this.s.projectiles.push({ id: this.id('bullet'), x: enemy.x, y: enemy.y, angle, speed, radius: this.config.rules.enemyProjectileRadius, damage: this.weakened(enemy, enemy.damage), friendly: false, until: this.s.time + this.config.rules.enemyProjectileLifetime }); },
   updateEnemies(dt) {
     this.tickBossHazards(dt);
     if (!this.active) return;
@@ -478,17 +510,24 @@ export const enemyActions = {
       enemy.burnStacks = enemy.burnStacks.filter(t => t > this.s.time);
       if (enemy.burnStacks.length && this.s.time >= enemy.burnTick) {
         const info = this.c.statuses.find(s => s.id === 'burn');
-        this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * (this.statusPower + this.upgradeAmount('statusDamage')), { dot: true, color: '#efaa71' });
+        // 깊은 불씨 makes every burn tick land twice as hard.
+        this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * (this.statusPower + this.upgradeAmount('statusDamage')) * (this.trait('emberStacks')?.burnDamageMultiplier || 1), { dot: true, color: '#efaa71' });
         enemy.burnTick += info.tickInterval;
       }
+      // A boss behind a corridor waits in his hall until F2 walks in and the gates shut (factory-bosses.js fbHallGates).
+      if (enemy.boss && this.fbHallWaiting()) { enemy.ready = Math.max(enemy.ready, this.s.time + this.config.rules.enemyInitialDelay); continue; }
       if (enemy.breaking) { this.updatePhaseBreak(enemy, dt); if (!this.active) return; continue; }
       if (enemy.hp <= 0 || enemy.held || enemy.exposedUntil > this.s.time || enemy.stunUntil > this.s.time || enemy.alarmUntil > this.s.time || enemy.bellUntil > this.s.time) continue;
+      // Factory bodies: a leap in the air, a searchlight turning, a riveter knelt to fire (src/engine/factory-mobs.js).
+      const planted = this.factoryStep(enemy, dt);
       if (enemy.dash) {
         const d = enemy.dash, start = { x: enemy.x, y: enemy.y };
         this.move(enemy, Math.cos(d.angle) * enemy.dashDistance / enemy.dashDuration * dt, Math.sin(d.angle) * enemy.dashDistance / enemy.dashDuration * dt);
-        if (segmentDistance(this.p, start, enemy) <= enemy.radius + this.config.arena.playerRadius) this.hurt(enemy.damage);
+        if (segmentDistance(this.p, start, enemy) <= enemy.radius + this.config.arena.playerRadius) this.hurt(this.weakened(enemy, enemy.damage));
         if (!this.active) return;
-        d.elapsed += dt; if (d.elapsed >= enemy.dashDuration) { enemy.dash = null; if (d.then) enemy.followup = { type: d.then, at: this.s.time + this.config.bossAI[enemy.type].hornDelay }; } continue;
+        d.elapsed += dt;
+        if (this.factoryDash(enemy, start, dt)) continue;
+        if (d.elapsed >= enemy.dashDuration) { enemy.dash = null; if (d.then) enemy.followup = { type: d.then, at: this.s.time + this.config.bossAI[enemy.type].hornDelay }; else this.factoryDashDone(enemy, d); } continue;
       }
       if (enemy.spin) { this.spinEnemy(enemy, dt); if (!this.active) return; continue; }
       if (enemy.noteVolleys && this.s.time >= enemy.noteVolleys.next) {
@@ -497,6 +536,7 @@ export const enemyActions = {
         v.turn = -v.turn; v.left--; v.next = this.s.time + ai.waveVolleyGap; if (v.left <= 0) enemy.noteVolleys = null;
       }
       if (enemy.tell) { if (this.s.time >= enemy.tell.until) this.executeEnemy(enemy); if (!this.active) return; continue; }
+      if (planted) continue;
       if (enemy.followup) {
         const next = enemy.followup; enemy.followup = null;
         this.beginEnemyTell(enemy, next.type, Math.max(this.config.rules.minimumFollowupTell, next.at - this.s.time)); continue;
@@ -511,8 +551,11 @@ export const enemyActions = {
         this.beginEnemyTell(enemy, type); if (!enemy.boss && enemy.attack !== 'shot') activeMelee++;
       } else if (!enemy.stationary && d > this.config.rules.enemyStopDistance[enemy.boss ? 'boss' : RANGED_ATTACKS.includes(enemy.attack) ? 'ranged' : 'melee']) {
         const chill = this.c.statuses.find(s => s.id === 'chill');
-        const slow = enemy.statuses.chill > this.s.time ? (enemy.boss ? Math.min(this.c.caps.bossSlow, chill.slow * this.statusPower) : chill.slow * this.statusPower) : 0;
-        const step = enemy.speed * (1 - slow) * (enemy.beatUntil > this.s.time ? 1 + this.config.enemies.drummer.beatHaste : 1) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
+        const chillSlow = enemy.statuses.chill > this.s.time ? (enemy.boss ? Math.min(this.c.caps.bossSlow, chill.slow * this.statusPower) : chill.slow * this.statusPower) : 0;
+        // 흠뻑: a soaked body drags its feet too (a boss no more than the boss cap).
+        const soaked = this.trait('soaked'), wetSlow = soaked && this.wet(enemy) ? (enemy.boss ? Math.min(this.c.caps.bossSlow, soaked.slow) : soaked.slow) : 0;
+        const slow = 1 - (1 - chillSlow) * (1 - wetSlow);
+        const step = enemy.speed * (1 - slow) * (enemy.boss ? 1 : 1 - this.patchSlow(enemy, true)) * (enemy.beatUntil > this.s.time ? 1 + this.config.enemies.drummer.beatHaste : 1) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
         this.move(enemy, Math.cos(way) * step, Math.sin(way) * step);
       }
     }
@@ -532,9 +575,10 @@ export const enemyActions = {
         const target = this.s.enemies.find(e => e.hp > 0 && segmentDistance(e, before, b) < e.radius + b.radius);
         // A bullet the wrench turned round hits for exactly what it would have taken off F2: no crit, no damage bonus.
         if (target) { this.hitEnemy(target, b.damage, { exact: !!b.exact }); b.until = 0; }
-      } else if (segmentDistance(this.p, before, b) <= this.config.arena.playerRadius + b.radius) { this.hurt(b.damage); b.until = 0; }
+      } else if (segmentDistance(this.p, before, b) <= this.config.arena.playerRadius + b.radius) { this.hurt(b.damage); b.until = 0; b.rivet = null; }
       if (!this.active) return;
     }
+    for (const b of this.s.projectiles) if (b.until <= this.s.time && b.rivet) this.rivetLanded(b);
     this.s.projectiles = this.s.projectiles.filter(b => b.until > this.s.time);
   },
 };

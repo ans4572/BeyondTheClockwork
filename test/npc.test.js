@@ -41,9 +41,10 @@ test('every room has a spot on the route map', () => {
   for (const id of ['start', ...slice.rooms.map(room => room.id)]) assert.equal(maps.route[id].length, 2, id);
 });
 
-test('every resident type walks in the village', () => {
+test('every resident type walks in the village or the night market', () => {
+  // 2026-11-10: the town has 19 walkers; the five it lost still walk the night market, so no resident goes unseen.
   const residents = Object.keys(clips.clips).filter(key => key.endsWith('-walk/south')).map(key => key.split('-')[0]);
-  assert.deepEqual([...new Set(maps.crowds.village.cast)].sort(), residents.sort());
+  assert.deepEqual([...new Set([...maps.crowds.village.cast, ...maps.crowds.market.cast])].sort(), residents.sort());
 });
 
 test('the village streets are connected and keep clear of Moru and Bolt', () => {

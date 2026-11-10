@@ -1,0 +1,104 @@
+{
+  "inspectorIris": {
+    "id": "c7d48520-a58c-4153-8b56-1fe0c82f6366",
+    "actions": [
+      "move",
+      "attack",
+      "cast"
+    ],
+    "attackMs": 1800,
+    "strikeMs": 1000,
+    "casts": {
+      "cast": {
+        "durationMs": 2200,
+        "strikeMs": 1300
+      }
+    },
+    "clips": {
+      "attack": [
+        "attack-v2",
+        "attack"
+      ],
+      "cast": [
+        "cast-v3"
+      ]
+    },
+    "drop": {
+      "attack": {
+        "north": [
+          5
+        ],
+        "north-east": [
+          1,
+          5,
+          6
+        ],
+        "south-east": [
+          5
+        ],
+        "west": [
+          5
+        ]
+      },
+      "cast": {
+        "east": [
+          7,
+          8
+        ],
+        "south": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  },
+  "directorPress": {
+    "id": "de399770-0682-425a-8454-a04161a76be1",
+    "actions": [
+      "move",
+      "attack",
+      "cast"
+    ],
+    "attackMs": 2000,
+    "strikeMs": 1100,
+    "casts": {
+      "cast": {
+        "durationMs": 2400,
+        "strikeMs": 1500
+      }
+    },
+    "drop": {
+      "attack": {
+        "east": [
+          6,
+          7
+        ],
+        "south-east": [
+          5,
+          6
+        ],
+        "south": [
+          4,
+          5
+        ],
+        "south-west": [
+          5,
+          7
+        ],
+        "west": [
+          4,
+          5
+        ],
+        "north-west": [
+          6,
+          7
+        ],
+        "north-east": [
+          5,
+          6
+        ]
+      }
+    }
+  }
+}

@@ -14,11 +14,12 @@ const dummy = (g, x = 9, y = 8, type = 'guard') => { const e = g.spawnEnemy(type
 const cast = (g, id, target = { x: 11, y: 8 }) => { const skill = data.combat.skills.find(s => s.id === id); g.makeCast(skill, data.slice.skillBehavior[id], g.slots[0] || { level: 1, rarity: 'common' }, target, false); return g.s.casts.at(-1); };
 const swing = (g, phase) => { g.p.combo = phase; g.p.comboExpires = g.s.time + 9; g.basicAttack(); step(g, 0.6); };
 
+const madeElements = data.combat.elements;
 test('every element offers as many element cards (skill mods and traits) as every other', () => {
-  for (const skill of data.combat.skills) assert.ok([1, 2].includes(data.slice.skillMods.filter(m => m.skill === skill.id).length), skill.id);
-  const traits = data.combat.elements.map(element => data.slice.elementTraits.filter(t => t.element === element.id).length);
+  for (const skill of data.combat.skills.filter(s => madeElements.some(e => e.id === s.element))) assert.ok([1, 2].includes(data.slice.skillMods.filter(m => m.skill === skill.id).length), skill.id);
+  const traits = madeElements.map(element => data.slice.elementTraits.filter(t => t.element === element.id).length);
   assert.ok(traits.every(n => n === traits[0]), `traits per element: ${traits}`);
-  const cards = data.combat.elements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
+  const cards = madeElements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
   assert.ok(cards.every(n => n === cards[0]), `element cards per element: ${cards}`);
   assert.equal(data.slice.mods.length, 8);
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);
@@ -73,9 +74,23 @@ test('both wrench rooms offer three random mods without repeats', () => {
 
 test('chosen mods and traits persist through a save and are validated', () => {
   const g = arena(); g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'skillMod', id: 'overload' }]; assert.equal(g.chooseReward(0), true);
-  g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'trait', id: 'quickFreeze' }]; assert.equal(g.chooseReward(0), true);
+  g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'trait', id: 'frostCrack' }]; assert.equal(g.chooseReward(0), true);
   const restored = decodeSave(encodeSave(g.s), data);
-  assert.deepEqual(restored.run.skillMods, ['overload']); assert.deepEqual(restored.run.traits, ['quickFreeze']);
+  assert.deepEqual(restored.run.skillMods, ['overload']); assert.deepEqual(restored.run.traits, ['frostCrack']);
+  // A trait since cut (2026-11-08) becomes another trait of its element in a saved run, and on the reward table.
+  const old = JSON.parse(encodeSave(g.s));
+  old.state.run.traits = ['quickFreeze', 'emberSpread']; old.state.run.picks = [{ node: 0, kind: 'trait', id: 'quickFreeze' }, { node: 1, kind: 'trait', id: 'emberSpread' }];
+  old.state.run.rewardChoices = [{ kind: 'trait', id: 'dodgeGust' }, { kind: 'trait', id: 'slipstream' }];
+  let loaded = decodeSave(JSON.stringify(old), data);
+  // The same tier first: quick freeze was special (frozen cracks), spreading embers rare (the burn brand).
+  assert.deepEqual(loaded.run.traits, ['frostCrack', 'burnBrand']);
+  assert.deepEqual(loaded.run.picks.map(p => p.id), ['frostCrack', 'burnBrand']);
+  // The wind card cannot become the gust already on the table, so it is the other wind trait.
+  assert.deepEqual(loaded.run.rewardChoices.map(r => r.id), ['galeHold', 'slipstream']);
+  // A run that already holds both ice traits has nothing to swap in: the cut one just drops out.
+  old.state.run.traits = ['frostCrack', 'coldReap', 'quickFreeze']; old.state.run.picks = []; old.state.run.rewardChoices = [];
+  loaded = decodeSave(JSON.stringify(old), data);
+  assert.deepEqual(loaded.run.traits, ['frostCrack', 'coldReap']);
   const raw = JSON.parse(encodeSave(g.s)); raw.state.run.rewardChoices = [{ kind: 'trait', id: 'fake' }];
   assert.throws(() => decodeSave(JSON.stringify(raw), data));
 });
@@ -102,11 +117,10 @@ test('piercing bolts pass through and hit each enemy once', () => {
   assert.equal(blocked.hp, blocked.maxHp);
 });
 
-test('flash freeze and quick freeze reach a freeze sooner', () => {
+test('flash freeze reaches a freeze sooner', () => {
   const stunAfter = (setup, hits) => { const g = arena(); setup(g); const e = dummy(g), c = { id: 'x', staggerUsed: {}, fusion: false, chillBonus: g.s.run.skillMods.length ? 1 : 0 }; for (let i = 0; i < hits; i++) { g.s.time += 1; g.applyStatus(e, 'ice', c); } return e.stunUntil > g.s.time; };
   assert.equal(stunAfter(() => {}, 2), false); assert.equal(stunAfter(() => {}, 3), true);
   assert.equal(stunAfter(g => { g.s.run.skillMods = ['flashFreeze']; }, 2), true);
-  assert.equal(stunAfter(g => { g.s.run.traits = ['quickFreeze']; }, 2), true);
 });
 
 test('overcurrent chains to two more enemies', () => {
@@ -134,11 +148,13 @@ test('the vortex drifts toward the aim', () => {
   assert.ok(Math.abs(c.x - x - 0.6) < 1e-6);
 });
 
-test('fire traits: more stacks, and basic hits punish burning enemies', () => {
-  const g = arena(); g.s.run.traits = ['emberStacks']; const e = dummy(g), c = { id: 'a', staggerUsed: {} };
-  for (let i = 0; i < 6; i++) { g.s.time += 0.3; g.applyStatus(e, 'fire', c); }
-  assert.equal(e.burnStacks.length, 5);
-  const burn = data.combat.statuses.find(s => s.id === 'burn'); assert.ok(Math.abs(Math.max(...e.burnStacks) - g.s.time - burn.duration - 2) < 1e-9);
+test('fire traits: deeper embers burn twice as hard and longer, and basic hits punish burning enemies', () => {
+  const burnt = traits => { const g = arena(); g.s.run.traits = traits; const e = dummy(g), c = { id: 'a', staggerUsed: {} }; for (let i = 0; i < 6; i++) { g.s.time += 0.3; g.applyStatus(e, 'fire', c); } return { g, e }; };
+  const deep = burnt(['emberStacks']), plain = burnt([]);
+  assert.equal(deep.e.burnStacks.length, 3, 'the stack cap is unchanged');
+  const burn = data.combat.statuses.find(s => s.id === 'burn'); assert.ok(Math.abs(Math.max(...deep.e.burnStacks) - deep.g.s.time - burn.duration - 2) < 1e-9);
+  step(deep.g, 1); step(plain.g, 1);
+  assert.ok(Math.abs((deep.e.maxHp - deep.e.hp) / (plain.e.maxHp - plain.e.hp) - 2) < 1e-6, 'twice the burn');
   const h = arena(); h.s.run.traits = ['burnBrand']; const f = dummy(h), base = h.damageMultiplier(f, true); f.burnStacks = [h.s.time + 2];
   assert.ok(Math.abs(h.damageMultiplier(f, true) - base * 1.15) < 1e-9); assert.equal(h.damageMultiplier(f, false), h.damageMultiplier(dummy(h), false));
 });
@@ -148,9 +164,7 @@ test('cold reap refunds cooldowns on a chilled kill', () => {
   g.hitEnemy(e, 50); assert.equal(g.p.cooldowns.frostBolt, 9);
 });
 
-test('lightning traits: wider discharge, and energy from shocked targets', () => {
-  const g = arena(['lightning', 'wind']); g.s.run.traits = ['arcRange']; const e = dummy(g), near = dummy(g, 11.2, 8); e.statuses.shock = g.s.time + 2; g.triggerShock(e);
-  assert.ok(near.hp < near.maxHp);
+test('lightning traits: energy from shocked targets', () => {
   const h = arena(['lightning', 'wind']); h.s.run.traits = ['staticCharge']; const f = dummy(h); f.statuses.shock = h.s.time + 2; swing(h, 0);
   assert.equal(h.p.energy, 12);
 });
@@ -249,4 +263,25 @@ test('every reward picked on a run is written down in order, with the stop it wa
   g.s.mode = 'reward'; g.s.run.node = 4; g.s.run.rewardChoices = [{ kind: 'level', id: 0 }]; assert.ok(g.chooseReward(0));
   assert.deepEqual(g.s.run.picks.map(p => [p.node, p.kind, p.id]), [[2, 'heal', 'patch'], [4, 'level', 0]]);
   assert.equal(g.s.run.picks[1].element, g.slots[0].element);
+});
+
+test('backflow pushes after the last blast lands, so the blast it pushes with still hits', () => {
+  const g = arena(); g.s.run.skillMods = ['backflow']; const e = dummy(g, 9.8, 8);
+  cast(g, 'exhaustBurst'); step(g, 1);
+  assert.ok(e.maxHp - e.hp >= 54, `all three blasts landed: ${e.maxHp - e.hp}`); assert.ok(e.x > 10.5, 'and it was thrown');
+});
+
+test('wind pressure: the wrench throws a pressed body twice as far and stuns it half again as long', () => {
+  const moved = pressed => { const g = arena(['wind', 'fire']), e = dummy(g); if (pressed) e.statuses.windPressure = g.s.time + 4; swing(g, 0); return e.x - 9; };
+  const dry = moved(false), wet = moved(true);
+  assert.ok(Math.abs(wet / dry - 2) < 0.15, `${wet} vs ${dry}`);
+  const g = arena(['wind', 'fire']), e = dummy(g); e.statuses.windPressure = g.s.time + 4;
+  g.hitEnemy(e, 1, { stagger: 1 }); assert.ok(Math.abs(e.stunUntil - g.s.time - g.config.rules.normalHitStun * 1.5) < 1e-9);
+  g.s.run.traits = ['galeHold']; g.hitEnemy(e, 1, { stagger: 1 }); assert.ok(Math.abs(e.stunUntil - g.s.time - g.config.rules.normalHitStun * 3) < 1e-9);
+});
+
+test('frozen cracks: the wrench does 20% more to a chilled body and 40% more to a frozen one', () => {
+  const g = arena(['ice', 'fire']); g.s.run.traits = ['frostCrack']; const e = dummy(g), plain = g.damageMultiplier(e, true);
+  e.statuses.chill = g.s.time + 3; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.2) < 1e-9);
+  e.frozenUntil = g.s.time + 1; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.4) < 1e-9);
 });

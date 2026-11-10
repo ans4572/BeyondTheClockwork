@@ -1,0 +1,25 @@
+Use case: stylized-concept.
+Create ONE static production game environment background for Beyond the Clockwork, chapter 2 "the Silent Factory": a combat room inside the toy town's factory, where wind-up toy residents marked "defective" are brought to have their thoughts erased and be re-stamped identical. The game is cute and toy-like, the factory is quietly unsettling, never horror.
+Input image 1 is a chapter-1 combat room of the same game: match its rendering EXACTLY: polished richly detailed pixel-art toy materials, navy and brass trim, the SAME quarter-view isometric camera, the SAME pixel density, crisp pixel edges, no depth blur. Input image 2 is version A of THIS SAME ROOM: copy its floor material and colour, wall materials, machine style, light and palette exactly, so both read as the same room. Do NOT copy its layout: this picture shows a different part of the same hall, described below.
+CRITICAL SCALE: input image 1 is at final game scale (1536x1024). After this picture is resized to 1280x1280, doors, crates, lamps, pipes and floor tiles must be the SAME SIZE IN PIXELS as in input image 1. A bigger room means MORE floor and more walls, never bigger objects. Do not zoom in.
+Draw every object at 80% of its size in input image 1.
+Landscape 1:1 (square), OUTPUT 1024x1024 pixels. Opaque full-bleed background.
+FACTORY BASE (shared by every room, keep it subtle): riveted brass trim, painted steel, round toy-like machine shapes with chunky bolts, clean dark outlines. That is the ONLY shared kit. Everything else — floor material, floor colour, wall composition, foreground, light and palette — comes from ROOM IDENTITY below and must be clearly different from the other factory rooms.
+VARIETY RULES (strict):
+- NO doll heads, NO toy faces, NO robot faces, NO eyes on shelves, racks, machines or crates. Shelves hold parts, boxes, tools or materials instead. (Only the erasing line room may show dolls, and only faceless.)
+- At most ONE small smile pictogram in the whole picture (stamping line excepted). No smile faces on crates, banners or machines.
+- At most ONE wind-up key on top of a machine in the whole picture.
+- No row of three matching machines in mint / butter yellow / powder pink. Use the room's own palette only.
+- No glass-cylinder press with pipes along the bottom edge. The bottom edge uses the room's own FOREGROUND.
+- The floor is the room's own material and colour, not blue-grey steel plates (unless the room says so).
+- The back wall is not always symmetrical; follow the room's WALL description.
+SIZE AND SHAPE (same as version A): the EMPTY fighting floor occupies approximately 56% of width and 64% of height of the picture, centered, a tall room taller than wide. One connected open floor. Rich continuous scenery (machines, racks, walls, pipes) fills the outer band on every side.
+EXITS (on the same sides and at the same heights as version A): EXACTLY TWO wide open floor openings, each at least 3 tiles wide, no doors or barriers: one on the LEFT at lower-left where the player enters, one on the RIGHT at upper right where the player leaves. Every other part of the edge is solid wall or machinery. No third exit.
+Combat readability: the open floor has no thin props, clutter, cables, conveyor belts, hazards, puddles or scattered small objects. Calm low-contrast floor plates so characters read clearly. Every wall and machine has a clear solid base line where it meets the floor. The outermost picture edge is scenery, not floor.
+No UI, labels, text, letters, numbers, logos, watermarks, people, toy residents, enemies, player, characters, arrows, grids, debug overlays or animation. Doll heads and toys are inanimate objects only. Signs use pictograms only. Natural floor-plate joints, no tactical grid. One cohesive detailed scene, not a contact sheet. Exact requested 1024x1024 native output if available.
+ROOM IDENTITY — Compression store, B: the crusher side of the same store.
+FLOOR: diamond-pattern steel tread plate, warm grey with faint rust at the edges, hazard chevron stripes only along the walls. Floor shape: tall room, wider at the bottom than at the top.
+WALL: one giant hydraulic crusher frame fills the TOP-RIGHT corner, its jaw closed and still; bale chutes along the TOP wall; a big scrap weighing scale on the LEFT wall; strapped compressed cubes stacked high in the corners.
+FOREGROUND (bottom edge): a row of strapped compressed bales with one gap, and a hazard-striped low barrier.
+LIGHT: dim, rotating orange warning lamps, deep shadows high up.
+PALETTE: rust brown, ochre, gunmetal, hazard yellow.

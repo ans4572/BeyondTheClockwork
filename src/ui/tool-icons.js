@@ -25,7 +25,9 @@ const BODIES = {
 // the drawn bodies above stay for the few marks that have no painted icon yet (home, spark).
 const ART = new Set(['gear', 'coin', 'crown', 'charge', 'lock', 'action-wrench', 'action-dodge',
   ...['wrench-damage', 'max-hp', 'skill-cooldown', 'dodge-cooldown', 'move-speed', 'status-damage', 'crit', 'attack-speed', 'kill-heal', 'armor',
-    'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`)]);
+    'wrench-mod', 'skill-level', 'gear-pouch', 'repair', 'piggy-bank', 'overheat', 'glass-spring'].map(id => `reward-${id}`),
+  // Nasa's oils (PixelLab, 2026-11-08).
+  ...['attack', 'boss', 'health', 'energy', 'spare'].map(id => `potion-${id}`)]);
 // The three HUD buttons (full screen, map, settings) are smooth painted icons on a 24 unit grid, not pixels: brass and
 // cream bodies with a navy outline, one shade and one highlight, in the colours of the painted town and its minimap.
 const N = '#2b3345', BRASS = '#d9a441', LIGHT = '#f3cd6a', SHADE = '#9a6a24', CREAM = '#f6ecd2', FOLD = '#e3cf9f', RED = '#c8463c';

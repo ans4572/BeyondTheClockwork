@@ -172,3 +172,14 @@ test('a painted room waits on a plain dark frame until its picture has loaded, w
   assert.ok(!calls.includes('drawImage') && !calls.includes('clip') && !calls.includes('scenery'));
   assert.deepEqual(calls.filter(name => name === 'fillRect').length, 1);
 });
+
+test('a crate is kept when the bare floor already cannot reach a goal (the coarse grid), and moved when it would close the way', async () => {
+  const { dealHazards } = await import('../src/engine/hazards.js');
+  // The factory gate's second picture: its narrow way to the portal is too fine for the flow grid even with no furniture.
+  const chapter = slice.chapters.find(c => c.id === 'silent-factory'), room = chapter.rooms[0];
+  const rules = { ...slice.hazards, ...chapter.hazards, counts: { ...slice.hazards.counts, ...chapter.hazards.counts, ...room.hazardCounts } };
+  for (const variant of [0, 1]) {
+    const place = roomPlace(maps, room.id, variant);
+    for (let seed = 1; seed <= 12; seed++) assert.equal(dealHazards(place, rules, seed * 7919, Infinity, 0.9, 0).filter(h => h.kind === 'crate').length, 2, `picture ${variant} seed ${seed}`);
+  }
+});

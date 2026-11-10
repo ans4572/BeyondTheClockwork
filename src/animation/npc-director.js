@@ -122,7 +122,10 @@ export class NpcDirector {
     if (greeting && this.greetedAt === null && (!lookAt || Math.hypot(lookAt.x - x, lookAt.y - y) <= GREET_UNITS)) this.greetedAt = this.elapsed;
     const greetedMs = this.greetedAt === null ? Infinity : elapsedMs - this.greetedAt * 1000;
     if (greeting && greetedMs < greeting.durationMs) return { x, y, label, pose: { action: `${character}-greeting`, direction, frame: frameAtProgress(greeting, greetedMs / greeting.durationMs) } };
-    const breathing = idle.loop && !reducedMotion, frame = breathing ? frameAtProgress(idle, (elapsedMs % idle.durationMs) / idle.durationMs) : 0;
+    // Each stander starts its loop at its own point (from where it stands), so a room of them never moves in step:
+    // the chapter 2 rest stop's workers sip, doze, stretch and chat each in their own time (2026-11-09).
+    const offset = (((Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1 + 1) % 1) * (idle.durationMs || 0);
+    const breathing = idle.loop && !reducedMotion, frame = breathing ? frameAtProgress(idle, ((elapsedMs + offset) % idle.durationMs) / idle.durationMs) : 0;
     return { x, y, label, pose: { action: `${character}-idle`, direction, frame } };
   }
   pose(resident, stopped, reducedMotion) {

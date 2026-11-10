@@ -31,7 +31,7 @@
 <script>
 // Phones keep this page for up to ten minutes. It asks the server for its own latest copy and, if that copy is newer,
 // reloads under a fresh address so the new list shows at once. Bump PAGE_VERSION whenever the list changes.
-const PAGE_VERSION = '2026-11-04-all-coded';
+const PAGE_VERSION = '2026-11-09-mob2';
 fetch(`${location.pathname}?check=${Date.now()}`, { cache: 'no-store' }).then(r => r.text()).then(text => {
   const latest = text.match(/PAGE_VERSION = '([^']+)'/)?.[1];
   if (latest && latest !== PAGE_VERSION && !location.search.includes(latest)) location.replace(`${location.pathname}?v=${latest}`);
@@ -64,6 +64,22 @@ const GROUPS = [
     ['steamShatter', '불+얼음 · 증기 파쇄'], ['arcFurnace', '불+전기 · 아크 용광로'], ['fireCyclone', '불+바람 · 화염 회오리'],
     ['magneticIceClamp', '얼음+전기 · 자기 얼음 집게'], ['frostCrosscut', '얼음+바람 · 서리 교차 베기'], ['stormFloat', '전기+바람 · 폭풍 부유체']
   ].map(([id, name]) => [id, name, '이 융합을 쓸 때'])],
+  ['H', '물·소리 속성 (2026-11-09 시안에서 고름)', [
+    ['ringPalm', '소리 · 울림 손바닥', '기술을 쓸 때'], ['roar', '소리 · 굉음 모으기', '굉음을 누를 때'], ['roarRelease', '소리 · 굉음', '굉음을 놓을 때'], ['resonanceBurst', '소리 · 공명 붕괴', '공명이 가득 찬 적이 터질 때'],
+    ['waterCannon', '물 · 물대포', '기술을 쓸 때'], ['hydroJet', '물 · 고압 분사', '기술을 쓸 때'], ['splash', '물 · 물보라', '물폭탄·물줄기·물튀김이 적에게 닿을 때'],
+    ['overheatResonance', '불+소리 · 과열 공진', '이 융합을 쓸 때'], ['steamVeil', '불+물 · 과열 증기막', '이 융합을 쓸 때'], ['highNoteShatter', '얼음+소리 · 고음 파쇄', '이 융합을 쓸 때'], ['iceSheet', '얼음+물 · 빙판', '이 융합을 쓸 때'],
+    ['resonantBolt', '전기+소리 · 공명 낙뢰', '이 융합을 쓸 때'], ['shockPool', '전기+물 · 감전 웅덩이', '이 융합을 쓸 때'], ['echoGust', '바람+소리 · 메아리 돌풍', '이 융합을 쓸 때'], ['waterspout', '바람+물 · 물기둥 회오리', '이 융합을 쓸 때'],
+    ['surfaceResonance', '소리+물 · 수면 공명', '이 융합을 쓸 때'], ['surfaceResonanceHit', '소리+물 · 수면 공명 물막 울림', '물막 위 적이 맞을 때마다']
+  ]],
+  ['I', '2장 보스 (2026-11-09 시안에서 고름)', [
+    ['boss-irisLaser', '아이리스 · 탐조등 레이저', '레이저를 쏠 때, 분신이 함께 쏠 때'], ['boss-decoys', '아이리스 · 분신 일제 사격', '진짜를 못 찾았을 때'], ['boss-stampLand', '아이리스 · 불합격 도장', '도장이 하나 떨어질 때마다'],
+    ['boss-verdict', '아이리스 · 검수 판정', '판정이 내려올 때'], ['boss-tapeMeasure', '아이리스 · 줄자', '줄자를 쏠 때'], ['boss-decoysAppear', '아이리스 · 분신 등장', '셋이 나타날 때'],
+    ['boss-crossLaser', '아이리스 · 십자 레이저', '네 갈래 레이저가 돌 때'], ['boss-gridBlow', '아이리스 · 동심원 검사', '안전 조각 밖이 터질 때'], ['boss-mirrorTurn', '아이리스 · 거울판 돌리기', '렌치로 45도 돌릴 때'], ['boss-mirrorLit', '아이리스 · 빛 되돌림', '거울판이 광선을 되돌릴 때'],
+    ['boss-plateDrop', '프레스 · 압착판 낙하', '압착판이 떨어질 때'], ['boss-armSlam', '프레스 · 한 팔 내려찍기'], ['boss-lineShift', '프레스 · 라인 방향 바꾸기'], ['boss-callGuards', '프레스 · 압축 경비 호출'],
+    ['boss-craneDrop', '프레스 · 크레인 집게', '그림자가 멈추고 집게가 내려올 때'], ['boss-twoRows', '프레스 · 두 줄 압착'], ['boss-wallSqueeze', '프레스 · 양벽 압축'], ['boss-rhythmBeat', '프레스 · 박자 압착', '박자마다'],
+    ['boss-twinSlam', '프레스 · 쌍둥이 피스톤', '피스톤이 내려찍을 때마다'], ['boss-steamBurst', '프레스 · 증기 분출'], ['boss-finalAlarm', '프레스 · 마무리 압축 경보', '마지막 1초'], ['boss-finalPress', '프레스 · 마무리 압축', '내려찍을 때'],
+    ['boss-moldOk', '프레스 · 규격 틀 일치'], ['boss-moldNo', '프레스 · 규격 틀 불일치']
+  ].map(([id, name, when]) => [id, name, when || '패턴이 나갈 때'])],
   ['D', '적', [
     ['tell', '공격 예고', '일반 몹이 공격 준비를 시작할 때 (모든 몹 공통)'],
     ['guard', '경비 · 휘두르기', '목각 경비가 공격할 때'],
@@ -80,6 +96,17 @@ const GROUPS = [
     ['pop', '깜짝 상자 · 튀어나옴', '깜짝 상자가 튀어나올 때'],
     ['summon', '웨이브 등장', '다음 무리가 나타날 때'],
     ['kill', '처치', '적을 쓰러뜨렸을 때']
+  ]],
+  ['J', '2장 적 (2026-11-09)', [
+    ['clampCarrier', '집게 운반공 · 집게', '집게를 뻗을 때'],
+    ['stampInspector', '도장 검사원 · 도장 찍기', '뛰어올라 내려앉을 때'],
+    ['pressGuard', '압축 경비 · 돌진', '돌진할 때'],
+    ['pressCaptain', '압축 경비대장 · 돌진', '돌진할 때 (두 번)'],
+    ['lensInspector', '렌즈 검수원 · 빔', '빔을 쏠 때'],
+    ['riveter', '리벳 사수 · 리벳 발사', '리벳 세 발을 쏠 때'],
+    ['tapePacker', '테이프 포장공 · 돌진', '테이프를 깔며 돌진할 때'],
+    ['oiler', '기름칠공 · 기름통 던지기', '기름통을 던질 때'],
+    ['partsSupplier', '부품 보급공 · 놋쇠판 보급', '동료에게 놋쇠판을 줄 때']
   ]],
   ['E', '보스 · 마을', [
     ['alarm', '로코 · 경보', '로코의 경보 패턴'],

@@ -62,7 +62,12 @@
     "R12-walk",
     "moru-idle",
     "bolt-idle",
-    "bolt-greeting"
+    "bolt-greeting",
+    "nasa-idle",
+    "W1-idle",
+    "W2-idle",
+    "W3-idle",
+    "W4-idle"
   ],
   "clips": {
     "C1-idle/east": {
@@ -9262,6 +9267,1046 @@
         91
       ],
       "bodyHeight": 75
+    },
+    "nasa-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        46,
+        85
+      ],
+      "bodyHeight": 78
+    },
+    "nasa-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-south-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        46,
+        80
+      ],
+      "bodyHeight": 74
+    },
+    "nasa-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-south.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        48,
+        80
+      ],
+      "bodyHeight": 69
+    },
+    "nasa-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-south-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        55,
+        81
+      ],
+      "bodyHeight": 73
+    },
+    "nasa-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        47,
+        82
+      ],
+      "bodyHeight": 72
+    },
+    "nasa-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-north-west.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        44,
+        82
+      ],
+      "bodyHeight": 73
+    },
+    "nasa-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-north.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        48,
+        79
+      ],
+      "bodyHeight": 71
+    },
+    "nasa-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/nasa-idle-north-east.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 4,
+      "frameCount": 4,
+      "frameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "durationMs": 1000,
+      "loop": true,
+      "scale": 0.85,
+      "anchor": [
+        42,
+        78
+      ],
+      "bodyHeight": 71
+    },
+    "W1-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        43,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W1-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W1-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1800,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "durationMs": 3000,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        52,
+        84
+      ],
+      "bodyHeight": 73
+    },
+    "W2-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        44,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W2-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W2-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1400,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220,
+        220
+      ],
+      "durationMs": 3160,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        51,
+        85
+      ],
+      "bodyHeight": 68
+    },
+    "W3-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        42,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        53,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        53,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        53,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W3-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W3-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        2200,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140
+      ],
+      "durationMs": 3320,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        53,
+        84
+      ],
+      "bodyHeight": 75
+    },
+    "W4-idle/east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/south-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/south": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/north-east": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-right-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        48,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/south-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/north-west": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 78
+    },
+    "W4-idle/north": {
+      "sheet": "/art/animations/npc/pixellab/sheets/W4-idle-left-v2.webp",
+      "provider": "pixellab",
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "columns": 9,
+      "frameCount": 9,
+      "frameDurationsMs": [
+        1600,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130,
+        130
+      ],
+      "durationMs": 2640,
+      "loop": true,
+      "scale": 1,
+      "anchor": [
+        47,
+        84
+      ],
+      "bodyHeight": 78
     }
   }
 }

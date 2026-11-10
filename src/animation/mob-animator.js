@@ -33,7 +33,8 @@ export class MobAnimator {
     track.x = enemy.x; track.y = enemy.y;
     track.stillFor = moved > 0 ? 0 : track.stillFor + delta;
     if (enemy.flashUntil !== track.flashUntil) { track.flashUntil = enemy.flashUntil; track.hitAt = time; }
-    if (enemy.tell && track.attackAt === null) track.attackAt = enemy.tell.started;
+    // A boss's cast-like patterns play its cast clip when it has one (enemy.tellPose, src/engine/factory-bosses.js).
+    if (enemy.tell && track.attackAt === null) { track.attackAt = enemy.tell.started; track.pose = enemy.tellPose && this.clip(enemy, enemy.tellPose, 'south') ? enemy.tellPose : 'attack'; }
     track.direction = nearestDirection(enemy.dash?.angle ?? enemy.tell?.angle ?? enemy.facing, track.direction, HYSTERESIS);
     const direction = track.direction, attack = this.attack(time, enemy, track, moved);
     if (attack) return attack;
@@ -48,10 +49,10 @@ export class MobAnimator {
   }
   attack(time, enemy, track, moved) {
     if (track.attackAt === null) return null;
-    const clip = this.clip(enemy, 'attack', track.direction), elapsed = (time - track.attackAt) * 1000;
+    const pose = track.pose || 'attack', clip = this.clip(enemy, pose, track.direction), elapsed = (time - track.attackAt) * 1000;
     const walkingOff = moved > 0 && !enemy.tell && !enemy.dash && elapsed > clip.lastEventMs + ATTACK_SETTLE_MS;
     if (elapsed >= clip.durationMs || walkingOff) { track.attackAt = null; return null; }
-    return { action: `${enemy.type}-attack`, direction: track.direction, frame: frameAtProgress(clip, elapsed / clip.durationMs) };
+    return { action: `${enemy.type}-${pose}`, direction: track.direction, frame: frameAtProgress(clip, elapsed / clip.durationMs) };
   }
   dying(time, enemy, track) {
     const clip = this.clip(enemy, 'death', track.direction);

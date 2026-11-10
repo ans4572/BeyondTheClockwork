@@ -20,3 +20,10 @@ test('a save from before the mouse way moves with the keys, and odd values are r
   const odd = reload(s => { s.controls = 'joystick'; s.mouseBindings = ['KeyQ']; });
   assert.equal(odd.controls, 'keys'); assert.deepEqual(odd.mouseBindings, {});
 });
+
+test('the arrow-key way (arrows, Ctrl, Shift) is kept with its own changed keys; a broken list is emptied', () => {
+  const kept = reload(s => { s.controls = 'arrows'; s.arrowBindings = { attack: 'ControlRight' }; });
+  assert.equal(kept.controls, 'arrows'); assert.deepEqual(kept.arrowBindings, { attack: 'ControlRight' });
+  const odd = reload(s => { s.controls = 'arrows'; s.arrowBindings = 'Ctrl'; });
+  assert.equal(odd.controls, 'arrows'); assert.deepEqual(odd.arrowBindings, {});
+});

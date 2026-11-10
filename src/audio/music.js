@@ -4,12 +4,29 @@ import { assetUrl } from '../animation/sprite-library.js';
 
 /** Abstraction, Music Loop Bundle (CC0). volume evens out how loud each recording is. */
 export const MUSIC = {
-  title: { volume: 0.55 },
-  town: { volume: 0.55 },
   street: { volume: 0.5 },
-  roco: { volume: 0.5 },
-  dusk: { volume: 0.5 },
-  brass: { volume: 0.5 }
+  // The title is the original chiptune again (user's choice, 2026-11-09): it measures 5.7 dB louder than title-v2, so 0.29.
+  title: { volume: 0.29 },
+  // Orden's theme (2026-11-09, art/audio/bgm/orden.prompt.md): the clock tower summit after each chapter's last boss.
+  // 40 bars of 3/4 at 76 BPM; its last bar is a held note ringing out, so it loops whole.
+  orden: { volume: 0.55 },
+  // Chapter 1's piano versions (2026-11-09, art/audio/bgm/codex-ch1-bgm-piano.task.md, see art/audio/CREDITS.md): the village,
+  // the night market and dusk, Roco, Brass. They are mixed about 6 dB quieter than the old loops, like chapter 2's.
+  'town-v2': { volume: 0.55 },
+  'dusk-v2': { volume: 0.5 },
+  'roco-v2': { volume: 0.5 },
+  'brass-v2': { volume: 0.5 },
+  // Chapter 2, the Silent Factory (2026-11-08, see art/audio/CREDITS.md): the rooms, the rest stop, Iris, Press.
+  // factory-v2 ends in a 5-second fade to silence, so it is looped by hand: from 171.56 s (bar 80 at 112 BPM, the
+  // eighth-note grid starting 0.132 s in) back to 0.132 s, a whole number of bars, before the fade begins (2026-11-09).
+  'factory-v2': { volume: 0.5, loop: [0.132, 171.56] },
+  'factory-rest-v2': { volume: 0.5 },
+  'iris-v2': { volume: 0.5 },
+  'press-v2': { volume: 0.5 }
+};
+/** A chapter's own songs; a chapter missing here plays chapter 1's. */
+const CHAPTER_MUSIC = {
+  'silent-factory': { rooms: 'factory-v2', rest: 'factory-rest-v2', miniboss: 'iris-v2', regionBoss: 'press-v2' }
 };
 // Songs cross-fade over a second; a song that ends into silence stops almost at once.
 const FADE_SECONDS = 1, STOP_SECONDS = 0.25;
@@ -17,17 +34,25 @@ const FADE_SECONDS = 1, STOP_SECONDS = 0.25;
 /**
  * Which track belongs to what is on screen, or null for silence.
  * The run's first half (before the night-market rest stop) is bright; from the rest stop on it is dusk.
+ * Chapter 2 has one song for its fighting rooms, one for its rest stop and one for each boss.
  */
-export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex }) {
+export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex, chapter, tower = false, talking = false }) {
   if (onTitle) return 'title';
+  // The clock tower summit (a chapter's ending scene, Orden and Belgard) has Orden's own theme.
+  if (tower) return 'orden';
+  // The last boss's words once the chapter is won keep his fight's song (2026-11-09: the clear screen's title song came in
+  // under them); the tower scene then has Orden's, the clear screen the title song.
+  if (mode === 'complete' && talking) return CHAPTER_MUSIC[chapter]?.regionBoss || 'brass-v2';
   // Once the title is left the song stops: the stamp, the scrapyard and the first lesson are quiet.
   if (['opening', 'intro', 'returned', 'introDeath'].includes(mode)) return null;
-  if (['hub', 'registration', 'practice'].includes(mode)) return 'town';
+  if (['hub', 'registration', 'practice'].includes(mode)) return 'town-v2';
   if (mode === 'complete') return 'title';
-  if (roomKind === 'miniboss') return 'roco';
-  if (roomKind === 'regionBoss') return 'brass';
+  const own = CHAPTER_MUSIC[chapter];
+  if (own) { if (roomIndex === undefined || roomIndex < 0) return null; return roomKind === 'miniboss' ? own.miniboss : roomKind === 'regionBoss' ? own.regionBoss : roomKind === 'shop' ? own.rest : own.rooms; }
+  if (roomKind === 'miniboss') return 'roco-v2';
+  if (roomKind === 'regionBoss') return 'brass-v2';
   if (roomIndex === undefined || roomIndex < 0) return null;
-  return roomIndex >= restIndex ? 'dusk' : 'street';
+  return roomIndex >= restIndex ? 'dusk-v2' : 'street';
 }
 
 export class MusicPlayer {
@@ -57,7 +82,10 @@ export class MusicPlayer {
     this.elements ??= new Map();
     if (!this.elements.has(name)) {
       // While its download is under way a song waits for it instead of streaming the same file a second time.
-      const pending = this.files?.has(name) && !this.local?.get(name), element = pending ? new Audio() : new Audio(this.local?.get(name) || assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element); }
+      const pending = this.files?.has(name) && !this.local?.get(name), element = pending ? new Audio() : new Audio(this.local?.get(name) || assetUrl(`/art/audio/bgm/${name}.ogg`)); element.loop = true; element.preload = 'metadata'; this.elements.set(name, element);
+      // Some phones let a song routed through Web Audio end despite `loop`: the wanted song starts over by hand.
+      element.onended = () => { if (this.current === name) { element.currentTime = MUSIC[name].loop?.[0] || 0; element.play().catch(() => {}); } };
+    }
     return this.elements.get(name);
   }
   track(audio, name) {
@@ -84,6 +112,8 @@ export class MusicPlayer {
       element.play().then(() => { if (name !== this.current) element.pause(); }).catch(() => { this.unlocked = false; }).finally(() => { if (name !== this.current) element.pause(); element.muted = false; });
     }
   }
+  /** Inside a tap: the wanted song, if a phone refused to start it outside one, starts now. */
+  kick() { const track = this.current && this.tracks.get(this.current); if (track?.element.paused) track.element.play().catch(() => {}); }
   /**
    * Call every frame with the wanted track (or null) and the overall music volume (0..1). `force` starts it even while
    * the context is still waking up, for the call made inside the tap that unlocks sound.
@@ -124,6 +154,9 @@ export class MusicPlayer {
     if (name && now >= (this.fadeUntil || 0)) this.tracks.get(name).gain.gain.setTargetAtTime(MUSIC[name].volume * volume, now, 0.15);
     // A phone stops music when the app goes to the background; it picks up again by itself on return.
     const playing = name && this.tracks.get(name);
+    // A song looped by hand jumps back a whole number of bars, carrying over how far past its end it ran.
+    const loop = name && MUSIC[name].loop;
+    if (loop && playing && !playing.element.paused && playing.element.currentTime >= loop[1]) playing.element.currentTime = loop[0] + (playing.element.currentTime - loop[1]);
     if (playing?.element.paused && !this.retrying) { this.retrying = true; playing.element.play().catch(() => {}).finally(() => { this.retrying = false; }); }
   }
 }

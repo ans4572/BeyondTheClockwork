@@ -24,6 +24,24 @@ export function encodeSave(state) { return JSON.stringify({ version: 1, savedAt:
 const REMOVED_STATS = { dodgeCooldown: { baseCost: 10, costStep: 5 } };
 /** Run rewards that were removed: a run saved holding one simply loses it (it only shortened the dodge's wait). */
 const REMOVED_REWARDS = { mod: ['windupRecoil'], upgrade: ['dodgeCooldownReduction'] };
+/**
+ * Element traits cut on 2026-11-08 (two an element instead of three), with the element and tier each had. A saved run
+ * that holds one gets another trait of the same element in its place (see swapCutTrait).
+ */
+const CUT_TRAITS = {
+  emberSpread: { element: 'fire', tier: 'rare' }, quickFreeze: { element: 'ice', tier: 'special' }, arcRange: { element: 'lightning', tier: 'rare' },
+  dodgeGust: { element: 'wind', tier: 'rare' }, chainCollapse: { element: 'sound', tier: 'rare' }, drenchSpread: { element: 'water', tier: 'rare' }
+};
+/**
+ * The trait that takes a cut one's place: one of the same element the run does not hold yet (nor is `taken`), the same
+ * tier first. Null when the run already holds every trait of that element; the cut one is then simply dropped.
+ */
+function swapCutTrait(id, held, data, taken = []) {
+  const cut = CUT_TRAITS[id];
+  if (!cut) return id;
+  const free = data.slice.elementTraits.filter(t => t.element === cut.element && !held.includes(t.id) && !taken.includes(t.id));
+  return (free.find(t => t.tier === cut.tier) || free[0])?.id || null;
+}
 const LEGACY_ROW_COSTS = { chassis: [20, 35, 55, 80, 110], strike: [20, 35, 55, 80, 110], repair: [30, 70, 130], safety: [120, 300] };
 
 export function decodeSave(raw, data) {
@@ -71,8 +89,9 @@ export function decodeSave(raw, data) {
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
   // How F2 is moved: the keys (WASD) or the mouse (right click). Older saves move with the keys; each way keeps its own keys.
   const settings = s.profile.settings;
-  settings.controls = settings.controls === 'mouse' ? 'mouse' : 'keys';
-  if (!settings.mouseBindings || typeof settings.mouseBindings !== 'object' || Array.isArray(settings.mouseBindings)) settings.mouseBindings = {};
+  // The arrow-key way (arrows, Ctrl, Shift; no mouse) came later and keeps its own changed keys too.
+  settings.controls = ['mouse', 'arrows'].includes(settings.controls) ? settings.controls : 'keys';
+  for (const key of ['mouseBindings', 'arrowBindings']) if (!settings[key] || typeof settings[key] !== 'object' || Array.isArray(settings[key])) settings[key] = {};
   // Saves from before chapters start in chapter 1.
   if (!Number.isInteger(s.profile.chapter) || s.profile.chapter < 1) s.profile.chapter = 1;
   // Older saves start their play clock at zero; a broken value is reset rather than refusing the save.
@@ -80,6 +99,10 @@ export function decodeSave(raw, data) {
   // The ledger name: older saves have none (called F2); anything odd in it is cleaned rather than refused.
   s.profile.nickname = cleanNickname(s.profile.nickname ?? '');
   s.profile.loadout ??= [];
+  // Nasa's bottle waiting for the next expedition (slice.json potions): none in older saves, an unknown one dropped.
+  const oils = (data.slice.potions?.list || []).map(p => p.id);
+  if (!oils.includes(s.profile.potion)) s.profile.potion = null;
+  if (s.run && s.run.potion !== undefined && !oils.includes(s.run.potion)) delete s.run.potion;
   s.profile.ownedElements ??= [...s.profile.loadout];
   if (!Array.isArray(s.profile.ownedElements) || s.profile.ownedElements.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 부품이 올바르지 않습니다.');
   if (!Array.isArray(s.profile.loadout) || s.profile.loadout.length > 2 || s.profile.loadout.some(id => !data.slice.elements.includes(id))) fail('저장된 속성 선택이 올바르지 않습니다.');
@@ -101,6 +124,23 @@ export function decodeSave(raw, data) {
     if (new Set(run.slots.map(slot => slot.element)).size !== run.slots.length || run.slots.some(slot => !data.slice.elements.includes(slot.element) || !integerIn(slot.level, 1, data.combat.balance.skillMaxLevel) || !Object.hasOwn(data.combat.balance.rarityDamage, slot.rarity))) fail('저장된 속성 슬롯이 올바르지 않습니다.');
     if (!Array.isArray(run.plan) || run.plan.length !== rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');
     if (Array.isArray(run.mods)) run.mods = run.mods.filter(id => !REMOVED_REWARDS.mod.includes(id));
+    // A cut trait the run had picked becomes another of the same element; its line in the run's picks follows it.
+    if (Array.isArray(run.traits)) {
+      const kept = run.traits.filter(id => !CUT_TRAITS[id]), swaps = {};
+      for (const id of run.traits.filter(id => CUT_TRAITS[id])) { const next = swapCutTrait(id, kept, data); swaps[id] = next; if (next) kept.push(next); }
+      run.traits = kept;
+      if (Array.isArray(run.picks)) run.picks = run.picks.filter(pick => pick?.kind !== 'trait' || swaps[pick.id] !== null).map(pick => (pick?.kind === 'trait' && swaps[pick.id] ? { ...pick, id: swaps[pick.id] } : pick));
+    }
+    // A cut trait on the reward table becomes another card of its element that is neither held nor already on the table.
+    if (Array.isArray(run.rewardChoices) && Array.isArray(run.traits)) {
+      const onTable = run.rewardChoices.filter(r => r?.kind === 'trait' && !CUT_TRAITS[r.id]).map(r => r.id);
+      run.rewardChoices = run.rewardChoices.map(reward => {
+        if (reward?.kind !== 'trait' || !CUT_TRAITS[reward.id]) return reward;
+        const next = swapCutTrait(reward.id, run.traits, data, onTable);
+        if (next) onTable.push(next);
+        return next ? { ...reward, id: next } : null;
+      }).filter(Boolean);
+    }
     if (run.upgrades) for (const id of REMOVED_REWARDS.upgrade) delete run.upgrades[id];
     if (Array.isArray(run.rewardChoices)) run.rewardChoices = run.rewardChoices.filter(reward => !REMOVED_REWARDS[reward.kind]?.includes(reward.id));
     if (!validNumber(run.coins) || !validNumber(run.elapsed) || !Array.isArray(run.clears) || !Array.isArray(run.shopBought) || !Array.isArray(run.mods) || !run.upgrades || !Array.isArray(run.rewardChoices)) fail('저장된 원정 보상이 올바르지 않습니다.');

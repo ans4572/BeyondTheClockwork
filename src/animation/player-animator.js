@@ -7,6 +7,8 @@ const MOTION_GAP_SECONDS = 0.05, ROOM_CHANGE_UNITS = 2;
 // Casting never locks movement; walking ends the body clip only after the skill's peak has shown.
 const CAST_SETTLE_MS = 500;
 const LIE_STILL_SHARE = 0.4;
+// 고압 분사: while the stream runs, the cast body stays on this frame, the left hand held out (the stream starts there).
+export const PLAYER_HELD_FRAME = 6;
 
 /** Nearest of the eight directions; `hysteresis` radians keeps the current one near a boundary. */
 export function nearestDirection(angle, current = null, hysteresis = 0) {
@@ -47,7 +49,9 @@ export class PlayerAnimator {
     this.locomotion.update(delta, this.axis, speed);
   }
   cast(game) {
-    const { s, p } = game, last = p.lastCast, action = last && this.library.data.castActions?.[last.skillId];
+    const { s, p } = game, actions = this.library.data.castActions || {}, jet = s.casts.find(k => k.shape === 'jet');
+    if (jet && actions[jet.skillId]) { this.facing = nearestDirection(jet.angle); return { action: actions[jet.skillId], direction: this.facing, frame: PLAYER_HELD_FRAME }; }
+    const last = p.lastCast, action = last && actions[last.skillId];
     if (!action) return null;
     const direction = nearestDirection(last.angle), clip = this.library.clip(action, direction), elapsed = (s.time - last.at) * 1000;
     if (!clip || elapsed >= clip.durationMs) return null;
