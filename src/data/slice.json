@@ -10,9 +10,7 @@
     "water"
   ],
   "elementUnlocks": {
-    "note": "Elements that are not on Moru's shelf from the start. after: the chapter that must be beaten first (the local test server's unlock switch skips it). preview: still being made, shown only where chapter previews are on (the local dev server), like chapters[].preview.",
-    "sound": { "after": "smile-street" },
-    "water": { "after": "smile-street" }
+    "note": "Elements that are not on Moru's shelf from the start. after: the chapter that must be beaten first (the local test server's unlock switch skips it). preview: still being made, shown only where chapter previews are on (the local dev server), like chapters[].preview."
   },
   "bosses": [
     "collectorRoco",
