@@ -440,3 +440,52 @@ body.cramped .panel.difficulty .rec-els .rec-el { width: 18px; height: 18px; }
 body.touch .panel.element-panel .element-card .pick { min-height: 28px; padding: 2px 6px; font-size: 12px; line-height: 1.2; }
 body.cramped .panel.element-panel .reward-grid.element-grid { gap: 6px; }
 body.cramped .panel.element-panel > .actions { margin-top: 6px; }
+
+/* ---- UI review fixes (2026-11-10) ---- */
+/* 1. While someone talks, the thumb buttons step aside: they sat over the speech box and F2's portrait. */
+body.talking #touch .touch-pad, body.talking #touch .touch-zone { visibility: hidden; }
+/* 2. F2's card on a phone: the face goes beside the name, so the parts and the fusion below it are not cut off. */
+body.cramped .f2-card { grid-template-columns: 170px 1fr; gap: 10px; }
+body.cramped .f2-who { display: grid; grid-template-columns: 56px 1fr; column-gap: 8px; align-items: center; padding: 8px; text-align: left; }
+body.cramped .f2-face { grid-row: 1 / span 4; width: 56px; height: 56px; margin: 0; background-position: -28px -14px; background-size: 448px 224px; }
+body.cramped .f2-who b { font-size: 14px; }
+body.cramped .f2-who small { font-size: 11px; margin: 0; }
+body.cramped .f2-hp { margin: 4px 0 2px; }
+body.cramped .f2-loadout { grid-column: 1 / -1; margin-top: 6px; line-height: 1.5; }
+body.cramped .f2-row small { display: none; }
+body.cramped .f2-row { padding: 2px 0; }
+/* 3. A phone keeps the last tapped spot as "hovered", so the button that came up under the finger looked picked (yellow). */
+body.touch .panel button:hover:not(:disabled) { background: var(--paper); }
+body.touch .panel button.primary:hover:not(:disabled) { background: var(--ink); }
+body.touch .panel summary:hover { background: transparent; }
+body.touch .panel .cs-card:hover:not(:disabled) { background: var(--paper-low); }
+/* 4. Redrawing a reward card is the second choice: a quiet text button under the main "선택". */
+.panel .reward-card .reroll-one { box-shadow: none; background: transparent; color: var(--label); text-decoration: underline; text-underline-offset: 3px; font-weight: 700; }
+.panel .reward-card .reroll-one:hover:not(:disabled) { background: transparent; color: var(--ink); }
+body.touch .panel .reward-card .reroll-one { min-height: 30px; }
+/* 5. Moru's tuning board on a landscape phone: two columns, so all twelve stats show at once. */
+body.cramped .panel:has(.stat-list) { width: min(860px, 100%); }
+body.cramped .stat-list { display: block; columns: 2; column-gap: 18px; overflow-y: visible; flex: none; background: none; }
+body.cramped .stat-list > * { break-inside: avoid; }
+body.cramped .stat-group { margin: 4px 0 0; break-after: avoid; }
+body.cramped .stat-row { grid-template-columns: 102px 30px 1fr 84px 46px; gap: 5px; padding: 1px 2px; }
+body.cramped .stat-row strong { font-size: 11.5px; letter-spacing: -0.3px; overflow: hidden; text-overflow: ellipsis; }
+body.cramped .stat-value { font-size: 11px; }
+body.touch.cramped .panel .stat-row button { min-height: 26px; padding: 1px 4px; }
+body.cramped .panel p.stat-hint { display: none; }
+/* 6. The HUD bars read on a dark empty track (the light label sat on a light track and could not be read). */
+.hud-bar { background: #4a4538; }
+/* 7. The map: the popup narrows to the painting (main.js fitAtlas sets its width), and the stop line reads in ink. */
+.panel.atlas-panel { max-width: 100%; }
+.atlas-detail em { color: var(--ink); font-size: 13px; }
+/* 8. Codex tags and lines a step larger on a touch screen. */
+body.touch .tag { font-size: 12px; padding: 2px 6px; }
+body.touch .panel .codex-move p { font-size: 13px; }
+body.touch .codex-move h4 small { font-size: 12px; }
+/* 9. The device link tab keeps its two short explanations on a phone (they say what the buttons do). */
+body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4px 0; }
+/* 10. A phone wider than the 1.75 picture: the picture keeps to the left and the thumb buttons get the spare width on the
+   right, instead of a black bar on each side with the buttons over the game. */
+@media (min-aspect-ratio: 2/1) {
+  body.touch #app { place-items: center start; padding-left: env(safe-area-inset-left); }
+}

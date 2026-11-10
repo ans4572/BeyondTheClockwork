@@ -180,7 +180,7 @@ try {
     $('overlay').style.zoom = zoom;
     document.body.classList.toggle('cramped', document.documentElement.clientHeight / zoom < CRAMPED_SHEET_HEIGHT);
   };
-  addEventListener('resize', fitHud); document.addEventListener('fullscreenchange', fitHud); fitHud();
+  addEventListener('resize', () => { fitHud(); fitAtlas(); }); document.addEventListener('fullscreenchange', fitHud); fitHud();
   const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
   // The face in the corner opens F2 정보 (Moru points it out once the first part is fitted).
   $('hud-face').addEventListener('click', () => { if (!saveBlocked && !onTitle && !screen && game.s.profile.registered) { openAudio(); pause('stats'); } });
@@ -241,10 +241,10 @@ try {
   /** Runs a script, with any side question it offers, and resolves with the final choice. */
   async function talk(name) {
     const { scripts } = data.dialogue;
-    screen = 'talk'; clearInput(); $('hud').classList.add('talking'); renderOverlay(true);
+    screen = 'talk'; clearInput(); $('hud').classList.add('talking'); document.body.classList.add('talking'); renderOverlay(true);
     let choice = await talkBox.play(scripts[name]);
     while (scripts[choice]) { await talkBox.play(scripts[choice]); choice = await talkBox.play(scripts[name]); }
-    $('hud').classList.remove('talking'); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
+    $('hud').classList.remove('talking'); document.body.classList.remove('talking'); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
     return choice;
   }
   async function talkToNpc(npc) {
@@ -671,8 +671,8 @@ try {
     const t = transfer, until = t.expiresAt ? new Date(t.expiresAt) : null;
     const made = t.code ? `<p class="transfer-code" aria-label="이동 코드">${formatCode(t.code)}</p><p class="notice">다른 기기에서 환경설정 → 이 코드를 입력하세요. ${until ? `${until.getHours()}:${String(until.getMinutes()).padStart(2, '0')}까지(5분)` : '5분 동안'} 쓸 수 있고, 한 번 불러오면 사라집니다.</p><div class="actions">${button('코드 복사', 'transfer-copy')}</div>` : '';
     const clock = at => { const d = at && new Date(at); return d && !Number.isNaN(d.getTime()) ? `${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}` : '아직 없음'; };
-    const sync = `<p class="notice">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}마을에 들어갈 때마다 서버에 저장되고, 연결된 기기에서 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
-    return `${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice">다른 기기를 연결하려면 코드를 만들어 그 기기에서 입력하세요. 한 번만 하면 됩니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
+    const sync = `<p class="notice keep">${link ? `<b>서버 저장</b> · 마지막 저장 ${clock(link.at)}<br>` : ''}마을에 들어갈 때마다 서버에 저장되고, 연결된 기기에서 열면 최신 진행이 이어집니다.</p><div class="actions">${button(syncBusy ? '저장하는 중…' : '지금 저장하기', 'sync-now', syncBusy ? 'disabled' : '')}</div>`;
+    return `${sync}${syncNote ? `<p class="error">${escapeHTML(syncNote)}</p>` : ''}<p class="notice keep">다른 기기를 연결하려면 코드를 만들어 그 기기에서 입력하세요. 한 번만 하면 됩니다. 받는 기기의 저장은 덮어씌워집니다.</p>${made}<div class="actions">${button(t.busy === 'send' ? '만드는 중…' : t.code ? '새 코드 만들기' : '이동 코드 만들기', 'transfer-send', t.busy ? 'disabled' : '')}</div><div class="actions transfer-enter"><input id="transfer-input" type="text" maxlength="9" placeholder="코드 8글자" value="${escapeHTML(t.typed)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="이동 코드 입력">${button(t.busy === 'fetch' ? '찾는 중…' : '코드로 불러오기', 'transfer-fetch', t.busy ? 'disabled' : '')}</div>${t.error ? `<p class="error">${escapeHTML(t.error)}</p>` : ''}`;
   }
   let nicknameNote = '';
   /** The settings field for the ledger name; a linked device gets the new name with the next upload. */
@@ -858,9 +858,24 @@ try {
     for (const heading of $('overlay').querySelectorAll('h2')) { heading.setAttribute('aria-label', heading.textContent); heading.replaceChildren(pixelText(heading.textContent, 15, '#2b3345')); }
     // Restored once the headings are drawn: the lists only take their final height then, and an earlier value is cut short.
     if (scrolled) restoreScroll($('overlay'), scrolled);
+    fitAtlas();
     if (html) { clearInput(); ((same && $('overlay').querySelector(`${same}:not(:disabled)`)) || $('overlay').querySelector('button:not(:disabled)'))?.focus({ preventScroll: true }); }
   }
 
+  /**
+   * The map popup is as wide as the painting at the height it gets (2026-11-10: a fixed width left empty sky either side
+   * of it). Measured twice, as a narrower popup can wrap the stop line below the map and leave the map less height.
+   */
+  function fitAtlas() {
+    const panel = $('overlay').querySelector('.panel.atlas-panel'), atlas = panel?.querySelector('.atlas'), map = atlas?.querySelector('.world-map');
+    if (!map) return;
+    const [, , w, h] = (map.getAttribute('viewBox') || '0 0 1000 563').split(' ').map(Number);
+    panel.style.width = '';
+    for (let i = 0; i < 2; i++) {
+      const frame = 2 * (parseFloat(getComputedStyle(map).borderTopWidth) || 0), room = panel.offsetWidth - atlas.clientWidth;
+      panel.style.width = `${Math.min(panel.parentElement.clientWidth, Math.round((atlas.clientHeight - frame) * w / h + frame + room))}px`;
+    }
+  }
   function lessonHint() {
     const keys = bindings(), lesson = game.tutorial, moveWord = isTouch ? '왼쪽을 끌어' : mouseMove() ? '우클릭으로' : arrowMove() ? '방향키로' : `${['up', 'left', 'down', 'right'].map(key => keyName(keys[key])).join(' ')} 키로`;
     if (!screen && game.s.mode === 'route' && game.s.run.node === 0) return '노란 표시로 걸어 나가세요';
