@@ -47,6 +47,9 @@ const HOME_NAME = '웃음 마을';
 const DEBUG_ALLOWED = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 // Two taps closer than this are a double tap, which phones would turn into a page zoom.
 const DOUBLE_TAP_MS = 350;
+/** How long the back yard's "use your skills on the dummies" line stays up after F2 walks in. */
+const PRACTICE_TIP_SECONDS = 5;
+let practiceSince = null;
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
@@ -1012,8 +1015,11 @@ try {
     const hint = lessonHint();
     put($('hint'), 'text', hint);
     put($('hint'), 'hidden', !hint);
-    // The back yard's standing instruction sits in the notice line at the top centre, under any fresh notice.
-    const notice = s.notices.at(-1)?.text || (!screen && s.mode === 'practice' ? '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다' : '');
+    // The back yard's instruction sits in the notice line at the top centre for its first seconds only (2026-11-10: it
+    // stayed up the whole visit and covered the yard on a phone), under any fresh notice.
+    if (s.mode !== 'practice') practiceSince = null; else practiceSince ??= s.time;
+    const yardTip = !screen && practiceSince !== null && s.time - practiceSince < PRACTICE_TIP_SECONDS;
+    const notice = s.notices.at(-1)?.text || (yardTip ? '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다' : '');
     $('toast').classList.toggle('visible', !!notice && game.onFoot);
     put($('toast'), 'text', notice);
   }
