@@ -239,6 +239,16 @@ test('a music box is picked up by walking onto it, mends once, waits while F2 is
   assert.ok(healed > 10 && box.gone); g.tickHazards(); assert.equal(g.p.hp, healed);
 });
 
+test('a music box picked up on the way to the portal plays its mending burst out and the burst goes', () => {
+  const g = roomFight(21); g.s.enemies = []; g.s.mode = 'route'; g.p.hp = 10;
+  // The walk never reaches the next room here.
+  g.nextNode = () => {};
+  g.s.hazards = [{ id: 'm', kind: 'musicbox', x: g.p.x, y: g.p.y, size: 0.8 }];
+  g.update(1 / 60, {}); assert.ok(g.p.hp > 10); assert.ok(g.s.effects.some(e => e.look === 'mend'), 'burst shown');
+  for (let i = 0; i < 120; i++) g.update(1 / 60, {});
+  assert.ok(!g.s.effects.some(e => e.look === 'mend'), 'burst gone after its 1.4 s');
+});
+
 test('a fence stops enemy shots and breaks after enough of them', () => {
   const g = roomFight(21); g.s.enemies = [];
   const fence = { id: 'f', kind: 'fence', x: g.p.x + 2, y: g.p.y, w: 0.45, h: 1.9, hp: 2 };

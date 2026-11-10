@@ -233,8 +233,8 @@ test('bosses do not move when vortex pulls normal enemies', () => {
 });
 test('shock discharge does not recurse or ignore its per-target lock', () => {
   const g = arena(), e = inert(g, 'captainBrass'), other = inert(g, 'captainBrass', { x: 9.5, y: 8 });
-  const full = e.maxHp; e.statuses.shock = other.statuses.shock = 3; g.triggerShock(e); assert.equal(e.hp, full - 10); assert.equal(other.hp, full - 10);
-  g.triggerShock(other); assert.equal(other.hp, full - 10); step(g, 0.6); g.triggerShock(other); assert.equal(other.hp, full - 20);
+  const full = e.maxHp; e.statuses.shock = other.statuses.shock = 3; g.triggerShock(e); assert.equal(e.hp, full - 8); assert.equal(other.hp, full - 8);
+  g.triggerShock(other); assert.equal(other.hp, full - 8); step(g, 0.6); g.triggerShock(other); assert.equal(other.hp, full - 16);
 });
 test('pause freezes attack, enemy tell, cooldown, statuses and elapsed time', () => {
   const g = arena(), e = inert(g); g.basicAttack(); g.beginEnemyTell(e, 'melee'); g.p.cooldowns.heatSwing = 5;

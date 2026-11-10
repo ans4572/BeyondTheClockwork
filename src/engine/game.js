@@ -435,8 +435,9 @@ export class Game {
     if (!(moved < wanted * 0.4 || other) || !ready(enemy)) return;
     for (const body of [enemy, other].filter(b => b && ready(b))) {
       body.slamReady = this.s.time + info.slamEvery;
-      this.hitEnemy(body, info.slamDamage * this.statusPower, { dot: true, color: '#badbd3' });
-      if (!body.boss && body.hp > 0) body.stunUntil = Math.max(body.stunUntil, this.s.time + info.slamStun);
+      const gale = this.trait('galeHold');
+      this.hitEnemy(body, info.slamDamage * this.statusPower * (gale?.slamMultiplier || 1), { dot: true, color: '#badbd3' });
+      if (!body.boss && body.hp > 0) body.stunUntil = Math.max(body.stunUntil, this.s.time + (gale?.slamStun ?? info.slamStun));
       this.effect('ring', body.x, body.y, '#badbd3', 0.35, 0.8, { look: 'quake' });
     }
   }
@@ -524,8 +525,10 @@ export class Game {
     // Resonance: every layer makes the body take a little more from everything.
     const ringing = 1 + this.resonanceOf(enemy) * (this.trait('longEcho')?.damageTakenPerStack ?? this.status('resonance')?.damageTakenPerStack ?? 0);
     // Brass oil: bosses and elites take more from every blow this expedition.
+    // 흠뻑 (2026-11-10): a wet body takes a little more from everything.
+    const drenched = !options.exact && this.trait('soaked')?.damageTakenBonus && this.wet(enemy) ? 1 + this.trait('soaked').damageTakenBonus : 1;
     const versus = !options.exact && (enemy.boss || enemy.elite) ? 1 + (this.potion?.bossDamage || 0) : 1;
-    const amount = versus * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    const amount = versus * drenched * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(this.weakened(enemy, enemy.damage))) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.45, 1, { targetX: this.p.x, targetY: this.p.y, look: 'thrust' });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
@@ -672,7 +675,7 @@ export class Game {
       if (!a.hazardsStruck) { a.hazardsStruck = true; this.strikeHazards(a.angle, range, arc); }
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, arc)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
-        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { this.addEnergy(this.trait('staticCharge').energy); this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
+        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { const charge = this.trait('staticCharge'); this.addEnergy(charge.energy); if (charge.fusionRefund && !(this.p.staticRefundAt > this.s.time)) { this.p.staticRefundAt = this.s.time + charge.refundEvery; this.p.fusionReady = Math.max(this.s.time, (this.p.fusionReady || 0) - charge.fusionRefund); } this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
         this.triggerShock(enemy);
         this.wrenchOnSoundWater(enemy);
         if (!a.energyGiven) { this.addEnergy(this.c.player.energyPerBasicPhase * (1 + (this.stats.energyGain || 0))); a.energyGiven = true; }
@@ -791,7 +794,7 @@ export class Game {
       if (mod.id === 'flashFreeze') cast.chillBonus = mod.chillBonus;
       if (mod.id === 'overcurrent') cast.secondaryTargets += mod.extraTargets;
       if (mod.id === 'homingStrike') cast.homing = mod.homingRange;
-      if (mod.id === 'driftingVortex') cast.drift = mod.speed;
+      if (mod.id === 'driftingVortex') { cast.drift = mod.speed; cast.damage *= 1 + (mod.damageBonus || 0); cast.finisher *= 1 + (mod.damageBonus || 0); }
       if (mod.id === 'emberTrail') cast.emberTrail = mod;
       if (mod.id === 'exhaustTrail') { cast.leaveBehind = true; cast.interval = mod.interval; }
       if (mod.id === 'frostShards') cast.shards = mod;
@@ -872,6 +875,8 @@ export class Game {
     if (enemy.shieldHits !== undefined) { enemy.frontGuard = 0; enemy.shieldHits = undefined; enemy.shieldBroken = true; this.effect('scrap', enemy.x, enemy.y - enemy.radius, '#ffbe20', 0.5, 0.8); }
     if (enemy.immuneTo || enemy.coatedUntil > this.s.time) { enemy.immuneTo = null; enemy.coatedUntil = 0; this.effect('scrap', enemy.x, enemy.y - enemy.radius, '#9fd3e6', 0.5, 0.8); }
     this.effect('ring', enemy.x, enemy.y, '#ffe6a8', 0.5, reach + 0.4, { look: 'resonanceBurst' });
+    // The burst stops ordinary bodies at its heart and round it for a moment (2026-11-10: sound had nothing that held a crowd).
+    if (info.collapseStun) for (const other of this.s.enemies) if (other.hp > 0 && !other.boss && floorDistance(enemy, other) <= reach + other.radius) other.stunUntil = Math.max(other.stunUntil, this.s.time + info.collapseStun);
     this.sense({ kind: 'resonance' });
     for (const h of this.s.hazards || []) if (h.kind === 'crate' && !h.gone && distance(h, enemy) <= info.spreadRadius) this.lightCrate(h, 0.05);
     const ring = { id: this.id('collapse'), staggerUsed: {}, fusion: false, statusAt: {} };

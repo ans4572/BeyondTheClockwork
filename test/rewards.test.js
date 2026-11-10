@@ -82,9 +82,10 @@ test('chosen mods and traits persist through a save and are validated', () => {
   old.state.run.traits = ['quickFreeze', 'emberSpread']; old.state.run.picks = [{ node: 0, kind: 'trait', id: 'quickFreeze' }, { node: 1, kind: 'trait', id: 'emberSpread' }];
   old.state.run.rewardChoices = [{ kind: 'trait', id: 'dodgeGust' }, { kind: 'trait', id: 'slipstream' }];
   let loaded = decodeSave(JSON.stringify(old), data);
-  // The same tier first: quick freeze was special (frozen cracks), spreading embers rare (the burn brand).
-  assert.deepEqual(loaded.run.traits, ['frostCrack', 'burnBrand']);
-  assert.deepEqual(loaded.run.picks.map(p => p.id), ['frostCrack', 'burnBrand']);
+  // The same tier first: quick freeze was special (frozen cracks); spreading embers was rare, and since 2026-11-10 both fire
+  // traits are rare, so it is the first of them (deeper embers).
+  assert.deepEqual(loaded.run.traits, ['frostCrack', 'emberStacks']);
+  assert.deepEqual(loaded.run.picks.map(p => p.id), ['frostCrack', 'emberStacks']);
   // The wind card cannot become the gust already on the table, so it is the other wind trait.
   assert.deepEqual(loaded.run.rewardChoices.map(r => r.id), ['galeHold', 'slipstream']);
   // A run that already holds both ice traits has nothing to swap in: the cut one just drops out.
@@ -165,8 +166,10 @@ test('cold reap refunds cooldowns on a chilled kill', () => {
 });
 
 test('lightning traits: energy from shocked targets', () => {
-  const h = arena(['lightning', 'wind']); h.s.run.traits = ['staticCharge']; const f = dummy(h); f.statuses.shock = h.s.time + 2; swing(h, 0);
-  assert.equal(h.p.energy, 12);
+  const h = arena(['lightning', 'wind']); h.s.run.traits = ['staticCharge']; const f = dummy(h); f.statuses.shock = h.s.time + 2; h.p.fusionReady = h.s.time + 10; swing(h, 0);
+  assert.equal(h.p.energy, 16);
+  // And the fusion's wait shortens by a second, at most once a second.
+  assert.ok(Math.abs(h.p.fusionReady - (h.s.time - 0.6 + 10 - 1)) < 0.05, `${h.p.fusionReady - h.s.time}`);
 });
 
 test('wind traits: dodging past applies pressure, and gale holds enemies longer', () => {

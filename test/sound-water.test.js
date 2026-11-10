@@ -38,8 +38,8 @@ test('ring palm: 52 and one layer, pushed back; a ringing body takes 1.5 times a
   assert.ok(e.x > 9.7, `pushed to ${e.x}`);
   e.x = 9; const before = lost(e);
   cast(g, 'ringPalm'); step(g, 0.05);
-  // 52 × 1.5, and every layer already on the body makes it take 4% more.
-  assert.equal(Math.round((lost(e) - before) * 1000) / 1000, Math.round(52 * 1.5 * 1.04 * 1000) / 1000);
+  // 52 × 1.5, and every layer already on the body makes it take 6% more.
+  assert.equal(Math.round((lost(e) - before) * 1000) / 1000, Math.round(52 * 1.5 * 1.06 * 1000) / 1000);
   assert.equal(g.resonanceOf(e), 3);
 });
 
@@ -80,10 +80,17 @@ test('resonance collapse: 30 more, the ring starts over, an elite shield and coa
   assert.equal(g.resonanceOf(c), 0); assert.ok(lost(c) >= 30);
 });
 
-test('resonance alone: each layer adds 4% to every blow, and wears off after four seconds', () => {
+test('resonance collapse stops ordinary bodies at its heart and round it for a moment', () => {
+  const g = arena(), a = dummy(g, 9, 8), b = dummy(g, 9.8, 8), far = dummy(g, 14, 8), stun = data.combat.statuses.find(s => s.id === 'resonance').collapseStun;
+  g.collapseResonance(a);
+  for (const e of [a, b]) assert.ok(e.stunUntil >= g.s.time + stun - 1e-9);
+  assert.ok(!(far.stunUntil > g.s.time), 'a body out of reach keeps moving');
+});
+
+test('resonance alone: each layer adds 6% to every blow, and wears off after four seconds', () => {
   const g = arena(), e = dummy(g);
   ring(g, e, 2); g.hitEnemy(e, 100, { exact: false });
-  assert.equal(lost(e), 108);
+  assert.equal(lost(e), 112);
   g.s.time += 5; assert.equal(g.resonanceOf(e), 0);
 });
 
@@ -92,18 +99,18 @@ test('water cannon: three narrow-spread shots pass through every body, soak them
   const shot = cast(g, 'waterCannon', { x: 14, y: 8 });
   assert.equal(shot.projectiles.length, 3);
   step(g, 0.6);
-  assert.equal(lost(a), 51, 'close by, all three shots land (3 × 17)');
-  assert.ok(lost(b) >= 17 && lost(b) < 51, `further on, the fan has opened: ${lost(b)}`);
+  assert.equal(lost(a), 57, 'close by, all three shots land (3 × 19)');
+  assert.ok(lost(b) >= 19 && lost(b) < 57, `further on, the fan has opened: ${lost(b)}`);
   assert.ok(g.wet(a) && g.wet(b));
   assert.ok(a.x > 10.5 && b.x > 12.2);
 });
 
-test('hydro jet: held, it beats 15 times on every body on its line for 90; let go, it stops early; feet slow while it runs', () => {
+test('hydro jet: held, it beats 15 times on every body on its line for 105; let go, it stops early; feet slow while it runs', () => {
   let g = arena(); const front = dummy(g, 10), back = dummy(g, 11.5);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 });
   assert.equal(g.castFeet, 0.6);
   step(g, 1.7, { skillHeld: [JET], aim: { x: 14, y: 8 } });
-  assert.equal(lost(front), 90); assert.equal(lost(back), 90); assert.ok(g.wet(front) && g.wet(back));
+  assert.equal(lost(front), 105); assert.equal(lost(back), 105); assert.ok(g.wet(front) && g.wet(back));
   assert.equal(g.s.casts.some(c => c.shape === 'jet'), false); assert.equal(g.castFeet, 1);
   g = arena(); const e = dummy(g, 10);
   g.castSkill(JET, { x: 14, y: 8 }); step(g, 1.7, { aim: { x: 14, y: 8 } });
@@ -127,7 +134,7 @@ test('되울림: the palm rings again 0.4s later for half, laying one more layer
   const g = withCards(['echoPalm']), e = dummy(g);
   cast(g, 'ringPalm'); step(g, 0.2); assert.equal(lost(e), 52);
   e.x = 9; step(g, 0.4);
-  assert.ok(Math.abs(lost(e) - (52 + 26 * 1.04)) < 1e-9); assert.equal(g.resonanceOf(e), 2);
+  assert.ok(Math.abs(lost(e) - (52 + 26 * 1.06)) < 1e-9); assert.equal(g.resonanceOf(e), 2);
 });
 
 test('조율 박자: a palm on a ringing body gives back two seconds of its wait', () => {
@@ -175,7 +182,7 @@ test('넓은 노즐 and 물웅덩이: the stream is twice as broad and catches a
   assert.equal(lost(missed), 0);
   let g = withCards(['wideNozzle']); const beside = dummy(g, 11, 8.9);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 }); step(g, 1.7, { skillHeld: [JET], aim: { x: 14, y: 8 } });
-  assert.equal(lost(beside), 90);
+  assert.equal(lost(beside), 105);
   g = withCards(['puddle']);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 }); step(g, 0.3, { skillHeld: [JET], aim: { x: 14, y: 8 } });
   const pool = g.s.casts.find(c => c.look === 'puddle');
@@ -185,11 +192,11 @@ test('넓은 노즐 and 물웅덩이: the stream is twice as broad and catches a
   Object.assign(g.p, { x: pool.x, y: pool.y }); assert.equal(g.patchSlow(g.p), 0);
 });
 
-test('긴 여운: resonance lasts two seconds longer and each layer adds 7%', () => {
+test('긴 여운: resonance lasts two seconds longer and each layer adds 9%', () => {
   const g = withCards(['longEcho']), e = dummy(g);
   g.applyStatus(e, 'sound', plain('a'), 2);
   assert.equal(e.statuses.resonance, g.s.time + 6);
-  g.hitEnemy(e, 100); assert.equal(lost(e), 114);
+  g.hitEnemy(e, 100); assert.equal(lost(e), 118);
 });
 
 test('렌치 조율: the wrench lays a layer on a ringing body, once a second', () => {

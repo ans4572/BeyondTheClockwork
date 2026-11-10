@@ -179,7 +179,7 @@
         ],
         "shock": [
           "감전",
-          "3초 동안 렌치로 때리면 주변 적 최대 셋에게 전기가 튑니다."
+          "3초 동안 렌치로 때리면 주변 적 최대 둘에게 전기가 튑니다(8 피해)."
         ],
         "windPressure": [
           "풍압",
@@ -187,7 +187,7 @@
         ],
         "resonance": [
           "공명",
-          "4초 동안 받는 피해가 겹마다 4% 늘어납니다(3겹까지). 3겹에서 소리에 맞으면 공명 붕괴: 30 피해, 정예 방패·코팅이 벗겨지고 옆 적에게 공명이 옮겨 갑니다."
+          "4초 동안 받는 피해가 겹마다 6% 늘어납니다(3겹까지). 3겹에서 소리에 맞으면 공명 붕괴: 30 피해, 주변 일반 적 0.6초 기절, 정예 방패·코팅이 벗겨지고 옆 적에게 공명이 옮겨 갑니다."
         ],
         "wet": [
           "젖음",
@@ -632,7 +632,7 @@
       "duration": 1.5,
       "minDuration": 0.4,
       "turnRate": 3.5,
-      "halfWidth": 0.35,
+      "halfWidth": 0.45,
       "move": 0.6,
       "interval": 0.1,
       "delay": 0
@@ -859,7 +859,7 @@
       "name": "긴 손잡이",
       "description": "렌치 공격 범위가 넓어진다.",
       "rangeBonus": 0.5,
-      "tier": "common"
+      "tier": "rare"
     },
     {
       "id": "dashStrike",
@@ -873,7 +873,7 @@
       "id": "elementalCharge",
       "name": "속성 충전기",
       "description": "3타가 장착한 속성의 상태이상을 건다.",
-      "tier": "special"
+      "tier": "common"
     },
     {
       "id": "scrapHarvest",
@@ -887,7 +887,7 @@
       "id": "spinSlash",
       "name": "회전 렌치",
       "description": "3타가 몸을 한 바퀴 돌며 주변의 적을 모두 벤다.",
-      "tier": "rare"
+      "tier": "common"
     }
   ],
   "rooms": [
@@ -1498,7 +1498,7 @@
     "maxHp": {
       "name": "덧댄 외판",
       "description": "최대 체력을 늘리고 늘어난 만큼 회복한다.",
-      "tier": "rare"
+      "tier": "common"
     },
     "skillCooldownReduction": {
       "name": "고속 배선",
@@ -1508,7 +1508,7 @@
     "statusDamage": {
       "name": "오래 타는 코일",
       "description": "화상이 주는 지속 피해가 강해진다.",
-      "tier": "rare"
+      "tier": "common"
     },
     "moveSpeed": {
       "name": "기름칠한 관절",
@@ -1665,7 +1665,7 @@
       "name": "과부하",
       "description": "적에게 화상을 입히면 이 기술의 대기시간이 2초 줄어든다.",
       "cooldownRefund": 2,
-      "tier": "rare"
+      "tier": "special"
     },
     {
       "id": "backflow",
@@ -1673,7 +1673,7 @@
       "name": "역류",
       "description": "마지막 폭발이 주변 적을 밀어낸다. 보스는 밀리지 않는다.",
       "knockback": 1.5,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "piercingBolt",
@@ -1688,7 +1688,7 @@
       "name": "급랭",
       "description": "장판의 둔화가 두 배로 쌓여 적이 더 빨리 얼어붙는다.",
       "chillBonus": 1,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "overcurrent",
@@ -1696,7 +1696,7 @@
       "name": "과전류",
       "description": "연쇄 대상이 2기 늘어난다.",
       "extraTargets": 2,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "homingStrike",
@@ -1704,7 +1704,7 @@
       "name": "유도 낙뢰",
       "description": "낙뢰가 근처의 적에게 떨어진다.",
       "homingRange": 4,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "doubleDash",
@@ -1718,9 +1718,9 @@
       "id": "driftingVortex",
       "skill": "vortexIntake",
       "name": "이동 회오리",
-      "description": "회오리가 조준 방향으로 천천히 나아간다.",
-      "speed": 1.2,
-      "tier": "rare"
+      "description": "회오리가 조준 방향으로 천천히 나아가고, 회오리 피해가 25% 늘어난다.",
+      "speed": 1.2, "damageBonus": 0.25,
+      "tier": "common"
     },
     {
       "id": "emberTrail",
@@ -1732,7 +1732,7 @@
       "pulses": 2,
       "interval": 0.5,
       "damageShare": 0.1,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "exhaustTrail",
@@ -1740,7 +1740,7 @@
       "name": "배기 흔적",
       "description": "내 몸이 아니라 내가 지나온 자리에서 차례로 터진다. 도망치며 뒤에 폭발을 깔 수 있다.",
       "interval": 0.4,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "frostShards",
@@ -1750,7 +1750,7 @@
       "shards": 3,
       "range": 2.6,
       "damageShare": 0.3,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "delayedDischarge",
@@ -1768,7 +1768,7 @@
       "name": "꿰뚫는 돌진",
       "description": "적을 밀지 않고 꿰뚫고 지나가며, 지나친 적을 내 뒤쪽으로 끌어당긴다.",
       "pull": 1.4,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "iceBurst",
@@ -1776,7 +1776,7 @@
       "name": "냉각 폭발",
       "description": "장판이 사라질 때 얼음이 터져 안에 있는 적에게 24 피해를 준다.",
       "damage": 24,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "extraStrike",
@@ -1784,7 +1784,7 @@
       "name": "연쇄 낙뢰",
       "description": "낙뢰가 한 번 더 떨어진다.",
       "extraHits": 1,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "vortexBlast",
@@ -1792,7 +1792,7 @@
       "name": "압축 방출",
       "description": "마지막 타격이 빨아들인 적을 바깥으로 튕겨 낸다. 보스는 밀리지 않는다.",
       "knockback": 1.4,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "echoPalm",
@@ -1809,7 +1809,7 @@
       "name": "조율 박자",
       "description": "공명이 걸린 적을 치면 이 기술의 대기시간이 2초 줄어든다.",
       "cooldownRefund": 2,
-      "tier": "rare"
+      "tier": "special"
     },
     {
       "id": "fullVolume",
@@ -1817,7 +1817,7 @@
       "name": "최대 음량",
       "description": "끝까지 모아 쏘면 공명이 1겹이 아니라 2겹 걸린다.",
       "stacks": 2,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "shortBreath",
@@ -1825,7 +1825,7 @@
       "name": "짧은 숨",
       "description": "모으는 시간이 0.3초로 줄고, 모으는 동안에도 평소 속도로 걷는다.",
       "charge": 0.3,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "burstShot",
@@ -1834,7 +1834,7 @@
       "description": "끝이나 벽에 닿으면 터져 반지름 1.5 안의 적을 적신다(피해 50%).",
       "radius": 1.5,
       "damageShare": 0.5,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "wallSlam",
@@ -1843,14 +1843,14 @@
       "description": "발마다 밀치는 거리가 0.6칸으로 늘고(세 발 다 맞으면 1.8칸), 벽에 부딪힌 일반 적은 1초 기절한다.",
       "knockback": 0.6,
       "daze": 1,
-      "tier": "rare"
+      "tier": "common"
     },
     {
       "id": "wideNozzle",
       "skill": "hydroJet",
       "name": "넓은 노즐",
-      "description": "물줄기가 두 배 넓어져(양옆 0.35 → 0.7칸) 옆으로 비낀 적까지 맞힌다.",
-      "halfWidth": 0.7,
+      "description": "물줄기가 두 배 넓어져(양옆 0.45 → 0.9칸) 옆으로 비낀 적까지 맞힌다.",
+      "halfWidth": 0.9,
       "tier": "rare"
     },
     {
@@ -1862,7 +1862,7 @@
       "duration": 3,
       "slow": 0.2,
       "spacing": 0.7,
-      "tier": "rare"
+      "tier": "common"
     }
   ],
   "elementTraits": [
@@ -1873,7 +1873,7 @@
       "description": "화상 피해가 2배가 되고, 지속시간이 2초 늘어난다.",
       "burnDamageMultiplier": 2,
       "extraDuration": 2,
-      "tier": "special"
+      "tier": "rare"
     },
     {
       "id": "burnBrand",
@@ -1895,8 +1895,10 @@
       "id": "staticCharge",
       "element": "lightning",
       "name": "정전 수집",
-      "description": "감전된 적을 기본 공격으로 치면 축전을 4 더 얻는다.",
-      "energy": 4,
+      "description": "감전된 적을 기본 공격으로 치면 축전을 8 더 얻고, 융합 기술 대기시간이 1초 줄어든다(1초에 한 번).",
+      "energy": 8,
+      "fusionRefund": 1,
+      "refundEvery": 1,
       "tier": "special"
     },
     {
@@ -1911,9 +1913,9 @@
       "id": "galeHold",
       "element": "wind",
       "name": "돌풍 고정",
-      "description": "풍압 걸린 적이 렌치에 맞으면 경직이 1.5배가 아니라 3배가 된다.",
+      "description": "풍압 걸린 적이 렌치에 맞으면 경직이 1.5배가 아니라 3배가 되고, 벽꽝 피해가 2배, 기절이 1초가 된다.",
       "staggerBonus": 0.3,
-      "stunMultiplier": 3,
+      "stunMultiplier": 3, "slamMultiplier": 2, "slamStun": 1,
       "tier": "special"
     },
     {
@@ -1937,10 +1939,10 @@
       "id": "longEcho",
       "element": "sound",
       "name": "긴 여운",
-      "description": "공명 지속시간이 2초 늘고, 겹마다 받는 피해가 4%에서 7%로 늘어난다.",
+      "description": "공명 지속시간이 2초 늘고, 겹마다 받는 피해가 6%에서 9%로 늘어난다.",
       "extraDuration": 2,
-      "damageTakenPerStack": 0.07,
-      "tier": "special"
+      "damageTakenPerStack": 0.09,
+      "tier": "rare"
     },
     {
       "id": "wrenchTune",
@@ -1955,9 +1957,9 @@
       "id": "soaked",
       "element": "water",
       "name": "흠뻑",
-      "description": "젖음 지속시간이 2초 늘고, 젖은 적은 15% 느려진다.",
+      "description": "젖음 지속시간이 2초 늘고, 젖은 적은 15% 느려지며 받는 피해가 10% 늘어난다.",
       "extraDuration": 2,
-      "slow": 0.15,
+      "slow": 0.15, "damageTakenBonus": 0.1,
       "tier": "special"
     },
     {

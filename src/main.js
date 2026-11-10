@@ -57,7 +57,7 @@ const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체�
 const PERK_ICONS = { piggyBank: 'reward-piggy-bank', overheatEngine: 'reward-overheat', glassSpring: 'reward-glass-spring' };
 const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', statusDamage: 'reward-status-damage', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
-const TIER_NAMES = { common: '일반', rare: '희귀', special: '특별' };
+const TIER_NAMES = { common: '일반', rare: '희귀', special: '전설' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
 /** Tuning stats that shorten a wait: their value is shown as a cut. */
 const SHORTER_WAITS = new Set(['cooldownReduction']);

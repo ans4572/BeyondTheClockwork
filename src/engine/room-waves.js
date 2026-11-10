@@ -298,6 +298,11 @@ export const roomWaves = {
   },
   /** The portal only takes someone walking into it, so a player already standing there is not whisked away. */
   walkToPortal(dt, input) {
+    // The clock keeps running on the way out, so a spark or a mending burst (a music box picked up here) plays out and
+    // goes: with the clock stopped it hung on F2, stuck on its first frame, until the next room.
+    this.s.time += Math.min(dt, 1 / 30);
+    this.s.effects = this.s.effects.filter(e => e.until > this.s.time);
+    this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
     this.stepFeet(dt, input, this.config.arena.playerRadius, true);
     // A music box left in the cleared room can still be picked up on the way out.
     this.pickUpMusicBoxes();

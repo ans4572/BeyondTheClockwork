@@ -23,6 +23,8 @@ const NOTE_SCALE = 0.8;
 const STREAM_SCALE = 0.5, STREAM_THICKNESS = 0.32;
 // F2's empty left hand held out in the shared forward-cast body (frame PLAYER_HELD_FRAME), from the feet in world pixels.
 const STREAM_HANDS = { east: [9.5, -23.4], 'south-east': [10.8, -20.7], south: [10.4, -19.8], 'south-west': [5.4, -17.1], west: [-11.7, -17.1], 'north-west': [-18, -23.4], north: [-17.6, -25.2], 'north-east': [4.5, -23.4] };
+// The painted water stream and the dash streak were drawn for these widths (units); wider casts are drawn wider to match.
+const STREAM_HALF_WIDTH = 0.35, DASH_DRAWN_RADIUS = 0.7;
 export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure', 'resonance', 'wet'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
 /** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
 export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
@@ -945,7 +947,8 @@ export class CanvasRenderer {
         return true;
       }
       case 'notes': { const k = fx.value * 20 / 54; return this.drawFxFrame('drumBeat', frameAt('drumBeat'), x, y, { sx: k, sy: k }); }
-      case 'dash': return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, alpha: 1 - t * 0.6 });
+      // The streak is drawn for a dash 0.7 wide; a wider one (pressureDash radius) widens it to match.
+      case 'dash': { const k = (fx.value || DASH_DRAWN_RADIUS) / DASH_DRAWN_RADIUS; return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, sy: k, alpha: 1 - t * 0.6 }); }
       case 'carpetRoll': {
         // A new live carpet unrolls from one end to the other, gold-edged, then stays lit while Brass lives.
         const ax = fx.x, ay = fx.y, length = Math.hypot(fx.targetX - ax, fx.targetY - ay) * 20 * Math.min(1, t * 1.6), c = this.ctx;
@@ -1063,13 +1066,14 @@ export class CanvasRenderer {
   drawStream(cast) {
     const hand = STREAM_HANDS[nearestDirection(cast.angle)], c = this.ctx, p = this.game.p, x0 = p.x * 20 + hand[0], y0 = p.y * 20 + hand[1], x1 = cast.endX * 20, y1 = cast.endY * 20 - 12;
     // 넓은 노즐 draws the stream as much thicker as it is wider.
-    if (this.drawPaintedStream(x0, y0, x1, y1, cast.halfWidth / 0.35)) return;
+    const thick = cast.halfWidth / STREAM_HALF_WIDTH;
+    if (this.drawPaintedStream(x0, y0, x1, y1, thick)) return;
     const len = Math.hypot(x1 - x0, y1 - y0), wob = i => Math.sin(this.visualTime * 30 + i * 1.7) * 1.6, nx = -Math.sin(cast.angle), ny = Math.cos(cast.angle);
     const colors = ['#2b3345', '#3f9fb5', '#7fd0dc', '#ffffff'];
     const n = Math.max(2, Math.round(len / 10)), at = i => { const k = i / n, w = i < n ? wob(i) : 0; return [x0 + (x1 - x0) * k + nx * w, y0 + (y1 - y0) * k + ny * w]; };
     c.save(); c.lineCap = 'round';
     for (const [w, col] of [[6, colors[0]], [4, colors[1]], [2, colors[2]], [1, colors[3]]]) {
-      c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x0, y0);
+      c.strokeStyle = col; c.lineWidth = w * thick; c.beginPath(); c.moveTo(x0, y0);
       for (let i = 1; i <= n; i++) c.lineTo(...at(i));
       c.stroke();
     }

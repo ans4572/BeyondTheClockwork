@@ -1023,7 +1023,7 @@
       "hits": 1,
       "damagePerHit": 46,
       "totalDirectDamage": 46,
-      "range": 3.4,
+      "range": 3.8,
       "radius": 0,
       "effect": "전방 100도 부채꼴; 화상 1중첩"
     },
@@ -1037,7 +1037,7 @@
       "damagePerHit": 18,
       "totalDirectDamage": 54,
       "range": 0,
-      "radius": 2.5,
+      "radius": 2.8,
       "effect": "0.25초 간격 3회 폭발; 화상; 시전 중 이동 가능"
     },
     {
@@ -1063,7 +1063,7 @@
       "damagePerHit": 18,
       "totalDirectDamage": 90,
       "range": 6,
-      "radius": 3.3,
+      "radius": 3.0,
       "effect": "2.5초 장판; 0.5초마다 1회; 둔화"
     },
     {
@@ -1104,7 +1104,7 @@
       "damagePerHit": 40,
       "totalDirectDamage": 40,
       "range": 3,
-      "radius": 0.7,
+      "radius": 0.9,
       "effect": "0.2초 전진 타격; 풍압; 돌진 중 무적(0.3초)"
     },
     {
@@ -1130,9 +1130,9 @@
       "hits": 1,
       "damagePerHit": 52,
       "totalDirectDamage": 52,
-      "range": 3,
+      "range": 3.5,
       "radius": 0,
-      "effect": "앞쪽 110도 부채꼴(거리 3) 공명 충격; 공명 1; 일반 적 0.8 밀침; 공명이 걸린 적에게는 1.5배와 공명 2",
+      "effect": "앞쪽 110도 부채꼴(거리 3.5) 공명 충격; 공명 1; 일반 적 0.8 밀침; 공명이 걸린 적에게는 1.5배와 공명 2",
       "resonantMultiplier": 1.5,
       "resonantStacks": 2
     },
@@ -1158,11 +1158,11 @@
       "name": "물대포",
       "cooldown": 5,
       "hits": 3,
-      "damagePerHit": 17,
-      "totalDirectDamage": 51,
+      "damagePerHit": 19,
+      "totalDirectDamage": 57,
       "range": 6,
       "radius": 0,
-      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 17, 가까이서 셋 다 맞으면 51); 발마다 일반 적 0.25 밀침; 젖음"
+      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 19, 가까이서 셋 다 맞으면 57); 발마다 일반 적 0.25 밀침; 젖음"
     },
     {
       "id": "hydroJet",
@@ -1171,11 +1171,11 @@
       "name": "고압 분사",
       "cooldown": 10,
       "hits": 15,
-      "damagePerHit": 6,
-      "totalDirectDamage": 90,
+      "damagePerHit": 7,
+      "totalDirectDamage": 105,
       "range": 5,
       "radius": 0,
-      "effect": "누르고 있는 동안 최대 1.5초 커서를 따라 도는 물줄기(0.1초마다 줄 위의 적 모두에게 6); 이동 60%; 벽에 닿으면 물보라; 젖음"
+      "effect": "누르고 있는 동안 최대 1.5초 커서를 따라 도는 물줄기(0.1초마다 줄 위의 적 모두에게 7); 이동 60%; 벽에 닿으면 물보라; 젖음"
     },
     {
       "id": "prismPierce",
@@ -1916,9 +1916,9 @@
     {
       "id": "shock",
       "duration": 3,
-      "dischargeDamage": 10,
+      "dischargeDamage": 8,
       "dischargeRadius": 1.5,
-      "maxTargets": 3,
+      "maxTargets": 2,
       "targetCooldown": 0.5
     },
     {
@@ -1934,9 +1934,10 @@
     {
       "id": "resonance",
       "duration": 4,
-      "damageTakenPerStack": 0.04,
+      "damageTakenPerStack": 0.06,
       "maxStacks": 3,
       "collapseDamage": 30,
+      "collapseStun": 0.6,
       "spreadRadius": 1.2,
       "spreadStacks": 1
     },
