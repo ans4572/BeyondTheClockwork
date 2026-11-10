@@ -156,6 +156,8 @@ try {
     for (const type of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(type, e => e.preventDefault(), { passive: false });
   }
   document.addEventListener('dblclick', e => e.preventDefault());
+  // Pictures are never dragged off the page (Firefox ignores -webkit-user-drag).
+  document.addEventListener('dragstart', e => { if (!e.target.closest?.('input, textarea')) e.preventDefault(); });
   // The game canvas is backed at the size it is shown (up to 2x for sharp screens), so maps and sprites are not stretched twice.
   const MAX_BACKING_WIDTH = 2560;
   const fitCanvas = () => {

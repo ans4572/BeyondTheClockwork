@@ -493,3 +493,10 @@ body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4
 @media (min-aspect-ratio: 2/1) {
   body.touch #app { place-items: center start; padding-left: env(safe-area-inset-left); }
 }
+
+/* No text selection or picture dragging anywhere in the game, on a computer too (2026-11-10: dragging the mouse across a
+   popup selected its text, and some pictures could be dragged off). Typing boxes and the transfer code stay selectable. */
+#app, #title { -webkit-user-select: none; user-select: none; }
+#app img, #title img { -webkit-user-drag: none; }
+#app input, #app textarea, #title input { -webkit-user-select: text; user-select: text; }
+#app .transfer-code { -webkit-user-select: all; user-select: all; }
