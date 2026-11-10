@@ -42,8 +42,9 @@
 .panel.atlas-panel .atlas { flex: 1 1 auto; min-height: 0; }
 /* On phones the title gives way to the island; only the close button stays, over the map's corner. */
 body.touch .panel.atlas-panel { padding: 8px 10px; }
-body.touch .panel.atlas-panel .panel-header { position: absolute; top: 14px; right: 16px; z-index: 1; padding: 0; margin: 0; border: 0; }
-body.touch .panel.atlas-panel .panel-header h2 { display: none; }
+/* The map keeps its title on a phone too (2026-11-10: it was hidden to give the painting the height); fitAtlas sizes
+   the painting to what is left. */
+body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom: 4px; }
 /* The region board: the painted Clockwork Island with the route drawn over it by src/ui/world-map.js. */
 .atlas { margin-top: 4px; line-height: 0; }
 .world-map { display: block; width: 100%; height: 100%; aspect-ratio: auto; border: 3px solid var(--ink); background: #a8d4ee; }
@@ -454,11 +455,9 @@ body.cramped .f2-hp { margin: 4px 0 2px; }
 body.cramped .f2-loadout { grid-column: 1 / -1; margin-top: 6px; line-height: 1.5; }
 body.cramped .f2-row small { display: none; }
 body.cramped .f2-row { padding: 2px 0; }
-/* 3. A phone keeps the last tapped spot as "hovered", so the button that came up under the finger looked picked (yellow). */
-body.touch .panel button:hover:not(:disabled) { background: var(--paper); }
-body.touch .panel button.primary:hover:not(:disabled) { background: var(--ink); }
-body.touch .panel summary:hover { background: transparent; }
-body.touch .panel .cs-card:hover:not(:disabled) { background: var(--paper-low); }
+/* 3. A phone kept the last tapped spot as "hovered", so the button that came up under the finger looked picked: the hover
+   colours now apply only to a pointer that hovers (style.css @media (hover: hover)). The first fix painted every
+   tapped button paper, the chosen tab too, whose paper label then vanished on its paper background. */
 /* 4. Redrawing a reward card is the second choice: a quiet text button under the main "선택". */
 .panel .reward-card .reroll-one { box-shadow: none; background: transparent; color: var(--label); text-decoration: underline; text-underline-offset: 3px; font-weight: 700; }
 .panel .reward-card .reroll-one:hover:not(:disabled) { background: transparent; color: var(--ink); }
