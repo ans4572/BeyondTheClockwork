@@ -110,10 +110,9 @@ test('hydro jet: held, it beats 15 times on every body on its line for 90; let g
   assert.ok(lost(e) >= 24 && lost(e) <= 36, `a tap sprays the least: ${lost(e)}`);
 });
 
-test('sound and water are on Moru\'s shelf only where previews are on, and open once chapter 1 is beaten', () => {
+test('sound and water are on Moru\'s shelf on the live site too (2026-11-10), and open once chapter 1 is beaten', () => {
   const g = new Game(data); Object.assign(g.s.profile, { registered: true, freeGears: 999, ownedElements: ['fire'], loadout: ['fire'] }); g.s.mode = 'hub';
-  assert.equal(g.elementShown('sound'), false); assert.equal(g.buyElement('sound'), false);
-  g.previews = true;
+  assert.equal(g.previews, false); assert.equal(g.elementShown('sound'), true); assert.equal(g.buyElement('sound'), false, 'not before chapter 1');
   assert.equal(g.elementShown('water'), true); assert.equal(g.elementOpen('water'), false); assert.equal(g.buyElement('water'), false);
   g.s.profile.cleared = ['smile-street'];
   assert.equal(g.buyElement('water'), true); assert.deepEqual(g.s.profile.loadout, ['fire', 'water']);
