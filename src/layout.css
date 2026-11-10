@@ -403,3 +403,33 @@ body.cramped .element-panel .element-card .device { min-width: 0; }
 .panel.potions .reward-card p { margin: 0; line-height: 1.35; }
 .panel.potions .reward-card .values { grid-row: 3; grid-column: 1; align-self: center; margin: 6px 0 0; white-space: nowrap; }
 .panel.potions .reward-card .pick { grid-row: 3; grid-column: 2; margin-top: 6px; padding: 4px; }
+
+/* ---- Departure popup (2026-11-10) ---- */
+/* The three cards keep their rows level whatever the length of their description: it holds two lines, the values
+   follow it, the clear record follows them, and the button sits at the bottom. */
+.panel.difficulty { position: relative; }
+.panel.difficulty .difficulty-card p { min-height: 3em; }
+.panel.difficulty .difficulty-values { margin-top: 0; grid-auto-rows: 1.5em; align-items: center; }
+/* (fixed rows: the minus and plus signs come from a taller fallback font, so the -40%/+40% cards stood a few px lower) */
+.panel.difficulty .rec { margin-top: 0; }
+.panel.difficulty .difficulty-card .pick { margin-top: auto; }
+/* The server's fastest clear keeps its maker's name on the same line (it took a second line, so the cards differed). */
+.panel.difficulty .rec-row { grid-template-columns: 58px auto auto 1fr; }
+.panel.difficulty .rec-who { grid-column: auto; justify-self: end; margin: 0; }
+/* A landscape phone (390 px high) takes the whole popup without scrolling: the side notes and the small labels go,
+   the record rows tighten, and the stay-in-town button moves up beside the title. */
+body.cramped .panel.difficulty > p { display: none; }
+body.cramped .panel.difficulty .card-label { display: none; }
+body.cramped .panel.difficulty .difficulty-card p { min-height: 2.7em; }
+body.cramped .panel.difficulty .difficulty-values { font-size: 12px; gap: 0 8px; margin-bottom: 6px; }
+body.cramped .panel.difficulty .rec { font-size: 12px; margin-bottom: 6px; padding-top: 4px; }
+body.cramped .panel.difficulty .rec-head { margin-bottom: 0; }
+body.cramped .panel.difficulty .rec-row { padding: 2px 0; }
+body.cramped .panel.difficulty .rec-row b { font-size: 14px; }
+body.cramped .panel.difficulty .chapter-tabs { margin-bottom: 4px; }
+body.cramped .panel.difficulty .chapter-tabs .chapter-tab { padding: 3px 10px; }
+body.cramped .panel.difficulty > .actions { position: absolute; top: 8px; right: 16px; margin: 0; }
+body.cramped .panel.difficulty > .actions button { padding: 4px 10px; }
+body.cramped .panel.difficulty .rec-row { grid-template-columns: 50px auto auto 1fr; }
+body.cramped .panel.difficulty .rec-who { font-size: 11px; }
+body.cramped .panel.difficulty .rec-els .rec-el { width: 18px; height: 18px; }

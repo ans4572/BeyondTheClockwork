@@ -615,14 +615,17 @@ try {
     const profile = game.s.profile, wanted = departChapter || profile.lastChapter || FIRST_CHAPTER;
     return chapterOpen(data.slice, profile, wanted, game.previews, game.unlockChapters) ? chapterOf(data.slice, wanted).id : FIRST_CHAPTER;
   }
-  /** One tab per chapter above the difficulty cards; a chapter not open yet says which one opens it. */
+  /**
+   * One tab per chapter above the difficulty cards; a chapter not open yet says which one opens it. A chapter still being
+   * made is listed too, locked, on the live site (2026-11-10: it was left out there, so chapter 2 did not show at all).
+   */
   function chapterTabs(current) {
-    const list = shownChapters();
+    const list = chapterList(data.slice);
     if (list.length < 2) return '';
     const tabs = list.map(chapter => {
       const open = chapterOpen(data.slice, game.s.profile, chapter.id, game.previews, game.unlockChapters), on = chapter.id === current, done = chapterCleared(game.s.profile, chapter.id);
       const label = `<small>${chapter.number}장</small>${escapeHTML(chapter.name)}${done ? ` ${ico('crown')}` : open ? '' : ` ${ico('lock')}`}`;
-      const why = open ? '' : `${josa(chapterOf(data.slice, chapter.after).name, '을', '를')} 끝내면 열립니다`;
+      const why = open ? '' : chapter.after && !chapterCleared(game.s.profile, chapter.after) ? `${josa(chapterOf(data.slice, chapter.after).name, '을', '를')} 끝내면 열립니다` : '아직 준비 중입니다';
       return button(label, 'depart-chapter', `data-id="${chapter.id}" aria-pressed="${on}"${open ? '' : ` disabled title="${why}"`}`, on ? 'tab on chapter-tab' : 'tab chapter-tab');
     }).join('');
     return `<div class="codex-tabs chapter-tabs" role="group" aria-label="장 고르기">${tabs}</div>`;
@@ -636,7 +639,7 @@ try {
   }
   function difficultyPanel() {
     askRecords();
-    const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = shownChapters().length > 1;
+    const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
     const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
     const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
