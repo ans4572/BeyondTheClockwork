@@ -1,3 +1,4 @@
+import { cursorSize } from '../ui/cursor.js';
 import { roomTitle } from './room-title.js';
 import { cleanNickname } from './nickname.js';
 import { cleanRecords } from './records.js';
@@ -85,7 +86,7 @@ export function decodeSave(raw, data) {
   s.profile.chapterRecords = Object.fromEntries(chapterIds.slice(1).filter(id => kept[id] && typeof kept[id] === 'object').map(id => [id, cleanRecords(kept[id])]));
   if (!chapterIds.includes(s.profile.lastChapter)) delete s.profile.lastChapter;
   // Saves from before background music get it switched on at the default volume.
-  if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; }
+  if (s.profile.settings) { s.profile.settings.music ??= true; s.profile.settings.musicVolume ??= 0.6; s.profile.settings.cursorSize = cursorSize(s.profile.settings.cursorSize); }
   if (!s.profile.settings || !s.profile.settings.bindings || !['sound', 'damageNumbers', 'reducedMotion', 'music'].every(key => typeof s.profile.settings[key] === 'boolean') || !(s.profile.settings.musicVolume >= 0 && s.profile.settings.musicVolume <= 1)) fail('저장된 설정이 올바르지 않습니다.');
   // How F2 is moved: the keys (WASD) or the mouse (right click). Older saves move with the keys; each way keeps its own keys.
   const settings = s.profile.settings;

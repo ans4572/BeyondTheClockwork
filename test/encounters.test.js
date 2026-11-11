@@ -228,6 +228,23 @@ test('a crate struck by the wrench blows up a moment later and hurts what stands
   assert.ok(guard.hp < hp); assert.equal(g.s.hazards.length, 0);
 });
 
+test('after the fight a crate still goes off, lit before or after the clear, but no longer hurts F2 (2026-11-11)', () => {
+  const g = roomFight(21); g.s.enemies = [];
+  const lit = { id: 'c1', kind: 'crate', x: g.p.x + 1.2, y: g.p.y, size: 0.9 }, later = { id: 'c2', kind: 'crate', x: g.p.x - 1.2, y: g.p.y, size: 0.9 };
+  g.s.hazards = [lit, later];
+  g.strikeHazards(0, 2, 60); assert.ok(lit.fuseAt > g.s.time); assert.equal(later.fuseAt, undefined);
+  g.finishCombat(); assert.equal(g.s.mode, 'reward');
+  const kept = g.s.hazards.find(h => h.id === 'c1'); assert.ok(kept.fuseAt !== undefined, 'the fuse stays lit');
+  const hp = g.p.hp; g.s.time = kept.fuseAt + 0.01; g.tickHazards();
+  assert.ok(kept.gone, 'it goes off'); assert.equal(g.p.hp, hp, 'F2 is not hurt');
+  const other = g.s.hazards.find(h => h.id === 'c2'); if (other.fuseAt === undefined) g.strikeHazards(Math.PI, 2, 60); assert.ok(other.fuseAt !== undefined, 'struck after the clear, it is lit');
+  g.s.time = other.fuseAt + 0.01; g.tickHazards(); assert.ok(other.gone); assert.equal(g.p.hp, hp);
+  // On the walk to the portal the wrench lights a crate and its fuse runs out there.
+  const third = { id: 'c3', kind: 'crate', x: g.p.x + 1.2, y: g.p.y, size: 0.9 }; g.s.hazards.push(third); g.s.mode = 'route'; g.s.run.portalArmed = false;
+  g.p.angle = 0; for (let i = 0; i < 90 && !third.gone; i++) g.update(1 / 60, { basic: i < 30, aim: { x: third.x, y: third.y } });
+  assert.ok(third.gone, 'struck and gone on the way out'); assert.equal(g.p.hp, hp);
+});
+
 test('a music box is picked up by walking onto it, mends once, waits while F2 is whole, and never blocks', () => {
   const g = roomFight(21); g.s.enemies = [];
   const box = { id: 'm', kind: 'musicbox', x: g.p.x - 1.2, y: g.p.y, size: 0.8 };

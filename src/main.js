@@ -23,6 +23,7 @@ import { browserReporter, mailbox, fetchRecords, PING_SECONDS } from './ui/stats
 import { mergeMine, formatClock } from './engine/records.js';
 import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, josa, NICKNAME_MAX } from './engine/nickname.js';
+import { CURSOR_MIN, CURSOR_MAX, CURSOR_STEP, cursorSize, cursorImage, cursorCss } from './ui/cursor.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
@@ -117,6 +118,9 @@ try {
   // The game is drawn in full detail off screen, then set on a 640-pixel grid (see CanvasRenderer).
   const detail = document.createElement('canvas');
   const renderer = new CanvasRenderer(detail, game, { view: $('game'), letters: $('letters') });
+  /** The play field's crosshair at the size picked in the settings (src/ui/cursor.js). */
+  const applyCursor = () => document.body.style.setProperty('--game-cursor', cursorCss(game.s.profile.settings?.cursorSize));
+  applyCursor();
   let touch = null;
   // F2's sheets come first and the loading card waits for them, so the old code doll never stands in for the player.
   // Enemies and townsfolk follow one set at a time instead of competing with F2 for the connection.
@@ -182,7 +186,7 @@ try {
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels never shrink past a readable size; on a short screen they switch to a compact layout so nothing scrolls.
     const zoom = Math.max(scale, TOUCH_PANEL_ZOOM);
-    $('overlay').style.zoom = zoom;
+    $('overlay').style.zoom = zoom; document.documentElement.style.setProperty('--overlay-zoom', zoom);
     document.body.classList.toggle('cramped', document.documentElement.clientHeight / zoom < CRAMPED_SHEET_HEIGHT);
   };
   addEventListener('resize', () => { fitHud(); fitAtlas(); }); document.addEventListener('fullscreenchange', fitHud); fitHud();
@@ -576,7 +580,7 @@ try {
       const mod = data.slice.mods.find(m => m.id === reward.id);
       // The elemental charger names what its third blow will put on, from the elements fitted now (2026-11-10).
       const charges = mod.id === 'elementalCharge' ? game.slots.map(slot => `${data.combat.elements.find(e => e.id === slot.element)?.name} → ${data.slice.presentation.codex.statuses[data.combat.elements.find(e => e.id === slot.element)?.status]?.[0] || ''}`) : null;
-      const extra = charges ? `<br><b>지금 걸리는 것: ${charges.length ? charges.join(' · ') : '장착한 속성이 없어 아직 없음'}</b>` : '';
+      const extra = charges ? `<br><b>지금 장착: ${charges.length ? charges.join(', ') : '속성이 없어 걸리는 상태이상 없음'}</b>` : '';
       return { name: mod.name, icon: ico('reward-wrench-mod'), label: '렌치 개조', description: mod.description + extra, value: '이 원정에 유지 · 최대 2개' };
     }
     if (reward.kind === 'skillMod') { const mod = data.slice.skillMods.find(m => m.id === reward.id), skill = data.combat.skills.find(s => s.id === mod.skill); return { name: mod.name, skills: [skill.id], label: `기술 개조 · ${skill.name}`, description: mod.description, value: '이 원정에 유지', color: data.slice.presentation.colors[skill.element] }; }
@@ -674,7 +678,7 @@ try {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
       return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button('선택', 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
-    }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide');
+    }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide rewards');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
   function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
@@ -753,14 +757,16 @@ try {
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
-    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label>${isTouch ? `<label><input type="checkbox" data-setting="autoAim" ${settings.autoAim !== false ? 'checked' : ''}> 자동 조준</label>` : ''}<label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label></div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}</div>`}`;
+    const general = `<div class="settings-grid"><label><input type="checkbox" data-setting="sound" ${settings.sound ? 'checked' : ''}> 효과음</label><label><input type="checkbox" data-setting="music" ${settings.music ? 'checked' : ''}> 배경음악</label><label class="volume">배경음악 크기 <input type="range" min="0" max="100" step="5" data-volume="musicVolume" value="${Math.round(settings.musicVolume * 100)}" aria-label="배경음악 크기"></label><label><input type="checkbox" data-setting="damageNumbers" ${settings.damageNumbers ? 'checked' : ''}> 피해 숫자</label>${isTouch ? `<label><input type="checkbox" data-setting="autoAim" ${settings.autoAim !== false ? 'checked' : ''}> 자동 조준</label>` : ''}<label><input type="checkbox" data-setting="reducedMotion" ${settings.reducedMotion ? 'checked' : ''}> 섬광과 화면 흔들림 줄이기</label>${isTouch ? '' : (() => { const px = cursorSize(settings.cursorSize); return `<label class="volume cursor-size">마우스 커서 크기 <input type="range" min="${CURSOR_MIN}" max="${CURSOR_MAX}" step="${CURSOR_STEP}" data-cursor value="${px}" aria-label="마우스 커서 크기"><span class="cursor-preview" aria-hidden="true"><img src="${cursorImage(px)}" style="--px:${px}" alt=""></span></label>`; })()}</div>${game.s.profile.registered ? `<div class="actions nickname-row"><label for="nickname-input">수리 장부 이름</label><input id="nickname-input" type="text" maxlength="${NICKNAME_MAX}" placeholder="F2" value="${escapeHTML(game.s.profile.nickname || '')}" autocomplete="off" spellcheck="false">${button('바꾸기', 'nickname-save')}</div>${nicknameNote ? `<p class="notice">${escapeHTML(nicknameNote)}</p>` : ''}` : ''}<p class="play-time">총 플레이 시간 <strong>${formatPlayTime(game.s.profile.playSeconds || 0)}</strong></p>${onTitle ? '' : `<div class="divider"></div><div class="actions leave">${button('타이틀 화면으로', 'to-title')}</div>`}`;
     const byMouse = mouseMove(), now = scheme(), schemeButton = (id, label) => button(label, 'controls', `data-id="${id}" aria-pressed="${id === now}"`, id === now ? 'tab on' : 'tab');
     const mouseNote = arrowMove() ? '마우스 없이: 방향키 이동, Space 렌치, Shift 회피. 렌치와 기술은 가장 가까운 적을 자동으로 노립니다' : byMouse ? '마우스: 오른쪽 클릭 이동 (누르고 있으면 커서를 따라감), 왼쪽 클릭 렌치' : '마우스: 왼쪽 클릭 렌치, 오른쪽 클릭 융합';
     const keys = `<div class="actions control-scheme"><span>이동 방식</span>${schemeButton('keys', '키보드 이동 (WASD)')}${schemeButton('mouse', '마우스 이동 (우클릭)')}${schemeButton('arrows', '방향키 (Space 공격)')}</div><p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(SCHEME_KEYS[now]()).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">${mouseNote}<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     // A touch screen moves with its on-screen pad: there are no keys to change, so it has no keys tab.
     const onRun = !onTitle && !!game.s.run, current = (settingsTab === 'run' && !onRun) || (settingsTab === 'keys' && isTouch) ? 'general' : settingsTab;
     const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2></div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    // Paused on an expedition: how long it has run so far (2026-11-11), the clock the clear records use.
+    const runClock = onRun ? `<span class="run-clock">${ico('clock')} 이번 원정 ${formatClock(game.s.run.elapsed || 0)}</span>` : '';
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2>${runClock}</div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -1022,6 +1028,8 @@ try {
     const hint = lessonHint();
     put($('hint'), 'text', hint);
     put($('hint'), 'hidden', !hint);
+    // A boss pattern's caption (Brass's bell, carpet, ranks...) is read mid-dodge, so it is set larger (2026-11-11).
+    $('hint').classList.toggle('boss', !!hint && !screen && game.s.mode === 'combat' && hint === game.bossWarning);
     // The back yard's instruction sits in the notice line at the top centre for its first seconds only (2026-11-10: it
     // stayed up the whole visit and covered the yard on a phone), under any fresh notice.
     if (s.mode !== 'practice') practiceSince = null; else practiceSince ??= s.time;
@@ -1169,7 +1177,13 @@ try {
     if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
   }
   $('overlay').addEventListener('click', e => { const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target); });
-  $('overlay').addEventListener('input', e => { if (e.target.dataset.volume) game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; });
+  /** The cursor slider: the size is kept and the preview beside it and the cursor itself follow as it moves. */
+  const setCursor = slider => {
+    const px = cursorSize(Number(slider.value)), img = slider.parentElement.querySelector('.cursor-preview img');
+    game.s.profile.settings.cursorSize = px; applyCursor();
+    if (img) { img.src = cursorImage(px); img.style.setProperty('--px', px); }
+  };
+  $('overlay').addEventListener('input', e => { if (e.target.dataset.volume) game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; if (e.target.matches('[data-cursor]')) setCursor(e.target); });
   $('overlay').addEventListener('change', e => {
     const setting = e.target.dataset.setting;
     if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
@@ -1177,6 +1191,7 @@ try {
     // (2026-11-10: picking an element reopened the list).
     if (e.target.matches('[data-codex-filter]')) { codexFilter = e.target.value; renderOverlay(true); if (!isTouch) $('overlay').querySelector('[data-codex-filter]')?.focus({ preventScroll: true }); return; }
     if (e.target.dataset.volume) { game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; game.save(); return; }
+    if (e.target.matches('[data-cursor]')) { setCursor(e.target); game.save(); return; }
   });
   // The row under the pointer or the keyboard explains itself in the line below the list.
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
@@ -1321,7 +1336,7 @@ try {
   const checkIn = async () => {
     if (!mail || document.hidden || Date.now() - lastPing < 20000) return;
     lastPing = Date.now();
-    const gifts = await mail.ping({ name: game.s.profile.nickname || '', where: place(), node: game.s.run ? game.s.run.node + 1 : 0, gears: Math.max(0, Math.floor(game.s.profile.freeGears)), playSeconds: Math.max(0, Math.floor(game.s.profile.playSeconds || 0)) });
+    const gifts = await mail.ping({ name: game.s.profile.nickname || '', where: place(), node: game.s.run ? game.s.run.node + 1 : 0, chapter: game.s.run ? game.chapter.id : '', gears: Math.max(0, Math.floor(game.s.profile.freeGears)), playSeconds: Math.max(0, Math.floor(game.s.profile.playSeconds || 0)) });
     if (gifts.length) mail.claim(game.receiveGifts(gifts));
   };
   if (mail) { setTimeout(checkIn, 3000); setInterval(checkIn, PING_SECONDS * 1000); document.addEventListener('visibilitychange', () => { if (!document.hidden) checkIn(); }); }
@@ -1398,8 +1413,8 @@ try {
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening').then(() => { if (!isTouch && game.s.mode === 'intro') { pause('controls'); $('overlay').querySelector('[data-action="controls-start"]')?.focus({ preventScroll: true }); } });
     const pad = pollGamepad(), map = bindings();
     // Phones aim at the nearest enemy unless that is switched off in the settings (2026-11-10); then F2 aims the way it faces.
-    if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.s.enemies); }
-    else if (arrowMove()) pointer = autoAim(game.p, game.s.enemies);
+    if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
+    else if (arrowMove()) pointer = autoAim(game.p, game.aimTargets);
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;
     if (pad?.skill !== undefined) pending.skill = pad.skill;

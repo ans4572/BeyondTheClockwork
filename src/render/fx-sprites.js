@@ -88,6 +88,9 @@ export const FX = {
   // two hollow rings racing out and dust rolling low; no disc (the old one read as a paper plate). 0.6 s at 30 fps, drawn for a
   // 32 px reach; the renderer fits it to the blow's reach and plays it over the effect's own duration. Anchor = the floor.
   floorShock: { sheet: 'art/fx/floor-shock-v2.png', w: 96, h: 72, cols: 4, frames: 19, anchor: [48, 36] },
+  // The yellow portal marker (2026-11-11): a gold ring inlaid in the floor like the maps' brass trims (dark outline, twelve
+  // dial ticks, a warm see-through floor inside), breathing, motes rising, a slim arrow bobbing over it. A 1.6 s loop.
+  portalMarker: { sheet: 'art/fx/portal-marker-v4.png', w: 56, h: 58, cols: 6, frames: 32, fps: 20, anchor: [28, 46] },
 };
 /** A note drawn for enemy shots (hand-made pixels, 24 x 28). */
 export const NOTE_ART = 'art/fx/note.png';

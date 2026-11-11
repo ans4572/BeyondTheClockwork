@@ -15,6 +15,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:disabled { cursor: not-allowed; }
 canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; cursor: crosshair; outline: none; }
+/* The play field's crosshair at the size picked in the settings (src/ui/cursor.js sets --game-cursor). */
+canvas#game { cursor: var(--game-cursor, crosshair); }
 canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 .viewport { position: relative; background: #ddd6bc; aspect-ratio: 1.75; isolation: isolate; }
@@ -25,6 +27,16 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
 .panel { pointer-events: auto; background: var(--paper); color: var(--ink); box-shadow: 6px 6px 0 #0e121a80; padding: 18px 22px; max-height: 100%; overflow: auto; width: min(520px, 100%); word-break: keep-all; }
 .panel.wide { width: min(760px, 100%); }
+/* The cursor preview shows the cursor at its real size on screen: the settings sheet is zoomed to the window
+   (--overlay-zoom, main.js fitHud) and the mouse cursor is not, so both the box and the picture divide that zoom out.
+   On the cream of the street floors, where the cursor is mostly seen. */
+.settings-grid .cursor-preview { display: inline-grid; place-items: center; width: calc(108px / var(--overlay-zoom, 1)); height: calc(108px / var(--overlay-zoom, 1)); margin-left: 4px; background: #e8d6b0; box-shadow: inset 0 0 0 2px var(--ink); vertical-align: middle; }
+.settings-grid .cursor-preview img { width: calc(var(--px) * 1px / var(--overlay-zoom, 1)); height: calc(var(--px) * 1px / var(--overlay-zoom, 1)); }
+.panel-header .run-clock { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; color: var(--label); }
+/* The reward popup keeps one height whatever cards it holds (2026-11-11: a card with a longer text or the swap buttons
+   made it taller, and it jumped on a reroll); the cards stretch to it, their values and button at the bottom. */
+.panel.rewards { display: flex; flex-direction: column; min-height: min(560px, 100%); }
+.panel.rewards .reward-grid { flex: 1; }
 .panel.compact { width: min(430px, 100%); }
 .panel.side { width: min(500px, 100%); }
 .panel h2 { margin: 0; line-height: 0; }

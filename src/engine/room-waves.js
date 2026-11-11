@@ -70,7 +70,9 @@ export const roomWaves = {
   /** Crates, plates, saws: their clocks run and they act on whoever is in reach. */
   tickHazards(dt = 0) {
     const rules = this.config.hazards, list = this.s.hazards;
-    if (!rules || !list?.length || this.s.mode !== 'combat') return;
+    if (!rules || !list?.length) return;
+    // After the fight (the reward, the walk to the portal) only crates still act: a lit one goes off, harmless to F2.
+    if (this.s.mode !== 'combat') { if (['reward', 'route'].includes(this.s.mode)) for (const h of list) if (h.kind === 'crate' && !h.gone && h.fuseAt !== undefined && this.s.time >= h.fuseAt) this.blowCrate(h); return; }
     const { p } = this, t = this.s.time, playerR = this.config.arena.playerRadius;
     // A push from a device (a press, a steam burst) carries F2 out over a quarter of a second instead of in one jump.
     if (p.blown && dt > 0) { const share = Math.min(1, dt / p.blown.left); this.move(p, p.blown.x * share, p.blown.y * share); p.blown.x -= p.blown.x * share; p.blown.y -= p.blown.y * share; p.blown.left -= dt; if (p.blown.left <= 0) p.blown = null; }
@@ -183,7 +185,7 @@ export const roomWaves = {
     const rule = this.config.hazards.crate; h.gone = true;
     // The pixelfx crate blast (art/fx/crate-blast-v1.png) brings its own wood splinters, so no separate scrap.
     this.effect('ring', h.x, h.y, '#e8914e', CRATE_BLAST_SECONDS, rule.radius, { look: 'crateBlast' }); this.sense({ kind: 'burst' });
-    if (!this.p.dodge && floorDistance(h, this.p) < rule.radius + this.config.arena.playerRadius) this.hurt(rule.damage);
+    if (this.s.mode === 'combat' && !this.p.dodge && floorDistance(h, this.p) < rule.radius + this.config.arena.playerRadius) this.hurt(rule.damage);
     for (const e of this.s.enemies) if (e.hp > 0 && !e.dummy && floorDistance(h, e) < rule.radius + e.radius) {
       this.hitEnemy(e, rule.enemyDamage, { dot: true, color: '#e8914e' });
       const stun = e.boss && !e.breaking && this.config.bossAI[e.type]?.crateStunSeconds;
@@ -281,7 +283,9 @@ export const roomWaves = {
     const { run } = this.s, { waveWarnSeconds } = this.config.rules;
     run.wave++;
     const types = this.room.waves[run.wave], kind = run.plan?.[run.node]?.formations?.[run.wave], spots = this.formation(kind, types);
-    if (ARRIVAL_NOTES[kind]) this.notify(ARRIVAL_NOTES[kind]);
+    // The warning names the shape the bodies really stand in (a ring that did not fit round the player is a pincer).
+    const shape = spots.kind || kind;
+    if (ARRIVAL_NOTES[shape]) this.notify(ARRIVAL_NOTES[shape]);
     for (const [i, type] of types.entries()) {
       const spot = spots[i];
       run.arrivals.push({ type, x: spot.x, y: spot.y, at: this.s.time + waveWarnSeconds, affixes: run.plan?.[run.node]?.affixes?.[run.wave]?.[i] || null });
@@ -305,8 +309,9 @@ export const roomWaves = {
     this.s.effects = this.s.effects.filter(e => e.until > this.s.time);
     this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
     this.stepFeet(dt, input, this.config.arena.playerRadius, true);
-    // A music box left in the cleared room can still be picked up on the way out.
-    this.pickUpMusicBoxes();
+    // A music box left in the cleared room can still be picked up on the way out, and a crate lit then (the wrench still
+    // swings here) goes off, harmless to F2 (2026-11-11: its fuse burned forever).
+    this.pickUpMusicBoxes(); this.tickHazards(dt);
     const near = distance(this.p, this.portal) <= PORTAL_REACH_UNITS, run = this.s.run;
     if (!near) run.portalArmed = true;
     else if (run.portalArmed) { run.portalArmed = false; this.nextNode(0); }

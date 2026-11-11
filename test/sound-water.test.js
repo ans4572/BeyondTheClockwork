@@ -253,7 +253,7 @@ test('메아리 돌풍: the ring cuts each body on its way out and again on its 
 test('수면 공명: striking a body on the film rings the whole film, at most once per 0.3s and six times', () => {
   const { g, cast } = fuse(['sound', 'water']), a = dummy(g, 10), b = dummy(g, 11, 9); const film = cast();
   step(g, 0.1); assert.equal(lost(b), 0);
-  g.ringFilms(a); assert.equal(film.rings, 1); assert.equal(lost(b), 17); g.ringFilms(a); assert.equal(film.rings, 1, 'not again so soon');
+  g.ringFilms(a); assert.equal(film.rings, 1); assert.equal(lost(b), 34); g.ringFilms(a); assert.equal(film.rings, 1, 'not again so soon');
   for (let i = 0; i < 8; i++) { g.s.time += 0.31; g.ringFilms(a); } assert.equal(film.rings, 6);
   const off = dummy(g, 20, 20); g.s.time += 1; g.ringFilms(off); assert.equal(film.rings, 6);
 });
@@ -267,9 +267,9 @@ test('과열 증기막: steam round F2 follows her and scalds and soaks what is 
 
 test('빙판: forms with a blow, slows only enemies on it, then breaks under them three seconds later', () => {
   const { g, cast } = fuse(['ice', 'water']), e = dummy(g, 11), out = dummy(g, 16); const sheet = cast();
-  step(g, 0.1); assert.equal(lost(e), 20); assert.equal(lost(out), 0);
+  step(g, 0.1); assert.equal(lost(e), 40); assert.equal(lost(out), 0);
   assert.equal(g.patchSlow(e, true), 0.4); Object.assign(g.p, { x: 11, y: 8 }); assert.equal(g.patchSlow(g.p), 0, 'F2 is not slowed');
-  step(g, 3); assert.ok(lost(e) >= 110 - 1e-6); assert.ok(sheet.done); assert.equal(g.patchSlow(e, true), 0, 'the ice is gone');
+  step(g, 3); assert.ok(lost(e) >= 220 - 1e-6); assert.ok(sheet.done); assert.equal(g.patchSlow(e, true), 0, 'the ice is gone');
 });
 
 test('감전 웅덩이: discharges into every body in it every half second, harder for each wet body', () => {

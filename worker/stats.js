@@ -25,7 +25,7 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS runs_day ON runs (day)`
 ];
 /** Columns added after the first tables went live; on a database that has them already the statement fails and is skipped. */
-const MIGRATIONS = [`ALTER TABLE runs ADD COLUMN difficulty TEXT`, `ALTER TABLE runs ADD COLUMN chapter TEXT`];
+const MIGRATIONS = [`ALTER TABLE runs ADD COLUMN difficulty TEXT`, `ALTER TABLE runs ADD COLUMN chapter TEXT`, `ALTER TABLE devices ADD COLUMN chapter_now TEXT`];
 const ready = new WeakMap();
 const setUp = async db => { await db.batch(SCHEMA.map(sql => db.prepare(sql))); for (const sql of MIGRATIONS) await db.prepare(sql).run().catch(() => {}); };
 const ensure = db => { if (!ready.has(db)) ready.set(db, setUp(db).catch(error => { ready.delete(db); throw error; })); return ready.get(db); };
@@ -48,9 +48,9 @@ export async function record(db, sent, now = Date.now()) {
     ]);
   } else if (event.kind === 'ping') {
     // A device that never sent an open (it began before statistics existed) is still listed, with its kind unknown.
-    await db.prepare(`INSERT INTO devices (id, first_day, last_day, last_seen, where_now, node_now, gears, play_seconds, nickname) VALUES (?1, ?2, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
-      ON CONFLICT (id) DO UPDATE SET last_day = ?2, last_seen = ?3, where_now = ?4, node_now = ?5, gears = ?6, play_seconds = ?7, nickname = ?8`)
-      .bind(event.device, day, now, event.where, event.node, event.gears, event.playSeconds, event.name || null).run();
+    await db.prepare(`INSERT INTO devices (id, first_day, last_day, last_seen, where_now, node_now, gears, play_seconds, nickname, chapter_now) VALUES (?1, ?2, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+      ON CONFLICT (id) DO UPDATE SET last_day = ?2, last_seen = ?3, where_now = ?4, node_now = ?5, gears = ?6, play_seconds = ?7, nickname = ?8, chapter_now = ?9`)
+      .bind(event.device, day, now, event.where, event.node, event.gears, event.playSeconds, event.name || null, event.chapter || null).run();
     return { mail: await waiting(db, event.device) };
   } else if (event.kind === 'runStart') {
     await db.prepare(`INSERT OR IGNORE INTO runs (device, run, day, combo, started_at, difficulty, chapter) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`).bind(event.device, event.run, day, event.combo, now, event.difficulty, event.chapter).run();
@@ -71,7 +71,7 @@ export async function claimGifts(db, device, ids, now = Date.now()) {
   return true;
 }
 
-const USER_COLUMNS = `d.id, d.memo, d.nickname, d.form, d.os, d.browser, d.installed, d.first_day, d.last_day, d.last_seen, d.where_now, d.node_now, d.gears, d.play_seconds, d.opens,
+const USER_COLUMNS = `d.id, d.memo, d.nickname, d.form, d.os, d.browser, d.installed, d.first_day, d.last_day, d.last_seen, d.where_now, d.node_now, d.chapter_now, d.gears, d.play_seconds, d.opens,
   COALESCE(r.runs, 0) AS runs, COALESCE(r.clears, 0) AS clears, r.best AS best, COALESCE(g.given, 0) AS given, COALESCE(g.pending, 0) AS pending`;
 const USER_JOINS = `FROM devices d
   LEFT JOIN (SELECT device, COUNT(*) AS runs, SUM(reason = 'clear') AS clears, MAX(node) AS best FROM runs GROUP BY device) r ON r.device = d.id

@@ -167,6 +167,11 @@ test('a gift sent from the admin page arrives on the next check-in, pays once, a
   assert.deepEqual(list.counts, { everyone: 1, online: 1, today: 1, pending: 0 });
   const [row] = list.users;
   assert.equal(row.id, phone); assert.equal(row.where_now, 'hub'); assert.equal(row.gears, 40); assert.equal(row.given, 300); assert.equal(row.pending, 0);
+  assert.equal(row.chapter_now, null, 'no chapter in town');
+  await ping({ where: 'run', node: 4, chapter: 'silent-factory' });
+  const away = (await (await admin('/api/admin/users')).json()).users[0];
+  assert.equal(away.where_now, 'run'); assert.equal(away.node_now, 4); assert.equal(away.chapter_now, 'silent-factory', 'the expedition names its chapter (2026-11-11)');
+  await ping();
   assert.equal((await (await admin('/api/admin/users/' + phone + '/memo', { method: 'POST', body: JSON.stringify({ memo: '테스트 폰' }) })).json()).memo, '테스트 폰');
   assert.equal((await (await admin('/api/admin/users?q=테스트')).json()).users.length, 1);
   assert.equal((await (await admin('/api/admin/users?q=zzz')).json()).users.length, 0);

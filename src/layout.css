@@ -20,7 +20,7 @@
   background-repeat: no-repeat; background-size: 100% 24px, 100% 24px, 100% 10px, 100% 10px; background-attachment: local, local, scroll, scroll; }
 .stat-group { margin: 8px 0 2px; font-size: 12px; color: var(--label); }
 .panel p.stat-hint { min-height: 2.6em; margin: 4px 0 0; white-space: pre-line; }
-.stat-row { display: grid; grid-template-columns: 104px 42px 1fr 100px 58px; gap: 8px; align-items: center; padding: 2px 2px; border-bottom: 1px solid #2b334533; }
+.stat-row { display: grid; grid-template-columns: 110px 42px 1fr 100px 58px; gap: 8px; align-items: center; padding: 2px 2px; border-bottom: 1px solid #2b334533; }
 .stat-row strong { font-size: 13px; white-space: nowrap; }
 .stat-level { font-size: 11px; color: var(--label); text-align: right; white-space: nowrap; }
 .stat-bar { position: relative; height: 8px; background: #d8ccb0; box-shadow: inset 0 0 0 1px var(--ink); }
@@ -109,6 +109,7 @@ body.on-title #overlay { position: fixed; z-index: 30; }
 
 #hint { position: absolute; left: 50%; bottom: 58px; transform: translateX(-50%); padding: 6px 16px; background: var(--ink); color: var(--paper); font-size: 14px; font-weight: 700; white-space: nowrap; pointer-events: none; z-index: 6; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 #hint[hidden] { display: none; }
+#hint.boss { bottom: 64px; padding: 8px 22px; font-size: 19px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
 
 html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #app { display: grid; place-items: center; width: 100vw; height: 100svh; max-width: none; margin: 0; padding: 0; }
@@ -472,7 +473,7 @@ body.cramped .panel:has(.stat-list) { width: min(860px, 100%); }
 body.cramped .stat-list { display: block; columns: 2; column-gap: 18px; overflow-y: visible; flex: none; background: none; }
 body.cramped .stat-list > * { break-inside: avoid; }
 body.cramped .stat-group { margin: 4px 0 0; break-after: avoid; }
-body.cramped .stat-row { grid-template-columns: 102px 30px 1fr 84px 46px; gap: 5px; padding: 1px 2px; }
+body.cramped .stat-row { grid-template-columns: 110px 30px 1fr 84px 46px; gap: 5px; padding: 1px 2px; }
 body.cramped .stat-row strong { font-size: 11.5px; letter-spacing: -0.3px; overflow: hidden; text-overflow: ellipsis; }
 body.cramped .stat-value { font-size: 11px; }
 body.touch.cramped .panel .stat-row button { min-height: 26px; padding: 1px 4px; }

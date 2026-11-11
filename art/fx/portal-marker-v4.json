@@ -1,0 +1,743 @@
+{
+ "frames": [
+  {
+   "filename": "portal-marker 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 1",
+   "frame": {
+    "x": 56,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 2",
+   "frame": {
+    "x": 112,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 3",
+   "frame": {
+    "x": 168,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 4",
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 5",
+   "frame": {
+    "x": 280,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 6",
+   "frame": {
+    "x": 0,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 7",
+   "frame": {
+    "x": 56,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 8",
+   "frame": {
+    "x": 112,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 9",
+   "frame": {
+    "x": 168,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 10",
+   "frame": {
+    "x": 224,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 11",
+   "frame": {
+    "x": 280,
+    "y": 58,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 12",
+   "frame": {
+    "x": 0,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 13",
+   "frame": {
+    "x": 56,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 14",
+   "frame": {
+    "x": 112,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 15",
+   "frame": {
+    "x": 168,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 16",
+   "frame": {
+    "x": 224,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 17",
+   "frame": {
+    "x": 280,
+    "y": 116,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 18",
+   "frame": {
+    "x": 0,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 19",
+   "frame": {
+    "x": 56,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 20",
+   "frame": {
+    "x": 112,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 21",
+   "frame": {
+    "x": 168,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 22",
+   "frame": {
+    "x": 224,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 23",
+   "frame": {
+    "x": 280,
+    "y": 174,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 24",
+   "frame": {
+    "x": 0,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 25",
+   "frame": {
+    "x": 56,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 26",
+   "frame": {
+    "x": 112,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 27",
+   "frame": {
+    "x": 168,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 28",
+   "frame": {
+    "x": 224,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 29",
+   "frame": {
+    "x": 280,
+    "y": 232,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 30",
+   "frame": {
+    "x": 0,
+    "y": 290,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  },
+  {
+   "filename": "portal-marker 31",
+   "frame": {
+    "x": 56,
+    "y": 290,
+    "w": 56,
+    "h": 58
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 58
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 58
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "portal-marker.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 336,
+   "h": 348
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "portal-marker",
+    "from": 0,
+    "to": 31,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/portal-marker",
+   "name": "Portal marker",
+   "fps": 20,
+   "loop": true,
+   "frames": 32,
+   "frameSize": [
+    56,
+    58
+   ],
+   "pivot": [
+    28,
+    46
+   ],
+   "columns": 6
+  }
+ }
+}

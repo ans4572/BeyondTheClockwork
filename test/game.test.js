@@ -335,8 +335,8 @@ test('frost crosscut flies one wide ice crescent forward that cuts each enemy in
  for(const e of [center,side,off,beyond])e.hp=e.maxHp=1000;
  g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion(center),true);
  step(g,.15);assert.equal(center.hp,1000,'nothing before the blade leaves the hand');
- step(g,.35);assert.equal(center.hp,885);assert.equal(side.hp,885,'the band is wide');
- step(g,1);assert.equal(center.hp,885,'one cut per enemy');assert.equal(side.hp,885);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
+ step(g,.35);assert.equal(center.hp,770);assert.equal(side.hp,770,'the band is wide');
+ step(g,1);assert.equal(center.hp,770,'one cut per enemy');assert.equal(side.hp,770);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
  assert.equal(g.s.casts.length,0);assert.equal(g.p.energy,35);
 });
 
@@ -351,7 +351,7 @@ test('fire cyclone starts in front of its caster, moves forward and cannot spawn
 });
 test('storm float stays at its placement, explodes once after its tell, and never displaces bosses',()=>{
  const g=arena(),enemy=inert(g,'guard',{x:11.2,y:8}),boss=inert(g,'captainBrass',{x:11,y:10});enemy.hp=enemy.maxHp=1000;boss.hp=boss.maxHp=1000;const bx=boss.x,by=boss.y;
- g.s.run.slots=['lightning','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:11,y:8}),true);g.p.x=5;g.p.y=5;step(g,.8);assert.equal(enemy.hp,1000);assert.equal(g.s.casts[0].x,11);assert.equal(g.s.casts[0].y,8);step(g,.1);assert.equal(enemy.hp,892);assert.equal(boss.hp,892);assert.ok(enemy.x>11.7);assert.equal(boss.x,bx);assert.equal(boss.y,by);step(g,.5);assert.equal(enemy.hp,892);assert.equal(g.p.energy,40);
+ g.s.run.slots=['lightning','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:11,y:8}),true);g.p.x=5;g.p.y=5;step(g,.8);assert.equal(enemy.hp,1000);assert.equal(g.s.casts[0].x,11);assert.equal(g.s.casts[0].y,8);step(g,.1);assert.equal(enemy.hp,784);assert.equal(boss.hp,784);assert.ok(enemy.x>11.7);assert.equal(boss.x,bx);assert.equal(boss.y,by);step(g,.5);assert.equal(enemy.hp,784);assert.equal(g.p.energy,40);
 });
 test('legacy fusion discoveries migrate without resetting readiness or existing cast snapshots',()=>{
  const g=arena();g.s.profile.discoveredFusions=['blizzardFan','ionFan','frostCrosscut'];g.p.fusionReady=100;g.s.casts=[{skillId:'ionFan',shape:'cone',hits:6,age:.3}];const saved=decodeSave(encodeSave(g.s),data);assert.deepEqual(saved.profile.discoveredFusions,['frostCrosscut','stormFloat']);assert.equal(saved.player.fusionReady,100);assert.equal(saved.casts[0].skillId,'ionFan');assert.equal(saved.casts[0].hits,6);
@@ -365,7 +365,7 @@ test('magnetic ice clamp is a fixed oriented target rectangle with a tell and ex
  const g=arena(),center=inert(g,'captainBrass',{x:12,y:8}),outside=inert(g,'guard',{x:13.7,y:9.9});center.hp=center.maxHp=outside.hp=outside.maxHp=1000;
  g.s.run.slots=['ice','lightning'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:12,y:8}),true);
  const cast=g.s.casts[0];assert.equal(cast.shape,'clamp');assert.equal(cast.x,12);assert.equal(cast.y,8);g.p.x=5;g.p.y=5;
- step(g,.55);assert.equal(center.hp,1000);assert.equal(outside.hp,1000);step(g,.07);assert.equal(center.hp,963);step(g,.18);assert.equal(center.hp,926);step(g,.18);assert.equal(center.hp,889);step(g,.5);assert.equal(center.hp,889);assert.equal(outside.hp,1000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,35);assert.equal(g.p.fusionReady,20);
+ step(g,.55);assert.equal(center.hp,1000);assert.equal(outside.hp,1000);step(g,.07);assert.equal(center.hp,926);step(g,.18);assert.equal(center.hp,852);step(g,.18);assert.equal(center.hp,778);step(g,.5);assert.equal(center.hp,778);assert.equal(outside.hp,1000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,35);assert.equal(g.p.fusionReady,20);
 });
 
 test('magnetic ice clamp aims at an off-axis target, limits placement range and migrates ring discoveries',()=>{
@@ -568,4 +568,18 @@ test('a direct blow lands within 10% either side of its value, averaging the sam
     assert.ok(Math.abs(mean - 100) < 1.5, `mean ${mean}`);
     const before = e.hp; g.hitEnemy(e, 100, { dot: true }); assert.equal(before - e.hp, 100);
   } finally { data.combat.caps.damageSpread = 0; }
+});
+
+test('a coated elite shrugs off the status of one carried element, also when shock spreads from a kill (2026-11-11)', () => {
+  const g = arena(); g.s.run.slots = ['lightning', 'fire'].map(element => ({ element, level: 1, rarity: 'common' })); g.s.run.wave = 99;
+  const e = g.spawnWaveEnemy('elite', { x: 10, y: 8 }, [{ id: 'coated', element: 'water' }]); e.ready = 1e9; e.hp = e.maxHp = 1e6;
+  assert.ok(['lightning', 'fire'].includes(e.affixes[0].element), 'the coat is one F2 carries');
+  const coat = e.affixes[0].element, other = coat === 'fire' ? 'lightning' : 'fire', status = el => data.combat.elements.find(x => x.id === el).status;
+  g.applyStatus(e, coat, { id: 'a', staggerUsed: {} }); g.applyStatus(e, other, { id: 'b', staggerUsed: {} });
+  assert.ok(!(e.statuses[status(coat)] > g.s.time)); assert.ok(e.statuses[status(other)] > g.s.time);
+  const shocked = g.spawnWaveEnemy('elite', { x: 10, y: 9 }, [{ id: 'coated', element: 'lightning' }]); shocked.ready = 1e9; shocked.hp = shocked.maxHp = 1e6;
+  if (shocked.immuneTo === 'shock') {
+    g.s.run.traits = ['shockSpread']; const r = inert(g, 'rat', { x: 10.4, y: 9 }); r.statuses.shock = g.s.time + 3;
+    g.hitEnemy(r, 9999, { exact: true }); assert.ok(!(shocked.statuses.shock > g.s.time), 'the spread passes it over');
+  }
 });

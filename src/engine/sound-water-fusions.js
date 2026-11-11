@@ -54,7 +54,7 @@ export const soundWaterFusions = {
       const inside = e => reachable(this, e) && floorDistance(cast, e) <= cast.radius + e.radius;
       if (cast.stage === 0 && cast.age + 1e-7 >= cast.delay) {
         cast.stage = 1;
-        for (const e of this.s.enemies) if (inside(e)) { this.castHit(cast, e, cast.damages[0]); if (!e.boss && e.hp > 0) { e.stunUntil = Math.max(e.stunUntil, t + cast.frozenSeconds); e.frozenUntil = Math.max(e.frozenUntil || 0, t + cast.frozenSeconds); } }
+        for (const e of this.s.enemies) if (inside(e)) { this.castHit(cast, e, cast.damages[0]); if (!e.boss && e.hp > 0 && e.immuneTo !== 'chill') { e.stunUntil = Math.max(e.stunUntil, t + cast.frozenSeconds); e.frozenUntil = Math.max(e.frozenUntil || 0, t + cast.frozenSeconds); } }
         this.elementOnHazards(cast, h => floorDistance(cast, h) <= cast.radius + 0.6);
         this.effect('ring', cast.x, cast.y, '#9fe3f0', 0.6, cast.radius, { look: 'frostShatter', skill: cast.skillId });
       }

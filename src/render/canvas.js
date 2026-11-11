@@ -80,6 +80,8 @@ const CAMERA_LEAD = [1.2, 0.4], CAMERA_LEAD_SECONDS = 0.45;
 const CAMERA_FOLLOW_SECONDS = 0.12, CAMERA_DEAD_Y = 0.6, CAMERA_SNAP = 4;
 /** 도전 스패너's spinning spanner drawn smaller than its sheet (about 24 px long; 2026-11-11, asked smaller). */
 const SPANNER_SCALE = 0.7;
+/** The portal ring's front edge below its centre, its half width and the height the scenery may cover (units; the ring only). */
+const MARKER_FRONT_UNITS = 0.42, MARKER_HALF_UNITS = 1.0, MARKER_TALL_UNITS = 0.9;
 /** 도전 스패너's chain and the saw rail's current: a 4 px rim, 2 px gold, 1 px core (2026-11-11, asked a little thinner than 5/3/1). */
 const THIN_BOLT = 0.5;
 const GROUND_LOOKS = new Set(['pressSlam', 'quake', 'drumBeat', 'march', 'carpetRoll', 'stampHit']);
@@ -776,6 +778,9 @@ export class CanvasRenderer {
   }
   /** The yellow ring and arrow: a place to walk to, and the portal between the yard and the town. */
   marker({ x, y }) {
+    // The pixelfx marker (art/fx/portal-marker-v4), still on its first frame when motion is reduced; the drawn ring while it loads.
+    const still = this.game.s.profile.settings.reducedMotion;
+    if (this.drawFxFrame('portalMarker', still ? 0 : this.visualTime * FX.portalMarker.fps, Math.round(x * 20), Math.round(y * 20))) return;
     const c = this.ctx, beat = this.game.s.profile.settings.reducedMotion ? 0 : Math.sin(this.visualTime * 4);
     c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.ellipse(x * 20, y * 20, 15 + beat * 2, 6 + beat, 0, 0, TAU); c.stroke();
     c.fillStyle = '#ffd257'; c.beginPath(); c.moveTo(x * 20 - 7, y * 20 - 34 + beat * 3); c.lineTo(x * 20 + 7, y * 20 - 34 + beat * 3); c.lineTo(x * 20, y * 20 - 24 + beat * 3); c.fill();
@@ -1535,7 +1540,10 @@ export class CanvasRenderer {
     // Once registered, the way out of town to the street is the same yellow portal, not a sign.
     // Every walk-around place shows its way out as the same yellow ring: the village's street and the rest stop's road.
     const streetPortal = ['hub', 'shop'].includes(s.mode) && g.village ? g.village.exit.portal : null;
-    for (const spot of [goal, streetPortal]) if (spot) this.marker(spot);
+    // Scenery standing in front of the ring (a post, a railing) is painted back over it, so it lies on the floor among
+    // the map's things; only the ring's height is covered, the arrow above it always shows (2026-11-11).
+    const floorMask = this.depthMasks?.get(map?.background);
+    for (const spot of [goal, streetPortal]) if (spot) { this.marker(spot); this.coverBody(floorMask, spot.x, spot.y + MARKER_FRONT_UNITS, MARKER_HALF_UNITS, MARKER_TALL_UNITS); }
     this.minimapPlace = { map, mapImage, size, goal: goal || streetPortal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     this.overlays = [];
     // The floor, bottom to top: flat hazards (plates, saw rails), where F2's fusions and ground skills reach, and over

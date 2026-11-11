@@ -56,6 +56,15 @@ function ordinaryWeight(room, before, hp, eliteHp) {
 const BIG_WAVE = 10;
 /** How far from the player a side group, and a ring, gathers: far enough that a wave still gives a moment to turn. */
 const ARRIVAL_REACH = 10.5, RING_REACH = 9;
+/** Directions tried for a flank or pincer, ring turns tried, and the widest opening a ring may leave (radians). */
+const SIDE_TRIES = 16, RING_TURNS = 6, RING_MOST_GAP = Math.PI * 0.8;
+/** The widest empty arc between directions seen from the player (all the way round when there are none). */
+function widestGap(angles) {
+  const a = angles.map(x => ((x % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)).sort((p, q) => p - q);
+  if (a.length < 2) return Math.PI * 2;
+  let gap = 0; for (let i = 0; i < a.length; i++) gap = Math.max(gap, ((a[(i + 1) % a.length] - a[i]) + Math.PI * 2) % (Math.PI * 2));
+  return gap;
+}
 
 /** A small seeded generator, separate from the game's own, so dealing fights never shifts any other roll. */
 export function dealer(seed) {
@@ -215,23 +224,48 @@ export function formationSpots(kind, types, ctx) {
     return null;
   };
   const place = (type, centre) => {
-    // Guns and drums stand a little behind the others, on the side away from the player.
-    const spot = centre && near(centre, 2.2, roleOf(type) === 'back' ? 1.6 : 0);
+    // Guns and drums stand a little behind the others, on the side away from the player. A crowded side widens a step
+    // before a body is sent off to some random spot, which would break the shape the warning names.
+    const back = roleOf(type) === 'back' ? 1.6 : 0, spot = centre && (near(centre, 2.2, back) || near(centre, 3.2, back));
     const chosen = spot || spread(taken);
     taken.push(chosen); return chosen;
   };
-  if (kind === 'flank' || kind === 'pincer') {
-    const base = random() * Math.PI * 2;
-    const sides = (kind === 'pincer' ? [base, base + Math.PI] : [base]).map(angle => along(angle, ARRIVAL_REACH));
-    return types.map((type, i) => place(type, sides[i % sides.length]));
-  }
+  // 2026-11-11: the side (or sides) used to be one random direction, and from a player near a wall it often had no floor,
+  // so the bodies fell back to random spots under a "한쪽에서 몰려온다" warning (measured: flank 53%, pincer 19%, ring 16%
+  // looked like their warning). Now only directions with floor at the far end are drawn, and a shape that does not fit
+  // where the player stands becomes the nearest one that does; `spots.kind` is the shape made, for the warning.
+  const sidesFor = count => {
+    const turn = random() * Math.PI * 2, options = [];
+    for (let i = 0; i < SIDE_TRIES; i++) {
+      const base = turn + (Math.PI * 2 * i) / SIDE_TRIES, sides = (count === 2 ? [base, base + Math.PI] : [base]).map(angle => along(angle, ARRIVAL_REACH));
+      if (sides.every(Boolean)) options.push(sides);
+    }
+    return options.length ? options[Math.floor(random() * options.length)] : null;
+  };
+  const made = (spots, shape) => Object.assign(spots, { kind: shape });
   if (kind === 'ring') {
-    const turn = random() * Math.PI * 2;
-    return types.map((type, i) => {
-      const spot = along(turn + (Math.PI * 2 * i) / types.length, roleOf(type) === 'back' ? RING_REACH + 1.5 : RING_REACH);
-      const chosen = spot && free(spot) ? { x: spot.x, y: spot.y } : spread(taken);
+    // The turn that puts the most of the ring on the floor; too open a ring (a player against a wall) is a pincer instead.
+    let best = null;
+    for (let t = 0; t < RING_TURNS; t++) {
+      const turn = random() * Math.PI * 2, spots = types.map((type, i) => along(turn + (Math.PI * 2 * i) / types.length, roleOf(type) === 'back' ? RING_REACH + 1.5 : RING_REACH));
+      const angles = spots.filter(Boolean).map(spot => Math.atan2(spot.y - player.y, spot.x - player.x)), gap = widestGap(angles);
+      if (!best || gap < best.gap) best = { spots, gap };
+    }
+    if (best.gap <= RING_MOST_GAP) return made(types.map((type, i) => {
+      const spot = best.spots[i], chosen = spot && free(spot) ? { x: spot.x, y: spot.y } : (spot && near(spot, 1.6)) || spread(taken);
       taken.push(chosen); return chosen;
-    });
+    }), 'ring');
+    kind = 'pincer';
+  }
+  if (kind === 'pincer') {
+    const sides = sidesFor(2);
+    if (sides) return made(types.map((type, i) => place(type, sides[i % 2])), 'pincer');
+    kind = 'flank';
+  }
+  if (kind === 'flank') {
+    const sides = sidesFor(1);
+    if (sides) return made(types.map(type => place(type, sides[0])), 'flank');
+    return made(types.map(() => { const spot = spread(taken); taken.push(spot); return spot; }), 'spread');
   }
   if (kind === 'camps') {
     const camps = Array.from({ length: types.length > 5 ? 3 : 2 }, () => {

@@ -284,7 +284,12 @@ let searching = 0;
 // ── 유저 tab ─────────────────────────────────────────────────────────────────────────────────────────────────
 const ago = (ms, now) => { const s = Math.max(0, (now - ms) / 1000); return s < 60 ? '방금' : s < 3600 ? `${Math.floor(s / 60)}분 전` : s < 86400 ? `${Math.floor(s / 3600)}시간 전` : `${Math.floor(s / 86400)}일 전`; };
 const isOnline = (u, data) => u.last_seen && data.now - u.last_seen < data.onlineSeconds * 1000;
-const placeOf = u => (u.where_now === 'run' ? `원정 ${u.node_now}번째` : PLACES[u.where_now] || '–');
+/** Where a device is now; an expedition names its chapter (2026-11-11; a device that has not reported one since shows 1장). */
+const placeOf = u => {
+  if (u.where_now !== 'run') return PLACES[u.where_now] || '–';
+  const chapter = (state.names?.chapters || []).find(c => c.id === u.chapter_now), number = chapter?.number || (u.chapter_now ? '?' : 1);
+  return `${number}장 원정 ${u.node_now}번째`;
+};
 const kindOf = u => [FORMS[u.form], SYSTEMS[u.os], BROWSERS[u.browser]].filter(Boolean).join(' · ') || '알 수 없음';
 /** The admin's memo first, then the name the player wrote in Moru's ledger, else the product number every player starts as. */
 const nameOf = u => (u.memo ? `${esc(u.memo)}${u.nickname ? ` <span class="nick">${esc(u.nickname)}</span>` : ''}` : u.nickname ? esc(u.nickname) : '<span class="mute">F2 (이름 없음)</span>');

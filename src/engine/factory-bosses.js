@@ -3,7 +3,7 @@
 // enemyActions calls in at a tell, a strike, each step, a phase break and a break swing (see the hooks in factory-mobs.js
 // and enemy-actions.js). Numbers live in slice.json bossAI.inspectorIris / bossAI.directorPress.
 import { fitsMap } from './map-geometry.js';
-import { distance, floorDistance, segmentDistance, inCone, FLOOR_FLAT } from './math.js';
+import { distance, floorDistance, segmentDistance, inCone, reachesThing, FLOOR_FLAT } from './math.js';
 import { josa } from './nickname.js';
 
 const TURN = Math.PI * 2;
@@ -19,6 +19,8 @@ const BREAK_FIRST = {
   molds: '프레스: 규격에 맞지 않는 것은 통과할 수 없다.'
 };
 export const FACTORY_BREAKS = new Set(['mirrors', 'pylons', 'molds']);
+/** A mirror's footprint for the wrench, the size of the ring drawn under it (2026-11-11: judged by its centre alone). */
+const MIRROR_RADIUS = 0.6;
 const angleTo = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
 const wrap = a => ((a + Math.PI) % TURN + TURN) % TURN - Math.PI;
 const inBox = (p, f, pad = 0) => Math.abs(p.x - f.x) <= f.w / 2 + pad && Math.abs(p.y - f.y) <= f.h / 2 + pad;
@@ -661,7 +663,7 @@ export const factoryBosses = {
         if (stun) { const p = this.p, until = this.s.time + stun; p.stunUntil = Math.max(p.stunUntil || 0, until); p.heldUntil = Math.max(p.heldUntil || 0, until); p.attack = null; this.effect('ring', p.x, p.y, '#cfe9f2', 0.35, 1, { look: 'quake' }); this.sense({ kind: 'heavy' }); }
       }
       const b = enemy.breaking; if (!b) continue;
-      for (const m of b.mirrors || []) if (!m.lit && reach(m) && !(m.turnedAt > this.s.time - 0.15)) {
+      for (const m of b.mirrors || []) if (!m.lit && reachesThing(this.p, m, a.angle, range + 0.4, this.config.rules.comboArcDegrees, MIRROR_RADIUS) && !(m.turnedAt > this.s.time - 0.15)) {
         this.sense({ kind: 'boss', id: 'mirrorTurn' }); m.from = (m.dir ?? 0) * Math.PI / 4; m.dir = ((m.dir ?? 0) + 1) % 8; m.turnedAt = this.s.time; m.aimed = m.dir === mirrorDir(m, enemy); if (m.aimed) m.aimedAt = this.s.time;
         this.effect('spark', m.x, m.y - 0.6, m.aimed ? '#7fe0a0' : '#ffe58a', 0.3, 0.8); this.sense({ kind: 'hit' });
       }

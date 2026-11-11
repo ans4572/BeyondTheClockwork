@@ -1,6 +1,6 @@
 import { fitsMap } from './map-geometry.js';
 import { FACTORY_BREAKS } from './factory-bosses.js';
-import { distance, floorDistance, inCone, segmentDistance } from './math.js';
+import { distance, floorDistance, inCone, segmentDistance, reachesThing } from './math.js';
 import { josa } from './nickname.js';
 
 /**
@@ -178,12 +178,19 @@ export const enemyActions = {
   /** A swing during a break: bats cans back, strikes drums, knocks down soldiers it meets. */
   breakSwing(a, range) {
     this.fbSwing(a, range);
-    const reach = target => inCone(this.p, target, a.angle, range + 0.3, this.config.rules.comboArcDegrees);
+    // Judged by the thing's own size (2026-11-11: by its centre point alone a drum or a flag soldier was hard to hit).
+    const reach = (target, radius) => reachesThing(this.p, target, a.angle, range + 0.3, this.config.rules.comboArcDegrees, radius);
     for (const enemy of this.s.enemies) {
       const b = enemy.breaking; if (!b) continue;
-      for (const can of b.cans || []) if (!can.back && reach(can)) { can.back = true; can.dir = Math.atan2(enemy.y - can.y, enemy.x - can.x); this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' }); }
-      if (b.drums && !a.drumStruck) { const i = b.drums.findIndex(drum => reach(drum)); if (i >= 0) { a.drumStruck = true; this.strikeDrum(enemy, i); } }
-      for (const s of b.soldiers || []) if (!s.down && reach(s)) { if (s.flag) { s.down = true; this.effect('scrap', s.x, s.y, '#ffd257', 0.5, 1); this.sense({ kind: 'kill' }); } else this.effect('spark', s.x, s.y, '#d8dde2', 0.2, 0.5); }
+      const rule = this.breakRule ? this.breakRule(enemy, b.index) : {};
+      for (const can of b.cans || []) if (!can.back && reach(can, rule.canRadius || 0.35)) { can.back = true; can.dir = Math.atan2(enemy.y - can.y, enemy.x - can.x); this.effect('spark', can.x, can.y, '#fff4d6', 0.2, 0.6); this.sense({ kind: 'hit' }); }
+      if (b.drums && !a.drumStruck) {
+        // The nearest drum in reach is the one struck (it used to be the first in the list, so with two in reach the far
+        // one could be struck and the order fail).
+        const near = b.drums.map((drum, i) => ({ i, d: distance(this.p, drum) })).filter(({ i }) => reach(b.drums[i], rule.drumRadius || 0.6)).sort((x, y) => x.d - y.d)[0];
+        if (near) { a.drumStruck = true; this.strikeDrum(enemy, near.i); }
+      }
+      for (const s of b.soldiers || []) if (!s.down && reach(s, rule.soldierRadius || 0.45)) { if (s.flag) { s.down = true; this.effect('scrap', s.x, s.y, '#ffd257', 0.5, 1); this.sense({ kind: 'kill' }); } else this.effect('spark', s.x, s.y, '#d8dde2', 0.2, 0.5); }
     }
   },
   /** What the boss will do next: its usual round, plus what it has unlocked by being hurt. */

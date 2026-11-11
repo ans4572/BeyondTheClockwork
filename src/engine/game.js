@@ -140,6 +140,23 @@ export class Game {
     const map = this.village || this.map, [width, height] = map?.size || [this.config.arena.width, this.config.arena.height];
     return map ? { left: 0, right: width, top: 0, bottom: height } : this.config.arena.bounds;
   }
+  /**
+   * What auto-aim (touch, arrow keys) turns the wrench to: during a boss's break, the things to strike (cans flying, drums,
+   * flag soldiers still up, mirrors not yet lit) before any body; otherwise the living enemies (2026-11-11: it only knew
+   * enemies, so on a phone the swing turned to the shielded boss instead of the drum or mirror beside F2).
+   */
+  get aimTargets() {
+    const things = [];
+    for (const enemy of this.s.enemies) {
+      const b = enemy.hp > 0 && enemy.breaking; if (!b) continue;
+      for (const can of b.cans || []) if (!can.back) things.push(can);
+      for (const drum of b.drums || []) things.push(drum);
+      for (const s of b.soldiers || []) if (s.flag && !s.down) things.push(s);
+      for (const m of b.mirrors || []) if (!m.lit) things.push(m);
+    }
+    const bodies = this.s.enemies.filter(e => e.hp > 0 && !(things.length && e.breaking));
+    return things.length ? [...things.map(t => ({ x: t.x, y: t.y, hp: 1 })), ...bodies] : bodies;
+  }
   get active() { return ['intro', 'combat', 'practice'].includes(this.s.mode) && !this.s.paused && !this.s.downUntil; }
   /** F2 has fallen on a run and lies still for a moment before the run ends. */
   get down() { return !!this.s.downUntil; }
@@ -560,7 +577,8 @@ export class Game {
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       const spread = this.trait('shockSpread');
       if (spread && enemy.statuses.shock > this.s.time) {
-        const next = this.s.enemies.filter(e => e !== enemy && e.hp > 0 && !e.dummy && distance(enemy, e) <= spread.range).sort((a, b) => distance(enemy, a) - distance(enemy, b))[0];
+        // An elite coated against shock is passed over (2026-11-11: the spread set shock on it directly).
+        const next = this.s.enemies.filter(e => e !== enemy && e.hp > 0 && !e.dummy && e.immuneTo !== 'shock' && distance(enemy, e) <= spread.range).sort((a, b) => distance(enemy, a) - distance(enemy, b))[0];
         if (next) { next.statuses.shock = Math.max(next.statuses.shock || 0, enemy.statuses.shock); this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.6, 1, { targetX: next.x, targetY: next.y, look: 'spanner', chain: [] }); }
       }
       const harvest = this.wrenchMod('scrapHarvest');
@@ -1361,8 +1379,10 @@ export class Game {
       if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
       this.sense({ kind: 'loot' });
     }
-    // The room's furniture stays where it stands while the reward is chosen and the portal walked to; only lit fuses go out.
-    const furniture = (this.s.hazards || []).filter(h => !h.gone).map(({ fuseAt, ...h }) => h);
+    // The room's furniture stays where it stands while the reward is chosen and the portal walked to. A crate already lit
+    // still goes off (2026-11-11: fuses used to go out, and a crate struck after the fight never went off at all), but
+    // once the fight is won it no longer hurts F2 (room-waves.js blowCrate).
+    const furniture = (this.s.hazards || []).filter(h => !h.gone);
     this.clearCombat(); this.s.hazards = furniture;
     if (this.room.boss) this.s.mode = 'unwind'; else this.offerRewards();
     this.save(); return true;

@@ -1,7 +1,7 @@
 import { chapterList, chapterOpen } from './chapters.js';
 
 export function createProfile(data) {
-  return { nickname: '', freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, potion: null, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, playSeconds: 0, runs: 0, wins: 0, chapter: 1, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], records: {}, cleared: [], chapterRecords: {}, settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, bindings: {}, controls: 'keys', mouseBindings: {}, arrowBindings: {} } };
+  return { nickname: '', freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, potion: null, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, playSeconds: 0, runs: 0, wins: 0, chapter: 1, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], records: {}, cleared: [], chapterRecords: {}, settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, cursorSize: 32, bindings: {}, controls: 'keys', mouseBindings: {}, arrowBindings: {} } };
 }
 
 /** Price of the next level of a stat that is currently at `rank`. */

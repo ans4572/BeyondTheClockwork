@@ -280,3 +280,21 @@ test('the column comes in three ranks: following each gap is safe, standing in t
   const [struck, , damage] = pass(g => { const [line] = g.rankLines; if (!line) return; const end = line.rank.gapFrom > 0.5 ? line.a : line.b; g.p.x = end[0]; g.p.y = end[1]; g.p.invulnerableUntil = 0; });
   assert.ok(struck >= damage);
 });
+
+test('break targets are struck by their size, the nearest drum is the one struck, and auto-aim turns to them (2026-11-11)', async () => {
+  const { reachesThing, inCone } = await import('../src/engine/math.js');
+  const from = { x: 0, y: 0 }, beside = { x: Math.cos(1.25), y: Math.sin(1.25) };
+  assert.equal(inCone(from, beside, 0, 2, 115), false, 'by its centre alone it was missed');
+  assert.equal(reachesThing(from, beside, 0, 2, 115, 0.6), true, 'pressed against it, it is struck');
+  assert.equal(reachesThing(from, { x: -1, y: 0 }, 0, 2, 115, 0.6), false, 'not behind the body');
+  assert.equal(reachesThing(from, { x: 2.5, y: 0 }, 0, 2, 115, 0.6), true, 'its edge is in reach');
+  assert.equal(reachesThing(from, { x: 2.7, y: 0 }, 0, 2, 115, 0.6), false);
+  const [g, brass] = boss('captainBrass');
+  g.p.x = 10; g.p.y = 8;
+  let struck = null; g.strikeDrum = (enemy, i) => { struck = i; };
+  brass.breaking = { kind: 'drums', index: 0, drums: [{ x: 11.9, y: 8.2 }, { x: 10.9, y: 8 }] };
+  g.breakSwing({ angle: 0 }, 2.2);
+  assert.equal(struck, 1, 'the nearer drum');
+  assert.deepEqual(g.aimTargets.slice(0, 2).map(t => [t.x, t.y]), [[11.9, 8.2], [10.9, 8]], 'auto-aim knows the drums');
+  assert.ok(!g.aimTargets.includes(brass), 'and not the shielded boss');
+});

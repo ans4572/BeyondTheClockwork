@@ -10,6 +10,18 @@ export const FLOOR_FLAT = 0.55;
 export const floorDistance = (a, b) => Math.hypot(a.x - b.x, (a.y - b.y) / FLOOR_FLAT);
 export const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 export const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
+/**
+ * Whether a swing reaches a thing of `radius` (a drum, a mirror, a flag soldier: 2026-11-11, judged by their centre point
+ * alone they were hard to hit): in reach of its edge, and inside the arc widened by the angle the thing covers. Pressed up
+ * against it (within `radius` + half a unit) it counts in any direction in front of the body's side.
+ */
+export function reachesThing(origin, target, angle, range, degrees, radius) {
+  const d = distance(origin, target);
+  if (d > range + radius) return false;
+  const off = Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle));
+  if (d <= radius + 0.5) return off <= Math.PI / 2 + 1e-9;
+  return off <= degrees * Math.PI / 360 + Math.atan2(radius, d);
+}
 export function segmentDistance(p, a, b) {
   const dx = b.x - a.x, dy = b.y - a.y;
   const t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1), 0, 1);
