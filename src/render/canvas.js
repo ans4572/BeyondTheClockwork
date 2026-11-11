@@ -797,8 +797,10 @@ export class CanvasRenderer {
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
   coverBody(mask, x, y, halfWidth = 1.3, tall = 2.9) { return mask?.cover(this.ctx, x, y, halfWidth, tall) || 0; }
   drawNpc({ x, y, pose, label }, mask) {
-    const clip = this.npcSprites.clip(pose.action, pose.direction);
-    if (!this.drawSprite(x * 20, y * 20, pose, this.npcSprites)) return;
+    // A walk sheet still on its way (they load after the standing ones, main.js loadNpcs): the resident stands meanwhile.
+    const walking = pose.action.endsWith('-walk'), still = walking && !this.npcSprites.image(this.npcSprites.clip(pose.action, pose.direction)?.sheet) ? { ...pose, action: pose.action.replace(/-walk$/, '-idle'), frame: 0 } : pose;
+    const clip = this.npcSprites.clip(still.action, still.direction);
+    if (!this.drawSprite(x * 20, y * 20, still, this.npcSprites)) return;
     this.coverBody(mask, x, y);
     if (!label) return;
     this.labels.push({ label, x: x * 20, y: y * 20 - clip.bodyHeight * clip.scale * BODY_SCALE / 2 - NAME_GAP });

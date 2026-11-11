@@ -72,7 +72,8 @@ export function cleanEvent(sent) {
     if (!PLACES.includes(sent.where) || !whole(sent.node, 99) || !whole(sent.gears, 1e9) || !whole(sent.playSeconds, 1e9)) return null;
     // The chapter of the expedition under way (2026-11-11), for the admin page's 유저 tab; none outside a run.
     const chapter = sent.where === 'run' && typeof sent.chapter === 'string' && CHAPTER_ID.test(sent.chapter) ? sent.chapter : null;
-    return { kind, device, name: cleanNickname(sent.name), where: sent.where, node: sent.node, gears: sent.gears, playSeconds: sent.playSeconds, chapter };
+    const difficulty = sent.where === 'run' && DIFFICULTIES.includes(sent.difficulty) ? sent.difficulty : null;
+    return { kind, device, name: cleanNickname(sent.name), where: sent.where, node: sent.node, gears: sent.gears, playSeconds: sent.playSeconds, chapter, difficulty };
   }
   if (kind !== 'runStart' && kind !== 'runEnd') return null;
   const combo = comboKey(sent.elements);

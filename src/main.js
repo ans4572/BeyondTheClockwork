@@ -134,12 +134,17 @@ try {
   // They wait for the title to be drawn, so they do not hold up the loading card.
   titleDrawn.then(() => { for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); } });
   const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error));
-  playerSprites
-    .then(() => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json')).then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
+  const loadMobs = () => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json').then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
     // Chapter 2's factory mobs, fetched after the boot and only where chapter 2 can be played (not while it is a preview
     // on the live site); they join the chapter 1 mob library.
-    .then(() => (game.previews || !data?.slice?.chapters?.find(c => c.eliteType)?.preview) && SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, bootDone).then(library => renderer.mobSprites?.merge(library))).catch(error => console.warn(error))
-    .then(() => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)))).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+    .then(() => (game.previews || !data?.slice?.chapters?.find(c => c.eliteType)?.preview) && SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, bootDone).then(library => renderer.mobSprites?.merge(library))).catch(error => console.warn(error));
+  // Standing sheets first (about 0.4 MB) so everyone shows at once; the walks (about 1.7 MB) follow, and a resident whose
+  // walk has not arrived yet is drawn standing (canvas.js drawNpc).
+  const loadNpcs = () => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)), action => action.endsWith('-walk')).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
+  // The townsfolk come first unless the save is in the middle of an expedition (2026-11-11: they waited behind both
+  // chapters' mob sheets, about 5.7 MB, so a reload in town showed an empty square for a while).
+  const inRun = !!game.s.run && ['combat', 'reward', 'route', 'unwind', 'shop', 'merchant'].includes(game.s.mode);
+  playerSprites.then(() => (inRun ? loadMobs().then(loadNpcs) : loadNpcs().then(loadMobs)));
   // On a local test server the game and its renderer can be looked at from the console (never on the published site).
   if (DEBUG_ALLOWED) window.__btc = { game, renderer };
   // Anonymous play statistics for the admin page (admin.html); never sent from a local test server.
@@ -1336,7 +1341,7 @@ try {
   const checkIn = async () => {
     if (!mail || document.hidden || Date.now() - lastPing < 20000) return;
     lastPing = Date.now();
-    const gifts = await mail.ping({ name: game.s.profile.nickname || '', where: place(), node: game.s.run ? game.s.run.node + 1 : 0, chapter: game.s.run ? game.chapter.id : '', gears: Math.max(0, Math.floor(game.s.profile.freeGears)), playSeconds: Math.max(0, Math.floor(game.s.profile.playSeconds || 0)) });
+    const gifts = await mail.ping({ name: game.s.profile.nickname || '', where: place(), node: game.s.run ? game.s.run.node + 1 : 0, chapter: game.s.run ? game.chapter.id : '', difficulty: game.s.run ? game.s.run.difficulty || data.slice.difficulty?.default || '' : '', gears: Math.max(0, Math.floor(game.s.profile.freeGears)), playSeconds: Math.max(0, Math.floor(game.s.profile.playSeconds || 0)) });
     if (gifts.length) mail.claim(game.receiveGifts(gifts));
   };
   if (mail) { setTimeout(checkIn, 3000); setInterval(checkIn, PING_SECONDS * 1000); document.addEventListener('visibilitychange', () => { if (!document.hidden) checkIn(); }); }
