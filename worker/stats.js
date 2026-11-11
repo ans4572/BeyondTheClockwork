@@ -183,14 +183,15 @@ export async function summary(db, days = 30, now = Date.now(), difficulty = '') 
  * element pair and the ledger name of whoever made it, never their device id) and, when a device is named, that
  * device's own best, clear count and furthest stop. Clears under MIN_CLEAR_SECONDS are not real runs and are skipped.
  */
-export async function records(db, device = '') {
+export async function records(db, device = '', chapter = FIRST_CHAPTER_ID) {
   await ensure(db);
-  const mine = isDeviceId(device) ? device : '';
+  // One chapter's board (2026-11-11); runs from before they carried their chapter are chapter 1's.
+  const mine = isDeviceId(device) ? device : '', ch = /^[a-z][a-z-]{0,31}$/.test(chapter || '') ? chapter : FIRST_CHAPTER_ID;
   const tops = DIFFICULTIES.map(id => db.prepare(`SELECT r.seconds, r.combo, r.device, d.nickname FROM runs r LEFT JOIN devices d ON d.id = r.device
-    WHERE r.reason = 'clear' AND r.difficulty = ?1 AND r.seconds >= ?2 ORDER BY r.seconds, r.ended_at LIMIT 1`).bind(id, MIN_CLEAR_SECONDS));
+    WHERE r.reason = 'clear' AND r.difficulty = ?1 AND r.seconds >= ?2 AND COALESCE(r.chapter, ?3) = ?4 ORDER BY r.seconds, r.ended_at LIMIT 1`).bind(id, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch));
   const own = mine ? DIFFICULTIES.flatMap(id => [
-    db.prepare(`SELECT seconds, combo FROM runs WHERE device = ?1 AND difficulty = ?2 AND reason = 'clear' AND seconds >= ?3 ORDER BY seconds LIMIT 1`).bind(mine, id, MIN_CLEAR_SECONDS),
-    db.prepare(`SELECT SUM(reason = 'clear') AS clears, MAX(node) AS furthest FROM runs WHERE device = ?1 AND difficulty = ?2`).bind(mine, id)
+    db.prepare(`SELECT seconds, combo FROM runs WHERE device = ?1 AND difficulty = ?2 AND reason = 'clear' AND seconds >= ?3 AND COALESCE(chapter, ?4) = ?5 ORDER BY seconds LIMIT 1`).bind(mine, id, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch),
+    db.prepare(`SELECT SUM(reason = 'clear') AS clears, MAX(node) AS furthest FROM runs WHERE device = ?1 AND difficulty = ?2 AND COALESCE(chapter, ?3) = ?4`).bind(mine, id, FIRST_CHAPTER_ID, ch)
   ]) : [];
   const out = await db.batch([...tops, ...own]), rows = result => result?.results?.[0] || null;
   return Object.fromEntries(DIFFICULTIES.map((id, i) => {
@@ -235,7 +236,7 @@ export async function statsApi(request, url, env, reply, cors = {}) {
   }
   if (path === '/api/records' && method === 'GET') {
     if (!env.STATS) return reply({ error: 'unavailable' }, 503);
-    return reply(await records(env.STATS, url.searchParams.get('device') || ''));
+    return reply(await records(env.STATS, url.searchParams.get('device') || '', url.searchParams.get('chapter') || FIRST_CHAPTER_ID));
   }
   if (!path.startsWith('/api/admin/')) return null;
   // A short token would be guessable, so the admin routes stay shut until a long one is set.

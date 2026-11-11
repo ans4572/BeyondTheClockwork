@@ -434,7 +434,7 @@ test('every combat room runs two or three waves of fifteen to twenty-four enemie
 test('the next wave is warned about, arrives when the dealt number are left, and only the last one clears the room', () => {
   const g = hub(); g.startRun(11); const { waves, power } = g.room, plan = g.s.run.plan[g.s.run.node];
   assert.equal(plan.shape, 'two'); assert.equal(waves.length, 2); assert.equal(plan.callAt, 3);
-  assert.equal(g.s.enemies.length, waves[0].length); assert.equal(g.s.enemies[0].maxHp, Math.round(data.slice.enemies[g.s.enemies[0].type].hp * power));
+  assert.equal(g.s.enemies.length, waves[0].length); assert.equal(g.s.enemies[0].maxHp, Math.round(data.slice.enemies[g.s.enemies[0].type].hp * power * (g.s.enemies[0].elite ? 1 : data.slice.rules.waveHpShare)));
   g.s.enemies.forEach(e => { e.ready = 1e9; });
   // A big wave calls the next while three still stand.
   g.s.enemies.slice(0, -4).forEach(e => { e.hp = 0; }); step(g, 0.1); assert.equal(g.s.run.wave, 0);

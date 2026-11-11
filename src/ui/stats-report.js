@@ -61,11 +61,12 @@ export function mailbox({ storage, hostname, protocol = 'https:', fetchImpl = (.
  * The difficulty cards' records from the worker (worker/stats.js records), with this device's own named so the
  * answer can say which top record is ours. Null on a local test server or when the worker cannot be reached.
  */
-export async function fetchRecords({ storage, hostname, protocol = 'https:', fetchImpl = (...a) => fetch(...a), base = apiBase(hostname) } = {}) {
+export async function fetchRecords({ storage, hostname, protocol = 'https:', fetchImpl = (...a) => fetch(...a), base = apiBase(hostname), chapter = '' } = {}) {
   if (LOCAL_HOSTS.includes(hostname) || protocol === 'file:') return null;
   const device = deviceId(storage);
   try {
-    const response = await fetchImpl(`${base}/api/records${device ? `?device=${device}` : ''}`);
+    const query = [device && `device=${device}`, chapter && `chapter=${encodeURIComponent(chapter)}`].filter(Boolean).join('&');
+    const response = await fetchImpl(`${base}/api/records${query ? `?${query}` : ''}`);
     return response.ok ? await response.json() : null;
   } catch { return null; }
 }

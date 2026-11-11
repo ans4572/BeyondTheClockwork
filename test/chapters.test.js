@@ -33,9 +33,9 @@ test('chapter 2 opens once chapter 1 is beaten, and a save from before chapters 
   assert.equal(old.s.profile.chapter, 2, 'entering chapter 2 opens its stat levels');
 });
 
-test('a chapter 2 run is harder and pays more, keeps its records apart, and reports nothing to the server', () => {
+test('a chapter 2 run is harder and pays more, keeps its records apart, and reports to the server under its own chapter', () => {
   const g = atPortal(p => { p.cleared = ['smile-street']; }), sent = [];
-  g.onRun = (kind, event) => sent.push(kind);
+  g.onRun = (kind, event) => sent.push([kind, event.chapter]);
   assert.ok(g.depart('normal', FACTORY));
   const level = data.slice.difficulty.levels.find(l => l.id === 'normal'), chapter = data.slice.chapters.find(c => c.id === FACTORY);
   assert.equal(g.difficulty.scale, level.scale * chapter.scale);
@@ -44,7 +44,7 @@ test('a chapter 2 run is harder and pays more, keeps its records apart, and repo
   assert.equal(g.s.result.chapter, FACTORY);
   assert.equal(g.s.profile.chapterRecords[FACTORY].normal.clears, 1);
   assert.equal(g.s.profile.records.normal, undefined, 'chapter 1 records untouched');
-  assert.deepEqual(sent, []);
+  assert.deepEqual(sent, [['runStart', FACTORY], ['runEnd', FACTORY]]);
 });
 
 test('beating the forming hall marks chapter 2 cleared; a chapter 2 run survives a reload', () => {
@@ -68,12 +68,13 @@ test('a chapter 1 run is unchanged: no chapter on the run, records where they we
   assert.equal(g.s.profile.records.easy.furthest, 1);
 });
 
-test('chapter 2 is still a preview: without previews it stays shut even after chapter 1 is beaten', () => {
+test('chapter 2 is public (2026-11-11): on the live site it opens once chapter 1 is beaten, on any difficulty', () => {
+  const fresh = atPortal(() => {}, false);
+  assert.equal(chapterOpen(data.slice, fresh.s.profile, FACTORY), false, 'shut before chapter 1 is beaten');
   const live = atPortal(p => { p.cleared = ['smile-street']; }, false);
-  assert.equal(chapterOpen(data.slice, live.s.profile, FACTORY), false);
-  assert.equal(live.depart('normal', FACTORY), false);
-  assert.equal(live.s.run, null);
-  assert.ok(chapterOpen(data.slice, live.s.profile, FACTORY, true), 'open on the dev server');
+  assert.equal(chapterOpen(data.slice, live.s.profile, FACTORY), true);
+  assert.ok(live.depart('easy', FACTORY));
+  assert.equal(live.chapter.id, FACTORY);
 });
 
 test('chapter 2 rooms get only crates and music boxes from chapter 1’s furniture, and factory devices of their own', () => {
@@ -207,7 +208,7 @@ test('stat levels open with a chapter, not on the first step into it: 20 once ch
   const beaten = atPortal(p => { p.cleared = ['smile-street']; });
   assert.equal(beaten.s.profile.chapter, 1, 'never entered chapter 2');
   assert.equal(rankCap(data, beaten.s.profile, stat, true), 20, 'chapter 2 is open, so its levels are');
-  assert.equal(rankCap(data, beaten.s.profile, stat, false), 10, 'where chapter 2 is not shown yet it does not open');
+  assert.equal(rankCap(data, beaten.s.profile, stat, false), 20, 'chapter 2 is public, so the live site opens its levels too');
   beaten.s.profile.freeGears = 1e6; for (let i = 0; i < 20; i++) assert.ok(beaten.tune('maxHp', 'buy')); assert.equal(beaten.tune('maxHp', 'buy'), false);
   // A third chapter after the factory: its levels open the moment the factory is beaten.
   const third = { ...data, slice: { ...data.slice, chapters: [...data.slice.chapters, { id: 'clock-tower', number: 3, name: '중앙시계탑', after: FACTORY, rooms: data.slice.chapters[1].rooms }] } };

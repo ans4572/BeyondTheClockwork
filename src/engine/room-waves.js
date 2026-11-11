@@ -19,7 +19,8 @@ export const roomWaves = {
     const enemy = this.spawnEnemy(type === 'elite' && this.chapter?.eliteType ? this.chapter.eliteType : type, spot);
     if (type === 'elite') enemy.elite = true;
     // An elite-only room makes its elites tougher (encounters.js dealRoom: the room weighs 90% of an ordinary one).
-    const { power } = this.room, toughen = type === 'elite' ? this.s.run?.plan?.[this.s.run.node]?.eliteHp || 1 : 1;
+    // Ordinary bodies spawn a little lighter (rules.waveHpShare, 2026-11-11), elites as they are.
+    const { power } = this.room, toughen = type === 'elite' ? this.s.run?.plan?.[this.s.run.node]?.eliteHp || 1 : this.config.rules.waveHpShare ?? 1;
     enemy.hp = enemy.maxHp = Math.round(enemy.hp * power * toughen); enemy.damage = Math.max(1, Math.round(enemy.damage * power * this.config.rules.waveDamageShare));
     // Wave bodies wait where they stand until the player comes near; nothing rushes in from across the map.
     enemy.aggro = false;

@@ -313,10 +313,10 @@ export class Game {
     return true;
   }
   /**
-   * Play statistics go to the server for chapter 1 only for now: chapter 2 still borrows chapter 1's enemies and bosses,
-   * so its runs would only blur the clear board and the admin figures.
+   * Play statistics go to the server from every chapter (2026-11-11: chapter 2 went public; it was chapter 1 only). Each
+   * event carries its chapter, so the admin figures and the clear board keep the chapters apart.
    */
-  report(kind, event) { if (this.chapter.id === FIRST_CHAPTER) this.onRun(kind, event); }
+  report(kind, event) { this.onRun(kind, event); }
   /** The chapter's last boss is down: the run ends in the chapter's ending. */
   finishChapter() { this.s.mode = 'complete'; this.s.profile.wins++; clearChapter(this.s.profile, this.chapter.id); }
   spawnEnemy(type, position) {

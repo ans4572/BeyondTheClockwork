@@ -599,26 +599,26 @@ try {
   // The server's records, asked for each time the cards open (at most every RECORDS_REFRESH_MS); the cards show the
   // save's own records at once and the server's line once it answers.
   const RECORDS_REFRESH_MS = 30000;
-  let serverRecords = null, recordsState = 'idle', recordsAskedAt = -Infinity;
-  function askRecords() {
-    if (recordsState === 'loading' || performance.now() - recordsAskedAt < RECORDS_REFRESH_MS) return;
-    recordsState = 'loading'; recordsAskedAt = performance.now();
-    fetchRecords({ storage: localStorage, hostname: location.hostname, protocol: location.protocol }).then(found => {
-      if (found) serverRecords = found;
-      recordsState = serverRecords ? 'ready' : 'offline';
+  // Each chapter has its own board (2026-11-11: chapter 2 went public), asked for when its cards are on screen.
+  const serverBoards = {}, boardState = {}, boardAskedAt = {};
+  function askRecords(chapter = FIRST_CHAPTER) {
+    if (boardState[chapter] === 'loading' || performance.now() - (boardAskedAt[chapter] ?? -Infinity) < RECORDS_REFRESH_MS) return;
+    boardState[chapter] = 'loading'; boardAskedAt[chapter] = performance.now();
+    fetchRecords({ storage: localStorage, hostname: location.hostname, protocol: location.protocol, chapter }).then(found => {
+      if (found) serverBoards[chapter] = found;
+      boardState[chapter] = serverBoards[chapter] ? 'ready' : 'offline';
       if (game.s.panel === 'difficulty') renderOverlay(true);
     });
   }
-  /** A difficulty card's clear record: this device's best (time and element pair) and the server's fastest clear. */
+  /** A difficulty card's clear record: this device's best (time and element pair) and the server's fastest clear in this chapter. */
   function recordBlock(id, chapter = FIRST_CHAPTER) {
-    // The server keeps chapter 1's board only for now (game.js report): a later chapter shows this device's record alone.
-    const first = chapter === FIRST_CHAPTER, local = chapterRecords(game.s.profile, chapter)[id];
-    const mine = first ? mergeMine(local, serverRecords?.[id]?.me) : mergeMine(local), top = first ? serverRecords?.[id]?.top : null;
+    const serverRecords = serverBoards[chapter] || null, recordsState = boardState[chapter] || 'idle', local = chapterRecords(game.s.profile, chapter)[id];
+    const mine = mergeMine(local, serverRecords?.[id]?.me), top = serverRecords?.[id]?.top;
     const pair = list => `<span class="rec-els" title="${list?.length ? list.map(e => data.combat.elements.find(x => x.id === e)?.name || e).join(' + ') : '렌치만'}">${list?.length ? list.map(e => elementIcon(e, 'rec-el')).join('') : '<i>렌치만</i>'}</span>`;
     const quiet = text => `<b class="rec-none">${text}</b>`;
     const me = mine.best !== null ? `<b>${formatClock(mine.best)}</b>${pair(mine.elements)}` : `${quiet('아직 없음')}<span class="rec-els"><i>${mine.furthest ? `${mine.furthest}구간까지` : ''}</i></span>`;
     const server = top ? `<b>${formatClock(top.seconds)}</b>${pair(top.elements)}<small class="rec-who">${ico('crown')}${top.mine ? '나' : escapeHTML(top.name || '이름 없는 인형')}</small>`
-      : quiet(!first ? '준비 중' : recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
+      : quiet(recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
     return `<div class="rec"><div class="rec-head"><span>클리어 기록</span>${top?.mine ? '<em class="rec-mine">내가 서버 1위!</em>' : ''}</div>`
       + `<div class="rec-row${mine.best !== null && top?.mine ? ' top' : ''}"><span>내 최고</span>${me}</div><div class="rec-row top"><span>서버 1위</span>${server}</div></div>`;
   }
@@ -650,8 +650,8 @@ try {
     return `<div class="debug-give"><span>난이도</span>${levels.map(level => button(level.id === pick ? `${level.name} ✓` : level.name, 'debug-difficulty', `data-level="${level.id}" aria-pressed="${level.id === pick}"`, level.id === pick ? 'primary' : '')).join('')}</div>`;
   }
   function difficultyPanel() {
-    askRecords();
     const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
+    askRecords(chapter);
     const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
     const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');

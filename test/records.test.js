@@ -53,3 +53,13 @@ test('the server board: fastest real clear per difficulty with its name, never a
   assert.equal((await records(db, a)).normal.top.mine, true);
   assert.equal((await records(db)).normal.me, null);
 });
+
+test('each chapter has its own server board (2026-11-11); runs without a chapter count as chapter 1', async () => {
+  const db = d1(), a = 'aaaaaaaaaaaaaaaa';
+  await record(db, { device: a, kind: 'runEnd', run: 'run-1-1', difficulty: 'easy', elements: ['fire'], reason: 'clear', node: 12, seconds: 900 });
+  await record(db, { device: a, kind: 'runEnd', run: 'run-2-1', difficulty: 'easy', chapter: 'silent-factory', elements: ['ice'], reason: 'clear', node: 14, seconds: 1200 });
+  assert.equal((await records(db, a)).easy.top.seconds, 900);
+  assert.equal((await records(db, a)).easy.me.clears, 1, 'chapter 2 clears stay off chapter 1');
+  const factory = await records(db, a, 'silent-factory');
+  assert.equal(factory.easy.top.seconds, 1200); assert.deepEqual(factory.easy.top.elements, ['ice']); assert.equal(factory.easy.me.furthest, 14);
+});

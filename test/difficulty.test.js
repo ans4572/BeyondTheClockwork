@@ -24,7 +24,7 @@ test('enemies and bosses take the difficulty’s health and attack', () => {
   const guard = data.slice.enemies.guard, power = data.slice.rooms[0].power, share = data.slice.rules.waveDamageShare;
   for (const { id, scale } of levels) {
     const g = runOn(id), first = g.spawnWaveEnemy('guard', { x: 10, y: 10 });
-    assert.equal(first.maxHp, Math.round(Math.round(guard.hp * scale) * power), id);
+    assert.equal(first.maxHp, Math.round(Math.round(guard.hp * scale) * power * data.slice.rules.waveHpShare), id);
     assert.equal(first.damage, Math.max(1, Math.round(Math.round(guard.damage * scale) * power * share)), id);
     const roco = runOn(id, data.slice.rooms.findIndex(r => r.boss === 'collectorRoco')).s.enemies.find(e => e.boss);
     assert.equal(roco.maxHp, Math.round(data.combat.bosses.find(b => b.id === 'collectorRoco').hp * scale), `${id} boss`);
