@@ -78,7 +78,11 @@ const CAMERA_LEAD = [1.2, 0.4], CAMERA_LEAD_SECONDS = 0.45;
  * than CAMERA_SNAP (a new room, a panel's spot) is taken at once.
  */
 const CAMERA_FOLLOW_SECONDS = 0.12, CAMERA_DEAD_Y = 0.6, CAMERA_SNAP = 4;
-const GROUND_LOOKS = new Set(['quake', 'drumBeat', 'march', 'carpetRoll', 'stampHit']);
+/** 도전 스패너's spinning spanner drawn smaller than its sheet (about 24 px long; 2026-11-11, asked smaller). */
+const SPANNER_SCALE = 0.7;
+/** 도전 스패너's chain and the saw rail's current: a 4 px rim, 2 px gold, 1 px core (2026-11-11, asked a little thinner than 5/3/1). */
+const THIN_BOLT = 0.5;
+const GROUND_LOOKS = new Set(['pressSlam', 'quake', 'drumBeat', 'march', 'carpetRoll', 'stampHit']);
 const TAG_SIZE = 7, TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
@@ -335,8 +339,9 @@ export class CanvasRenderer {
       const ax = x - h.dx * 20, ay = y - h.dy * 20, bx = x + h.dx * 20, by = y + h.dy * 20;
       c.lineCap = 'round';
       const charged = h.chargedUntil > t;
-      for (const [w, col] of [[8, NAVY], [6, '#c79a3e'], [3, charged ? (Math.floor(t * 16) % 2 ? '#ffe086' : '#fff4b7') : '#3a3440']]) { c.lineWidth = w; c.strokeStyle = col; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); }
-      if (charged) { c.save(); c.globalAlpha = 0.35; c.lineWidth = 16; c.strokeStyle = '#ffe086'; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore(); }
+      this.pixelLine(ax, ay, bx, by, [[4, NAVY], [3, '#c79a3e'], [1, '#3a3440']]);
+      // Charged: current crackling along the slot in pixel lightning, a new shape every other frame.
+      if (charged) this.pixelBolt(ax, ay, bx, by, Math.floor(t * 12) + h.x * 7, { rough: 0.06, forks: 1, size: THIN_BOLT });
       for (const [ex, ey] of [[ax, ay], [bx, by]]) { this.rect(ex - 4, ey - 4, 8, 8, NAVY); this.rect(ex - 3, ey - 3, 6, 6, '#e0b048'); this.rect(ex - 1, ey - 1, 2, 2, NAVY); }
       const saw = sawAt(h, t, rules.rail.speed), image = art('saw'), size = rules.rail.radius * 2 * 20 * 1.4;
       c.save(); c.translate(saw.x * 20, saw.y * 20 - size * 0.35); c.rotate(t * 12);
@@ -857,13 +862,61 @@ export class CanvasRenderer {
     const m = this.ctx.getTransform?.();
     (this.overlays ??= []).push(() => { const c = this.ctx; c.save(); if (m) c.setTransform(m); draw(); c.restore(); });
   }
-  /** A jagged spark of current between two points, redrawn each frame so it crackles. */
-  zigzag(x1, y1, x2, y2, seed, size = 1, edge = size > 1) {
-    const c = this.ctx, n = 6, wobble = k => { const v = Math.sin(k * 91.7) * 43758.5; return v - Math.floor(v) - 0.5; };
-    const pts = Array.from({ length: n }, (_, i) => { const t = (i + 1) / n, j = i < n - 1 ? 10 * size : 0; return [x1 + (x2 - x1) * t + wobble(seed + i * 7.3) * j, y1 + (y2 - y1) * t + wobble(seed + i * 3.1 + 5) * j]; });
-    // `edge`: a thin navy outline, as the painted effects have.
-    const strokes = edge ? [[2.2 * size + 1.6, '#2b3345'], [2.2 * size, '#fff8cf'], [size, '#ffd257']] : [[3 * size, '#fff8cf'], [1.2 * size, '#ffd257']];
-    for (const [w, col] of strokes) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x1, y1); for (const [px, py] of pts) c.lineTo(px, py); c.stroke(); }
+  /**
+   * Lines laid in whole pixels, like the sprites around them (2026-11-11: the smooth canvas strokes read as drawn by code).
+   * Each path is walked in half-pixel steps; every pixel it crosses gets a square per layer ([half width, colour]), all the
+   * paths' widest layer first, so joins and forks merge into one outline.
+   */
+  pixelPaths(paths, layers) {
+    const c = this.ctx;
+    for (const [half, col] of layers) {
+      if (half < 0) continue;
+      // A half of 1.5 gives a 4 px square (two up and left, one down and right), so in-between widths stay whole pixels.
+      const w = Math.round(half * 2 + 1), o = Math.floor(w / 2);
+      c.fillStyle = col;
+      for (const pts of paths) {
+        let last = '';
+        for (let i = 1; i < pts.length; i++) {
+          const [ax, ay] = pts[i - 1], [bx, by] = pts[i], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) * 2));
+          for (let k = i === 1 ? 0 : 1; k <= n; k++) {
+            const px = Math.round(ax + (bx - ax) * k / n), py = Math.round(ay + (by - ay) * k / n), key = px + ',' + py;
+            if (key !== last) { last = key; c.fillRect(px - o, py - o, w, w); }
+          }
+        }
+      }
+    }
+  }
+  pixelLine(x1, y1, x2, y2, layers) { this.pixelPaths([[[x1, y1], [x2, y2]]], layers); }
+  /**
+   * Pixel lightning between two points: a jagged path by midpoint displacement (as pixelfx draws its bolts) with a fork
+   * or two, laid in whole pixels with a navy rim, a gold body and a pale core. `seed` picks the shape: callers change it
+   * every other frame so it crackles. `rough` is how far it strays (0.22 free, under 0.1 along a rail); `hot` whitens the core.
+   */
+  pixelBolt(x1, y1, x2, y2, seed, { size = 1, forks = 2, rough = 0.22, hot = false } = {}) {
+    let state = Math.abs(Math.floor(seed * 7919)) % 233280 + 1;
+    const rnd = () => (state = (state * 9301 + 49297) % 233280) / 233280;
+    const jag = (a, b, depth, r) => {
+      let pts = [a, b];
+      for (let d = 0; d < depth; d++) {
+        const next = [pts[0]];
+        for (let i = 1; i < pts.length; i++) {
+          const [ax, ay] = pts[i - 1], [bx, by] = pts[i], L = Math.hypot(bx - ax, by - ay) || 1, off = (rnd() * 2 - 1) * r * L;
+          next.push([(ax + bx) / 2 - (by - ay) / L * off, (ay + by) / 2 + (bx - ax) / L * off], pts[i]);
+        }
+        pts = next;
+      }
+      return pts;
+    };
+    const L = Math.hypot(x2 - x1, y2 - y1), main = jag([x1, y1], [x2, y2], L > 40 ? 4 : 3, rough), branches = [];
+    for (let f = 0; f < forks && main.length > 6; f++) {
+      const i = 2 + Math.floor(rnd() * (main.length - 4)), [x, y] = main[i], [px, py] = main[i - 1];
+      const a = Math.atan2(y - py, x - px) + (rnd() < 0.5 ? -1 : 1) * (0.5 + rnd() * 0.6), len = Math.min(size ? 18 : 10, L * (0.15 + rnd() * 0.15));
+      branches.push(jag([x, y], [x + Math.cos(a) * len, y + Math.sin(a) * len], 2, 0.3));
+    }
+    this.pixelPaths([main], [[size + 1, '#2b3345']]); this.pixelPaths(branches, [[1, '#2b3345']]);
+    // size 0 is the thin bolt (감전 튐, 2026-11-11 asked smaller): a 1 px light gold line in a 3 px rim, white while hot.
+    this.pixelPaths([main], [[size, size ? '#ffd257' : hot ? '#ffffff' : '#ffe086']]); this.pixelPaths(branches, [[0, '#ffd257']]);
+    this.pixelPaths([main], [[size >= 1 ? size - 1 : size > 0 ? 0 : -1, hot ? '#ffffff' : '#fff8cf']]);
   }
   /** The picture an effect asks for by `look`; false while its sheet is not loaded, so the plain shape is drawn. */
   drawLook(fx, x, y, t) {
@@ -884,7 +937,7 @@ export class CanvasRenderer {
         const tx = fx.targetX * 20, ty = fx.targetY * 20 - 8, sy = y - 8, a = Math.atan2(ty - sy, tx - x), reach = Math.min(1, t / 0.25), c = this.ctx;
         const hx = x + (tx - x) * reach, hy = sy + (ty - sy) * reach, fade = t < 0.6 ? 1 : 1 - (t - 0.6) / 0.4;
         c.save(); c.globalAlpha *= fade; c.lineCap = 'round';
-        for (const [w, col] of [[5, '#2b3345'], [3, '#8a8f9c'], [1, '#d8dde2']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, sy); c.lineTo(hx - Math.cos(a) * 14, hy - Math.sin(a) * 14); c.stroke(); }
+        this.pixelLine(x, sy, hx - Math.cos(a) * 14, hy - Math.sin(a) * 14, [[2, '#2b3345'], [1, '#8a8f9c'], [0, '#d8dde2']]);
         c.restore();
         return this.drawFxFrame('guardThrust', frameAt('guardThrust'), hx - Math.cos(a) * 34, hy - Math.sin(a) * 34, { angle: a, sx: 1.2, sy: 1.2, alpha: fade });
       }
@@ -904,8 +957,10 @@ export class CanvasRenderer {
         if (!this.mark('measureHook')) return false;
         const c = this.ctx, sy = y - 12, tx = fx.targetX * 20, ty = fx.targetY * 20 - 8, a = Math.atan2(ty - sy, tx - x), reach = t < 0.45 ? Math.min(1, t / 0.2) : Math.max(0, 1 - (t - 0.45) / 0.55);
         const hx = x + (tx - x) * reach, hy = sy + (ty - sy) * reach;
-        c.save(); c.lineCap = 'butt'; c.strokeStyle = '#2b3345'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, sy); c.lineTo(hx, hy); c.stroke();
-        c.strokeStyle = '#f2c230'; c.lineWidth = 4; c.stroke(); c.setLineDash([1, 5]); c.strokeStyle = '#2b3345'; c.lineWidth = 3; c.stroke(); c.restore();
+        // The tape in whole pixels: a navy edge, the yellow tape and a navy tick across it every 6 px.
+        this.pixelLine(x, sy, hx, hy, [[2, '#2b3345'], [1, '#f2c230']]);
+        const len = Math.hypot(hx - x, hy - sy), nx = -Math.sin(a), ny = Math.cos(a); c.fillStyle = '#2b3345';
+        for (let d = 6; d < len - 2; d += 6) for (const k of [-1, 0, 1]) c.fillRect(Math.round(x + Math.cos(a) * d + nx * k), Math.round(sy + Math.sin(a) * d + ny * k), 1, 1);
         return this.drawMark('measureHook', hx, hy, 20, { angle: a });
       }
       case 'oilCan': case 'brassPlate': {
@@ -915,7 +970,11 @@ export class CanvasRenderer {
       case 'stampHit': return this.drawMark('stampImpact', x, y, fx.value * 20 * 2 * (0.65 + 0.45 * t), { alpha: 1 - t * t });
       case 'failBlast': return this.drawMark('failBlast', x, y - 16, 44 * (0.7 + 0.6 * t), { alpha: 1 - t * t });
       case 'reinspect': { const k = t < 0.18 ? 2.2 - 1.2 * t / 0.18 : 1; return this.drawMark('reinspectSeal', x, y - 30, 34 * k, { alpha: t < 0.7 ? 1 : 1 - (t - 0.7) / 0.3 }); }
-      case 'quake': { const k = fx.value * 20 / 44; return this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: k, sy: k, alpha: 0.85 }); }
+      // Press landing something heavy: the pixelfx slam, its ring drawn 62 px across at 1x, fitted to the blow's reach.
+      case 'pressSlam': { const k = fx.value * 20 / 30; return this.drawFxFrame('pressSlam', frameAt('pressSlam'), x, y, { sx: k, sy: k }); }
+      // 공명 낙뢰's bolt coming down on its body.
+      case 'boltStrike': return this.drawFxFrame('boltStrike', frameAt('boltStrike'), x, y, { sx: 1.25, sy: 1.25 });
+      case 'quake': { const k = fx.value * 20 / 32; return this.drawFxFrame('floorShock', frameAt('floorShock'), x, y, { sx: k, sy: k }) || this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: fx.value * 20 / 44, sy: fx.value * 20 / 44, alpha: 0.85 }); }
       case 'boom': { const k = Math.max(1, fx.value * 20 / 20); return this.drawFxFrame('ratExplosion', frameAt('ratExplosion'), x, y + 4, { sx: k, sy: k }); }
       case 'wave': { const k = Math.max(0.7, fx.value * 20 / 84); return this.drawFxFrame('trumpetWave', frameAt('trumpetWave'), x, y - 10, { angle: fx.angle, sx: k, sy: k }); }
       // The flame sweep grows with the skill's reach: 1.6 at the old 3 units (2026-11-10: reach 3 -> 3.4, picture kept to it).
@@ -931,10 +990,16 @@ export class CanvasRenderer {
       case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
       case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
       case 'frostCrescentBreak': return this.drawFxFrame('frostCrescentBreak', frameAt('frostCrescentBreak'), x, y - CRESCENT_LIFT, { angle: fx.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE }) || this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
+      case 'arc': {
+        // 감전 튐: current leaping from the shocked body to the one it hurts, in pixel lightning; it flickers out.
+        if (t > 0.45 && Math.floor(this.visualTime * 24) % 2) return true;
+        this.pixelBolt(x, y - 24, fx.targetX * 20, fx.targetY * 20 - 24, Math.floor(this.visualTime * 12) + Math.round(fx.targetX * 31), { hot: t < 0.15, forks: 1, size: 0 });
+        return true;
+      }
       case 'zapLine': {
         // Lightning runs along a saw rail: two crackling threads end to end, and a burst at each brass stop.
-        const tx = fx.targetX * 20, ty = fx.targetY * 20, seed = Math.floor(this.visualTime * 24);
-        this.zigzag(x, y - 2, tx, ty - 2, seed); if (t < 0.6) this.zigzag(x, y - 2, tx, ty - 2, seed + 41);
+        const tx = fx.targetX * 20, ty = fx.targetY * 20, seed = Math.floor(this.visualTime * 12);
+        this.pixelBolt(x, y - 2, tx, ty - 2, seed, { rough: 0.1, size: THIN_BOLT }); if (t < 0.6) this.pixelBolt(x, y - 2, tx, ty - 2, seed + 41, { rough: 0.1, forks: 0, size: THIN_BOLT });
         this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 10, { sx: 0.8, sy: 0.8 });
         this.drawFxFrame('electricHit', frameAt('electricHit'), tx, ty - 10, { sx: 0.8, sy: 0.8 });
         return true;
@@ -948,7 +1013,8 @@ export class CanvasRenderer {
       }
       case 'notes': { const k = fx.value * 20 / 54; return this.drawFxFrame('drumBeat', frameAt('drumBeat'), x, y, { sx: k, sy: k }); }
       // The streak is drawn for a dash 0.7 wide; a wider one (pressureDash radius) widens it to match.
-      case 'dash': { const k = (fx.value || DASH_DRAWN_RADIUS) / DASH_DRAWN_RADIUS; return this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, sy: k, alpha: 1 - t * 0.6 }); }
+      // The air ahead of the dash is drawn 16 px either side; a wider dash (pressureDash radius) widens it to match.
+      case 'dash': { const k = (fx.value || DASH_DRAWN_RADIUS) * 20 / 16; return this.drawFxFrame('dashGust', this.visualTime * FX.dashGust.fps, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, sy: k, alpha: 1 - t * 0.6 }) || this.drawFxFrame('pressureDash', this.visualTime * 12, g.p.x * 20, g.p.y * 20 - 12, { angle: fx.angle, sy: k, alpha: 1 - t * 0.6 }); }
       case 'carpetRoll': {
         // A new live carpet unrolls from one end to the other, gold-edged, then stays lit while Brass lives.
         const ax = fx.x, ay = fx.y, length = Math.hypot(fx.targetX - ax, fx.targetY - ay) * 20 * Math.min(1, t * 1.6), c = this.ctx;
@@ -968,11 +1034,11 @@ export class CanvasRenderer {
         // The charged spanner flies to its first enemy, bursts there, and current leaps on to the others.
         if (!this.mapImages?.get(FX.conductiveSpanner.sheet)) return false;
         const tx = fx.targetX * 20, ty = fx.targetY * 20 - 24, sx = x, sy = y - 16, fly = Math.min(1, t / 0.35);
-        if (t < 0.35) this.drawFxFrame('conductiveSpanner', this.visualTime * 12, sx + (tx - sx) * fly, sy + (ty - sy) * fly, { angle: Math.atan2(ty - sy, tx - sx), sx: 1.5, sy: 1.5 });
+        if (t < 0.35) { const at = [sx + (tx - sx) * fly, sy + (ty - sy) * fly], angle = Math.atan2(ty - sy, tx - sx); this.drawFxFrame('spannerSpin', this.visualTime * FX.spannerSpin.fps, ...at, { angle, sx: SPANNER_SCALE, sy: SPANNER_SCALE }) || this.drawFxFrame('conductiveSpanner', this.visualTime * 12, ...at, { angle, sx: 1.5, sy: 1.5 }); }
         else {
           const k = (t - 0.35) / 0.65;
           this.drawFxFrame('electricHit', k * FX.electricHit.frames, tx, ty, { sx: 1.6, sy: 1.6 });
-          for (const [i, e] of (fx.chain || []).entries()) { const ex = e.x * 20, ey = e.y * 20 - 24; if (k < 0.6) this.zigzag(tx, ty, ex, ey, Math.floor(this.visualTime * 20) + i * 13, 1, true); this.drawFxFrame('electricHit', Math.max(0, k - 0.1) * FX.electricHit.frames, ex, ey, { sx: 1.4, sy: 1.4 }); }
+          for (const [i, e] of (fx.chain || []).entries()) { const ex = e.x * 20, ey = e.y * 20 - 24; if (k < 0.6) this.pixelBolt(tx, ty, ex, ey, Math.floor(this.visualTime * 12) + i * 13, { hot: k < 0.08, size: THIN_BOLT }); this.drawFxFrame('electricHit', Math.max(0, k - 0.1) * FX.electricHit.frames, ex, ey, { sx: 1.4, sy: 1.4 }); }
         }
         return true;
       }
@@ -1023,6 +1089,8 @@ export class CanvasRenderer {
   /** 굉음 let go: a straight column of sound out to its range, wider and brighter the longer it was gathered. */
   drawSoundBeam(fx, x, y, t) {
     // The painted beam, stretched to the column's length and thicker the longer it was gathered.
+    // The pixelfx pillar (150 px long, 13 px either side at full charge), fitted to the column's length and width.
+    if (this.drawFxFrame('roarPillar', t * FX.roarPillar.frames, x, y - 14, { angle: fx.angle, sx: fx.value * 20 / 150, sy: (fx.halfWidth * 20 / 13) * (0.6 + 0.4 * fx.power) })) return;
     if (this.drawFxFrame('roarBeam', t * FX.roarBeam.frames, x, y - 14, { angle: fx.angle, sx: fx.value * 20 / 225, sy: 0.45 + 0.35 * fx.power })) return;
     const c = this.ctx, len = fx.value * 20, w = fx.halfWidth * 20 * (0.6 + 0.4 * fx.power), y0 = y - 14;
     c.save(); c.translate(x, y0); c.rotate(fx.angle); c.globalAlpha = 1 - t * t;

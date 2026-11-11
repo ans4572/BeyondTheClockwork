@@ -332,7 +332,7 @@ export const factoryBosses = {
     if (!p.dodge && inBox(p, box, this.config.arena.playerRadius * 0.5)) this.hurt(this.weakened(enemy, enemy.damage));
     for (const e of this.s.enemies) if (e.hp > 0 && !e.boss && inBox(e, box)) this.hitEnemy(e, enemy.damage * 2, { dot: true });
     (this.s.hazards ??= []).push({ id: this.id('hz'), kind: 'bossPlate', x: d.x, y: d.y, w: ai.plateW, h: ai.plateH, until: t + ai.plateBlock });
-    this.effect('ring', d.x, d.y, '#e8e2d2', 0.4, 1.5, { look: 'quake' });
+    this.effect('ring', d.x, d.y, '#e8e2d2', 1.1, 1.5, { look: 'pressSlam' });
   },
   /**
    * Iris's inspection rings (2026-11-09, were a 3 x 3 grid that sat badly on the round hall): on the hall's middle, a middle disc
@@ -548,7 +548,7 @@ export const factoryBosses = {
         plate.done = true; this.sense({ kind: 'boss', id: 'plateDrop' }); const box = { x: plate.x, y: plate.y, w: ai.plateW, h: ai.plateH };
         if (!p.dodge && inBox(p, box, R * 0.5)) this.hurt(this.weakened(enemy, enemy.damage));
         for (const py of b.pylons) if (!py.broken && inBox(py, box, rule.pylonRadius)) { py.broken = true; this.effect('scrap', py.x, py.y, '#ffbe20', 0.6, 1.2); this.sense({ kind: 'heavy' }); }
-        this.effect('ring', plate.x, plate.y, '#e8e2d2', 0.4, 1.5, { look: 'quake' });
+        this.effect('ring', plate.x, plate.y, '#e8e2d2', 1.1, 1.5, { look: 'pressSlam' });
         if (!this.active) return;
       }
       b.plates = b.plates.filter(pl => !pl.done);
@@ -590,7 +590,7 @@ export const factoryBosses = {
     if (f.phase === 'warn') {
       if (t < f.dropAt) return;
       const guard = this.s.enemies.find(e => !e.boss && e.hp > 0 && floorDistance(e, f) < ai.craneRadius + (e.radius || 0.4));
-      this.effect('ring', f.x, f.y, '#e8e2d2', 0.3, ai.craneRadius, { look: 'quake' });
+      this.effect('ring', f.x, f.y, '#e8e2d2', 1.1, ai.craneRadius, { look: 'pressSlam' });
       if (guard) { f.carry = guard.id; guard.held = true; }
       else if (!p.dodge && !p.grabbed && floorDistance(p, f) < ai.craneRadius + R * 0.5) { f.carry = 'f2'; f.escapes = 0; p.grabbed = { by: 'crane', crane: true, angle: 0, until: t + 99 }; this.notify('집게에 잡혔습니다! 회피를 3번 눌러 빠져나오세요.'); }
       else { f.done = true; return; }
@@ -628,7 +628,7 @@ export const factoryBosses = {
     if (!owner || owner.hp <= 0 || owner.breaking || t >= f.until) { f.done = true; return; }
     for (const tw of f.twins) {
       if (tw.stoppedAt === null) { const goal = { x: p.x + tw.side * ai.twinSide, y: p.y }, a = angleTo(tw, goal), d = distance(tw, goal); if (d > 0.4) { const step = Math.min(d, ai.twinSpeed * dt); this.move(tw, Math.cos(a) * step, Math.sin(a) * step, 0.8); } }
-      if (tw.slam && t >= tw.slam.at) { this.sense({ kind: 'boss', id: 'twinSlam' }); if (!p.dodge && floorDistance(tw.slam, p) < ai.twinSlamRadius + R * 0.5) this.hurt(this.weakened(owner, owner.damage)); this.effect('ring', tw.slam.x, tw.slam.y, '#e8e2d2', 0.4, ai.twinSlamRadius, { look: 'quake' }); tw.slam = null; if (!this.active) return; }
+      if (tw.slam && t >= tw.slam.at) { this.sense({ kind: 'boss', id: 'twinSlam' }); if (!p.dodge && floorDistance(tw.slam, p) < ai.twinSlamRadius + R * 0.5) this.hurt(this.weakened(owner, owner.damage)); this.effect('ring', tw.slam.x, tw.slam.y, '#e8e2d2', 1.1, ai.twinSlamRadius, { look: 'pressSlam' }); tw.slam = null; if (!this.active) return; }
     }
     if (t >= f.nextSlam) { const free = f.twins.filter(tw => tw.stoppedAt === null && !tw.slam), tw = free[Math.floor(this.random() * free.length)]; if (tw) tw.slam = { x: p.x, y: p.y, at: t + ai.twinSlamWarn }; f.nextSlam = t + ai.twinSlamEvery; }
     if (f.twins.every(tw => tw.stoppedAt !== null)) {

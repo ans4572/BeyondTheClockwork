@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "dash-gust 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 1",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 2",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 3",
+   "frame": {
+    "x": 0,
+    "y": 56,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 4",
+   "frame": {
+    "x": 144,
+    "y": 56,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 5",
+   "frame": {
+    "x": 288,
+    "y": 56,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 6",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 7",
+   "frame": {
+    "x": 144,
+    "y": 112,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 8",
+   "frame": {
+    "x": 288,
+    "y": 112,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 9",
+   "frame": {
+    "x": 0,
+    "y": 168,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 10",
+   "frame": {
+    "x": 144,
+    "y": 168,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  },
+  {
+   "filename": "dash-gust 11",
+   "frame": {
+    "x": 288,
+    "y": 168,
+    "w": 144,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 56
+   },
+   "duration": 42
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "dash-gust.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 432,
+   "h": 224
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "dash-gust",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/dash-gust",
+   "name": "Dash gust",
+   "fps": 24,
+   "loop": true,
+   "frames": 12,
+   "frameSize": [
+    144,
+    56
+   ],
+   "pivot": [
+    88,
+    28
+   ],
+   "columns": 3
+  }
+ }
+}

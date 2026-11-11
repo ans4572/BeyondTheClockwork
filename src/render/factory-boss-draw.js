@@ -250,7 +250,9 @@ export const factoryBossDraw = {
     const c = this.ctx, carry = f.phase === 'carry', image = this.mark(carry ? 'craneShut' : 'craneOpen'); if (!image) return;
     const left = f.phase === 'warn' ? f.dropAt - t : 1, high = carry ? 34 : left < 0.15 ? 20 + (left / 0.15) * 90 : 110;
     const w = image.width / 2, h = image.height / 2, x = f.x * 20, bottom = f.y * 20 - high + h * 0.55;
-    c.save(); c.strokeStyle = '#3d4352'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, bottom - h - 400); c.lineTo(x, bottom - h + 2); c.stroke(); c.restore();
+    // The chain in whole pixels: a dark 2 px line with a lit link every 4 px.
+    const cx = Math.round(x) - 1, top = Math.round(bottom - h - 400), end = Math.round(bottom - h + 2); this.rect(cx, top, 2, end - top, '#3d4352');
+    c.fillStyle = '#6b7385'; for (let cy = end - 3; cy > top; cy -= 4) c.fillRect(cx, cy, 1, 2);
     c.save(); c.imageSmoothingEnabled = false; c.drawImage(image, x - w / 2, bottom - h, w, h); c.restore();
   },
   /** Steam valves at the four corners: open ones (PixelLab) with a green safe circle; shut ones show how many blows remain. */
@@ -298,13 +300,13 @@ export const factoryBossDraw = {
     // Brass lines: the ring edges and the dividers between pieces.
     c.save(); c.strokeStyle = '#c79a3e'; c.globalAlpha = 0.85; c.lineWidth = 1.5;
     for (const r of f.radii) { c.beginPath(); c.ellipse(f.cx * 20, f.cy * 20, r * 20, r * 20 * FLOOR_FLAT, 0, 0, TAU); c.stroke(); }
-    for (let s = 0; s < n; s++) { const a = turn + s * TAU / n; c.beginPath(); c.moveTo(...pt(f.radii[0], a)); c.lineTo(...pt(f.radii[f.radii.length - 1], a)); c.stroke(); }
+    for (let s = 0; s < n; s++) { const a = turn + s * TAU / n; this.pixelLine(...pt(f.radii[0], a), ...pt(f.radii[f.radii.length - 1], a), [[0, '#c79a3e']]); }
     c.restore();
     if (showing) {
       this.drawMark('stampReject', f.cx * 20, f.cy * 20, 22, { alpha: 0.85 });
       for (let k = 1; k < f.radii.length; k++) for (let s = 0; s < n; s++) { const [x, y] = pt((f.radii[k - 1] + f.radii[k]) / 2, turn + (s + 0.5) * TAU / n); this.drawMark(f.safe[k] === s ? 'stampPass' : 'stampReject', x, y, f.safe[k] === s ? 18 : 20, { alpha: 0.85 }); }
       // Her lens light sweeping round the rings while they are shown.
-      const a = t * 4; c.save(); c.globalAlpha = 0.5; c.strokeStyle = '#fff4b7'; c.lineWidth = 3; c.beginPath(); c.moveTo(...pt(0, a)); c.lineTo(...pt(f.radii[f.radii.length - 1], a)); c.stroke(); c.restore();
+      const a = t * 4; c.save(); c.globalAlpha = 0.5; this.pixelLine(...pt(0, a), ...pt(f.radii[f.radii.length - 1], a), [[1, '#fff4b7'], [0, '#ffffff']]); c.restore();
     }
   },
   /** The PixelLab laser strip stretched from x, y along angle `a`, `len` long; false while the picture is missing. */

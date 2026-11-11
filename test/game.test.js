@@ -7,6 +7,8 @@ import { buyRank, refundAll, permanentStats } from '../src/engine/progression.js
 import { encodeSave, decodeSave, hasProgress } from '../src/engine/storage.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
+// The exact numbers below need blows without their ±10% spread (the spread has its own test in game.test.js).
+const SPREAD = data.combat.caps.damageSpread; data.combat.caps.damageSpread = 0;
 // These tests pin the tuning itself, so the default difficulty plays at 1.0 here; test/difficulty.test.js covers the scaling.
 Object.assign(data.slice.difficulty.levels.find(level => level.id === data.slice.difficulty.default), { scale: 1, loot: 1 });
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };
@@ -550,4 +552,20 @@ test('a rabbit beaten mid-dash no longer holds a melee slot, so a jack-in-the-bo
   let surfaced = false;
   for (let i = 0; i < 600 && !surfaced; i++) { g.p.hp = g.p.maxHp; g.update(1 / 60, {}); if (jack.tell?.type === 'ambush' || (i > 60 && !jack.hidden)) surfaced = true; }
   assert.ok(surfaced);
+});
+
+test('a direct blow lands within 10% either side of its value, averaging the same; burns stay exact', () => {
+  const g = arena(), e = inert(g, 'rat', { x: 9, y: 8 }); e.hp = e.maxHp = 1e9; g.rollCrit = () => false;
+  let n = 12345; g.random = () => (n = (n * 16807) % 2147483647) / 2147483647;
+  data.combat.caps.damageSpread = SPREAD;
+  try {
+    assert.equal(SPREAD, 0.1);
+    const lost = [];
+    for (let i = 0; i < 400; i++) { const before = e.hp; g.hitEnemy(e, 100); lost.push(before - e.hp); }
+    assert.ok(lost.every(v => v >= 90 - 1e-9 && v <= 110 + 1e-9));
+    assert.ok(Math.min(...lost) < 92 && Math.max(...lost) > 108);
+    const mean = lost.reduce((a, b) => a + b) / lost.length;
+    assert.ok(Math.abs(mean - 100) < 1.5, `mean ${mean}`);
+    const before = e.hp; g.hitEnemy(e, 100, { dot: true }); assert.equal(before - e.hp, 100);
+  } finally { data.combat.caps.damageSpread = 0; }
 });

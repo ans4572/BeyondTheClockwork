@@ -1,0 +1,721 @@
+{
+ "frames": [
+  {
+   "filename": "bolt-strike 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 1",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 2",
+   "frame": {
+    "x": 256,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 3",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 4",
+   "frame": {
+    "x": 512,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 5",
+   "frame": {
+    "x": 640,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 6",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 7",
+   "frame": {
+    "x": 128,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 8",
+   "frame": {
+    "x": 256,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 9",
+   "frame": {
+    "x": 384,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 10",
+   "frame": {
+    "x": 512,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 11",
+   "frame": {
+    "x": 640,
+    "y": 144,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 12",
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 13",
+   "frame": {
+    "x": 128,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 14",
+   "frame": {
+    "x": 256,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 15",
+   "frame": {
+    "x": 384,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 16",
+   "frame": {
+    "x": 512,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 17",
+   "frame": {
+    "x": 640,
+    "y": 288,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 18",
+   "frame": {
+    "x": 0,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 19",
+   "frame": {
+    "x": 128,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 20",
+   "frame": {
+    "x": 256,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 21",
+   "frame": {
+    "x": 384,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 22",
+   "frame": {
+    "x": 512,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 23",
+   "frame": {
+    "x": 640,
+    "y": 432,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 24",
+   "frame": {
+    "x": 0,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 25",
+   "frame": {
+    "x": 128,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 26",
+   "frame": {
+    "x": 256,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 27",
+   "frame": {
+    "x": 384,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 28",
+   "frame": {
+    "x": 512,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 29",
+   "frame": {
+    "x": 640,
+    "y": 576,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bolt-strike 30",
+   "frame": {
+    "x": 0,
+    "y": 720,
+    "w": 128,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 144
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bolt-strike.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 768,
+   "h": 864
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bolt-strike",
+    "from": 0,
+    "to": 30,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/bolt-strike",
+   "name": "Bolt strike (resonant)",
+   "fps": 30,
+   "loop": false,
+   "frames": 31,
+   "frameSize": [
+    128,
+    144
+   ],
+   "pivot": [
+    64,
+    112
+   ],
+   "columns": 6
+  }
+ }
+}

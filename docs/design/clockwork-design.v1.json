@@ -68,6 +68,7 @@
     "minDodgeCooldown": 0.45,
     "critChance": 0.4,
     "critMultiplier": 1.5,
+    "damageSpread": 0.1,
     "shieldFractionMaxHp": 0.5,
     "lightHealBasePerRoom": 12,
     "erosionHealBasePerRoom": 8,

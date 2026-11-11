@@ -1,0 +1,457 @@
+{
+ "frames": [
+  {
+   "filename": "floor-shock 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 1",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 2",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 3",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 4",
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 5",
+   "frame": {
+    "x": 96,
+    "y": 72,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 6",
+   "frame": {
+    "x": 192,
+    "y": 72,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 7",
+   "frame": {
+    "x": 288,
+    "y": 72,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 8",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 9",
+   "frame": {
+    "x": 96,
+    "y": 144,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 10",
+   "frame": {
+    "x": 192,
+    "y": 144,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 11",
+   "frame": {
+    "x": 288,
+    "y": 144,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 12",
+   "frame": {
+    "x": 0,
+    "y": 216,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 13",
+   "frame": {
+    "x": 96,
+    "y": 216,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 14",
+   "frame": {
+    "x": 192,
+    "y": 216,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 15",
+   "frame": {
+    "x": 288,
+    "y": 216,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 16",
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 17",
+   "frame": {
+    "x": 96,
+    "y": 288,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  },
+  {
+   "filename": "floor-shock 18",
+   "frame": {
+    "x": 192,
+    "y": 288,
+    "w": 96,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 72
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "floor-shock.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 384,
+   "h": 360
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "floor-shock",
+    "from": 0,
+    "to": 18,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/floor-shock",
+   "name": "Floor shock",
+   "fps": 30,
+   "loop": false,
+   "frames": 19,
+   "frameSize": [
+    96,
+    72
+   ],
+   "pivot": [
+    48,
+    36
+   ],
+   "columns": 4
+  }
+ }
+}

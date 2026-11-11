@@ -72,7 +72,7 @@ export const soundWaterFusions = {
         for (const e of this.s.enemies) if (reachable(this, e) && floorDistance(at, e) <= cast.radius + e.radius) this.castHit(cast, e, cast.pulseDamage);
         this.effect('ring', at.x, at.y, '#ffe086', 0.45, cast.radius, { look: 'resonanceBurst', burst: 0.5 });
       };
-      if (!cast.bolted) { cast.bolted = true; if (body?.hp > 0) { this.castHit(cast, body, cast.boltDamage); this.effect('ring', body.x, body.y, '#ffe086', 0.5, 1, { look: 'zapBig' }); } }
+      if (!cast.bolted) { cast.bolted = true; if (body?.hp > 0) { this.castHit(cast, body, cast.boltDamage); this.effect('ring', body.x, body.y, '#ffe086', 1, 1, { look: 'boltStrike' }); } }
       // The ringing body fell: whatever ringing was left goes off at once where it stood.
       if (!body || body.hp <= 0) { const at = body ? { x: body.x, y: body.y } : { x: cast.x, y: cast.y }; for (; cast.left > 0; cast.left--) ring(at); cast.done = true; return true; }
       cast.x = body.x; cast.y = body.y;

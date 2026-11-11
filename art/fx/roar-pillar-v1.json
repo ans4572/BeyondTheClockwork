@@ -1,0 +1,457 @@
+{
+ "frames": [
+  {
+   "filename": "roar-pillar 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 1",
+   "frame": {
+    "x": 176,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 2",
+   "frame": {
+    "x": 352,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 3",
+   "frame": {
+    "x": 0,
+    "y": 64,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 4",
+   "frame": {
+    "x": 176,
+    "y": 64,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 5",
+   "frame": {
+    "x": 352,
+    "y": 64,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 6",
+   "frame": {
+    "x": 0,
+    "y": 128,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 7",
+   "frame": {
+    "x": 176,
+    "y": 128,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 8",
+   "frame": {
+    "x": 352,
+    "y": 128,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 9",
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 10",
+   "frame": {
+    "x": 176,
+    "y": 192,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 11",
+   "frame": {
+    "x": 352,
+    "y": 192,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 12",
+   "frame": {
+    "x": 0,
+    "y": 256,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 13",
+   "frame": {
+    "x": 176,
+    "y": 256,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 14",
+   "frame": {
+    "x": 352,
+    "y": 256,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 15",
+   "frame": {
+    "x": 0,
+    "y": 320,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 16",
+   "frame": {
+    "x": 176,
+    "y": 320,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 17",
+   "frame": {
+    "x": 352,
+    "y": 320,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  },
+  {
+   "filename": "roar-pillar 18",
+   "frame": {
+    "x": 0,
+    "y": 384,
+    "w": 176,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 176,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 176,
+    "h": 64
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "roar-pillar.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 528,
+   "h": 448
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "roar-pillar",
+    "from": 0,
+    "to": 18,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/roar-pillar",
+   "name": "Roar pillar",
+   "fps": 30,
+   "loop": false,
+   "frames": 19,
+   "frameSize": [
+    176,
+    64
+   ],
+   "pivot": [
+    12,
+    32
+   ],
+   "columns": 3
+  }
+ }
+}

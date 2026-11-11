@@ -6,6 +6,8 @@ import { Game } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
+// The exact numbers below need blows without their ±10% spread (the spread has its own test in game.test.js).
+data.combat.caps.damageSpread = 0;
 // Exact numbers here: no lucky crits, and the default difficulty at 1.0.
 data.combat.player.critChance = 0;
 Object.assign(data.slice.difficulty.levels.find(level => level.id === data.slice.difficulty.default), { scale: 1, loot: 1 });

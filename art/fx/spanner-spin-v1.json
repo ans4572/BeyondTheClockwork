@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "spanner-spin 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 1",
+   "frame": {
+    "x": 100,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 2",
+   "frame": {
+    "x": 200,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 3",
+   "frame": {
+    "x": 0,
+    "y": 60,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 4",
+   "frame": {
+    "x": 100,
+    "y": 60,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 5",
+   "frame": {
+    "x": 200,
+    "y": 60,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 6",
+   "frame": {
+    "x": 0,
+    "y": 120,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 7",
+   "frame": {
+    "x": 100,
+    "y": 120,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 8",
+   "frame": {
+    "x": 200,
+    "y": 120,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 9",
+   "frame": {
+    "x": 0,
+    "y": 180,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 10",
+   "frame": {
+    "x": 100,
+    "y": 180,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  },
+  {
+   "filename": "spanner-spin 11",
+   "frame": {
+    "x": 200,
+    "y": 180,
+    "w": 100,
+    "h": 60
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 60
+   },
+   "sourceSize": {
+    "w": 100,
+    "h": 60
+   },
+   "duration": 42
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "spanner-spin.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 300,
+   "h": 240
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "spanner-spin",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/spanner-spin",
+   "name": "Spanner spin (charged)",
+   "fps": 24,
+   "loop": true,
+   "frames": 12,
+   "frameSize": [
+    100,
+    60
+   ],
+   "pivot": [
+    62,
+    30
+   ],
+   "columns": 3
+  }
+ }
+}

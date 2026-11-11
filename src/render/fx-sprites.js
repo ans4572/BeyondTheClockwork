@@ -70,6 +70,24 @@ export const FX = {
   // 고압 분사's stream, flowing left to right: `ends` = the gush at the nozzle and the frayed tip, which keep their size
   // while the middle is fitted to the stream's length (canvas.js drawStream).
   hydroStream: { sheet: 'art/fx/hydro-stream-v1.png', w: 256, h: 48, cols: 4, frames: 8, anchor: [0, 22], ends: [22, 46] },
+  // pixelfx redraws picked on a comparison page (2026-11-11; sources in art/fx/pixelfx). Press landing a plate, a crane or a
+  // piston: a flat white flash, two flat shock rings, dust rolling out and iron chips, seen from above; 30 fps, 1.1 s,
+  // drawn for a 3-unit ring (62 px). Anchor = the floor where it lands.
+  pressSlam: { sheet: 'art/fx/press-slam-v1.png', w: 176, h: 160, cols: 6, frames: 34, anchor: [88, 60] },
+  // 압축 돌진: a crescent of compressed air ahead of F2 (16 px either side), speed lines and wind ribbons behind; a 0.5 s loop
+  // at 24 fps, facing right. Anchor = F2.
+  dashGust: { sheet: 'art/fx/dash-gust-v1.png', w: 144, h: 56, cols: 3, frames: 12, fps: 24, anchor: [88, 28] },
+  // 굉음: a pillar of sound 150 px long and 13 px either side at full charge, rings rolling down it; 0.6 s, facing right.
+  roarPillar: { sheet: 'art/fx/roar-pillar-v1.png', w: 176, h: 64, cols: 3, frames: 19, anchor: [12, 32] },
+  // 공명 낙뢰: the bolt slamming down on its body, a flat flash and gold sound rings; 30 fps, 1 s. Anchor = the body's feet.
+  boltStrike: { sheet: 'art/fx/bolt-strike-v1.png', w: 128, h: 144, cols: 6, frames: 31, anchor: [64, 112] },
+  // 도전 스패너 in flight: a steel spanner spinning (two turns a loop) with a gold electric rim, arcs off its ends and sparks
+  // streaming behind; 0.5 s at 24 fps, flying right. Anchor = the spanner's middle. (증기 파쇄's redraw is a cast sheet in game-clips.json.)
+  spannerSpin: { sheet: 'art/fx/spanner-spin-v1.png', w: 100, h: 60, cols: 3, frames: 12, fps: 24, anchor: [62, 30] },
+  // A heavy blow's shockwave along the floor (mob swings, stomps, rows pressed; 21 places use look 'quake'): a short flat flash,
+  // two hollow rings racing out and dust rolling low; no disc (the old one read as a paper plate). 0.6 s at 30 fps, drawn for a
+  // 32 px reach; the renderer fits it to the blow's reach and plays it over the effect's own duration. Anchor = the floor.
+  floorShock: { sheet: 'art/fx/floor-shock-v2.png', w: 96, h: 72, cols: 4, frames: 19, anchor: [48, 36] },
 };
 /** A note drawn for enemy shots (hand-made pixels, 24 x 28). */
 export const NOTE_ART = 'art/fx/note.png';

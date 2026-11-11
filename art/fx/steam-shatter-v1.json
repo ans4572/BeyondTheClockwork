@@ -1,0 +1,1381 @@
+{
+ "frames": [
+  {
+   "filename": "steam-shatter 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 1",
+   "frame": {
+    "x": 212,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 2",
+   "frame": {
+    "x": 424,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 3",
+   "frame": {
+    "x": 636,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 4",
+   "frame": {
+    "x": 848,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 5",
+   "frame": {
+    "x": 1060,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 6",
+   "frame": {
+    "x": 1272,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 7",
+   "frame": {
+    "x": 1484,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 8",
+   "frame": {
+    "x": 0,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 9",
+   "frame": {
+    "x": 212,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 10",
+   "frame": {
+    "x": 424,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 11",
+   "frame": {
+    "x": 636,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 12",
+   "frame": {
+    "x": 848,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 13",
+   "frame": {
+    "x": 1060,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 14",
+   "frame": {
+    "x": 1272,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 15",
+   "frame": {
+    "x": 1484,
+    "y": 188,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 16",
+   "frame": {
+    "x": 0,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 17",
+   "frame": {
+    "x": 212,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 18",
+   "frame": {
+    "x": 424,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 19",
+   "frame": {
+    "x": 636,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 20",
+   "frame": {
+    "x": 848,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 21",
+   "frame": {
+    "x": 1060,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 22",
+   "frame": {
+    "x": 1272,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 23",
+   "frame": {
+    "x": 1484,
+    "y": 376,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 24",
+   "frame": {
+    "x": 0,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 25",
+   "frame": {
+    "x": 212,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 26",
+   "frame": {
+    "x": 424,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 27",
+   "frame": {
+    "x": 636,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 28",
+   "frame": {
+    "x": 848,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 29",
+   "frame": {
+    "x": 1060,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 30",
+   "frame": {
+    "x": 1272,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 31",
+   "frame": {
+    "x": 1484,
+    "y": 564,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 32",
+   "frame": {
+    "x": 0,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 33",
+   "frame": {
+    "x": 212,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 34",
+   "frame": {
+    "x": 424,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 35",
+   "frame": {
+    "x": 636,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 36",
+   "frame": {
+    "x": 848,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 37",
+   "frame": {
+    "x": 1060,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 38",
+   "frame": {
+    "x": 1272,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 39",
+   "frame": {
+    "x": 1484,
+    "y": 752,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 40",
+   "frame": {
+    "x": 0,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 41",
+   "frame": {
+    "x": 212,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 42",
+   "frame": {
+    "x": 424,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 43",
+   "frame": {
+    "x": 636,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 44",
+   "frame": {
+    "x": 848,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 45",
+   "frame": {
+    "x": 1060,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 46",
+   "frame": {
+    "x": 1272,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 47",
+   "frame": {
+    "x": 1484,
+    "y": 940,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 48",
+   "frame": {
+    "x": 0,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 49",
+   "frame": {
+    "x": 212,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 50",
+   "frame": {
+    "x": 424,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 51",
+   "frame": {
+    "x": 636,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 52",
+   "frame": {
+    "x": 848,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 53",
+   "frame": {
+    "x": 1060,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 54",
+   "frame": {
+    "x": 1272,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 55",
+   "frame": {
+    "x": 1484,
+    "y": 1128,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 56",
+   "frame": {
+    "x": 0,
+    "y": 1316,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 57",
+   "frame": {
+    "x": 212,
+    "y": 1316,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 58",
+   "frame": {
+    "x": 424,
+    "y": 1316,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 59",
+   "frame": {
+    "x": 636,
+    "y": 1316,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  },
+  {
+   "filename": "steam-shatter 60",
+   "frame": {
+    "x": 848,
+    "y": 1316,
+    "w": 212,
+    "h": 188
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 212,
+    "h": 188
+   },
+   "sourceSize": {
+    "w": 212,
+    "h": 188
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "steam-shatter.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1696,
+   "h": 1504
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "steam-shatter",
+    "from": 0,
+    "to": 60,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/steam-shatter",
+   "name": "Steam shatter",
+   "fps": 30,
+   "loop": false,
+   "frames": 61,
+   "frameSize": [
+    212,
+    188
+   ],
+   "pivot": [
+    106,
+    98
+   ],
+   "columns": 8
+  }
+ }
+}

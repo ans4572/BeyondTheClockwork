@@ -514,6 +514,9 @@ export class Game {
     if (!options.dot && enemy.tell?.type === 'supply') { enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + 1.5; if (this.s.run) this.giveLoot(0, enemy.spillCoins || 0); this.effect('scrap', enemy.x, enemy.y, '#e0b048', 0.5, 1); this.notify(`부품이 쏟아졌습니다! 동전 +${enemy.spillCoins || 0}`); }
     if (!enemy.aggro) this.rouse(enemy);
     const crit = !options.dot && !options.exact && this.rollCrit();
+    // Each direct blow lands up to 10% either side of its value (2026-11-11: every hit of a skill showed the same number); the
+    // average is unchanged. Burns, ticks and exact blows stay fixed.
+    const spread = this.c.caps.damageSpread && !options.dot && !options.exact ? 1 + (this.random() * 2 - 1) * this.c.caps.damageSpread : 1;
     const guarded = !options.dot && this.shieldHolds(enemy);
     if (guarded) this.sense({ kind: 'block' });
     // A trait shield gives way after a few blocked blows.
@@ -528,7 +531,7 @@ export class Game {
     // 흠뻑 (2026-11-10): a wet body takes a little more from everything.
     const drenched = !options.exact && this.trait('soaked')?.damageTakenBonus && this.wet(enemy) ? 1 + this.trait('soaked').damageTakenBonus : 1;
     const versus = !options.exact && (enemy.boss || enemy.elite) ? 1 + (this.potion?.bossDamage || 0) : 1;
-    const amount = versus * drenched * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    const amount = spread * versus * drenched * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(this.weakened(enemy, enemy.damage))) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.45, 1, { targetX: this.p.x, targetY: this.p.y, look: 'thrust' });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
@@ -545,7 +548,8 @@ export class Game {
       this.p.confiscated = null; this.effect('spark', this.p.x, this.p.y, '#ffd257', 0.6, 1, { look: 'ready', follow: true }); this.notify('기술을 되찾았습니다!');
     }
     this.tutorial.onHit(enemy, !!options.basic);
-    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount, { crit });
+    // The number shows what the body really lost: after a drummer's beat, a coating or a daze (2026-11-11, it showed the blow before them).
+    this.effect('number', enemy.x, enemy.y - enemy.radius, crit ? CRIT_RED : options.color || '#fff4cd', 0.65, amount * beaten, { crit });
     if (options.stagger) this.addStagger(enemy, options.stagger);
     const held = enemy.statuses.windPressure > this.s.time ? this.trait('galeHold')?.stunMultiplier || this.status('windPressure').wrenchStun || 1 : 1;
     if (!enemy.boss && options.stagger) enemy.stunUntil = Math.max(enemy.stunUntil, this.s.time + this.config.rules.normalHitStun * held);
@@ -641,7 +645,7 @@ export class Game {
     const info = this.c.statuses.find(s => s.id === 'shock');
     if (enemy.statuses.shock <= this.s.time || !enemy.statuses.shock || this.s.time < enemy.shockReady) return;
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
-    for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.55, 0.7, { look: 'zap' }); }
+    for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.55, 0.7, { look: 'zap' }); if (target !== enemy) this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.3, 1, { targetX: target.x, targetY: target.y, look: 'arc' }); }
   }
   /** 렌치 조율 (a ringing body rings a layer more, once a second) and 물튀김 (a soaked body splashes the ones beside it). */
   wrenchOnSoundWater(enemy) {

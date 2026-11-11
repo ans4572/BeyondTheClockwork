@@ -5,6 +5,8 @@ import { Game } from '../src/engine/game.js';
 import { decodeSave, encodeSave } from '../src/engine/storage.js';
 
 const data = Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))])));
+// The exact numbers below need blows without their ±10% spread (the spread has its own test in game.test.js).
+data.combat.caps.damageSpread = 0;
 const step = (g, seconds, input = {}) => { for (let i = 0; i < Math.round(seconds * 60); i++) g.update(1 / 60, input); };
 const arena = (elements = ['fire', 'ice']) => {
   const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(4711); g.s.enemies = []; if (g.s.run && g.room?.waves) g.s.run.wave = g.room.waves.length - 1; g.s.run.plan[0].layout = 2;
