@@ -7,11 +7,17 @@
 //   GET    /api/admin/users?q=               players (devices), most recently seen first
 //   GET    /api/admin/users/:id              one player: details, recent runs, gifts
 //   POST   /api/admin/users/:id/memo         { memo }                    a name only the admin page shows
+//   POST   /api/admin/users/:id/transfer     { ref?, inherit? } a transfer code (one day) for this player's newest uploaded save -> { code, expiresAt, savedAt }
+//   GET    /api/admin/users/:id/saves        synced saves that look like this player's (a device from before it named itself) -> { saves }
+//   POST   /api/admin/users/:id/restore      { save, inherit? } a transfer code for a save rebuilt by hand (src/engine/restore-save.js)
+// With inherit the code carries a one-time pass; the device that loads it posts it back:
+//   POST   /api/inherit                      { device, pass }  that device takes over the old one's runs, gifts and memo -> { ok }
 //   POST   /api/admin/gifts                  { device, gears, note }     free gears the game hands over on its next ping
 //   DELETE /api/admin/gifts/:id              take back a gift that has not arrived yet
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
 import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, FIRST_CHAPTER_ID, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
 import { MIN_CLEAR_SECONDS, comboElements } from '../src/engine/records.js';
+import { savedFor, adminCode, restoreCode, takePass, findSaves, codeFromSave } from './device-link.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
 const SCHEMA = [
@@ -111,6 +117,27 @@ export async function give(db, sent, now = Date.now()) {
   await db.prepare(`INSERT INTO gifts (device, gears, note, created_at) VALUES (?1, ?2, ?3, ?4)`).bind(sent.device, gears, note, now).run();
   const made = await db.prepare(`SELECT id, gears, note, created_at FROM gifts WHERE device = ?1 ORDER BY id DESC LIMIT 1`).bind(sent.device).first();
   return made && { ...made };
+}
+
+/**
+ * A player moved to a new device with a code made on the admin page (2026-11-12): the new device takes over the old
+ * one's runs (so its clears and the server board's own records follow it), opens, gifts and the admin's memo, and the
+ * old row goes. A run id both devices used (rare: the count is carried over) stays with the new device.
+ */
+export async function inheritRecords(db, from, to) {
+  if (!isDeviceId(from) || !isDeviceId(to) || from === to) return false;
+  await ensure(db);
+  await db.batch([
+    db.prepare(`INSERT OR IGNORE INTO devices (id, first_day, last_day, opens, last_seen) SELECT ?2, first_day, last_day, 0, last_seen FROM devices WHERE id = ?1`).bind(from, to),
+    db.prepare(`UPDATE devices SET memo = COALESCE(memo, (SELECT memo FROM devices WHERE id = ?1)), opens = COALESCE(opens, 0) + COALESCE((SELECT opens FROM devices WHERE id = ?1), 0),
+      first_day = COALESCE((SELECT first_day FROM devices WHERE id = ?1 AND first_day < COALESCE(devices.first_day, '9999')), first_day) WHERE id = ?2`).bind(from, to),
+    db.prepare(`UPDATE OR IGNORE runs SET device = ?2 WHERE device = ?1`).bind(from, to),
+    db.prepare(`DELETE FROM runs WHERE device = ?1`).bind(from),
+    db.prepare(`UPDATE sessions SET device = ?2 WHERE device = ?1`).bind(from, to),
+    db.prepare(`UPDATE gifts SET device = ?2 WHERE device = ?1`).bind(from, to),
+    db.prepare(`DELETE FROM devices WHERE id = ?1`).bind(from)
+  ]);
+  return true;
 }
 
 /** Days, oldest first, from `since` to today. */
@@ -234,6 +261,18 @@ export async function statsApi(request, url, env, reply, cors = {}) {
     try { sent = text.length <= EVENT_BYTES ? JSON.parse(text) : null; } catch {}
     return (await claimGifts(env.STATS, sent?.device, sent?.ids)) ? reply({ ok: true }) : reply({ error: 'bad' }, 400);
   }
+  if (path === '/api/inherit' && method === 'POST') {
+    // The pass a code from the admin page carried (worker/device-link.js): this device takes over the old one's records.
+    if (!env.STATS || !env.TRANSFER) return reply({ error: 'unavailable' }, 503);
+    const text = await request.text();
+    let sent = null;
+    try { sent = text.length <= EVENT_BYTES ? JSON.parse(text) : null; } catch {}
+    if (!isDeviceId(sent?.device)) return reply({ error: 'bad' }, 400);
+    const from = await takePass(env.TRANSFER, sent.pass);
+    if (!from) return reply({ error: 'missing' }, 404);
+    await inheritRecords(env.STATS, from, sent.device);
+    return reply({ ok: true });
+  }
   if (path === '/api/records' && method === 'GET') {
     if (!env.STATS) return reply({ error: 'unavailable' }, 503);
     return reply(await records(env.STATS, url.searchParams.get('device') || '', url.searchParams.get('chapter') || FIRST_CHAPTER_ID));
@@ -248,9 +287,33 @@ export async function statsApi(request, url, env, reply, cors = {}) {
     return reply(await summary(db, [7, 30, 0].includes(days) ? days : 30, Date.now(), url.searchParams.get('difficulty') || ''));
   }
   if (path === '/api/admin/users' && method === 'GET') return reply(await users(db, url.searchParams.get('q') || ''));
-  const one = path.match(/^\/api\/admin\/users\/([a-z0-9]+)(\/memo)?$/);
-  if (one && !one[2] && method === 'GET') { const found = await user(db, one[1]); return found ? reply(found) : reply({ error: 'missing' }, 404); }
-  if (one && one[2] && method === 'POST') {
+  const one = path.match(/^\/api\/admin\/users\/([a-z0-9]+)(\/memo|\/transfer|\/restore|\/saves)?$/);
+  if (one && !one[2] && method === 'GET') {
+    const found = await user(db, one[1]);
+    if (!found) return reply({ error: 'missing' }, 404);
+    // When this player last uploaded progress (the save a transfer code would carry), never the save itself.
+    const saved = await savedFor(env.TRANSFER, one[1]).catch(() => null);
+    return reply({ ...found, saved: saved ? { at: saved.at, rev: saved.rev } : null });
+  }
+  if (one && one[2] === '/transfer' && method === 'POST') {
+    if (!env.TRANSFER) return reply({ error: 'unavailable' }, 503);
+    // From the save the device is linked to, or from one the owner picked in the search below (`ref`).
+    const sent = await body(), options = { inherit: sent?.inherit === true };
+    const made = sent?.ref ? await codeFromSave(env.TRANSFER, one[1], sent.ref, options) : await adminCode(env.TRANSFER, one[1], options);
+    return made ? reply(made) : reply({ error: 'nosave' }, 404);
+  }
+  if (one && one[2] === '/saves' && method === 'GET') {
+    if (!env.TRANSFER) return reply({ error: 'unavailable' }, 503);
+    const found = await user(db, one[1]);
+    if (!found) return reply({ error: 'missing' }, 404);
+    return reply({ saves: await findSaves(env.TRANSFER, found.user) });
+  }
+  if (one && one[2] === '/restore' && method === 'POST') {
+    if (!env.TRANSFER) return reply({ error: 'unavailable' }, 503);
+    const sent = await body(), made = await restoreCode(env.TRANSFER, one[1], sent?.save, { inherit: sent?.inherit === true });
+    return made ? reply(made) : reply({ error: 'bad' }, 400);
+  }
+  if (one && one[2] === '/memo' && method === 'POST') {
     if (!isDeviceId(one[1])) return reply({ error: 'missing' }, 404);
     const memo = plainText((await body())?.memo, MEMO_MAX);
     await ensure(db);

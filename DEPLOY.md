@@ -53,6 +53,8 @@ npx wrangler deploy
 
 관리자 페이지: `https://beyondtheclockwork.mungaeng.workers.dev/admin.html` (검색엔진 제외, 토큰 없으면 아무것도 안 보임)
 
+유저 탭의 연동 코드: 유저를 고르면 그 기기가 마지막으로 올린 진행으로 24시간짜리 연동 코드를 만들 수 있습니다. 이 업데이트 전 버전만 쓴 기기는 '서버 저장 찾기'로 맞는 저장을 고르고, 서버 저장이 없으면 '진행 복구'로 진행을 직접 정합니다. 기기와 동기화 자리의 연결은 Workers KV(`TRANSFER`)의 `device:<기기 id>`, 기록 이어받기 통행증은 `inherit:<…>`(7일)에 남습니다(추가 설정 없음). 서버 저장 찾기는 KV의 `sync:` 키를 훑어서(list) 한 번에 읽기 수백 번을 씁니다.
+
 - `POST /api/stats` 게임이 보내는 익명 이벤트: 게임 열기(`open`), 원정 출발(`runStart`), 귀환(`runEnd`). 형식이 틀리면 400.
 - `GET /api/admin/stats?days=7|30|0&difficulty=easy|normal|hard` 관리자 요약(난이도를 빼면 전체). `Authorization: Bearer <ADMIN_TOKEN>`이 맞아야 열림.
 - 게임은 화면에 떠 있는 동안 1분마다 `POST /api/stats`(`ping`)로 접속을 알리고, 답으로 도착 전 선물을 받습니다. 받은 뒤 `POST /api/mail/claim`.

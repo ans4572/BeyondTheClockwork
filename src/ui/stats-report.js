@@ -79,3 +79,23 @@ export function browserReporter() {
     opened: () => report('open', { ...deviceProfile(navigator, screen), installed: matchMedia('(display-mode: standalone)').matches || navigator.standalone === true })
   });
 }
+
+/** A pass from a code made on the admin page, kept apart from the save until the server has taken it (2026-11-12). */
+export const INHERIT_STORE_KEY = 'beyond-the-clockwork.inherit.v1';
+export function rememberPass(storage, pass) { try { if (pass) storage.setItem(INHERIT_STORE_KEY, String(pass)); } catch {} }
+/**
+ * Hands the kept pass in, so this device takes over the old device's records (runs, the server board's own records,
+ * gifts). Kept for the next opening when the server cannot be reached; dropped once taken or unknown. Not on a local server.
+ */
+export async function handInPass({ storage, hostname, protocol = 'https:', fetchImpl = (...a) => fetch(...a), base = apiBase(hostname) } = {}) {
+  let pass = null;
+  try { pass = storage.getItem(INHERIT_STORE_KEY); } catch {}
+  if (!pass || LOCAL_HOSTS.includes(hostname) || protocol === 'file:') return false;
+  const device = deviceId(storage);
+  if (!device) return false;
+  try {
+    const response = await fetchImpl(`${base}/api/inherit`, { method: 'POST', body: JSON.stringify({ device, pass }) });
+    if (response.ok || response.status === 404 || response.status === 400) storage.removeItem(INHERIT_STORE_KEY);
+    return response.ok;
+  } catch { return false; }
+}

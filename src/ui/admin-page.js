@@ -1,7 +1,9 @@
 // The admin page (admin.html): reads the play statistics summary from the worker (worker/stats.js) with the admin
 // token the owner typed in, and lays it out as one compact dashboard. The token stays in this browser only.
-// Two tabs: 통계 (the summary) and 유저 (each device: when it was last seen, where it is now, gifts of free gears).
+// Two tabs: 통계 (the summary) and 유저 (each device: when it was last seen, where it is now, gifts of free gears, and a
+// transfer code made from its newest uploaded save, 2026-11-12).
 import { apiBase } from './device-transfer.js';
+import { formatCode } from '../engine/transfer-code.js';
 
 const TOKEN_KEY = 'beyond-the-clockwork.admin-token.v1';
 const RANGES = [[7, '7일'], [30, '30일'], [0, '전체']];
@@ -22,7 +24,7 @@ const app = document.getElementById('app'), tip = document.getElementById('tip')
 const state = {
   tab: sessionStorage.getItem('admin-tab') === 'users' ? 'users' : 'stats', days: [7, 30, 0].includes(Number(sessionStorage.getItem('admin-days') ?? 30)) ? Number(sessionStorage.getItem('admin-days') ?? 30) : 30, level: sessionStorage.getItem('admin-level') || '', data: null, names: null, allDays: false, at: null,
   levelChapter: sessionStorage.getItem('admin-level-chapter') || '',
-  people: null, q: '', onlineOnly: false, shown: 20, picked: null, detail: null, confirm: 0, said: ''
+  people: null, q: '', onlineOnly: false, shown: 20, picked: null, detail: null, confirm: 0, said: '', code: null, codeInherit: false, search: null, restore: null, restoreConfirm: 0
 };
 const PLACES = { title: '타이틀', hub: '마을', practice: '연습장' };
 const GIFT_PRESETS = [100, 500, 1000];
@@ -242,6 +244,7 @@ function drawCharts() {
 }
 
 app.addEventListener('click', event => {
+  if (event.target.closest('summary[data-act="restore-open"]')) { event.preventDefault(); toggleRestore(); return; }
   const button = event.target.closest('button');
   if (!button) return;
   if (button.dataset.tab && button.dataset.tab !== state.tab) { state.tab = button.dataset.tab; sessionStorage.setItem('admin-tab', state.tab); state.at = null; load(); return; }
@@ -251,6 +254,11 @@ app.addEventListener('click', event => {
   if (button.dataset.cancel) { cancelGift(Number(button.dataset.cancel)); return; }
   if (button.dataset.act === 'gift') { sendGift(); return; }
   if (button.dataset.act === 'memo') { saveMemo(); return; }
+  if (button.dataset.act === 'code') { makeCode(); return; }
+  if (button.dataset.act === 'search') { searchSaves(); return; }
+  if (button.dataset.ref) { makeCode(button.dataset.ref); return; }
+  if (button.dataset.act === 'restore') { makeRestoreCode(); return; }
+  if (button.dataset.act === 'copy-code') { copyCode(); return; }
   if (button.dataset.act === 'more') { state.shown += 30; drawPeople(); return; }
   if (button.dataset.act === 'close') { state.picked = null; state.detail = null; drawDetail(); drawPeople(); return; }
   if (button.dataset.levelchapter !== undefined) { state.levelChapter = button.dataset.levelchapter; sessionStorage.setItem('admin-level-chapter', state.levelChapter); render(); return; }
@@ -277,6 +285,8 @@ addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout
 app.addEventListener('input', event => {
   if (event.target.id === 'people-search') { state.q = event.target.value; state.shown = 20; clearTimeout(searching); searching = setTimeout(() => loadPeople(false), 250); }
   if (event.target.id === 'gift-gears') { state.confirm = 0; giftButton(); }
+  if (event.target.id === 'code-inherit') state.codeInherit = event.target.checked;
+  restoreInput(event.target);
 });
 app.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target.id === 'memo') saveMemo(); });
 let searching = 0;
@@ -387,6 +397,9 @@ function drawDetail() {
       <dt>장부 이름</dt><dd>${u.nickname ? esc(u.nickname) : '<span class="mute">없음 (F2)</span>'} <span class="mute">유저가 게임에서 정한 이름</span></dd>
       <dt>기기 id</dt><dd class="num mute" style="word-break:break-all">${esc(u.id)}</dd>
     </dl>
+    <h4>연동 코드</h4>
+    ${codeBlock(d)}
+    ${restoreBlock(d)}
     <h4>자유 톱니 보내기</h4>
     <div class="gift">
       <div class="gift-row"><input id="gift-gears" class="field num" type="number" min="1" max="100000" step="1" inputmode="numeric" placeholder="개수" aria-label="보낼 톱니 수">${GIFT_PRESETS.map(n => `<button class="ghost" data-preset="${n}">+${num(n)}</button>`).join('')}</div>
@@ -399,6 +412,158 @@ function drawDetail() {
     <h4>최근 원정</h4>
     ${d.runs.length ? `<table><tbody>${d.runs.slice(0, 10).map(r => `<tr><td class="mute num">${esc(shortDay(r.day))}</td><td>${comboCell(r.combo)}</td><td>${levelChip(r.difficulty)}</td><td><span class="chip ${esc(r.reason || 'open')}">${REASONS[r.reason || 'open']}</span></td><td class="r num">${r.node ? `${r.node}번째` : '–'}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">아직 원정 기록이 없어요.</p>'}`;
   giftButton();
+}
+
+/** A made code, its expiry and what it does; shared by the two code sections. */
+function codeShown(made, restored) {
+  return `<div class="code-row"><b class="code num">${esc(formatCode(made.code))}</b><button class="ghost" data-act="copy-code">복사</button></div>
+      <p class="hint">${esc(made.note || '')}${when(Date.parse(made.expiresAt))}까지 쓸 수 있어요. 유저가 게임의 설정 → 다른 기기와 연동에서 이 코드를 넣으면 ${restored ? '복구한 진행을 불러와요' : '이 진행을 불러오고, 그 뒤로 두 기기가 같이 동기화돼요'}.${made.inherit ? ' 불러온 기기가 이 유저의 원정 기록·서버 기록·선물·메모를 이어받고, 이 줄은 목록에서 사라져요.' : ''}</p>`;
+}
+
+/**
+ * The transfer code section: when the player last uploaded progress (each return to the village replaces it, so there is
+ * only ever the newest) and a code made from it, shown until another player is picked.
+ */
+function codeBlock(d) {
+  const mine = state.code?.device === state.picked && state.code.kind === 'live' ? state.code : null, made = mine?.code ? mine : null;
+  if (!d.saved) return searchBlock();
+  return `<div class="gift">
+      <p class="hint">마지막으로 올라온 진행: <b class="num">${when(Date.parse(d.saved.at))}</b> · 마을로 돌아올 때마다 최신으로 바뀌어요.</p>
+      ${made ? codeShown(made, false) : ''}
+      ${mine?.error ? `<p class="hint">${esc(mine.error)}</p>` : ''}
+      <label class="check"><input type="checkbox" id="code-inherit"${state.codeInherit ? ' checked' : ''}> 기록도 새 기기로 옮기기 <span class="mute">(옛 기기를 더 쓰지 않을 때)</span></label>
+      <button class="${made ? 'ghost' : 'primary'}" data-act="code">${made ? '새 코드 만들기' : '연동 코드 만들기'}</button>
+    </div>`;
+}
+
+/**
+ * A device from before the game named itself when uploading: its save is on the server all the same (every return to the
+ * village uploads it), only not yet linked. The search lists the saves that match what its check-ins reported.
+ */
+function searchBlock() {
+  const found = state.search?.device === state.picked ? state.search : null, mine = state.code?.device === state.picked && state.code.kind === 'live' ? state.code : null;
+  const WHY = { name: '이름', gears: '톱니', play: '플레이 시간', time: '저장 시각' };
+  const rows = found?.saves?.map(v => `<tr><td><b>${esc(v.nickname || '이름 없음')}</b><div class="mute num">${when(Date.parse(v.at))} 저장</div></td>
+      <td class="num">톱니 ${num(v.freeGears)}<div class="mute">${hours(v.playSeconds)} · 조율 ${num(v.tuning)} · ${v.cleared.length}장 클리어</div></td>
+      <td>${v.why.map(w => `<span class="chip clear">${WHY[w] || esc(w)}</span>`).join(' ')}</td>
+      <td class="r"><button class="ghost" data-ref="${esc(v.ref)}">이 저장으로 코드 만들기</button></td></tr>`).join('') || '';
+  return `<div class="gift">
+      <p class="hint">이 기기는 아직 서버 저장과 연결되지 않았어요(이 업데이트 전 버전). 게임은 마을로 돌아올 때마다 진행을 서버에 올려 두므로, 이 유저의 마지막 접속 정보(이름·톱니·플레이 시간·시각)와 맞는 저장을 찾을 수 있어요.</p>
+      ${found?.saves ? (rows ? `<table><tbody>${rows}</tbody></table>` : '<p class="hint">맞는 저장을 찾지 못했어요. 유저가 이 기기에서 게임을 한 번 열면 바로 연결되고, 기기를 잃었다면 아래 진행 복구를 써 주세요.</p>') : ''}
+      ${mine?.error ? `<p class="hint">${esc(mine.error)}</p>` : ''}
+      <label class="check"><input type="checkbox" id="code-inherit"${state.codeInherit ? ' checked' : ''}> 기록도 새 기기로 옮기기 <span class="mute">(옛 기기를 더 쓰지 않을 때)</span></label>
+      <button class="primary" data-act="search"${found?.busy ? ' disabled' : ''}>${found?.busy ? '찾는 중…' : found?.saves ? '다시 찾기' : '서버 저장 찾기'}</button>
+    </div>`;
+}
+async function searchSaves() {
+  const device = state.picked;
+  state.search = { device, busy: true }; drawDetail();
+  const answer = await request(`/api/admin/users/${encodeURIComponent(device)}/saves`);
+  if (state.picked !== device) return;
+  state.search = { device, saves: answer?.ok ? answer.body.saves : [] }; drawDetail();
+}
+
+async function makeCode(ref) {
+  const device = state.picked, inherit = !!state.codeInherit;
+  const answer = await request(`/api/admin/users/${encodeURIComponent(device)}/transfer`, { method: 'POST', body: JSON.stringify(ref ? { inherit, ref } : { inherit }) });
+  if (!answer || state.picked !== device) return;
+  state.code = answer.ok ? { device, kind: 'live', inherit, ...answer.body } : { device, kind: 'live', error: answer.body?.error === 'nosave' ? '서버에 올라온 진행이 없어 코드를 만들지 못했어요.' : '코드를 만들지 못했어요. 잠시 뒤 다시 해 주세요.' };
+  await pick(device, true);
+}
+async function copyCode() {
+  if (!state.code?.code) return;
+  try { await navigator.clipboard.writeText(formatCode(state.code.code)); state.code.note = '복사했어요. '; } catch { state.code.note = ''; }
+  drawDetail();
+}
+
+// ── 진행 복구: a save rebuilt by hand for a player whose device is gone (src/engine/restore-save.js, 2026-11-12) ──────
+/** The game's data and the save builder, loaded the first time the section opens (the page itself stays light). */
+const restoreKit = { promise: null, value: null, failed: false };
+function loadRestoreKit() {
+  restoreKit.promise ??= Promise.all([import('../engine/data.js'), import('../engine/restore-save.js')]).then(async ([d, r]) => {
+    const data = await d.loadData();
+    restoreKit.value = { options: r.restoreOptions(data), build: choice => r.buildRestoreSave(data, choice) }; restoreKit.failed = false;
+  }).catch(() => { restoreKit.failed = true; restoreKit.promise = null; });
+  return restoreKit.promise;
+}
+/**
+ * The form starts from what the statistics know: the ledger name, the gears at the last check-in, the elements its runs
+ * used, and chapter 1 with its bosses if it ever finished a run. Run count and play time are carried over unseen.
+ */
+function restoreDefaults(d, options) {
+  const u = d.user, used = new Set(d.runs.flatMap(r => String(r.combo || '').split('+')).filter(Boolean));
+  const first = options.chapters[0], cleared = u.clears > 0 && first ? [first.id] : [];
+  return { device: u.id, open: true, nickname: u.nickname || '', freeGears: u.gears || 0, stats: {}, owned: options.elements.map(e => e.id).filter(id => used.has(id)),
+    cleared, bosses: cleared.length ? first.bosses.map(b => b.id) : [], inherit: true, runs: u.runs || 0, playSeconds: u.play_seconds || 0 };
+}
+/** The highest stat level the chosen chapters allow (ten for each chapter open), as in the game. */
+function restoreCap(r, options) {
+  let opened = 1;
+  for (const c of options.chapters) if (c.number > opened && r.cleared.includes(options.chapters.find(p => p.number === c.number - 1)?.id)) opened = c.number;
+  return options.ranksPerChapter * opened;
+}
+function restoreBlock(d) {
+  const kit = restoreKit.value, r = state.restore?.device === d.user.id ? state.restore : null, open = !!r?.open;
+  const mine = state.code?.device === state.picked && state.code.kind === 'restore' ? state.code : null;
+  let body = '';
+  if (open && (!kit || !r.stats)) body = `<p class="hint">${restoreKit.failed ? '게임 데이터를 불러오지 못했어요. 접었다 다시 펼쳐 주세요.' : '게임 데이터를 불러오는 중…'}</p>`;
+  else if (open) {
+    const { options } = kit, cap = restoreCap(r, options), box = (attr, id, on, label) => `<label class="check"><input type="checkbox" ${attr}="${esc(id)}"${on ? ' checked' : ''}> ${esc(label)}</label>`;
+    const armed = state.restoreConfirm > Date.now();
+    body = `<div class="gift restore-form">
+      <p class="hint">기기를 잃어 진행이 서버에도 없을 때, 진행을 직접 정해 새 세이브를 만들어요. 튜토리얼은 끝난 상태로 마을에서 시작해요.</p>
+      <div class="gift-row"><input class="field" data-r="nickname" maxlength="12" placeholder="장부 이름" value="${esc(r.nickname)}" aria-label="장부 이름"><input class="field num" data-r="freeGears" type="number" min="0" step="1" value="${esc(r.freeGears)}" aria-label="자유 톱니"></div>
+      <p class="sub">클리어한 장과 쓰러뜨린 보스 <span class="mute">(보스 기록의 설계도는 자동으로 붙어요)</span></p>
+      ${options.chapters.map(c => `<div class="checks">${box('data-r-clear', c.id, r.cleared.includes(c.id), `${c.number}장 ${c.name} 클리어`)}${c.bosses.map(b => box('data-r-boss', b.id, r.bosses.includes(b.id), b.name)).join('')}</div>`).join('')}
+      <p class="sub">보유 속성 <span class="mute">(앞의 둘을 장착해요)</span></p>
+      <div class="checks">${options.elements.map(e => box('data-r-owned', e.id, r.owned.includes(e.id), e.name)).join('')}</div>
+      <p class="sub">조율판 <span class="mute">(열린 장 기준 최대 ${cap}단계)</span></p>
+      <div class="restore-grid">${options.stats.map(s => `<label>${esc(s.name)}<input class="field num" type="number" min="0" max="${Math.min(s.maxRank, cap)}" step="1" data-r-stat="${esc(s.id)}" value="${esc(r.stats[s.id] || 0)}"></label>`).join('')}</div>
+      <label class="check"><input type="checkbox" data-r="inherit"${r.inherit ? ' checked' : ''}> 이 유저의 원정 기록·서버 기록·선물·메모를 새 기기로 옮기기</label>
+      ${mine?.code ? codeShown(mine, true) : ''}${mine?.error ? `<p class="hint">${esc(mine.error)}</p>` : ''}
+      <button class="${mine?.code ? 'ghost' : 'primary'}${armed ? ' armed' : ''}" data-act="restore">${armed ? '한 번 더 누르면 복구 코드를 만들어요' : mine?.code ? '이 내용으로 새 복구 코드 만들기' : '복구 코드 만들기'}</button>
+    </div>`;
+  }
+  return `<details class="restore"${open ? ' open' : ''}><summary data-act="restore-open">기기를 잃은 유저: 진행 복구 코드</summary>${body}</details>`;
+}
+/** Keeps what the owner typed or ticked, so the half-minute refresh and redraws do not wipe the form. */
+function restoreInput(target) {
+  const r = state.restore;
+  if (!r?.stats || r.device !== state.picked) return;
+  const flip = (list, id, on) => (on ? [...new Set([...list, id])] : list.filter(x => x !== id));
+  if (target.dataset.r === 'inherit') r.inherit = target.checked;
+  else if (target.dataset.r) r[target.dataset.r] = target.value;
+  else if (target.dataset.rStat) r.stats[target.dataset.rStat] = target.value;
+  else if (target.dataset.rOwned) r.owned = flip(r.owned, target.dataset.rOwned, target.checked);
+  else if (target.dataset.rBoss) r.bosses = flip(r.bosses, target.dataset.rBoss, target.checked);
+  // Clearing a chapter opens more tuning levels: the board's limits are drawn again.
+  else if (target.dataset.rClear) { r.cleared = flip(r.cleared, target.dataset.rClear, target.checked); state.restoreConfirm = 0; drawDetail(); return; }
+  else return;
+  state.restoreConfirm = 0;
+}
+/** The summary opens or folds the section; the first opening loads the game's data and fills the form. */
+async function toggleRestore() {
+  const d = state.detail;
+  if (!d?.user) return;
+  if (state.restore?.device !== d.user.id) state.restore = { device: d.user.id, open: false };
+  state.restore.open = !state.restore.open; drawDetail();
+  if (!state.restore.open) return;
+  await loadRestoreKit();
+  if (restoreKit.value && state.restore?.device === d.user.id && !state.restore.stats) state.restore = restoreDefaults(d, restoreKit.value.options);
+  drawDetail();
+}
+async function makeRestoreCode() {
+  const r = state.restore, kit = restoreKit.value, device = state.picked;
+  if (!r?.stats || !kit || r.device !== device) return;
+  if (!(state.restoreConfirm > Date.now())) { state.restoreConfirm = Date.now() + 5000; drawDetail(); setTimeout(drawDetail, 5100); return; }
+  state.restoreConfirm = 0;
+  let save;
+  try { save = kit.build({ ...r, freeGears: Number(r.freeGears), stats: Object.fromEntries(Object.entries(r.stats).map(([k, v]) => [k, Number(v)])) }); }
+  catch { state.code = { device, kind: 'restore', error: '세이브를 만들지 못했어요. 입력을 확인해 주세요.' }; drawDetail(); return; }
+  const answer = await request(`/api/admin/users/${encodeURIComponent(device)}/restore`, { method: 'POST', body: JSON.stringify({ save, inherit: !!r.inherit }) });
+  if (!answer || state.picked !== device) return;
+  state.code = answer.ok ? { device, kind: 'restore', inherit: !!r.inherit, ...answer.body } : { device, kind: 'restore', error: '복구 코드를 만들지 못했어요. 잠시 뒤 다시 해 주세요.' };
+  drawDetail();
 }
 
 /** The send button says what it will do; the first press arms it, the second (within 5 seconds) sends. */

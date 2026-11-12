@@ -5,11 +5,13 @@
 //   GET    /api/transfer/:code                     -> { save, syncKey? }  (the code stays until it is used or expires)
 //   DELETE /api/transfer/:code                     -> { ok }               (the game calls this once the save is loaded)
 // Sync (linked devices share a secret key; the save is uploaded on returning to the village):
-//   POST   /api/sync              { save }           -> { key, rev }
+//   POST   /api/sync              { save, device? }  -> { key, rev }
 //   GET    /api/sync/:key                            -> { rev, save, at }
-//   PUT    /api/sync/:key         { save, baseRev }  -> { rev }   or 409 { rev } when another device uploaded since baseRev
+//   PUT    /api/sync/:key         { save, baseRev, device? } -> { rev }   or 409 { rev } when another device uploaded since baseRev
+// The device id sent along is noted against the sync key (worker/device-link.js) for the admin page's transfer codes.
 // Play statistics and the admin page's summary: worker/stats.js.
 import { statsApi } from './stats.js';
+import { linkDevice } from './device-link.js';
 import { makeCode, normalizeCode, normalizeSyncKey, looksLikeSave, CODE_TTL_SECONDS, SYNC_KEY_LENGTH, SYNC_TTL_SECONDS } from '../src/engine/transfer-code.js';
 
 /** The copies of the game that may call the API from another address (GitHub Pages, local play). */
@@ -69,6 +71,7 @@ export async function api(request, url, env, cors = {}) {
     if (!(await allowNew())) return reply({ error: 'rate' }, 429);
     const key = await unused('sync:', SYNC_KEY_LENGTH);
     await store.put(`sync:${key}`, JSON.stringify({ rev: 1, save: sent.save, at: new Date().toISOString() }), { expirationTtl: SYNC_TTL_SECONDS });
+    await linkDevice(store, sent.device, key);
     return reply({ key, rev: 1 });
   }
   const sync = path.match(/^\/api\/sync\/([^/]+)$/);
@@ -76,12 +79,14 @@ export async function api(request, url, env, cors = {}) {
     const key = normalizeSyncKey(sync[1]), held = key && await store.get(`sync:${key}`);
     if (!held) return reply({ error: 'unlinked' }, 404);
     const record = JSON.parse(held);
-    if (method === 'GET') return reply(record);
+    // The game names its device when it checks on opening, so a device already syncing is linked without new progress.
+    if (method === 'GET') { await linkDevice(store, url.searchParams.get('device'), key); return reply(record); }
     const sent = await body();
     if (!looksLikeSave(sent?.save) || !Number.isInteger(sent.baseRev)) return reply({ error: 'bad' }, 400);
     if (sent.baseRev !== record.rev) return reply({ error: 'conflict', rev: record.rev }, 409);
     const rev = record.rev + 1;
     await store.put(`sync:${key}`, JSON.stringify({ rev, save: sent.save, at: new Date().toISOString() }), { expirationTtl: SYNC_TTL_SECONDS });
+    await linkDevice(store, sent.device, key);
     return reply({ rev });
   }
   return reply({ error: 'missing' }, 404);

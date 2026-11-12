@@ -30,22 +30,25 @@ async function call(path, options = {}, fetchImpl = fetch, base = apiBase()) {
   return body;
 }
 const post = (method, body) => ({ method, body: JSON.stringify(body) });
+// `device` (stats-report.js deviceId) goes along with a sync upload so the admin page can make a transfer code from this
+// device's newest save (worker/device-link.js, 2026-11-12); without one the upload works as before.
+const withDevice = (body, device) => (device ? { ...body, device } : body);
 
 /** Leaves the save on the server under a five-minute code; a sync key sent along links the receiving device too. */
 export const sendSave = (save, fetchImpl, base, syncKey) => call('/api/transfer', post('POST', syncKey ? { save, syncKey } : { save }), fetchImpl, base);
-/** What another device left under this code: { code, save, syncKey? }. */
+/** What another device (or the admin page) left under this code: { code, save, syncKey?, inherit? }. */
 export async function fetchSave(typed, fetchImpl, base) {
   const code = normalizeCode(typed);
   if (!code) fail('typed');
   const held = await call(`/api/transfer/${code}`, {}, fetchImpl, base);
-  return { code, save: held.save, syncKey: held.syncKey };
+  return { code, save: held.save, syncKey: held.syncKey, inherit: held.inherit };
 }
 /** A used code is removed so it cannot be loaded twice; failing to remove it only means it expires on its own. */
 export const forgetCode = (code, fetchImpl, base) => call(`/api/transfer/${code}`, { method: 'DELETE' }, fetchImpl, base).catch(() => {});
 
 /** Starts syncing from this device: { key, rev }. */
-export const startSync = (save, fetchImpl, base) => call('/api/sync', post('POST', { save }), fetchImpl, base);
+export const startSync = (save, fetchImpl, base, device) => call('/api/sync', post('POST', withDevice({ save }, device)), fetchImpl, base);
 /** The newest synced save: { rev, save, at }. */
-export const pullSync = (key, fetchImpl, base) => call(`/api/sync/${key}`, {}, fetchImpl, base);
+export const pullSync = (key, fetchImpl, base, device) => call(`/api/sync/${key}${device ? `?device=${encodeURIComponent(device)}` : ''}`, {}, fetchImpl, base);
 /** Uploads over revision `baseRev`: { rev }, or a TransferError with reason 'conflict' if another device got there first. */
-export const pushSync = (key, save, baseRev, fetchImpl, base) => call(`/api/sync/${key}`, post('PUT', { save, baseRev }), fetchImpl, base);
+export const pushSync = (key, save, baseRev, fetchImpl, base, device) => call(`/api/sync/${key}`, post('PUT', withDevice({ save, baseRev }, device)), fetchImpl, base);

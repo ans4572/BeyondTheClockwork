@@ -228,3 +228,128 @@ test('the difficulty cards split by chapter; a run from before chapters were rep
   assert.deepEqual(by['silent-factory'].map(d => [d.difficulty, d.runs, d.defeats]), [['easy', 1, 1], ['normal', 0, 0], ['hard', 1, 1]]);
   assert.equal(cleanEvent({ device: phone, kind: 'runStart', run: 'run-9-9', elements: ['fire'], chapter: "x'; DROP" }).chapter, null, 'a chapter that is not an id is dropped');
 });
+
+test('the admin page makes a transfer code from a player’s newest uploaded save, and only with the token (2026-11-12)', async () => {
+  const { startSync, pullSync, pushSync, fetchSave } = await import('../src/ui/device-transfer.js');
+  const { encodeSave, decodeSave } = await import('../src/engine/storage.js');
+  const m = new Map(), TRANSFER = { get: async k => (m.has(k) ? m.get(k) : null), put: async (k, v) => { m.set(k, v); }, delete: async k => { m.delete(k); } };
+  const token = 'a-long-admin-token-for-tests-only', env = { STATS: d1(), TRANSFER, ADMIN_TOKEN: token };
+  const call = (path, options = {}) => { const request = new Request(new URL(path, 'https://w.example'), { ...options, headers: { 'CF-Connecting-IP': '1.2.3.4', ...options.headers } }); return api(request, new URL(request.url), env); };
+  const game = async (url, options = {}) => call(url, options);
+  const admin = (path, options = {}) => call(path, { ...options, headers: { Authorization: `Bearer ${token}` } });
+  await call('/api/stats', { method: 'POST', body: JSON.stringify({ device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' }) });
+  await call('/api/stats', { method: 'POST', body: JSON.stringify({ device: pc, kind: 'open', form: 'desktop', os: 'windows', browser: 'chrome' }) });
+  // Nothing uploaded yet: the page says so, and no code is made.
+  assert.equal((await (await admin(`/api/admin/users/${phone}`)).json()).saved, null);
+  assert.equal((await admin(`/api/admin/users/${phone}/transfer`, { method: 'POST' })).status, 404);
+  // The phone starts syncing (naming its device); the PC syncs from an older game that names none, then opens the new one.
+  const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.s.profile.freeGears = 10;
+  const { key, rev } = await startSync(encodeSave(g.s), game, '', phone);
+  const other = await startSync(encodeSave(g.s), game, '');
+  assert.equal((await admin(`/api/admin/users/${pc}/transfer`, { method: 'POST' })).status, 404, 'an upload without a device is not linked');
+  await pullSync(other.key, game, '', pc);
+  assert.equal((await admin(`/api/admin/users/${pc}/transfer`, { method: 'POST' })).status, 200, 'opening the game links it');
+  // Each return to the village replaces the save: the code carries the newest one, and the sync key with it.
+  g.s.profile.freeGears = 77; await pushSync(key, encodeSave(g.s), rev, game, '', phone);
+  const detail = await (await admin(`/api/admin/users/${phone}`)).json();
+  assert.equal(detail.saved.rev, 2); assert.equal(detail.saved.save, undefined, 'the page never sees the save itself');
+  assert.equal((await call(`/api/admin/users/${phone}/transfer`, { method: 'POST' })).status, 401, 'no token, no code');
+  const made = await (await admin(`/api/admin/users/${phone}/transfer`, { method: 'POST' })).json();
+  assert.ok(Date.parse(made.expiresAt) - Date.now() > 23 * 3600 * 1000, 'a day to pass it on');
+  const got = await fetchSave(made.code, game, '');
+  assert.equal(decodeSave(got.save, data).profile.freeGears, 77);
+  assert.equal(got.syncKey, key);
+  assert.equal([...m.keys()].filter(k => k.startsWith('sync:')).length, 2, 'one save per sync place, nothing piled up');
+});
+
+/** Workers KV as a Map, with the list() the save search pages through. */
+function kvStore() {
+  const m = new Map();
+  return { m, get: async k => (m.has(k) ? m.get(k) : null), put: async (k, v) => { m.set(k, v); }, delete: async k => { m.delete(k); },
+    list: async ({ prefix = '', cursor } = {}) => { const names = [...m.keys()].filter(k => k.startsWith(prefix)).sort(), from = Number(cursor || 0), keys = names.slice(from, from + 2).map(name => ({ name })); return { keys, list_complete: from + 2 >= names.length, cursor: String(from + 2) }; } };
+}
+function adminWorld() {
+  const token = 'a-long-admin-token-for-tests-only', env = { STATS: d1(), TRANSFER: kvStore(), ADMIN_TOKEN: token };
+  const call = (path, options = {}) => { const request = new Request(new URL(path, 'https://w.example'), options); return api(request, new URL(request.url), env); };
+  return { env, call, game: async (url, options = {}) => call(url, options), admin: (path, options = {}) => call(path, { ...options, headers: { Authorization: `Bearer ${token}` } }), event: body => call('/api/stats', { method: 'POST', body: JSON.stringify(body) }) };
+}
+
+test('a device from before the game named itself is found by its check-ins, and its code links a new device to the same sync (2026-11-12)', async () => {
+  const { startSync, pullSync, pushSync, fetchSave } = await import('../src/ui/device-transfer.js');
+  const { encodeSave, decodeSave } = await import('../src/engine/storage.js');
+  const { progressMark, syncPlan } = await import('../src/engine/sync.js');
+  const { call, game, admin, event } = adminWorld();
+  // Computer A, yesterday, on the old game: it checks in and uploads to its sync place without naming itself.
+  const a = new Game(data); a.s.profile.registered = true; a.s.mode = 'hub'; Object.assign(a.s.profile, { nickname: '모모', freeGears: 40, playSeconds: 5000 });
+  await event({ device: pc, kind: 'open', form: 'desktop', os: 'windows', browser: 'chrome' });
+  await event({ device: pc, kind: 'ping', name: '모모', where: 'hub', node: 0, gears: 40, playSeconds: 5000 });
+  const aLink = { ...(await startSync(encodeSave(a.s), game, '')), mark: progressMark(a.s) };
+  // Other players' saves are on the server too.
+  for (const [name, gears] of [['모모', 900], ['다른', 40], ['누구', 7]]) { const g = new Game(data); g.s.profile.registered = true; Object.assign(g.s.profile, { nickname: name, freeGears: gears, playSeconds: 99999 }); await startSync(encodeSave(g.s), game, ''); }
+  assert.equal((await (await admin(`/api/admin/users/${pc}`)).json()).saved, null, 'not linked yet');
+  assert.equal((await call(`/api/admin/users/${pc}/saves`)).status, 401, 'no token, no search');
+  const { saves } = await (await admin(`/api/admin/users/${pc}/saves`)).json();
+  assert.equal(saves.length, 1, 'only the save that matches on two signs or more');
+  assert.deepEqual(saves[0].why.slice(0, 3), ['name', 'gears', 'play']); assert.equal(saves[0].freeGears, 40); assert.equal(saves[0].save, undefined, 'the page never gets the save');
+  // The owner makes a code from it; computer B loads it and joins A's sync place.
+  const made = await (await admin(`/api/admin/users/${pc}/transfer`, { method: 'POST', body: JSON.stringify({ ref: saves[0].ref }) })).json();
+  const got = await fetchSave(made.code, game, '');
+  assert.equal(got.syncKey, aLink.key); assert.equal(got.inherit, undefined, 'records stay unless asked');
+  assert.ok((await (await admin(`/api/admin/users/${pc}`)).json()).saved, 'from now on the device is linked');
+  // B plays on and uploads; back on A, the opening check takes B's progress.
+  const b = decodeSave(got.save, data); b.profile.freeGears = 300;
+  const remoteRev = (await pullSync(got.syncKey, game, '', phone)).rev;
+  await pushSync(got.syncKey, encodeSave(b), remoteRev, game, '', phone);
+  const remote = await pullSync(aLink.key, game, '', pc);
+  assert.equal(syncPlan(a.s, aLink, remote), 'take');
+  assert.equal(decodeSave(remote.save, data).profile.freeGears, 300);
+});
+
+test('a save rebuilt on the admin page loads in the game, held to the levels its chapters open (2026-11-12)', async () => {
+  const { buildRestoreSave, restoreOptions, BOSS_BLUEPRINTS } = await import('../src/engine/restore-save.js');
+  const { decodeSave } = await import('../src/engine/storage.js');
+  const options = restoreOptions(data);
+  assert.deepEqual(options.chapters.map(c => c.bosses.length), [2, 2]);
+  const save = buildRestoreSave(data, { nickname: '복구', freeGears: 1234, stats: { maxHp: 30, attackDamage: 15 }, owned: ['fire', 'sound', 'water'], bosses: ['collectorRoco', 'captainBrass'], cleared: ['smile-street'], runs: 12, playSeconds: 3600 });
+  const s = decodeSave(save, data);
+  assert.equal(s.mode, 'hub'); assert.equal(s.profile.registered, true);
+  assert.equal(s.profile.stats.maxHp, 20, 'chapter 2 open: twenty levels'); assert.equal(s.profile.stats.attackDamage, 15);
+  assert.deepEqual(s.profile.loadout, ['fire', 'sound']); assert.deepEqual(s.profile.ownedElements, ['fire', 'sound', 'water']);
+  assert.deepEqual(s.profile.blueprints, [BOSS_BLUEPRINTS.captainBrass]);
+  assert.deepEqual(s.profile.cleared, ['smile-street']); assert.equal(s.profile.chapter, 2);
+  assert.equal(s.profile.freeGears, 1234); assert.equal(s.profile.runs, 12);
+  assert.equal(decodeSave(buildRestoreSave(data, { stats: { maxHp: 30 } }), data).profile.stats.maxHp, 10, 'nothing cleared: ten levels');
+  // The record each boss leaves matches the one the game itself gives on its first defeat.
+  const source = await readFile(new URL('../src/engine/game.js', import.meta.url), 'utf8');
+  for (const [boss, record] of Object.entries(BOSS_BLUEPRINTS)) assert.ok(source.includes(`${boss}: '${record}'`), boss);
+});
+
+test('a code from the admin page can carry a pass: the device that loads it takes over the lost one’s records, once (2026-11-12)', async () => {
+  const { fetchSave } = await import('../src/ui/device-transfer.js');
+  const { buildRestoreSave } = await import('../src/engine/restore-save.js');
+  const { handInPass, rememberPass, INHERIT_STORE_KEY } = await import('../src/ui/stats-report.js');
+  const { call, game, admin, event } = adminWorld();
+  // The lost phone: a hard clear, a memo and a gift it never took.
+  await event({ device: phone, kind: 'open', form: 'phone', os: 'ios', browser: 'safari' });
+  await event({ device: phone, kind: 'runStart', run: 'run-1-5', elements: ['fire', 'ice'], difficulty: 'hard' });
+  await event({ device: phone, kind: 'runEnd', run: 'run-1-5', elements: ['fire', 'ice'], reason: 'clear', node: 12, seconds: 900, difficulty: 'hard' });
+  await admin(`/api/admin/users/${phone}/memo`, { method: 'POST', body: JSON.stringify({ memo: '단골' }) });
+  await admin('/api/admin/gifts', { method: 'POST', body: JSON.stringify({ device: phone, gears: 50 }) });
+  const save = buildRestoreSave(data, { nickname: '모모', freeGears: 40, owned: ['fire', 'ice'], cleared: ['smile-street'] });
+  assert.equal((await call(`/api/admin/users/${phone}/restore`, { method: 'POST', body: JSON.stringify({ save }) })).status, 401);
+  assert.equal((await admin(`/api/admin/users/${phone}/restore`, { method: 'POST', body: JSON.stringify({ save: '{"x":1}' }) })).status, 400);
+  const made = await (await admin(`/api/admin/users/${phone}/restore`, { method: 'POST', body: JSON.stringify({ save, inherit: true }) })).json();
+  const got = await fetchSave(made.code, game, '');
+  assert.ok(got.inherit, 'the code carries the pass'); assert.equal(got.syncKey, undefined, 'a rebuilt save joins no sync');
+  // The new PC loads it and hands the pass in (kept apart from the save until the server takes it).
+  const m = new Map(), store = { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) };
+  store.setItem(DEVICE_STORE_KEY, pc); rememberPass(store, got.inherit);
+  assert.equal(await handInPass({ storage: store, hostname: 'example.com', fetchImpl: game, base: '' }), true);
+  assert.equal(store.getItem(INHERIT_STORE_KEY), null, 'a pass the server took is dropped');
+  const list = (await (await admin('/api/admin/users')).json()).users;
+  assert.deepEqual(list.map(u => u.id), [pc], 'the old row is gone');
+  assert.equal(list[0].memo, '단골'); assert.equal(list[0].runs, 1); assert.equal(list[0].clears, 1); assert.equal(list[0].pending, 1, 'the gift waits for the new device');
+  assert.equal((await (await call(`/api/records?device=${pc}`)).json()).hard.me.clears, 1, 'the board’s own records follow');
+  assert.equal((await call('/api/inherit', { method: 'POST', body: JSON.stringify({ device: pc, pass: got.inherit }) })).status, 404, 'the pass works once');
+  assert.equal(await handInPass({ storage: store, hostname: 'localhost', fetchImpl: game, base: '' }), false, 'nothing kept, nothing sent');
+});

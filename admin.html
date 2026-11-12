@@ -140,6 +140,17 @@
     .memo-row .field, .gift-row .field { flex: 1; }
     .gift { display: grid; gap: 8px; }
     .gift .primary { margin: 0; }
+    /* The transfer code made for a player (2026-11-12): big enough to read out, in two halves as the game shows it. */
+    .code-row { display: flex; gap: 8px; align-items: center; }
+    .code-row .code { font-size: 26px; letter-spacing: 0.08em; }
+    /* 진행 복구 (2026-11-12): a folded section under the code, a form of ticks and the tuning board's levels. */
+    .restore { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
+    .restore summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+    .restore-form .sub { margin: 6px 0 0; font-weight: 700; font-size: 13px; }
+    .checks { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+    .check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+    .restore-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px 10px; }
+    .restore-grid label { display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
     .primary:disabled { opacity: .45; cursor: default; }
     .primary.armed { background: var(--bad); color: #fff; }
 

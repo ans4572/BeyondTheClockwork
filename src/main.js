@@ -19,7 +19,7 @@ import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
-import { browserReporter, mailbox, fetchRecords, PING_SECONDS } from './ui/stats-report.js';
+import { browserReporter, mailbox, fetchRecords, rememberPass, handInPass, PING_SECONDS } from './ui/stats-report.js';
 import { mergeMine, formatClock } from './engine/records.js';
 import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, josa, NICKNAME_MAX } from './engine/nickname.js';
@@ -1048,6 +1048,8 @@ try {
    * Saves this device's progress to the server. The first time (or after the server forgot it) it opens this device's
    * place there; later it is skipped when nothing changed since the last upload, unless asked for by hand.
    */
+  /** This device's statistics id, or undefined on a local test server (the check-in `mail` is made further down). */
+  function statsDevice() { try { return mail?.device; } catch { return undefined; } }
   async function syncUpload(byHand = false) {
     const played = game.s.profile.playSeconds || 0;
     if (syncBusy || !game.s.profile.registered || (link && !byHand && progressMark(game.s) === link.mark && played - (link.played || 0) < PLAY_UPLOAD_SECONDS)) return;
@@ -1055,8 +1057,10 @@ try {
     try {
       game.save();
       const save = encodeSave(game.s), at = new Date().toISOString();
-      if (link) { const { rev } = await pushSync(link.key, save, link.rev); link = { ...link, rev, mark: progressMark(game.s), at, played }; }
-      else { const { key, rev } = await startSync(save); link = { key, rev, mark: progressMark(game.s), at, played }; }
+      // The device id goes along for the admin page's transfer codes (2026-11-12); a local test server has none.
+      const device = statsDevice();
+      if (link) { const { rev } = await pushSync(link.key, save, link.rev, undefined, undefined, device); link = { ...link, rev, mark: progressMark(game.s), at, played }; }
+      else { const { key, rev } = await startSync(save, undefined, undefined, device); link = { key, rev, mark: progressMark(game.s), at, played }; }
       writeLink(localStorage, link);
     } catch (error) {
       if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); syncBusy = false; return syncUpload(byHand); }
@@ -1075,7 +1079,8 @@ try {
   async function syncCheck() {
     if (!link) return;
     let remote;
-    try { remote = await pullSync(link.key); } catch (error) { if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } return; }
+    // Naming the device here links it for the admin page's transfer codes from the first opening (2026-11-12).
+    try { remote = await pullSync(link.key, undefined, undefined, statsDevice()); } catch (error) { if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } return; }
     // Once the player has left the title, the choice waits for the next opening.
     if (!onTitle || screen !== 'title') return;
     const plan = syncPlan(game.s, link, remote);
@@ -1096,15 +1101,17 @@ try {
     if (name === 'transfer-send') await busy('send', async () => { if (!link) await syncUpload(true); game.save(); Object.assign(transfer, await sendSave(encodeSave(game.s), undefined, undefined, link?.key)); });
     if (name === 'transfer-copy') { try { await navigator.clipboard.writeText(formatCode(transfer.code)); transfer.error = ''; } catch { transfer.error = '복사하지 못했어요. 코드를 직접 적어 주세요.'; } renderOverlay(true); }
     if (name === 'transfer-fetch') await busy('fetch', async () => {
-      const { code, save, syncKey } = await fetchSave(transfer.typed);
+      const { code, save, syncKey, inherit } = await fetchSave(transfer.typed);
       let state; try { state = decodeSave(save, data); } catch (error) { throw new Error('불러오기 실패: ' + saveProblem(error.message)); }
-      transfer.incoming = { code, state, syncKey, savedAt: JSON.parse(save).savedAt }; screen = 'confirmTransfer';
+      transfer.incoming = { code, state, syncKey, inherit, savedAt: JSON.parse(save).savedAt }; screen = 'confirmTransfer';
     });
     if (name === 'transfer-cancel') { transfer.incoming = null; screen = 'pause'; renderOverlay(true); }
     if (name === 'transfer-apply' && transfer.incoming) {
-      const { code, state, syncKey } = transfer.incoming;
+      const { code, state, syncKey, inherit } = transfer.incoming;
       mergePlayTime(state, game.s.profile.playSeconds);
       game.state = state; saveBlocked = false; loadError = ''; game.save(); lastAutosave = state.time; forgetCode(code); syncMode = state.mode;
+      // A code from the admin page may carry a pass: this device takes over the old one's records (2026-11-12).
+      if (inherit) { rememberPass(localStorage, inherit); handInPass({ storage: localStorage, hostname: location.hostname, protocol: location.protocol }); }
       // The code came from a synced device: join it, counting from its newest upload so this copy is not pulled over it.
       if (syncKey) {
         link = { key: syncKey, rev: 0, mark: progressMark(state), at: new Date().toISOString() }; writeLink(localStorage, link);
@@ -1510,6 +1517,8 @@ try {
     document.addEventListener('pointerdown', openAudio, { once: true });
   }
   if (!loadError) { openTitle(); syncCheck(); }
+  // A records hand-over that could not reach the server last time tries again on opening.
+  handInPass({ storage: localStorage, hostname: location.hostname, protocol: location.protocol });
   renderOverlay(true); updateHUD(); requestAnimationFrame(frame);
   // The loading card stays until the title's paper form is drawn, so nobody sees an empty frame. Only the title waits:
   // the player's skill sheets, place art and the other songs come after, so they do not slow the first screen.
