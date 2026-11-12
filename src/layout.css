@@ -473,9 +473,12 @@ body.cramped .panel:has(.stat-list) { width: min(860px, 100%); }
 body.cramped .stat-list { display: block; columns: 2; column-gap: 18px; overflow-y: visible; flex: none; background: none; }
 body.cramped .stat-list > * { break-inside: avoid; }
 body.cramped .stat-group { margin: 4px 0 0; break-after: avoid; }
-body.cramped .stat-row { grid-template-columns: 110px 30px 1fr 84px 46px; gap: 5px; padding: 1px 2px; }
+/* 2026-11-12: the level ("10 / 20") and the value ("+25% → +27.5%") ran into the bar and the button at 30px and 84px;
+   the name now takes what is left and the bar gives way, so every figure has room. */
+body.cramped .stat-row { grid-template-columns: minmax(0, 1fr) 44px 48px 108px 50px; gap: 5px; padding: 1px 2px; }
+body.cramped .stat-level { font-size: 10.5px; }
 body.cramped .stat-row strong { font-size: 11.5px; letter-spacing: -0.3px; overflow: hidden; text-overflow: ellipsis; }
-body.cramped .stat-value { font-size: 11px; }
+body.cramped .stat-value { font-size: 11px; overflow: hidden; text-overflow: clip; }
 body.touch.cramped .panel .stat-row button { min-height: 26px; padding: 1px 4px; }
 body.cramped .panel p.stat-hint { display: none; }
 /* 6. The HUD bars read on a dark empty track (the light label sat on a light track and could not be read). */
