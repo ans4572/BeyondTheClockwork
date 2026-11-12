@@ -31,7 +31,8 @@ const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECO
 const floorMark = (elements = []) => ['fire', 'ice', 'lightning', 'sound', 'water'].find(e => elements.includes(e)) || null;
 
 // Run parts that add straight onto a permanent stat of the same name.
-const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'];
+// 축전 효율기 (energyGain, 2026-11-12) adds onto the tuning board's charge gain the same way.
+const RUN_STATS = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction', 'energyGain'];
 // Boss fields that act on the player rather than on enemies.
 const HOSTILE_SHAPES = ['magnet', 'suction', 'stickerVolley', 'stickerFall', 'sticker', 'stompRing', 'floorMark'];
 /** How long the pixelfx swing and hit sheets play (art/fx/wrench-arc, wrench-hit). */
@@ -575,11 +576,14 @@ export class Game {
       const parts = options.source === 'fusion' ? PARTS.fusion : options.source === 'skill' ? PARTS.skill : PARTS.wrench;
       enemy.tell = null; enemy.dash = null; enemy.spin = null; this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
-      const spread = this.trait('shockSpread');
-      if (spread && enemy.statuses.shock > this.s.time) {
-        // An elite coated against shock is passed over (2026-11-11: the spread set shock on it directly).
-        const next = this.s.enemies.filter(e => e !== enemy && e.hp > 0 && !e.dummy && e.immuneTo !== 'shock' && distance(enemy, e) <= spread.range).sort((a, b) => distance(enemy, a) - distance(enemy, b))[0];
-        if (next) { next.statuses.shock = Math.max(next.statuses.shock || 0, enemy.statuses.shock); this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.6, 1, { targetX: next.x, targetY: next.y, look: 'spanner', chain: [] }); }
+      // 불씨 전이 (2026-11-12, fire's special trait): a burning body that falls passes its fire to the bodies round it.
+      const embers = this.trait('emberTransfer');
+      if (embers && enemy.burnStacks?.some(t => t > this.s.time)) {
+        for (const other of this.s.enemies) {
+          if (other === enemy || other.hp <= 0 || floorDistance(enemy, other) > embers.radius + other.radius) continue;
+          for (let i = 0; i < embers.stacks; i++) this.applyStatus(other, 'fire', { id: this.id('ember') });
+        }
+        this.effect('ring', enemy.x, enemy.y, '#ff9a3c', 0.4, embers.radius);
       }
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
@@ -660,7 +664,9 @@ export class Game {
     if (give > 0) this.addStagger(enemy, give, false);
   }
   triggerShock(enemy) {
-    const info = this.c.statuses.find(s => s.id === 'shock');
+    // 과전류 방전 (2026-11-12, lightning's special trait): a harder discharge that reaches one body more.
+    const base = this.c.statuses.find(s => s.id === 'shock'), surge = this.trait('surgeDischarge');
+    const info = surge ? { ...base, dischargeDamage: surge.dischargeDamage, maxTargets: surge.maxTargets } : base;
     if (enemy.statuses.shock <= this.s.time || !enemy.statuses.shock || this.s.time < enemy.shockReady) return;
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
     for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.55, 0.7, { look: 'zap' }); if (target !== enemy) this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.3, 1, { targetX: target.x, targetY: target.y, look: 'arc' }); }
@@ -697,7 +703,7 @@ export class Game {
       if (!a.hazardsStruck) { a.hazardsStruck = true; this.strikeHazards(a.angle, range, arc); }
       for (const enemy of this.s.enemies) if (enemy.hp > 0 && !a.hit.includes(enemy.id) && inCone(this.p, enemy, a.angle, range, arc)) {
         a.hit.push(enemy.id); const hit = this.hitEnemy(enemy, info.damage * (a.empowered ? 1 + this.wrenchMod('dashStrike').damageBonus : 1), { basic: true, stagger: this.c.balance.basicStagger[a.phase] }); this.punch(enemy, a, hit);
-        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { const charge = this.trait('staticCharge'); this.addEnergy(charge.energy); if (charge.fusionRefund && !(this.p.staticRefundAt > this.s.time)) { this.p.staticRefundAt = this.s.time + charge.refundEvery; this.p.fusionReady = Math.max(this.s.time, (this.p.fusionReady || 0) - charge.fusionRefund); } this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
+        if (enemy.statuses.shock > this.s.time && this.trait('staticCharge')) { const charge = this.trait('staticCharge'); this.addEnergy(charge.energy); this.effect('spark', this.p.x, this.p.y, '#ffe086', 0.6, 1, { look: 'ready', follow: true }); }
         this.triggerShock(enemy);
         this.wrenchOnSoundWater(enemy);
         if (!a.energyGiven) { this.addEnergy(this.c.player.energyPerBasicPhase * (1 + (this.stats.energyGain || 0))); a.energyGiven = true; }
@@ -738,6 +744,8 @@ export class Game {
     return this.c.fusions.find(f => f.pair.every(id => this.slots.some(s => s.element === id)));
   }
   get cooldownFactor() { return 1 - this.cooldownReduction; }
+  /** A fusion's wait (2026-11-12: all 30 s, the ultimate): only the tuning board shortens it, not the run's 고속 배선. */
+  get fusionCooldownFactor() { return 1 - (this.tuning.cooldownReduction || 0); }
   get skillSlots() { return this.slots.flatMap(slot => this.c.skills.filter(s => s.element === slot.element).map(skill => ({ skill, slot }))); }
   castSkill(index, target) {
     const entry = this.skillSlots[index];
@@ -798,21 +806,23 @@ export class Game {
     const fusion = this.fusion;
     if (!fusion || !this.active || this.p.dodge || this.stunned || this.busyCasting || this.p.fusionReady > this.s.time || this.p.energy < fusion.energyCost || this.s.casts.some(c => c.shape === 'dash')) return false;
     this.p.energy -= fusion.energyCost;
-    this.p.fusionReady = this.s.time + fusion.cooldown * this.cooldownFactor;
+    this.p.fusionReady = this.s.time + fusion.cooldown * this.fusionCooldownFactor;
     const rarityKeys = Object.keys(this.c.balance.rarityDamage);
     const slot = { level: Math.min(...this.slots.map(s => s.level)), rarity: rarityKeys[Math.min(...this.slots.map(s => rarityKeys.indexOf(s.rarity)))] };
     this.makeCast(fusion, this.config.fusionBehavior[fusion.id], slot, target, true); this.sense({ kind: 'cast', id: fusion.id, fusion: true, pair: fusion.pair });
+    // 여진 장치 (2026-11-12): a few seconds of lighter blows after a fusion.
+    const guard = this.upgradeAmount('fusionGuard');
+    if (guard) { this.p.fusionGuardUntil = this.s.time + this.c.balance.temporaryUpgrades.find(u => u.id === 'fusionGuard').seconds; this.effect('ring', this.p.x, this.p.y, '#9fd7e8', 0.5, 1.1); }
     if (!this.s.profile.discoveredFusions.includes(fusion.id)) this.s.profile.discoveredFusions.push(fusion.id);
     return true;
   }
   applySkillMods(cast) {
     for (const mod of this.config.skillMods.filter(m => m.skill === cast.skillId && this.skillMod(m.id))) {
-      if (mod.id === 'overload') cast.overload = mod.cooldownRefund;
       if (mod.id === 'backflow') cast.finalKnockback = mod.knockback;
       if (mod.id === 'iceBurst') cast.finisher = mod.damage;
       if (mod.id === 'extraStrike') cast.hits += mod.extraHits;
       if (mod.id === 'vortexBlast') cast.finalKnockback = mod.knockback;
-      if (mod.id === 'piercingBolt') cast.pierce = true;
+      if (mod.id === 'piercingBolt') cast.hits += mod.extraBolts || 0;
       if (mod.id === 'flashFreeze') cast.chillBonus = mod.chillBonus;
       if (mod.id === 'overcurrent') cast.secondaryTargets += mod.extraTargets;
       if (mod.id === 'homingStrike') cast.homing = mod.homingRange;
@@ -850,7 +860,8 @@ export class Game {
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
     if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
     if (cast.shape === 'projectile') {
-      for (let i = 0; i < skill.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (skill.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
+      // As many bolts as the cast has (a skill mod may add some: 서리 산탄), fanned evenly about the aim.
+      for (let i = 0; i < cast.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (cast.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
     }
     this.setupSoundWaterFusion(cast);
     this.s.casts.push(cast);
@@ -867,11 +878,10 @@ export class Game {
     // 울림 손바닥 lands harder on a body already ringing, and lays on more.
     const ringing = this.resonanceOf(enemy);
     if (ringing && cast.resonantMultiplier) damage *= cast.resonantMultiplier;
+    // 과충전 회로 (2026-11-12): every blow of a fusion lands harder.
+    if (cast.fusion) damage *= 1 + this.upgradeAmount('fusionDamage');
     const hit = this.hitEnemy(enemy, damage, { slot: cast.slot, color: cast.color, source: cast.fusion ? 'fusion' : 'skill' });
     enemy.joltUntil = this.s.time + JOLT_SECONDS;
-    // 조율 박자: striking a ringing body with the palm gives back part of its wait, once a cast.
-    const beat = ringing && cast.skillId === 'ringPalm' && !cast.derived && !cast.tuned && this.skillMod('tuningBeat');
-    if (beat) { cast.tuned = true; this.p.cooldowns.ringPalm = Math.max(this.s.time, (this.p.cooldowns.ringPalm || 0) - beat.cooldownRefund); }
     // A cast that lands many times is felt once, on its first contact.
     if (!cast.felt) { cast.felt = true; this.sense({ kind: cast.fusion ? 'fusion' : 'skill', crit: hit.crit }); }
     // A sound blow on a body at full resonance collapses it (and lays no new layer: the ringing starts over).
@@ -881,7 +891,6 @@ export class Game {
     if (enemy.hp > 0) for (const element of order) if (!(collapse && element === 'sound')) this.applyStatus(enemy, element, cast, element === 'sound' ? (ringing && cast.resonantStacks) || cast.resonanceStacks || 1 : 1);
     // 수면 공명: a sound blow on a body standing on the film makes the film ring (the film's own ringing does not).
     if (cast.elements.includes('sound') && cast.shape !== 'film') this.ringFilms(enemy);
-    if (cast.overload && enemy.burnStacks.some(t => t > this.s.time)) { this.p.cooldowns[cast.skillId] = Math.max(0, (this.p.cooldowns[cast.skillId] || 0) - cast.overload); cast.overload = 0; }
     this.castStagger(enemy, cast.fusion ? this.c.balance.fusionStaggerPerCastCap : this.c.balance.skillStaggerPerCastCap, cast);
     // Wind throws enemies about: one shoved against a crate sets it off.
     if (cast.elements.includes('wind')) { const reach = this.config.hazards?.elements?.shoveCrateReach || 1; for (const h of this.s.hazards || []) if (h.kind === 'crate' && !h.gone && distance(h, enemy) <= reach) this.lightCrate(h, 0.3); }
@@ -891,16 +900,17 @@ export class Game {
    * off, and the ring passes one layer to the bodies round it. One brought to full resonance by that bursts in turn.
    */
   collapseResonance(enemy, chain = new Set()) {
-    const info = this.status('resonance'), reach = info.spreadRadius, passes = info.spreadStacks;
+    // 공명 붕괴 강화 (2026-11-12, sound's special trait): a harder burst, a longer hold and a wider ring.
+    const info = this.status('resonance'), deep = this.trait('deepCollapse'), reach = deep?.spreadRadius ?? info.spreadRadius, passes = info.spreadStacks, stun = deep?.stun ?? info.collapseStun;
     chain.add(enemy.id); enemy.resonanceStacks = 0; enemy.statuses.resonance = 0;
-    this.hitEnemy(enemy, info.collapseDamage * this.statusPower, { dot: true, color: '#ffe6a8' });
+    this.hitEnemy(enemy, info.collapseDamage * (deep?.damageMultiplier || 1) * this.statusPower, { dot: true, color: '#ffe6a8' });
     if (enemy.shieldHits !== undefined) { enemy.frontGuard = 0; enemy.shieldHits = undefined; enemy.shieldBroken = true; this.effect('scrap', enemy.x, enemy.y - enemy.radius, '#ffbe20', 0.5, 0.8); }
     if (enemy.immuneTo || enemy.coatedUntil > this.s.time) { enemy.immuneTo = null; enemy.coatedUntil = 0; this.effect('scrap', enemy.x, enemy.y - enemy.radius, '#9fd3e6', 0.5, 0.8); }
     this.effect('ring', enemy.x, enemy.y, '#ffe6a8', 0.5, reach + 0.4, { look: 'resonanceBurst' });
     // The burst stops ordinary bodies at its heart and round it for a moment (2026-11-10: sound had nothing that held a crowd).
-    if (info.collapseStun) for (const other of this.s.enemies) if (other.hp > 0 && !other.boss && floorDistance(enemy, other) <= reach + other.radius) other.stunUntil = Math.max(other.stunUntil, this.s.time + info.collapseStun);
+    if (stun) for (const other of this.s.enemies) if (other.hp > 0 && !other.boss && floorDistance(enemy, other) <= reach + other.radius) other.stunUntil = Math.max(other.stunUntil, this.s.time + stun);
     this.sense({ kind: 'resonance' });
-    for (const h of this.s.hazards || []) if (h.kind === 'crate' && !h.gone && distance(h, enemy) <= info.spreadRadius) this.lightCrate(h, 0.05);
+    for (const h of this.s.hazards || []) if (h.kind === 'crate' && !h.gone && distance(h, enemy) <= reach) this.lightCrate(h, 0.05);
     const ring = { id: this.id('collapse'), staggerUsed: {}, fusion: false, statusAt: {} };
     for (const other of this.s.enemies) {
       if (other.hp <= 0 || chain.has(other.id) || floorDistance(enemy, other) > reach + other.radius) continue;
@@ -1107,7 +1117,7 @@ export class Game {
     this.s.casts = this.s.casts.filter(c => !c.done);
   }
   /** What a blow of `amount` takes off F2 after armour and perks (a reflected bullet carries this same number). */
-  damageTaken(amount) { return amount * (1 - (this.stats.damageReduction || 0)) * (1 + (this.perk('overheatEngine')?.damageTaken || 0)); }
+  damageTaken(amount) { return amount * (1 - (this.stats.damageReduction || 0)) * (1 + (this.perk('overheatEngine')?.damageTaken || 0)) * (this.p.fusionGuardUntil > this.s.time ? 1 - this.upgradeAmount('fusionGuard') : 1); }
   hurt(amount) {
     // The F9 debug panel's god mode (this computer's dev server only; never saved): nothing lands on F2.
     if (this.godMode) return false;
@@ -1262,9 +1272,17 @@ export class Game {
     if (input.fusion) held.fusion = now + INPUT_BUFFER;
     if (held.dodge > now && this.dodge()) held.dodge = 0;
     if (p.dodge) {
+      // (kept before moving: the dodge's last frame clears p.dodge, and that frame still brushes past bodies)
+      const dodge = p.dodge;
       this.moveDodge(dt);
       const slip = this.trait('slipstream');
-      if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) { if (!(enemy.statuses.windPressure > this.s.time)) this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: p.moveAngle }); enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration; }
+      // 뒷바람: each body the dodge brushes past gets wind pressure (not one coated against it, 2026-11-11) and, once a
+      // dodge, a gust's blow (slip.damage, 2026-11-11).
+      if (slip) for (const enemy of this.s.enemies) if (enemy.hp > 0 && distance(p, enemy) <= enemy.radius + slip.radius) {
+        if (enemy.immuneTo !== 'windPressure') { if (!(enemy.statuses.windPressure > this.s.time)) this.effect('dodge', enemy.x, enemy.y, '#badbd3', 0.45, 1, { look: 'gust', angle: p.moveAngle }); enemy.statuses.windPressure = this.s.time + this.c.statuses.find(s => s.id === 'windPressure').duration; }
+        const brushed = dodge.brushed ??= [];
+        if (slip.damage && !brushed.includes(enemy.id)) { brushed.push(enemy.id); this.hitEnemy(enemy, slip.damage * this.statusPower, { color: '#badbd3' }); if (!this.active) return; }
+      }
     // A wrench swing plants the feet: the player stands still until the swing and its recovery end.
     } else if (!p.attack && !this.s.casts.some(c => c.shape === 'dash')) {
       const stuck = this.s.casts.find(c => c.shape === 'sticker' && floorDistance(p, c) < c.radius);

@@ -55,7 +55,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .transfer-code { font-size: 26px !important; font-weight: 700; letter-spacing: 3px; margin: 6px 0 0 !important; user-select: all; }
 .run-picks-head { font-weight: 700; margin: 4px 0 8px; }
 .run-picks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 52vh; overflow-y: auto; }
-.run-abandon { justify-content: flex-end; margin-top: 12px; }
+/* Giving up the run sits beside 닫기 in the pause panel's header (2026-11-11: under a long list of picks late in a run it
+   was far down the panel), on every tab while a run is on. */
+.panel-header .header-actions { display: flex; gap: 8px; align-items: center; }
 .run-picks li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; padding: 6px 8px; background: var(--paper-low); }
 .run-picks .pick-no { display: grid; place-items: center; width: 24px; height: 24px; background: var(--ink); color: var(--paper); font-weight: 700; font-size: 12px; }
 .run-picks .pick-meta { color: var(--label); font-size: 12px; }
@@ -139,7 +141,10 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .codex-filter { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 12px; font-weight: 700; color: var(--label); }
 .codex-filter select { padding: 6px 28px 6px 10px; border: 0; border-radius: 0; box-shadow: inset 0 0 0 2px var(--ink); background: #fffaf0; color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .codex-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.codex-entry { padding: 10px 12px; background: var(--paper-low); border-top: 4px solid var(--accent, var(--ink)); }
+.codex-entry { position: relative; padding: 10px 12px; background: var(--paper-low); border-top: 4px solid var(--accent, var(--ink)); }
+.codex-entry.fitted { box-shadow: inset 0 0 0 2px var(--ink); }
+.codex-entry .fitted-tag { position: absolute; top: 8px; right: 10px; padding: 1px 7px; background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 700; }
+.panel .codex-entry .codex-role { margin: -2px 0 6px; font-size: 12px; font-weight: 700; color: var(--label); }
 .codex-entry h3 { display: flex; align-items: center; gap: 6px; font-size: 13px; margin: 0 0 6px; }
 .codex-entry .pair { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; font-size: 12px; font-weight: 700; }
 .codex-entry .pair b { margin: 0 4px; color: var(--label); }
@@ -155,8 +160,9 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 /* Single or several targets: ink for several, brick red for one, so the two read apart at a glance. */
 .tag.reach { color: var(--paper); background: var(--ink); box-shadow: none; }
 .tag.reach.single { background: var(--red); }
-.status-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; margin-top: 10px; }
-.panel .status-legend p { display: flex; align-items: baseline; gap: 6px; margin: 2px 0; font-size: 11px; color: var(--label); }
+.status-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin-top: 10px; }
+/* 2026-11-11: 11px in the label grey was hard to read; the explanations now read like the move lines. */
+.panel .status-legend p { display: flex; align-items: baseline; gap: 6px; margin: 2px 0; font-size: 12.5px; line-height: 1.5; color: var(--ink); }
 .status-legend img { width: 16px; height: 16px; align-self: center; image-rendering: pixelated; }
 .status-legend strong { color: var(--ink); white-space: nowrap; }
 
@@ -222,6 +228,14 @@ body.cramped .f2-face { width: 120px; height: 120px; background-position: -60px 
 .rec-who { grid-column: 2 / 4; display: inline-flex; gap: 3px; align-items: center; font-size: 12px; margin-top: 1px; }
 .rec-who .ico { width: 14px; height: 14px; }
 .rec-mine { background: var(--accent); color: var(--paper); font-size: 11px; padding: 0 5px; font-style: normal; }
+/* The server's three places (2026-11-12): three short rows in a smaller hand than the own best. */
+.rec-row.rank { padding: 1px 0; min-height: 20px; }
+.rec-row.rank .rec-who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.rec-row.rank .rec-who .ico { vertical-align: -2px; margin-right: 2px; }
+.rec-row.rank b { font-size: 14px; }
+.rec-row.rank .rec-els .rec-el { width: 18px; height: 18px; }
+.rec-row.rank:not(.top) b:not(.rec-none) { color: var(--ink); }
+.rec-row.rank.me > span:first-child { color: var(--accent); font-weight: 700; }
 
 /* The first choice after waking (main.js controlsPanel): two cards, keys or mouse, each with its keys drawn. */
 .controls-choice .cs-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px; }

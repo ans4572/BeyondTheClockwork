@@ -54,6 +54,30 @@ test('the server board: fastest real clear per difficulty with its name, never a
   assert.equal((await records(db)).normal.me, null);
 });
 
+test('the server board names the three fastest players, each once by their best clear (2026-11-12)', async () => {
+  const db = d1(), ids = ['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb', 'cccccccccccccccc', 'dddddddddddddddd'];
+  let n = 0; const end = (device, seconds, elements) => record(db, { device, kind: 'runEnd', run: `run-${++n}-1`, difficulty: 'hard', elements, reason: 'clear', node: 12, seconds });
+  await record(db, { device: ids[1], kind: 'ping', where: 'hub', node: 0, gears: 0, playSeconds: 10, name: '나사왕' });
+  await end(ids[0], 700, ['fire']); await end(ids[0], 650, ['ice', 'wind']); await end(ids[0], 680, ['fire']);
+  await end(ids[1], 720, ['sound']); await end(ids[2], 900, ['water']); await end(ids[3], 990, ['wind']);
+  const board = (await records(db, ids[2])).hard;
+  assert.deepEqual(board.tops.map(t => t.seconds), [650, 720, 900], 'one row a player, their best');
+  assert.deepEqual(board.tops[0].elements, ['ice', 'wind'], 'the pair of that best clear');
+  assert.equal(board.tops[1].name, '나사왕'); assert.deepEqual(board.tops.map(t => t.mine), [false, false, true]);
+  assert.deepEqual(board.top, board.tops[0]); assert.deepEqual((await records(db)).normal.tops, []);
+});
+
+test('the end popup asks where a clear would stand: faster other players, counted once each (2026-11-12)', async () => {
+  const db = d1(), ids = ['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb', 'cccccccccccccccc', 'dddddddddddddddd'];
+  let n = 0; const end = (device, seconds) => record(db, { device, kind: 'runEnd', run: `run-${++n}-1`, difficulty: 'hard', elements: ['fire'], reason: 'clear', node: 12, seconds });
+  await end(ids[0], 600); await end(ids[0], 640); await end(ids[1], 700); await end(ids[2], 800); await end(ids[3], 750);
+  // Device 4 clears again in 720: two players are faster (its own 750 does not count against it).
+  const seen = await records(db, ids[3], undefined, { difficulty: 'hard', seconds: 720 });
+  assert.deepEqual(seen.hard.standing, { seconds: 720, place: 3, players: 4 }); assert.equal(seen.normal.standing, undefined);
+  assert.deepEqual((await records(db, '', undefined, { difficulty: 'hard', seconds: 500 })).hard.standing, { seconds: 500, place: 1, players: 5 });
+  assert.equal((await records(db, ids[3], undefined, { difficulty: 'hard', seconds: MIN_CLEAR_SECONDS - 1 })).hard.standing, undefined, 'a too-fast clear gets no place');
+});
+
 test('each chapter has its own server board (2026-11-11); runs without a chapter count as chapter 1', async () => {
   const db = d1(), a = 'aaaaaaaaaaaaaaaa';
   await record(db, { device: a, kind: 'runEnd', run: 'run-1-1', difficulty: 'easy', elements: ['fire'], reason: 'clear', node: 12, seconds: 900 });

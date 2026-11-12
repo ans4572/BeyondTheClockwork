@@ -99,23 +99,18 @@
     "temporaryUpgrades": [
       {
         "id": "basicDamage",
-        "perRank": 0.1,
-        "maxRank": 4
+        "perRank": 0.12,
+        "maxRank": 3
       },
       {
         "id": "maxHp",
-        "perRank": 15,
-        "maxRank": 4
+        "perRank": 18,
+        "maxRank": 3
       },
       {
         "id": "skillCooldownReduction",
-        "perRank": 0.05,
-        "maxRank": 4
-      },
-      {
-        "id": "statusDamage",
-        "perRank": 0.15,
-        "maxRank": 4
+        "perRank": 0.06,
+        "maxRank": 3
       },
       {
         "id": "moveSpeed",
@@ -124,23 +119,39 @@
       },
       {
         "id": "critChance",
-        "perRank": 0.07,
-        "maxRank": 4
+        "perRank": 0.08,
+        "maxRank": 3
       },
       {
         "id": "attackSpeed",
-        "perRank": 0.08,
-        "maxRank": 4
+        "perRank": 0.09,
+        "maxRank": 3
       },
       {
         "id": "killHeal",
         "perRank": 1,
-        "maxRank": 3
+        "maxRank": 1
       },
       {
         "id": "damageReduction",
         "perRank": 0.1,
         "maxRank": 2
+      },
+      {
+        "id": "energyGain",
+        "perRank": 0.1,
+        "maxRank": 3
+      },
+      {
+        "id": "fusionDamage",
+        "perRank": 0.4,
+        "maxRank": 1
+      },
+      {
+        "id": "fusionGuard",
+        "perRank": 0.5,
+        "maxRank": 1,
+        "seconds": 5
       }
     ]
   },
@@ -196,8 +207,8 @@
       "name": "과열 휘두르기",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 46,
-      "totalDirectDamage": 46,
+      "damagePerHit": 40,
+      "totalDirectDamage": 40,
       "range": 3.8,
       "radius": 0,
       "effect": "전방 100도 부채꼴; 화상 1중첩"
@@ -208,12 +219,12 @@
       "element": "fire",
       "name": "배기 폭발",
       "cooldown": 9,
-      "hits": 3,
-      "damagePerHit": 18,
-      "totalDirectDamage": 54,
+      "hits": 4,
+      "damagePerHit": 19,
+      "totalDirectDamage": 76,
       "range": 0,
-      "radius": 2.8,
-      "effect": "0.25초 간격 3회 폭발; 화상; 시전 중 이동 가능"
+      "radius": 3.4,
+      "effect": "0.25초 간격 4회 폭발; 화상; 시전 중 이동 가능"
     },
     {
       "id": "frostBolt",
@@ -222,11 +233,11 @@
       "name": "서리 볼트",
       "cooldown": 6,
       "hits": 3,
-      "damagePerHit": 27,
-      "totalDirectDamage": 81,
+      "damagePerHit": 18,
+      "totalDirectDamage": 54,
       "range": 7,
       "radius": 0,
-      "effect": "좁은 3발 확산탄; 근거리 동시 명중 가능; 둔화"
+      "effect": "좁은 3발 확산탄, 발마다 지나는 길의 적을 모두 꿰뚫음; 근거리 동시 명중 가능; 둔화"
     },
     {
       "id": "coolingField",
@@ -235,8 +246,8 @@
       "name": "냉각 지대",
       "cooldown": 11,
       "hits": 5,
-      "damagePerHit": 18,
-      "totalDirectDamage": 90,
+      "damagePerHit": 28,
+      "totalDirectDamage": 140,
       "range": 6,
       "radius": 3,
       "effect": "2.5초 장판; 0.5초마다 1회; 둔화"
@@ -248,13 +259,13 @@
       "name": "도전 스패너",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 42,
-      "totalDirectDamage": 42,
+      "damagePerHit": 45,
+      "totalDirectDamage": 45,
       "range": 6,
       "radius": 0,
-      "effect": "첫 대상 42, 다른 적 최대 2기에게 각 20; 감전; 같은 적 재연쇄 금지",
-      "secondaryDamage": 20,
-      "secondaryTargets": 2
+      "effect": "첫 대상 45, 다른 적 최대 3기에게 각 21; 감전; 같은 적 재연쇄 금지",
+      "secondaryDamage": 21,
+      "secondaryTargets": 3
     },
     {
       "id": "capacitorStrike",
@@ -263,10 +274,10 @@
       "name": "축전 낙뢰",
       "cooldown": 10,
       "hits": 3,
-      "damagePerHit": 20,
-      "totalDirectDamage": 60,
+      "damagePerHit": 28,
+      "totalDirectDamage": 84,
       "range": 7,
-      "radius": 1.4,
+      "radius": 1.2,
       "effect": "0.5초 예고 후 0.35초 간격 3회; 감전"
     },
     {
@@ -276,8 +287,8 @@
       "name": "압축 돌진",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 40,
-      "totalDirectDamage": 40,
+      "damagePerHit": 50,
+      "totalDirectDamage": 50,
       "range": 3,
       "radius": 0.9,
       "effect": "0.2초 전진 타격; 풍압; 돌진 중 무적(0.3초)"
@@ -289,12 +300,12 @@
       "name": "회오리 흡입",
       "cooldown": 10,
       "hits": 6,
-      "damagePerHit": 10,
-      "totalDirectDamage": 80,
+      "damagePerHit": 11,
+      "totalDirectDamage": 90,
       "range": 5,
       "radius": 3,
-      "effect": "0.25초 간격 6타 후 20 피해 마무리; 일반 적 약한 흡입; 풍압",
-      "finisherDamage": 20
+      "effect": "0.25초 간격 6타 후 24 피해 마무리; 일반 적 약한 흡입; 풍압",
+      "finisherDamage": 24
     },
     {
       "id": "ringPalm",
@@ -333,11 +344,11 @@
       "name": "물대포",
       "cooldown": 5,
       "hits": 3,
-      "damagePerHit": 20,
-      "totalDirectDamage": 60,
+      "damagePerHit": 22,
+      "totalDirectDamage": 66,
       "range": 6,
       "radius": 0,
-      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 20, 가까이서 셋 다 맞으면 60); 발마다 일반 적 0.25 밀침; 젖음"
+      "effect": "앞쪽 6칸으로 좁게 퍼지는 관통 3발(발마다 22, 가까이서 셋 다 맞으면 66); 발마다 일반 적 0.25 밀침; 젖음"
     },
     {
       "id": "hydroJet",
@@ -361,11 +372,11 @@
         "ice"
       ],
       "name": "증기 파쇄",
-      "cooldown": 18,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 4,
-      "damagePerHit": 48,
-      "totalDirectDamage": 192,
+      "damagePerHit": 83,
+      "totalDirectDamage": 332,
       "radius": 3.6,
       "effect": "고온·냉각을 번갈아 터뜨리는 원형 4연타; 화상과 둔화",
       "pairKey": "fire+ice"
@@ -377,11 +388,11 @@
         "lightning"
       ],
       "name": "전호 용광로",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 65,
       "hits": 4,
-      "damagePerHit": 60,
-      "totalDirectDamage": 240,
+      "damagePerHit": 103,
+      "totalDirectDamage": 412,
       "radius": 2.4,
       "effect": "지정 지점 4연쇄 폭발; 화상과 감전",
       "pairKey": "fire+lightning"
@@ -393,11 +404,11 @@
         "wind"
       ],
       "name": "화염 회오리",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 65,
       "hits": 8,
-      "damagePerHit": 28,
-      "totalDirectDamage": 224,
+      "damagePerHit": 48,
+      "totalDirectDamage": 384,
       "radius": 3,
       "effect": "전방 1.2에서 생겨 천천히 나아가는 소형 불 회오리; 약한 흡입; 화상과 풍압",
       "pairKey": "fire+wind",
@@ -417,13 +428,13 @@
         "sound"
       ],
       "name": "과열 공진",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 3,
-      "damagePerHit": 68,
-      "totalDirectDamage": 204,
+      "damagePerHit": 117,
+      "totalDirectDamage": 351,
       "radius": 1.2,
-      "effect": "가까운 적 3기(적이 적으면 같은 적을 다시)의 몸속을 울려 달굼; 0.8초 뒤부터 0.3초 간격으로 차례로 터지고 터질 때 반지름 1.2 안이 함께 맞음(3 × 68); 화상과 공명",
+      "effect": "가까운 적 최대 5기(적이 적으면 같은 적을 다시, 한 적은 최대 3번)의 몸속을 울려 달굼; 0.8초 뒤부터 0.3초 간격으로 차례로 터지고 터질 때 반지름 1.2 안이 함께 맞음(최대 5 × 117, 한 적만 있으면 3 × 117); 화상과 공명",
       "pairKey": "fire+sound"
     },
     {
@@ -433,13 +444,13 @@
         "water"
       ],
       "name": "과열 증기막",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 8,
-      "damagePerHit": 26,
-      "totalDirectDamage": 208,
-      "radius": 2.2,
-      "effect": "F2 주변이 2초 동안 뜨거운 증기로 덮여 안의 적이 0.25초마다 데고 젖음(8 × 26); 증기막은 F2를 따라 움직임; 화상과 젖음",
+      "damagePerHit": 48,
+      "totalDirectDamage": 384,
+      "radius": 3,
+      "effect": "F2 주변이 2초 동안 뜨거운 증기로 덮여 안의 적이 0.25초마다 데고 젖음(8 × 48); 증기막은 F2를 따라 움직임; 화상과 젖음",
       "legacyIds": [
         "steamCannon"
       ],
@@ -452,11 +463,11 @@
         "lightning"
       ],
       "name": "자성 빙쇄",
-      "cooldown": 20,
-      "energyCost": 65,
+      "cooldown": 30,
+      "energyCost": 60,
       "hits": 3,
-      "damagePerHit": 74,
-      "totalDirectDamage": 222,
+      "damagePerHit": 127,
+      "totalDirectDamage": 381,
       "radius": 2.2,
       "effect": "지정 지점의 두 얼음 턱이 닫히며 중앙 방전·파쇄 3타; 둔화와 감전; 보스 강제 이동 없음",
       "pairKey": "ice+lightning",
@@ -484,11 +495,11 @@
         "wind"
       ],
       "name": "빙풍 절단",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 65,
       "hits": 1,
-      "damagePerHit": 230,
-      "totalDirectDamage": 230,
+      "damagePerHit": 396,
+      "totalDirectDamage": 396,
       "radius": 1.4,
       "effect": "두꺼운 얼음 초승달 하나를 바람에 실어 앞으로 날림; 지나는 길의 적을 한 번씩 벰; 둔화와 풍압",
       "pairKey": "ice+wind",
@@ -514,13 +525,13 @@
         "sound"
       ],
       "name": "고음 파쇄",
-      "cooldown": 20,
-      "energyCost": 65,
+      "cooldown": 30,
+      "energyCost": 60,
       "hits": 2,
-      "damagePerHit": 100,
-      "totalDirectDamage": 200,
+      "damagePerHit": 172,
+      "totalDirectDamage": 344,
       "radius": 2.2,
-      "effect": "지정 반지름 2.2 안을 얼린(일반 적 0.8초) 뒤 높은 음으로 산산조각(90 + 110); 언 적은 깨질 때 1.3배; 둔화와 공명",
+      "effect": "지정 반지름 2.2 안을 얼린(일반 적 0.8초) 뒤 높은 음으로 산산조각(154 + 190); 언 적은 깨질 때 1.3배; 둔화와 공명",
       "pairKey": "ice+sound",
       "range": 6
     },
@@ -531,14 +542,14 @@
         "water"
       ],
       "name": "빙판",
-      "cooldown": 20,
-      "energyCost": 65,
+      "cooldown": 30,
+      "energyCost": 60,
       "hits": 2,
-      "damagePerHit": 110,
-      "totalDirectDamage": 220,
+      "damagePerHit": 222,
+      "totalDirectDamage": 444,
       "radius": 2.5,
       "range": 6,
-      "effect": "노린 곳에 3초 동안 빙판(반지름 2.5): 깔릴 때 40, 위의 일반 적은 40% 느려지고, 3초 뒤 한꺼번에 깨지며 위의 적에게 180; 둔화와 젖음",
+      "effect": "노린 곳에 2초 동안 빙판(반지름 2.5): 깔릴 때 100, 위의 일반 적은 40% 느려지고, 2초 뒤 한꺼번에 깨지며 위의 적에게 344; 둔화와 젖음",
       "legacyIds": [
         "freezeHose"
       ],
@@ -551,11 +562,11 @@
         "wind"
       ],
       "name": "폭뢰 부유구",
-      "cooldown": 18,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 1,
-      "damagePerHit": 216,
-      "totalDirectDamage": 216,
+      "damagePerHit": 372,
+      "totalDirectDamage": 372,
       "radius": 3,
       "effect": "지정 지점의 부유 구체가 0.85초 뒤 한 번 파열; 감전과 풍압; 일반 적만 0.65 밀침; 보스 이동 없음",
       "pairKey": "lightning+wind",
@@ -579,13 +590,13 @@
         "sound"
       ],
       "name": "공명 낙뢰",
-      "cooldown": 20,
-      "energyCost": 65,
+      "cooldown": 30,
+      "energyCost": 60,
       "hits": 5,
-      "damagePerHit": 40,
-      "totalDirectDamage": 200,
-      "radius": 2.2,
-      "effect": "가장 가까운 적에게 낙뢰(80); 맞은 적이 2초 동안 스스로 울려 0.5초마다 반지름 2.2에 방전 음파(4 × 30); 그 적이 죽으면 남은 울림이 한 번에 터짐; 감전과 공명",
+      "damagePerHit": 69,
+      "totalDirectDamage": 345,
+      "radius": 2.8,
+      "effect": "가까운 적 최대 3기에게 낙뢰(각 137); 가장 가까운 적이 2초 동안 스스로 울려 0.5초마다 반지름 2.8에 방전 음파(4 × 52); 그 적이 죽으면 남은 울림이 한 번에 터짐; 감전과 공명",
       "pairKey": "lightning+sound",
       "range": 7
     },
@@ -596,14 +607,14 @@
         "water"
       ],
       "name": "감전 웅덩이",
-      "cooldown": 20,
-      "energyCost": 65,
+      "cooldown": 30,
+      "energyCost": 60,
       "hits": 6,
-      "damagePerHit": 34,
-      "totalDirectDamage": 204,
+      "damagePerHit": 58,
+      "totalDirectDamage": 348,
       "radius": 2.2,
       "range": 6,
-      "effect": "노린 곳에 3초 동안 웅덩이(반지름 2.2), 0.5초마다 방전해 안의 적을 모두 때림(6 × 34); 안의 젖은 적 한 기마다 방전 피해 +10%(최대 +50%); 감전과 젖음",
+      "effect": "노린 곳에 3초 동안 웅덩이(반지름 2.2), 0.5초마다 방전해 안의 적을 모두 때림(6 × 58); 안의 젖은 적 한 기마다 방전 피해 +10%(최대 +30%); 감전과 젖음",
       "legacyIds": [
         "shockStream"
       ],
@@ -616,13 +627,13 @@
         "sound"
       ],
       "name": "메아리 돌풍",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 2,
-      "damagePerHit": 100,
-      "totalDirectDamage": 200,
+      "damagePerHit": 172,
+      "totalDirectDamage": 344,
       "radius": 1.2,
-      "effect": "조준 방향으로 음파 고리가 날아가 벽이나 끝에 닿으면 되돌아옴; 오갈 때 한 번씩 맞음(2 × 100); 풍압과 공명",
+      "effect": "조준 방향으로 음파 고리가 날아가 벽이나 끝에 닿으면 되돌아옴; 오갈 때 한 번씩 맞음(2 × 172); 풍압과 공명",
       "pairKey": "sound+wind",
       "range": 6
     },
@@ -633,14 +644,14 @@
         "water"
       ],
       "name": "물기둥 회오리",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 5,
-      "damagePerHit": 20,
-      "totalDirectDamage": 220,
+      "damagePerHit": 34,
+      "totalDirectDamage": 376,
       "radius": 2,
       "range": 6,
-      "effect": "노린 곳에 물기둥이 서서 2초 동안 일반 적을 빨아올리고 0.4초마다 때림(5 × 20), 2초 뒤 한꺼번에 내리꽂아 안의 적에게 120(일반 적 0.6초 기절); 보스는 끌려가지 않음; 풍압과 젖음",
+      "effect": "노린 곳에 물기둥이 서서 2초 동안 일반 적을 빨아올리고 0.4초마다 때림(5 × 34), 2초 뒤 한꺼번에 내리꽂아 안의 적에게 206(일반 적 0.6초 기절); 보스는 끌려가지 않음; 풍압과 젖음",
       "legacyIds": [
         "whirlSpray"
       ],
@@ -653,13 +664,13 @@
         "water"
       ],
       "name": "수면 공명",
-      "cooldown": 20,
+      "cooldown": 30,
       "energyCost": 60,
       "hits": 6,
-      "damagePerHit": 34,
-      "totalDirectDamage": 204,
+      "damagePerHit": 58,
+      "totalDirectDamage": 348,
       "radius": 3,
-      "effect": "F2 앞에 4초 동안 얇은 물막(반지름 3); 그 위 적이 소리나 렌치에 맞을 때마다 물막 전체가 울려 물막 위 모든 적이 함께 맞음(최대 6번, 한 번에 34); 젖음과 공명",
+      "effect": "F2 앞에 4초 동안 얇은 물막(반지름 3); 그 위 적이 소리나 렌치에 맞을 때마다 물막 전체가 울려 물막 위 모든 적이 함께 맞음(최대 6번, 한 번에 58); 젖음과 공명",
       "pairKey": "sound+water"
     }
   ],

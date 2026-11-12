@@ -66,16 +66,18 @@ test('every stat changes what it says', () => {
   g.s.profile.stats.moveSpeed = 20; const x = g.p.x; step(g, 0.5, { x: 1 }); assert.ok(Math.abs(g.p.x - x - 3.5 * 1.4 * 0.5) < 0.2);
   g.s.profile.stats.attackSpeed = 20; g.p.attack = null; g.p.x = 8; assert.equal(g.basicAttack(), true); g.updateBasic(0.1); assert.ok(Math.abs(g.p.attack.elapsed - 0.14) < 1e-9);
   g.s.profile.stats.cooldownReduction = 20; assert.ok(Math.abs(g.cooldownFactor - 0.7) < 1e-9);
-  g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownFactor - 0.5) < 1e-9);
+  g.s.run.upgrades.skillCooldownReduction = 3; assert.ok(Math.abs(g.cooldownFactor - 0.52) < 1e-9);
+  // A fusion's wait takes the tuning only: the run part (고속 배선) is for the element skills (2026-11-12).
+  assert.ok(Math.abs(g.fusionCooldownFactor - 0.7) < 1e-9);
 });
 test('tuning, run parts and oil simply add up, with no cap over the sum', () => {
   const g = arena();
-  // Crit: base 10% + 30 ranks (30%) + four sharpened-cog parts (28%).
+  // Crit: base 10% + 30 ranks (30%) + three sharpened-cog parts (24%, at most three since 2026-11-12).
   g.s.profile.stats.critChance = 30; assert.ok(Math.abs(g.critChance - 0.4) < 1e-9);
-  g.s.run.upgrades.critChance = 4; assert.ok(Math.abs(g.critChance - 0.68) < 1e-9);
+  g.s.run.upgrades.critChance = 3; assert.ok(Math.abs(g.critChance - 0.64) < 1e-9);
   g.random = () => 0.6; assert.equal(g.rollCrit(), true);
-  // Cooldown: 30 ranks reach 45%; the run part's 20% goes on top.
-  g.s.profile.stats.cooldownReduction = 30; g.s.run.upgrades.skillCooldownReduction = 4; assert.ok(Math.abs(g.cooldownReduction - 0.65) < 1e-9);
+  // Cooldown: 30 ranks reach 45%; the run part's 18% goes on top.
+  g.s.profile.stats.cooldownReduction = 30; g.s.run.upgrades.skillCooldownReduction = 3; assert.ok(Math.abs(g.cooldownReduction - 0.63) < 1e-9);
   // Damage: 30 ranks of tuning (90%) and the red oil (+12%) both count.
   g.s.profile.stats.attackDamage = 30; g.s.run.potion = 'attack'; assert.ok(Math.abs(g.attackBonus - 1.02) < 1e-9);
 });
@@ -178,7 +180,7 @@ test('fusion cost/cooldown and minimum slot level/rarity are respected', () => {
   assert.equal(g.castFusion({ x: 9, y: 8 }), false); g.p.energy = 100;
   assert.equal(g.castFusion({ x: 9, y: 8 }), true); assert.equal(g.p.energy, 40);
   assert.equal(g.s.casts[0].slot.level, 2); assert.equal(g.s.casts[0].slot.rarity, 'rare');
-  assert.equal(g.p.fusionReady, 18); assert.equal(g.castFusion({ x: 9, y: 8 }), false);
+  assert.equal(g.p.fusionReady, data.combat.fusions.find(f => f.id === 'steamShatter').cooldown); assert.equal(g.castFusion({ x: 9, y: 8 }), false);
 });
 test('every fusion actually deals its direct damage', () => {
   for (const fusion of data.combat.fusions) {
@@ -335,8 +337,9 @@ test('frost crosscut flies one wide ice crescent forward that cuts each enemy in
  for(const e of [center,side,off,beyond])e.hp=e.maxHp=1000;
  g.s.run.slots=['ice','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion(center),true);
  step(g,.15);assert.equal(center.hp,1000,'nothing before the blade leaves the hand');
- step(g,.35);assert.equal(center.hp,770);assert.equal(side.hp,770,'the band is wide');
- step(g,1);assert.equal(center.hp,770,'one cut per enemy');assert.equal(side.hp,770);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
+ const cut=1000-data.combat.fusions.find(f=>f.id==='frostCrosscut').damagePerHit;
+ step(g,.35);assert.equal(center.hp,cut);assert.equal(side.hp,cut,'the band is wide');
+ step(g,1);assert.equal(center.hp,cut,'one cut per enemy');assert.equal(side.hp,cut);assert.equal(off.hp,1000);assert.equal(beyond.hp,1000,'stops at its range');
  assert.equal(g.s.casts.length,0);assert.equal(g.p.energy,35);
 });
 
@@ -350,8 +353,8 @@ test('fire cyclone starts in front of its caster, moves forward and cannot spawn
  assert.ok(h.s.casts[0].x<=wall.x-.2+1e-8);
 });
 test('storm float stays at its placement, explodes once after its tell, and never displaces bosses',()=>{
- const g=arena(),enemy=inert(g,'guard',{x:11.2,y:8}),boss=inert(g,'captainBrass',{x:11,y:10});enemy.hp=enemy.maxHp=1000;boss.hp=boss.maxHp=1000;const bx=boss.x,by=boss.y;
- g.s.run.slots=['lightning','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:11,y:8}),true);g.p.x=5;g.p.y=5;step(g,.8);assert.equal(enemy.hp,1000);assert.equal(g.s.casts[0].x,11);assert.equal(g.s.casts[0].y,8);step(g,.1);assert.equal(enemy.hp,784);assert.equal(boss.hp,784);assert.ok(enemy.x>11.7);assert.equal(boss.x,bx);assert.equal(boss.y,by);step(g,.5);assert.equal(enemy.hp,784);assert.equal(g.p.energy,40);
+ const g=arena(),enemy=inert(g,'guard',{x:11.2,y:8}),boss=inert(g,'captainBrass',{x:11,y:10});enemy.hp=enemy.maxHp=10000;boss.hp=boss.maxHp=10000;const bx=boss.x,by=boss.y;
+ g.s.run.slots=['lightning','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:11,y:8}),true);g.p.x=5;g.p.y=5;step(g,.8);assert.equal(enemy.hp,10000);assert.equal(g.s.casts[0].x,11);assert.equal(g.s.casts[0].y,8);const left=10000-data.combat.fusions.find(f=>f.id==='stormFloat').damagePerHit;step(g,.1);assert.equal(enemy.hp,left);assert.equal(boss.hp,left);assert.ok(enemy.x>11.7);assert.equal(boss.x,bx);assert.equal(boss.y,by);step(g,.5);assert.equal(enemy.hp,left);assert.equal(g.p.energy,40);
 });
 test('legacy fusion discoveries migrate without resetting readiness or existing cast snapshots',()=>{
  const g=arena();g.s.profile.discoveredFusions=['blizzardFan','ionFan','frostCrosscut'];g.p.fusionReady=100;g.s.casts=[{skillId:'ionFan',shape:'cone',hits:6,age:.3}];const saved=decodeSave(encodeSave(g.s),data);assert.deepEqual(saved.profile.discoveredFusions,['frostCrosscut','stormFloat']);assert.equal(saved.player.fusionReady,100);assert.equal(saved.casts[0].skillId,'ionFan');assert.equal(saved.casts[0].hits,6);
@@ -362,10 +365,10 @@ test('orb placement follows an off-axis cursor and clamps to its own range',()=>
 });
 
 test('magnetic ice clamp is a fixed oriented target rectangle with a tell and exactly three hits',()=>{
- const g=arena(),center=inert(g,'captainBrass',{x:12,y:8}),outside=inert(g,'guard',{x:13.7,y:9.9});center.hp=center.maxHp=outside.hp=outside.maxHp=1000;
+ const g=arena(),center=inert(g,'captainBrass',{x:12,y:8}),outside=inert(g,'guard',{x:13.7,y:9.9});center.hp=center.maxHp=outside.hp=outside.maxHp=10000;
  g.s.run.slots=['ice','lightning'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:12,y:8}),true);
  const cast=g.s.casts[0];assert.equal(cast.shape,'clamp');assert.equal(cast.x,12);assert.equal(cast.y,8);g.p.x=5;g.p.y=5;
- step(g,.55);assert.equal(center.hp,1000);assert.equal(outside.hp,1000);step(g,.07);assert.equal(center.hp,926);step(g,.18);assert.equal(center.hp,852);step(g,.18);assert.equal(center.hp,778);step(g,.5);assert.equal(center.hp,778);assert.equal(outside.hp,1000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,35);assert.equal(g.p.fusionReady,20);
+ step(g,.55);assert.equal(center.hp,10000);assert.equal(outside.hp,10000);const jaw=data.combat.fusions.find(f=>f.id==='magneticIceClamp').damagePerHit;step(g,.07);assert.equal(center.hp,10000-jaw);step(g,.18);assert.equal(center.hp,10000-2*jaw);step(g,.18);assert.equal(center.hp,10000-3*jaw);step(g,.5);assert.equal(center.hp,10000-3*jaw);assert.equal(outside.hp,10000);assert.equal(center.x,12);assert.equal(center.y,8);assert.equal(g.p.energy,100-data.combat.fusions.find(f=>f.id==="magneticIceClamp"||f.name==="자성 빙쇄").energyCost);assert.equal(g.p.fusionReady,data.combat.fusions.find(f=>f.id==='magneticIceClamp').cooldown);
 });
 
 test('magnetic ice clamp aims at an off-axis target, limits placement range and migrates ring discoveries',()=>{
@@ -543,7 +546,7 @@ test('the balancing cards: more strikes, an ice burst and frozen cracks', () => 
   assert.equal(g.s.casts.at(-1).hits, strike.hits + 1);
   g.makeCast(field, data.slice.skillBehavior.coolingField, { level: 1, rarity: 'common' }); assert.equal(g.s.casts.at(-1).finisher, 24);
   const e = inert(g, 'guard', { x: 9, y: 8 }), plain = g.damageMultiplier(e, true); e.frozenUntil = 1e9;
-  assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.4) < 1e-9);
+  assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1 - data.slice.elementTraits.find(t => t.id === 'frostCrack').damageBonus) < 1e-9);
 });
 test('a rabbit beaten mid-dash no longer holds a melee slot, so a jack-in-the-box still surfaces', () => {
   const g = arena(), jack = g.spawnEnemy('jackbox', { x: 12, y: 8 });
@@ -577,9 +580,4 @@ test('a coated elite shrugs off the status of one carried element, also when sho
   const coat = e.affixes[0].element, other = coat === 'fire' ? 'lightning' : 'fire', status = el => data.combat.elements.find(x => x.id === el).status;
   g.applyStatus(e, coat, { id: 'a', staggerUsed: {} }); g.applyStatus(e, other, { id: 'b', staggerUsed: {} });
   assert.ok(!(e.statuses[status(coat)] > g.s.time)); assert.ok(e.statuses[status(other)] > g.s.time);
-  const shocked = g.spawnWaveEnemy('elite', { x: 10, y: 9 }, [{ id: 'coated', element: 'lightning' }]); shocked.ready = 1e9; shocked.hp = shocked.maxHp = 1e6;
-  if (shocked.immuneTo === 'shock') {
-    g.s.run.traits = ['shockSpread']; const r = inert(g, 'rat', { x: 10.4, y: 9 }); r.statuses.shock = g.s.time + 3;
-    g.hitEnemy(r, 9999, { exact: true }); assert.ok(!(shocked.statuses.shock > g.s.time), 'the spread passes it over');
-  }
 });

@@ -521,7 +521,7 @@ export const enemyActions = {
       if (enemy.burnStacks.length && this.s.time >= enemy.burnTick) {
         const info = this.c.statuses.find(s => s.id === 'burn');
         // 깊은 불씨 makes every burn tick land twice as hard.
-        this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * (this.statusPower + this.upgradeAmount('statusDamage')) * (this.trait('emberStacks')?.burnDamageMultiplier || 1), { dot: true, color: '#efaa71' });
+        this.hitEnemy(enemy, info.damagePerSecond * info.tickInterval * enemy.burnStacks.length * this.statusPower * (this.trait('emberStacks')?.burnDamageMultiplier || 1), { dot: true, color: '#efaa71' });
         enemy.burnTick += info.tickInterval;
       }
       // A boss behind a corridor waits in his hall until F2 walks in and the gates shut (factory-bosses.js fbHallGates).

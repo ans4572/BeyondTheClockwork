@@ -24,14 +24,17 @@ export function encodeSave(state) { return JSON.stringify({ version: 1, savedAt:
 /** Permanent stats that were removed, with the prices they were bought at, so a save gets its gears back. */
 const REMOVED_STATS = { dodgeCooldown: { baseCost: 10, costStep: 5 } };
 /** Run rewards that were removed: a run saved holding one simply loses it (it only shortened the dodge's wait). */
-const REMOVED_REWARDS = { mod: ['windupRecoil'], upgrade: ['dodgeCooldownReduction'] };
+// 오래 타는 코일 (statusDamage, burn damage, offered only with fire) cut 2026-11-12: fire then held one more card than the rest.
+const REMOVED_REWARDS = { mod: ['windupRecoil'], upgrade: ['dodgeCooldownReduction', 'statusDamage'] };
 /**
  * Element traits cut on 2026-11-08 (two an element instead of three), with the element and tier each had. A saved run
  * that holds one gets another trait of the same element in its place (see swapCutTrait).
  */
 const CUT_TRAITS = {
   emberSpread: { element: 'fire', tier: 'rare' }, quickFreeze: { element: 'ice', tier: 'special' }, arcRange: { element: 'lightning', tier: 'rare' },
-  dodgeGust: { element: 'wind', tier: 'rare' }, chainCollapse: { element: 'sound', tier: 'rare' }, drenchSpread: { element: 'water', tier: 'rare' }
+  dodgeGust: { element: 'wind', tier: 'rare' }, chainCollapse: { element: 'sound', tier: 'rare' }, drenchSpread: { element: 'water', tier: 'rare' },
+  // 감전 전염 gave way to 과전류 방전 as lightning's special on 2026-11-12.
+  shockSpread: { element: 'lightning', tier: 'special' }
 };
 /**
  * The trait that takes a cut one's place: one of the same element the run does not hold yet (nor is `taken`), the same
@@ -43,6 +46,11 @@ function swapCutTrait(id, held, data, taken = []) {
   const free = data.slice.elementTraits.filter(t => t.element === cut.element && !held.includes(t.id) && !taken.includes(t.id));
   return (free.find(t => t.tier === cut.tier) || free[0])?.id || null;
 }
+/**
+ * Special skill mods turned into element traits on 2026-11-12 (과부하 → 불씨 전이, 조율 박자 → 공명 붕괴 강화): a saved run
+ * holding the mod, or offered it, gets the trait instead (unless it already holds it, when the mod simply goes).
+ */
+const MODS_TO_TRAITS = { overload: 'emberTransfer', tuningBeat: 'deepCollapse' };
 const LEGACY_ROW_COSTS = { chassis: [20, 35, 55, 80, 110], strike: [20, 35, 55, 80, 110], repair: [30, 70, 130], safety: [120, 300] };
 
 export function decodeSave(raw, data) {
@@ -125,6 +133,21 @@ export function decodeSave(raw, data) {
     if (new Set(run.slots.map(slot => slot.element)).size !== run.slots.length || run.slots.some(slot => !data.slice.elements.includes(slot.element) || !integerIn(slot.level, 1, data.combat.balance.skillMaxLevel) || !Object.hasOwn(data.combat.balance.rarityDamage, slot.rarity))) fail('저장된 속성 슬롯이 올바르지 않습니다.');
     if (!Array.isArray(run.plan) || run.plan.length !== rooms.length || run.plan.some((entry, i) => !integerIn(entry.layout, 0, data.slice.roomLayouts.length - 1) || !integerIn(entry.variant, 0, (rooms[i].variants?.length || 1) - 1))) fail('저장된 원정 경로가 올바르지 않습니다.');
     if (Array.isArray(run.mods)) run.mods = run.mods.filter(id => !REMOVED_REWARDS.mod.includes(id));
+    if (Array.isArray(run.skillMods)) {
+      const moved = run.skillMods.filter(id => MODS_TO_TRAITS[id]);
+      run.skillMods = run.skillMods.filter(id => !MODS_TO_TRAITS[id]);
+      if (moved.length) run.traits = [...new Set([...(Array.isArray(run.traits) ? run.traits : []), ...moved.map(id => MODS_TO_TRAITS[id])])];
+      if (Array.isArray(run.picks)) run.picks = run.picks.map(pick => (pick?.kind === 'skillMod' && MODS_TO_TRAITS[pick.id] ? { ...pick, kind: 'trait', id: MODS_TO_TRAITS[pick.id] } : pick));
+    }
+    if (Array.isArray(run.rewardChoices)) {
+      const seen = new Set([...(Array.isArray(run.traits) ? run.traits : []), ...run.rewardChoices.filter(r => r?.kind === 'trait').map(r => r.id)]);
+      run.rewardChoices = run.rewardChoices.map(reward => {
+        if (reward?.kind !== 'skillMod' || !MODS_TO_TRAITS[reward.id]) return reward;
+        const id = MODS_TO_TRAITS[reward.id];
+        if (seen.has(id)) return null;
+        seen.add(id); return { ...reward, kind: 'trait', id };
+      }).filter(Boolean);
+    }
     // A cut trait the run had picked becomes another of the same element; its line in the run's picks follows it.
     if (Array.isArray(run.traits)) {
       const kept = run.traits.filter(id => !CUT_TRAITS[id]), swaps = {};
@@ -143,6 +166,8 @@ export function decodeSave(raw, data) {
       }).filter(Boolean);
     }
     if (run.upgrades) for (const id of REMOVED_REWARDS.upgrade) delete run.upgrades[id];
+    // A part kept past its card's top rank (2026-11-12: most cards went from 4 ranks to 3, 수리 회로 from 3 to 1) is held at it.
+    if (run.upgrades) for (const u of data.combat.balance.temporaryUpgrades) if (run.upgrades[u.id] > u.maxRank) run.upgrades[u.id] = u.maxRank;
     if (Array.isArray(run.rewardChoices)) run.rewardChoices = run.rewardChoices.filter(reward => !REMOVED_REWARDS[reward.kind]?.includes(reward.id));
     if (!validNumber(run.coins) || !validNumber(run.elapsed) || !Array.isArray(run.clears) || !Array.isArray(run.shopBought) || !Array.isArray(run.mods) || !run.upgrades || !Array.isArray(run.rewardChoices)) fail('저장된 원정 보상이 올바르지 않습니다.');
     for (const reward of run.rewardChoices) {

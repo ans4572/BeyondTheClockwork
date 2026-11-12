@@ -13,13 +13,15 @@ export const soundWaterFusions = {
     if (!SHAPES.has(cast.shape)) return;
     const p = this.p, near = this.s.enemies.filter(e => reachable(this, e) && distance(p, e) <= cast.range + e.radius).sort((a, b) => distance(p, a) - distance(p, b));
     if (cast.shape === 'marks') {
-      // 과열 공진: up to three nearest bodies; with fewer, the bursts go round the ones there are.
-      const picks = near.slice(0, cast.targets);
-      cast.marks = picks.length ? Array.from({ length: cast.hits }, (_, i) => ({ id: picks[i % picks.length].id, at: cast.delay + i * cast.interval, done: false })) : [];
+      // 과열 공진: up to `targets` nearest bodies, `bursts` bursts in all; with fewer bodies the bursts go round the ones
+      // there are, at most `perBody` on one, so a lone body takes no more than before (2026-11-11: 3 bodies and 3 bursts).
+      const picks = near.slice(0, cast.targets), count = Math.min(cast.bursts || cast.hits, picks.length * (cast.perBody || Infinity));
+      cast.marks = picks.length ? Array.from({ length: count }, (_, i) => ({ id: picks[i % picks.length].id, at: cast.delay + i * cast.interval, done: false })) : [];
       if (!picks.length) cast.done = true;
     }
     if (cast.shape === 'shatter') { cast.stage = 0; this.effect('friendlyTell', cast.x, cast.y, '#e0a43c', cast.delay + cast.breakDelay, cast.radius, { skill: cast.skillId, mark: 'sound' }); }
-    if (cast.shape === 'speaker') { cast.speaker = near[0]?.id ?? null; cast.left = cast.pulses; cast.next = cast.delay; cast.bolted = false; if (cast.speaker === null) cast.done = true; }
+    // 공명 낙뢰: bolts fall on up to `boltTargets` nearest bodies at once (2026-11-11: on one); the nearest one rings.
+    if (cast.shape === 'speaker') { cast.bolts = near.slice(0, cast.boltTargets || 1).map(e => e.id); cast.speaker = near[0]?.id ?? null; cast.left = cast.pulses; cast.next = cast.delay; cast.bolted = false; if (cast.speaker === null) cast.done = true; }
     if (cast.shape === 'echo') { cast.travel = cast.startDistance || 0; cast.outbound = true; cast.reach = Math.max(1, this.lineReach(p, cast.angle, cast.range).reach); cast.hitOut = []; cast.hitBack = []; }
     if (cast.shape === 'film') { cast.x = p.x + Math.cos(cast.angle) * cast.forward; cast.y = p.y + Math.sin(cast.angle) * cast.forward; cast.rings = 0; cast.lastRing = -Infinity; }
     if (cast.shape === 'veil') { cast.x = p.x; cast.y = p.y; cast.next = cast.delay; }
@@ -72,7 +74,10 @@ export const soundWaterFusions = {
         for (const e of this.s.enemies) if (reachable(this, e) && floorDistance(at, e) <= cast.radius + e.radius) this.castHit(cast, e, cast.pulseDamage);
         this.effect('ring', at.x, at.y, '#ffe086', 0.45, cast.radius, { look: 'resonanceBurst', burst: 0.5 });
       };
-      if (!cast.bolted) { cast.bolted = true; if (body?.hp > 0) { this.castHit(cast, body, cast.boltDamage); this.effect('ring', body.x, body.y, '#ffe086', 1, 1, { look: 'boltStrike' }); } }
+      if (!cast.bolted) {
+        cast.bolted = true;
+        for (const id of cast.bolts || [cast.speaker]) { const struck = this.s.enemies.find(e => e.id === id); if (struck?.hp > 0) { this.castHit(cast, struck, cast.boltDamage); this.effect('ring', struck.x, struck.y, '#ffe086', 1, 1, { look: 'boltStrike' }); } }
+      }
       // The ringing body fell: whatever ringing was left goes off at once where it stood.
       if (!body || body.hp <= 0) { const at = body ? { x: body.x, y: body.y } : { x: cast.x, y: cast.y }; for (; cast.left > 0; cast.left--) ring(at); cast.done = true; return true; }
       cast.x = body.x; cast.y = body.y;

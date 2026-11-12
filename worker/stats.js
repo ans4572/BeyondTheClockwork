@@ -1,7 +1,8 @@
 // Play statistics kept in Cloudflare D1 (binding STATS): the game posts small events, the admin page reads a summary.
 //   POST /api/stats                 one event (src/engine/stats.js cleanEvent) -> 204, or for a ping { mail: [gifts] }
 //   POST /api/mail/claim            { device, ids }  the game took these gifts                   -> { ok }
-//   GET  /api/records?device=       per difficulty: the server's fastest clear, and this device's own   -> { easy: { top, me }, … }
+//   GET  /api/records?device=       per difficulty: the server's three fastest players, and this device's own -> { easy: { tops, top, me }, … }
+//        &difficulty=&at=           …and where a clear of `at` seconds would stand there -> { hard: { …, standing: { seconds, place, players } } }
 // Admin routes (Authorization: Bearer <ADMIN_TOKEN>):
 //   GET    /api/admin/stats?days=7|30|0&difficulty=   the summary below
 //   GET    /api/admin/users?q=               players (devices), most recently seen first
@@ -206,25 +207,39 @@ export async function summary(db, days = 30, now = Date.now(), difficulty = '') 
 }
 
 /**
- * The difficulty cards' records, from the runs already kept: per difficulty the fastest clear on the server (its time,
- * element pair and the ledger name of whoever made it, never their device id) and, when a device is named, that
+ * The difficulty cards' records, from the runs already kept: per difficulty the three fastest players on the server, each
+ * by their own best clear (its time, element pair and the ledger name of whoever made it, never their device id; `top`
+ * is the first of them, as before 2026-11-12) and, when a device is named, that
  * device's own best, clear count and furthest stop. Clears under MIN_CLEAR_SECONDS are not real runs and are skipped.
  */
-export async function records(db, device = '', chapter = FIRST_CHAPTER_ID) {
+/** How many players each difficulty's board names (2026-11-12: 1 → 3). */
+export const BOARD_SIZE = 3;
+export async function records(db, device = '', chapter = FIRST_CHAPTER_ID, at = null) {
   await ensure(db);
   // One chapter's board (2026-11-11); runs from before they carried their chapter are chapter 1's.
   const mine = isDeviceId(device) ? device : '', ch = /^[a-z][a-z-]{0,31}$/.test(chapter || '') ? chapter : FIRST_CHAPTER_ID;
-  const tops = DIFFICULTIES.map(id => db.prepare(`SELECT r.seconds, r.combo, r.device, d.nickname FROM runs r LEFT JOIN devices d ON d.id = r.device
-    WHERE r.reason = 'clear' AND r.difficulty = ?1 AND r.seconds >= ?2 AND COALESCE(r.chapter, ?3) = ?4 ORDER BY r.seconds, r.ended_at LIMIT 1`).bind(id, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch));
+  // One row per device, its best clear (SQLite takes the other columns from the row MIN picked), the fastest BOARD_SIZE.
+  const tops = DIFFICULTIES.map(id => db.prepare(`SELECT t.seconds, t.combo, t.device, d.nickname FROM (
+      SELECT r.device, MIN(r.seconds) AS seconds, r.combo, r.ended_at FROM runs r
+      WHERE r.reason = 'clear' AND r.difficulty = ?1 AND r.seconds >= ?2 AND COALESCE(r.chapter, ?3) = ?4 GROUP BY r.device
+    ) t LEFT JOIN devices d ON d.id = t.device ORDER BY t.seconds, t.ended_at LIMIT ?5`).bind(id, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch, BOARD_SIZE));
   const own = mine ? DIFFICULTIES.flatMap(id => [
     db.prepare(`SELECT seconds, combo FROM runs WHERE device = ?1 AND difficulty = ?2 AND reason = 'clear' AND seconds >= ?3 AND COALESCE(chapter, ?4) = ?5 ORDER BY seconds LIMIT 1`).bind(mine, id, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch),
     db.prepare(`SELECT SUM(reason = 'clear') AS clears, MAX(node) AS furthest FROM runs WHERE device = ?1 AND difficulty = ?2 AND COALESCE(chapter, ?3) = ?4`).bind(mine, id, FIRST_CHAPTER_ID, ch)
   ]) : [];
-  const out = await db.batch([...tops, ...own]), rows = result => result?.results?.[0] || null;
+  // The chapter's end popup asks where the clear it shows would stand before that run is sent (2026-11-12): the other
+  // players' bests, and how many of them are faster.
+  const asked = at && DIFFICULTIES.includes(at.difficulty) && Number.isFinite(at.seconds) && at.seconds >= MIN_CLEAR_SECONDS ? { difficulty: at.difficulty, seconds: Math.round(at.seconds) } : null;
+  const standing = asked ? [db.prepare(`SELECT COUNT(*) AS others, COALESCE(SUM(s < ?6), 0) AS ahead FROM (
+      SELECT device, MIN(seconds) AS s FROM runs WHERE reason = 'clear' AND difficulty = ?1 AND seconds >= ?2 AND COALESCE(chapter, ?3) = ?4 AND device != ?5 GROUP BY device)`).bind(asked.difficulty, MIN_CLEAR_SECONDS, FIRST_CHAPTER_ID, ch, mine, asked.seconds)] : [];
+  const out = await db.batch([...tops, ...own, ...standing]), rows = result => result?.results?.[0] || null;
+  const stood = asked ? rows(out.at(-1)) : null;
+  const entry = row => ({ seconds: row.seconds, elements: comboElements(row.combo), name: row.nickname || '', mine: !!mine && row.device === mine });
   return Object.fromEntries(DIFFICULTIES.map((id, i) => {
-    const top = rows(out[i]), best = mine ? rows(out[DIFFICULTIES.length + i * 2]) : null, totals = mine ? rows(out[DIFFICULTIES.length + i * 2 + 1]) : null;
+    const board = (out[i]?.results || []).map(entry), best = mine ? rows(out[DIFFICULTIES.length + i * 2]) : null, totals = mine ? rows(out[DIFFICULTIES.length + i * 2 + 1]) : null;
     return [id, {
-      top: top ? { seconds: top.seconds, elements: comboElements(top.combo), name: top.nickname || '', mine: !!mine && top.device === mine } : null,
+      tops: board, top: board[0] || null,
+      ...(asked?.difficulty === id ? { standing: { seconds: asked.seconds, place: (Number(stood?.ahead) || 0) + 1, players: (Number(stood?.others) || 0) + 1 } } : {}),
       me: mine ? { best: best?.seconds ?? null, elements: comboElements(best?.combo), clears: Number(totals?.clears) || 0, furthest: Number(totals?.furthest) || 0 } : null
     }];
   }));
@@ -275,7 +290,8 @@ export async function statsApi(request, url, env, reply, cors = {}) {
   }
   if (path === '/api/records' && method === 'GET') {
     if (!env.STATS) return reply({ error: 'unavailable' }, 503);
-    return reply(await records(env.STATS, url.searchParams.get('device') || '', url.searchParams.get('chapter') || FIRST_CHAPTER_ID));
+    const at = url.searchParams.has('at') ? { difficulty: url.searchParams.get('difficulty') || '', seconds: Number(url.searchParams.get('at')) } : null;
+    return reply(await records(env.STATS, url.searchParams.get('device') || '', url.searchParams.get('chapter') || FIRST_CHAPTER_ID, at));
   }
   if (!path.startsWith('/api/admin/')) return null;
   // A short token would be guessable, so the admin routes stay shut until a long one is set.

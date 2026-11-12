@@ -54,9 +54,9 @@ let practiceSince = null;
 // Tile colours for cards that belong to no element.
 // Each run part has its own picture.
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
-const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['기술 대기시간', '−'], statusDamage: ['화상 피해', '+'], moveSpeed: ['이동속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'] };
+const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['기술 대기시간', '−'], moveSpeed: ['이동속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'], energyGain: ['렌치 축전', '+'], fusionDamage: ['융합 피해', '+'], fusionGuard: ['융합 뒤 5초 받는 피해', '−'] };
 const PERK_ICONS = { piggyBank: 'reward-piggy-bank', overheatEngine: 'reward-overheat', glassSpring: 'reward-glass-spring' };
-const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', statusDamage: 'reward-status-damage', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor' };
+const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor', energyGain: 'charge' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '전설' };
 // The thirteen tuning rows read as four parts of the body they change: casing, wrench, circuits and pockets.
@@ -305,7 +305,8 @@ try {
     bossCard(boss);
   }
   // A chapter's ending, once per save: its last boss's words (chapter 1; Press speaks when unwound), the clock tower
-  // hears of it (Orden and Belgard), then the To be continued sheet. Chapter 2's tower talk added 2026-11-09.
+  // hears of it (Orden and Belgard), then the chapter's end sheet (its record and server place since 2026-11-12; it
+  // said 'To be continued' before). Chapter 2's tower talk added 2026-11-09.
   const ENDINGS = { [FIRST_CHAPTER]: { seen: 'ending', after: 'brassAfter', tower: 'ordenScene' }, 'silent-factory': { seen: 'factoryEnding', tower: 'ordenFactory' } };
   /** True while a chapter's ending shows the clock tower summit: Orden's theme plays, at full volume (playMusic). */
   let atTower = false;
@@ -566,13 +567,12 @@ try {
    */
   function partValue(id, rank) {
     const amount = rank * data.combat.balance.temporaryUpgrades.find(u => u.id === id).perRank;
-    const RUN = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction'], tuned = key => (game.stats[key] || 0) - (RUN.includes(key) ? game.upgradeAmount(key) : 0);
+    const RUN = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction', 'energyGain'], tuned = key => (game.stats[key] || 0) - (RUN.includes(key) ? game.upgradeAmount(key) : 0);
     if (id === 'maxHp') return game.p.maxHp + amount - game.upgradeAmount('maxHp');
     if (id === 'killHeal') return amount;
     if (id === 'basicDamage') return game.attackBonus + amount;
     // Same order as the game (game.js critChance, cooldownReduction): the tuning is capped, the part adds on top.
     if (id === 'skillCooldownReduction') return (game.tuning.cooldownReduction || 0) + amount;
-    if (id === 'statusDamage') return tuned('statusPower') + amount;
     if (id === 'critChance') return game.critChance - game.upgradeAmount('critChance') + amount;
     return tuned(id) + amount;
   }
@@ -598,7 +598,9 @@ try {
     const rank = game.s.run.upgrades[reward.id] || 0, [name, sign] = PART_VALUES[reward.id], now = partValue(reward.id, rank), next = partValue(reward.id, rank + 1);
     const shown = v => reward.id === 'maxHp' || reward.id === 'killHeal' ? `${v}` : `${v ? sign : ''}${Math.round(v * 100)}%`;
     // What the part changes, as it stands now and with this part fitted.
-    return { name: desc.name, icon: ico(PART_ICONS[reward.id] || 'spark'), label: '출력 부품', description: desc.description, value: `${name} ${shown(now)} → <strong>${shown(next)}</strong><br>${rank + 1}/${upgrade.maxRank} 단계` };
+    // The two fusion parts show the fusion they act on (2026-11-12).
+    const fused = reward.id.startsWith('fusion') && game.fusion ? { skills: [game.fusion.id] } : { icon: ico(PART_ICONS[reward.id] || 'spark') };
+    return { name: desc.name, ...fused, label: '출력 부품', description: desc.description, value: `${name} ${shown(now)} → <strong>${shown(next)}</strong><br>${rank + 1}/${upgrade.maxRank} 단계` };
   }
   /**
    * The town portal's question: how hard this expedition is. Each card says what changes against 보통 (enemies, bosses and
@@ -610,6 +612,8 @@ try {
   const RECORDS_REFRESH_MS = 30000;
   // Each chapter has its own board (2026-11-11: chapter 2 went public), asked for when its cards are on screen.
   const serverBoards = {}, boardState = {}, boardAskedAt = {};
+  // The dev server has no records API: the boards can be filled by hand there to see the popup full (2026-11-12).
+  if (window.__btc) Object.assign(window.__btc, { serverBoards, boardState });
   function askRecords(chapter = FIRST_CHAPTER) {
     if (boardState[chapter] === 'loading' || performance.now() - (boardAskedAt[chapter] ?? -Infinity) < RECORDS_REFRESH_MS) return;
     boardState[chapter] = 'loading'; boardAskedAt[chapter] = performance.now();
@@ -619,17 +623,57 @@ try {
       if (game.s.panel === 'difficulty') renderOverlay(true);
     });
   }
-  /** A difficulty card's clear record: this device's best (time and element pair) and the server's fastest clear in this chapter. */
+  /** A difficulty card's clear record: this device's best (time and element pair) and the server's three fastest players in this chapter. */
+  /** A record's element pair as small icons (or 'wrench only'). */
+  const recordPair = list => `<span class="rec-els" title="${list?.length ? list.map(e => data.combat.elements.find(x => x.id === e)?.name || e).join(' + ') : '렌치만'}">${list?.length ? list.map(e => elementIcon(e, 'rec-el')).join('') : '<i>렌치만</i>'}</span>`;
+  const recordQuiet = text => `<b class="rec-none">${text}</b>`;
+  /** The server's three places as rows; `empty` fills the first row when nobody is on the board. */
+  function placeRows(board, empty) {
+    const entry = t => `<b>${formatClock(t.seconds)}</b>${recordPair(t.elements)}<small class="rec-who">${t === board[0] ? ico('crown') : ''}${t.mine ? '나' : escapeHTML(t.name || '이름 없는 인형')}</small>`;
+    // Always three place rows, so cards side by side stay the same height; an empty place under a filled one is a dash.
+    return [0, 1, 2].map(i => `<div class="rec-row rank${i ? '' : ' top'}${board[i]?.mine ? ' me' : ''}"><span>${i + 1}위</span>${board[i] ? entry(board[i]) : i && board.length ? recordQuiet('—') : i ? '' : empty}</div>`).join('');
+  }
   function recordBlock(id, chapter = FIRST_CHAPTER) {
     const serverRecords = serverBoards[chapter] || null, recordsState = boardState[chapter] || 'idle', local = chapterRecords(game.s.profile, chapter)[id];
-    const mine = mergeMine(local, serverRecords?.[id]?.me), top = serverRecords?.[id]?.top;
-    const pair = list => `<span class="rec-els" title="${list?.length ? list.map(e => data.combat.elements.find(x => x.id === e)?.name || e).join(' + ') : '렌치만'}">${list?.length ? list.map(e => elementIcon(e, 'rec-el')).join('') : '<i>렌치만</i>'}</span>`;
-    const quiet = text => `<b class="rec-none">${text}</b>`;
+    // 2026-11-12: three places, not one (a server from before sends only `top`).
+    const mine = mergeMine(local, serverRecords?.[id]?.me), board = serverRecords?.[id]?.tops || (serverRecords?.[id]?.top ? [serverRecords[id].top] : []), top = board[0], place = board.findIndex(t => t.mine) + 1;
+    const pair = recordPair, quiet = recordQuiet;
     const me = mine.best !== null ? `<b>${formatClock(mine.best)}</b>${pair(mine.elements)}` : `${quiet('아직 없음')}<span class="rec-els"><i>${mine.furthest ? `${mine.furthest}구간까지` : ''}</i></span>`;
-    const server = top ? `<b>${formatClock(top.seconds)}</b>${pair(top.elements)}<small class="rec-who">${ico('crown')}${top.mine ? '나' : escapeHTML(top.name || '이름 없는 인형')}</small>`
-      : quiet(recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
-    return `<div class="rec"><div class="rec-head"><span>클리어 기록</span>${top?.mine ? '<em class="rec-mine">내가 서버 1위!</em>' : ''}</div>`
-      + `<div class="rec-row${mine.best !== null && top?.mine ? ' top' : ''}"><span>내 최고</span>${me}</div><div class="rec-row top"><span>서버 1위</span>${server}</div></div>`;
+    const empty = quiet(recordsState === 'loading' && !serverRecords ? '불러오는 중' : serverRecords ? '아직 없음' : '연결 안 됨');
+    const places = placeRows(board, empty);
+    return `<div class="rec"><div class="rec-head"><span>클리어 기록</span>${place ? `<em class="rec-mine">내가 서버 ${place}위!</em>` : ''}</div>`
+      + `<div class="rec-row${mine.best !== null && place === 1 ? ' top' : ''}"><span>내 최고</span>${me}</div><div class="rec-board">${places}</div></div>`;
+  }
+  /**
+   * The chapter's end popup (2026-11-12, in place of 'To be continued'): this clear against the own best, where it stands
+   * on the server, and the board's three places with it counted in. The run is sent on the way back, so the server is
+   * asked where a clear of this time would stand.
+   */
+  const endStanding = { key: '', state: 'idle', data: null };
+  if (window.__btc) window.__btc.endStanding = endStanding;
+  function endRecord() {
+    const run = game.s.run, chapter = game.chapter.id, difficulty = run.difficulty || 'normal', seconds = Math.round(run.elapsed), elements = run.slots.map(s => s.element);
+    const key = `${chapter}:${difficulty}:${seconds}`;
+    if (endStanding.key !== key) {
+      Object.assign(endStanding, { key, state: 'loading', data: null });
+      fetchRecords({ storage: localStorage, hostname: location.hostname, protocol: location.protocol, chapter, difficulty, at: seconds }).then(found => {
+        if (endStanding.key !== key) return;
+        Object.assign(endStanding, { state: found ? 'ready' : 'offline', data: found?.[difficulty] || null });
+        if (game.s.mode === 'complete') renderOverlay(true);
+      });
+    }
+    const level = data.slice.difficulty.levels.find(l => l.id === difficulty), server = endStanding.data;
+    const before = mergeMine(chapterRecords(game.s.profile, chapter)[difficulty], server?.me), fresh = before.best === null || seconds < before.best;
+    // The board as it will be: this device's row holds the better of its old best and this clear.
+    const best = fresh ? { seconds, elements, mine: true } : { seconds: before.best, elements: before.elements, mine: true };
+    const board = server ? [...(server.tops || []).filter(t => !t.mine), best].sort((a, b) => a.seconds - b.seconds).slice(0, 3) : [];
+    // Only a clear in the top three says its place (2026-11-12: the count of players and lower places are not shown).
+    const stand = server?.standing, where = stand && stand.place <= 3 ? `서버 ${stand.place}위` : '';
+    const mine = before.best === null ? `${recordQuiet('첫 클리어')}` : `<b>${formatClock(before.best)}</b>${recordPair(before.elements)}`;
+    const empty = recordQuiet(endStanding.state === 'loading' ? '불러오는 중' : '연결 안 됨');
+    return `<div class="rec end-rec"><div class="rec-head"><span>${escapeHTML(level?.name || '')} 클리어 기록</span>${fresh ? '<em class="rec-mine">새 최고 기록!</em>' : ''}</div>`
+      + `<div class="rec-row top"><span>이번</span><b>${formatClock(seconds)}</b>${recordPair(elements)}${where ? `<small class="rec-who">${where}</small>` : ''}</div>`
+      + `<div class="rec-row"><span>이전 최고</span>${mine}</div><div class="rec-board">${server ? placeRows(board, empty) : `<div class="rec-row rank top"><span>1위</span>${empty}</div>`}</div></div>`;
   }
   /** The chapter the departure popup shows: the one last picked there, else the last one set out for, if it is open. */
   function shownChapter() {
@@ -707,10 +751,8 @@ try {
   /** This run's rewards in the order they were picked: the stop, the card's tier and name, and what it does. */
   function runPicks() {
     const run = game.s.run, picks = run?.picks || [], rooms = game.rooms;
-    // Giving up the run sits with the run itself, under its picks (2026-11-09, was on the general settings tab).
-    const giveUp = `<div class="actions run-abandon">${button('원정 포기', 'abandon', '', 'danger')}</div>`;
     const head = `<p class="run-picks-head">${escapeHTML(roomTitle(rooms[run.node]))} · ${run.node + 1}번째 정거장 · 고른 보상 ${picks.length}개</p>`;
-    if (!picks.length) return `${head}<p class="notice">아직 고른 보상이 없습니다. 구간을 깨면 보상 카드를 고를 수 있어요.</p>${giveUp}`;
+    if (!picks.length) return `${head}<p class="notice">아직 고른 보상이 없습니다. 구간을 깨면 보상 카드를 고를 수 있어요.</p>`;
     const elementName = id => data.combat.elements.find(e => e.id === id)?.name || '';
     const rows = picks.map((pick, i) => {
       const reward = { kind: pick.kind, id: pick.id, amount: pick.amount, rarity: pick.rarity };
@@ -718,7 +760,7 @@ try {
       let tier = ''; try { tier = TIER_NAMES[game.rewardTier(reward)] || ''; } catch {}
       return `<li><span class="pick-no">${i + 1}</span><div><b>${escapeHTML(String(info.name || ''))}</b> <span class="pick-meta">${escapeHTML([tier, info.label, `${pick.node + 1}번째 정거장`].filter(Boolean).join(' · '))}</span>${info.description ? `<p>${info.description}</p>` : ''}</div></li>`;
     }).join('');
-    return `${head}<ol class="run-picks">${rows}</ol>${giveUp}`;
+    return `${head}<ol class="run-picks">${rows}</ol>`;
   }
   /**
    * F2 정보: what F2's body can do right now, the moru tuning and this run's parts together. Opened from the HUD face,
@@ -771,7 +813,7 @@ try {
     const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
     // Paused on an expedition: how long it has run so far (2026-11-11), the clock the clear records use.
     const runClock = onRun ? `<span class="run-clock">${ico('clock')} 이번 원정 ${formatClock(game.s.run.elapsed || 0)}</span>` : '';
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2>${runClock}</div>${button('닫기', 'resume', '', 'primary')}</div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2>${runClock}</div><div class="header-actions">${onRun ? button('원정 포기', 'abandon', '', 'danger') : ''}${button('닫기', 'resume', '', 'primary')}</div></div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -784,12 +826,15 @@ try {
     const tags = (move, statuses) => `<div class="tags">${reach(move.id)}<span class="tag">피해 ${move.totalDirectDamage}</span>${move.energyCost ? `<span class="tag">축전 ${move.energyCost}</span>` : ''}<span class="tag">대기시간 ${move.cooldown}초</span>${statuses.map(status).join('')}</div>`;
     const move = (m, line, statuses, extra = '') => `<div class="codex-move"><img class="move-icon" src="${skillIcon(m.id)}" alt=""><div><h4>${m.name}${extra}</h4><p>${line}</p>${tags(m, statuses)}</div></div>`;
     const shownElements = data.combat.elements.filter(e => game.elementShown(e.id));
-    const elements = shownElements.map(e => `<article class="codex-entry" style="--accent:${data.slice.presentation.colors[e.id]}"><h3>${elementIcon(e.id, 'codex-icon')}${e.name} · ${e.device}</h3>${data.combat.skills.filter(s => s.element === e.id).map(s => move(s, words.skills[s.id], [ELEMENT_STATUS[e.id]])).join('')}</article>`).join('');
+    // 2026-11-11: each element names its role under its heading, as the reward cards do.
+    const elements = shownElements.map(e => `<article class="codex-entry" style="--accent:${data.slice.presentation.colors[e.id]}"><h3>${elementIcon(e.id, 'codex-icon')}${e.name} · ${e.device}</h3>${e.role ? `<p class="codex-role">${escapeHTML(e.role)}</p>` : ''}${data.combat.skills.filter(s => s.element === e.id).map(s => move(s, words.skills[s.id], [ELEMENT_STATUS[e.id]])).join('')}</article>`).join('');
     const shownFusions = data.combat.fusions.filter(f => f.pair.every(id => game.elementShown(id)));
     // The fusion list filters by one element (2026-11-09): 전체 first, then the elements in their own order (불 얼음 전기 바람 소리 물).
     if (codexFilter !== 'all' && !shownElements.some(e => e.id === codexFilter)) codexFilter = 'all';
     const filter = `<label class="codex-filter">속성 <select data-codex-filter aria-label="융합 속성 고르기">${[['all', '전체'], ...shownElements.map(e => [e.id, e.name])].map(([id, name]) => `<option value="${id}"${codexFilter === id ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
-    const fusions = shownFusions.filter(f => codexFilter === 'all' || f.pair.includes(codexFilter)).map(f => `<article class="codex-entry"><div class="pair">${f.pair.map(id => `${elementIcon(id, 'codex-icon')}${element(id).name}`).join('<b>+</b>')}</div>${move(f, words.fusions[f.id], f.pair.map(id => ELEMENT_STATUS[id]), game.s.profile.discoveredFusions.includes(f.id) ? ' <small>✓ 써 봄</small>' : '')}</article>`).join('');
+    // The fusion of the two elements fitted now comes first, marked (2026-11-11), so it is found without scrolling.
+    const fitted = game.fusion?.id;
+    const fusions = shownFusions.filter(f => codexFilter === 'all' || f.pair.includes(codexFilter)).sort((a, b) => (b.id === fitted) - (a.id === fitted)).map(f => `<article class="codex-entry${f.id === fitted ? ' fitted' : ''}">${f.id === fitted ? '<span class="fitted-tag">지금 장착</span>' : ''}<div class="pair">${f.pair.map(id => `${elementIcon(id, 'codex-icon')}${element(id).name}`).join('<b>+</b>')}</div>${move(f, words.fusions[f.id], f.pair.map(id => ELEMENT_STATUS[id]), game.s.profile.discoveredFusions.includes(f.id) ? ' <small>✓ 써 봄</small>' : '')}</article>`).join('');
     const legend = `<div class="status-legend">${Object.entries(words.statuses).filter(([id]) => shownElements.some(e => ELEMENT_STATUS[e.id] === id)).map(([id, [name, text]]) => `<p><img src="${assetUrl(STATUS_ICONS[id])}" alt=""><strong>${name}</strong> ${text}</p>`).join('')}</div>`;
     const how = isTouch ? '융합 버튼' : '우클릭';
     return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'codex-close')}</div><div class="codex-tabs">${tab('elements', `속성 ${shownElements.length}`)}${tab('fusions', `융합 ${shownFusions.length}`)}</div>${codexTab === 'fusions' ? filter : ''}<div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? `<p class="notice">장착한 두 속성의 융합 하나를 ${how}으로 씁니다. 축전은 렌치로 때리면 찹니다.</p>` : legend}`, 'wide');
@@ -861,9 +906,9 @@ try {
       html = panel(`<h2>${title}</h2><p>${line}</p>`
         + `<div class="actions">${button(isTouch ? verb : `${keyName(bindings().interact)} · ${verb}`, 'unwind', '', 'primary')}</div>`, 'compact');
     }
-    if (mode === 'complete') html = panel(`<p class="tbc">To be continued…</p>${game.chapter.id === FIRST_CHAPTER
+    if (mode === 'complete') html = panel(`${game.chapter.id === FIRST_CHAPTER
       ? `<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.${shownChapters().length > 1 ? ' 원정 창에서 2장을 고를 수 있습니다.' : ''}</p>`
-      : '<h2>2장 · 무음공장 끝</h2><p>프레스의 압력을 풀었습니다. 원본 조립 기록과 구형 자율 조율 설계도가 기록됩니다.<br>신호선은 모두 중앙시계탑을 가리킵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${formatTime(s.run.elapsed)}</b>움직인 시간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div><div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
+      : '<h2>2장 · 무음공장 끝</h2><p>프레스의 압력을 풀었습니다. 원본 조립 기록과 구형 자율 조율 설계도가 기록됩니다.<br>신호선은 모두 중앙시계탑을 가리킵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div>${endRecord()}<div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'returned') {
       const result = s.result;
       html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>기술 단계·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${chapterRooms(data.slice, result.chapter).length}</b>${escapeHTML((chapterRooms(data.slice, result.chapter)[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');

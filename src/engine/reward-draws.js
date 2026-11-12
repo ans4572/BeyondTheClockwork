@@ -43,7 +43,7 @@ export const rewardDraws = {
   /** Run parts not yet maxed, skill levels below the cap, and repairs while the body is damaged. */
   partRewards() {
     const run = this.s.run, elements = this.slots.map(s => s.element);
-    const parts = this.c.balance.temporaryUpgrades.filter(u => (run.upgrades[u.id] || 0) < u.maxRank && (u.id !== 'skillCooldownReduction' || elements.length) && (u.id !== 'statusDamage' || elements.includes('fire'))).map(u => ({ kind: 'upgrade', id: u.id }));
+    const parts = this.c.balance.temporaryUpgrades.filter(u => (run.upgrades[u.id] || 0) < u.maxRank && (u.id !== 'skillCooldownReduction' || elements.length) && (!u.id.startsWith('fusion') || this.fusion)).map(u => ({ kind: 'upgrade', id: u.id }));
     const levels = this.slots.map((slot, i) => slot.level < this.c.balance.skillMaxLevel ? { kind: 'level', id: i } : null).filter(Boolean);
     const repairs = this.p.hp < this.p.maxHp ? this.config.rules.healRewards.map(h => ({ kind: 'heal', id: h.id })) : [];
     const perks = (this.config.perks || []).filter(perk => !run.perks?.includes(perk.id)).map(perk => ({ kind: 'perk', id: perk.id }));

@@ -101,22 +101,24 @@ test('water cannon: three narrow-spread shots pass through every body, soak them
   const shot = cast(g, 'waterCannon', { x: 14, y: 8 });
   assert.equal(shot.projectiles.length, 3);
   step(g, 0.6);
-  assert.equal(lost(a), 60, 'close by, all three shots land (3 × 20)');
-  assert.ok(lost(b) >= 20 && lost(b) < 60, `further on, the fan has opened: ${lost(b)}`);
+  const perShot = data.combat.skills.find(s => s.id === 'waterCannon').damagePerHit;
+  assert.equal(lost(a), 3 * perShot, 'close by, all three shots land');
+  assert.ok(lost(b) >= perShot && lost(b) < 3 * perShot, `further on, the fan has opened: ${lost(b)}`);
   assert.ok(g.wet(a) && g.wet(b));
   assert.ok(a.x > 10.5 && b.x > 12.2);
 });
 
-test('hydro jet: held, it beats 15 times on every body on its line for 105; let go, it stops early; feet slow while it runs', () => {
+test('hydro jet: held, it beats 15 times on every body on its line for its total (8 a beat since 2026-11-12); let go, it stops early; feet slow while it runs', () => {
+  const { totalDirectDamage: full, damagePerHit: beat } = data.combat.skills.find(s => s.id === 'hydroJet');
   let g = arena(); const front = dummy(g, 10), back = dummy(g, 11.5);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 });
   assert.equal(g.castFeet, 0.6);
   step(g, 1.7, { skillHeld: [JET], aim: { x: 14, y: 8 } });
-  assert.equal(lost(front), 105); assert.equal(lost(back), 105); assert.ok(g.wet(front) && g.wet(back));
+  assert.equal(lost(front), full); assert.equal(lost(back), full); assert.ok(g.wet(front) && g.wet(back));
   assert.equal(g.s.casts.some(c => c.shape === 'jet'), false); assert.equal(g.castFeet, 1);
   g = arena(); const e = dummy(g, 10);
   g.castSkill(JET, { x: 14, y: 8 }); step(g, 1.7, { aim: { x: 14, y: 8 } });
-  assert.ok(lost(e) >= 24 && lost(e) <= 36, `a tap sprays the least: ${lost(e)}`);
+  assert.ok(lost(e) >= beat * 3 && lost(e) <= beat * 5, `a tap sprays the least: ${lost(e)}`);
 });
 
 test('sound and water are on Moru\'s shelf on the live site from the start, like the other four (2026-11-10)', () => {
@@ -139,11 +141,13 @@ test('되울림: the palm rings again 0.4s later for half, laying one more layer
   assert.ok(Math.abs(lost(e) - (52 + 26 * 1.06)) < 1e-9); assert.equal(g.resonanceOf(e), 2);
 });
 
-test('조율 박자: a palm on a ringing body gives back two seconds of its wait', () => {
-  const g = withCards(['tuningBeat']), e = dummy(g); ring(g, e, 1);
-  g.castSkill(PALM, { x: 11, y: 8 }); step(g, 0.05);
-  const wait = g.p.cooldowns.ringPalm - g.s.time;
-  assert.ok(wait > 3.8 && wait <= 4, `wait ${wait}`);
+test('공명 붕괴 강화: the burst hits twice as hard, holds a second and rings wider (2026-11-12)', () => {
+  const rule = data.slice.elementTraits.find(t => t.id === 'deepCollapse'), info = data.combat.statuses.find(s => s.id === 'resonance');
+  const burst = cards => { const g = withCards(cards), a = dummy(g, 9, 8), wide = dummy(g, 9 + (info.spreadRadius + rule.spreadRadius) / 2 + 0.4, 8); a.resonanceStacks = 3; a.statuses.resonance = g.s.time + 4; g.collapseResonance(a); return { g, a, wide }; };
+  const plainBurst = burst([]), deep = burst(['deepCollapse']);
+  assert.ok(Math.abs(lost(deep.a) - lost(plainBurst.a) * rule.damageMultiplier) < 1e-6, `${lost(deep.a)} vs ${lost(plainBurst.a)}`);
+  assert.equal(plainBurst.wide.resonanceStacks || 0, 0, 'out of the plain ring'); assert.ok(deep.wide.resonanceStacks >= 1, 'inside the wider ring');
+  assert.ok(Math.abs(deep.wide.stunUntil - deep.g.s.time - rule.stun) < 1e-6);
 });
 
 test('최대 음량 and 짧은 숨: a full charge lays two layers; the charge takes 0.3 seconds at full speed', () => {
@@ -184,7 +188,7 @@ test('넓은 노즐 and 물웅덩이: the stream is twice as broad and catches a
   assert.equal(lost(missed), 0);
   let g = withCards(['wideNozzle']); const beside = dummy(g, 11, 8.9);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 }); step(g, 1.7, { skillHeld: [JET], aim: { x: 14, y: 8 } });
-  assert.equal(lost(beside), 105);
+  assert.equal(lost(beside), data.combat.skills.find(s => s.id === 'hydroJet').totalDirectDamage);
   g = withCards(['puddle']);
   g.p.skillHeld = [JET]; g.castSkill(JET, { x: 14, y: 8 }); step(g, 0.3, { skillHeld: [JET], aim: { x: 14, y: 8 } });
   const pool = g.s.casts.find(c => c.look === 'puddle');
@@ -253,7 +257,7 @@ test('메아리 돌풍: the ring cuts each body on its way out and again on its 
 test('수면 공명: striking a body on the film rings the whole film, at most once per 0.3s and six times', () => {
   const { g, cast } = fuse(['sound', 'water']), a = dummy(g, 10), b = dummy(g, 11, 9); const film = cast();
   step(g, 0.1); assert.equal(lost(b), 0);
-  g.ringFilms(a); assert.equal(film.rings, 1); assert.equal(lost(b), 34); g.ringFilms(a); assert.equal(film.rings, 1, 'not again so soon');
+  g.ringFilms(a); assert.equal(film.rings, 1); assert.equal(lost(b), data.combat.fusions.find(f=>f.id==='surfaceResonance').damagePerHit); g.ringFilms(a); assert.equal(film.rings, 1, 'not again so soon');
   for (let i = 0; i < 8; i++) { g.s.time += 0.31; g.ringFilms(a); } assert.equal(film.rings, 6);
   const off = dummy(g, 20, 20); g.s.time += 1; g.ringFilms(off); assert.equal(film.rings, 6);
 });
@@ -265,11 +269,11 @@ test('과열 증기막: steam round F2 follows her and scalds and soaks what is 
   g.p.x = 11.5; step(g, 0.6); assert.ok(lost(far) > 0, 'the cloud moved with F2');
 });
 
-test('빙판: forms with a blow, slows only enemies on it, then breaks under them three seconds later', () => {
+test('빙판: forms with a blow, slows only enemies on it, then breaks under them when it ends (two seconds since 2026-11-12)', () => {
   const { g, cast } = fuse(['ice', 'water']), e = dummy(g, 11), out = dummy(g, 16); const sheet = cast();
-  step(g, 0.1); assert.equal(lost(e), 40); assert.equal(lost(out), 0);
+  const ice = data.slice.fusionBehavior.iceSheet; step(g, 0.1); assert.equal(lost(e), ice.firstDamage); assert.equal(lost(out), 0);
   assert.equal(g.patchSlow(e, true), 0.4); Object.assign(g.p, { x: 11, y: 8 }); assert.equal(g.patchSlow(g.p), 0, 'F2 is not slowed');
-  step(g, 3); assert.ok(lost(e) >= 220 - 1e-6); assert.ok(sheet.done); assert.equal(g.patchSlow(e, true), 0, 'the ice is gone');
+  step(g, ice.duration - 0.3); assert.ok(!sheet.done, 'still whole just before'); step(g, 0.3); assert.ok(lost(e) >= ice.firstDamage + ice.breakDamage - 1e-6); assert.ok(sheet.done); assert.equal(g.patchSlow(e, true), 0, 'the ice is gone');
 });
 
 test('감전 웅덩이: discharges into every body in it every half second, harder for each wet body', () => {
@@ -283,4 +287,12 @@ test('물기둥 회오리: draws ordinary bodies in and up, then slams them down
   const boss = g.spawnEnemy('captainBrass', { x: 9.2, y: 10.2 }); boss.ready = 1e9; boss.hp = boss.maxHp = 1e5; const gap = Math.hypot(boss.x - 11, boss.y - 8); cast();
   step(g, 1); assert.ok(Math.hypot(e.x - 11, e.y - 8) < 1, 'pulled in'); assert.ok(e.lift > 0, 'lifted'); assert.ok(Math.hypot(boss.x - 11, boss.y - 8) >= gap - 0.05, 'the boss is not drawn in');
   step(g, 1.1); assert.equal(e.lift, 0); assert.ok(e.stunUntil > g.s.time); assert.ok(lost(e) >= 110 - 1e-6);
+});
+
+test('과열 공진 marks up to five bodies, at most three bursts on one; 공명 낙뢰 strikes up to three, the nearest rings (2026-11-11)', () => {
+  const per = data.combat.fusions.find(f => f.id === 'overheatResonance').damagePerHit, bolt = data.slice.fusionBehavior.resonantBolt.boltDamage;
+  { const { g, cast } = fuse(['fire', 'sound']), lone = dummy(g, 11); const c = cast(); assert.equal(c.marks.length, 3, 'a lone body: three bursts'); step(g, 3); assert.ok(lost(lone) >= per * 3 && lost(lone) < per * 4, 'three bursts (with its burn and ringing), not five'); }
+  { const { g, cast } = fuse(['fire', 'sound']), bodies = [9.5, 10.5, 11.5, 12.5, 13.5].map((x, i) => dummy(g, x, 6.5 + (i % 2) * 3)); const c = cast(); assert.equal(c.marks.length, 5); assert.equal(new Set(c.marks.map(m => m.id)).size, 5, 'five bodies marked'); step(g, 3); assert.ok(bodies.every(b => lost(b) >= per)); }
+  { const { g, cast } = fuse(['lightning', 'sound']), bodies = [9, 10, 11, 12, 13, 14].map((x, i) => dummy(g, x, 6 + (i % 3) * 1.5)); const c = cast(); assert.equal(c.bolts.length, 3); step(g, 0.1);
+    assert.equal(bodies.filter(b => lost(b) >= bolt).length, 3, 'three bolts'); }
 });

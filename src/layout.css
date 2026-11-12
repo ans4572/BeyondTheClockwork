@@ -306,7 +306,12 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #scene.fade { animation: scene-in 1.2s ease-out both; }
 @keyframes scene-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #scene.fade { animation: none; } }
-.ending .tbc { margin: 0 0 10px; font: 32px/1.1 "NeoDunggeunmo Pro", monospace; color: #a92f2b; }
+/* The chapter's end record (2026-11-12, where "To be continued" stood): the record rows of the departure cards, wider. */
+.ending .end-rec { margin: 4px 0 10px; --accent: #a92f2b; }
+.ending .end-rec .rec-row { grid-template-columns: 64px auto auto 1fr; }
+.ending .end-rec .rec-row.rank { grid-template-columns: 64px auto auto minmax(0, 1fr); }
+.ending .end-rec .rec-who { grid-column: auto; justify-self: end; margin: 0; }
+.ending .end-rec .rec-row.rank .rec-who { justify-self: stretch; text-align: right; }
 /* With no player in the scene, the right speaker stands like the left one. */
 .no-player .talk-who.player { right: 8px; bottom: -33px; }
 
@@ -415,21 +420,26 @@ body.cramped .element-panel .element-card .device { min-width: 0; }
 /* The three cards keep their rows level whatever the length of their description: it holds two lines, the values
    follow it, the clear record follows them, and the button sits at the bottom. */
 .panel.difficulty { position: relative; }
-.panel.difficulty .difficulty-card p { min-height: 3em; }
 .panel.difficulty .difficulty-values { margin-top: 0; grid-auto-rows: 1.5em; align-items: center; }
 /* (fixed rows: the minus and plus signs come from a taller fallback font, so the -40%/+40% cards stood a few px lower) */
-.panel.difficulty .rec { margin-top: 0; }
+.panel.difficulty .rec { margin: 0 0 5px; }
 .panel.difficulty .difficulty-card .pick { margin-top: auto; }
 /* The server's fastest clear keeps its maker's name on the same line (it took a second line, so the cards differed). */
 .panel.difficulty .rec-row { grid-template-columns: 58px auto auto 1fr; }
 .panel.difficulty .rec-who { grid-column: auto; justify-self: end; margin: 0; }
+/* Three even cards whatever their names: a long name is cut short instead of widening its card (2026-11-12). */
+.panel.difficulty .reward-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* The name takes what the row has left, right-aligned, and is cut with an ellipsis only when that runs out. */
+.panel.difficulty .rec-row.rank { grid-template-columns: 30px auto auto minmax(0, 1fr); }
+.panel.difficulty .rec-row.rank .rec-who { justify-self: stretch; text-align: right; }
+.panel.difficulty .difficulty-card p { min-height: 2.8em; }
 /* A landscape phone (390 px high) takes the whole popup without scrolling: the side notes and the small labels go,
    the record rows tighten, and the stay-in-town button moves up beside the title. */
 body.cramped .panel.difficulty > p { display: none; }
 body.cramped .panel.difficulty .card-label { display: none; }
 body.cramped .panel.difficulty .difficulty-card p { min-height: 2.7em; }
 body.cramped .panel.difficulty .difficulty-values { font-size: 12px; gap: 0 8px; margin-bottom: 6px; }
-body.cramped .panel.difficulty .rec { font-size: 12px; margin-bottom: 6px; padding-top: 4px; }
+body.cramped .panel.difficulty .rec { font-size: 12px; margin-bottom: 3px; padding-top: 3px; }
 body.cramped .panel.difficulty .rec-head { margin-bottom: 0; }
 body.cramped .panel.difficulty .rec-row { padding: 2px 0; }
 body.cramped .panel.difficulty .rec-row b { font-size: 14px; }
@@ -438,8 +448,23 @@ body.cramped .panel.difficulty .chapter-tabs .chapter-tab { padding: 3px 10px; }
 body.cramped .panel.difficulty > .actions { position: absolute; top: 8px; right: 16px; margin: 0; }
 body.cramped .panel.difficulty > .actions button { padding: 4px 10px; }
 body.cramped .panel.difficulty .rec-row { grid-template-columns: 50px auto auto 1fr; }
+body.cramped .panel.difficulty .rec-row.rank { grid-template-columns: 28px auto auto minmax(0, 1fr); }
 body.cramped .panel.difficulty .rec-who { font-size: 11px; }
 body.cramped .panel.difficulty .rec-els .rec-el { width: 18px; height: 18px; }
+/* Three server places on a landscape phone: one line each, the smallest icons, no heading line. */
+body.cramped .panel.difficulty .rec-row.rank { padding: 0; min-height: 18px; }
+body.cramped .panel.difficulty .rec-row.rank b { font-size: 12px; }
+body.cramped .panel.difficulty .rec-row.rank .rec-els .rec-el { width: 14px; height: 14px; padding: 0; }
+/* With three places the popup no longer fitted a landscape phone with touch-sized buttons (2026-11-12): the chapter tabs and
+   the depart buttons stay a wide thumb bar but lower, and the value and record rows close up. */
+body.touch.cramped .panel.difficulty .chapter-tabs .chapter-tab { min-height: 30px; }
+body.touch.cramped .panel.difficulty .difficulty-card .pick { min-height: 32px; padding: 2px 6px; }
+body.touch.cramped .panel.difficulty > .actions button { min-height: 32px; }
+body.cramped .panel.difficulty .difficulty-values { grid-auto-rows: 1.35em; margin-bottom: 4px; }
+body.cramped .panel.difficulty .rec-head { line-height: 1.2; }
+body.cramped .panel.difficulty .rec-row { padding: 1px 0; }
+body.cramped .panel.difficulty .rec-row.rank { min-height: 15px; }
+body.cramped .panel.difficulty .rec-row.rank b { font-size: 11.5px; }
 
 /* ---- Element shop on a phone (2026-11-10) ---- */
 /* The buy / equip buttons were the full touch height (44 px) under every card, taller than the skills above them, and

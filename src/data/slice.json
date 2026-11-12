@@ -111,10 +111,10 @@
     "codex": {
       "skills": {
         "heatSwing": "앞쪽을 넓게 휘둘러 맞은 적에게 불을 붙입니다.",
-        "exhaustBurst": "내 주변이 세 번 연달아 터집니다. 터지는 동안에도 움직일 수 있습니다.",
-        "frostBolt": "얼음 조각 세 개를 앞으로 쏩니다. 가까이 붙어 쏘면 여러 발이 함께 맞습니다.",
+        "exhaustBurst": "내 주변이 네 번 연달아 터집니다. 터지는 동안에도 움직일 수 있습니다.",
+        "frostBolt": "얼음 조각 세 개를 앞으로 쏩니다. 조각은 지나가는 길의 적을 모두 꿰뚫고, 가까이 붙어 쏘면 여러 발이 함께 맞습니다.",
         "coolingField": "노린 곳에 냉기 바닥을 깔아 그 위의 적을 계속 느리게 합니다.",
-        "conductiveSpanner": "앞의 적을 때리면 전기가 근처 적 둘에게 더 튑니다.",
+        "conductiveSpanner": "앞의 적을 때리면 전기가 근처 적 셋에게 더 튑니다.",
         "capacitorStrike": "잠깐 예고한 뒤 노린 곳에 번개가 세 번 떨어집니다.",
         "pressureDash": "짧게 돌진하며 부딪힌 적을 밀어냅니다. 돌진하는 동안은 피해를 받지 않습니다.",
         "vortexIntake": "노린 곳에 회오리를 만들어 적을 끌어모은 뒤 마지막에 한 번 더 때립니다.",
@@ -130,13 +130,13 @@
         "magneticIceClamp": "노린 곳에 얼음 집게가 닫히며 가운데 적을 세 번 때립니다.",
         "frostCrosscut": "두꺼운 얼음 초승달을 바람에 실어 앞으로 날립니다. 지나가는 길의 적을 모두 벱니다.",
         "stormFloat": "노린 곳에 번개 구슬을 띄우고 잠시 뒤 터뜨려 주변 적을 밀어냅니다.",
-        "overheatResonance": "가까운 적 셋의 몸속을 울려 달군 뒤 차례로 터뜨립니다. 터질 때 옆의 적도 함께 탑니다.",
+        "overheatResonance": "가까운 적 다섯까지 몸속을 울려 달군 뒤 차례로 터뜨립니다. 터질 때 옆의 적도 함께 탑니다. 한 적은 세 번까지 터집니다.",
         "highNoteShatter": "노린 곳을 얼린 뒤 높은 음으로 산산조각 냅니다. 얼어 있던 적은 더 크게 깨집니다.",
-        "resonantBolt": "가장 가까운 적에게 낙뢰를 떨어뜨리면, 그 적이 2초 동안 스스로 울리며 주변에 방전 음파를 냅니다.",
+        "resonantBolt": "가까운 적 셋까지 낙뢰를 떨어뜨리고, 가장 가까운 적은 2초 동안 스스로 울리며 주변에 방전 음파를 냅니다.",
         "echoGust": "음파 고리를 날려 보내면 벽이나 끝에서 되돌아옵니다. 오갈 때 한 번씩 벱니다.",
         "surfaceResonance": "앞에 얇은 물막을 깝니다. 그 위의 적을 렌치나 소리로 칠 때마다 물막 전체가 울려 위의 적이 모두 맞습니다.",
         "steamVeil": "내 주변이 2초 동안 뜨거운 증기로 덮여, 안의 적이 계속 데고 젖습니다. 증기막은 나를 따라옵니다.",
-        "iceSheet": "노린 곳에 빙판을 깝니다. 위의 적은 느려지고, 3초 뒤 빙판이 한꺼번에 깨지며 크게 다칩니다.",
+        "iceSheet": "노린 곳에 빙판을 깝니다. 위의 적은 느려지고, 2초 뒤 빙판이 한꺼번에 깨지며 크게 다칩니다.",
         "shockPool": "노린 곳에 전기가 흐르는 웅덩이를 깝니다. 0.5초마다 방전하고, 젖은 적이 많을수록 셉니다.",
         "waterspout": "노린 곳에 물기둥을 세워 적을 빨아올렸다가, 2초 뒤 한꺼번에 내리꽂습니다."
       },
@@ -144,9 +144,9 @@
         "note": "How many a move strikes, for the codex: single (one body) or multi (several), and how it reaches them.",
         "heatSwing": ["multi", "부채꼴"],
         "exhaustBurst": ["multi", "내 주변"],
-        "frostBolt": ["single", "3발"],
+        "frostBolt": ["multi", "3발 관통"],
         "coolingField": ["multi", "지점 범위"],
-        "conductiveSpanner": ["multi", "최대 3기 연쇄"],
+        "conductiveSpanner": ["multi", "최대 4기 연쇄"],
         "capacitorStrike": ["multi", "지점 범위"],
         "pressureDash": ["multi", "돌진 경로"],
         "vortexIntake": ["multi", "지점 범위"],
@@ -157,14 +157,14 @@
         "steamShatter": ["multi", "내 주변"],
         "arcFurnace": ["multi", "지점 범위"],
         "fireCyclone": ["multi", "나아가는 회오리"],
-        "overheatResonance": ["multi", "가까운 적 3기 폭발"],
+        "overheatResonance": ["multi", "가까운 적 5기 폭발"],
         "steamVeil": ["multi", "내 주변"],
         "magneticIceClamp": ["multi", "지점 범위"],
         "frostCrosscut": ["multi", "직선 칼날"],
         "highNoteShatter": ["multi", "지점 범위"],
         "iceSheet": ["multi", "지점 범위"],
         "stormFloat": ["multi", "지점 범위"],
-        "resonantBolt": ["multi", "맞은 적 둘레"],
+        "resonantBolt": ["multi", "가까운 적 3기 낙뢰"],
         "shockPool": ["multi", "지점 범위"],
         "echoGust": ["multi", "직선 왕복"],
         "waterspout": ["multi", "지점 범위"],
@@ -651,7 +651,7 @@
       "delay": 0
     },
     "frostBolt": {
-      "shape": "projectile",
+      "shape": "projectile", "pierce": true,
       "spread": 0.18,
       "speed": 12,
       "width": 0.22,
@@ -695,7 +695,7 @@
     "overheatResonance": {
       "note": "Marks up to targets nearest bodies in range (the same one again when there are fewer), each bursting in turn from delay, interval apart, hitting everything within the fusion radius of it.",
       "shape": "marks",
-      "targets": 3,
+      "targets": 5, "bursts": 5, "perBody": 3,
       "range": 6,
       "interval": 0.3,
       "delay": 0.8
@@ -705,8 +705,8 @@
       "shape": "shatter",
       "range": 6,
       "damages": [
-        90,
-        110
+        154,
+        190
       ],
       "frozenSeconds": 0.8,
       "frozenBonus": 1.3,
@@ -718,9 +718,10 @@
       "note": "A bolt (boltDamage) on the nearest body in range; it then rings pulses times, interval apart, hitting everything within the fusion radius for pulseDamage. If it falls first, the pulses left go off at once.",
       "shape": "speaker",
       "range": 7,
-      "boltDamage": 80,
+      "boltDamage": 137,
+      "boltTargets": 3,
       "pulses": 4,
-      "pulseDamage": 30,
+      "pulseDamage": 52,
       "interval": 0.5,
       "delay": 0
     },
@@ -754,10 +755,10 @@
       "note": "An ice sheet at the aimed spot for duration seconds: firstDamage as it forms, ordinary bodies on it slowed by slow, then it breaks for breakDamage on everything on it.",
       "shape": "sheet",
       "range": 6,
-      "duration": 3,
+      "duration": 2,
       "slow": 0.4,
-      "firstDamage": 40,
-      "breakDamage": 180,
+      "firstDamage": 100,
+      "breakDamage": 344,
       "interval": 0,
       "delay": 0
     },
@@ -767,7 +768,7 @@
       "range": 6,
       "duration": 3,
       "wetBonusPer": 0.1,
-      "wetBonusMax": 0.5,
+      "wetBonusMax": 0.3,
       "interval": 0.5,
       "delay": 0.2
     },
@@ -777,7 +778,7 @@
       "range": 6,
       "pull": 2.5,
       "slamAt": 2,
-      "slamDamage": 120,
+      "slamDamage": 206,
       "stun": 0.6,
       "interval": 0.4,
       "delay": 0
@@ -1503,12 +1504,7 @@
     },
     "skillCooldownReduction": {
       "name": "고속 배선",
-      "description": "속성 기술과 융합 기술의 대기시간이 줄어든다.",
-      "tier": "common"
-    },
-    "statusDamage": {
-      "name": "오래 타는 코일",
-      "description": "화상이 주는 지속 피해가 강해진다.",
+      "description": "속성 기술의 대기시간이 줄어든다(융합 기술은 그대로).",
       "tier": "common"
     },
     "moveSpeed": {
@@ -1534,6 +1530,21 @@
     "damageReduction": {
       "name": "강화 외장",
       "description": "받는 피해가 줄어든다.",
+      "tier": "rare"
+    },
+    "energyGain": {
+      "name": "축전 효율기",
+      "description": "렌치로 얻는 축전이 늘어난다.",
+      "tier": "common"
+    },
+    "fusionDamage": {
+      "name": "과충전 회로",
+      "description": "융합 기술의 피해가 늘어난다.",
+      "tier": "rare"
+    },
+    "fusionGuard": {
+      "name": "여진 장치",
+      "description": "융합 기술을 쓰면 5초 동안 받는 피해가 줄어든다.",
       "tier": "rare"
     }
   },
@@ -1661,14 +1672,6 @@
   ],
   "skillMods": [
     {
-      "id": "overload",
-      "skill": "heatSwing",
-      "name": "과부하",
-      "description": "적에게 화상을 입히면 이 기술의 대기시간이 2초 줄어든다.",
-      "cooldownRefund": 2,
-      "tier": "special"
-    },
-    {
       "id": "backflow",
       "skill": "exhaustBurst",
       "name": "역류",
@@ -1679,8 +1682,10 @@
     {
       "id": "piercingBolt",
       "skill": "frostBolt",
-      "name": "관통탄",
-      "description": "서리 볼트가 적을 뚫고 지나간다.",
+      "name": "서리 산탄",
+      "description": "서리 볼트가 다섯 발로 늘어난다.",
+      "extraBolts": 2,
+      "note": "2026-11-11: was 관통탄 (bolts pierce); the bolts pierce on their own now, so it adds two bolts instead (id kept for saves).",
       "tier": "rare"
     },
     {
@@ -1740,7 +1745,8 @@
       "skill": "exhaustBurst",
       "name": "배기 흔적",
       "description": "내 몸이 아니라 내가 지나온 자리에서 차례로 터진다. 도망치며 뒤에 폭발을 깔 수 있다.",
-      "interval": 0.4,
+      "interval": 0.25,
+      "note": "2026-11-11: 0.4 -> 0.25 s, the same beat as the plain blast, so the four blasts end inside the 1 s effect (at 0.4 the last one came at 1.2 s, the longest of the skills).",
       "tier": "common"
     },
     {
@@ -1805,14 +1811,6 @@
       "tier": "rare"
     },
     {
-      "id": "tuningBeat",
-      "skill": "ringPalm",
-      "name": "조율 박자",
-      "description": "공명이 걸린 적을 치면 이 기술의 대기시간이 2초 줄어든다.",
-      "cooldownRefund": 2,
-      "tier": "special"
-    },
-    {
       "id": "fullVolume",
       "skill": "roar",
       "name": "최대 음량",
@@ -1871,8 +1869,8 @@
       "id": "emberStacks",
       "element": "fire",
       "name": "깊은 불씨",
-      "description": "화상 피해가 2배가 되고, 지속시간이 2초 늘어난다.",
-      "burnDamageMultiplier": 2,
+      "description": "화상 피해가 1.8배가 되고, 지속시간이 2초 늘어난다.",
+      "burnDamageMultiplier": 1.8,
       "extraDuration": 2,
       "tier": "rare"
     },
@@ -1880,9 +1878,18 @@
       "id": "burnBrand",
       "element": "fire",
       "name": "달궈진 틈",
-      "description": "화상 걸린 적에게 기본 공격 피해가 15% 늘어난다.",
-      "damageBonus": 0.15,
+      "description": "화상 걸린 적에게 기본 공격 피해가 25% 늘어난다.",
+      "damageBonus": 0.25,
       "tier": "rare"
+    },
+    {
+      "id": "emberTransfer",
+      "element": "fire",
+      "name": "불씨 전이",
+      "description": "화상 걸린 적이 쓰러지면 반지름 1.5 안의 적에게 화상이 2겹 옮는다.",
+      "radius": 1.5,
+      "stacks": 2,
+      "tier": "special"
     },
     {
       "id": "coldReap",
@@ -1896,18 +1903,16 @@
       "id": "staticCharge",
       "element": "lightning",
       "name": "정전 수집",
-      "description": "감전된 적을 기본 공격으로 치면 축전을 8 더 얻고, 융합 기술 대기시간이 1초 줄어든다(1초에 한 번).",
-      "energy": 8,
-      "fusionRefund": 1,
-      "refundEvery": 1,
-      "tier": "special"
+      "description": "감전된 적을 기본 공격으로 치면 축전을 5 더 얻는다.",
+      "energy": 5,
+      "tier": "rare"
     },
     {
       "id": "slipstream",
       "element": "wind",
       "name": "뒷바람",
-      "description": "회피로 스쳐 지나간 적에게 풍압을 건다.",
-      "radius": 0.5,
+      "description": "회피로 스쳐 지나간 적에게 풍압을 걸고 피해 20을 준다(회피 한 번에 적마다 한 번).",
+      "radius": 0.5, "damage": 20,
       "tier": "rare"
     },
     {
@@ -1920,20 +1925,21 @@
       "tier": "special"
     },
     {
-      "id": "shockSpread",
+      "id": "surgeDischarge",
       "element": "lightning",
-      "name": "감전 전염",
-      "description": "감전된 적을 처치하면 가장 가까운 적에게 감전이 옮는다.",
-      "range": 3,
-      "tier": "rare"
+      "name": "과전류 방전",
+      "description": "감전된 적이 맞을 때 튀는 방전의 피해가 8에서 14로, 대상이 2기에서 3기로 늘어난다.",
+      "dischargeDamage": 14,
+      "maxTargets": 3,
+      "tier": "special"
     },
     {
       "id": "frostCrack",
       "element": "ice",
       "name": "빙결 파쇄",
-      "description": "둔화된 적을 렌치로 치면 피해가 20%, 얼어붙은 적이면 40% 늘어난다.",
-      "damageBonus": 0.4,
-      "chilledBonus": 0.2,
+      "description": "둔화된 적을 렌치로 치면 피해가 25%, 얼어붙은 적이면 50% 늘어난다.",
+      "damageBonus": 0.5,
+      "chilledBonus": 0.25,
       "tier": "special"
     },
     {
@@ -1953,6 +1959,16 @@
       "stacks": 1,
       "lock": 1,
       "tier": "rare"
+    },
+    {
+      "id": "deepCollapse",
+      "element": "sound",
+      "name": "공명 붕괴 강화",
+      "description": "공명 붕괴 피해가 2배가 되고, 주변 기절이 1초로 늘며, 공명이 반지름 1.8까지 퍼진다.",
+      "damageMultiplier": 2,
+      "stun": 1,
+      "spreadRadius": 1.8,
+      "tier": "special"
     },
     {
       "id": "soaked",

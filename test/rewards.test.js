@@ -19,8 +19,9 @@ const swing = (g, phase) => { g.p.combo = phase; g.p.comboExpires = g.s.time + 9
 const madeElements = data.combat.elements;
 test('every element offers as many element cards (skill mods and traits) as every other', () => {
   for (const skill of data.combat.skills.filter(s => madeElements.some(e => e.id === s.element))) assert.ok([1, 2].includes(data.slice.skillMods.filter(m => m.skill === skill.id).length), skill.id);
-  const traits = madeElements.map(element => data.slice.elementTraits.filter(t => t.element === element.id).length);
-  assert.ok(traits.every(n => n === traits[0]), `traits per element: ${traits}`);
+  // Each element has one special card, and since 2026-11-12 it is always a trait (과부하 and 조율 박자 were skill mods).
+  for (const element of madeElements) assert.deepEqual(data.slice.elementTraits.filter(t => t.element === element.id && t.tier === 'special').length, 1, element.id);
+  assert.equal(data.slice.skillMods.filter(m => m.tier === 'special').length, 0);
   const cards = madeElements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
   assert.ok(cards.every(n => n === cards[0]), `element cards per element: ${cards}`);
   assert.equal(data.slice.mods.length, 8);
@@ -75,10 +76,10 @@ test('both wrench rooms offer three random mods without repeats', () => {
 });
 
 test('chosen mods and traits persist through a save and are validated', () => {
-  const g = arena(); g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'skillMod', id: 'overload' }]; assert.equal(g.chooseReward(0), true);
+  const g = arena(); g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'skillMod', id: 'emberTrail' }]; assert.equal(g.chooseReward(0), true);
   g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'trait', id: 'frostCrack' }]; assert.equal(g.chooseReward(0), true);
   const restored = decodeSave(encodeSave(g.s), data);
-  assert.deepEqual(restored.run.skillMods, ['overload']); assert.deepEqual(restored.run.traits, ['frostCrack']);
+  assert.deepEqual(restored.run.skillMods, ['emberTrail']); assert.deepEqual(restored.run.traits, ['frostCrack']);
   // A trait since cut (2026-11-08) becomes another trait of its element in a saved run, and on the reward table.
   const old = JSON.parse(encodeSave(g.s));
   old.state.run.traits = ['quickFreeze', 'emberSpread']; old.state.run.picks = [{ node: 0, kind: 'trait', id: 'quickFreeze' }, { node: 1, kind: 'trait', id: 'emberSpread' }];
@@ -98,26 +99,68 @@ test('chosen mods and traits persist through a save and are validated', () => {
   assert.throws(() => decodeSave(JSON.stringify(raw), data));
 });
 
-test('overload refunds the cooldown once per cast when the swing lands a burn, and not on a miss', () => {
-  const input = { aim: { x: 9, y: 8 }, skill: 0 };
-  const g = arena(); g.p.energy = 100; const e = dummy(g); g.update(1 / 60, input); const plain = g.p.cooldowns.heatSwing;
-  const h = arena(); h.p.energy = 100; h.s.run.skillMods = ['overload']; const f = dummy(h), far = dummy(h, 9, 8.4);
-  h.update(1 / 60, input); assert.ok(Math.abs(plain - h.p.cooldowns.heatSwing - 2) < 1e-6); assert.ok(e.hp < e.maxHp && f.burnStacks.length && far.burnStacks.length);
-  const miss = arena(); miss.p.energy = 100; miss.s.run.skillMods = ['overload']; miss.update(1 / 60, input); assert.ok(Math.abs(miss.p.cooldowns.heatSwing - plain) < 1e-6);
+test('불씨 전이: a burning body that falls sets two burns on the bodies round it, and none without the trait (2026-11-12)', () => {
+  const rule = data.slice.elementTraits.find(t => t.id === 'emberTransfer');
+  for (const held of [true, false]) {
+    const g = arena(); if (held) g.s.run.traits = ['emberTransfer'];
+    const e = dummy(g, 9, 8), near = dummy(g, 9 + rule.radius * 0.6, 8), far = dummy(g, 9 + rule.radius + 2, 8);
+    e.hp = 1; e.burnStacks = [g.s.time + 3]; g.hitEnemy(e, 50);
+    assert.equal(near.burnStacks.filter(t => t > g.s.time).length, held ? rule.stacks : 0); assert.equal(far.burnStacks.length, 0);
+  }
+  // A body that was not burning passes nothing.
+  const g = arena(); g.s.run.traits = ['emberTransfer']; const e = dummy(g, 9, 8), near = dummy(g, 9.5, 8); e.hp = 1; g.hitEnemy(e, 50); assert.equal(near.burnStacks.length, 0);
+});
+
+test('과전류 방전: a shocked body struck throws a harder discharge at one body more (2026-11-12)', () => {
+  const rule = data.slice.elementTraits.find(t => t.id === 'surgeDischarge'), info = data.combat.statuses.find(s => s.id === 'shock');
+  const zap = traits => { const g = arena(['lightning', 'fire']); g.random = () => 0.99; g.s.run.traits = traits; const src = dummy(g, 9, 8), others = [9.4, 9.8, 10.2].map(x => dummy(g, x, 8)); src.statuses.shock = g.s.time + 3; src.shockReady = 0; g.triggerShock(src); return [src, ...others].map(e => e.maxHp - e.hp).filter(d => d > 0); };
+  const plain = zap([]), surge = zap(['surgeDischarge']);
+  assert.equal(plain.length, info.maxTargets); assert.equal(surge.length, rule.maxTargets);
+  assert.ok(surge.every(d => Math.abs(d - rule.dischargeDamage) < 1e-6) && plain.every(d => Math.abs(d - info.dischargeDamage) < 1e-6), `${plain} / ${surge}`);
+  // A run saved holding 감전 전염 gets 과전류 방전 in its place.
+  const g = arena(['lightning', 'fire']); const old = JSON.parse(encodeSave(g.s)); old.state.run.traits = ['shockSpread'];
+  assert.deepEqual(decodeSave(JSON.stringify(old), data).run.traits, ['surgeDischarge']);
+});
+
+test('축전 효율기, 과충전 회로, 여진 장치: charge gain, harder fusion blows, lighter blows after a fusion (2026-11-12)', () => {
+  const part = id => data.combat.balance.temporaryUpgrades.find(u => u.id === id);
+  // 축전 효율기 adds onto the tuning board's charge gain.
+  const g = arena(); const plain = g.stats.energyGain || 0; g.s.run.upgrades.energyGain = 2;
+  assert.ok(Math.abs(g.stats.energyGain - plain - 2 * part('energyGain').perRank) < 1e-9);
+  // 과충전 회로: 빙풍 절단 is one direct blow, so the fusion part scales it exactly.
+  const fused = upgrades => { const g = arena(['ice', 'wind']); g.random = () => 0.99; g.s.run.upgrades = upgrades; const e = dummy(g, 10, 8); g.p.energy = 100; g.p.fusionReady = 0; assert.ok(g.castFusion({ x: e.x, y: e.y })); step(g, 1); return e.maxHp - e.hp; };
+  const base = fused({}), strong = fused({ fusionDamage: 1 });
+  assert.ok(base > 0 && Math.abs(strong / base - (1 + part('fusionDamage').perRank)) < 1e-6, `${base} → ${strong}`);
+  // 여진 장치: lighter blows for its seconds after a fusion, and none without a fusion cast.
+  const h = arena(['ice', 'wind']); h.s.run.upgrades.fusionGuard = 1; const full = h.damageTaken(100);
+  h.p.energy = 100; h.p.fusionReady = 0; assert.ok(h.castFusion({ x: 11, y: 8 }));
+  assert.ok(Math.abs(h.damageTaken(100) - full * (1 - part('fusionGuard').perRank)) < 1e-9);
+  h.s.time += part('fusionGuard').seconds + 0.1; assert.equal(h.damageTaken(100), full);
+  // The fusion parts are offered only with two elements fitted.
+  assert.ok(['fusionDamage', 'fusionGuard', 'energyGain'].every(id => arena(['ice', 'wind']).partRewards().some(r => r.id === id)));
+  const one = arena(['ice']); assert.ok(!one.partRewards().some(r => String(r.id).startsWith('fusion')) && one.partRewards().some(r => r.id === 'energyGain'));
+});
+
+test('a saved run holding 과부하 or 조율 박자 (skill mods until 2026-11-12) gets their traits instead', () => {
+  const g = arena(['fire', 'sound']); const old = JSON.parse(encodeSave(g.s));
+  Object.assign(old.state.run, { skillMods: ['overload', 'fullVolume'], traits: ['burnBrand'], picks: [{ node: 0, kind: 'skillMod', id: 'overload' }], rewardChoices: [{ kind: 'skillMod', id: 'tuningBeat' }, { kind: 'skillMod', id: 'overload' }, { kind: 'trait', id: 'longEcho' }] });
+  const s = decodeSave(JSON.stringify(old), data);
+  assert.deepEqual(s.run.skillMods, ['fullVolume']); assert.deepEqual(s.run.traits, ['burnBrand', 'emberTransfer']);
+  assert.deepEqual(s.run.picks, [{ node: 0, kind: 'trait', id: 'emberTransfer' }]);
+  assert.deepEqual(s.run.rewardChoices, [{ kind: 'trait', id: 'deepCollapse' }, { kind: 'trait', id: 'longEcho' }], 'one already held drops off the table');
 });
 
 test('backflow pushes normal enemies on the last blast, never bosses', () => {
   const g = arena(); g.s.run.skillMods = ['backflow']; const e = dummy(g, 9.5), boss = dummy(g, 7, 8, 'collectorRoco'), x = e.x, bx = boss.x;
-  cast(g, 'exhaustBurst'); step(g, 0.6);
+  cast(g, 'exhaustBurst'); step(g, 0.9); // the fourth (last) blast lands at 0.75 s since 2026-11-11
   assert.ok(e.x > x + 1); assert.equal(boss.x, bx);
 });
 
-test('piercing bolts pass through and hit each enemy once', () => {
-  const g = arena(); g.s.run.skillMods = ['piercingBolt']; const near = dummy(g, 10), far = dummy(g, 12);
-  cast(g, 'frostBolt'); step(g, 0.5);
-  assert.ok(near.hp < near.maxHp && far.hp < far.maxHp);
-  const h = arena(); dummy(h, 10); const blocked = dummy(h, 12); cast(h, 'frostBolt'); step(h, 0.5);
-  assert.equal(blocked.hp, blocked.maxHp);
+test('frost bolts pierce on their own (2026-11-11), and 서리 산탄 fires five of them', () => {
+  const g = arena(); const near = dummy(g, 10), far = dummy(g, 12);
+  assert.equal(cast(g, 'frostBolt').projectiles.length, 3); step(g, 0.5);
+  assert.ok(near.hp < near.maxHp && far.hp < far.maxHp, 'the one behind is struck too');
+  const h = arena(); h.s.run.skillMods = ['piercingBolt']; assert.equal(cast(h, 'frostBolt').projectiles.length, 5);
 });
 
 test('flash freeze reaches a freeze sooner', () => {
@@ -126,9 +169,9 @@ test('flash freeze reaches a freeze sooner', () => {
   assert.equal(stunAfter(g => { g.s.run.skillMods = ['flashFreeze']; }, 2), true);
 });
 
-test('overcurrent chains to two more enemies', () => {
-  const hits = mods => { const g = arena(['lightning', 'wind']); g.s.run.skillMods = mods; const list = [dummy(g, 9), dummy(g, 9.5, 8.5), dummy(g, 9.5, 7.5), dummy(g, 10, 8.8), dummy(g, 10, 7.2)]; cast(g, 'conductiveSpanner'); step(g, 0.1); return list.filter(e => e.hp < e.maxHp).length; };
-  assert.equal(hits([]), 3); assert.equal(hits(['overcurrent']), 5);
+test('overcurrent chains to two more enemies (three on its own since 2026-11-11, five with it)', () => {
+  const hits = mods => { const g = arena(['lightning', 'wind']); g.s.run.skillMods = mods; const list = [dummy(g, 9), dummy(g, 9.5, 8.5), dummy(g, 9.5, 7.5), dummy(g, 10, 8.8), dummy(g, 10, 7.2), dummy(g, 10.5, 8.3), dummy(g, 10.5, 7.7)]; cast(g, 'conductiveSpanner'); step(g, 0.1); return list.filter(e => e.hp < e.maxHp).length; };
+  assert.equal(hits([]), 4); assert.equal(hits(['overcurrent']), 6);
 });
 
 test('homing strike lands on a nearby enemy', () => {
@@ -151,15 +194,15 @@ test('the vortex drifts toward the aim', () => {
   assert.ok(Math.abs(c.x - x - 0.6) < 1e-6);
 });
 
-test('fire traits: deeper embers burn twice as hard and longer, and basic hits punish burning enemies', () => {
+test('fire traits: deeper embers burn harder and longer (1.8x since 2026-11-12), and basic hits punish burning enemies', () => {
   const burnt = traits => { const g = arena(); g.s.run.traits = traits; const e = dummy(g), c = { id: 'a', staggerUsed: {} }; for (let i = 0; i < 6; i++) { g.s.time += 0.3; g.applyStatus(e, 'fire', c); } return { g, e }; };
   const deep = burnt(['emberStacks']), plain = burnt([]);
   assert.equal(deep.e.burnStacks.length, 3, 'the stack cap is unchanged');
   const burn = data.combat.statuses.find(s => s.id === 'burn'); assert.ok(Math.abs(Math.max(...deep.e.burnStacks) - deep.g.s.time - burn.duration - 2) < 1e-9);
   step(deep.g, 1); step(plain.g, 1);
-  assert.ok(Math.abs((deep.e.maxHp - deep.e.hp) / (plain.e.maxHp - plain.e.hp) - 2) < 1e-6, 'twice the burn');
+  assert.ok(Math.abs((deep.e.maxHp - deep.e.hp) / (plain.e.maxHp - plain.e.hp) - data.slice.elementTraits.find(t => t.id === 'emberStacks').burnDamageMultiplier) < 1e-6, 'the trait’s share of burn');
   const h = arena(); h.s.run.traits = ['burnBrand']; const f = dummy(h), base = h.damageMultiplier(f, true); f.burnStacks = [h.s.time + 2];
-  assert.ok(Math.abs(h.damageMultiplier(f, true) - base * 1.15) < 1e-9); assert.equal(h.damageMultiplier(f, false), h.damageMultiplier(dummy(h), false));
+  assert.ok(Math.abs(h.damageMultiplier(f, true) - base * (1 + data.slice.elementTraits.find(t => t.id === 'burnBrand').damageBonus)) < 1e-9); assert.equal(h.damageMultiplier(f, false), h.damageMultiplier(dummy(h), false));
 });
 
 test('cold reap refunds cooldowns on a chilled kill', () => {
@@ -169,17 +212,25 @@ test('cold reap refunds cooldowns on a chilled kill', () => {
 
 test('lightning traits: energy from shocked targets', () => {
   const h = arena(['lightning', 'wind']); h.s.run.traits = ['staticCharge']; const f = dummy(h); f.statuses.shock = h.s.time + 2; h.p.fusionReady = h.s.time + 10; swing(h, 0);
-  assert.equal(h.p.energy, 16);
-  // And the fusion's wait shortens by a second, at most once a second.
-  assert.ok(Math.abs(h.p.fusionReady - (h.s.time - 0.6 + 10 - 1)) < 0.05, `${h.p.fusionReady - h.s.time}`);
+  assert.equal(h.p.energy, 8 + data.slice.elementTraits.find(t => t.id === 'staticCharge').energy);
+  // The fusion's wait is its own since 2026-11-12: the trait no longer shortens it.
+  assert.ok(Math.abs(h.p.fusionReady - (h.s.time - 0.6 + 10)) < 0.05, `${h.p.fusionReady - h.s.time}`);
 });
 
 test('wind traits: dodging past applies pressure, and gale holds enemies longer', () => {
   const g = arena(['wind', 'fire']); g.s.run.traits = ['slipstream']; const e = dummy(g, 9, 8);
   g.p.moveAngle = 0; g.update(1 / 60, { dodge: true, x: 1 }); step(g, 0.2, { x: 1 });
   assert.ok(e.statuses.windPressure > g.s.time);
+  assert.equal(e.maxHp - e.hp, data.slice.elementTraits.find(t => t.id === 'slipstream').damage, 'one gust blow for the dodge (2026-11-11)');
   const h = arena(['wind', 'fire']); h.s.run.traits = ['galeHold']; const f = dummy(h); f.statuses.windPressure = h.s.time + 2; h.hitEnemy(f, 1, { stagger: 1 });
   assert.ok(Math.abs(f.stunUntil - h.s.time - data.slice.rules.normalHitStun * data.slice.elementTraits.find(t => t.id === 'galeHold').stunMultiplier) < 1e-9);
+});
+
+test('뒷바람: a body still beside F2 on the dodge’s last frame does not crash the game (2026-11-12)', () => {
+  const g = arena(['wind', 'fire']); g.s.run.traits = ['slipstream']; const e = dummy(g, 9, 8);
+  g.p.moveAngle = 0; g.update(1 / 60, { dodge: true, x: 1 });
+  for (let i = 0; i < 60 && g.p.dodge; i++) { e.x = g.p.x + 0.3; e.y = g.p.y; g.update(1 / 60, { x: 1 }); }
+  assert.equal(g.p.dodge, null, 'the dodge ran out');
 });
 
 test('long wrench reaches further', () => {
@@ -258,7 +309,7 @@ test('piercing dash goes through enemies and leaves them behind the player', () 
   cast(g, 'pressureDash', { x: 20, y: 8 }); step(g, 0.4); assert.ok(e.hp < e.maxHp); assert.ok(e.x < g.p.x, 'pulled behind the player');
 });
 test('a run takes only one mod per skill', () => {
-  const g = arena(); g.s.run.skillMods = ['overload'];
+  const g = arena(); g.s.run.skillMods = ['emberTrail'];
   assert.ok(!g.buildRewards().some(r => r.kind === 'skillMod' && data.slice.skillMods.find(m => m.id === r.id).skill === 'heatSwing'));
 });
 
@@ -295,8 +346,14 @@ test('wind pressure slam: a pressed body driven into another body hurts and stun
   const c = dummy(g, 3, 3), d = dummy(g, 3.6, 3); g.pushEnemy(c, 0.3, 0); assert.equal(d.hp, d.maxHp, 'no pressure, no slam');
 });
 
-test('frozen cracks: the wrench does 20% more to a chilled body and 40% more to a frozen one', () => {
+test('frozen cracks: the wrench does 25% more to a chilled body and 50% more to a frozen one (2026-11-12, was 20/40)', () => {
   const g = arena(['ice', 'fire']); g.s.run.traits = ['frostCrack']; const e = dummy(g), plain = g.damageMultiplier(e, true);
-  e.statuses.chill = g.s.time + 3; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.2) < 1e-9);
-  e.frozenUntil = g.s.time + 1; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.4) < 1e-9);
+  e.statuses.chill = g.s.time + 3; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.25) < 1e-9);
+  e.frozenUntil = g.s.time + 1; assert.ok(Math.abs(g.damageMultiplier(e, true) / plain - 1.5) < 1e-9);
+});
+
+test('a saved run holding more ranks of a part than its card now allows is held at the top rank (2026-11-12)', () => {
+  const g = arena(); g.s.run.upgrades = { basicDamage: 4, killHeal: 3, moveSpeed: 2 };
+  const loaded = decodeSave(encodeSave(g.s), data);
+  assert.deepEqual(loaded.run.upgrades, { basicDamage: 3, killHeal: 1, moveSpeed: 2 });
 });
