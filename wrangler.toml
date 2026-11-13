@@ -6,6 +6,11 @@ main = "worker/index.js"
 # Variables set in the dashboard (like ADMIN_TOKEN, if saved as Text) survive each git deploy instead of being wiped.
 keep_vars = true
 
+# Before each deploy the game's code is packed into build/ and index.html points at it (scripts/build.mjs, 2026-11-14).
+# It packs only on Cloudflare's build machine (WORKERS_CI); a deploy from this computer uploads the plain files.
+[build]
+command = "node scripts/build.mjs --deploy"
+
 [assets]
 directory = "."
 binding = "ASSETS"

@@ -348,6 +348,10 @@ test/                                 자동 테스트
 
 새 항목은 위에 추가합니다.
 
+### 2026-11-14
+
+- 배포 사이트의 코드를 파일 하나로 묶음(사용자 요청, `scripts/build.mjs`, `wrangler.toml` `[build]`, `_headers` `/build/*`): 한국에서 접속하면 Cloudflare 로스앤젤레스(LAX) 서버가 답해서 요청 하나에 약 0.7초가 걸렸음. 그래서 바뀐 게 없는 재방문에도 코드 69개와 데이터 5개를 "바뀌었나?" 확인하는 데만 약 24초가 들었음(PC Chrome 실측, 69개 모두 304). 이제 Cloudflare 빌드 기기가 배포 직전에 코드를 `build/main-<해시>.js` 하나로, 스타일 두 개를 `build/style-<해시>.css` 하나로, 데이터 5개를 `build/data/<이름>-<해시>.json`으로 만들고, `index.html`이 이 파일들을 가리키도록 고쳐 올림. 이름에 내용 해시가 들어가서 1년 동안 다시 묻지 않고 쓰며, 매번 확인하는 건 `index.html` 하나뿐. 배포하면 이름이 바뀌어서 새 코드가 바로 반영됨. 원본은 그대로 ES 모듈이라 로컬 개발 서버·테스트·`admin.html`·`sounds.html`은 전과 같음. 내 컴퓨터에서 `npx wrangler deploy`로 올리면 묶지 않은 파일이 그대로 올라감(`WORKERS_CI`가 없으면 건너뜀). 로컬에서 묶은 버전 확인: `npm run build` → `http://localhost:4173/index.built.html`. 개발용 도구 esbuild 0.25.12 추가(`package-lock.json`). 빌드가 원본의 몇 줄을 정확한 글자로 고쳐 쓰므로 그 줄이 바뀌면 `test/build.test.js`가 푸시 전에 실패함. 테스트 463개 통과.
+
 ### 2026-11-13
 
 - 닉네임의 드문 한글이 다른 글꼴로 보이던 것(사용자 제보, 2026-11-13, `art/fonts/Galmuri11-rest-v1.woff2`·`Galmuri11-Bold-rest-v1.woff2`·`rest-chars.txt`, `src/style.css`·`layout.css`·`canvas.js`·`title-screen.js`·`index.html`·`admin.html`·`sounds.html`, `test/font-chars.test.js`): 순위표의 '쏘이팕'에서 '팕'만 크기와 모양이 달랐음. 원인: 글꼴을 줄일 때(11-12) 게임 글자와 자주 쓰는 한글 2,350자(KS X 1001)만 남겨, 그 밖의 한글 8,821자는 맑은 고딕 같은 다른 글꼴로 그려짐. 이제 나머지 한글을 담은 보조 글꼴(보통 130 KB, 굵게 110 KB)을 'Galmuri11 Rest'라는 별도 이름으로 모든 글꼴 목록의 Galmuri11 바로 뒤에 둠. 화면에 그런 글자가 있을 때만 받음(같은 이름에 unicode-range로 붙이면 Chrome이 한글이 보이는 순간 늘 받아서 별도 이름으로 함). 확인(로컬 브라우저): 보통 접속은 보조 글꼴을 받지 않고, '쏘이팕'을 띄우면 그때 받아 굵게·보통 모두 같은 글꼴로 그려짐. 테스트 458개 통과(모든 글꼴 목록에 보조 글꼴이 있는지, 한글 11,172자가 빠짐없이 둘 중 하나에 있는지 추가).

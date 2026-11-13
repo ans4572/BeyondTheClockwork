@@ -12,9 +12,13 @@
     "playtest": "node scripts/playtest.mjs",
     "check": "npm run data:check && npm run art:check && node scripts/sync-preloads.mjs --check && node --test",
     "art:check": "node scripts/check-assets.mjs",
-    "preload:sync": "node scripts/sync-preloads.mjs"
+    "preload:sync": "node scripts/sync-preloads.mjs",
+    "build": "node scripts/build.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
   }
 }

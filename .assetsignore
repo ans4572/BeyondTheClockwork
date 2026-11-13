@@ -30,3 +30,5 @@ art/scenes/**/*.png
 art/chapters/1-smile-street/maps/00-village-court/background-esr2x-q92.webp
 art/audio/bgm/title-v2.ogg
 art/audio/bgm/title-v3.ogg
+# The packed site tried on this computer (scripts/build.mjs without --deploy; the build machine writes index.html).
+index.built.html

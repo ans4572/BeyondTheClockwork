@@ -41,3 +41,7 @@ art/world-map/icons/*-v*.png
 art/chapters/1-smile-street/maps/00-scrapyard/background-v2.png
 art/scenes/**/background-v*.png
 art/chapters/*/maps/**/background-v*.png
+
+# Packed code for the published site, made on Cloudflare's build machine (scripts/build.mjs).
+build/
+index.built.html

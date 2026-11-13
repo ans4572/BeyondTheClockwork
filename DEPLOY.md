@@ -2,7 +2,7 @@
 
 주소: https://beyondtheclockwork.mungaeng.workers.dev  ·  `main`에 푸시하면 자동 배포.
 
-게임은 빌드 과정이 없는 정적 파일입니다. 저장소 루트를 그대로 올리면 됩니다.
+게임은 정적 파일이고, 저장소 루트를 그대로 올립니다. 다만 Cloudflare 빌드 기기에서는 배포 직전에 `scripts/build.mjs --deploy`(`wrangler.toml` `[build]`)가 코드·스타일·데이터를 이름에 해시가 붙은 파일 몇 개로 묶어 `build/`에 두고, `index.html`이 그 파일들을 가리키도록 고칩니다(2026-11-14). 한국 접속은 LA 서버를 거쳐 요청 하나에 약 0.7초가 걸리기 때문입니다. 빌드 기기가 dev 의존성(esbuild)을 설치하지 않았으면 스크립트가 `npm ci`로 직접 설치합니다. 대시보드 설정은 바꿀 필요 없습니다(Build command는 비워 두고, Deploy command는 `npx wrangler deploy`).
 
 ## 방법 1 · GitHub 연결 (추천, 푸시하면 자동 배포)
 
@@ -25,8 +25,8 @@ npx wrangler deploy
 
 ## 들어 있는 설정
 
-- `_headers`: 코드·데이터는 매번 새 버전 확인(바로 반영), 그림·소리는 하루 캐시.
-- `wrangler.toml`: Worker 이름 `beyondtheclockwork`, 저장소 루트를 정적 파일로 올림.
+- `_headers`: `index.html`은 매번 새 버전 확인(바로 반영), 묶은 코드 `build/*`는 1년 캐시(이름에 해시), 그림·소리는 하루 캐시.
+- `wrangler.toml`: Worker 이름 `beyondtheclockwork`, 저장소 루트를 정적 파일로 올림, 배포 직전 `[build]`로 코드 묶기.
 - `.assetsignore`: 테스트·스크립트·문서 등 게임에 필요 없는 파일은 올리지 않음.
 - 파일 수 약 1,300개, 가장 큰 파일 2.6MB — Cloudflare Pages 제한(파일 2만 개, 파일당 25MB) 안입니다.
 - 모든 경로가 상대 경로라 GitHub Pages(`/BeyondTheClockwork/`)와 Cloudflare(루트) 양쪽에서 그대로 동작합니다.

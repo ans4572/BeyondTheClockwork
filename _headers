@@ -24,6 +24,11 @@
   ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
+# The packed code, style sheet and data (scripts/build.mjs, 2026-11-14) carry their contents' hash in their names: kept a
+# year without asking, so a visit checks index.html alone instead of some 75 files (each about 0.7 s from Korea).
+/build/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # The service worker itself is checked on every visit, so switching it off (sw.js KILL) reaches every device.
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
