@@ -27,6 +27,7 @@ npx wrangler deploy
 
 - `_headers`: `index.html`은 매번 새 버전 확인(바로 반영), 묶은 코드 `build/*`는 1년 캐시(이름에 해시), 그림·소리는 하루 캐시.
 - `wrangler.toml`: Worker 이름 `beyondtheclockwork`, 저장소 루트를 정적 파일로 올림, 배포 직전 `[build]`로 코드 묶기.
+- `sw.js`: 그림·소리·글꼴은 같은 main이 올라가는 GitHub Pages(`ans4572.github.io/BeyondTheClockwork`, 서울 서버)에서 받아 기기에 저장(2026-11-14). 거기 없거나 6초 안에 답이 없으면 Cloudflare에서 받음. GitHub Pages 배포를 끄면 그림은 Cloudflare에서 받으므로 느려지기만 하고 게임은 그대로 동작. 사본 사용만 끄려면 `sw.js`의 `MIRROR = ''`.
 - `.assetsignore`: 테스트·스크립트·문서 등 게임에 필요 없는 파일은 올리지 않음.
 - 파일 수 약 1,300개, 가장 큰 파일 2.6MB — Cloudflare Pages 제한(파일 2만 개, 파일당 25MB) 안입니다.
 - 모든 경로가 상대 경로라 GitHub Pages(`/BeyondTheClockwork/`)와 Cloudflare(루트) 양쪽에서 그대로 동작합니다.
