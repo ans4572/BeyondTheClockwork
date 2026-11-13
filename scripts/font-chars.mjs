@@ -7,6 +7,9 @@
 //   node scripts/font-chars.mjs > art/fonts/subset-chars.txt
 //   python -m fontTools.subset art/fonts/Galmuri11.woff2 --text-file=art/fonts/subset-chars.txt --flavor=woff2 --layout-features=* --output-file=art/fonts/Galmuri11-sub-vN.woff2
 //   (and the same for Galmuri11-Bold.woff2), then point src/style.css, admin.html, sounds.html and scripts/sync-preloads.mjs at them.
+// The Hangul syllables the subsets lack are in art/fonts/rest-chars.txt and cut the same way into Galmuri11-rest-vN.woff2 and
+// Galmuri11-Bold-rest-vN.woff2 (2026-11-13, family 'Galmuri11 Rest', fetched only when such a syllable is shown). After a new
+// subset list, write rest-chars.txt again as every syllable U+AC00-D7A3 not in subset-chars.txt and cut both again.
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 

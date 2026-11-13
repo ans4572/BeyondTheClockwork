@@ -57,7 +57,7 @@ body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom
 .world-map .node.locked { cursor: default; }
 .world-map .node .hit { fill: transparent; stroke: none; }
 .world-map .node circle:not(.hit) { fill: #fff4d6; stroke: var(--ink); stroke-width: 2.5; }
-.world-map .node text { font: 700 9.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.world-map .node text { font: 700 9.5px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; pointer-events: none; }
 .world-map .node .marker { filter: drop-shadow(0 2px 1.5px rgba(43, 51, 69, .45)); transition: transform .12s; transform-box: fill-box; transform-origin: 50% 100%; }
 .world-map .node .num { font-size: 11px; dominant-baseline: central; }
 .world-map .node.done .num { fill: #fff4d6; }
@@ -68,24 +68,24 @@ body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom
 .world-map .name rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 2.5; } .world-map .name text { font-size: 12.5px; }
 .world-map .you { animation: atlas-bob 1.2s ease-in-out infinite; }
 .world-map .you path { fill: #c43c36; stroke: #fff4d6; stroke-width: 2; }
-.world-map .you text { font: 700 13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #c43c36; stroke: #fff4d6; stroke-width: 4; paint-order: stroke; text-anchor: middle; }
+.world-map .you text { font: 700 13px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #c43c36; stroke: #fff4d6; stroke-width: 4; paint-order: stroke; text-anchor: middle; }
 @keyframes atlas-bob { 50% { transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .world-map .you { animation: none; } }
 .world-map .banner rect { fill: #f6ecd2; stroke: var(--ink); stroke-width: 3; }
-.world-map .banner text { font: 700 16px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
+.world-map .banner text { font: 700 16px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: var(--ink); text-anchor: middle; }
 .world-map .banner.dark rect { fill: #4a4d58; } .world-map .banner.blue rect { fill: #4f6fa1; } .world-map .banner.dark text, .world-map .banner.blue text { fill: #f6ecd2; }
-.world-map .soon { font: 700 10.5px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
+.world-map .soon { font: 700 10.5px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; fill: #4a4d58; text-anchor: middle; paint-order: stroke; stroke: #f6ecd2; stroke-width: 4; }
 .panel p.atlas-detail { flex: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 8px 0 0; }
 .atlas-detail strong { font-size: 14px; }
 .atlas-detail em { font-style: normal; font-size: 12px; color: var(--red); }
 
-#title { position: fixed; inset: 0; z-index: 20; overflow: hidden; background: repeating-linear-gradient(0deg, #3d6a63 0 24px, #35605a 24px 26px); font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#title { position: fixed; inset: 0; z-index: 20; overflow: hidden; background: repeating-linear-gradient(0deg, #3d6a63 0 24px, #35605a 24px 26px); font-family: "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #title[hidden], #title [hidden] { display: none; }
 .title-stage { position: absolute; left: 50%; top: 50%; width: 1120px; height: 640px; transform: translate(-50%, -50%); }
 #title canvas { width: auto; height: auto; max-width: none; image-rendering: pixelated; }
 .title-stage canvas { position: absolute; left: 0; top: 0; }
 .title-stage nav { position: absolute; left: 492px; top: 408px; display: grid; gap: 2px; width: 520px; }
-.title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
+.title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
 .title-stage button::before { content: ""; width: 20px; height: 20px; flex: none; box-shadow: inset 0 0 0 3px currentColor; }
 .title-stage button:focus { outline: none; }
 .title-stage button:focus { color: #a92f2b; }
@@ -125,7 +125,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #toast.below-boss { top: calc(var(--hud-scale, 1) * 62px); }
 
 /* Paper tags from the disposal form, laid out on a fixed 1120x640 sheet that scales with the window. */
-#hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #2b3345; }
+#hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #2b3345; }
 #hud button { pointer-events: auto; cursor: pointer; border: 0; font: inherit; color: inherit; }
 .hud-tag { background: #f6ecd2; color: #2b3345; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .hud-vitals { position: absolute; left: 14px; top: 12px; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; }
@@ -163,7 +163,7 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #skills[hidden] { display: none; }
 /* A mouse over a skill slot shows what it does; the HUD itself lets clicks through to the game. */
 body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
-#skill-tip { position: absolute; z-index: 7; width: max-content; max-width: 300px; padding: 8px 12px; background: #2b3345; color: #f6ecd2; font: 400 13px/1.45 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; transform: translate(-50%, -100%); pointer-events: none; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+#skill-tip { position: absolute; z-index: 7; width: max-content; max-width: 300px; padding: 8px 12px; background: #2b3345; color: #f6ecd2; font: 400 13px/1.45 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; transform: translate(-50%, -100%); pointer-events: none; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
 #skill-tip[hidden] { display: none; }
 #skill-tip b { display: block; font-weight: 700; color: #ffd257; }
 #skill-tip small { display: block; margin-top: 3px; color: #c9c2ad; font-size: 12px; }
@@ -173,11 +173,11 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 /* Not enough charge yet: the skill shows but reads as unavailable. */
 .slot.short img, #touch button.short img { opacity: .35; filter: grayscale(1); }
 .slot img { width: 36px; height: 36px; image-rendering: pixelated; }
-.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 11px/13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
+.slot kbd { position: absolute; left: 0; top: 0; min-width: 9px; padding: 0 2px 0 3px; background: #2b3345; color: #f6ecd2; font: 800 11px/13px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; }
 .slot .lv { position: absolute; right: 2px; top: 0; font-size: 10px; line-height: 12px; }
 .slot .cool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: #0e121ab8; }
 .slot .left { position: absolute; inset: 0; display: grid; place-items: center; color: #fff4d6; font-size: 13px; text-shadow: 1px 1px 0 #0e121a, -1px -1px 0 #0e121a; }
-#hud .hud-bar b { font: 700 12px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
+#hud .hud-bar b { font: 700 12px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #fff4d6; text-shadow: 1px 0 #2b3345, -1px 0 #2b3345, 0 1px #2b3345, 0 -1px #2b3345; }
 .slot kbd { z-index: 1; }
 
 #practice-reset { position: absolute; left: 14px; top: 96px; padding: 5px 14px; font-size: 13px; }
@@ -210,7 +210,7 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
 #hud.talking > :not(#dialogue) { display: none; }
-#dialogue { position: absolute; inset: 0; pointer-events: auto; user-select: none; -webkit-user-select: none; font: 400 18px/1.55 "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#dialogue { position: absolute; inset: 0; pointer-events: auto; user-select: none; -webkit-user-select: none; font: 400 18px/1.55 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #dialogue[hidden] { display: none; }
 .talk-box { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: #f6ecd2; box-shadow: 0 -4px 0 #2b3345, 0 -8px 0 #c79a3e; }
 .talk-who { position: absolute; z-index: 1; image-rendering: pixelated; transition: filter .12s, transform .12s; }
@@ -270,7 +270,7 @@ body.touch .hud-minimap:not([hidden]) ~ .hud-wallet .tool-icon { width: 26px; he
 .touch-stick { position: absolute; left: -52px; top: -52px; width: 104px; height: 104px; border-radius: 50%; background: #16202a55; box-shadow: inset 0 0 0 3px #f6ecd2aa; pointer-events: none; }
 .touch-stick[hidden] { display: none; }
 .touch-stick i { position: absolute; left: 28px; top: 28px; width: 48px; height: 48px; border-radius: 50%; background: #f6ecd2cc; }
-#touch button { position: relative; overflow: hidden; pointer-events: auto; touch-action: none; border: 0; padding: 0; color: #2b3345; background: #f6ecd2d9; box-shadow: inset 0 0 0 2px #2b3345; font: 700 13px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#touch button { position: relative; overflow: hidden; pointer-events: auto; touch-action: none; border: 0; padding: 0; color: #2b3345; background: #f6ecd2d9; box-shadow: inset 0 0 0 2px #2b3345; font: 700 13px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #touch .touch-pad button.empty { visibility: hidden; }
 #touch button.ready { background: #ffd257; }
 #touch button img { width: 62%; height: 62%; margin-top: 19%; image-rendering: pixelated; pointer-events: none; }
@@ -300,14 +300,14 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #touch .touch-practice[hidden] { display: none; }
 #touch .touch-practice.on { background: #ffd257; }
 @media (orientation: portrait) {
-  body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+  body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 }
 
 /* The ending's cut to the clock tower: a still backdrop under the dialogue. */
 #scene { position: absolute; inset: 0; z-index: 1; background: #141b2b; }
 #scene[hidden] { display: none; }
 #scene img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 15%; }
-#scene b { position: absolute; left: 3%; top: 5%; padding: .3em .9em; background: #f6ecd2; color: #2b3345; font: 700 clamp(12px, 2vw, 22px) "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#scene b { position: absolute; left: 3%; top: 5%; padding: .3em .9em; background: #f6ecd2; color: #2b3345; font: 700 clamp(12px, 2vw, 22px) "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #scene.fade { animation: scene-in 1.2s ease-out both; }
 @keyframes scene-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #scene.fade { animation: none; } }
@@ -324,7 +324,7 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
 
 /* The charge a skill spends, small in the slot's bottom-right corner; red while there is not enough. */
-.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 12px/14px "Galmuri11", "Malgun Gothic", sans-serif; font-style: normal; }
+.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 12px/14px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", sans-serif; font-style: normal; }
 .slot.short .cost, #touch .short .cost { color: #ff8a80; }
 #touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 14px; line-height: 16px; }
 #touch .cost:empty { display: none; }
@@ -333,7 +333,7 @@ body.touch .panel .stat-row button { min-height: 36px; }
 /* A boss's name sweeps across as its fight begins. */
 #boss-card { position: absolute; left: 0; right: 0; top: 34%; z-index: 4; display: grid; justify-items: center; padding: 14px 0 16px; background: linear-gradient(90deg, transparent, #16202ad9 18%, #16202ad9 82%, transparent); color: #fff4d6; pointer-events: none; }
 #boss-card[hidden] { display: none; }
-#boss-card small { font: 700 clamp(12px, 1.6vw, 18px) "Galmuri11", sans-serif; color: #ffd257; }
+#boss-card small { font: 700 clamp(12px, 1.6vw, 18px) "Galmuri11", "Galmuri11 Rest", sans-serif; color: #ffd257; }
 #boss-card b { font: clamp(26px, 4.4vw, 52px)/1.1 "NeoDunggeunmo Pro", monospace; letter-spacing: .04em; text-shadow: 3px 3px 0 #a92f2b; }
 #boss-card.show { animation: boss-card 1.7s ease-out both; }
 @keyframes boss-card { 0% { opacity: 0; transform: translateX(-12%); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(8%); } }
@@ -540,7 +540,7 @@ body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4
 .talk-choices:has(button:nth-child(3)):not(:has(button:nth-child(4))) { display: flex; flex-wrap: wrap; gap: 2px 18px; }
 
 /* The graphics memory was reset twice within a minute (2026-11-13): one tap reloads, in the loading card's look. */
-#art-lost { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #0e121acc; font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#art-lost { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #0e121acc; font-family: "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #art-lost .card { max-width: min(86vw, 420px); padding: 22px 30px; background: #f6ecd2; color: #2b3345; text-align: center; box-shadow: 8px 8px 0 #0e121a80; }
 #art-lost b { display: block; font-size: 20px; }
 #art-lost span { display: block; margin-top: 10px; font-size: 13px; line-height: 1.5; color: #5d6476; word-break: keep-all; }

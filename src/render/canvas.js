@@ -541,7 +541,7 @@ export class CanvasRenderer {
     // Element names from the game data (combat.json), so a trait on water or sound reads '물 …' rather than 'undefined …'.
     const names = Object.fromEntries((this.game.c.elements || []).map(e => [e.id, e.name])), rules = this.game.config.eliteAffixes?.list || [];
     const tags = enemy.affixes.map(({ id, element }) => { const rule = rules.find(r => r.id === id); return rule && { text: element && names[element] ? `${names[element]} ${rule.name}` : rule.name, color: element ? this.game.config.presentation.colors[element] : rule.color }; }).filter(Boolean);
-    const ink = this.ink(); ink.font = `700 ${TAG_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
+    const ink = this.ink(); ink.font = `700 ${TAG_SIZE}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
     const widths = tags.map(tag => Math.ceil(ink.measureText(tag.text).width) + 9), total = widths.reduce((a, b) => a + b, 0) + (tags.length - 1) * 2;
     // Drawn smaller than the rest of the lettering, shrunk round the tags' bottom middle so they stay just over the head.
     const c = this.ctx, cx = enemy.x * 20, bottom = y + TAG_SIZE + 4;
@@ -619,7 +619,7 @@ export class CanvasRenderer {
       const image = this.mapImages?.get(STATUS_ICONS[badge.id]);
       if (image) c.drawImage(image, x, y, BADGE_SIZE, BADGE_SIZE);
       // Stacks read as a small ×N beside the icon, outlined so it stays legible over any floor.
-      if (badge.count > 1) { const c = this.ink(); c.font = `700 ${COUNT_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
+      if (badge.count > 1) { const c = this.ink(); c.font = `700 ${COUNT_SIZE}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'left'; c.lineWidth = 2; c.strokeStyle = '#2b3345'; c.strokeText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); c.fillStyle = '#fff4d6'; c.fillText(`×${badge.count}`, x + BADGE_SIZE, y + BADGE_SIZE - 1); }
       x += width(badge);
     }
   }
@@ -824,7 +824,7 @@ export class CanvasRenderer {
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
   nameplate(label, x, bottom, fill = '#fff4d6') {
     const c = this.ink();
-    c.save(); c.font = `700 ${NAME_SIZE}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    c.save(); c.font = `700 ${NAME_SIZE}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
     c.lineJoin = 'round'; c.lineWidth = 2.5; c.strokeStyle = '#2b3345'; c.strokeText(label, x, bottom);
     c.fillStyle = fill; c.fillText(label, x, bottom); c.restore(); if (c !== this.ctx) c.globalAlpha = 1;
   }
@@ -1253,7 +1253,7 @@ export class CanvasRenderer {
     t.setTransform(m.a * r, m.b * r, m.c * r, m.d * r, m.e * r, m.f * r); t.globalAlpha = this.ctx.globalAlpha;
     return t;
   }
-  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ink(); c.font = `600 ${size}px "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
+  text(text, x, y, color = '#3f5c55', size = 7, align = 'center') { const c = this.ink(); c.font = `600 ${size}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.fillStyle = color; c.textAlign = align; c.fillText(text, x, y); }
   /**
    * A fallen body's parts: small cogs, bolts, springs and plates of its colour thrown away from F2, arcing up,
    * bouncing once on the floor and fading. `fx.value` is how many; each piece's path is fixed by its effect's id.

@@ -7,6 +7,8 @@
   <title>운행 장부 · 태엽 밖으로</title>
   <style>
     /* Galmuri11 by Lee Minseo, SIL OFL 1.1 (art/fonts/Galmuri-OFL.txt), the game's own reading face (paper look). */
+    @font-face { font-family: 'Galmuri11 Rest'; src: url('art/fonts/Galmuri11-rest-v1.woff2') format('woff2'); font-weight: 100 599; unicode-range: U+AC00-D7A3; font-display: swap; }
+    @font-face { font-family: 'Galmuri11 Rest'; src: url('art/fonts/Galmuri11-Bold-rest-v1.woff2') format('woff2'); font-weight: 600 900; unicode-range: U+AC00-D7A3; font-display: swap; }
     @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-sub-v1.woff2') format('woff2'); font-weight: 100 599; font-display: swap; }
     @font-face { font-family: 'Galmuri11'; src: url('art/fonts/Galmuri11-Bold-sub-v1.woff2') format('woff2'); font-weight: 600 900; font-display: swap; }
     /* A dense dashboard: everything on one or two screens. Two looks share one layout: the game's office paper
@@ -23,7 +25,7 @@
       --blue: #2b3345; --blue-2: #c79a3e; --blue-3: #9a9384; --blue-4: #d9cba5; --good: #3d7a52; --bad: #a92f2b; --warn: #a8761c;
       --trace: #a92f2b; --accent: #2b3345; --on-accent: #f6ecd2; --tip: #2b3345; --on-tip: #f6ecd2; --edge: #2b3345; --radius: 6px; --hover: .75;
       color-scheme: light;
-      font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      font-family: "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
     }
     :root[data-theme="paper"] .bar-top { border-bottom: 2px solid var(--edge); }
     :root[data-theme="paper"] .tile .value, :root[data-theme="paper"] .donut text[style] { font-weight: 700; letter-spacing: 0; }
