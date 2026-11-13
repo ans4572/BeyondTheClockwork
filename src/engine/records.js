@@ -3,8 +3,11 @@
 // statistics already keep (worker/stats.js records). Shown on the difficulty cards before setting out (main.js).
 import { DIFFICULTIES, ELEMENT_IDS } from './stats.js';
 
-/** A clear faster than this is not a real run (a hand-made request); the server's board leaves it out. */
-export const MIN_CLEAR_SECONDS = 240;
+/**
+ * A clear faster than this is not a real run (a hand-made request); the server's board leaves it out. 2026-11-13: 240 → 60,
+ * a player's real 3:46 on easy was left off the board (clears are stored either way, so it showed again at once).
+ */
+export const MIN_CLEAR_SECONDS = 60;
 
 const emptyRecord = () => ({ best: null, elements: [], clears: 0, furthest: 0 });
 const elementsOk = list => Array.isArray(list) && list.length <= 2 && list.every(id => ELEMENT_IDS.includes(id));
