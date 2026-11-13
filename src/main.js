@@ -146,13 +146,48 @@ try {
   // They wait for F2's own sheets (2026-11-12: they started alongside them, about 100 files with the world map and the
   // first places' paintings, and queued F2 behind them, so 새로 시작하기 on a phone waited about 10 s for F2).
   let playerSheetsIn = false;
-  const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  // The skill poses and cast sheets come once the boot is done, and only for the elements F2 carries (dressPlayer).
+  const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, new Promise(() => {}))).then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  // Each skill's and fusion's elements, to hold F2's skill sheets for the elements carried only (2026-11-13: all six
+  // elements' poses and cast sheets are about 250 MB decoded, graded canvases a phone keeps for good).
+  const SKILL_ELEMENTS = Object.fromEntries([...(data.combat.skills || []).map(skill => [skill.id, [skill.element]]), ...(data.combat.fusions || []).map(fusion => [fusion.id, fusion.pair])]);
+  let skillsHeld = '', playerDressed = false;
+  bootDone.then(() => { playerDressed = true; dressPlayer(); });
+  /** Holds F2's sheets for the elements the run, the practice yard or the loadout carries, and lets go of the others. */
+  function dressPlayer() {
+    const library = renderer.sprites, elements = [...new Set(game.slots.map(slot => slot.element))].sort(), key = elements.join();
+    if (!playerDressed || !library?.hold || key === skillsHeld) return;
+    skillsHeld = key;
+    library.hold(clip => (SKILL_ELEMENTS[clip.split('/')[0]] || []).every(element => elements.includes(element))).catch(() => {});
+  }
   playerSprites.then(() => {
     playerSheetsIn = true; mapArt.fetchImages();
     for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
   });
-  const loadMobs = () => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json').then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
+  // The mobs' clips are known from the start, but their sheets are held only while a chapter that has them is played
+  // (2026-11-13: both chapters' mob sheets are about 380 MB decoded, and a phone that kept them in town lost its graphics
+  // memory there). dressMobs picks them; nothing loads them on its own (NEVER).
+  const NEVER = new Promise(() => {}), mobLibraries = {};
+  const loadMobs = () => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json', browserImage, () => true, NEVER).then(library => { mobLibraries.street = library; renderer.useMobSprites(library); dressMobs(); }).catch(error => console.warn(error))
     .then(wantFactoryMobs);
+  let mobsHeld = '';
+  /**
+   * Holds the mob sheets the game can show now and lets go of the rest: a chapter's own mobs (and the chapter 1 mobs its
+   * rooms bring) from the moment the departure board shows it, through the run; the scrapyard's before registration;
+   * any mob on the field whatever it is; none in town. Called with each overlay; does nothing while the answer is the same.
+   */
+  function dressMobs() {
+    const street = mobLibraries.street, factory = mobLibraries.factory;
+    if (!street) return;
+    const chapter = !game.s.profile.registered ? FIRST_CHAPTER : game.s.run ? (game.s.run.chapter || FIRST_CHAPTER) : departChapter;
+    const types = [...new Set(game.s.enemies.map(enemy => enemy.type))].sort(), key = `${chapter}|${types}`;
+    if (key === mobsHeld) return;
+    mobsHeld = key;
+    const rooms = chapter && chapter !== FIRST_CHAPTER ? JSON.stringify(chapterRooms(data.slice, chapter)) : '';
+    const typeOf = clip => clip.split('-')[0], onField = clip => types.includes(typeOf(clip));
+    street.hold(clip => chapter === FIRST_CHAPTER || onField(clip) || rooms.includes(`"${typeOf(clip)}"`)).catch(() => {});
+    factory?.hold(clip => chapter === 'silent-factory' || onField(clip)).catch(() => {});
+  }
   // Chapter 2's factory mobs (280 sheets, about 3 MB) join the chapter 1 mob library once chapter 2 is open to this
   // player (2026-11-12: every visitor fetched them, a new player hours before they could meet one). Asked again when the
   // overlay changes, so clearing chapter 1 or the departure board starts them; at most once.
@@ -165,7 +200,7 @@ try {
     // The effects, belts and places wait in the map loader until now (heldBack); it is asked once to fetch them.
     if (!factoryArt) { factoryArt = true; mapArt.fetchImages(); }
     if (!chapterOneMobs) return;
-    factoryMobs = SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, bootDone).then(library => renderer.mobSprites?.merge(library)).catch(error => console.warn(error));
+    factoryMobs = SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, NEVER).then(library => { mobLibraries.factory = library; renderer.mobSprites?.merge(library); mobsHeld = ''; dressMobs(); }).catch(error => console.warn(error));
   }
   // Standing sheets first (about 0.4 MB) so everyone shows at once; the walks (about 1.7 MB) follow, and a resident whose
   // walk has not arrived yet is drawn standing (canvas.js drawNpc).
@@ -929,7 +964,7 @@ try {
     }
   }
   function renderOverlay(force = false) {
-    wantFactoryMobs();
+    wantFactoryMobs(); dressMobs(); dressPlayer();
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
     const key = `${mode}:${s.run?.node}`;
     if (!force && key === overlayKey) return;
@@ -1455,6 +1490,17 @@ try {
   document.addEventListener('visibilitychange', () => { if (document.hidden) writePlayTime(localStorage, game.s.profile.playSeconds || 0); if (document.hidden && game.active && screen !== 'talk') { pause(); game.save(); } if (!document.hidden) audio?.resume().catch(() => {}); });
   window.addEventListener('pagehide', () => { writePlayTime(localStorage, game.s.profile.playSeconds || 0); game.save(); });
   window.addEventListener('beforeunload', () => game.save());
+  // When the graphics memory is reset (2026-11-13: a phone showed only shadows and names in town, with no map, bodies or
+  // portrait; Android drops it when the app sits in the background or memory runs short), every picture already decoded
+  // comes back blank and nothing in the game draws it again. The game is saved and the page reloads: the art comes back
+  // from the device store in a few seconds and 이어하기 returns to the same spot. At most once a minute, so a phone that
+  // keeps losing it does not reload in a loop.
+  const GPU_RELOAD = 'btc-gpu-reload';
+  $('game').addEventListener('contextlost', () => game.save());
+  $('game').addEventListener('contextrestored', () => {
+    try { if (Date.now() - Number(sessionStorage.getItem(GPU_RELOAD) || 0) < 60_000) return; sessionStorage.setItem(GPU_RELOAD, String(Date.now())); } catch { /* reload anyway */ }
+    game.save(); location.reload();
+  });
 
   function pollGamepad() {
     const pad = navigator.getGamepads?.().find(p => p?.connected);

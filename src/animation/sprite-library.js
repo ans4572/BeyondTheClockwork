@@ -13,7 +13,6 @@ const fileImage = url => new Promise((resolve, reject) => {
  */
 export const ATLAS_INDEX = 'art/atlases/index.json';
 let atlasIndex = null;
-const pages = new Map();
 /** Where each sheet sits: sheet path (without the leading slash) → { page, rect }. Fetched once. */
 export function atlasPlaces() {
   atlasIndex ??= fetch(ATLAS_INDEX, { cache: 'no-cache' }).then(response => (response.ok ? response.json() : null)).catch(() => null).then(index => {
@@ -30,38 +29,39 @@ function cutOnCanvas(page, [x, y, w, h]) {
   return canvas;
 }
 /**
- * Every sheet of a page, cut out once the page arrives; the page itself is then let go. The page is decoded from its
- * bytes into an ImageBitmap off the main thread and the sheets are cut from that (2026-11-13: cutting them from a picture
- * element held the main thread for about 10 s in all while the loading card turned).
+ * The sheets asked of each page in the same moment, cut out together: the page is fetched and decoded from its bytes
+ * into an ImageBitmap off the main thread (2026-11-13: cutting from a picture element held the main thread for about
+ * 10 s in all), only the sheets asked for are cut, and the page is let go. A sheet let go and asked again later (a
+ * chapter's mobs, released in town) is cut again from its page, which by then is on the device.
  */
-function pageSheets(page, places) {
-  if (!pages.has(page)) pages.set(page, (async () => {
-    const mine = [...places].filter(([, place]) => place.page === page);
+const asked = new Map();
+function cutLater(page, sheet, rect) {
+  return new Promise((resolve, reject) => {
+    let batch = asked.get(page);
+    if (!batch) { batch = []; asked.set(page, batch); setTimeout(() => { asked.delete(page); cutPage(page, batch); }, 0); }
+    batch.push({ sheet, rect, resolve, reject });
+  });
+}
+async function cutPage(page, batch) {
+  try {
     if (typeof createImageBitmap === 'function') {
       try {
         const response = await fetch(page); if (!response.ok) throw new Error(`${response.status} ${page}`);
         const whole = await createImageBitmap(await response.blob());
-        const sheets = new Map(await Promise.all(mine.map(async ([sheet, { rect: [x, y, w, h] }]) => [sheet, await createImageBitmap(whole, x, y, w, h)])));
+        await Promise.all(batch.map(async ({ rect: [x, y, w, h], resolve }) => resolve(await createImageBitmap(whole, x, y, w, h))));
         whole.close();
-        return sheets;
+        return;
       } catch { /* The picture element and a canvas instead. */ }
     }
-    const image = await fileImage(page), sheets = new Map(mine.map(([sheet, place]) => [sheet, cutOnCanvas(image, place.rect)]));
+    const image = await fileImage(page);
+    for (const { rect, resolve } of batch) resolve(cutOnCanvas(image, rect));
     image.src = '';
-    return sheets;
-  })());
-  return pages.get(page);
+  } catch (error) { for (const { reject } of batch) reject(error); }
 }
 /** The sheet cut from its atlas page, or null when it is on no page (or the page could not be loaded). */
 export async function fromAtlas(url) {
-  const places = await atlasPlaces(), place = places.get(assetUrl(url));
-  if (!place) return null;
-  // A cut sheet is handed over once and not kept here (the library keeps it); asked again, it comes from its own file.
-  return pageSheets(place.page, places).then(sheets => {
-    const sheet = sheets.get(assetUrl(url)) || null;
-    sheets.delete(assetUrl(url)); places.delete(assetUrl(url));
-    return sheet;
-  }, () => { places.delete(assetUrl(url)); return null; });
+  const place = (await atlasPlaces()).get(assetUrl(url));
+  return place ? cutLater(place.page, assetUrl(url), place.rect).catch(() => null) : null;
 }
 
 /** A sprite sheet ready to draw: from its atlas page when it has one, else its own file. */
@@ -81,9 +81,12 @@ export function frameAtProgress(clip, progress) {
 /** Data names assets from the game's root; the page may not live at the root of its site. */
 export const assetUrl = url => url.replace(/^\//, '');
 
+/** Frees a sheet let go: an ImageBitmap is closed, a canvas (a graded sheet) shrunk to nothing (Safari keeps its memory until collected). */
+const letGo = image => { image?.close?.(); if (typeof image?.getContext === 'function') { image.width = 0; image.height = 0; } };
+
 /** Sprite clips and their decoded sheets. Holds no game state. */
 export class SpriteLibrary {
-  constructor(data, images) { this.data = data; this.images = images; this.locomotion = data.locomotion; }
+  constructor(data, images, loadImage = browserImage) { this.data = data; this.images = images; this.own = images; this.ownClips = Object.entries(data.clips); this.loadImage = loadImage; this.locomotion = data.locomotion; }
   /**
    * Loads the clips and their sheets. Clips whose action `later` accepts (skills, say) and every cast effect are not
    * waited for: they keep arriving after the library is returned, and `image` answers null until each one is in.
@@ -99,7 +102,7 @@ export class SpriteLibrary {
     const sheetsOf = clips => clips.flatMap(([, clip]) => [clip.sheet, clip.effect]).filter(Boolean);
     const clips = Object.entries(data.clips), now = [...new Set(sheetsOf(clips.filter(([key]) => !later(key.split('/')[0]))))];
     const rest = [...new Set([...sheetsOf(clips), ...Object.values(data.castEffects || {}).map(effect => effect.sheet).filter(Boolean)])].filter(sheet => !now.includes(sheet));
-    const images = await Promise.all(now.map(loadImage)), library = new SpriteLibrary(data, new Map(now.map((sheet, i) => [sheet, images[i]])));
+    const images = await Promise.all(now.map(loadImage)), library = new SpriteLibrary(data, new Map(now.map((sheet, i) => [sheet, images[i]])), loadImage);
     library.rest = restAfter.catch(() => {}).then(() => Promise.all(rest.map(sheet => loadImage(sheet).then(image => library.images.set(sheet, image)).catch(() => {}))));
     return library;
   }
@@ -109,6 +112,30 @@ export class SpriteLibrary {
     const own = this.images;
     this.images = { get: url => own.get(url) || other.images.get(url), set: (url, image) => own.set(url, image) };
     return this;
+  }
+  /**
+   * The sheets of this library's own clips (not those merged in) whose name (such as 'rat-idle/south') `wanted` accepts,
+   * and of its cast effects whose skill id it accepts.
+   */
+  sheetsOf(wanted) {
+    const clips = this.ownClips.filter(([key]) => wanted(key)).flatMap(([, clip]) => [clip.sheet, clip.effect]);
+    const casts = Object.entries(this.data.castEffects || {}).filter(([id]) => wanted(id)).map(([, effect]) => effect.sheet);
+    return [...new Set([...clips, ...casts].filter(Boolean))];
+  }
+  /**
+   * Holds the sheets of exactly the clips `wanted` accepts (2026-11-13, a chapter's mobs only while it is played: both
+   * chapters' mob sheets are about 380 MB decoded, too much for a phone to keep in town): the missing are loaded, the
+   * rest let go (an ImageBitmap is closed at once). Resolves once the wanted sheets are in.
+   */
+  hold(wanted) {
+    const keep = new Set(this.sheetsOf(wanted)), own = this.own;
+    this.coming ??= new Map(); this.holding = keep;
+    for (const [sheet, image] of [...own]) if (!keep.has(sheet)) { own.delete(sheet); letGo(image); }
+    return Promise.all([...keep].map(sheet => {
+      if (own.has(sheet)) return null;
+      if (!this.coming.has(sheet)) this.coming.set(sheet, this.loadImage(sheet).then(image => { if (this.holding.has(sheet)) own.set(sheet, image); else letGo(image); }, () => {}).finally(() => this.coming.delete(sheet)));
+      return this.coming.get(sheet);
+    }));
   }
   clip(action, direction) { return this.data.clips[`${action}/${direction}`] || null; }
   image(url) { return this.images.get(url) || null; }

@@ -55,6 +55,9 @@ export function gradedLater(image) {
   canvas.width = image.width; canvas.height = image.height;
   const c = canvas.getContext('2d', { willReadFrequently: true });
   c.drawImage(image, 0, 0);
+  // A sheet cut from an atlas page is an ImageBitmap used only here: let go of it now rather than when collected
+  // (F2's sheets alone are about 370 MB decoded, a phone cannot hold them twice).
+  image.close?.();
   const pixels = c.getImageData(0, 0, canvas.width, canvas.height), here = () => { gradePixels(pixels.data); c.putImageData(pixels, 0, 0); return canvas; };
   const grader = gradeWorker();
   if (!grader) return Promise.resolve(here());

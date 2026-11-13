@@ -1722,7 +1722,7 @@ export class CanvasRenderer {
       if (!actor.player && actor.affixes?.length && actor.hp > 0 && mobPose) this.drawOutline(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, actor.boss ? BOSS_SPRITE_SCALE : 1, this.affixColors(actor));
       // During her decoys the real Iris stands as the same south-facing still as her copies, only holding the stamp.
       const still = !actor.player && actor.decoys && actor.tell?.type === 'decoys' && this.fbIrisStill(actor.x * 20 + jolt, actor.y * 20 - lift, true, this.hitWhite(actor));
-      const drawn = actor.player ? playerPose && this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) : still || mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, this.hitWhite(actor) || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
+      const drawn = actor.player ? playerPose && (this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) || this.drawSprite(actor.x * 20, actor.y * 20, { action: 'idle', direction: playerPose.direction, frame: 0 }, this.sprites, false, PLAYER_SCALE)) : still || mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, this.hitWhite(actor) || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (drawn && shielded) this.shieldSheen(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, BOSS_SPRITE_SCALE);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       if (squash) c.restore();
