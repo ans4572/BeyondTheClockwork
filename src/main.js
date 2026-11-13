@@ -3,18 +3,19 @@ import { Game } from './engine/game.js';
 import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
-import { PIXELS_PER_UNIT } from './engine/map-geometry.js';
+import { PIXELS_PER_UNIT, placeOf } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART, FLAG_BEARER_ART } from './render/canvas.js';
 import { FX_FILES, UNWIND_VERBS } from './render/fx-sprites.js';
-import { SpriteLibrary, assetUrl, browserImage } from './animation/sprite-library.js';
+import { SpriteLibrary, assetUrl, browserImage, atlasPlaces } from './animation/sprite-library.js';
 import { createMapLoader } from './render/map-loader.js';
 import { TitleScreen, pixelText, PIXEL_FONT, PIXEL_EM } from './ui/title-screen.js';
 import { TouchControls, autoAim } from './ui/touch-controls.js';
-import { gradedCanvas } from './render/grade.js';
+import { gradedLater } from './render/grade.js';
 import { worldMapSvg, WORLD_MAP_ART, WORLD_MAP_MARKERS } from './ui/world-map.js';
 import { SoundBank } from './audio/sfx.js';
-import { MusicPlayer, musicScene } from './audio/music.js';
+import { MusicPlayer, musicScene, MUSIC } from './audio/music.js';
+import { warmCache, pruneArt } from './render/warm-cache.js';
 import { HITS_TO_LEARN } from './engine/tutorial.js';
 import { DialogueBox } from './ui/dialogue.js';
 import { formatCode } from './engine/transfer-code.js';
@@ -87,7 +88,9 @@ const FUSION_SLOW_MS = 100, MULTI_STOP = 0.005, MULTI_STOP_CAP = 0.015, CRIT_STO
  */
 let markTitleDrawn, markBootDone, titleIsDrawn = false;
 const titleDrawn = new Promise(done => { markTitleDrawn = () => { titleIsDrawn = true; done(); }; }), bootDone = new Promise(done => { markBootDone = done; });
-function finishBoot() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); markTitleDrawn?.(); markBootDone?.(); }
+function finishBoot() { showTitleNow(); markTitleDrawn?.(); markBootDone?.(); }
+/** Takes the loading card away and shows the title (the tap card goes as soon as it is tapped, 2026-11-12). */
+function showTitleNow() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 /** Places on Moru's parts shelf: six elements now, two more planned (2026-11-08). */
 const ELEMENT_SHELF = 8;
 const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure', sound: 'resonance', water: 'wet' };
@@ -99,6 +102,14 @@ const KEY_NAMES = { ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRig
 const keyName = key => KEY_NAMES[key] || key.replace('Key', '').replace('Digit', '');
 
 try {
+  // sw.js keeps the art, sounds and fonts on the device (2026-11-13). Not on the local dev server, where art changes in
+  // place (add ?sw to try it there).
+  const keepArt = 'serviceWorker' in navigator && (!DEBUG_ALLOWED || new URLSearchParams(location.search).has('sw'));
+  // pruneArt reads which art this visit loaded from the browser's request record, which keeps 250 by default.
+  performance.setResourceTimingBufferSize?.(5000);
+  if (keepArt) navigator.serviceWorker.register('sw.js').catch(() => {});
+  /** Resolves once sw.js handles this page's requests (at most a few seconds), so what is fetched next is kept. */
+  const artKept = () => (!keepArt || navigator.serviceWorker.controller ? Promise.resolve() : Promise.race([new Promise(done => navigator.serviceWorker.addEventListener('controllerchange', done, { once: true })), new Promise(done => setTimeout(done, 3000))]));
   // The pixel lettering font must be ready before the first heading or the title is drawn from it.
   const [, data] = await Promise.all([Promise.all([document.fonts.load(`${PIXEL_EM}px ${PIXEL_FONT}`, '태엽'), document.fonts.load('700 12px Galmuri11', '태엽'), document.fonts.load('12px Galmuri11', '태엽')]).catch(() => {}), loadData()]);
   let saved = null, loadError = '';
@@ -128,16 +139,34 @@ try {
   // since no skill can be used before elements are equipped in town.
   const PLAYER_LATER = action => !['idle', 'walk', 'run', 'attack-1', 'attack-2', 'attack-3', 'hit', 'death', 'dodge'].includes(action);
   // F2's and Moru's sheets are colour-graded as they load so they sit with the brighter cast (src/render/grade.js).
-  const gradedImage = url => browserImage(url).then(gradedCanvas);
+  // Graded in a worker (2026-11-13: on the main thread it held the loading card still for seconds).
+  const gradedImage = url => browserImage(url).then(gradedLater);
   // Menu icons are tiny but shown all at once (codex, parts shelf, reward cards): fetched and decoded while the title
   // plays, and the decoded pictures kept, so a panel never opens with pictures arriving one by one.
-  // They wait for the title to be drawn, so they do not hold up the loading card.
-  titleDrawn.then(() => { for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); } });
+  // They wait for F2's own sheets (2026-11-12: they started alongside them, about 100 files with the world map and the
+  // first places' paintings, and queued F2 behind them, so 새로 시작하기 on a phone waited about 10 s for F2).
+  let playerSheetsIn = false;
   const playerSprites = titleDrawn.then(() => SpriteLibrary.load(undefined, gradedImage, PLAYER_LATER, bootDone)).then(library => renderer.useSprites(library)).catch(error => console.warn(error));
+  playerSprites.then(() => {
+    playerSheetsIn = true; mapArt.fetchImages();
+    for (const file of [...UI_ICONS, ...Object.values(STATUS_ICONS).map(assetUrl)]) { const image = new Image(); image.decoding = 'async'; image.src = file; image.decode().catch(() => {}); keptIcons.push(image); }
+  });
   const loadMobs = () => SpriteLibrary.load('/art/animations/mobs/normal-elite/game-clips.json').then(library => renderer.useMobSprites(library)).catch(error => console.warn(error))
-    // Chapter 2's factory mobs, fetched after the boot and only where chapter 2 can be played (not while it is a preview
-    // on the live site); they join the chapter 1 mob library.
-    .then(() => (game.previews || !data?.slice?.chapters?.find(c => c.eliteType)?.preview) && SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, bootDone).then(library => renderer.mobSprites?.merge(library))).catch(error => console.warn(error));
+    .then(wantFactoryMobs);
+  // Chapter 2's factory mobs (280 sheets, about 3 MB) join the chapter 1 mob library once chapter 2 is open to this
+  // player (2026-11-12: every visitor fetched them, a new player hours before they could meet one). Asked again when the
+  // overlay changes, so clearing chapter 1 or the departure board starts them; at most once.
+  let factoryMobs = null, chapterOneMobs = false, factoryArt = false;
+  /** Chapter 2 can be reached by this player (or is being played): its mobs, effects and places are worth fetching. */
+  const factoryWanted = () => game.previews || game.s.run?.chapter === 'silent-factory' || chapterOpen(data.slice, game.s.profile, 'silent-factory', game.previews, game.unlockChapters);
+  function wantFactoryMobs() {
+    chapterOneMobs ||= !!renderer.mobSprites;
+    if (factoryMobs || !factoryWanted()) return;
+    // The effects, belts and places wait in the map loader until now (heldBack); it is asked once to fetch them.
+    if (!factoryArt) { factoryArt = true; mapArt.fetchImages(); }
+    if (!chapterOneMobs) return;
+    factoryMobs = SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, bootDone).then(library => renderer.mobSprites?.merge(library)).catch(error => console.warn(error));
+  }
   // Standing sheets first (about 0.4 MB) so everyone shows at once; the walks (about 1.7 MB) follow, and a resident whose
   // walk has not arrived yet is drawn standing (canvas.js drawNpc).
   const loadNpcs = () => SpriteLibrary.load('/art/animations/npc/game-clips.json', url => (url.includes('/moru-') ? gradedImage(url) : browserImage(url)), action => action.endsWith('-walk')).then(library => renderer.useNpcSprites(library)).catch(error => console.warn(error));
@@ -201,10 +230,35 @@ try {
   hudFace.imageSmoothingEnabled = false;
   portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
   portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
-  // Each place's art, in order of need (src/render/map-loader.js); nothing starts before the title is drawn.
-  const mapArt = createMapLoader({ data, game, renderer, slots: IMAGE_SLOTS, canStart: () => titleIsDrawn,
-    firstFiles: [...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(FLAG_BEARER_ART), ...Object.values(HAZARD_ART), ...FX_FILES] });
+  // Each place's art, in order of need (src/render/map-loader.js); nothing starts before the title is drawn and F2's
+  // sheets are in.
+  // Chapter 2's effects, hazards and places wait until it can be reached (2026-11-12: every visitor fetched them, with about 13 MB of its paintings).
+  const smallFirst = [...Object.values(STATUS_ICONS), data?.maps?.practice?.dummyImage, BRASS_DRUM_ART, ...Object.values(FLAG_BEARER_ART), ...Object.values(HAZARD_ART), ...FX_FILES];
+  // The other places are fetched ahead by warmCache below, so the loader's own prefetch is off (prefetchSlots 0).
+  const mapArt = createMapLoader({ data, game, renderer, slots: IMAGE_SLOTS, canStart: () => titleIsDrawn && playerSheetsIn, heldBack: file => file.includes('/2-silent-factory/') && !factoryWanted(),
+    firstFiles: smallFirst, prefetchSlots: 0 });
   const { introPlace, fetchImages, bringPlaceForward, placeArtReady } = mapArt;
+  // While the loading card turns (2026-11-13), everything a run can need is fetched into the cache in order of need, four
+  // at a time and at low priority, and sw.js keeps it on the device. The card waits for all of it and shows how far it
+  // has come (the user's choice: a first visit waits once, then every file is on the device): the place this save opens on (the scrapyard for a new
+  // body, the town or a run's stop for one registered), the townsfolk standing and chapter 1's mobs, the effects, chapter 1's
+  // places, F2's skills and the walks, the menu icons, chapter 2's mobs, effects and places, then the songs. Nothing is
+  // decoded here (a phone could not hold every place at once); a returning visit finds it all on the device. A phone that
+  // asks to save data is sent none of it (warm-cache.js saveData).
+  let warming, wanted = [];
+  {
+    const artOf = place => [place?.background, place?.mask, ...(place?.props || []).map(prop => prop.image)].filter(Boolean);
+    const places = Object.values(data.maps?.villages || {}).flatMap(artOf), factory = file => file.includes('/2-silent-factory/');
+    const first = game.s.profile.registered ? (game.village || game.map || game.hubMap) : introPlace;
+    const shown = fraction => { const note = document.querySelector('#boot:not(.tap) .boot-pct'); if (note) note.textContent = ` ${Math.floor(fraction * 100)}%`; };
+    warming = Promise.all([atlasPlaces(), artKept()]).then(([sheets]) => {
+      const pages = [...new Set([...sheets.values()].map(({ page }) => page))], group = name => pages.filter(page => page.includes(`/${name}-`));
+      wanted = [...artOf(first), ...group('npc-standing'), ...group('mobs-1'), ...smallFirst.filter(file => file && !factory(file)), ...places.filter(file => !factory(file)),
+        ...group('f2-later'), ...group('npc-walks'), ...UI_ICONS, ...group('mobs-2'), ...smallFirst.filter(file => file && factory(file)), ...places.filter(factory),
+        ...Object.keys(MUSIC).map(name => `/art/audio/bgm/${name}.ogg`)];
+      return warmCache(wanted, { onProgress: shown });
+    }).catch(error => console.warn(error));
+  }
   fetchImages();
   const gameViewport = $('overlay').parentElement;
   let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
@@ -393,7 +447,7 @@ try {
       // that; and the title song is started right inside the tap, since a phone may refuse a song started a frame later.
       const GATE = ['click', 'touchend', 'keydown'];
       await new Promise(done => {
-        const go = e => { if (e.type === 'keydown') { e.preventDefault(); e.stopImmediatePropagation(); } for (const type of GATE) removeEventListener(type, go, true); openAudio(e); playMusic(true); done(); };
+        const go = e => { if (e.type === 'keydown') { e.preventDefault(); e.stopImmediatePropagation(); } for (const type of GATE) removeEventListener(type, go, true); openAudio(e); playMusic(true); showTitleNow(); done(); };
         for (const type of GATE) addEventListener(type, go, true);
       });
     }
@@ -875,6 +929,7 @@ try {
     }
   }
   function renderOverlay(force = false) {
+    wantFactoryMobs();
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
     const key = `${mode}:${s.run?.node}`;
     if (!force && key === overlayKey) return;
@@ -1537,8 +1592,10 @@ try {
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button, .talk-ask')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
     // The player's sheets keep loading behind the title; leaving it waits for them, so F2 is never drawn without them.
-    onNew: () => { openAudio(); playerSprites.then(startNew); },
-    onLoad: () => { openAudio(); playerSprites.then(() => { leaveTitle(); resume(); }); },
+    // (2026-11-12) A choice made before F2's sheets are in shows 불러오는 중… on its line, and further taps wait with it
+    // instead of starting the game twice.
+    onNew: () => { openAudio(); title.busyUntil('new', playerSprites).then(go => go && startNew()); },
+    onLoad: () => { openAudio(); title.busyUntil('load', playerSprites).then(go => go && (leaveTitle(), resume())); },
     onSettings: () => { screen = 'pause'; renderOverlay(true); },
     // The stamp lands with a heavy 쾅 (sfx.js stamp); the old low beep is only the fallback.
     onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; sfx('stamp', () => beep(70, 0.2, 0.09)); game.s.paused = paused; },
@@ -1569,9 +1626,13 @@ try {
   // the player's skill sheets, place art and the other songs come after, so they do not slow the first screen.
   await title.ready.catch(() => {});
   markTitleDrawn(); fetchImages();
+  // The loading card stays until everything is fetched (2026-11-13; at once where it is all on the device already).
+  await warming;
   await startSound();
   finishBoot();
   fetchImages();
+  // A minute in, old art files the game no longer uses leave the device store (warm-cache.js pruneArt).
+  if (keepArt) setTimeout(() => pruneArt(wanted).then(removed => removed && console.info(`기기 저장소에서 옛 그림 ${removed}개 정리`)).catch(() => {}), 60_000);
 } catch (error) {
   finishBoot();
   // Anyone with the link can land here, so the local-server advice is for this machine only.

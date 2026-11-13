@@ -2,6 +2,8 @@
 const F2_TITLE = 'art/ui/title/f2-title-v3.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
 const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, LINE_READ_MS = 700, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
+// A choice waiting on loading says so after this long; a quick one shows nothing.
+const BUSY_AFTER_MS = 120;
 const STAMP_DROP_MS = 150, STAMP_PRESS_MS = 200, STAMP_LIFT_MS = 300, STAMP_HOLD_MS = 500, SHAKE_MS = 240, BURST_MS = 130, MARK_CENTER = [374, 306], MARK_SIZE = 30, MARK_ZOOM = 2, TOOL_RISE = 780;
 const load = src => new Promise((ok, no) => { const image = new Image(); image.onload = () => ok(image); image.onerror = no; image.src = src; });
 
@@ -119,6 +121,17 @@ export class TitleScreen {
     open[(at + delta + open.length) % open.length]?.focus();
   }
   activate() { if (this.buttons.includes(document.activeElement)) document.activeElement.click(); }
+  /**
+   * Runs a choice once `ready` settles: resolves true for the first tap, false for any tap while one is waiting. Until
+   * then the line reads 불러오는 중… (2026-11-12: a tap before F2's sheets were in showed nothing, so it felt ignored).
+   */
+  busyUntil(name, ready) {
+    if (this.waiting) return Promise.resolve(false);
+    const button = this.buttons.find(b => b.dataset.do === name), note = Object.assign(document.createElement('small'), { className: 'busy-note', textContent: '(불러오는 중…)' });
+    this.waiting = true;
+    const slow = setTimeout(() => { button?.classList.add('busy'); button?.append(note); }, BUSY_AFTER_MS);
+    return Promise.resolve(ready).catch(() => {}).then(() => { clearTimeout(slow); this.waiting = false; button?.classList.remove('busy'); note.remove(); return true; });
+  }
   focus() { const [fresh, resume] = this.buttons; (resume.disabled ? fresh : resume).focus({ preventScroll: true }); }
   show({ canLoad, detail = '' }) {
     this.root.hidden = false; this.dark.hidden = true; this.stage.inert = false; this.fit();

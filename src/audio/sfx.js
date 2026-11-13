@@ -2,12 +2,10 @@
 // Recordings keep their fixed pitch; frequently repeated synthesized actions vary slightly.
 import { voiceContext } from './synthesis.js';
 // Loaded with the same query as this file, so a page that busts the cache for this module gets fresh recipes too.
-const { ELEMENT_SOUNDS } = await import(`./elements.js${new URL(import.meta.url).search}`);
-const { CODED_SOUNDS } = await import(`./coded.js${new URL(import.meta.url).search}`);
-const { WATER_SOUND_CANDIDATES } = await import(`./water-sound.js${new URL(import.meta.url).search}`);
-const { BOSS2_CANDIDATES } = await import(`./boss2-sound.js${new URL(import.meta.url).search}`);
-const { MOB2_CANDIDATES } = await import(`./mob2-sound.js${new URL(import.meta.url).search}`);
-const { REDO_CANDIDATES } = await import(`./redo-sound.js${new URL(import.meta.url).search}`);
+// All six at once (2026-11-12: one after another they held the title up by six round trips, about 2.6 s on a phone).
+const QUERY = new URL(import.meta.url).search;
+const [{ ELEMENT_SOUNDS }, { CODED_SOUNDS }, { WATER_SOUND_CANDIDATES }, { BOSS2_CANDIDATES }, { MOB2_CANDIDATES }, { REDO_CANDIDATES }] = await Promise.all(
+  ['elements', 'coded', 'water-sound', 'boss2-sound', 'mob2-sound', 'redo-sound'].map(name => import(`./${name}.js${QUERY}`)));
 /**
  * Every coded recipe: the player's, the world's, ice, the water and sound elements' (water-sound.js), chapter 2's bosses and
  * mobs, and the remade takes (redo-sound.js) under `redo:<sound>` so they never mix with the older candidates of that name.

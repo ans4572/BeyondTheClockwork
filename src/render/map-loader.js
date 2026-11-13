@@ -1,6 +1,7 @@
 import { placeOf, roomPlace, prepareClearance } from '../engine/map-geometry.js';
 import { assetUrl } from '../animation/sprite-library.js';
 import { DepthMask, computeDepth } from './depth-mask.js';
+import { saveData } from './warm-cache.js';
 
 /**
  * Brings each place's art into the renderer in order of need, and lets go of places left behind.
@@ -12,9 +13,11 @@ import { DepthMask, computeDepth } from './depth-mask.js';
  *   browser allows it (`buildDepth`).
  *
  * `firstFiles` are loaded with the first places (icons, effects, props); `canStart` holds everything back until the
- * title is drawn; `slots` is how many pictures load at once.
+ * title is drawn; `slots` is how many place pictures load at once, `smallSlots` how many of the small first files.
+ * `heldBack(file)` keeps a first file or a prefetch waiting while it answers true (a chapter the player cannot reach yet).
+ * `prefetchSlots` is how many of the other places' files are fetched into the cache at once, at low priority.
  */
-export function createMapLoader({ data, game, renderer, firstFiles = [], canStart = () => true, slots = 3 }) {
+export function createMapLoader({ data, game, renderer, firstFiles = [], canStart = () => true, slots = 3, smallSlots = 8, heldBack = () => false, prefetchSlots = 2 }) {
   renderer.mapImages = new Map(); renderer.depthMasks = new Map();
   const villages = () => Object.values(data?.maps?.villages || {});
   const offscreen = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
@@ -84,37 +87,46 @@ export function createMapLoader({ data, game, renderer, firstFiles = [], canStar
   const firstRoom = placeOf(data.maps, data.maps?.maps?.[data.slice.rooms[0]?.id]);
   // The place a new game opens on comes first (the scrapyard), then the town and the first stop; icons and effects after.
   const introPlace = placeOf(data.maps, data.maps?.intro);
-  let imageQueue = [...new Set([...artOf(introPlace), ...artOf(game.hubMap), ...artOf(firstRoom), ...firstFiles].filter(Boolean))];
-  // Every other place's files are then fetched into the browser's cache, one at a time and at low priority, but not
-  // decoded: fourteen decoded maps and masks would not fit a phone's memory, and a cached file opens in a moment.
+  let imageQueue = [...new Set([...artOf(introPlace), ...artOf(game.hubMap), ...artOf(firstRoom)].filter(Boolean))];
+  // The small first files (about 200 effects, icons and props, a few KB each) have their own lane with more at once
+  // (2026-11-12: behind the paintings, three at a time, they took about 20 s on a phone; each costs a round trip, not bandwidth).
+  let smallQueue = [...new Set(firstFiles.filter(file => file && !imageQueue.includes(file)))], smallLoading = 0;
+  // Every other place's files are then fetched into the browser's cache, two at a time (one before 2026-11-13) and at
+  // low priority, but not decoded: fourteen decoded maps and masks would not fit a phone's memory, and a cached file opens in a moment.
   const prefetch = [...new Set(villages().flatMap(artOf).filter(file => !imageQueue.includes(file)))];
-  const requested = new Set(imageQueue);
-  let prefetching = false, imagesLoading = 0, placeLoaded = null, nextFloor = null;
+  const requested = new Set([...imageQueue, ...smallQueue]);
+  let prefetching = 0, imagesLoading = 0, placeLoaded = null, nextFloor = null;
   function prefetchRest() {
-    if (prefetching || imagesLoading || imageQueue.length || !prefetch.length) return;
-    const file = prefetch.shift(); if (requested.has(file)) return prefetchRest();
-    prefetching = true;
-    fetch(assetUrl(file), { priority: 'low' }).then(r => r.blob()).catch(() => {}).finally(() => { prefetching = false; prefetchRest(); });
+    while (prefetching < prefetchSlots) {
+      if (imagesLoading || smallLoading || imageQueue.length || smallQueue.some(file => !heldBack(file)) || !prefetch.length || saveData()) return;
+      const file = takeNext(prefetch); if (!file) return; if (requested.has(file)) continue;
+      prefetching++;
+      fetch(assetUrl(file), { priority: 'low' }).then(r => r.blob()).catch(() => {}).finally(() => { prefetching--; prefetchRest(); });
+    }
   }
-  /** Starts the next pictures in the queue, up to `slots` at once; does nothing until `canStart()`. */
+  /** Starts the next pictures in both queues, up to `slots` and `smallSlots` at once; does nothing until `canStart()`. */
   function fetchImages() {
     // Places are drawn only after the title, so their art starts once the title is drawn, beside F2's own sheets
     // rather than after all of them (on a slow connection the scrapyard came too late for the opening).
     if (!canStart()) return;
-    if (!imageQueue.length) prefetchRest();
-    while (imagesLoading < slots && imageQueue.length) {
-      const file = imageQueue.shift(), image = new Image(), done = () => { imagesLoading--; fetchImages(); };
-      imagesLoading++;
-      // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
-      image.onload = () => image.decode().catch(() => {}).then(() => {
-        if (!requested.has(file)) return done();
-        const owners = villages().filter(village => [village.background, village.mask].includes(file));
-        if (owners.length) originals.set(file, image);
-        sharpenedLater(file, image).then(picture => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, picture); owners.forEach(buildDepth); done(); });
-      });
-      image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
-      image.src = assetUrl(file);
-    }
+    if (!imageQueue.length && !smallQueue.some(file => !heldBack(file))) prefetchRest();
+    while (imagesLoading < slots && imageQueue.length) { imagesLoading++; loadImage(imageQueue.shift(), () => { imagesLoading--; fetchImages(); }); }
+    for (let file; smallLoading < smallSlots && (file = takeNext(smallQueue));) { smallLoading++; loadImage(file, () => { smallLoading--; fetchImages(); }); }
+  }
+  /** Takes the first file of a queue that is not held back, or null. */
+  function takeNext(queue) { const at = queue.findIndex(file => !heldBack(file)); return at < 0 ? null : queue.splice(at, 1)[0]; }
+  /** Loads, decodes and hands over one picture, then calls `done`. */
+  function loadImage(file, done) {
+    const image = new Image();
+    // Decoded before first use, so a map, effect or prop drawn for the first time mid-fight does not stall that frame.
+    image.onload = () => image.decode().catch(() => {}).then(() => {
+      if (!requested.has(file)) return done();
+      const owners = villages().filter(village => [village.background, village.mask].includes(file));
+      if (owners.length) originals.set(file, image);
+      sharpenedLater(file, image).then(picture => { if (!requested.has(file)) return done(); renderer.mapImages.set(file, picture); owners.forEach(buildDepth); done(); });
+    });
+    image.onerror = () => { console.warn(`맵 배경을 불러올 수 없습니다: ${file}`); done(); };
+    image.src = assetUrl(file);
   }
   /** Puts `wantedPlace` (by default the place the game is in) and the place after it at the head of the queue. */
   function bringPlaceForward(wantedPlace) {

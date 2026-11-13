@@ -10,11 +10,23 @@
 /concepts/*
   Cache-Control: public, max-age=0, must-revalidate
 
-# Art, fonts and sound: a returning visit shows the copy it has at once and checks for a newer one in the background
-# (stale-while-revalidate), instead of waiting on hundreds of checks before the first frame. Redrawn art gets a new file
-# name, so a replaced picture is never stuck; one replaced in place shows the old copy for one visit at most.
+# Art, fonts and sound: kept a day without asking (2026-11-13, was a minute), then shown at once while a newer copy is
+# checked for in the background (stale-while-revalidate, 30 days), instead of waiting on hundreds of checks before the
+# first frame. Redrawn art gets a new file name, so a replaced picture is never stuck; one replaced in place under the same
+# name shows the old copy for a day at most (and sw.js keeps it longer: give it a new name). The .json lists under /art/
+# (game-clips.json, art/atlases/index.json) are fetched with cache: 'no-cache', so they are checked on every visit.
 /art/*
-  Cache-Control: public, max-age=60, stale-while-revalidate=604800
+  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+
+# Atlas pages carry their contents' hash in their names: a page never changes, so it is kept a year (index.json is
+# fetched with cache: 'no-cache' and so still checked every visit).
+/art/atlases/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+
+# The service worker itself is checked on every visit, so switching it off (sw.js KILL) reaches every device.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
 
 /*
   X-Content-Type-Options: nosniff

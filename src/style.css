@@ -1,8 +1,8 @@
 /* NeoDunggeunmo Pro by Eunbin Jeong (Dalgona.), SIL OFL 1.1 (art/fonts/NeoDunggeunmoPro-OFL.txt): the pixel lettering on the title and panel headings. */
 @font-face { font-family: 'NeoDunggeunmo Pro'; src: url('../art/fonts/NeoDunggeunmoPro.woff2') format('woff2'); font-display: block; }
 /* Galmuri11 by Lee Minseo, SIL OFL 1.1 (art/fonts/Galmuri-OFL.txt): every other word in the game, the same on every device. Regular for reading, Bold for names, numbers and buttons. */
-@font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11.woff2') format('woff2'); font-weight: 100 599; font-display: block; }
-@font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11-Bold.woff2') format('woff2'); font-weight: 600 900; font-display: block; }
+@font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11-sub-v1.woff2') format('woff2'); font-weight: 100 599; font-display: block; }
+@font-face { font-family: 'Galmuri11'; src: url('../art/fonts/Galmuri11-Bold-sub-v1.woff2') format('woff2'); font-weight: 600 900; font-display: block; }
 /* Every panel is a sheet from the same office as the disposal form on the title screen. */
 :root {
   font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;

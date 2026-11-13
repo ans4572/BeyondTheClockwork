@@ -33,3 +33,35 @@ export function gradedCanvas(image) {
   c.putImageData(pixels, 0, 0);
   return canvas;
 }
+
+// The grading itself runs in grade-worker.js where the browser allows module workers; otherwise right here.
+let worker, jobs = 0;
+const waiting = new Map();
+function gradeWorker() {
+  if (worker !== undefined) return worker;
+  try {
+    worker = new Worker(new URL('./grade-worker.js', import.meta.url), { type: 'module' });
+    worker.addEventListener('message', ({ data: reply }) => { const job = waiting.get(reply.id); waiting.delete(reply.id); if (!job) return; if (reply.error) job.fallback(); else job.done(reply.buffer); });
+    worker.addEventListener('error', () => { worker?.terminate(); worker = null; const left = [...waiting.values()]; waiting.clear(); left.forEach(job => job.fallback()); });
+  } catch { worker = null; }
+  return worker;
+}
+/**
+ * gradedCanvas without holding the page still (2026-11-13): the pixels are read here, graded in a worker and put back
+ * here, so only the reading and writing (a few milliseconds a sheet) happen on the main thread.
+ */
+export function gradedLater(image) {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width; canvas.height = image.height;
+  const c = canvas.getContext('2d', { willReadFrequently: true });
+  c.drawImage(image, 0, 0);
+  const pixels = c.getImageData(0, 0, canvas.width, canvas.height), here = () => { gradePixels(pixels.data); c.putImageData(pixels, 0, 0); return canvas; };
+  const grader = gradeWorker();
+  if (!grader) return Promise.resolve(here());
+  return new Promise(resolve => {
+    const id = ++jobs, { width, height } = pixels;
+    // The buffer moves to the worker, so the fallback reads the pixels again from the canvas.
+    waiting.set(id, { done: buffer => { c.putImageData(new ImageData(new Uint8ClampedArray(buffer), width, height), 0, 0); resolve(canvas); }, fallback: () => resolve(gradedCanvas(canvas)) });
+    grader.postMessage({ id, buffer: pixels.data.buffer }, [pixels.data.buffer]);
+  });
+}

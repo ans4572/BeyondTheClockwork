@@ -98,6 +98,11 @@ body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom
 .title-stage button:disabled { color: #a8a596; cursor: default; }
 .title-stage .save-note { font-size: .62em; font-weight: 700; color: #5d6476; white-space: nowrap; }
 .title-stage button:disabled .save-note { color: inherit; }
+/* A choice waiting on loading (2026-11-12): the line says so, in place of its save note. */
+.title-stage .busy-note { font-size: .62em; font-weight: 700; color: #5d6476; white-space: nowrap; animation: boot-blink 1.2s ease-in-out infinite; }
+.title-stage button.busy .save-note { display: none; }
+@keyframes boot-blink { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .title-stage .busy-note { animation: none; } }
 .title-shake .title-stage { animation: title-shake 220ms steps(4) both; }
 @keyframes title-shake { 25% { margin: 6px 0 0 -8px; } 50% { margin: -5px 0 0 6px; } 75% { margin: 3px 0 0 -3px; } }
 .title-dark { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: #0e1218; }

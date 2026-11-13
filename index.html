@@ -21,6 +21,7 @@
     #boot .card { padding: 22px 34px; background: #f6ecd2; color: #2b3345; text-align: center; box-shadow: 8px 8px 0 #0e121a80; }
     #boot b { display: block; font-size: 30px; letter-spacing: 2px; }
     #boot span { display: block; margin-top: 10px; font-size: 13px; color: #5d6476; }
+    #boot .boot-pct { font-style: normal; font-variant-numeric: tabular-nums; }
     #boot i { display: inline-block; margin-right: 6px; font-style: normal; animation: boot-turn 1.6s linear infinite; }
     @keyframes boot-turn { to { transform: rotate(360deg); } }
     #boot.tap { cursor: pointer; }
@@ -30,8 +31,8 @@
     @media (prefers-reduced-motion: reduce) { #boot i, #boot.tap span { animation: none; } }
   </style>
   <!-- preload:start -->
-  <link rel="preload" href="art/fonts/Galmuri11.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="art/fonts/Galmuri11-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="art/fonts/Galmuri11-sub-v1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="art/fonts/Galmuri11-Bold-sub-v1.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="art/fonts/NeoDunggeunmoPro.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="art/ui/title/f2-title-v3.png" as="image">
   <link rel="preload" href="src/data/combat.json" as="fetch" crossorigin>
@@ -39,6 +40,17 @@
   <link rel="preload" href="src/data/slice.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/maps.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/dialogue.json" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-0-e4ec269254.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-1-1357da69eb.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-2-7163980870.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-3-70d9821837.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-4-5ebfd2f458.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-5-9714135b0c.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-6-c9d5bab159.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-7-0d3c28bd4c.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-8-88c63880d4.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-9-037b925925.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-10-3df93e1949.webp" as="fetch" crossorigin>
   <link rel="modulepreload" href="src/engine/data.js">
   <link rel="modulepreload" href="src/engine/game.js">
   <link rel="modulepreload" href="src/ui/tool-icons.js">
@@ -56,6 +68,7 @@
   <link rel="modulepreload" href="src/ui/world-map.js">
   <link rel="modulepreload" href="src/audio/sfx.js">
   <link rel="modulepreload" href="src/audio/music.js">
+  <link rel="modulepreload" href="src/render/warm-cache.js">
   <link rel="modulepreload" href="src/engine/tutorial.js">
   <link rel="modulepreload" href="src/ui/dialogue.js">
   <link rel="modulepreload" href="src/engine/transfer-code.js">
@@ -86,6 +99,12 @@
   <link rel="modulepreload" href="src/render/floor-marks.js">
   <link rel="modulepreload" href="src/render/factory-boss-draw.js">
   <link rel="modulepreload" href="src/audio/synthesis.js">
+  <link rel="modulepreload" href="src/audio/elements.js">
+  <link rel="modulepreload" href="src/audio/coded.js">
+  <link rel="modulepreload" href="src/audio/water-sound.js">
+  <link rel="modulepreload" href="src/audio/boss2-sound.js">
+  <link rel="modulepreload" href="src/audio/mob2-sound.js">
+  <link rel="modulepreload" href="src/audio/redo-sound.js">
   <link rel="modulepreload" href="src/engine/stats.js">
   <link rel="modulepreload" href="src/animation/locomotion.js">
   <!-- preload:end -->
@@ -93,7 +112,7 @@
   <link rel="stylesheet" href="src/layout.css">
 </head>
 <body>
-  <div id="boot" role="status"><div class="card"><b>태엽 밖으로</b><span><i>⚙</i>태엽을 감는 중…</span></div></div>
+  <div id="boot" role="status"><div class="card"><b>태엽 밖으로</b><span><i>⚙</i>태엽을 감는 중…<em class="boot-pct"></em></span></div></div>
   <main id="app">
     <div class="viewport">
       <canvas id="game" width="640" height="366" tabindex="0" aria-label="WASD 이동, 마우스 조준, 좌클릭 공격, Space 회피"></canvas>
