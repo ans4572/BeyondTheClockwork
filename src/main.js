@@ -1495,12 +1495,26 @@ try {
   // comes back blank and nothing in the game draws it again. The game is saved and the page reloads: the art comes back
   // from the device store in a few seconds and 이어하기 returns to the same spot. At most once a minute, so a phone that
   // keeps losing it does not reload in a loop.
+  // 2026-11-13: an iPhone setting out (art still arriving) lost it with no contextlost event at all, and a second loss
+  // within the minute was ignored, leaving the game stuck with no pictures. Now the painting itself is checked every few
+  // seconds (renderer.artLost), the off-screen canvas the game is drawn on is listened to as well, and a loss inside the
+  // minute pauses the game behind a card whose one tap reloads.
   const GPU_RELOAD = 'btc-gpu-reload';
-  $('game').addEventListener('contextlost', () => game.save());
-  $('game').addEventListener('contextrestored', () => {
-    try { if (Date.now() - Number(sessionStorage.getItem(GPU_RELOAD) || 0) < 60_000) return; sessionStorage.setItem(GPU_RELOAD, String(Date.now())); } catch { /* reload anyway */ }
-    game.save(); location.reload();
-  });
+  let artCard = null;
+  function recoverArt() {
+    game.save();
+    let recent = false;
+    try { recent = Date.now() - Number(sessionStorage.getItem(GPU_RELOAD) || 0) < 60_000; if (!recent) sessionStorage.setItem(GPU_RELOAD, String(Date.now())); } catch { /* reload anyway */ }
+    if (!recent) { location.reload(); return; }
+    if (artCard) return;
+    if (game.active) pause();
+    artCard = document.createElement('div'); artCard.id = 'art-lost'; artCard.setAttribute('role', 'alert');
+    artCard.innerHTML = '<div class="card"><b>그림을 다시 불러와야 합니다</b><span>기기의 그래픽 메모리가 비워졌습니다. 진행은 저장되었습니다.</span><button type="button">다시 불러오기</button></div>';
+    artCard.querySelector('button').addEventListener('click', () => { try { sessionStorage.setItem(GPU_RELOAD, String(Date.now())); } catch { /* reload anyway */ } game.save(); location.reload(); });
+    document.body.append(artCard);
+  }
+  for (const canvas of [$('game'), detail]) { canvas.addEventListener('contextlost', () => game.save()); canvas.addEventListener('contextrestored', recoverArt); }
+  setInterval(() => { if (!document.hidden && !onTitle && renderer.artLost()) recoverArt(); }, 3000);
 
   function pollGamepad() {
     const pad = navigator.getGamepads?.().find(p => p?.connected);

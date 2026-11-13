@@ -627,13 +627,29 @@ export class CanvasRenderer {
     this.drawProp({ image, x: enemy.x, y: enemy.y, scale: 1, white: this.hitWhite(enemy) });
     this.drawStatuses(enemy, enemy.y * 20 - 70);
   }
-  /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
+  /**
+   * True when the place's painting now draws as nothing: the graphics memory was reset and every decoded picture went
+   * blank (2026-11-13: an iPhone setting out showed only shadows, with no contextlost event to say so). Three points
+   * across the middle of the painting, which is opaque everywhere, are copied to a tiny canvas and read back.
+   */
+  artLost() {
+    const image = this.shownMap;
+    if (this.ctx.isContextLost?.()) return true;
+    if (!image?.width || !image?.height) return false;
+    const probe = this.probe ??= Object.assign(document.createElement('canvas'), { width: 3, height: 1 }), c = probe.getContext('2d', { willReadFrequently: true });
+    if (!c) return false;
+    c.clearRect(0, 0, 3, 1);
+    try { for (let i = 0; i < 3; i++) c.drawImage(image, Math.floor(image.width * (i + 1) / 4), Math.floor(image.height / 2), 1, 1, i, 0, 1, 1); } catch { return false; }
+    const d = c.getImageData(0, 0, 3, 1).data;
+    return d[3] === 0 && d[7] === 0 && d[11] === 0;
+  }
   /** The whole frame in the ink colour, copied to the screen; the minimap hides until the picture is in. */
   drawWaiting() {
-    const c = this.ctx; this.minimapPlace = null; this.overlays = [];
+    const c = this.ctx; this.minimapPlace = null; this.overlays = []; this.shownMap = null;
     c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1c2230'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore();
     if (this.view) { const v = this.view.getContext('2d'); v.imageSmoothingEnabled = false; v.drawImage(this.canvas, 0, 0, this.view.width, this.view.height); }
   }
+  /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
   drawMinimap(target) {
     const place = this.minimapPlace, g = this.game, s = g.s;
     if (!place?.mapImage || !place.map) return false;
@@ -1485,6 +1501,10 @@ export class CanvasRenderer {
     // Every frame starts from a clean drawing state, so nothing a draw forgot to put back can carry into the next one.
     c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; c.filter = 'none';
     if (map?.background && !mapImage) { this.drawWaiting(); return; }
+    // The frame starts on the ink colour, not on the last frame (2026-11-13: when the graphics memory was reset the map
+    // drew as nothing, and the light's tint, motes and dark edges piled up frame on frame into a cream disc).
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1c2230'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore();
+    this.shownMap = mapImage;
     // Panels over the hub show the spot the player will stand on; everywhere else follows the body.
     const body = hub && !g.village ? map?.spawn : g.p;
     // In a fight the view leans a little the way F2 aims (as in Hades), easing over a quarter second, so more of what

@@ -538,3 +538,10 @@ body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4
 /* Three choices sit side by side and wrap (2026-11-10: Bolt's two-line greeting with three choices one under another ran
    past the bottom of the speech box on a phone). Four or more keep their two columns. */
 .talk-choices:has(button:nth-child(3)):not(:has(button:nth-child(4))) { display: flex; flex-wrap: wrap; gap: 2px 18px; }
+
+/* The graphics memory was reset twice within a minute (2026-11-13): one tap reloads, in the loading card's look. */
+#art-lost { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #0e121acc; font-family: "Galmuri11", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+#art-lost .card { max-width: min(86vw, 420px); padding: 22px 30px; background: #f6ecd2; color: #2b3345; text-align: center; box-shadow: 8px 8px 0 #0e121a80; }
+#art-lost b { display: block; font-size: 20px; }
+#art-lost span { display: block; margin-top: 10px; font-size: 13px; line-height: 1.5; color: #5d6476; word-break: keep-all; }
+#art-lost button { margin-top: 16px; padding: 10px 22px; border: 0; background: #2b3345; color: #f6ecd2; font: inherit; font-size: 15px; cursor: pointer; }
