@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { warmCache, guessBytes, ART_STORE, pruneArt } from '../src/render/warm-cache.js';
+import { warmCache, guessBytes, ART_STORE, pruneArt, saveData } from '../src/render/warm-cache.js';
 
 // The loading card waits for warmCache and shows its percentage (2026-11-13).
 const fakeFetch = sizes => async file => {
@@ -55,4 +55,14 @@ test('pruneArt removes month-old files the game no longer uses and keeps the res
     assert.equal(await pruneArt(wanted, { now, loaded: ['http://game.test/art/ui/ending.png?v=2'] }), 1);
     assert.deepEqual([...stored.keys()].map(url => new URL(url).pathname), ['/art/atlases/mobs-1-0-new.webp', '/art/ui/ending.png', '/art/fonts/Galmuri11-sub-v1.woff2', '/art/chapters/x/background-v2.webp', '/art/no-date.png']);
   } finally { globalThis.caches = wasCaches; globalThis.location = wasLocation; }
+});
+
+test('only saving data or 2G skips the download; 3G and faster get everything', () => {
+  const was = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const on = connection => Object.defineProperty(globalThis, 'navigator', { value: { connection }, configurable: true });
+  try {
+    for (const [connection, skipped] of [[{ effectiveType: '3g' }, false], [{ effectiveType: '4g' }, false], [undefined, false], [{ effectiveType: '2g' }, true], [{ effectiveType: 'slow-2g' }, true], [{ effectiveType: '4g', saveData: true }, true]]) {
+      on(connection); assert.equal(saveData(), skipped, JSON.stringify(connection));
+    }
+  } finally { if (was) Object.defineProperty(globalThis, 'navigator', was); else delete globalThis.navigator; }
 });

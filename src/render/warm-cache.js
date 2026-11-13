@@ -1,10 +1,11 @@
 import { assetUrl } from '../animation/sprite-library.js';
 
 /**
- * A phone that asks to save data, or a slow connection, is not sent files it does not need yet (2026-11-12).
- * The places' paintings alone are about 26 MB.
+ * A phone that asks to save data, or a 2G connection, is not sent files it does not need yet (2026-11-12).
+ * The places' paintings alone are about 26 MB. A connection the browser rates 3G is sent everything (2026-11-13, the
+ * user's choice): browsers rate many ordinary phones and busy home lines 3G, and those players would never get it all.
  */
-export const saveData = () => !!globalThis.navigator?.connection?.saveData || /(^|-)2g$|^3g$/.test(globalThis.navigator?.connection?.effectiveType || '');
+export const saveData = () => !!globalThis.navigator?.connection?.saveData || /(^|-)2g$/.test(globalThis.navigator?.connection?.effectiveType || '');
 
 /** The device store sw.js keeps the art in (the same name as there; test/service-worker.test.js checks). */
 export const ART_STORE = 'btc-art-v1';
