@@ -66,4 +66,6 @@ async function buildForeground(village) {
 // `node scripts/build-village-foreground.mjs firstStepB candyYardB` rebuilds only those; no names rebuilds every mask.
 const only = process.argv.slice(2);
 // Villages without floor colour rules (chapter 2's factory rooms) have their masks made from their found floor instead.
-for (const [name, village] of Object.entries(villages)) if (village.floor && (!only.length || only.includes(name))) await buildForeground(village);
+// A mask painted in the map editor (`maskEdited`, scripts/map-editor) is rebuilt only when named, so a rebuild of all
+// masks does not wipe the painting.
+for (const [name, village] of Object.entries(villages)) if (village.floor && (only.length ? only.includes(name) : !village.maskEdited)) await buildForeground(village);

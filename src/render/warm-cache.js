@@ -2,7 +2,7 @@ import { assetUrl } from '../animation/sprite-library.js';
 
 /**
  * A phone that asks to save data, or a 2G connection, is not sent files it does not need yet (2026-11-12).
- * The places' paintings alone are about 26 MB. A connection the browser rates 3G is sent everything (2026-11-13, the
+ * The places' paintings alone are about 67 MB (2026-11-16: drawn at twice the size). A connection the browser rates 3G is sent everything (2026-11-13, the
  * user's choice): browsers rate many ordinary phones and busy home lines 3G, and those players would never get it all.
  */
 export const saveData = () => !!globalThis.navigator?.connection?.saveData || /(^|-)2g$/.test(globalThis.navigator?.connection?.effectiveType || '');
@@ -16,7 +16,8 @@ export const ART_STORE = 'btc-art-v1';
  */
 export function guessBytes(file) {
   if (/\/bgm\/.+\.ogg$/.test(file)) return 1_500_000;
-  if (/background[^/]*\.(webp|png|jpe?g)$/.test(file)) return 650_000;
+  // A place's painting, drawn at twice the size since 2026-11-16 (about 1.5 MB at webp q85).
+  if (/background[^/]*\.(webp|png|jpe?g)$/.test(file)) return 1_400_000;
   if (/\/atlases\//.test(file)) return 150_000;
   if (/\/world-map\/[^/]*island/.test(file)) return 350_000;
   return 12_000;

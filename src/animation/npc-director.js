@@ -16,6 +16,10 @@ const PATIENCE_SECONDS = 0.8, PASSING_SECONDS = 2.5;
 const SETTLE_SECONDS = 0.4;
 // Each resident keeps to their own side of the street, so a crowd does not stack on one line.
 export const LANE_UNITS = 0.35;
+/** One key for a stretch of street, whichever way it is walked. */
+export const linkKey = (a, b) => (a < b ? `${a}-${b}` : `${b}-${a}`);
+/** How far a resident may stray from the street line on the stretch a-b (narrowLinks, else LANE_UNITS). */
+export const laneOn = (crowd, a, b) => Math.min(LANE_UNITS, (crowd?.narrowLinks || []).find(([x, y]) => linkKey(x, y) === linkKey(a, b))?.[2] ?? LANE_UNITS);
 /** Residents whose generated 'north' walk shows their face: walking away from the camera they use the back three-quarter view instead. */
 export const FRONT_FACING_NORTH = new Set(['C2', 'C3', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R18']);
 export function walkDirection(character, dx, dy) {
@@ -66,9 +70,16 @@ export class NpcDirector {
   enter(place, crowd) {
     this.place = place; this.elapsed = 0; this.walked = 0; this.greetedAt = null; this.stopped = false; this.links = crowd?.points.map(() => []) || [];
     for (const [a, b] of crowd?.links || []) { this.links[a].push(b); this.links[b].push(a); }
+    // A stretch narrower than the usual lanes (maps.json crowds[].narrowLinks: [a, b, lane]) squeezes each resident's
+    // own side of the street to that width there, e.g. under the court's flower arch (2026-11-15).
+    this.narrow = new Map((crowd?.narrowLinks || []).map(([a, b, lane]) => [linkKey(a, b), Math.min(1, lane / LANE_UNITS)]));
+    // A quiet stretch (crowds[].quiet: { links: [[from, to, weight]], points }) is turned into less often from `from`,
+    // and nobody starts on its points, e.g. the court's flower arch branch (2026-11-15).
+    this.quiet = new Map((crowd?.quiet?.links || []).map(([a, b, weight]) => [`${a}>${b}`, weight]));
+    const quietPoints = new Set(crowd?.quiet?.points || []), starts = (crowd?.points || []).map((_, i) => i).filter(i => !quietPoints.has(i));
     this.points = crowd?.points;
     this.residents = (crowd?.cast || []).map((character, i) => {
-      const random = seeded(i * 7919 + 1), from = i % crowd.points.length, resident = { character, random, from, to: from, along: 0, nudge: [0, 0], dodge: 0, waited: 0, passing: 0, waiting: false, settle: 0, frame: 0, lane: [(random() * 2 - 1) * LANE_UNITS, (random() * 2 - 1) * LANE_UNITS] };
+      const random = seeded(i * 7919 + 1), from = starts.length ? starts[i % starts.length] : i % crowd.points.length, resident = { character, random, from, to: from, along: 0, nudge: [0, 0], dodge: 0, waited: 0, passing: 0, waiting: false, settle: 0, frame: 0, lane: [(random() * 2 - 1) * LANE_UNITS, (random() * 2 - 1) * LANE_UNITS] };
       this.turn(resident);
       resident.along = random() * this.length(resident);
       return resident;
@@ -100,13 +111,18 @@ export class NpcDirector {
   }
   spot(resident) {
     const from = this.points[resident.from], to = this.points[resident.to], length = this.length(resident) || 1, t = resident.along / length;
-    return { x: from[0] + (to[0] - from[0]) * t + resident.lane[0], y: from[1] + (to[1] - from[1]) * t + resident.lane[1], dx: (to[0] - from[0]) / length, dy: (to[1] - from[1]) / length };
+    const squeeze = this.narrow?.get(linkKey(resident.from, resident.to)) ?? 1;
+    return { x: from[0] + (to[0] - from[0]) * t + resident.lane[0] * squeeze, y: from[1] + (to[1] - from[1]) * t + resident.lane[1] * squeeze, dx: (to[0] - from[0]) / length, dy: (to[1] - from[1]) / length };
   }
   length({ from, to }) { return Math.hypot(this.points[to][0] - this.points[from][0], this.points[to][1] - this.points[from][1]); }
   /** Picks the next stretch of street, turning back only at a dead end. */
   turn(resident) {
     const onward = this.links[resident.to].filter(point => point !== resident.from), choices = onward.length ? onward : this.links[resident.to];
-    [resident.from, resident.to] = [resident.to, choices[Math.floor(resident.random() * choices.length)]];
+    // Each way on is equally likely, except a quiet stretch, which weighs less.
+    const weights = choices.map(point => this.quiet?.get(`${resident.to}>${point}`) ?? 1);
+    let roll = resident.random() * weights.reduce((sum, w) => sum + w, 0), next = choices.at(-1);
+    for (const [k, point] of choices.entries()) { roll -= weights[k]; if (roll < 0) { next = point; break; } }
+    [resident.from, resident.to] = [resident.to, next];
     resident.along = 0;
   }
   advance(resident, distance) {

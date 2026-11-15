@@ -304,6 +304,16 @@ test('debug jump runs on the difficulty picked; another one starts a fresh run, 
   assert.equal(g.debugJump(3, undefined, 'easy'), true); assert.notEqual(g.s.run.id, id); assert.equal(g.s.run.difficulty, 'easy'); assert.equal(g.s.run.node, 3);
   const easy = g.s.run.id; assert.equal(g.debugJump(4), true); assert.equal(g.s.run.id, easy, 'no pick keeps the run');
 });
+test('debug jump can pick a room\'s A or B painting (2026-11-15), and leaves the run\'s own pick alone otherwise', () => {
+  // The painting shown follows run.plan[node].variant (game.js roomPlace), so the pick is checked there.
+  const g = new Game(data), node = data.slice.rooms.findIndex(room => room.variants?.length > 1);
+  for (const variant of [0, 1]) {
+    assert.equal(g.debugJump(node, undefined, undefined, variant), true);
+    assert.equal(g.s.run.node, node); assert.equal(g.s.run.plan[node].variant, variant);
+  }
+  assert.equal(g.debugJump(node, undefined, undefined, 5), true); assert.equal(g.s.run.plan[node].variant, 1, 'an unknown painting keeps the last pick');
+  assert.equal(g.debugJump(node), true); assert.equal(g.s.run.plan[node].variant, 1, 'no pick keeps it too');
+});
 test('debug jump enters any stage, with or without a run', () => {
   const g = new Game(data);
   assert.equal(g.debugJump(99), false); assert.equal(g.s.run, null);

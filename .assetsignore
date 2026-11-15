@@ -28,6 +28,8 @@ art/scenes/**/*.png
 # Kept in the repository but no longer used by the game (2026-11-10): the ESRGAN village picture (the game draws the
 # original with hard pixels) and two title songs the game went back from (it plays title.ogg).
 art/chapters/1-smile-street/maps/00-village-court/background-esr2x-q92.webp
+# The court's 1920x1280 painting shown with hard pixels until 2026-11-14 (the game now loads background-v8-2x-q92.webp).
+art/chapters/1-smile-street/maps/00-village-court/background-v7-q92.webp
 art/audio/bgm/title-v2.ogg
 art/audio/bgm/title-v3.ogg
 # The packed site tried on this computer (scripts/build.mjs without --deploy; the build machine writes index.html).

@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>지도 벽 편집기 · 태엽 밖으로</title>
+<title>지도 벽·마스크 편집기 · 태엽 밖으로</title>
 <link rel="icon" href="data:,">
 <style>
   :root { --ink: #2b3345; --paper: #f6ecd2; --line: #cdbf9f; --walk: #4fbf6a; --wall: #e0564c; --pick: #ffd34d; }
@@ -35,13 +35,17 @@
 </head>
 <body>
 <header id="bar">
-  <h1>지도 벽 편집기</h1>
+  <h1>지도 벽·마스크 편집기</h1>
   <select id="village" title="편집할 지도"></select>
   <span class="sep"></span>
   <span class="group">
     <button id="mode-edit" aria-pressed="true" title="점을 끌어 옮기기 (E)">점 옮기기</button>
     <button id="mode-draw" aria-pressed="false" title="클릭해서 새 벽 그리기 (N)">새 벽 그리기</button>
     <button id="mode-walk" aria-pressed="false" title="F2로 직접 걸어 보기 (T)">시험 걷기</button>
+    <button id="mode-move" aria-pressed="false" title="시작·출구·몹·보스 위치를 끌어 옮기기 (P)">위치 옮기기</button>
+    <button id="mode-paint" aria-pressed="false" title="마스크 칠하기 (M): 왼쪽 끌기 칠하기, 오른쪽 끌기 지우기">마스크 칠하기</button>
+    <button id="mode-erase" aria-pressed="false" title="마스크 지우개 (X): 왼쪽 끌기로 파란 칠 지우기">지우개</button>
+    <label class="toggle" id="brush-box" title="붓 크기 ([ ] 키)">붓 <input type="range" id="brush" min="0.1" max="3" step="0.05" value="0.5"> <span id="brush-size">0.5</span>칸</label>
   </span>
   <span class="sep"></span>
   <span class="group">
@@ -58,7 +62,7 @@
   <span class="sep"></span>
   <button id="fit" title="지도 전체 보기 (F)">전체 보기</button>
   <button id="help-toggle">도움말</button>
-  <button id="save" class="save" title="maps.json에 저장 (Ctrl+S)">저장</button>
+  <button id="save" class="save" title="벽은 maps.json에, 마스크는 새 PNG로 저장 (Ctrl+S)">저장</button>
 </header>
 <main>
   <canvas id="view"></canvas>
@@ -76,6 +80,20 @@
         <li>휠: 확대·축소 · 빈 곳 끌기 또는 <kbd>Space</kbd>+끌기: 화면 이동</li>
         <li>시험 걷기: 지도를 클릭해 F2를 세우고 <kbd>WASD</kbd>/방향키</li>
         <li><kbd>Shift</kbd>를 누르고 끌면 0.1칸 단위로 맞춤</li>
+      </ul>
+      <h2>위치</h2>
+      <ul>
+        <li>위치 옮기기(<kbd>P</kbd>): <b>시작</b>(파랑)·<b>출구</b>(노란 원)·<b>보스</b>(보라)·<b>몹 1~N</b>(주황) 점을 끌어서 옮김</li>
+        <li>여러 방이 같은 지도를 쓰면 점 이름 뒤에 방 번호가 붙음. <kbd>Shift</kbd>+끌기는 0.1칸 단위</li>
+        <li>옮긴 뒤 오른쪽 검사(바닥 안·출구까지 연결)를 확인하고 저장. 되돌리기는 <kbd>Ctrl+Z</kbd></li>
+      </ul>
+      <h2>마스크</h2>
+      <ul>
+        <li><b>파란 칠</b> = 뒤에 선 몸을 가리는 물건(나무·벽·소품). 칠하지 않은 곳은 바닥이라 몸이 항상 위에 보임</li>
+        <li>마스크 칠하기(<kbd>M</kbd>): <b>왼쪽 끌기</b> 칠하기 · <b>오른쪽 끌기</b>(또는 <kbd>Alt</kbd>+왼쪽) 지우기</li>
+        <li><b>지우개</b>(<kbd>X</kbd>): 왼쪽 끌기로 기존 마스크(파란 칠)를 지움. 오른쪽 끌기는 반대로 칠하기</li>
+        <li>붓 크기: <kbd>[</kbd> <kbd>]</kbd> · 되돌리기는 벽과 함께 <kbd>Ctrl+Z</kbd></li>
+        <li>저장하면 새 이름(예: mask-v11.png)으로 쓰고 maps.json이 그 파일을 가리킴. 자동 마스크 스크립트는 이 지도를 건너뜀</li>
       </ul>
     </div>
   </aside>

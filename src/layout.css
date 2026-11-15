@@ -3,6 +3,21 @@
 .debug-give span:not(:first-child) { margin-left: 10px; }
 .debug-rooms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
 .panel .debug-rooms button { display: flex; gap: 8px; align-items: center; padding: 6px 8px; font-size: 12px; text-align: left; }
+/* Each room is one ticket (main.js debug panel): its name on top, and for rooms painted twice a strip torn off along a
+   dashed line to enter painting A or B. Rooms without the strip keep the same height, so the grid stays even. */
+.debug-rooms { grid-auto-rows: 1fr; }
+.debug-room { display: flex; flex-direction: column; min-width: 0; box-shadow: inset 0 0 0 2px var(--ink); background: var(--paper); }
+.debug-room.here { background: #fff3c4; }
+.panel .debug-room button { box-shadow: none; background: transparent; }
+.panel .debug-room .debug-room-go { flex: 1; min-height: 40px; padding: 6px 9px; align-items: center; }
+.panel .debug-room .debug-room-go span { min-width: 0; line-height: 1.3; word-break: keep-all; overflow-wrap: anywhere; }
+.panel .debug-room .debug-room-go.current { background: transparent; }
+.debug-room-pick { display: grid; grid-template-columns: 1fr 1fr; margin: 0 2px 2px; border-top: 2px dashed var(--label); }
+.panel .debug-room-pick button { justify-content: center; padding: 3px 0; font-size: 12px; text-align: center; color: var(--label); }
+.panel .debug-room-pick button + button { box-shadow: inset 2px 0 0 var(--paper-low); }
+.panel .debug-room-pick button.current { background: #ffd257; color: var(--ink); }
+@media (hover: hover) { .panel .debug-room button:hover:not(:disabled) { background: #ffd257; color: var(--ink); } }
+.panel .debug-room button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 .debug-rooms small { color: var(--label); }
 .panel .debug-rooms .current { background: #ffd257; }
 
@@ -84,6 +99,8 @@ body.touch .panel.atlas-panel .panel-header { margin-bottom: 4px; padding-bottom
 .title-stage { position: absolute; left: 50%; top: 50%; width: 1120px; height: 640px; transform: translate(-50%, -50%); }
 #title canvas { width: auto; height: auto; max-width: none; image-rendering: pixelated; }
 .title-stage canvas { position: absolute; left: 0; top: 0; }
+/* Drawn at a whole multiple of its screen size (title-screen.js drawForm) and smoothed down, so it stays even. */
+#title .title-form { width: 1120px; height: 640px; image-rendering: auto; }
 .title-stage nav { position: absolute; left: 492px; top: 408px; display: grid; gap: 2px; width: 520px; }
 .title-stage button { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0; border: 0; background: none; color: #2b3345; font: 700 21px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
 .title-stage button::before { content: ""; width: 20px; height: 20px; flex: none; box-shadow: inset 0 0 0 3px currentColor; }

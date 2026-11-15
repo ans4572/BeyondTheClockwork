@@ -1,9 +1,12 @@
 // 지도 벽 편집기: draws one village's picture with its floor outline (walkable) and walls (solids) on top, lets them be
 // dragged, added to and cut, walks F2 through them with the game's own collision, and saves them back to src/data/maps.json
 // through the local dev server (scripts/serve.mjs, POST /__dev/village). Dev only: scripts/ is not uploaded to Cloudflare.
+// The depth mask (white = scenery drawn over a body standing behind it) can be painted too and is saved as a new PNG
+// (POST /__dev/mask), 2026-11-14.
 import { fitsMap } from '../../src/engine/map-geometry.js';
 
-const PPU = 40, VERTEX_PX = 7, EDGE_PX = 6, CLOSE_PX = 10, REACH_UNIT = 0.25, WALK_SPEED = 4.5, HISTORY_LIMIT = 200;
+const PPU = 40, VERTEX_PX = 7, EDGE_PX = 6, CLOSE_PX = 10, REACH_UNIT = 0.25, WALK_SPEED = 4.5, HISTORY_LIMIT = 200, MASK_HISTORY_LIMIT = 30;
+const MASK_BLUE = 'rgb(70, 140, 255)', MASK_ALPHA = 0.43;
 const $ = id => document.getElementById(id);
 const canvas = $('view'), ctx = canvas.getContext('2d');
 const round = (v, step) => Math.round(v / step) * step;
@@ -17,7 +20,9 @@ const state = {
   history: [], future: [],
   view: { scale: 1, ox: 0, oy: 0 },
   mode: 'edit', pick: null, hover: null, drag: null, draft: [],
-  images: { background: null, mask: null },
+  images: { background: null },
+  mask: null,           // { canvas (white = scenery, black = floor), tint (its white in opaque blue), context, tintContext }
+  maskDirty: false, brush: 0.5, lastDab: null,
   f2: null, keys: new Set(), space: false,
   reach: null, problems: [], places: [],
   geometry: null,       // a fresh copy for fitsMap (its clearance cache is keyed by array identity)
@@ -41,11 +46,12 @@ async function load() {
 /** Every place in the game that stands on this village's floor, with the points it needs on that floor. */
 function placesUsing(id) {
   const maps = state.maps, roomNames = Object.fromEntries((state.slice?.rooms || []).map(r => [r.id, r.short || r.name || r.id])), out = [];
-  for (const [room, place] of Object.entries(maps.maps || {})) if (place.village === id) out.push({ label: `${room} ${roomNames[room] || ''}`.trim(), room, place, reach: room !== 'stop-07' });
-  for (const [room, list] of Object.entries(maps.alternates || {})) list.forEach((place, i) => { if (place.village === id) out.push({ label: `${room} 그림${i + 2}`, room, place, reach: true }); });
-  if (maps.hub?.village === id) out.push({ label: '마을', place: maps.hub, reach: false });
-  if (maps.intro?.village === id) out.push({ label: '폐기장 도입', place: maps.intro, reach: false });
-  if (maps.practice?.village === id) out.push({ label: '뒷마당', place: maps.practice, reach: false });
+  // `ref` tells the dev server which place to write when positions are saved (scripts/serve.mjs savePlaces).
+  for (const [room, place] of Object.entries(maps.maps || {})) if (place.village === id) out.push({ label: `${room} ${roomNames[room] || ''}`.trim(), room, place, reach: room !== 'stop-07', ref: { kind: 'room', room } });
+  for (const [room, list] of Object.entries(maps.alternates || {})) list.forEach((place, i) => { if (place.village === id) out.push({ label: `${room} 그림${i + 2}`, room, place, reach: true, ref: { kind: 'alt', room, index: i } }); });
+  if (maps.hub?.village === id) out.push({ label: '마을', place: maps.hub, reach: false, ref: { kind: 'hub' } });
+  if (maps.intro?.village === id) out.push({ label: '폐기장 도입', place: maps.intro, reach: false, ref: { kind: 'intro' } });
+  if (maps.practice?.village === id) out.push({ label: '뒷마당', place: maps.practice, reach: false, ref: { kind: 'practice' } });
   return out;
 }
 
@@ -56,31 +62,108 @@ async function openVillage(id) {
   state.shape = { walkable: clone(village.walkable || []), solids: clone(village.solids || []) };
   state.saved = JSON.stringify(state.shape);
   state.history = []; state.future = []; state.pick = null; state.draft = []; state.f2 = null;
-  state.places = placesUsing(id);
+  state.places = placesUsing(id); state.placesSaved = placesJSON();
   history.replaceState(null, '', `?v=${id}`);
   state.images.background = await image(village.background);
-  state.images.mask = village.mask ? tint(await image(village.mask)) : null;
+  state.mask = makeMask(village.mask ? await image(village.mask) : null, village.size); state.maskDirty = false;
   fit(); changed();
 }
 const image = src => new Promise(resolve => { const img = new Image(); img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = src.startsWith('/') ? `../..${src}` : src; });
-/** The depth mask as a see-through blue layer: its white (scenery) pixels only. */
-function tint(img) {
-  if (!img) return null;
-  const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
-  const k = c.getContext('2d'); k.drawImage(img, 0, 0);
-  const data = k.getImageData(0, 0, c.width, c.height), d = data.data;
-  for (let i = 0; i < d.length; i += 4) { const on = d[i] > 127; d[i] = 70; d[i + 1] = 140; d[i + 2] = 255; d[i + 3] = on ? 110 : 0; }
-  k.putImageData(data, 0, 0); return c;
+/**
+ * The depth mask at the size the game stores it (40 px a unit), as pure black and white, with a blue copy of its white
+ * (scenery) pixels to draw over the map. A village without a mask file starts all floor.
+ */
+function makeMask(img, [w, h]) {
+  const canvas = Object.assign(document.createElement('canvas'), { width: Math.round(w * PPU), height: Math.round(h * PPU) });
+  const tint = Object.assign(document.createElement('canvas'), { width: canvas.width, height: canvas.height });
+  const context = canvas.getContext('2d', { willReadFrequently: true }), tintContext = tint.getContext('2d');
+  context.fillStyle = '#000'; context.fillRect(0, 0, canvas.width, canvas.height);
+  if (img) { context.imageSmoothingEnabled = false; context.drawImage(img, 0, 0, canvas.width, canvas.height); }
+  const mask = { canvas, tint, context, tintContext };
+  redrawTint(mask); return mask;
+}
+/** Snaps the mask to pure black and white and rebuilds its blue copy (after loading or an undo). */
+function redrawTint(mask) {
+  const { width, height } = mask.canvas, data = mask.context.getImageData(0, 0, width, height), d = data.data;
+  const blue = mask.tintContext.createImageData(width, height), b = blue.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const on = d[i] > 127; d[i] = d[i + 1] = d[i + 2] = on ? 255 : 0; d[i + 3] = 255;
+    b[i] = 70; b[i + 1] = 140; b[i + 2] = 255; b[i + 3] = on ? 255 : 0;
+  }
+  mask.context.putImageData(data, 0, 0); mask.tintContext.putImageData(blue, 0, 0);
+}
+/** One round dab of the brush at (x, y) in units: scenery, or floor when `erase`. */
+function dab(x, y, erase) {
+  const { canvas, context, tintContext } = state.mask, perUnit = canvas.width / state.village.size[0], r = Math.max(0.5, state.brush * perUnit);
+  const shape = k => { k.beginPath(); k.arc(x * perUnit, y * perUnit, r, 0, Math.PI * 2); k.fill(); };
+  context.fillStyle = erase ? '#000' : '#fff'; shape(context);
+  tintContext.globalCompositeOperation = erase ? 'destination-out' : 'source-over'; tintContext.fillStyle = MASK_BLUE; shape(tintContext);
+  tintContext.globalCompositeOperation = 'source-over';
+}
+/** Dabs along the stroke from the last dab, close enough that a fast drag leaves no gaps. */
+function stroke(x, y, erase) {
+  const from = state.lastDab || [x, y], steps = Math.max(1, Math.ceil(Math.hypot(x - from[0], y - from[1]) / Math.max(0.05, state.brush * 0.4)));
+  for (let i = 1; i <= steps; i++) dab(from[0] + (x - from[0]) * i / steps, from[1] + (y - from[1]) * i / steps, erase);
+  state.lastDab = [x, y]; state.maskDirty = true;
+}
+/** The mask as rows of packed bits (white = 1), what the dev server writes as a 1-bit PNG. */
+function maskBits() {
+  const { width, height } = state.mask.canvas, d = state.mask.context.getImageData(0, 0, width, height).data, rowBytes = Math.ceil(width / 8), bytes = new Uint8Array(rowBytes * height);
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) if (d[(y * width + x) * 4] > 127) bytes[y * rowBytes + (x >> 3)] |= 0x80 >> (x & 7);
+  let text = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return { width, height, bits: btoa(text) };
 }
 
 // ---------- changes, history ----------
-const dirty = () => JSON.stringify(state.shape) !== state.saved;
-function remember() {
-  state.history.push(JSON.stringify(state.shape)); if (state.history.length > HISTORY_LIMIT) state.history.shift();
-  state.future = [];
+// History entries are { shape } (the walls as JSON) or { mask } (the mask's pixels before a stroke); one Ctrl+Z for both.
+const shapeDirty = () => JSON.stringify(state.shape) !== state.saved;
+const dirty = () => shapeDirty() || state.maskDirty || placesDirty();
+
+// ---------- start, exit, monster and boss positions (2026-11-15) ----------
+/** Every movable point of a place: start, exit portal, boss and each monster, in a fixed order. */
+function pointsOf(place) {
+  const out = [];
+  if (place.spawn) out.push({ key: 'spawn', p: place.spawn, text: '시작', color: '#5ac8fa' });
+  const portal = place.portal || place.exit?.portal;
+  if (portal) out.push({ key: 'portal', p: portal, text: '출구', color: '#ffd34d' });
+  if (place.bossSpawn) out.push({ key: 'bossSpawn', p: place.bossSpawn, text: '보스', color: '#c77dff' });
+  (place.enemySpawns || []).forEach((p, i) => out.push({ key: 'enemySpawns', i, p, text: `몹 ${i + 1}`, color: 'rgba(255, 150, 60, 0.95)' }));
+  return out;
 }
-function undo() { if (!state.history.length) return; state.future.push(JSON.stringify(state.shape)); state.shape = JSON.parse(state.history.pop()); state.pick = null; changed(); }
-function redo() { if (!state.future.length) return; state.history.push(JSON.stringify(state.shape)); state.shape = JSON.parse(state.future.pop()); state.pick = null; changed(); }
+const placesJSON = () => JSON.stringify(state.places.map(e => pointsOf(e.place).map(h => [h.p.x, h.p.y])));
+const placesDirty = () => !!state.places && placesJSON() !== state.placesSaved;
+function setPlaces(json) {
+  JSON.parse(json).forEach((list, e) => pointsOf(state.places[e].place).forEach((h, k) => { h.p.x = list[k][0]; h.p.y = list[k][1]; }));
+}
+/** The point nearest the pointer, within reach on screen. */
+function hitPoint(sx, sy) {
+  let best = null;
+  state.places.forEach((entry, e) => pointsOf(entry.place).forEach(h => {
+    const [px, py] = toScreen([h.p.x, h.p.y]), d = Math.hypot(px - sx, py - sy);
+    if (d <= Math.max(9, bodyRadius() * PPU * state.view.scale + 3) && (!best || d < best.d)) best = { entry: e, handle: h, d };
+  }));
+  return best;
+}
+const maskPixels = () => state.mask.context.getImageData(0, 0, state.mask.canvas.width, state.mask.canvas.height);
+function push(list, entry) {
+  list.push(entry);
+  if (list.length > HISTORY_LIMIT) list.shift();
+  // Mask snapshots are a few MB each: only the latest few are kept.
+  const masks = list.filter(e => e.mask);
+  if (masks.length > MASK_HISTORY_LIMIT) list.splice(list.indexOf(masks[0]), 1);
+}
+function remember() { push(state.history, { shape: JSON.stringify(state.shape) }); state.future = []; }
+function rememberPlaces() { push(state.history, { places: placesJSON() }); state.future = []; }
+function rememberMask() { push(state.history, { mask: maskPixels() }); state.future = []; }
+function restore(entry, into) {
+  if (entry.places) { push(into, { places: placesJSON() }); setPlaces(entry.places); }
+  else if (entry.mask) { push(into, { mask: maskPixels() }); state.mask.context.putImageData(entry.mask, 0, 0); redrawTint(state.mask); state.maskDirty = true; }
+  else { push(into, { shape: JSON.stringify(state.shape) }); state.shape = JSON.parse(entry.shape); state.pick = null; }
+  changed();
+}
+function undo() { if (state.history.length) restore(state.history.pop(), state.future); }
+function redo() { if (state.future.length) restore(state.future.pop(), state.history); }
 
 let reachTimer = 0;
 /** After any edit: a fresh geometry copy for the collision code, then (a moment later) the reach check. */
@@ -91,6 +174,7 @@ function changed() {
   updateBar(); draw();
 }
 const bodyRadius = () => state.village.bodyRadius ?? state.slice.arena.playerRadius;
+const painting = () => state.mode === 'paint' || state.mode === 'erase';
 
 /**
  * The same checks the game and its tests make: every start point stands on the floor (src/engine/data.js stops the game
@@ -185,12 +269,12 @@ function draw() {
   const [x0, y0] = toScreen([0, 0]), pw = w * PPU * scale, ph = h * PPU * scale;
   ctx.imageSmoothingEnabled = scale < 1.5;
   if (state.images.background) ctx.drawImage(state.images.background, x0, y0, pw, ph);
-  if ($('show-mask').checked && state.images.mask) ctx.drawImage(state.images.mask, x0, y0, pw, ph);
+  if (($('show-mask').checked || painting()) && state.mask) { ctx.globalAlpha = MASK_ALPHA; ctx.drawImage(state.mask.tint, x0, y0, pw, ph); ctx.globalAlpha = 1; }
   ctx.strokeStyle = '#11151f'; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, pw, ph);
 
   // The floor outside the outline darkened, so the walkable part reads at a glance.
   ctx.save();
-  ctx.beginPath(); ctx.rect(x0, y0, pw, ph); trace(state.shape.walkable); ctx.fillStyle = 'rgba(10, 12, 20, 0.45)'; ctx.fill('evenodd');
+  ctx.beginPath(); ctx.rect(x0, y0, pw, ph); trace(state.shape.walkable); ctx.fillStyle = `rgba(10, 12, 20, ${painting() ? 0.15 : 0.45})`; ctx.fill('evenodd');
   ctx.restore();
 
   if ($('show-reach').checked && state.reach) {
@@ -227,6 +311,11 @@ function draw() {
     ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#11151f'; ctx.lineWidth = 2; ctx.stroke();
     label('F2', sx, sy - r - 6, '#ffffff');
   }
+  if (painting() && state.hoverWorld) {
+    const [sx, sy] = toScreen(state.hoverWorld);
+    ctx.strokeStyle = state.mode === 'erase' ? '#ff8a80' : '#ffffff'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.arc(sx, sy, Math.max(2, state.brush * PPU * scale), 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+  }
   if (state.hoverWorld) {
     const [x, y] = state.hoverWorld;
     ctx.fillStyle = 'rgba(17, 21, 31, 0.85)'; ctx.fillRect(8, canvas.clientHeight - 30, 150, 22);
@@ -252,8 +341,19 @@ function drawPlaces() {
     ctx.fillStyle = color; ctx.beginPath(); ctx.arc(sx, sy, Math.max(4, bodyRadius() * PPU * scale), 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#11151f'; ctx.lineWidth = 1.5; ctx.stroke(); if (text) label(text, sx, sy - 10, color);
   };
+  const moving = state.mode === 'move', many = state.places.length > 1;
   for (const { place, label: name } of state.places) {
     if (place.exit?.polygon) { ctx.setLineDash([5, 4]); outline(place.exit.polygon, '#ffd34d', 'rgba(255, 211, 77, 0.15)', false); ctx.setLineDash([]); }
+    if (moving) {
+      // In 위치 옮기기 every point is labelled (with its room when several rooms share the map), and the one under the pointer is ringed.
+      for (const h of pointsOf(place)) {
+        const [sx, sy] = toScreen([h.p.x, h.p.y]), on = state.hover?.handle === h || state.drag?.handle === h;
+        if (h.key === 'portal') { ctx.strokeStyle = h.color; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(sx, sy, PPU * scale, 0, Math.PI * 2); ctx.stroke(); }
+        dot(h.p, h.color, `${h.text}${many ? ' · ' + name.split(' ')[0] : ''}`);
+        if (on) { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(sx, sy, Math.max(9, bodyRadius() * PPU * scale + 4), 0, Math.PI * 2); ctx.stroke(); }
+      }
+      continue;
+    }
     for (const p of place.enemySpawns || []) dot(p, 'rgba(255, 150, 60, 0.85)', '');
     if (place.bossSpawn) dot(place.bossSpawn, '#c77dff', '보스');
     if (place.portal) { const [sx, sy] = toScreen([place.portal.x, place.portal.y]); ctx.strokeStyle = '#ffd34d'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(sx, sy, PPU * scale, 0, Math.PI * 2); ctx.stroke(); label('출구', sx, sy - PPU * scale - 4, '#ffd34d'); }
@@ -266,19 +366,22 @@ function updateStatus() {
   const v = state.village, bad = state.problems.filter(p => p.bad).length;
   $('status').innerHTML = `<h2>${state.id}</h2><div class="dim">${v.background.split('/').at(-2)} · ${v.size[0]}×${v.size[1]}칸 · 몸 반지름 ${bodyRadius()}</div>`
     + `<div>바닥 점 ${state.shape.walkable.length}개 · 벽 ${state.shape.solids.length}개</div>`
+    + `<div class="dim">마스크 ${v.mask ? v.mask.split('/').at(-1) : '없음'}${v.maskEdited ? ' · 손으로 칠함' : ''}${state.maskDirty ? ' <span class="bad">(칠한 것 저장 안 됨)</span>' : ''}</div>`
     + `<h2>쓰는 곳</h2>${state.places.length ? `<ul>${state.places.map(p => `<li>${p.label}</li>`).join('')}</ul>` : '<div class="dim">아직 어느 방도 이 지도를 쓰지 않습니다.</div>'}`
     + `<h2>검사 ${bad ? `<span class="bad">문제 ${bad}개</span>` : '<span class="ok">통과</span>'}</h2>`
     + (state.problems.length ? `<ul>${state.problems.map(p => `<li class="${p.bad ? 'bad' : 'ok'}">${p.text}</li>`).join('')}</ul>` : '<div class="dim">검사할 시작점이 없습니다.</div>')
+    + (state.mode === 'move' && state.hover?.handle ? `<h2>위치</h2><div>${state.places[state.hover.entry].label} · ${state.hover.handle.text} (${state.hover.handle.p.x}, ${state.hover.handle.p.y})</div>` : '')
+    + (placesDirty() ? '<div class="bad">옮긴 위치 저장 안 됨</div>' : '')
     + (state.pick ? `<h2>선택</h2><div>${state.pick.kind === 'walk' ? '바닥 테두리' : `벽 ${state.pick.index + 1}`}${state.pick.vertex != null ? ` · 점 ${state.pick.vertex + 1} (${polygonOf(state.pick.kind, state.pick.index)[state.pick.vertex].join(', ')})` : ''}</div>` : '');
 }
 function updateBar() {
   $('undo').disabled = !state.history.length; $('redo').disabled = !state.future.length; $('delete').disabled = !state.pick;
   $('save').dataset.dirty = dirty(); $('save').textContent = dirty() ? '저장 *' : '저장됨';
-  for (const mode of ['edit', 'draw', 'walk']) $(`mode-${mode}`).setAttribute('aria-pressed', state.mode === mode);
+  for (const mode of ['edit', 'draw', 'walk', 'move', 'paint', 'erase']) $(`mode-${mode}`).setAttribute('aria-pressed', state.mode === mode);
   updateStatus();
 }
 function setMode(mode) {
-  state.mode = mode; state.draft = []; if (mode !== 'walk') state.keys.clear();
+  state.mode = mode; state.draft = []; state.hover = null; if (mode === 'paint' || mode === 'erase' || mode === 'move') state.pick = null; if (mode !== 'walk') state.keys.clear();
   if (mode === 'walk' && !state.f2) { const s = state.places.find(p => p.place.spawn)?.place.spawn; if (s) state.f2 = { x: s.x, y: s.y }; }
   updateBar(); draw();
 }
@@ -307,13 +410,34 @@ function closeDraft() {
 
 async function save() {
   const bad = state.problems.filter(p => p.bad);
-  if (bad.length && !confirm(`검사에서 문제 ${bad.length}개가 나왔습니다.\n\n${bad.map(p => '· ' + p.text).join('\n')}\n\n그래도 저장할까요?`)) return;
-  try {
-    const response = await fetch('/__dev/village', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: state.id, ...state.shape }) });
+  if (shapeDirty() && bad.length && !confirm(`검사에서 문제 ${bad.length}개가 나왔습니다.\n\n${bad.map(p => '· ' + p.text).join('\n')}\n\n그래도 저장할까요?`)) return;
+  const post = async (url, body) => {
+    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
-    state.saved = JSON.stringify(state.shape);
-    state.maps.villages[state.id].walkable = clone(state.shape.walkable); state.maps.villages[state.id].solids = clone(state.shape.solids);
-    updateBar(); toast('maps.json에 저장했습니다. 게임 탭을 새로고침하면 바로 적용됩니다.', 3200);
+    return response.json();
+  };
+  try {
+    const done = [];
+    if (placesDirty()) {
+      await post('/__dev/places', { id: state.id, places: state.places.map(e => {
+        const out = { ref: e.ref };
+        for (const h of pointsOf(e.place)) { if (h.key === 'enemySpawns') (out.enemySpawns ||= []).push({ x: h.p.x, y: h.p.y }); else out[h.key] = { x: h.p.x, y: h.p.y }; }
+        return out;
+      }) });
+      state.placesSaved = placesJSON(); done.push('위치');
+    }
+    if (shapeDirty() || (!state.maskDirty && !done.length)) {
+      await post('/__dev/village', { id: state.id, ...state.shape });
+      state.saved = JSON.stringify(state.shape);
+      state.maps.villages[state.id].walkable = clone(state.shape.walkable); state.maps.villages[state.id].solids = clone(state.shape.solids);
+      done.push('벽');
+    }
+    if (state.maskDirty) {
+      const { mask } = await post('/__dev/mask', { id: state.id, ...maskBits() });
+      state.village.mask = mask; state.village.maskEdited = true; state.maskDirty = false;
+      done.push(`마스크(${mask.split('/').at(-1)})`);
+    }
+    updateBar(); toast(`${done.join('·')} 저장했습니다. 게임 탭을 새로고침하면 바로 적용됩니다.`, 3600);
   } catch (error) { toast(`저장 실패: ${error.message} (로컬 서버 scripts/serve.mjs로 열었는지 확인)`, 5000); }
 }
 
@@ -321,8 +445,17 @@ canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('mousedown', e => {
   const [sx, sy] = mouse(e), [x, y] = toWorld(sx, sy);
   if (e.button === 1 || e.button === 0 && state.space) { state.drag = { pan: true, sx, sy, ox: state.view.ox, oy: state.view.oy }; canvas.classList.add('panning'); return; }
+  if (painting() && (e.button === 0 || e.button === 2)) {
+    rememberMask(); state.lastDab = null; state.drag = { paint: true, erase: (e.button === 2 || e.altKey) !== (state.mode === 'erase') };
+    stroke(x, y, state.drag.erase); updateBar(); draw(); return;
+  }
   if (e.button === 2) { const v = hitVertex(sx, sy); if (v) { state.pick = v; removePicked(); } return; }
   if (state.mode === 'walk') { state.f2 = { x, y, blocked: !fitsMap(x, y, bodyRadius(), state.geometry) }; draw(); return; }
+  if (state.mode === 'move') {
+    const hit = hitPoint(sx, sy);
+    if (hit) { rememberPlaces(); state.drag = { handle: hit.handle, entry: hit.entry, moved: false }; state.hover = hit; updateBar(); draw(); return; }
+    state.drag = { pan: true, sx, sy, ox: state.view.ox, oy: state.view.oy }; canvas.classList.add('panning'); return;
+  }
   if (state.mode === 'draw') {
     if (state.draft.length >= 3) { const [fx, fy] = toScreen(state.draft[0]); if (Math.hypot(fx - sx, fy - sy) <= CLOSE_PX) return closeDraft(); }
     state.draft.push([x, y]); draw(); return;
@@ -339,21 +472,25 @@ window.addEventListener('mousemove', e => {
   const [sx, sy] = mouse(e), [x, y] = toWorld(sx, sy), drag = state.drag;
   state.hoverWorld = [x, y];
   if (drag?.pan) { state.view.ox = drag.ox + sx - drag.sx; state.view.oy = drag.oy + sy - drag.sy; draw(); return; }
+  if (drag?.paint) { stroke(x, y, drag.erase); draw(); return; }
   const step = e.shiftKey ? 0.1 : 0.01;
   if (drag?.vertex) {
     const v = drag.vertex; polygonOf(v.kind, v.index)[v.vertex] = [clamp2(round(x, step)), clamp2(round(y, step))]; drag.moved = true;
     state.geometry = null; draw(); return;
   }
+  if (drag?.handle) { drag.handle.p.x = clamp2(round(x, step)); drag.handle.p.y = clamp2(round(y, step)); drag.moved = true; updateStatus(); draw(); return; }
   if (drag?.solid != null) {
     const dx = round(x - drag.from[0], step), dy = round(y - drag.from[1], step);
     state.shape.solids[drag.solid] = drag.start.map(([px, py]) => [clamp2(px + dx), clamp2(py + dy)]); drag.moved = true; draw(); return;
   }
   if (state.mode === 'edit') state.hover = hitVertex(sx, sy);
+  if (state.mode === 'move') { const before = state.hover?.handle; state.hover = hitPoint(sx, sy); if (before !== state.hover?.handle) updateStatus(); }
   draw();
 });
 window.addEventListener('mouseup', () => {
   const drag = state.drag; state.drag = null; canvas.classList.remove('panning');
   if (!drag || drag.pan) return;
+  if (drag.paint) { state.lastDab = null; updateBar(); return; }
   if (!drag.moved) state.history.pop(); // a click without a move is not an edit
   changed();
 });
@@ -387,6 +524,10 @@ window.addEventListener('keydown', e => {
   if (key === 'e') setMode('edit');
   if (key === 'n') setMode('draw');
   if (key === 't') setMode(state.mode === 'walk' ? 'edit' : 'walk');
+  if (key === 'm') setMode(state.mode === 'paint' ? 'edit' : 'paint');
+  if (key === 'x') setMode(state.mode === 'erase' ? 'edit' : 'erase');
+  if (key === 'p') setMode(state.mode === 'move' ? 'edit' : 'move');
+  if (key === '[' || key === ']') setBrush(state.brush * (key === ']' ? 1.25 : 0.8));
   if (key === 'f') fit();
 });
 window.addEventListener('keyup', e => { const key = e.key.toLowerCase(); if (key === ' ') state.space = false; state.keys.delete(key); });
@@ -416,6 +557,11 @@ $('village').addEventListener('change', e => openVillage(e.target.value));
 $('mode-edit').onclick = () => setMode('edit');
 $('mode-draw').onclick = () => setMode('draw');
 $('mode-walk').onclick = () => setMode('walk');
+$('mode-paint').onclick = () => setMode('paint');
+$('mode-erase').onclick = () => setMode('erase');
+$('mode-move').onclick = () => setMode('move');
+function setBrush(size) { state.brush = Math.round(Math.max(0.1, Math.min(3, size)) * 100) / 100; $('brush').value = state.brush; $('brush-size').textContent = state.brush; draw(); }
+$('brush').addEventListener('input', e => setBrush(Number(e.target.value)));
 $('undo').onclick = undo; $('redo').onclick = redo; $('delete').onclick = removePicked;
 $('fit').onclick = fit; $('save').onclick = save;
 $('help-toggle').onclick = () => { $('help').hidden = !$('help').hidden; };

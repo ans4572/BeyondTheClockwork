@@ -1,5 +1,5 @@
 // The title's own F2: the idle pose redrawn cleaner and larger (PixelLab, 192 px), shown at 2x on the form.
-const F2_TITLE = 'art/ui/title/f2-title-v3.png';
+const F2_TITLE = 'art/ui/title/f2-title-v5.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
 const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, LINE_READ_MS = 700, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
 // A choice waiting on loading says so after this long; a quick one shows nothing.
@@ -109,13 +109,25 @@ export class TitleScreen {
     });
     addEventListener('resize', () => this.fit());
     this.ready = load(F2_TITLE).then(f2 => {
-      const c = root.querySelector('.title-form').getContext('2d'); c.imageSmoothingEnabled = false; drawForm(c, f2);
+      this.f2 = f2; this.drawForm();
       const stamp = stampImage(MARK_SIZE), mark = this.mark.getContext('2d');
       this.mark.width = stamp.width; this.mark.height = stamp.height; mark.drawImage(stamp, 0, 0);
       this.mark.style.width = `${stamp.width * MARK_ZOOM}px`; this.mark.style.left = `${MARK_CENTER[0] - stamp.width * MARK_ZOOM / 2}px`; this.mark.style.top = `${MARK_CENTER[1] - stamp.height * MARK_ZOOM / 2}px`;
     });
   }
-  fit() { const k = Math.min(innerWidth / STAGE[0], innerHeight / STAGE[1]); this.stage.style.transform = `translate(-50%, -50%) scale(${k})`; this.stage.style.setProperty('--k', k); }
+  fit() { const k = Math.min(innerWidth / STAGE[0], innerHeight / STAGE[1]); this.k = k; this.stage.style.transform = `translate(-50%, -50%) scale(${k})`; this.stage.style.setProperty('--k', k); this.drawForm(); }
+  /**
+   * The form is drawn with hard pixels at the next whole multiple of its size on screen, then smoothed down to fit
+   * (2026-11-15): stretched by the window's odd scale with hard pixels, F2's pixels came out uneven (some rows doubled,
+   * some dropped, his face looked wrong), and smoothed straight up it blurred.
+   */
+  drawForm() {
+    if (!this.f2) return;
+    const canvas = this.root.querySelector('.title-form'), sharp = Math.max(1, Math.ceil((this.k || 1) * (devicePixelRatio || 1) - 0.01));
+    if (canvas.width === STAGE[0] * sharp) return;
+    canvas.width = STAGE[0] * sharp; canvas.height = STAGE[1] * sharp;
+    const c = canvas.getContext('2d'); c.setTransform(sharp, 0, 0, sharp, 0, 0); c.imageSmoothingEnabled = false; drawForm(c, this.f2);
+  }
   move(delta) {
     const open = this.buttons.filter(button => !button.disabled), at = open.indexOf(document.activeElement);
     open[(at + delta + open.length) % open.length]?.focus();

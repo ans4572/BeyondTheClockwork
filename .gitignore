@@ -31,6 +31,10 @@ art/**/background-v1*
 !art/chapters/2-silent-factory/maps/10-steam-boiler-room-b/background-v1-q92.webp
 art/**/*.zip
 art/**/concept.png
+# Tiles, attempts and checks from redrawing a map at twice the size (Codex upscale-2x.task.md); only the result is kept.
+art/**/upscale-work/
+art/**/upscale-work-*/
+art/**/upscale-2x-*-report-*.md
 _workspace/
 # Full-size painted sources the game does not load (it uses the .webp next to them).
 art/**/background-compact-v*.png
@@ -45,3 +49,7 @@ art/chapters/*/maps/**/background-v*.png
 # Packed code for the published site, made on Cloudflare's build machine (scripts/build.mjs).
 build/
 index.built.html
+
+# Chapter 3 mob preview sheets (rebuilt by scripts/build-ch3-mob-preview.py); the page itself is kept.
+art/chapters/3-clock-tower/mobs/preview/*.png
+art/chapters/3-clock-tower/mobs/preview/data.json

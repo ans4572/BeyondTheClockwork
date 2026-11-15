@@ -199,7 +199,9 @@ export class CanvasRenderer {
     c.fillStyle = 'rgba(24, 20, 36, 0.34)'; c.beginPath(); c.ellipse(x, y, 13, 4.5, 0, 0, TAU); c.fill();
     const white = typeof flash === 'number' ? flash : 0;
     if (flash && !white) c.filter = flash === true ? 'brightness(1.9)' : flash;
-    c.imageSmoothingEnabled = resize !== 1;
+    // Hard pixels at every size (2026-11-15): F2 is drawn at 0.9 (PLAYER_SCALE), and smoothing that blurred F2 alone
+    // beside the sharp mobs; one sheet pixel now lands on whole screen pixels, slightly uneven, but crisp.
+    c.imageSmoothingEnabled = false;
     for (const url of [clip.sheet, clip.effect]) if (url && library.image(url)) c.drawImage(library.image(url), sx, sy, w, h, left, top, w * size, h * size);
     if (flash && !white) c.filter = 'none';
     if (white > 0) this.whiteOver(image, sx, sy, w, h, left, top, w * size, h * size, white);

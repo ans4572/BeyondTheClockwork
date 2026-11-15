@@ -200,13 +200,17 @@ export class Game {
     this.clearCombat(); this.s.run = null; this.s.result = null; this.s.profile.registered = false; this.resetPlayer(); this.s.mode = 'opening'; this.save(); return true;
   }
   /** Debug only: enter any stage directly, starting a run first if none is active. */
-  debugJump(node, chapter = FIRST_CHAPTER, difficulty) {
+  /** `variant` (0 = A, 1 = B) picks which painting of a room with variants is entered; left out, the run's own pick stays. */
+  debugJump(node, chapter = FIRST_CHAPTER, difficulty, variant) {
     if (!Number.isInteger(node) || !chapterRooms(this.config, chapter)[node]) return false;
     const level = this.config.difficulty?.levels.some(l => l.id === difficulty) ? difficulty : undefined;
     // A jump into another chapter, or on another difficulty (debug panel, 2026-11-10), starts a fresh run there.
     if (this.s.run && (this.chapter.id !== chapter || (level && (this.s.run.difficulty || this.config.difficulty?.default) !== level))) { this.clearCombat(); this.s.run = null; }
     if (!this.s.run) { this.clearCombat(); this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.startRun(undefined, level, chapter); }
-    this.s.run.node = node; this.s.run.rewardChoices = []; this.enterNode(); return true;
+    this.s.run.node = node; this.s.run.rewardChoices = [];
+    const variants = this.rooms[node]?.variants?.length || 0;
+    if (Number.isInteger(variant) && variant >= 0 && variant < variants) this.s.run.plan[node].variant = variant;
+    this.enterNode(); return true;
   }
   register() {
     if (this.s.mode !== 'registration') return false;

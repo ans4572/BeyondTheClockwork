@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { fitsMap, cameraFor, placeOf, pointInPolygon, VIEW_UNITS } from '../src/engine/map-geometry.js';
-import { LANE_UNITS } from '../src/animation/npc-director.js';
+import { laneOn } from '../src/animation/npc-director.js';
 import { closeSlivers, columnDepths, ghostFor, raiseDepths, seeThroughAlpha } from '../src/render/depth-mask.js';
 
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
@@ -37,7 +37,7 @@ test('each mask matches the declared map size, and each background is drawn at t
   for (const place of places) {
     assert.deepEqual(imageSize(new URL(`..${place.mask}`, import.meta.url)), place.size.map(units => Math.round(units * 40)));
     // The painting ships at map size x 40 and the game enlarges it x pixelScale with hard pixel edges, or ships already
-    // at x 80 (the court, upscaled with Real-ESRGAN) with no pixelScale.
+    // at x 80 (the court, redrawn at twice the size on 2026-11-14) with no pixelScale.
     assert.deepEqual(imageSize(new URL(`..${place.background}`, import.meta.url)).map(n => n * (place.pixelScale || 1)), place.size.map(units => Math.round(units * 80)));
   }
   for (const place of places) assert.ok(fs.statSync(new URL(`..${place.mask}`, import.meta.url)).size < 500000, place.mask);
@@ -59,7 +59,9 @@ test('every stretch of village street stays on the floor', () => {
     for (const [a, b] of links) for (let t = 0; t <= 1; t += 0.1) {
       const x = points[a][0] + (points[b][0] - points[a][0]) * t, y = points[a][1] + (points[b][1] - points[a][1]) * t;
       // Feet stay on the floor at every corner of a resident's lane.
-      for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) assert.ok(fitsMap(x + dx * LANE_UNITS, y + dy * LANE_UNITS, FOOT_UNITS, place), `${place.crowd} ${a}-${b} at ${x},${y}`);
+      // A stretch marked narrow (crowds[].narrowLinks) is checked at its own, smaller lane width.
+      const lane = laneOn(streetsOf(place), a, b);
+      for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) assert.ok(fitsMap(x + dx * lane, y + dy * lane, FOOT_UNITS, place), `${place.crowd} ${a}-${b} at ${x},${y}`);
     }
   }
 });
