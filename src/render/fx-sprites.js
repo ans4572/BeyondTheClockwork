@@ -60,7 +60,8 @@ export const FX = {
   trumpetWave: { sheet: 'art/fx/trumpet-wave.png', w: 88, h: 46, cols: 4, frames: 14, anchor: [6, 23] },
   // Sound and water (PixelLab Pro Flash concept + PixMiniMax frames, 2026-11-08; art/animations/player/skills/sound-water).
   // Drawn facing right and turned by the renderer; scaled down from their 128/256 px frames.
-  ringPalm: { sheet: 'art/fx/ring-palm-v1.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [13, 63] },
+  // v2 (2026-11-16): the orange emitter at the palm end taken out (it read as a speaker on F2's body); the arcs as they were.
+  ringPalm: { sheet: 'art/fx/ring-palm-v2.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [13, 63] },
   roarBeam: { sheet: 'art/fx/roar-beam-v1.png', w: 256, h: 128, cols: 4, frames: 9, anchor: [27, 61] },
   waterShot: { sheet: 'art/fx/water-shot-v1.png', w: 128, h: 128, cols: 4, frames: 8, anchor: [59, 63] },
   // 메아리 돌풍's wave front seen from above, laid on the floor (PixelLab, 2026-11-16; it replaced an upright ring that read
