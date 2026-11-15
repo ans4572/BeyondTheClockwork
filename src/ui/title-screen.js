@@ -124,8 +124,10 @@ export class TitleScreen {
   drawForm() {
     if (!this.f2) return;
     const canvas = this.root.querySelector('.title-form'), sharp = Math.max(1, Math.ceil((this.k || 1) * (devicePixelRatio || 1) - 0.01));
-    if (canvas.width === STAGE[0] * sharp) return;
-    canvas.width = STAGE[0] * sharp; canvas.height = STAGE[1] * sharp;
+    // Drawn once per sharpness (2026-11-16: comparing with the canvas's own width skipped the first drawing whenever
+    // the sharpness was 1, as the canvas starts at the form's size, and a small window showed no form at all).
+    if (this.drawnSharp === sharp) return;
+    this.drawnSharp = sharp; canvas.width = STAGE[0] * sharp; canvas.height = STAGE[1] * sharp;
     const c = canvas.getContext('2d'); c.setTransform(sharp, 0, 0, sharp, 0, 0); c.imageSmoothingEnabled = false; drawForm(c, this.f2);
   }
   move(delta) {

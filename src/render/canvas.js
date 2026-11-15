@@ -1,4 +1,3 @@
-import {clampCorners} from '../engine/fusion-geometry.js';
 import { PlayerAnimator } from '../animation/player-animator.js';
 import { MobAnimator } from '../animation/mob-animator.js';
 import { CastEffects } from '../animation/cast-effects.js';
@@ -10,7 +9,7 @@ import { Lighting } from './lighting.js';
 import { FX, NOTE_ART, MARKS, LOOT_ART, HAZARD_ART, DEBRIS_ART, BOSS_UNWIND_ART, UNWIND_VERBS, LIFT_ART } from './fx-sprites.js';
 import { floorMarks, ELEMENT_TINTS } from './floor-marks.js';
 import { factoryBossDraw } from './factory-boss-draw.js';
-import { FLOOR_FLAT } from '../engine/math.js';
+import { FLOOR_FLAT, floorAngle, floorShrink } from '../engine/math.js';
 import { SUMMON_RISE_SECONDS, HIT_FLASH_SECONDS, JOLT_SECONDS } from '../engine/game.js';
 import { GROUND, sawAt, plateState, beltState, pressState, laserState, steamState, steamAt } from '../engine/hazards.js';
 // Factory devices drawn in two passes: their floor part under everyone, and what stands or hangs over it in the sort.
@@ -43,6 +42,8 @@ const LIFT_OPEN_REACH = 3, LIFT_HALF_SECONDS = 0.18;
 /** The ice crescent's sheet is drawn at this share of its pixels (its blade then spans the cut's width), this far off the floor. */
 const CRESCENT_SCALE = 0.65, CRESCENT_LIFT = 14;
 /** Elite trait tags over the head, drawn at this share of their old size (2026-11-06: they crowded the fight). */
+/** The blade's span the sheet was fitted to at CRESCENT_SCALE, on the screen, aimed sideways. */
+const CRESCENT_SPAN = 1.4;
 const AFFIX_TAG_SCALE = 0.6;
 /** Roco's PixelLab cans (32px pictures) drawn at this share, about the size of the old drawn ones. */
 const CAN_SCALE = 0.75;
@@ -835,15 +836,24 @@ export class CanvasRenderer {
     this.text(label, x, top + 7, '#3f5c55', 8);
   }
   /** One frame of an effect sheet (art/fx), placed by its anchor, turned and stretched as asked. */
-  drawFxFrame(name, frame, x, y, { angle = 0, sx = 1, sy = 1, alpha = 1 } = {}) {
+  drawFxFrame(name, frame, x, y, { angle = 0, sx = 1, sy = 1, alpha = 1, floor = false } = {}) {
     const fx = FX[name], image = this.mapImages?.get(fx.sheet);
     if (!image) return false;
     const f = Math.max(0, Math.min(fx.frames - 1, Math.floor(frame) % fx.frames)), c = this.ctx;
-    c.save(); c.globalAlpha = alpha; c.translate(x, y); if (angle) c.rotate(angle); c.scale(sx, sy);
+    c.save(); c.globalAlpha = alpha; c.translate(x, y);
+    // `floor`: the picture lies on the floor, turned to `angle` there (math.js floorAngle), so it foreshortens as the
+    // round reaches do instead of spinning flat on the screen (2026-11-16).
+    if (floor) this.floorTurn(angle); else if (angle) c.rotate(angle);
+    c.scale(sx, sy);
     c.drawImage(image, (f % fx.cols) * fx.w, Math.floor(f / fx.cols) * fx.h, fx.w, fx.h, -fx.anchor[0], -fx.anchor[1], fx.w, fx.h);
     c.restore(); return true;
   }
   /** A still from MARKS (see fx-sprites.js), or undefined while it is not loaded or not drawn yet. */
+  /** Turns the drawing to screen heading `angle` laid on the floor: x runs along it, y across it, squashed as the floor is. */
+  floorTurn(angle) {
+    const a = floorAngle(angle), cos = Math.cos(a), sin = Math.sin(a);
+    this.ctx.transform(cos, sin * FLOOR_FLAT, -sin, cos * FLOOR_FLAT, 0, 0);
+  }
   mark(name) { return this.mapImages?.get(MARKS[name]); }
   /**
    * Draws a still centred on x, y, `width` render pixels wide. `flat` squashes a mark seen from above onto the floor;
@@ -1014,7 +1024,7 @@ export class CanvasRenderer {
       case 'zapBig': return this.drawFxFrame('electricHit', frameAt('electricHit'), x, y - 20, { sx: 1.8, sy: 1.8 });
       case 'gust': return this.drawFxFrame('pressureDash', this.visualTime * 12, x, y - 12, { angle: fx.angle, sx: 0.6, sy: 0.6, alpha: 1 - t });
       case 'frostShatter': return this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
-      case 'frostCrescentBreak': return this.drawFxFrame('frostCrescentBreak', frameAt('frostCrescentBreak'), x, y - CRESCENT_LIFT, { angle: fx.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE }) || this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
+      case 'frostCrescentBreak': return this.drawFxFrame('frostCrescentBreak', frameAt('frostCrescentBreak'), x, y - CRESCENT_LIFT, { angle: fx.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE / FLOOR_FLAT, floor: true }) || this.drawFxFrame('frostShatter', frameAt('frostShatter'), x, y - 24);
       case 'arc': {
         // 감전 튐: current leaping from the shocked body to the one it hurts, in pixel lightning; it flickers out.
         if (t > 0.45 && Math.floor(this.visualTime * 24) % 2) return true;
@@ -1111,14 +1121,16 @@ export class CanvasRenderer {
     if (t < 0.4) { c.globalAlpha = 1 - t / 0.4; this.circle(x, y - 16, 10 * (1 - t), '#fff4b7'); }
     c.restore(); return true;
   }
-  /** 굉음 let go: a straight column of sound out to its range, wider and brighter the longer it was gathered. */
+  /** 굉음 let go: a straight column of sound out to its range, as wide as it hits, brighter the longer it was gathered. */
   drawSoundBeam(fx, x, y, t) {
-    // The painted beam, stretched to the column's length and thicker the longer it was gathered.
-    // The pixelfx pillar (150 px long, 13 px either side at full charge), fitted to the column's length and width.
-    if (this.drawFxFrame('roarPillar', t * FX.roarPillar.frames, x, y - 14, { angle: fx.angle, sx: fx.value * 20 / 150, sy: (fx.halfWidth * 20 / 13) * (0.6 + 0.4 * fx.power) })) return;
-    if (this.drawFxFrame('roarBeam', t * FX.roarBeam.frames, x, y - 14, { angle: fx.angle, sx: fx.value * 20 / 225, sy: 0.45 + 0.35 * fx.power })) return;
-    const c = this.ctx, len = fx.value * 20, w = fx.halfWidth * 20 * (0.6 + 0.4 * fx.power), y0 = y - 14;
-    c.save(); c.translate(x, y0); c.rotate(fx.angle); c.globalAlpha = 1 - t * t;
+    // The pixelfx pillar (150 px long, its solid band 14 px either side; sparks reach past it), fitted to the column.
+    // Its solid band is always the hit band (game.js beam: halfWidth either side): a short gather hits as wide as a
+    // full one, so it shows only dimmer, not thinner (2026-11-16).
+    const len = fx.value * floorShrink(fx.angle) * 20, w = fx.halfWidth * 20, glow = 0.65 + 0.35 * fx.power;
+    if (this.drawFxFrame('roarPillar', t * FX.roarPillar.frames, x, y - 14, { angle: fx.angle, sx: len / 150, sy: w / 14, alpha: glow })) return;
+    if (this.drawFxFrame('roarBeam', t * FX.roarBeam.frames, x, y - 14, { angle: fx.angle, sx: len / 225, sy: 0.8, alpha: glow })) return;
+    const c = this.ctx, y0 = y - 14;
+    c.save(); c.translate(x, y0); c.rotate(fx.angle); c.globalAlpha = (1 - t * t) * glow;
     c.fillStyle = 'rgba(224, 164, 60, 0.35)'; c.fillRect(0, -w, len, w * 2);
     c.fillStyle = '#fff4b7'; c.fillRect(0, -w * 0.25, len, w * 0.5);
     // Rings travel down the column like sound fronts.
@@ -1185,9 +1197,11 @@ export class CanvasRenderer {
       }
       if (cast.shape === 'echo' && cast.age >= cast.delay) {
         // Coming back, the ring faces the way it travels: home.
-        const x = cast.x * 20, y = cast.y * 20 - 14, w = cast.halfWidth * 20, heading = cast.outbound ? cast.angle : cast.angle + Math.PI;
-        if (this.drawFxFrame('echoRing', this.visualTime * 12, x, y, { angle: heading, sx: w / 40, sy: w / 40 })) continue;
-        c.save(); c.translate(x, y); c.rotate(heading); c.globalAlpha = 0.95;
+        const x = cast.x * 20, y = cast.y * 20 - 6, w = cast.halfWidth * 20, heading = cast.outbound ? cast.angle : cast.angle + Math.PI;
+        // The wave front lies on the floor across the band it cuts (its front arc is 61 px tall), breathing a little as it runs.
+        const span = w * 2 * 0.9 / 61, breathe = 1 + Math.sin(this.visualTime * 18) * 0.05;
+        if (this.drawFxFrame('echoWave', 0, x, y, { angle: heading, sx: span * 0.6, sy: span * breathe, alpha: 0.95, floor: true })) continue;
+        c.save(); c.translate(x, y); this.floorTurn(heading); c.globalAlpha = 0.95;
         for (const [lw, col] of [[4, '#2b3345'], [2, cast.outbound ? '#f4ead2' : '#89bea0']]) { c.strokeStyle = col; c.lineWidth = lw; c.beginPath(); c.ellipse(0, 0, 5, w, 0, 0, TAU); c.stroke(); c.beginPath(); c.ellipse(-6, 0, 3, w * 0.7, 0, 0, TAU); c.stroke(); }
         c.restore();
       }
@@ -1437,9 +1451,9 @@ export class CanvasRenderer {
   }
   /** 빙풍 절단's blade: the PixelLab ice crescent turned to its heading, at waist height (a code-drawn one until it loads). */
   drawCrescent(cast) {
-    if (this.drawFxFrame('frostCrescent', this.visualTime * 14, cast.x * 20, cast.y * 20 - CRESCENT_LIFT, { angle: cast.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE })) return;
+    if (this.drawFxFrame('frostCrescent', this.visualTime * 14, cast.x * 20, cast.y * 20 - CRESCENT_LIFT, { angle: cast.angle, sx: CRESCENT_SCALE, sy: CRESCENT_SCALE * cast.halfWidth * FLOOR_FLAT / CRESCENT_SPAN, floor: true })) return;
     const c = this.ctx, R = cast.halfWidth * 20, T = cast.thickness * 20, ice = ['#1d4f7a', '#2f7fae', '#5fb9d8', '#9fe3f0', '#e9fbff'];
-    c.save(); c.translate(cast.x * 20, cast.y * 20 - 14); c.scale(1, 0.72); c.rotate(cast.angle);
+    c.save(); c.translate(cast.x * 20, cast.y * 20 - 14); this.floorTurn(cast.angle);
     c.lineCap = 'round';
     for (let i = 0; i < 6; i++) { const oy = (i - 2.5) * R * 0.3, len = R * (0.9 + ((i * 37) % 10) / 12); c.strokeStyle = `rgba(214, 240, 232, ${0.75 - Math.abs(i - 2.5) * 0.12})`; c.lineWidth = 2; c.beginPath(); c.moveTo(-len - T, oy); c.lineTo(-T * 0.6, oy); c.stroke(); }
     for (let i = 0; i < ice.length; i++) {
@@ -1623,10 +1637,10 @@ export class CanvasRenderer {
         });
       }
       if(cast.shape==='clamp'){
-        const corners=clampCorners(cast,cast.angle,cast),closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
-        // Only the plain fallback outlines the jaws' box; with the picture the jaws themselves show where they close.
-        if(!spriteFx)for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4];this.line(a.x*20,a.y*20,b.x*20,b.y*20,'#94bdc8',1);}
-        if(!spriteFx)for(const side of [-1,1]){const points=[-1,1].map(u=>({x:cast.x+Math.cos(cast.angle)*u*cast.halfLength-Math.sin(cast.angle)*side*gap,y:cast.y+Math.sin(cast.angle)*u*cast.halfLength+Math.cos(cast.angle)*side*gap}));this.line(points[0].x*20,points[0].y*20,points[1].x*20,points[1].y*20,'#7fc9df',5);}
+        const closing=Math.max(0,Math.min(1,(cast.age-cast.delay+cast.closeMs/1000)/(cast.closeMs/1000))),gap=cast.jawOpenDistance+(cast.jawClosedDistance-cast.jawOpenDistance)*closing;
+        // Only the plain fallback outlines the reach and the jaws (closing from left and right, as the picture's do).
+        if(!spriteFx){const x=cast.x*20,y=cast.y*20,r=cast.radius*20;c.save();c.strokeStyle='#94bdc8';c.lineWidth=1;c.beginPath();c.ellipse(x,y,r,r*FLOOR_FLAT,0,0,TAU);c.stroke();c.restore();
+          for(const side of [-1,1])this.line(x+side*gap*20,y-r*FLOOR_FLAT*0.8,x+side*gap*20,y+r*FLOOR_FLAT*0.8,'#7fc9df',5);}
       }
       if(cast.shape === 'orb' && !spriteFx){ const x=cast.x*20,y=cast.y*20-16; this.circle(x,y,9,'#a4c7b1');this.circle(x,y,5,'#dfca6a');this.line(x-5,y,x+4,y+3,'#fff1a2',2); }
       if (cast.shape === 'suction') {
@@ -1816,7 +1830,7 @@ export class CanvasRenderer {
       if (fx.type === 'ring' || fx.type === 'friendlyTell') { const r = fx.value * 20 * (fx.type === 'ring' ? 0.5 + fraction * 0.5 : 1); c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke(); }
       if (fx.type === 'swing') this.drawSwing(fx, x, y, fraction);
       if (fx.type === 'crosscut') { this.line(x,y,fx.targetX*20,fx.targetY*20,'#d7f0ec',4);this.line(x,y,fx.targetX*20,fx.targetY*20,fx.color,2); }
-      if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const side=(i/4-1)*fx.value,forward=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+(Math.cos(fx.angle)*forward-Math.sin(fx.angle)*side)*20,y:y+(Math.sin(fx.angle)*forward+Math.cos(fx.angle)*side)*20};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
+      if(fx.type==='iceClamp'){let last;for(let i=0;i<=8;i++){const across=(i/4-1)*fx.value,jag=i===0||i===8?0:Math.sin(i*2.7)*.22,p={x:x+across*20,y:y+jag*20*FLOOR_FLAT};if(last)this.line(last.x,last.y,p.x,p.y,'#c2a4e0',3);last=p;}}
       if (fx.type === 'beam') this.line(x, y, fx.targetX * 20, fx.targetY * 20, fx.color, 4);
       if (fx.type === 'soundBeam') { c.restore(); this.drawSoundBeam(fx, x, y, fraction); continue; }
       if (fx.type === 'dodge' || fx.type === 'hurt' || fx.type === 'spark') this.gear(x, y - 10, fx.value * 10 * (1 + fraction), fx.color, fraction);

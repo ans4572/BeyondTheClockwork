@@ -8,6 +8,21 @@ export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
  */
 export const FLOOR_FLAT = 0.55;
 export const floorDistance = (a, b) => Math.hypot(a.x - b.x, (a.y - b.y) / FLOOR_FLAT);
+/**
+ * Floor space (2026-11-16): the floor seen from above, where a screen step up or down of FLOOR_FLAT is one unit, as
+ * floorDistance measures. A band or a flying blade laid out there lies on the floor in the picture; laid out on the
+ * screen it read as a flat paper cut-out turning with the aim. `floorAngle` is a screen heading's direction there.
+ */
+export const floorAngle = angle => Math.atan2(Math.sin(angle) / FLOOR_FLAT, Math.cos(angle));
+/** How long one floor unit along screen heading `angle` looks on the screen (1 sideways, FLOOR_FLAT up or down). */
+export const floorShrink = angle => { const a = floorAngle(angle); return Math.hypot(Math.cos(a), Math.sin(a) * FLOOR_FLAT); };
+/** One floor unit along floor heading `a`, as a step on the screen. */
+export const floorStep = a => ({ x: Math.cos(a), y: Math.sin(a) * FLOOR_FLAT });
+/** How far `target` lies from `origin` along floor heading `a`, and how far to its side, in floor units. */
+export function floorFrame(origin, target, a) {
+  const dx = target.x - origin.x, dy = (target.y - origin.y) / FLOOR_FLAT;
+  return { along: dx * Math.cos(a) + dy * Math.sin(a), side: Math.abs(-dx * Math.sin(a) + dy * Math.cos(a)) };
+}
 export const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 export const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
 /**

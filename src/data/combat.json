@@ -468,8 +468,8 @@
       "hits": 3,
       "damagePerHit": 135,
       "totalDirectDamage": 405,
-      "radius": 2.2,
-      "effect": "지정 지점의 두 얼음 턱이 닫히며 중앙 방전·파쇄 3타; 둔화와 감전; 보스 강제 이동 없음",
+      "radius": 2.5,
+      "effect": "지정 지점(반지름 2.5)에서 두 얼음 턱이 닫히며 중앙 방전·파쇄 3타; 둔화와 감전; 보스 강제 이동 없음",
       "pairKey": "ice+lightning",
       "legacyIds": [
         "superconductRing"
@@ -478,9 +478,7 @@
       "behavior": {
         "shape": "clamp",
         "range": 6,
-        "halfLength": 1.8,
-        "halfWidth": 1.5,
-        "jawOpenDistance": 2.35,
+        "jawOpenDistance": 2.85,
         "jawClosedDistance": 0.7,
         "riseMs": 300,
         "closeMs": 120,
@@ -512,7 +510,7 @@
         "range": 6,
         "startDistance": 0.4,
         "speed": 14,
-        "halfWidth": 1.4,
+        "halfWidth": 2.55,
         "thickness": 0.7,
         "interval": 0,
         "delay": 0.18

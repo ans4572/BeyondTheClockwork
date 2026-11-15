@@ -119,7 +119,7 @@ export const floorMarks = {
       if (!bursts.length) continue;
       // A round reach uses the PixelLab rings (art/fx/marks/ring-fusion-*): the first element's outside, the second's inside.
       const rings = (cast.elements || []).map(id => FUSION_RINGS[id]).filter(name => name && this.mark(name));
-      if (cast.shape !== 'clamp' && rings.length) {
+      if (rings.length) {
         const [outer, inner = outer] = rings, r = cast.radius * 20, size = 2 * r * RING_SPAN;
         for (const { grow, alpha, both, glow } of bursts) {
           if (glow) { c.save(); c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.ellipse(x, y, r * grow, r * grow * RING_FLAT, 0, 0, TAU); c.fill(); c.restore(); }
@@ -128,26 +128,10 @@ export const floorMarks = {
         }
         continue;
       }
-      if (cast.shape === 'clamp' && rings.length) {
-        const [outer, inner = outer] = rings.map(name => this.mark(name)), l = cast.halfLength * 20, w = cast.halfWidth * 20;
-        for (const { grow, alpha, both, glow } of bursts) {
-          c.save(); c.translate(x, y); c.rotate(cast.angle); c.scale(1, w / l);
-          if (glow) { c.globalAlpha = glow; c.fillStyle = a; c.beginPath(); c.arc(0, 0, l * grow, 0, TAU); c.fill(); }
-          const ring = (image, k, opacity) => { const size = 2 * l * RING_SPAN * grow * k; c.globalAlpha = opacity; c.imageSmoothingEnabled = false; c.drawImage(image, -size / 2, -size / 2, size, size * image.height / image.width); };
-          ring(outer, 1, alpha); if (both && inner !== outer) ring(inner, RING_INNER, 0.85 * alpha);
-          c.restore();
-        }
-        continue;
-      }
       // Any ring still loading: flat-colour lines, as the pixel art around it.
-      // A round reach lies flat like the rings; the clamp's box keeps its true shape, matching the clamp drawn over it.
-      c.save(); c.translate(x, y);
-      if (cast.shape === 'clamp') c.rotate(cast.angle); else c.scale(1, RING_FLAT);
-      const outline = grow => {
-        c.beginPath();
-        if (cast.shape === 'clamp') { const l = cast.halfLength * 20 * grow, w = cast.halfWidth * 20 * grow; c.rect(-l, -w, l * 2, w * 2); }
-        else c.arc(0, 0, cast.radius * 20 * grow, 0, TAU);
-      };
+      // A round reach lies flat like the rings (the clamp's too since 2026-11-16).
+      c.save(); c.translate(x, y); c.scale(1, RING_FLAT);
+      const outline = grow => { c.beginPath(); c.arc(0, 0, cast.radius * 20 * grow, 0, TAU); };
       for (const { grow, alpha, both, glow } of bursts) {
         if (glow) { c.globalAlpha = glow; c.fillStyle = a; outline(grow); c.fill(); }
         c.globalAlpha = 0.45 * alpha; c.strokeStyle = '#2b3345'; c.lineWidth = 2; outline(grow * 1.03); c.stroke();

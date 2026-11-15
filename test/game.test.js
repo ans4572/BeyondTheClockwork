@@ -374,7 +374,7 @@ test('orb placement follows an off-axis cursor and clamps to its own range',()=>
  const g=arena();inert(g,'guard',{x:20,y:12});g.s.run.slots=['lightning','wind'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;g.p.angle=0;g.castFusion({x:8,y:30});assert.equal(g.s.casts[0].x,8);assert.equal(g.s.casts[0].y,14);
 });
 
-test('magnetic ice clamp is a fixed oriented target rectangle with a tell and exactly three hits',()=>{
+test('magnetic ice clamp closes on a round floor reach at its target, with a tell and exactly three hits',()=>{
  const g=arena(),center=inert(g,'captainBrass',{x:12,y:8}),outside=inert(g,'guard',{x:13.7,y:9.9});center.hp=center.maxHp=outside.hp=outside.maxHp=10000;
  g.s.run.slots=['ice','lightning'].map(element=>({element,level:1,rarity:'common'}));g.p.energy=100;assert.equal(g.castFusion({x:12,y:8}),true);
  const cast=g.s.casts[0];assert.equal(cast.shape,'clamp');assert.equal(cast.x,12);assert.equal(cast.y,8);g.p.x=5;g.p.y=5;
@@ -590,4 +590,18 @@ test('a coated elite shrugs off the status of one carried element, also when sho
   const coat = e.affixes[0].element, other = coat === 'fire' ? 'lightning' : 'fire', status = el => data.combat.elements.find(x => x.id === el).status;
   g.applyStatus(e, coat, { id: 'a', staggerUsed: {} }); g.applyStatus(e, other, { id: 'b', staggerUsed: {} });
   assert.ok(!(e.statuses[status(coat)] > g.s.time)); assert.ok(e.statuses[status(other)] > g.s.time);
+});
+
+test('the crescent and the echo ring lie on the floor: aimed up or down they reach less far on the screen (2026-11-16)', () => {
+  // F2 aims sideways at one guard and straight down at another, both the fusion's range minus a little away on the
+  // screen: on the floor the one below is 1/FLOOR_FLAT further, out of reach.
+  for (const [pair, id] of [[['ice', 'wind'], 'frostCrosscut'], [['wind', 'sound'], 'echoGust']]) {
+    const range = data.slice.fusionBehavior[id].range;
+    for (const [dx, dy, reached] of [[range - 1, 0, true], [0, range - 1, false], [0, (range - 1) * 0.55, true]]) {
+      const g = arena(), e = inert(g, 'guard', { x: g.p.x + dx, y: g.p.y + dy }); e.hp = e.maxHp = 5000;
+      g.s.run.slots = pair.map(element => ({ element, level: 1, rarity: 'common' })); g.p.energy = 100; g.p.angle = Math.atan2(dy, dx);
+      assert.equal(g.castFusion({ x: e.x, y: e.y }), true); step(g, 2);
+      assert.equal(e.hp < 5000, reached, `${id} at ${dx},${dy}`);
+    }
+  }
 });

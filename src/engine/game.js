@@ -8,7 +8,7 @@ import { Tutorial } from './tutorial.js';
 import { FlowField } from './flow-field.js';
 import { dealRun } from './encounters.js';
 import { dealHazards, musicRooms, SOLID, hazardBox, pressState, slamNow, laserState, laserPosts, steamState } from './hazards.js';
-import { clamp, distance, floorDistance, angleDiff, inCone, segmentDistance, FLOOR_FLAT } from './math.js';
+import { clamp, distance, floorDistance, angleDiff, inCone, segmentDistance, FLOOR_FLAT, floorAngle, floorStep, floorFrame, floorShrink } from './math.js';
 import { enemyActions } from './enemy-actions.js';
 import { roomWaves } from './room-waves.js';
 import { factoryMobs } from './factory-mobs.js';
@@ -862,7 +862,8 @@ export class Game {
     if (['self', 'moving', 'cone', 'dash', 'crosscut', 'crescent', 'beam', 'jet'].includes(cast.shape)) { cast.x = this.p.x; cast.y = this.p.y; }
     if (cast.shape === 'crescent') cast.travel = cast.startDistance || 0;
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
-    if (['target', 'orb'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
+    // 자성 빙쇄's jaws show their round reach while they rise, as the targeted blasts do (2026-11-16).
+    if (['target', 'orb', 'clamp'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
     if (cast.shape === 'projectile') {
       // As many bolts as the cast has (a skill mod may add some: 서리 산탄), fanned evenly about the aim.
       for (let i = 0; i < cast.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (cast.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
@@ -1014,8 +1015,11 @@ export class Game {
       }
       // 굉음: a straight column of sound out to its range, through every body on it, at once.
       if (cast.shape === 'beam') {
-        const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle);
-        const on = t => { const dx = t.x - cast.startX, dy = t.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = t.radius || 0.4; return along >= -r && along <= cast.range + r && side <= cast.halfWidth + r; };
+        // A column of sound in the air: its length runs over the floor (aimed up or down it reaches less far on the screen,
+        // as a round reach does), its width is the same on the screen whichever way (2026-11-16: laid flat on the floor it
+        // turned into a wide ladder aimed down).
+        const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), reach = cast.range * floorShrink(cast.angle);
+        const on = t => { const dx = t.x - cast.startX, dy = t.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = t.radius || 0.4; return along >= -r && along <= reach + r && side <= cast.halfWidth + r; };
         this.elementOnHazards(cast, on);
         for (const enemy of this.s.enemies) if (enemy.hp > 0 && on(enemy)) this.castHit(cast, enemy);
         this.effect('soundBeam', cast.startX, cast.startY, cast.color, 0.45, cast.range, { angle: cast.angle, power: cast.power ?? 1, halfWidth: cast.halfWidth });
@@ -1050,9 +1054,10 @@ export class Game {
       // 빙풍 절단: one wide ice crescent carried forward on the wind; everything it passes over is cut once.
       if (cast.shape === 'crescent') {
         if (cast.age < (cast.delay || 0)) continue;
-        const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), from = cast.travel, to = Math.min(cast.range, from + cast.speed * dt);
-        cast.travel = to; cast.x = cast.startX + fx * to; cast.y = cast.startY + fy * to;
-        const crossed = target => { const dx = target.x - cast.startX, dy = target.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = target.radius || 0.4; return along >= from - cast.thickness - r && along <= to + cast.thickness + r && side <= cast.halfWidth + r; };
+        // It flies over the floor (math.js floorFrame): its range and width are floor units, as a round blast's radius.
+        const heading = floorAngle(cast.angle), unit = floorStep(heading), from = cast.travel, to = Math.min(cast.range, from + cast.speed * dt);
+        cast.travel = to; cast.x = cast.startX + unit.x * to; cast.y = cast.startY + unit.y * to;
+        const crossed = target => { const { along, side } = floorFrame({ x: cast.startX, y: cast.startY }, target, heading), r = target.radius || 0.4; return along >= from - cast.thickness - r && along <= to + cast.thickness + r && side <= cast.halfWidth + r; };
         this.elementOnHazards(cast, crossed);
         for (const enemy of this.s.enemies) if (enemy.hp > 0 && !cast.hit.includes(enemy.id) && crossed(enemy)) { cast.hit.push(enemy.id); this.castHit(cast, enemy); }
         if (to >= cast.range) { cast.done = true; this.effect('ring', cast.x, cast.y, '#bfe9f4', 0.5, 1.2, { look: 'frostCrescentBreak', angle: cast.angle }); }
@@ -1083,8 +1088,10 @@ export class Game {
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && segment.points.slice(1).some((p,i)=>segmentDistance(enemy,segment.points[i],p) <= segment.halfWidth + enemy.radius)) this.castHit(cast,enemy);
           for(let i=1;i<segment.points.length;i++){const a=segment.points[i-1],b=segment.points[i];this.effect('crosscut',a.x,a.y,cast.color,0.2,segment.halfWidth,{targetX:b.x,targetY:b.y});}
         } else if(cast.shape === 'clamp') {
-          for(const enemy of this.s.enemies)if(enemy.hp>0&&clampContains(enemy,cast,cast.angle,cast,enemy.radius))this.castHit(cast,enemy);
-          this.effect('iceClamp',cast.x,cast.y,cast.color,.18,cast.halfWidth,{angle:cast.angle,halfLength:cast.halfLength,pulse:cast.pulse});
+          // The jaws close on a round reach on the floor, the same way whichever way F2 aims (2026-11-16: an oriented box
+          // turned with the aim under a picture that never turns, and read as a flat cut-out).
+          for(const enemy of this.s.enemies)if(enemy.hp>0&&floorDistance(cast,enemy)<=cast.radius+enemy.radius)this.castHit(cast,enemy);
+          this.effect('iceClamp',cast.x,cast.y,cast.color,.18,cast.radius,{pulse:cast.pulse});
         } else if (cast.shape === 'chain') {
           const first = this.s.enemies.filter(e => e.hp > 0 && inCone(this.p, e, cast.angle, cast.range, cast.acquisitionArc)).sort((a, b) => distance(this.p, a) - distance(this.p, b))[0];
           this.elementOnHazards(cast, h => first ? segmentDistance(h, this.p, first) <= 0.8 : inCone(this.p, h, cast.angle, cast.range, cast.acquisitionArc));
@@ -1495,7 +1502,7 @@ export class Game {
   }
   acknowledgeReturn() { if (this.s.mode !== 'returned') return false; this.s.mode = 'hub'; this.enterHub(); this.save(); return true; }
 }
-import {crosscutSegment,clampContains} from './fusion-geometry.js';
+import {crosscutSegment} from './fusion-geometry.js';
 import { cleanNickname } from './nickname.js';
 /** How front-loaded a dodge is: 0 is a flat speed; 0.7 starts at 1.7× the average and ends at 0.3× (about walking pace). */
 const DODGE_EASE = 0.7;

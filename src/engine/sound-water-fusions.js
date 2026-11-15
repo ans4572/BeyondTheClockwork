@@ -1,13 +1,18 @@
 // The nine fusions with sound or water (Silent Factory plan 8.1), each a cast shape of its own (slice.json fusionBehavior).
 // Installed on Game.prototype (game.js), so `this` is the game. makeCast calls setupSoundWaterFusion once; updateCasts
 // hands every step of these shapes to updateSoundWaterFusion. Drawn in code for now (src/render/canvas.js).
-import { distance, floorDistance } from './math.js';
+import { distance, floorDistance, floorAngle, floorStep, floorFrame } from './math.js';
 
 const SHAPES = new Set(['marks', 'shatter', 'speaker', 'echo', 'film', 'veil', 'sheet', 'pool', 'spout']);
 /** A body a fusion can reach: standing, out of the ground and not still climbing out of a summon. */
 const reachable = (game, e) => e.hp > 0 && !e.hidden && !(e.summonUntil > game.s.time);
 
 export const soundWaterFusions = {
+  /** How far 메아리 돌풍's ring runs out, in floor units: its range, or less where a wall stands on its line. */
+  echoReach(p, cast) {
+    const unit = floorStep(floorAngle(cast.angle)), k = Math.hypot(unit.x, unit.y);
+    return Math.max(1, this.lineReach(p, cast.angle, cast.range * k).reach / k);
+  },
   /** Picks targets and sets the starting state of a new sound or water fusion cast. */
   setupSoundWaterFusion(cast) {
     if (!SHAPES.has(cast.shape)) return;
@@ -22,7 +27,7 @@ export const soundWaterFusions = {
     if (cast.shape === 'shatter') { cast.stage = 0; this.effect('friendlyTell', cast.x, cast.y, '#e0a43c', cast.delay + cast.breakDelay, cast.radius, { skill: cast.skillId, mark: 'sound' }); }
     // 공명 낙뢰: bolts fall on up to `boltTargets` nearest bodies at once (2026-11-11: on one); the nearest one rings.
     if (cast.shape === 'speaker') { cast.bolts = near.slice(0, cast.boltTargets || 1).map(e => e.id); cast.speaker = near[0]?.id ?? null; cast.left = cast.pulses; cast.next = cast.delay; cast.bolted = false; if (cast.speaker === null) cast.done = true; }
-    if (cast.shape === 'echo') { cast.travel = cast.startDistance || 0; cast.outbound = true; cast.reach = Math.max(1, this.lineReach(p, cast.angle, cast.range).reach); cast.hitOut = []; cast.hitBack = []; }
+    if (cast.shape === 'echo') { cast.travel = cast.startDistance || 0; cast.outbound = true; cast.reach = this.echoReach(p, cast); cast.hitOut = []; cast.hitBack = []; }
     if (cast.shape === 'film') { cast.x = p.x + Math.cos(cast.angle) * cast.forward; cast.y = p.y + Math.sin(cast.angle) * cast.forward; cast.rings = 0; cast.lastRing = -Infinity; }
     if (cast.shape === 'veil') { cast.x = p.x; cast.y = p.y; cast.next = cast.delay; }
     if (cast.shape === 'sheet') {
@@ -87,11 +92,12 @@ export const soundWaterFusions = {
     }
     if (cast.shape === 'echo') {
       if (cast.age < cast.delay) return true;
-      const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), from = cast.travel, step = cast.speed * dt;
+      // The ring runs over the floor (math.js floorFrame): range and width in floor units, as 빙풍 절단's blade.
+      const heading = floorAngle(cast.angle), unit = floorStep(heading), from = cast.travel, step = cast.speed * dt;
       cast.travel = cast.outbound ? Math.min(cast.reach, from + step) : Math.max(0, from - step);
-      cast.x = cast.startX + fx * cast.travel; cast.y = cast.startY + fy * cast.travel;
+      cast.x = cast.startX + unit.x * cast.travel; cast.y = cast.startY + unit.y * cast.travel;
       const lo = Math.min(from, cast.travel), hi = Math.max(from, cast.travel);
-      const crossed = e => { const dx = e.x - cast.startX, dy = e.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = e.radius || 0.4; return along >= lo - r && along <= hi + r && side <= cast.halfWidth + r; };
+      const crossed = e => { const { along, side } = floorFrame({ x: cast.startX, y: cast.startY }, e, heading), r = e.radius || 0.4; return along >= lo - r && along <= hi + r && side <= cast.halfWidth + r; };
       const struck = cast.outbound ? cast.hitOut : cast.hitBack;
       this.elementOnHazards(cast, crossed);
       for (const e of this.s.enemies) if (reachable(this, e) && !struck.includes(e.id) && crossed(e)) { struck.push(e.id); this.castHit(cast, e); }

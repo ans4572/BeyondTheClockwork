@@ -730,7 +730,7 @@
       "shape": "echo",
       "range": 6,
       "speed": 10,
-      "halfWidth": 1.2,
+      "halfWidth": 2.2,
       "startDistance": 0.3,
       "interval": 0,
       "delay": 0.1
@@ -807,7 +807,7 @@
       "range": 6,
       "startDistance": 0.4,
       "speed": 14,
-      "halfWidth": 1.4,
+      "halfWidth": 2.55,
       "thickness": 0.7,
       "interval": 0,
       "delay": 0.18
@@ -823,9 +823,7 @@
     "magneticIceClamp": {
       "shape": "clamp",
       "range": 6,
-      "halfLength": 1.8,
-      "halfWidth": 1.5,
-      "jawOpenDistance": 2.35,
+      "jawOpenDistance": 2.85,
       "jawClosedDistance": 0.7,
       "riseMs": 300,
       "closeMs": 120,

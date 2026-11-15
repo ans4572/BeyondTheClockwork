@@ -63,7 +63,9 @@ export const FX = {
   ringPalm: { sheet: 'art/fx/ring-palm-v1.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [13, 63] },
   roarBeam: { sheet: 'art/fx/roar-beam-v1.png', w: 256, h: 128, cols: 4, frames: 9, anchor: [27, 61] },
   waterShot: { sheet: 'art/fx/water-shot-v1.png', w: 128, h: 128, cols: 4, frames: 8, anchor: [59, 63] },
-  echoRing: { sheet: 'art/fx/echo-ring-v1.png', w: 128, h: 128, cols: 4, frames: 8, anchor: [61, 63] },
+  // 메아리 돌풍's wave front seen from above, laid on the floor (PixelLab, 2026-11-16; it replaced an upright ring that read
+  // as a flat cut-out once the reach was laid on the floor). The anchor is the front arc's middle.
+  echoWave: { sheet: 'art/fx/echo-wave-v1.png', w: 128, h: 128, cols: 1, frames: 1, anchor: [90, 63] },
   waterSplash: { sheet: 'art/fx/water-splash-v1.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [62, 95] },
   resonanceBurst: { sheet: 'art/fx/resonance-burst-v1.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [64, 62] },
   overheatBurst: { sheet: 'art/fx/overheat-burst-v1.png', w: 128, h: 128, cols: 4, frames: 9, anchor: [63, 100] },
