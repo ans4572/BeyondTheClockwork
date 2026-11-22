@@ -109,7 +109,7 @@ export const rewardDraws = {
       const glass = this.perk('glassSpring');
       if (reward.id === 'glassSpring') { this.p.maxHp = Math.max(1, this.p.maxHp - glass.maxHpLoss); this.p.hp = Math.min(this.p.hp, this.p.maxHp); }
     }
-    if (reward.kind === 'heal') this.heal(this.config.rules.healRewards.find(h => h.id === reward.id).amount);
+    if (reward.kind === 'heal') { const repair = this.config.rules.healRewards.find(h => h.id === reward.id); this.heal(this.healShare(repair.share, repair.min)); }
     if (reward.kind === 'gears') this.s.profile.freeGears += Math.round(reward.amount * (1 + (this.stats.gearGain || 0)));
     // The pick, in order, for the pause menu's 이번 원정 tab: the stop it was taken at and what it was.
     (run.picks ??= []).push({ node: run.node, kind: reward.kind, id: reward.id ?? null, amount: reward.amount ?? null, rarity: reward.rarity ?? null, element: reward.kind === 'level' ? this.slots[reward.id]?.element ?? null : null });

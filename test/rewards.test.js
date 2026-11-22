@@ -52,8 +52,19 @@ test('owned rewards leave the pool; parts fill in, and repairs only come while t
   g.p.hp = 20; assert.ok(g.partRewards().some(c => c.kind === 'heal')); g.p.hp = g.p.maxHp; assert.ok(!g.partRewards().some(c => c.kind === 'heal'));
 });
 
+test('repairs mend a share of maximum health (2026-11-22): patch 10%, overhaul 20%, more health more mending', () => {
+  assert.deepEqual(data.slice.rules.healRewards.map(h => [h.id, h.share, h.min]), [['patch', 0.1, 20], ['overhaul', 0.2, 40]]);
+  const shop = data.progression.economy.shop.find(i => i.id === 'heal'); assert.deepEqual([shop.share, shop.min], [0.2, 40]);
+  assert.deepEqual([data.progression.run.regionBossClearHealShare, data.progression.run.regionBossClearHealMin], [0.2, 30]);
+  // Never less than the old flat amount: at 100 health the overhaul still mends 40; at 250, 20% of it, 50.
+  for (const [maxHp, mended] of [[100, 40], [250, 50]]) {
+    const g = arena(); g.p.maxHp = maxHp; g.p.hp = 1; g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'heal', id: 'overhaul' }];
+    assert.equal(g.chooseReward(0), true); assert.equal(g.p.hp, 1 + mended);
+  }
+});
+
 test('a repair card heals by its amount, and a skill reaches at most three levels above its start', () => {
-  const g = arena(); g.p.hp = 10; g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'heal', id: 'patch' }]; assert.equal(g.chooseReward(0), true); assert.equal(g.p.hp, 10 + data.slice.rules.healRewards[0].amount);
+  const g = arena(); g.p.hp = 10; g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'heal', id: 'patch' }]; assert.equal(g.chooseReward(0), true); assert.equal(g.p.hp, 10 + g.healShare(data.slice.rules.healRewards[0].share, data.slice.rules.healRewards[0].min));
   assert.equal(data.combat.balance.skillMaxLevel, 4);
   for (let i = 0; i < 5; i++) { g.s.mode = 'reward'; g.s.run.rewardChoices = [{ kind: 'level', id: 0 }]; g.chooseReward(0); }
   assert.equal(g.slots[0].level, 4); assert.ok(!g.partRewards().some(c => c.kind === 'level' && c.id === 0));

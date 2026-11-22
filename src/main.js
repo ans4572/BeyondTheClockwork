@@ -7,6 +7,7 @@ import { PIXELS_PER_UNIT, placeOf } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART, FLAG_BEARER_ART } from './render/canvas.js';
 import { playLiberationCutscene, preloadLiberation } from './ui/liberation-cutscene.js';
+import { playCouncilScene, COUNCIL_ART } from './ui/council-scene.js';
 import { FX_FILES, UNWIND_VERBS } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage, atlasPlaces } from './animation/sprite-library.js';
 import { createMapLoader } from './render/map-loader.js';
@@ -265,10 +266,13 @@ try {
     fitCanvas();
     const scale = $('game').getBoundingClientRect().width / 1120;
     $('hud').style.transform = `scale(${scale})`; document.documentElement.style.setProperty('--hud-scale', scale);
-    // Touch tools sit just left of the minimap's top edge (it is 168px wide, 14px from the right, 12px down on the sheet).
-    const shown = $('game').getBoundingClientRect();
-    $('touch').style.setProperty('--tools-right', `${Math.round(document.documentElement.clientWidth - shown.left - (1120 - 182) * scale + 8)}px`);
-    $('touch').style.setProperty('--tools-top', `${Math.round(shown.top + 12 * scale)}px`);
+    // Touch tools (full screen, map, menu): in the dark strip right of the picture where a wide phone leaves one, else just
+    // under the minimap (it is 168 x 112, 14px from the right, 12px down on the sheet). (2026-11-22, the phone review: they
+    // sat left of the minimap's top edge, over the boss's health bar.)
+    const shown = $('game').getBoundingClientRect(), wide = document.documentElement.clientWidth - shown.right >= 160;
+    if (wide) $('touch').style.removeProperty('--tools-right'); // (layout.css: 10px in from the edge, past any notch)
+    else $('touch').style.setProperty('--tools-right', `${Math.round(document.documentElement.clientWidth - shown.left - (1120 - 14) * scale)}px`);
+    $('touch').style.setProperty('--tools-top', `${Math.round(shown.top + (wide ? 12 : (12 + 112 + 8) * scale))}px`);
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels never shrink past a readable size; on a short screen they switch to a compact layout so nothing scrolls.
     const zoom = Math.max(scale, TOUCH_PANEL_ZOOM);
@@ -405,7 +409,7 @@ try {
    * (2026-11-21, the user's word): first meetings (boss ids, BOSS_TALKS), and what comes after a boss falls (the
    * unwind talks, Brass's and Orden's last words and the chapter endings' scenes).
    */
-  const talkMarks = kind => kind === 'meet' ? Object.keys(BOSS_TALKS) : [...Object.values(AFTER_TALKS), 'ordenFarewell', ...Object.values(ENDINGS).flatMap(e => [e.seen, e.after].filter(Boolean))];
+  const talkMarks = kind => kind === 'meet' ? Object.keys(BOSS_TALKS) : [...Object.values(AFTER_TALKS), 'ordenFarewell', 'council', ...Object.values(ENDINGS).flatMap(e => [e.seen, e.after].filter(Boolean))];
   // Chapter 2's bosses say what F2 has just learned once they are unwound (once per save); Brass's words come with the ending.
   // Tick·Tock and Belgard speak too once unwound (chapter 3, 2026-11-21: Codex's dialogue rewrite).
   const AFTER_TALKS = { inspectorIris: 'irisAfter', directorPress: 'pressAfter', twinTickTock: 'tickTockAfter', bellguard: 'belgardAfter' };
@@ -415,7 +419,7 @@ try {
     seen.push(after); game.save();
     game.s.paused = true; await talk(after); game.s.paused = false;
   }
-  let liberationFetched = false;
+  let liberationFetched = false; let councilFetched = false;
   async function meetBoss(boss) {
     (game.s.profile.bossTalks ??= []).push(boss); game.save();
     // The ending scene comes right after this fight: its picture and Orden's theme download meanwhile.
@@ -465,6 +469,18 @@ try {
     return panel(`<h2>3장 · 중앙시계탑 끝</h2><p>오르덴의 마지막 정각을 멈췄습니다. 마을의 종은 더 이상 울리지 않습니다.<br>모두 자기 걸음으로 걷습니다.</p>`
       + `<div class="result-stats"><span><b>${rooms} / ${rooms}</b>통과한 구간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${endRecord(result)}`
       + `<div class="actions">${button(label, action, '', 'primary')}</div>`, 'compact ending');
+  }
+  /**
+   * The hidden ending (ui/council-scene.js, 2026-11-22, the user's word): after chapter 3's first clear on hard, once
+   * the end sheet is closed and F2 is in the village. No music, a clock ticking. `watch` (the debug workbench) plays it
+   * without touching the save.
+   */
+  async function playCouncil(watch = false) {
+    screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true);
+    cutscene = playCouncilScene($('cutscene'), { reduced: reducedMotion(), sound: cutsceneSound, music: cutsceneMusic });
+    await cutscene.done; cutscene = null; cutSong = null;
+    if (!watch) { game.s.profile.councilPending = false; const seen = (game.s.profile.bossTalks ??= []); if (!seen.includes('council')) seen.push('council'); game.save(); }
+    game.s.paused = false; screen = null; renderOverlay(true);
   }
   /** Debug only: the cutscene by itself, nothing in the save changes. */
   async function watchLiberation() {
@@ -764,7 +780,7 @@ try {
     if (reward.kind === 'trait') { const trait = data.slice.elementTraits.find(t => t.id === reward.id), element = data.combat.elements.find(e => e.id === trait.element); return { name: trait.name, art: trait.element, label: `속성 특성 · ${element.name}`, description: trait.description, value: '이 원정에 유지', color: data.slice.presentation.colors[trait.element] }; }
     if (reward.kind === 'level') { const slot = game.slots[reward.id], element = data.combat.elements.find(e => e.id === slot.element); const skills = data.combat.skills.filter(s => s.element === slot.element); return { name: `${element.name} 기술 조율`, skills: skills.map(s => s.id), label: '기술 단계', description: `${josa(skills.map(s => s.name).join(' · '), '이', '가')} 함께 강해진다.`, value: `Lv.${slot.level} → ${slot.level + 1} (최대 ${data.combat.balance.skillMaxLevel}) · 직접 피해 +12%p` }; }
     if (reward.kind === 'gears') return { name: '자유 톱니 주머니', icon: ico('reward-gear-pouch'), label: '영구 재료', description: '모루의 조율판에서 내 방식으로 성장한다.', value: `자유 톱니 +${reward.amount} · 귀환 후 유지` };
-    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('reward-repair'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + repair.amount))} / ${game.p.maxHp}` }; }
+    if (reward.kind === 'heal') { const repair = data.slice.rules.healRewards.find(h => h.id === reward.id); return { name: repair.name, icon: ico('reward-repair'), label: '수리', description: repair.description, value: `체력 ${Math.round(game.p.hp)} → ${Math.min(game.p.maxHp, Math.round(game.p.hp + game.healShare(repair.share, repair.min)))} / ${game.p.maxHp}` }; }
     const upgrade = data.combat.balance.temporaryUpgrades.find(u => u.id === reward.id), desc = data.slice.rewards[reward.id];
     const rank = game.s.run.upgrades[reward.id] || 0, [name, sign] = PART_VALUES[reward.id], now = partValue(reward.id, rank), next = partValue(reward.id, rank + 1);
     const shown = v => reward.id === 'maxHp' || reward.id === 'killHeal' ? `${v}` : `${v ? sign : ''}${Math.round(v * 100)}%`;
@@ -906,7 +922,7 @@ try {
           </section>
           <section class="dbg-block"><h3>진행</h3>
             <div class="dbg-row"><span class="dbg-label">다음 이동 난이도</span>${seg(levels, 'debug-difficulty', l => l.id === pick, l => l.name, 'level')}</div>
-            <div class="dbg-row">${button('튜토리얼부터 시작', 'debug-tutorial')}${button('해방 컷신 보기', 'debug-liberation')}</div>
+            <div class="dbg-row">${button('튜토리얼부터 시작', 'debug-tutorial')}${button('해방 컷신 보기', 'debug-liberation')}${button('히든 엔딩 보기', 'debug-council')}</div>
           </section>
           <section class="dbg-block"><h3>대사</h3>
             ${(() => { const seen = s.profile.bossTalks || [], count = kind => talkMarks(kind).filter(m => seen.includes(m)).length;
@@ -946,7 +962,7 @@ try {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
       return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button('선택', 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
-    }).join('')}</div><p class="notice">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide rewards');
+    }).join('')}</div><p class="notice aside">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide rewards');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
   function localSavedAt() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null')?.savedAt; } catch { return null; } }
@@ -1112,6 +1128,8 @@ try {
       const top = places.get(`${name}#${n}`); if (top) box.scrollTop = top;
     }
   }
+  /** A sheet open over Moru's back yard: the mode stays 'practice', so the fight's input and controls are held by hand. */
+  function yardSheet() { return game.s.mode === 'practice' && !!game.s.panel; }
   /** Someone is typing in an open sheet (a transfer code, a name): a background redraw would wipe it (2026-11-22). */
   const typingInSheet = () => { const el = document.activeElement; return !!el && /^(INPUT|TEXTAREA)$/.test(el.tagName) && !!el.closest('#overlay'); };
   function renderOverlay(force = false) {
@@ -1143,7 +1161,7 @@ try {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && (mode === 'merchant' ? s.run.merchantBought || [] : s.run.shopBought).includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
-      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `HP ${item.amount} 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `최대 체력의 ${Math.round(item.share * 100)}%(최소 ${item.min}, 지금 ${game.healShare(item.share, item.min)}) 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${mode === 'merchant' ? button(`${merchant.boss}에게 가기`, 'merchant-leave', '', 'primary') : button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
       const boss = game.room.boss, verb = UNWIND_VERBS[boss] || UNWIND_VERBS.collectorRoco, [title, line] = UNWIND_SHEETS[boss] || UNWIND_SHEETS.collectorRoco;
@@ -1152,7 +1170,9 @@ try {
     }
     if (mode === 'complete') html = panel(`${game.chapter.id === FIRST_CHAPTER
       ? `<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.${shownChapters().length > 1 ? ' 원정 창에서 2장을 고를 수 있습니다.' : ''}</p>`
-      : '<h2>2장 · 무음공장 끝</h2><p>프레스의 압력을 풀었습니다. 원본 조립 기록과 구형 자율 조율 설계도가 기록됩니다.<br>신호선은 모두 중앙시계탑을 가리킵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div>${endRecord()}<div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
+      // (Chapter 3 ends through Orden's farewell and the town's end sheet, towerEndSheet; its words here too, never chapter 2's.)
+      : game.chapter.id === 'clock-tower' ? '<h2>3장 · 중앙시계탑 끝</h2><p>오르덴의 마지막 정각을 멈췄습니다. 마을의 종은 더 이상 울리지 않습니다.<br>모두 자기 걸음으로 걷습니다.</p>'
+      : '<h2>2장 · 무음공장 끝</h2><p>프레스의 압력을 풀었습니다. 원본 조립 기록과 구형 자율 조율 설계도가 기록됩니다.<br>신호선은 모두 중앙시계탑을 가리킵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div>${endRecord()}<div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice aside">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
     if (mode === 'towerEnd' && s.result) html = towerEndSheet(s.result, 'resume', '마을로 나가기');
     if (mode === 'returned' && s.result?.reason === 'clear' && s.result.chapter === 'clock-tower') html = towerEndSheet(s.result, 'acknowledge', '마을로 나가기');
     else if (mode === 'returned') {
@@ -1311,8 +1331,8 @@ try {
     const resetting = game.s.practice?.resetCooldowns;
     // On a phone the switch is a thumb button over the skill pad (touch-controls.js); the keyboard's T label is for desktops.
     put($('practice-reset'), 'hidden', game.s.mode !== 'practice' || isTouch);
-    put($('practice-exit'), 'hidden', game.s.mode !== 'practice');
-    if (isTouch) touch.practice(game.s.mode === 'practice' && !screen, !!resetting);
+    put($('practice-exit'), 'hidden', game.s.mode !== 'practice' || isTouch);
+    if (isTouch) touch.practice(game.s.mode === 'practice' && !screen && !yardSheet(), !!resetting);
     put($('practice-reset'), 'text', `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`);
     $('practice-reset').classList.toggle('on', !!resetting);
     // In Moru's back yard the switch sits on the top-right corner of the skill bar, clear of the wallet at the left.
@@ -1441,6 +1461,7 @@ try {
     // Every tuning stat at its top rank (slice.json permanentStats[].maxRank), past the chapter cap, at no cost.
     if (name === 'debug-tune-max') { for (const stat of data.slice.permanentStats) game.s.profile.stats[stat.id] = stat.maxRank; game.save(); game.notify('조율판: 모두 최대 (디버그)'); }
     if (name === 'debug-liberation') { leaveTitle(); resume(); watchLiberation(); }
+    if (name === 'debug-council') { leaveTitle(); resume(); playCouncil(true); }
     if (name === 'debug-talks') {
       const marks = talkMarks(d.kind), seen = game.s.profile.bossTalks || [], gone = seen.filter(m => marks.includes(m)).length;
       game.s.profile.bossTalks = seen.filter(m => !marks.includes(m)); game.save();
@@ -1536,7 +1557,8 @@ try {
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
   $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
   // Leaving the back yard without walking to its gate (2026-11-21).
-  $('practice-exit').addEventListener('click', () => { if (game.s.mode !== 'practice' || screen) return; game.closePanel(); game.leavePractice(); renderOverlay(true); updateHUD(); $('game').focus({ preventScroll: true }); });
+  $('practice-exit').addEventListener('click', () => leaveYard());
+  function leaveYard() { if (game.s.mode !== 'practice' || screen) return; game.closePanel(); game.leavePractice(); renderOverlay(true); updateHUD(); $('game').focus({ preventScroll: true }); }
   // The button enters full screen, or leaves it when already there; its picture shows which.
   const toggleFullscreen = () => (document.fullscreenElement ? document.exitFullscreen?.() : $('app').requestFullscreen?.())?.catch(() => {});
   $('fullscreen').addEventListener('click', toggleFullscreen);
@@ -1714,7 +1736,7 @@ try {
     const pad = navigator.getGamepads?.().find(p => p?.connected);
     if (!pad) { gamepadLast = []; return null; }
     const edge = index => pad.buttons[index]?.pressed && !gamepadLast[index];
-    if (screen === 'cinematic') { if (cutscene && (edge(0) || edge(9))) cutscene.skip(); gamepadLast = pad.buttons.map(b => b.pressed); return null; }
+    if (screen === 'cinematic') { if (cutscene && edge(9)) cutscene.skip(); else if (cutscene && edge(0)) (cutscene.advance || cutscene.skip)(); gamepadLast = pad.buttons.map(b => b.pressed); return null; }
     if (screen === 'talk') {
       if (edge(12) || edge(14)) talkBox.move(-1);
       if (edge(13) || edge(15)) talkBox.move(1);
@@ -1778,11 +1800,16 @@ try {
       (game.s.profile.bossTalks ??= []).push('ordenFarewell'); game.s.paused = true; talk('ordenFarewell').then(() => { game.s.paused = false; });
     }
     if (!screen && game.s.mode === 'hub' && game.s.profile.liberationPending) playLiberation();
+    else if (!screen && game.s.mode === 'hub' && game.s.profile.councilPending && !game.s.paused) playCouncil();
     // The liberation's paintings and Orden's themes, fetched once a page whenever F2 reaches his rooms before the town is
     // freed (2026-11-22, the code review: only his first-meeting talk fetched them, once per save, so a later page loaded
     // nothing and a slow line showed the cutscene empty at first).
     if (!liberationFetched && (game.room?.id === 'tower-10' || game.room?.id === 'tower-11') && (!game.villageFree || !game.s.profile.bossTalks?.includes('ordenFarewell'))) {
       liberationFetched = true; preloadLiberation(); music.preload(['orden', 'orden-lasthour-v2']);
+    }
+    // The hidden ending's two sheets, once a page, on a hard climb of the tower that has not seen it yet.
+    if (!councilFetched && game.room?.id === 'tower-11' && game.s.run?.difficulty === 'hard' && !game.s.profile.bossTalks?.includes('council')) {
+      councilFetched = true; for (const src of COUNCIL_ART) new Image().src = src;
     }
     // A boss waiting behind a corridor (Press's forming hall) speaks once F2 is in and the laser gates have shut.
     // (Not while the tower is still breaking open: Orden at the last hour speaks once his mask has broken, 2026-11-22.)
@@ -1795,7 +1822,9 @@ try {
     // (lastMouse dropped too, or the old mouse spot turned her straight back the same frame; 2026-11-22, the code review.)
     if (game.s.faceTo) { pointer = game.s.faceTo; renderer.pointer = pointer; game.s.faceTo = null; lastMouse = null; }
     // No stick or buttons over the tower's collapse or Orden's end (its menu button led to abandoning mid-scene).
-    if (isTouch) { touch.show(game.onFoot && !screen && !game.s.collapse && !game.s.ordenEnd, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
+    // (Nor over Moru's parts sheet in the back yard, 2026-11-22, the user's phone: the skill buttons, the reset switch
+    // and the map and menu buttons stood on top of the sheet.)
+    if (isTouch) { touch.show(game.onFoot && !screen && !game.s.collapse && !game.s.ordenEnd && !yardSheet(), !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
     else if (arrowMove()) pointer = autoAim(game.p, game.aimTargets);
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;
@@ -1814,7 +1843,7 @@ try {
       if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; drawnFrom = { x: game.p.x, y: game.p.y }; continue; }
       const walk = walkToTarget();
       // (Nor in the back yard while a sheet is open over it: F2 walked and cast under Moru's parts sheet, 2026-11-22.)
-      const input = screen === 'talk' || (game.s.mode === 'practice' && game.s.panel) ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0) + walk.x, y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0) + walk.y, aim: pointer, basic: mouseHeld || (!!map.attack && held.has(map.attack)) || pad?.basic || touch?.attacking, skillHeld: [...new Set([...[0, 1, 2, 3].filter(i => held.has(map[`skill${i}`])), ...(pad?.skillHeld || []), ...(touch?.skillHeld || [])])], ...pending };
+      const input = screen === 'talk' || yardSheet() ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0) + walk.x, y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0) + walk.y, aim: pointer, basic: mouseHeld || (!!map.attack && held.has(map.attack)) || pad?.basic || touch?.attacking, skillHeld: [...new Set([...[0, 1, 2, 3].filter(i => held.has(map[`skill${i}`])), ...(pad?.skillHeld || []), ...(touch?.skillHeld || [])])], ...pending };
       drawnFrom = { x: game.p.x, y: game.p.y }; game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
       noteWalk(walk);
     }
@@ -1888,6 +1917,7 @@ try {
       else if (name === 'map' && !saveBlocked) pause('map');
       else if (name === 'fullscreen') toggleFullscreen();
       else if (name === 'practiceReset') { if (game.s.mode === 'practice' && !screen) game.togglePracticeReset(); }
+      else if (name === 'practiceExit') leaveYard();
       else if (name === 'stats') { if (!saveBlocked && !onTitle && !screen && game.s.profile.registered) pause('stats'); }
     }, [[$('hud-face'), 'stats']]);
     document.addEventListener('pointerdown', openAudio, { once: true });

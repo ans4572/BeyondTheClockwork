@@ -273,7 +273,9 @@ body.touch #practice-exit { top: 96px; }
 /* Moru's parts shelf: six elements in three columns of two rows, each card short enough that the shelf never scrolls
    (2026-11-08, when sound and water made six). A card's two skills sit side by side. */
 .panel.element-panel { width: min(1080px, 100%); }
-.element-panel .reward-grid.element-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+/* (minmax(0, 1fr), 2026-11-22: at 1fr a column would not shrink past its content, and on a 16:9 phone the fourth ran off
+   the sheet; the names and numbers inside already cut with an ellipsis.) */
+.element-panel .reward-grid.element-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
 .element-panel .element-card { gap: 6px; padding: 8px 10px; }
 .element-panel .element-card .element-head .element-icon { width: 40px; height: 40px; }
 .element-panel .element-card .element-head h3 { font-size: 15px; }
@@ -344,13 +346,16 @@ body.touch #toast { top: 112px; }
 body.touch #dialogue { font-size: 25px; }
 body.touch .talk-box { height: 208px; }
 body.touch .talk-name { font-size: 26px; top: -24px; }
-body.touch .talk-text { left: 268px; right: 268px; top: 26px; }
+/* (The left edge as on a computer, 2026-11-22, the phone review: at 268 Belgard's sword ran over the first letters.) */
+body.touch .talk-text { left: 310px; right: 268px; top: 26px; }
 body.touch .alone .talk-text { left: 60px; right: 300px; }
-body.touch .talk-skip, body.touch .talk-name { left: 268px; }
+body.touch .talk-skip, body.touch .talk-name { left: 310px; }
 body.touch .player-talks .talk-name { left: auto; right: 268px; }
 body.touch .alone .talk-skip { left: 60px; }
 body.touch .talk-next { right: 280px; font-size: 20px; }
 body.touch .hud-vitals { transform: scale(1.3); transform-origin: 0 0; }
+/* The boss's bar clears the larger vitals card (2026-11-22, the phone review: the card's right end covered the bar's left). */
+body.touch .hud-boss { left: calc(50% + 50px); }
 body.touch .hud-wallet { transform: scale(1.3); transform-origin: 100% 0; }
 body.touch .hud-minimap:not([hidden]) ~ .hud-wallet { transform: none; top: 130px; padding: 9px 6px; }
 body.touch .hud-minimap:not([hidden]) ~ .hud-wallet span { font-size: 21px; }
@@ -375,18 +380,21 @@ body.touch .hud-minimap:not([hidden]) ~ .hud-wallet .tool-icon { width: 26px; he
 #touch .touch-pad .touch-skill2 { right: 48px; bottom: 92px; }
 #touch .touch-pad .touch-skill3 { right: 0; bottom: 92px; }
 #touch .touch-pad .touch-fusion { right: 152px; bottom: 4px; }
-.touch-tools { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: 62px; display: flex; gap: 6px; }
+.touch-tools { position: absolute; right: var(--tools-right, calc(10px + env(safe-area-inset-right))); top: var(--tools-top, 62px); display: flex; gap: 6px; }
 #touch .touch-tools button { width: 44px; height: 44px; display: grid; place-items: center; }
 #touch .touch-tools .tool-icon { width: 28px; height: 28px; }
-body.has-minimap .touch-tools { right: var(--tools-right, 200px); top: var(--tools-top, 12px); }
 body.touch .hud-tools { display: none; }
 body.touch .panel button { min-height: 44px; }
 body.touch .panel .stat-row button { min-height: 36px; }
 #touch .touch-talk { position: absolute; right: calc(236px + env(safe-area-inset-right)); bottom: 20px; width: 84px; height: 48px; background: #ffd257; }
 #touch .touch-talk[hidden] { display: none; }
 /* Moru's back yard: the cooldown-reset switch, above the skill pad (the T key on a keyboard). */
-#touch .touch-practice { position: absolute; right: calc(10px + env(safe-area-inset-right)); bottom: 208px; min-width: 150px; height: 44px; padding: 0 12px; font-size: 14px; }
+/* The back yard's two buttons stack under the tools wherever those stand (2026-11-22: at a fixed height over the skills,
+   leaving went over the tools on a 16:9 phone, where they sit under the minimap). */
+#touch .touch-practice { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: calc(var(--tools-top, 62px) + 100px); min-width: 150px; height: 44px; padding: 0 12px; font-size: 14px; }
 #touch .touch-practice[hidden] { display: none; }
+#touch .touch-practice-exit { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: calc(var(--tools-top, 62px) + 50px); min-width: 150px; height: 44px; padding: 0 12px; font-size: 14px; }
+#touch .touch-practice-exit[hidden] { display: none; }
 #touch .touch-practice.on { background: #ffd257; }
 @media (orientation: portrait) {
   body.touch #rotate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: #16202a; color: #f6ecd2; font: 700 18px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
@@ -415,7 +423,22 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #cutscene .cut-line.top { bottom: auto; top: 8%; }
 #cutscene .cut-skip { position: absolute; right: 2.5%; top: 4%; padding: .35em .9em; border: 0; background: #16202a99; color: #fff4d6; font: 700 clamp(11px, 1.5vw, 15px) "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
 #cutscene .cut-skip:focus-visible { outline: 2px solid #ffd257; outline-offset: 2px; }
+/* A finger's size on a phone (2026-11-22, the phone review: 80 x 28). */
+body.touch #cutscene .cut-skip { min-width: 96px; min-height: 44px; font-size: 15px; }
 @media (prefers-reduced-motion: reduce) { #cutscene .cut-line { transition: none; } }
+/* The hidden ending (ui/council-scene.js, 2026-11-22): black, two silhouettes, a dark dialogue box in the colours of
+   their rim light instead of the village's paper. Sized from the screen's height (container units), as the HUD is. */
+#cutscene .council { position: absolute; inset: 0; background: #000; container-type: size; cursor: pointer; touch-action: none; }
+#cutscene .council canvas { image-rendering: pixelated; }
+#cutscene .council-box { position: absolute; left: 0; right: 0; bottom: 0; height: 27.5cqh; background: #07090e; box-shadow: 0 -0.6cqh 0 #1b2333, 0 -1.25cqh 0 #3a5370; transition: opacity .4s; }
+#cutscene .council-box.off { opacity: 0; }
+#cutscene .council-inner { position: absolute; left: 50%; top: 0; bottom: 0; width: min(88%, 110cqh); transform: translateX(-50%); }
+#cutscene .council-name { position: absolute; left: 0; top: -2.8cqh; padding: .1em .8em; background: #1b2333; color: #8fb4d4; font: 400 max(15px, 3.1cqh)/1.2 "NeoDunggeunmo Pro", "Galmuri11", "Galmuri11 Rest", sans-serif; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+#cutscene .council-box.right .council-name { left: auto; right: 0; }
+#cutscene .council-text { margin: 0; padding-top: 3.75cqh; color: #c9d6e4; font: 400 max(14px, 2.8cqh)/1.55 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; word-break: keep-all; }
+#cutscene .council-next { position: absolute; right: 0; bottom: 1.9cqh; color: #8fb4d4; font-size: max(13px, 2.2cqh); }
+#cutscene .council-next[hidden] { display: none; }
+body.touch #cutscene .council-text { font-size: max(16px, 3.4cqh); }
 /* The chapter's end record (2026-11-12, where "To be continued" stood): the record rows of the departure cards, wider. */
 .ending .end-rec { margin: 4px 0 10px; --accent: #a92f2b; }
 .ending > p:first-of-type { text-wrap: balance; }
@@ -460,7 +483,11 @@ body.touch .panel .stat-row button { min-height: 36px; }
 body.cramped .panel { padding: 10px 16px; overflow-x: hidden; overflow-y: auto; }
 body.touch .panel, body.touch .panel .stat-list { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 body.cramped .panel h2 { font-size: 22px; margin-bottom: 4px; }
-body.cramped .panel > p:first-of-type:not(.result-next), body.cramped .panel > p.notice { display: none; }
+/* Only the notes marked as asides go (2026-11-22, the phone review: every notice went, so a phone hid the coins left in
+   the shop, the warning that the other device's progress is lost, the transfer code's expiry, the oil packed, the run
+   tab's lines and the map's line about the picked stop). A small question sheet (.compact: new game, abandoning the run,
+   taking another device's progress, the sync choice) keeps its first lines too: they say what will be lost. */
+body.cramped .panel:not(.compact) > p:first-of-type:not(.result-next):not(.atlas-detail):not(.run-picks-head), body.cramped .panel > p.notice.aside { display: none; }
 body.cramped .reward-grid { margin-top: 6px; gap: 8px; }
 body.cramped .reward-card { padding: 8px 10px; }
 body.cramped .reward-card .reward-icon, body.cramped .reward-skills img { width: 40px; height: 40px; margin-bottom: 4px; }

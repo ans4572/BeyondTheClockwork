@@ -95,20 +95,23 @@
       "rare": 0.32,
       "special": 0.08
     },
+    "healRewardsNote": "2026-11-22, the user's word: repairs mend a share of F2's maximum health (was 20 and 40 flat), so health raised in the workshop pays back in every repair. Patch 10%, overhaul 20%; the shop's repair and a region boss's clear heal are 20% too (docs/design/clockwork-design.v1.json). Each never mends less than its old flat amount (min, the user's word the same day): patch 20, overhaul 40, shop 40, region boss 30.",
     "healRewards": [
       {
         "id": "patch",
         "name": "응급 수리",
         "tier": "common",
-        "amount": 20,
-        "description": "체력을 20 회복한다."
+        "share": 0.1,
+        "min": 20,
+        "description": "최대 체력의 10%를 회복한다(최소 20)."
       },
       {
         "id": "overhaul",
         "name": "정밀 수리",
         "tier": "rare",
-        "amount": 40,
-        "description": "체력을 40 회복한다."
+        "share": 0.2,
+        "min": 40,
+        "description": "최대 체력의 20%를 회복한다(최소 40)."
       }
     ],
     "skillLevelTier": "common",

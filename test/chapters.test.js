@@ -291,4 +291,18 @@ test('the clock tower ends on Orden: the tuning chamber breaks open into the sum
   g.s.enemies.find(e => e.boss).hp = 0;
   for (let i = 0; i < 6 * 60 && g.s.mode !== 'returned'; i++) g.update(1 / 60, {});
   assert.equal(g.s.mode, 'returned'); assert.equal(g.s.profile.liberationPending, false);
+  assert.ok(!g.s.profile.councilPending, 'no hidden ending on normal');
+  // The hidden ending (2026-11-22): the first clear on hard, once per save, even after the town was freed on normal.
+  const hardClear = () => {
+    g.acknowledgeReturn(); g.s.mode = 'hub'; assert.ok(g.startRun(7, 'hard', 'clock-tower'));
+    g.s.run.node = g.rooms.findIndex(room => room.boss === 'ordenFinal'); g.enterNode(); g.s.entry = null;
+    g.s.enemies.find(e => e.boss).hp = 0;
+    for (let i = 0; i < 6 * 60 && g.s.mode !== 'returned'; i++) g.update(1 / 60, {});
+    assert.equal(g.s.mode, 'returned');
+  };
+  hardClear(); assert.equal(g.s.profile.councilPending, true);
+  assert.equal(reload(g).s.profile.councilPending, true, 'kept through a reload');
+  // main.js playCouncil clears it and marks it seen; a later hard clear does not bring it back.
+  g.s.profile.councilPending = false; g.s.profile.bossTalks.push('council');
+  hardClear(); assert.ok(!g.s.profile.councilPending);
 });

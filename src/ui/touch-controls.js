@@ -23,8 +23,8 @@ export class TouchControls {
     this.root = root; this.onPress = onPress; this.passOn = passOn; this.move = { x: 0, y: 0 }; this.attacking = false; this.stickId = null;
     // Skill buttons under a finger right now: 굉음 charges and 고압 분사 sprays while theirs is held.
     this.holding = new Set();
-    root.innerHTML = `<div class="touch-zone"></div><div class="touch-stick" hidden><i></i></div><div class="touch-tools">${document.fullscreenEnabled ? `<button data-press="fullscreen" aria-label="전체화면">${TOOL_ICONS.fullscreen}</button>` : ''}<button data-press="map" aria-label="지도">${TOOL_ICONS.map}</button><button data-press="menu" aria-label="환경설정">${TOOL_ICONS.settings}</button></div><button class="touch-talk" data-press="interact" hidden>말 걸기</button><button class="touch-practice" data-press="practiceReset" hidden></button><div class="touch-pad">${SLOT_BUTTONS.map(id => `<button class="touch-${id}" data-press="${id}" aria-label="${SLOT_NAMES[id]}"><img alt=""><span class="cool"></span><b class="left"></b><i class="cost"></i></button>`).join('')}</div>`;
-    this.zone = root.querySelector('.touch-zone'); this.stick = root.querySelector('.touch-stick'); this.knob = this.stick.firstChild; this.talk = root.querySelector('.touch-talk'); this.practiceButton = root.querySelector('.touch-practice');
+    root.innerHTML = `<div class="touch-zone"></div><div class="touch-stick" hidden><i></i></div><div class="touch-tools">${document.fullscreenEnabled ? `<button data-press="fullscreen" aria-label="전체화면">${TOOL_ICONS.fullscreen}</button>` : ''}<button data-press="map" aria-label="지도">${TOOL_ICONS.map}</button><button data-press="menu" aria-label="환경설정">${TOOL_ICONS.settings}</button></div><button class="touch-talk" data-press="interact" hidden>말 걸기</button><button class="touch-practice-exit" data-press="practiceExit" hidden>시험 끝내기</button><button class="touch-practice" data-press="practiceReset" hidden></button><div class="touch-pad">${SLOT_BUTTONS.map(id => `<button class="touch-${id}" data-press="${id}" aria-label="${SLOT_NAMES[id]}"><img alt=""><span class="cool"></span><b class="left"></b><i class="cost"></i></button>`).join('')}</div>`;
+    this.zone = root.querySelector('.touch-zone'); this.stick = root.querySelector('.touch-stick'); this.knob = this.stick.firstChild; this.talk = root.querySelector('.touch-talk'); this.practiceButton = root.querySelector('.touch-practice'); this.practiceExit = root.querySelector('.touch-practice-exit');
     const full = root.querySelector('[data-press="fullscreen"]');
     document.addEventListener('fullscreenchange', () => syncFullscreenIcon(full));
     this.slots = SLOT_BUTTONS.map(id => root.querySelector(`.touch-${id}`));
@@ -62,6 +62,8 @@ export class TouchControls {
   practice(visible, on) {
     const b = this.practiceButton, text = `대기시간 초기화 ${on ? '켜짐' : '꺼짐'}`;
     if (b.hidden === visible) b.hidden = !visible;
+    // Leaving the back yard sits over the switch on a phone (2026-11-22: the HUD's own 시험 끝내기 was 18 px tall there).
+    if (this.practiceExit.hidden === visible) this.practiceExit.hidden = !visible;
     if (b.textContent !== text) b.textContent = text;
     b.classList.toggle('on', !!on);
   }

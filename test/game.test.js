@@ -328,7 +328,7 @@ test('debug jump enters any stage, with or without a run', () => {
 });
 test('shop purchase is atomic, once-per-shop, and persisted across resume', () => {
   const g = arena(); g.s.run.node = 5; g.enterNode(); g.s.run.coins = 100; g.p.hp = 50;
-  assert.equal(g.buyShop('heal'), true); assert.equal(g.p.hp, 50 + data.progression.economy.shop.find(i => i.id === 'heal').amount); assert.equal(g.s.run.coins, 55);
+  assert.equal(g.buyShop('heal'), true); const repair = data.progression.economy.shop.find(i => i.id === 'heal'); assert.equal(g.p.hp, 50 + g.healShare(repair.share, repair.min)); assert.equal(g.s.run.coins, 55);
   const h = new Game(data, decodeSave(encodeSave(g.s), data)); assert.equal(h.buyShop('heal'), false); assert.equal(h.s.run.coins, 55);
   assert.equal(h.buyShop('persistentGears'), false); h.s.run.coins = 60; assert.equal(h.buyShop('persistentGears'), true); assert.equal(h.s.run.coins, 0); assert.equal(h.s.profile.freeGears, 20);
 });

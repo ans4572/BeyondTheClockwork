@@ -534,6 +534,11 @@ export class Game {
     this.effect('spark', at.x, at.y, '#8fd8b0', 0.8, 1.4, { look: 'mend' });
     this.notify('출구 앞에 회복 상자가 나타났습니다');
   }
+  /**
+   * A share of F2's maximum health, rounded, never under `min`: what a repair mends (2026-11-22, the user's word: was a
+   * flat amount, which stays as the least it mends).
+   */
+  healShare(share, min = 0) { return Math.max(min, Math.round(this.p.maxHp * share)); }
   heal(amount, quiet = false) {
     const actual = Math.min(this.p.maxHp - this.p.hp, amount);
     if (actual > 0 && !quiet) this.sense({ kind: 'mend' });
@@ -1531,8 +1536,9 @@ export class Game {
       run.clears.push(this.room.id); this.s.profile.combatClears++;
       const bank = this.perk('piggyBank');
       if (bank) { const interest = Math.min(bank.cap, Math.floor(run.coins * bank.rate)); if (interest) { run.coins += interest; this.notify(`저금통 이자 · 동전 +${interest}`); } }
-      if (this.room.kind === 'regionBoss' && this.room.healBox) this.dropHealBox(Number.isFinite(this.room.healBox) ? this.room.healBox : this.data.progression.run.regionBossClearHeal);
-      else if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
+      const clearHeal = this.healShare(this.data.progression.run.regionBossClearHealShare, this.data.progression.run.regionBossClearHealMin);
+      if (this.room.kind === 'regionBoss' && this.room.healBox) this.dropHealBox(Number.isFinite(this.room.healBox) ? this.room.healBox : clearHeal);
+      else if (this.room.kind === 'regionBoss') this.heal(clearHeal);
       this.sense({ kind: 'loot' });
     }
     // The room's furniture stays where it stands while the reward is chosen and the portal walked to. A crate already lit
@@ -1626,6 +1632,9 @@ export class Game {
     this.s.ordenEnd = null; this.finishChapter(); this.returnToHub('clear');
     // The first time straight into the village for the liberation; later the usual welcome home.
     if (end.first) { this.s.profile.liberationPending = true; this.acknowledgeReturn(); }
+    // The hidden ending (2026-11-22, the user's word): the first clear on hard, once per save, after the end sheet
+    // (main.js playCouncil, from profile.councilPending; seen marks it in bossTalks as 'council').
+    if (this.s.result?.difficulty === 'hard' && !this.s.profile.bossTalks?.includes('council')) this.s.profile.councilPending = true;
     this.save();
   }
   /** Out of the scrapyard and into the town square, on foot and not yet known to anyone. */
@@ -1671,7 +1680,7 @@ export class Game {
     const slot = this.slots.find(s => s.level < this.c.balance.skillMaxLevel);
     if (id === 'skillLevel' && !slot) return false;
     run.coins -= item.cost;
-    if (id === 'heal') this.heal(item.amount);
+    if (id === 'heal') this.heal(this.healShare(item.share, item.min));
     if (id === 'skillLevel') slot.level++;
     if (id === 'persistentGears') this.s.profile.freeGears += item.amount;
     bought.push(id); this.save(); return true;

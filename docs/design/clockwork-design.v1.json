@@ -95,7 +95,8 @@
       {
         "id": "heal",
         "cost": 45,
-        "amount": 40,
+        "share": 0.2,
+        "min": 40,
         "oncePerShop": true
       },
       {
@@ -2028,7 +2029,8 @@
       30,
       40
     ],
-    "regionBossClearHeal": 30,
+    "regionBossClearHealShare": 0.2,
+    "regionBossClearHealMin": 30,
     "persistentRewardGuaranteedPlusChoice": true,
     "basePersistentFullClear": 606,
     "fullRunRestartsAtFirstRegion": true,
