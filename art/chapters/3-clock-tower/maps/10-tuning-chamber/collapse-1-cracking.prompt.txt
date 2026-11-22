@@ -1,0 +1,13 @@
+Use case: image edit (precise, same picture).
+Input image 1 is a finished game background: the tuning chamber at the top of the Central Clock Tower in Beyond the Clockwork (a cute, toy-like pixel-art game). Input image 2 is the same place a moment later, after the tower has collapsed (the ruined summit open to the sunrise).
+Produce input image 1 AGAIN, IDENTICAL in camera, framing, size (1536x1024), pixel density, every object's position and shape, colours and rendering, with ONLY the damage below added. The game cross-fades from input image 1 to this picture, so NOTHING may move, change size, change shape or change colour except where it is cracked. Do not redraw, restyle, re-light, re-centre or zoom.
+MOMENT: the boss has just wired his tuning apparatus into the whole tower and overloaded it. The tower shudders; the room is starting to break, but nothing has fallen yet.
+DAMAGE TO ADD:
+- The great cream glass clock face at the top centre: long cracks running across the glass from its centre to the rim, a few small shards missing near the rim, a thin line of sunrise gold shining through the cracks. Its two hands now point straight UP together (twelve).
+- Walls and pillars: dark jagged cracks running along the block joints, a few blocks pushed a little out of line, thin trickles of dust and a few small stone chips falling, frozen in mid-air.
+- Ceiling ribs above the top wall: a few bent and snapped, dangling.
+- The tuning console: some small dial glasses shattered, a few tuning forks bent, the three signal cables bulging and crackling with brighter cyan sparks along their length.
+- Glass cabinets and windows on the side walls: cracked panes.
+- Floor: only a few THIN dark cracks running across the marble and through the gold ring, the same kind as in input image 2. The floor stays level and continuous: NO holes, NO rubble, NO debris and NO dust piles on the open floor.
+LIGHT: the same dawn light as input image 1, plus small flickers of cyan from the overloaded cables and warm gold light leaking through the cracks in the clock face.
+No UI, text, letters, numbers, people, characters, bosses or player. No new objects except cracks, chips, dust and sparks. Opaque full-bleed PNG, 1536x1024.

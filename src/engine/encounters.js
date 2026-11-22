@@ -5,13 +5,13 @@
 
 /** What each kind does in a fight, for themes and for where it stands in a formation. */
 export const ROLES = {
-  front: ['guard', 'pikeman', 'nutcracker', 'spintop', 'clampCarrier', 'stampInspector', 'pressGuard'],
-  fast: ['rat', 'rabbit', 'jackbox', 'tapePacker'],
-  back: ['trumpet', 'musicbox', 'drummer', 'lensInspector', 'riveter', 'oiler', 'partsSupplier']
+  front: ['guard', 'pikeman', 'nutcracker', 'spintop', 'clampCarrier', 'stampInspector', 'pressGuard', 'secondHandKnight', 'hourglassShield', 'pendulumGuard'],
+  fast: ['rat', 'rabbit', 'jackbox', 'tapePacker', 'gearRoller'],
+  back: ['trumpet', 'musicbox', 'drummer', 'lensInspector', 'riveter', 'oiler', 'partsSupplier', 'bellTurret', 'signalOrb', 'minuteArcher']
 };
 const roleOf = type => Object.keys(ROLES).find(role => ROLES[role].includes(type)) || 'front';
 /** The most of one kind in a wave: support and tricky kinds stay rare so a wave never turns into a wall of guns. */
-const MOST = { drummer: 1, spintop: 1, musicbox: 2, jackbox: 2, trumpet: 3, nutcracker: 3, partsSupplier: 1, oiler: 2, riveter: 2, lensInspector: 3, pressGuard: 3 };
+const MOST = { drummer: 1, spintop: 1, musicbox: 2, jackbox: 2, trumpet: 3, nutcracker: 3, partsSupplier: 1, oiler: 2, riveter: 2, lensInspector: 3, pressGuard: 3, signalOrb: 1, bellTurret: 2, minuteArcher: 3, gearRoller: 3, hourglassShield: 3 };
 /** Each theme's pull toward a role; 1 is no preference. */
 const THEMES = {
   mixed: { front: 1, fast: 1, back: 1 },

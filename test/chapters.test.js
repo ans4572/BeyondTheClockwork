@@ -216,3 +216,79 @@ test('stat levels open with a chapter, not on the first step into it: 20 once ch
   beaten.s.profile.cleared.push(FACTORY);
   assert.equal(rankCap(third, beaten.s.profile, stat, true), 30);
 });
+
+test('on the published site the clock tower opens once the factory is beaten (2026-11-22: no longer a preview)', () => {
+  const g = new Game(data);
+  assert.equal(g.previews, false);
+  assert.equal(chapterOpen(data.slice, g.s.profile, 'clock-tower', false, false), false);
+  g.s.profile.cleared = ['smile-street', 'silent-factory'];
+  assert.equal(chapterOpen(data.slice, g.s.profile, 'clock-tower', false, false), true);
+});
+
+test('a tower room shows its floor before its name; other rooms show the name alone', async () => {
+  const { roomTitle } = await import('../src/engine/room-title.js');
+  assert.equal(roomTitle({ name: '계단 기관실', floor: '1층' }), '1층 · 계단 기관실');
+  assert.equal(roomTitle({ name: '검수실 B' }), '검수실');
+  const tower = data.slice.chapters.find(c => c.id === 'clock-tower');
+  assert.ok(tower.rooms.every(r => /^(\d층|꼭대기)$/.test(r.floor)), 'every tower room has a floor');
+});
+
+test('abandoning the run in the tower collapse or in Orden at the last hour leaves no scene ticking (2026-11-22, the code review)', () => {
+  // Before: the scene stayed in the save with no run, and the next frame threw on s.run.elapsed and froze the game.
+  const tower = chapterRooms(data.slice, 'clock-tower');
+  for (const [node, start] of [[tower.length - 2, g => g.startCollapse({ x: 12, y: 18 })], [tower.length - 1, g => g.startOrdenEnd({ x: 12, y: 18 })]]) {
+    const g = new Game(data); g.previews = true; g.unlockChapters = true; g.s.profile.registered = true; g.s.mode = 'hub';
+    assert.ok(g.startRun(5, 'normal', 'clock-tower'));
+    g.s.run.node = node; g.enterNode(); g.s.entry = null; g.clearCombat(); start(g);
+    assert.ok(g.s.collapse || g.s.ordenEnd);
+    assert.ok(g.returnToHub('abandon'));
+    assert.equal(g.s.collapse, null); assert.equal(g.s.ordenEnd, null);
+    assert.doesNotThrow(() => { for (let i = 0; i < 120; i++) g.update(1 / 60, {}); });
+    assert.doesNotThrow(() => reload(g).update(1 / 60, {}));
+  }
+});
+
+test('the clock tower ends on Orden: the tuning chamber breaks open into the summit, whose fall clears the chapter', () => {
+  const tower = chapterRooms(data.slice, 'clock-tower');
+  assert.deepEqual(tower.slice(-3).map(r => [r.id, r.kind, r.floor, r.boss]), [['tower-09', 'regionBoss', '3층', 'bellguard'], ['tower-10', 'finalBoss', '4층', 'orden'], ['tower-11', 'finalBoss', '꼭대기', 'ordenFinal']]);
+  const g = new Game(data); g.previews = true; g.unlockChapters = true; g.s.profile.registered = true; g.s.mode = 'hub';
+  assert.ok(g.startRun(5, 'normal', 'clock-tower'));
+  g.s.run.node = tower.length - 2; g.enterNode(); g.s.entry = null;
+  const orden = g.s.enemies.find(e => e.boss);
+  assert.equal(orden.type, 'orden'); assert.equal(g.map.village, 'tuningChamber');
+  // F2 beats Orden 1 hurt, standing somewhere on the chamber floor.
+  Object.assign(g.p, { x: 12, y: 18, hp: 40 }); const gears = g.s.profile.freeGears;
+  orden.hp = 0;
+  for (let i = 0; i < 90 && !g.s.collapse; i++) g.update(1 / 60, {});
+  assert.ok(g.s.collapse, 'the tower starts to break');
+  assert.equal(g.s.mode, 'combat'); assert.equal(g.p.hp, 40, 'no heal'); assert.ok(g.s.profile.freeGears > gears, 'the room still pays its loot');
+  assert.equal(g.s.run.rewardChoices.length, 0, 'no reward pick');
+  // Input waits through the scene: F2 does not walk.
+  for (let i = 0; i < 60; i++) g.update(1 / 60, { x: 1, y: 0, dodge: true });
+  assert.deepEqual([g.p.x, g.p.y], [12, 18]);
+  // A reload mid-scene carries on from where it was.
+  const back = reload(g); assert.ok(back.s.collapse); assert.equal(back.room.id, 'tower-10');
+  for (let i = 0; i < 14 * 60 && g.s.collapse; i++) g.update(1 / 60, {});
+  assert.equal(g.s.collapse, null);
+  assert.equal(g.room.id, 'tower-11'); assert.equal(g.map.village, 'ruinedSummit');
+  assert.deepEqual([g.p.x, g.p.y], [12, 18], 'F2 stays where she stood'); assert.equal(g.p.hp, 40);
+  const last = g.s.enemies.find(e => e.boss);
+  assert.equal(last.type, 'ordenFinal'); assert.deepEqual([last.x, last.y], [g.map.bossSpawn.x, g.map.bossSpawn.y]);
+  // Beating Orden at the last hour: no part to plug in (2026-11-19); he fades away, the chapter is cleared and F2 is home.
+  // The first time straight into the village for the liberation, with the town bell gone from then on.
+  last.hp = 0;
+  assert.equal(g.villageFree, false);
+  for (let i = 0; i < 90 && !g.s.ordenEnd; i++) g.update(1 / 60, {});
+  assert.ok(g.s.ordenEnd?.first, 'he fades away first');
+  for (let i = 0; i < 5 * 60 && g.s.ordenEnd; i++) g.update(1 / 60, {});
+  assert.equal(g.s.mode, 'hub'); assert.ok(g.s.profile.cleared.includes('clock-tower'));
+  assert.equal(g.s.profile.liberationPending, true); assert.equal(g.villageFree, true);
+  // Later runs: the same fall goes straight home, through the usual welcome back, with no scene (once his farewell has
+  // been heard: main.js plays it and marks it; the debug workbench's replay button unmarks it, 2026-11-21).
+  g.s.profile.liberationPending = false; (g.s.profile.bossTalks ??= []).push('ordenFarewell');
+  g.s.mode = 'hub'; assert.ok(g.startRun(7, 'normal', 'clock-tower'));
+  g.s.run.node = g.rooms.findIndex(room => room.boss === 'ordenFinal'); g.enterNode(); g.s.entry = null;
+  g.s.enemies.find(e => e.boss).hp = 0;
+  for (let i = 0; i < 6 * 60 && g.s.mode !== 'returned'; i++) g.update(1 / 60, {});
+  assert.equal(g.s.mode, 'returned'); assert.equal(g.s.profile.liberationPending, false);
+});

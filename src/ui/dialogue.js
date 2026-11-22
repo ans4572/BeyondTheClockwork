@@ -42,6 +42,7 @@ export class DialogueBox {
     this.right = lines.some(line => line.who === this.playerId) ? this.playerId : lines.find(line => line.who !== other.who)?.who ?? this.playerId;
     this.other.hidden = !other; this.root.classList.toggle('alone', !other);
     this.root.classList.toggle('no-player', this.right !== this.playerId);
+    this.faceOf = faces;
     if (other) this.other.src = faces[other.who];
     this.player.src = faces[this.right];
     this.root.hidden = false;
@@ -49,6 +50,10 @@ export class DialogueBox {
   }
   show() {
     const line = this.lines[this.at], speaking = line.who === this.right;
+    // With two others in a scene (Tick and Tock, Moru and Nasa) the left side shows whichever of them speaks (2026-11-21:
+    // Tock talked under Tick's picture); the last one to speak stays while the right side talks.
+    const face = !speaking && this.faceOf[line.who];
+    if (face && this.other.getAttribute('src') !== face) this.other.src = face;
     this.root.classList.toggle('player-talks', speaking);
     this.other.classList.toggle('quiet', speaking); this.player.classList.toggle('quiet', !speaking);
     this.name.textContent = this.nameOf(line.who);

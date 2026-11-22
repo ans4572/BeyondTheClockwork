@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오르덴 시안 · 태엽 밖으로</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<style>
+  @font-face { font-family: Galmuri11; src: url('../../../../../fonts/Galmuri11-sub-v1.woff2') format('woff2'); }
+  :root { --ink: #1f2433; --panel: #2b3345; --line: #11151f; --paper: #f6ecd2; --gold: #ffd34d; --cyan: #7fe8f2; --dim: #aab3c8; --stage: #4a5266; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 14px/1.5 Galmuri11, "Malgun Gothic", sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 10px 16px; background: var(--panel); border-bottom: 2px solid var(--line); }
+  header h1 { font-size: 20px; margin: 0 12px 0 0; }
+  label { display: inline-flex; gap: 6px; align-items: center; color: var(--dim); }
+  select, button { font: inherit; color: var(--ink); background: var(--paper); border: 2px solid var(--line); padding: 2px 8px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--gold); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select:disabled { opacity: .45; cursor: default; }
+  main { max-width: 1240px; margin: 0 auto; padding: 16px; display: grid; gap: 18px; }
+  .note { color: var(--dim); margin: 0; }
+  .top { display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: var(--panel); border: 2px solid var(--line); padding: 14px 16px; }
+  .top img { width: 100%; image-rendering: pixelated; background: var(--stage); border: 2px solid var(--line); }
+  .top h2 { margin: 0 0 6px; color: var(--gold); font-size: 26px; line-height: 1.2; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .use { color: var(--dim); margin: 6px 0 0; }
+  .use em { color: var(--cyan); font-style: normal; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .cell { background: var(--stage); border: 2px solid var(--line); position: relative; }
+  .cell canvas { display: block; width: 100%; image-rendering: pixelated; }
+  .cell span { position: absolute; left: 4px; top: 2px; font-size: 11px; color: var(--dim); text-shadow: 0 1px 0 #000; }
+  .cell b { position: absolute; right: 4px; top: 2px; font-size: 11px; font-weight: normal; color: var(--gold); text-shadow: 0 1px 0 #000; }
+  @media (max-width: 760px) { .top { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>3장 최종 보스 오르덴 시안</h1>
+  <label>형태 <select id="form"></select></label>
+  <label>보기 <select id="view">
+    <option value="clean">게임용 (번쩍임 프레임 뺌)</option>
+    <option value="raw">PixelLab 원본</option>
+  </select></label>
+  <label>배경 <select id="stage">
+    <option value="#4a5266">회청</option>
+    <option value="#e9dcc4">대리석(밝음)</option>
+    <option value="#5b4a3a">청동 바닥</option>
+    <option value="#262b38">어두움</option>
+  </select></label>
+  <button id="pause" aria-pressed="false">멈춤</button>
+  <label><input type="checkbox" id="step"> 한 프레임씩(←→)</label>
+</header>
+<main>
+  <section class="top">
+    <img id="hero" src="../../../../../animations/npc/pixellab/portraits/orden-south-west.png" alt="오르덴 기준 그림">
+    <div>
+      <h2 id="title"></h2>
+      <p class="note" id="about"></p>
+      <p class="note" style="margin-top:8px">8방향 (남 · 남동 · 동 · 북동 · 북 · 북서 · 서 · 남서). 몸은 늘 떠 있고, 공격은 지팡이로만 합니다.</p>
+      <div class="tabs" id="tabs" style="margin-top:8px"></div>
+      <p class="use" id="use"></p>
+    </div>
+  </section>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const DIRS = ['south', 'south-east', 'east', 'north-east', 'north', 'north-west', 'west', 'south-west'];
+const DIR_KO = { south: '남(정면)', 'south-east': '남동', east: '동', 'north-east': '북동', north: '북(뒤)', 'north-west': '북서', west: '서', 'south-west': '남서' };
+// Screen direction of each facing, flattened for the low top-down view.
+const VEC = { south: [0, .6], 'south-east': [.7, .42], east: [1, 0], 'north-east': [.7, -.42], north: [0, -.6], 'north-west': [-.7, -.42], west: [-1, 0], 'south-west': [-.7, .42] };
+const FORMS = {
+  masked: { hero: '../../../../../animations/npc/pixellab/portraits/orden-south-west.png', title: '오르덴 · 가면의 신사',
+    about: '시계탑 4층에서 싸우는 첫 번째 오르덴. 원래 초상화를 기준으로 PixelLab에서 128px 8방향과 지팡이 동작 2개를 만들었습니다.' },
+  awakened: { hero: '../concept/orden-awakened-front-v1.png', title: '오르덴 · 마지막 정각',
+    about: '가면이 깨진 뒤의 인간 마법사. 옆에 떠다니던 가면 조각은 코드로 지웠습니다(서쪽은 가면이 얼굴을 덮고 있어 동쪽을 좌우로 뒤집어 씀). 시계판 후광과 마법 이펙트는 pixelfx로 따로 그립니다.' },
+  'awakened-shard': { hero: '../concept/orden-awakened-front-v1.png', title: '오르덴 · 마지막 정각 (원본)',
+    about: '가면 조각을 지우기 전의 PixelLab 원본. 동작 중에 조각이 사라졌다 나타나는 것을 비교해 볼 수 있습니다.' },
+};
+const ACTIONS = [
+  { key: 'float', name: '떠 있기', use: '대기. <em>코드로 움직임</em>: PixelLab 8방향 그림을 위아래로 띄우고 그림자 크기를 바꿈.' },
+  { key: 'glide', name: '이동 (미끄러지기)', use: '이동. <em>코드로 움직임</em>: 걷는 동작 없이 바라보는 쪽으로 미끄러지며 잔상을 남김.' },
+  { key: 'staff-jab', name: '지팡이 찌르기', use: '짧은 공격: 음표탄, 빛 바늘, 단발 마법. PixelLab 동작 + 코드로 떠 있기.' },
+  { key: 'staff-raise', name: '지팡이 들어올리기', use: '큰 공격: 마법진, 톱니 궤도, 광역 마법. 들어 올린 프레임을 예고 자세로 길게 잡을 예정. PixelLab 동작 + 코드로 떠 있기.' },
+];
+const W = 180, H = 196, LIFT = 12, FOOT = 151;
+const grid = document.getElementById('grid'), tabs = document.getElementById('tabs');
+let data, form, action = ACTIONS[0], players = [], images = {};
+let paused = matchMedia('(prefers-reduced-motion: reduce)').matches, clock = 0, last = performance.now();
+const image = file => images[file] ??= Object.assign(new Image(), { src: `${file}?v=${data.v}` });
+
+function show() {
+  for (const b of tabs.querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.key === action.key);
+  document.getElementById('use').innerHTML = '쓰는 곳: ' + action.use;
+  const f = FORMS[form.key];
+  Object.assign(document.getElementById('hero'), { src: f.hero, alt: f.title + ' 기준 그림' });
+  document.getElementById('title').textContent = f.title;
+  document.getElementById('about').textContent = f.about;
+  const clip = form.clips[action.key], viewSel = document.getElementById('view');
+  viewSel.disabled = !clip;
+  const view = viewSel.value, sheet = clip ? clip[view] : null;
+  const img = image(sheet ? sheet.file : form.rotations);
+  grid.innerHTML = ''; players = [];
+  DIRS.forEach((dir, row) => {
+    const cell = document.createElement('div'); cell.className = 'cell';
+    const canvas = Object.assign(document.createElement('canvas'), { width: W, height: H });
+    const dropped = clip && view === 'clean' && clip.dropped[dir];
+    cell.append(canvas);
+    cell.insertAdjacentHTML('beforeend', `<span>${DIR_KO[dir]}${sheet ? ` · ${sheet.frames[dir]}프레임` : ''}</span>${dropped ? `<b>뺀 프레임 ${dropped.join('·')}</b>` : ''}`);
+    grid.append(cell);
+    players.push({ dir, canvas, img, row: sheet ? row : 0, col: sheet ? 0 : row, count: sheet ? sheet.frames[dir] : 1, frame: 0, next: 0, clip: !!sheet });
+  });
+  img.onload = () => draw();
+  draw();
+}
+
+function sprite(c, p, x, y, alpha) {
+  c.globalAlpha = alpha;
+  c.drawImage(p.img, (p.clip ? p.frame : p.col) * W, p.row * W, W, W, Math.round(x), Math.round(y), W, W);
+  c.globalAlpha = 1;
+}
+function draw() {
+  const t = clock / 1000;
+  for (const p of players) {
+    if (!p.img.complete) continue;
+    const c = p.canvas.getContext('2d');
+    c.imageSmoothingEnabled = false; c.clearRect(0, 0, W, H);
+    const bob = Math.sin(t * Math.PI * 2 / 1.6) * 2.5;
+    let x = 0, trail = [];
+    let y = -LIFT + bob;
+    if (action.key === 'glide') {
+      // Glide out and back along the facing, fastest in the middle, with two fading afterimages.
+      const [vx, vy] = VEC[p.dir], s = k => Math.sin((t - k) * Math.PI * 2 / 2.4) * 18;
+      x = vx * s(0); y += vy * s(0);
+      trail = [0.08, 0.16].map((k, i) => ({ x: vx * s(k), y: -LIFT + bob + vy * s(k), a: 0.28 - i * 0.12 }));
+    }
+    // The shadow stays on the floor, smaller and fainter the higher he rises.
+    const h = LIFT - bob, sw = 30 - h * 0.6;
+    c.fillStyle = 'rgba(8,10,18,' + (0.42 - h * 0.012) + ')';
+    c.beginPath(); c.ellipse(W / 2 + x, FOOT + 12 + (action.key === 'glide' ? y + LIFT - bob : 0), sw, sw * 0.32, 0, 0, Math.PI * 2); c.fill();
+    for (const g of trail) sprite(c, p, g.x, g.y, g.a);
+    sprite(c, p, x, y, 1);
+  }
+}
+function tick(now) {
+  const dt = now - last; last = now;
+  const stepping = document.getElementById('step').checked;
+  if (!paused && !stepping) {
+    clock += dt;
+    for (const p of players) {
+      if (!p.clip || now < p.next) continue;
+      p.frame = (p.frame + 1) % p.count;
+      // A one-shot attack rests a moment on its first frame before it plays again.
+      p.next = now + (p.frame === 0 ? 600 : 100);
+    }
+  }
+  if (!paused) draw();
+  requestAnimationFrame(tick);
+}
+const step = delta => { for (const p of players) if (p.clip) p.frame = (p.frame + delta + p.count) % p.count; clock += delta * 100; draw(); };
+
+document.getElementById('form').onchange = e => { form = data.forms.find(f => f.key === e.target.value); show(); };
+document.getElementById('view').onchange = show;
+document.getElementById('stage').onchange = e => document.documentElement.style.setProperty('--stage', e.target.value);
+const pause = document.getElementById('pause');
+const setPause = v => { paused = v; pause.setAttribute('aria-pressed', paused); pause.textContent = paused ? '재생' : '멈춤'; draw(); };
+pause.onclick = () => setPause(!paused);
+addEventListener('keydown', e => { if (!document.getElementById('step').checked) return; if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); });
+fetch('data.json').then(r => r.json()).then(d => {
+  data = d;
+  const sel = document.getElementById('form');
+  for (const f of data.forms) sel.append(new Option(f.name, f.key));
+  form = data.forms[0];
+  for (const a of ACTIONS) {
+    const b = Object.assign(document.createElement('button'), { textContent: a.name }); b.dataset.key = a.key;
+    b.onclick = () => { action = a; show(); }; tabs.append(b);
+  }
+  setPause(paused); show(); requestAnimationFrame(tick);
+});
+</script>
+</body>
+</html>

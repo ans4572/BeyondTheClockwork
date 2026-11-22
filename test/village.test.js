@@ -287,7 +287,7 @@ test('every dialogue line has a known speaker, fits the box, and every choice le
   const { speakers, scripts } = dialogue;
   for (const [name, lines] of Object.entries(scripts)) for (const { who, text, choices } of lines) {
     assert.ok(speakers[who], `${name} ${who}`); assert.ok(text.length <= 72, text);
-    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'practice'].includes(id) || scripts[id], id);
+    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'practice', 'endPractice'].includes(id) || scripts[id], id);
   }
   for (const { sheet } of Object.values(speakers)) assert.ok(fs.existsSync(new URL(`..${sheet}`, import.meta.url)), sheet);
   assert.equal(scripts.registration.at(-1).choices[0].id, 'register');
@@ -452,4 +452,51 @@ test('sparks and shots left from a fight do not hang in the village', () => {
   g.effect('ring', g.p.x, g.p.y, '#e8742f', 0.5, 3); g.s.casts.push({ id: 'old', shape: 'moving', x: 1, y: 1 }); g.s.projectiles.push({ x: 1, y: 1 });
   g.update(1 / 60, {});
   assert.deepEqual([g.s.effects.length, g.s.casts.length, g.s.projectiles.length], [0, 0, 0]);
+});
+
+test('the back yard: Moru stands there to change the fitted parts, and his words there offer only that or going home', () => {
+  const yard = maps.practice.npcs.find(npc => npc.character === 'moru');
+  assert.ok(yard && yard.script === 'moruPractice' && yard.opens === 'elements');
+  assert.ok(fitsMap(yard.x, yard.y, radius, placeOf(maps, maps.practice)), 'he stands on the yard floor');
+  assert.deepEqual(dialogue.scripts.moruPractice.at(-1).choices.map(choice => choice.id), ['elements', 'endPractice']);
+  const g = atHub(); g.s.profile.ownedElements = ['fire', 'ice', 'wind'];
+  assert.equal(g.enterPractice(), true); assert.equal(g.nearbyNpc?.character, 'moru', 'he is within reach from where F2 comes in');
+  Object.assign(g.p, { x: 19, y: 14.2 }); assert.equal(g.nearbyNpc, null, 'not from the dummies');
+  g.openElements(); assert.equal(g.s.panel, 'elements');
+  g.p.cooldowns = { heatSwing: 999 }; assert.equal(g.toggleElement('wind'), true);
+  assert.deepEqual(g.s.practice.slots.map(slot => slot.element), ['ice', 'wind'], 'the yard tries the new pair at once');
+  assert.deepEqual(g.p.cooldowns, {}); assert.equal(g.fusion?.id, data.combat.fusions.find(f => f.pair.includes('ice') && f.pair.includes('wind')).id);
+  assert.equal(g.toggleElement('ice'), true); assert.equal(g.toggleElement('wind'), false, 'one part stays fitted in the yard');
+  g.closePanel(); g.leavePractice(); assert.equal(g.s.mode, 'hub'); assert.equal(g.s.practice, null);
+});
+
+test('a back yard left by a debug jump does not keep its pair: the village shows what Moru fits (2026-11-22)', () => {
+  const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub';
+  g.s.profile.ownedElements = ['lightning', 'light', 'magnet']; g.s.profile.loadout = ['lightning', 'light'];
+  assert.equal(g.enterPractice(), true);
+  g.debugJump(0); assert.equal(g.s.practice, null);
+  g.returnToHub('abandon'); g.acknowledgeReturn();
+  // An older save may still carry the yard's pair outside the yard.
+  g.s.practice = { slots: [{ element: 'lightning', level: 1, rarity: 'common' }], resetCooldowns: false };
+  g.toggleElement('magnet');
+  assert.deepEqual(g.slots.map(s => s.element), ['light', 'magnet']);
+  assert.deepEqual(g.skillSlots.map(s => s.skill.element), ['light', 'light', 'magnet', 'magnet']);
+});
+
+test('every rest stop\'s exit lies under its yellow marker, on floor F2 can reach (2026-11-22)', async () => {
+  // Chapter 3's attic: the walkable floor had been cut back to the doorway, so its exit sat out of reach in the corridor
+  // and the marker in front of the door did nothing (the user's word: the rest stop never led on).
+  const { pointInPolygon, fitsMap } = await import('../src/engine/map-geometry.js');
+  const maps = JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../src/data/maps.json', import.meta.url), 'utf8'));
+  const all = [...Object.entries(maps.maps), ...Object.entries(maps.alternates || {}).flatMap(([k, list]) => list.map((m, i) => [`${k}#${i}`, m]))];
+  let checked = 0;
+  for (const [key, m] of all) {
+    const v = maps.villages[m.village] || {}, exit = m.exit || v.exit;
+    if (!exit?.polygon || !exit.portal) continue;
+    const area = { ...v, ...m };
+    assert.ok(pointInPolygon(exit.portal.x, exit.portal.y, exit.polygon), `${key}: the marker is inside the exit`);
+    assert.ok(fitsMap(exit.portal.x, exit.portal.y, area.bodyRadius || 0.36, area), `${key}: the marker stands on walkable floor`);
+    checked++;
+  }
+  assert.ok(checked >= 3);
 });

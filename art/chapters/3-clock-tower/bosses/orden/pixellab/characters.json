@@ -1,0 +1,173 @@
+{
+  "_note": "Orden, the chapter 3 final boss, both forms. PixelLab 2026-11-17: create_character_pro_flash 128x128 (low top-down, mannequin) with a style anchor cropped to 128px (masked: art/animations/npc/pixellab/portraits/orden-south-west.png; awakened: concept/orden-awakened-front-v1.png), then two pixminimax staff clips x 8 directions (9 frames incl. the reference, canvases 168-180px). He floats and attacks only with the staff: idle bob, glide, teleport, hurt and every spell are drawn in code and pixelfx, the dial halo too. 'drop' lists frames with model-drawn bursts, slash arcs or sparks: skip them when importing. Awakened: the floating mask shard is in frame 0 and the rotations but vanishes in most clip frames (rear views especially). awakened staff-raise mixes two takes: south, east, west from the calmer 'slow ritual pose' retake (group 552357d2-0486-4952-963b-e6e75953919f), the rest from the first take (group 03738f38-59ed-474e-a9e3-57c9b6e744f9). Generations: 16 bodies + 32 clips + 6 retakes = 54.",
+  "masked": {
+    "id": "67f1010f-de64-4c1d-a79e-68178b055fee",
+    "clips": {
+      "staff-jab": "73bbd1e8-662c-4dd3-8580-c7f090548efb",
+      "staff-raise": "9b94bfa9-4fcf-4faa-b6ce-302ad4d68e87"
+    },
+    "drop": {
+      "staff-jab": {
+        "south": [
+          2,
+          3
+        ],
+        "east": [
+          1,
+          8
+        ],
+        "north-east": [
+          1
+        ],
+        "north": [
+          5,
+          6,
+          7
+        ]
+      },
+      "staff-raise": {
+        "south": [
+          5,
+          6
+        ],
+        "south-east": [
+          5
+        ],
+        "east": [
+          5,
+          6
+        ],
+        "north": [
+          5
+        ],
+        "west": [
+          5,
+          6,
+          7
+        ]
+      }
+    }
+  },
+  "awakened": {
+    "id": "a9278ac3-99ba-4d46-99d8-73da67bc3177",
+    "clips": {
+      "staff-jab": "6e61737f-def8-4a5b-b39c-76679c5f47d7",
+      "staff-raise": "03738f38-59ed-474e-a9e3-57c9b6e744f9",
+      "staff-raise-b": "552357d2-0486-4952-963b-e6e75953919f"
+    },
+    "drop": {
+      "staff-jab": {
+        "south": [
+          3,
+          4
+        ],
+        "south-east": [
+          2,
+          3
+        ],
+        "east": [
+          4
+        ],
+        "north-east": [
+          2,
+          3
+        ],
+        "north": [
+          6,
+          7
+        ],
+        "south-west": [
+          2
+        ]
+      },
+      "staff-raise": {
+        "south": [
+          6
+        ],
+        "south-east": [
+          4,
+          5,
+          6
+        ],
+        "south-west": [
+          6,
+          7
+        ],
+        "north": [
+          1,
+          2,
+          7
+        ],
+        "north-east": [
+          5
+        ],
+        "north-west": [
+          6
+        ]
+      }
+    }
+  },
+  "uses": {
+    "staff-jab": "짧은 공격: 음표탄, 빛 바늘, 단발 마법",
+    "staff-raise": "큰 공격: 마법진, 톱니 궤도, 광역 마법 (들어 올린 프레임을 예고 자세로 길게 잡기)"
+  },
+  "awakened-nomask": {
+    "_note": "awakened 프레임에서 떠다니는 가면 조각을 코드로 지운 판(PixelLab 0회). 떨어진 조각은 연결 성분, 머리에 붙은 조각은 1~2px 침식으로 떼어내 지우고, 남서 기본 모습은 밝은 색 덩어리 + 볼의 빨강으로 찾음. 서쪽은 가면이 얼굴을 덮고 있어 지우면 얼굴이 없어지므로 동쪽을 좌우 반전해 씀(서쪽만 지팡이 쥔 손이 반대). 스크립트는 세션 임시 폴더에서 돌렸고 원본 awakened/는 그대로 둠. 2026-11-17 얼굴 다듬기: 남·남동·남서의 빨간 세로줄(가면 화장)을 피부색으로 덮고, 동쪽 두 동작의 옆얼굴(PixelLab이 늙고 찡그린 얼굴·반쯤 감은 눈으로 그림)을 윤곽과 귀만 남기고 다시 칠함: 정면 피부색, 가는 눈썹, 청록 눈, 작은 입. 그 위에 PixelLab edit_image(64px 머리 11장 한 번, job 6da0be2a-7bde-46e0-94a3-2e26d26709a5)로 얼굴을 다시 그려 얼굴 둘레만 붙임. 이어서 피부를 정면 색으로, 눈 위에 짙은 눈꺼풀 선, 빨간 입술 1px을 코드로 더해 정면과 맞춤. 눈은 2x3으로 키우고 코끝을 1px 내밀어 뾰족하게. 눈썹은 남서처럼 2줄(코 쪽으로 내려감), 눈꺼풀 1줄, 눈 위 가는 속눈썹과 귀 쪽 눈꼬리(들어올리기 2번은 제외). 서쪽은 고친 동쪽을 다시 반전.",
+    "west": "mirror of east (rotations and both clips)",
+    "drop": {
+      "staff-jab": {
+        "south": [
+          3,
+          4
+        ],
+        "south-east": [
+          2,
+          3
+        ],
+        "east": [
+          4
+        ],
+        "west": [
+          4
+        ],
+        "north-east": [
+          2,
+          3
+        ],
+        "north": [
+          6,
+          7
+        ],
+        "south-west": [
+          1,
+          2
+        ]
+      },
+      "staff-raise": {
+        "south": [
+          6
+        ],
+        "south-east": [
+          4,
+          5,
+          6
+        ],
+        "south-west": [
+          6,
+          7
+        ],
+        "north": [
+          1,
+          2,
+          7
+        ],
+        "north-east": [
+          5
+        ],
+        "north-west": [
+          6
+        ]
+      }
+    }
+  }
+}

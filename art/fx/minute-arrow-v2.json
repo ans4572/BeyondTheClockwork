@@ -1,0 +1,193 @@
+{
+ "frames": [
+  {
+   "filename": "minute-arrow 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 1",
+   "frame": {
+    "x": 56,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 2",
+   "frame": {
+    "x": 0,
+    "y": 16,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 3",
+   "frame": {
+    "x": 56,
+    "y": 16,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 4",
+   "frame": {
+    "x": 0,
+    "y": 32,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 5",
+   "frame": {
+    "x": 56,
+    "y": 32,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "minute-arrow 6",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 56,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 56,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 56,
+    "h": 16
+   },
+   "duration": 42
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "minute-arrow.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 112,
+   "h": 64
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "minute-arrow",
+    "from": 0,
+    "to": 6,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/minute-arrow",
+   "name": "Minute arrow",
+   "fps": 24,
+   "loop": true,
+   "frames": 7,
+   "frameSize": [
+    56,
+    16
+   ],
+   "pivot": [
+    36,
+    8
+   ],
+   "columns": 2
+  }
+ }
+}

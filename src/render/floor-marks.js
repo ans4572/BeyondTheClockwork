@@ -7,6 +7,8 @@ import { FLOOR_FLAT } from '../engine/math.js';
  * so `this` is the renderer: its context, game, marks and overlay.
  */
 const TAU = Math.PI * 2;
+/** The floor outline each map clips to (clipToFloor), built once per map. */
+const FLOOR_PATHS = new WeakMap();
 /** Fusion shapes that strike an area of floor, drawn under their pictures (see drawFusionFloors); a shockwave lasts this long. */
 const FLOOR_SHAPES = new Set(['self', 'target', 'moving', 'orb', 'clamp']), FLOOR_WAVE_SECONDS = 0.28, FLOOR_FLASH_SECONDS = 0.22;
 /**
@@ -23,6 +25,8 @@ const DELAYED_SHAPES = new Set(['target', 'orb', 'shatter', 'pool']);
  * each later blow's ring still runs out to the rim.
  */
 const RING_FLAT = FLOOR_FLAT, FLASH_FROM = 0.4, FLASH_TO = 0.78;
+/** Landing marks drawn flatter than the floor's 0.55 (the reach they hit is unchanged), and how flat. */
+export const FLAT_MARKS = new Set(['flashBomb', 'magneticLift']), FLAT_MARK = 0.42;
 /**
  * Basic skills whose picture is smaller than what they strike: their element's reach ring lies faintly on the floor for
  * as long as they last, so the whole reach reads (회오리 흡입's whirl is about 69 px across, its pull and blows 120; 2026-11-09).
@@ -45,7 +49,8 @@ export const floorMarks = {
    * closes in on the rim as the moment of impact comes, so the timing reads as well as the place.
    */
   drawLandingMark(fx, x, y, fraction) {
-    const c = this.ctx, r = fx.value * 20, flat = 0.55;
+    // 섬광탄 and 끌어올리기 lie flatter (user, 2026-11-21: their plain rings read as circles beside the slanted paving).
+    const c = this.ctx, r = fx.value * 20, flat = FLAT_MARKS.has(fx.skill) ? FLAT_MARK : 0.55;
     // With its element's floor mark painted (lightning, frost, embers, or the hatch an enemy climbs out of), the mark turns
     // slowly and firms up toward the hit; the closing ring still keeps the time.
     const art = { lightning: 'landLightning', ice: 'landIce', fire: 'landFire', sound: 'landSound', water: 'landWater', spawn: 'spawn' }[fx.mark];
@@ -71,7 +76,16 @@ export const floorMarks = {
   clipToFloor(map) {
     const c = this.ctx;
     if (!map?.walkable || !c.clip) return false;
-    c.save(); c.beginPath();
+    c.save();
+    // The floor's outline is built once per map as a Path2D (2026-11-21, the chapter 3 code review: it was traced point by
+    // point on every call, up to five times a frame in Tick·Tock's room); traced as before where Path2D is missing.
+    if (typeof Path2D === 'function') {
+      let path = FLOOR_PATHS.get(map);
+      if (!path) { path = new Path2D(); for (const polygon of [map.walkable, ...(map.solids || [])]) { polygon.forEach(([px, py], i) => i ? path.lineTo(px * 20, py * 20) : path.moveTo(px * 20, py * 20)); path.closePath(); } FLOOR_PATHS.set(map, path); }
+      c.clip(path, 'evenodd');
+      return true;
+    }
+    c.beginPath();
     for (const polygon of [map.walkable, ...(map.solids || [])]) { polygon.forEach(([px, py], i) => i ? c.lineTo(px * 20, py * 20) : c.moveTo(px * 20, py * 20)); c.closePath(); }
     c.clip('evenodd');
     return true;
@@ -82,6 +96,11 @@ export const floorMarks = {
     c.save(); c.setLineDash([]); c.globalCompositeOperation = 'multiply'; c.globalAlpha = alpha; c.fillStyle = color; c.fill();
     c.globalCompositeOperation = 'source-over'; c.globalAlpha = alpha * 0.3; c.fill(); c.restore();
   },
+  /**
+   * A boss's danger floor: the usual tell red, never fainter than the usual boss tell (2026-11-21, the user's word: some of
+   * Tick·Tock's, Belgard's and Orden's danger floors were faint and some strong; the faint ones now match the rest).
+   */
+  dangerWash(alpha) { this.washFloor(Math.max(alpha, TELL_BOSS_WASH), TELL_RED); },
   /** A round danger floor `r` pixels wide around (x, y), its deeper red grown to `progress` (0 to 1) of the way out. */
   dangerDisc(x, y, r, progress) {
     const c = this.ctx;
@@ -231,7 +250,7 @@ export const floorMarks = {
     switch (tell.type) {
       case 'fan': case 'fanSecond': sector(ai.fanRange, ai.fanDegrees); break;
       // A plain swing (nutcracker, guard): the cone it sweeps, as wide and as far as the blow.
-      case 'melee': sector(enemy.attackRange, g.config.rules.enemyMeleeArc); break;
+      case 'melee': sector(enemy.attackRange, enemy.meleeArc ?? g.config.rules.enemyMeleeArc); break;
       case 'dash': box(enemy.dashDistance * 20, reach()); this.glyph('chevrons', enemy.dashDistance * 10, 3, '› › ›'); break;
       case 'claw': {
         const range = ai.clawLength, width = ai.clawWidth * 20;
@@ -248,6 +267,8 @@ export const floorMarks = {
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.glyph('alert', x, y - 12, '!', '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
       case 'spiral': ring(x, y, 0.9); for (let i = 0; i < enemy.bullets; i++) { const a = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets + i * TAU / enemy.bullets; this.line(x + Math.cos(a) * 18, y + Math.sin(a) * 18, x + Math.cos(a) * 28, y + Math.sin(a) * 28, '#b85863', 1.5); } break;
+      // The bell turret's bell: where it will land, and the bell itself arcing over to it.
+      case 'lob': { ring(tell.targetX * 20, tell.targetY * 20, enemy.lobRadius); const k = Math.min(1, progress), bx = (x + (tell.targetX * 20 - x) * k), by = (y + (tell.targetY * 20 - y) * k) - Math.sin(k * Math.PI) * 60 - 14; this.overlay(() => { if (!this.drawFxFrame('bellShot', this.visualTime * FX.bellShot.fps, bx, by)) { this.circle(bx, by, 5, '#2b3345'); this.circle(bx, by, 4, '#e0a43c'); } }); break; }
       case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.glyph('alert', tell.targetX * 20, tell.targetY * 20 + 4, '!', '#b85863', 14); break;
       case 'spin': this.text('↻', x, y - 18, '#b85863', 12); box(enemy.attackRange * 20, reach()); this.glyph('chevrons', enemy.attackRange * 10, 3, '» » »'); break;
       case 'beat': tone = '#e0a83a'; ring(x, y, enemy.beatRadius); tone = TELL_RED; break;
@@ -319,6 +340,8 @@ export const floorMarks = {
       }
       case 'trumpetWave':
         ring(x, y, 3.6); c.setLineDash([]); c.strokeStyle = '#7c9f7c'; c.lineWidth = 3; c.beginPath(); c.ellipse(x, y, 72, 72 * FLOOR_FLAT, 0, tell.angle - ai.waveGapDegrees * Math.PI / 360, tell.angle + ai.waveGapDegrees * Math.PI / 360); c.stroke(); this.glyph('gap', x + Math.cos(tell.angle) * 82, y + Math.sin(tell.angle) * 82, '틈', '#67805b', 8); break;
+      // Chapter 3's twins (clock-boss-draw.js).
+      default: this.drawClockTell(enemy, tell, { box, sector, ring, x, y, progress });
     }
     c.restore();
   },

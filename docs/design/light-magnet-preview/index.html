@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>빛·자력 코드 시안</title>
+<style>
+  :root { --bg:#1d2230; --card:#272e3f; --line:#3a4459; --text:#e9e3d2; --dim:#a9b0bf; --light:#fff3b0; --magnet:#9fc0e0; --copper:#d08a4c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,"Malgun Gothic",sans-serif; }
+  main { max-width:1400px; margin:auto; padding:24px 20px 60px; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  h2 { font-size:19px; margin:34px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  p.lead { color:var(--dim); font-size:14px; line-height:1.7; margin:0 0 14px; }
+  .bar { position:sticky; top:0; z-index:5; display:flex; gap:18px; flex-wrap:wrap; align-items:center; background:var(--bg); padding:10px 0; border-bottom:1px solid var(--line); }
+  .bar label { font-size:14px; cursor:pointer; display:flex; gap:6px; align-items:center; }
+  .bar nav { display:flex; gap:14px; margin-left:auto; font-size:14px; }
+  .bar a { color:var(--light); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(460px,1fr)); gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .card canvas { display:block; width:100%; height:auto; background:#2b3a3a; image-rendering:pixelated; }
+  .info { padding:10px 12px 12px; }
+  .info h3 { margin:0 0 4px; font-size:16px; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; }
+  .info h3 small { color:var(--dim); font-weight:normal; font-size:12px; }
+  .tag { font-size:11px; padding:1px 6px; border-radius:9px; background:#3a4459; color:var(--dim); }
+  .info p { margin:4px 0 0; font-size:13px; line-height:1.6; color:var(--dim); }
+  .tally { margin-top:6px; font-size:13px; color:var(--text); }
+  .tally b { color:var(--light); }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px; }
+  .cards div { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:13px; line-height:1.6; }
+  .cards b { display:block; font-size:14px; }
+  .cards span { color:var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <h1>빛·자력 코드 시안</h1>
+  <p class="lead">그림(PixelLab) 없이 코드로만 그린 움직임 시안입니다. 수치와 설명은 기획 JSON(<code>docs/design/clockwork-design.v1.json</code>)과 카드 데이터(<code>src/data/slice.json</code>)에서 읽습니다. 판정은 게임보다 단순하게 흉내 낸 것이고, 색·모양은 그림 단계에서 바뀔 수 있습니다. 바닥 원은 게임처럼 위아래로 눌린 타원입니다(1칸 = 40px).</p>
+  <div class="bar">
+    <label><input type="radio" name="layout" value="crowd" checked> 일반 적 5기</label>
+    <label><input type="radio" name="layout" value="boss"> 보스 하나(벨가드)</label>
+    <label><input type="checkbox" id="slow"> 느리게(0.5배)</label>
+    <nav><a href="#light">빛</a><a href="#magnet">자력</a><a href="#fusions">융합</a><a href="#cards">카드</a></nav>
+  </div>
+  <h2 id="light">빛 — 프리즘 렌즈 · 상태 '드러냄'(적 머리 위 흰 별)</h2>
+  <div class="grid" data-group="light"></div>
+  <h2 id="magnet">자력 — 전자석 장갑 · 상태 '쇳가루'(적 발밑 점 4개, 다 차면 굳음)</h2>
+  <div class="grid" data-group="magnet"></div>
+  <h2 id="fusions">융합 13개</h2>
+  <div class="grid" data-group="fusion"></div>
+  <h2 id="cards">개조·특성 카드 (글로만)</h2>
+  <div class="cards" id="cardList"></div>
+</main>
+<script type="module">
+const U = 40, FLAT = 0.55, W = 640, H = 340, ROOM_W = W / U;
+const load = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+const [design, slice, f2Sheet, mobImg, bossImg] = await Promise.all([
+  fetch('/docs/design/clockwork-design.v1.json').then(r => r.json()),
+  fetch('/src/data/slice.json').then(r => r.json()),
+  load('/art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp'),
+  load('/art/chapters/3-clock-tower/mobs/front/second-hand-knight-south-v1.png'),
+  load('/art/chapters/3-clock-tower/bosses/belgard/front/b-shoulder-sword-v1.png')
+]);
+
+// ---------- geometry (floor space: y squashed by FLAT, as the game's floorDistance) ----------
+const fdist = (a, b) => Math.hypot(a.x - b.x, (a.y - b.y) / FLAT);
+const along = (p, a, d) => ({ x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d * FLAT });
+const aimFrom = (p, q) => Math.atan2((q.y - p.y) / FLAT, q.x - p.x);
+function segDist(p, a, b) {
+  const ax = a.x, ay = a.y / FLAT, dx = b.x - ax, dy = b.y / FLAT - ay, x = p.x, y = p.y / FLAT, L = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L));
+  return Math.hypot(x - ax - t * dx, y - ay - t * dy);
+}
+const angDiff = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+const inCircle = (e, c, r) => fdist(e, c) <= r + e.r;
+const onSeg = (e, a, b, half) => segDist(e, a, b) <= half + e.r;
+const inCone = (e, o, a, spread, len) => fdist(e, o) <= len + e.r && angDiff(aimFrom(o, e), a) <= spread / 2 + Math.atan2(e.r, Math.max(0.3, fdist(e, o)));
+
+// ---------- scene ----------
+const CROWD = [[8.2, 3.0], [8.8, 4.5], [9.6, 6.0], [10.8, 3.6], [11.8, 5.2]];
+function makeScene(layout, f2x) {
+  const enemies = layout === 'boss'
+    ? [{ x: 10.4, y: 4.4, bx: 10.4, by: 4.4, r: 0.9, boss: true, img: bossImg, size: 150 }]
+    : CROWD.map(([x, y], i) => ({ x, y, bx: x, by: y, r: 0.45, boss: false, img: mobImg, size: 96, phase: i }));
+  for (const e of enemies) Object.assign(e, { taken: 0, reveal: -9, dust: 0, dustAt: -9, setLock: -9, setUntil: -9, stopUntil: -9, flash: -9 });
+  return { layout, enemies, f2: { x: f2x, y: 4.4 }, f2home: f2x, nums: [], notes: [], clock: 0, total: 0, last: null };
+}
+function moveEnemies(S) {
+  for (const e of S.enemies) {
+    if (S.clock < e.stopUntil || S.clock < e.setUntil) continue;
+    e.y = e.boss ? e.by + 0.6 * Math.sin(S.clock * 1.1) : e.by + 0.18 * Math.sin(S.clock * 1.4 + e.phase);
+  }
+}
+const nearest = (S, from, range = 99, skip = null) => S.enemies.filter(e => e !== skip && fdist(from, e) - e.r <= range).sort((a, b) => fdist(from, a) - fdist(from, b))[0] || null;
+
+// ---------- hits ----------
+function hit(S, e, dmg, o = {}) {
+  e.taken += dmg; S.total += dmg; e.flash = S.clock;
+  S.nums.push({ x: e.x + (Math.random() - 0.5) * 0.5, y: e.y, h: e.size * 0.85 + 10, v: dmg, at: S.clock, col: o.col || '#fff3b0' });
+  if (o.reveal) e.reveal = S.clock + 4;
+  if (o.stop && !e.boss) e.stopUntil = S.clock + o.stop;
+  if (o.dust) {
+    if (S.clock - e.dustAt > 4) e.dust = 0;
+    e.dust = Math.min(4, e.dust + o.dust); e.dustAt = S.clock;
+    if (e.dust >= 4 && S.clock >= e.setLock) {
+      e.dust = 0; e.setLock = S.clock + 4;
+      if (!e.boss) e.setUntil = S.clock + 0.8;
+      S.notes.push({ x: e.x, y: e.y, text: e.boss ? '경직 +15' : '굳음', at: S.clock });
+    }
+  }
+}
+// One hit per body per call; `once` (a Set) keeps a body to one hit across calls (e.g. a dash crossing).
+function hitWhere(S, test, dmg, o = {}, once = null) {
+  for (const e of S.enemies) if (test(e) && !(once && once.has(e))) { once?.add(e); hit(S, e, dmg, o); }
+}
+
+// ---------- drawing helpers ----------
+const X = x => x * U, Y = y => y * U;
+function ellipse(c, x, y, r, fill, stroke, lw = 2) {
+  c.beginPath(); c.ellipse(X(x), Y(y), r * U, r * U * FLAT, 0, 0, Math.PI * 2);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw; c.stroke(); }
+}
+function beam(c, a, b, width, core, edge, lift = 22, alpha = 1) {
+  c.save(); c.globalAlpha = alpha; c.lineCap = 'round';
+  c.strokeStyle = edge; c.lineWidth = width * U; c.beginPath(); c.moveTo(X(a.x), Y(a.y) - lift); c.lineTo(X(b.x), Y(b.y) - lift); c.stroke();
+  c.strokeStyle = core; c.lineWidth = Math.max(2, width * U * 0.4); c.beginPath(); c.moveTo(X(a.x), Y(a.y) - lift); c.lineTo(X(b.x), Y(b.y) - lift); c.stroke();
+  c.restore();
+}
+const RAINBOW = ['#ff6b6b', '#ffb347', '#ffe66d', '#7be07b', '#6fc3ff', '#8f8cff', '#d58cff'];
+function prismBeam(c, a, b, width, alpha) {
+  c.save(); c.globalAlpha = alpha * 0.5;
+  RAINBOW.forEach((col, i) => { const off = (i - 3) * width * U * 0.12; c.strokeStyle = col; c.lineWidth = 2; c.beginPath(); c.moveTo(X(a.x), Y(a.y) - 22 + off); c.lineTo(X(b.x), Y(b.y) - 22 + off); c.stroke(); });
+  c.restore(); beam(c, a, b, width, '#ffffff', 'rgba(255,248,220,0.55)', 22, alpha);
+}
+function star(c, x, y, r, col) {
+  c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, rr = i % 2 ? r * 0.35 : r; c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  c.closePath(); c.fillStyle = col; c.fill();
+}
+function shard(c, x, y, a, len, col) {
+  c.save(); c.translate(x, y); c.rotate(a); c.beginPath(); c.moveTo(len, 0); c.lineTo(-len * 0.5, len * 0.35); c.lineTo(-len * 0.3, 0); c.lineTo(-len * 0.5, -len * 0.35); c.closePath();
+  c.fillStyle = col; c.fill(); c.strokeStyle = '#2b3345'; c.lineWidth = 1; c.stroke(); c.restore();
+}
+function drawF2(c, S) {
+  const p = S.f2; ellipse(c, p.x, p.y, 0.45, 'rgba(0,0,0,0.28)');
+  if (f2Sheet) { const f = Math.floor(S.clock * 5) % 8, sx = (f % 4) * 128, sy = Math.floor(f / 4) * 128; c.drawImage(f2Sheet, sx, sy, 128, 128, X(p.x) - 64, Y(p.y) - 104, 128, 128); }
+  else { c.fillStyle = '#e0a43c'; c.fillRect(X(p.x) - 10, Y(p.y) - 40, 20, 40); }
+}
+function drawEnemy(c, S, e) {
+  ellipse(c, e.x, e.y, e.r, 'rgba(0,0,0,0.3)');
+  const set = S.clock < e.setUntil, s = e.size;
+  c.save();
+  if (S.clock - e.flash < 0.08) c.filter = 'brightness(2.2)';
+  else if (set) c.filter = 'grayscale(1) brightness(1.15) sepia(0.3) hue-rotate(170deg)';
+  else if (S.clock < e.stopUntil) c.filter = 'brightness(1.5) saturate(0.4)';
+  if (e.img) c.drawImage(e.img, X(e.x) - s / 2, Y(e.y) - s * 0.86, s, s); else { c.fillStyle = '#c55'; c.fillRect(X(e.x) - 12, Y(e.y) - 36, 24, 36); }
+  c.restore();
+  const top = Y(e.y) - s * 0.8;
+  if (S.clock < e.reveal) { star(c, X(e.x), top - 6, 8, '#ffffff'); star(c, X(e.x), top - 6, 4, '#ffe66d'); }
+  if (S.clock - e.dustAt <= 4 && e.dust > 0) for (let i = 0; i < 4; i++) { c.fillStyle = i < e.dust ? '#9fc0e0' : 'rgba(159,192,224,0.2)'; c.fillRect(X(e.x) - 15 + i * 8, Y(e.y) + 6, 6, 4); }
+}
+function drawOverlay(c, S) {
+  S.nums = S.nums.filter(n => S.clock - n.at < 0.8);
+  c.font = 'bold 15px system-ui'; c.textAlign = 'center';
+  for (const n of S.nums) { const k = (S.clock - n.at) / 0.8; c.globalAlpha = 1 - k; c.fillStyle = '#1b1b22'; c.fillText(n.v, X(n.x) + 1, Y(n.y) - n.h - k * 26 + 1); c.fillStyle = n.col; c.fillText(n.v, X(n.x), Y(n.y) - n.h - k * 26); }
+  S.notes = S.notes.filter(n => S.clock - n.at < 1.1);
+  c.font = 'bold 14px system-ui';
+  for (const n of S.notes) { c.globalAlpha = 1 - (S.clock - n.at) / 1.1; c.fillStyle = '#cfe6ff'; c.fillText(n.text, X(n.x), Y(n.y) + 26); }
+  c.globalAlpha = 1;
+}
+function floor(c) {
+  c.fillStyle = '#2d3b3a'; c.fillRect(0, 0, W, H);
+  c.strokeStyle = 'rgba(255,255,255,0.05)'; c.lineWidth = 1;
+  for (let x = 0; x <= W; x += U) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
+  for (let y = 0; y <= H; y += U * FLAT) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+}
+
+// ---------- effects ----------
+// Each: setup(S) -> state; step(S, st, t, prev) fires hits; draw(c, S, st, t). `t` is seconds since the cast.
+const fired = (t, prev, at) => prev < at && t >= at;
+const COL = { light: '#fff3b0', magnet: '#b9d3ee', fire: '#ffb070', ice: '#bfe9f4', lightning: '#ffe086', wind: '#d6f0e6', sound: '#f4d38a', water: '#8fd8ea' };
+const E = {};
+
+E.prismBeam = { period: 1.4, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { a, b: along(S.f2, a, 7) }; },
+  step(S, st, t, prev) { if (fired(t, prev, 0.15)) hitWhere(S, e => onSeg(e, S.f2, st.b, 0.3), 48, { reveal: 1 }); },
+  draw(c, S, st, t) { if (t > 0.15 && t < 0.5) prismBeam(c, S.f2, st.b, 0.6, 1 - (t - 0.15) / 0.35); } };
+
+E.flashBomb = { period: 2.0, setup(S) { const n = nearest(S, S.f2); const a = aimFrom(S.f2, n), d = Math.min(7, fdist(S.f2, n)); return { to: along(S.f2, a, d) }; },
+  step(S, st, t, prev) { if (fired(t, prev, 0.75)) hitWhere(S, e => inCircle(e, st.to, 3), 96, { reveal: 1, stop: 0.6 }); },
+  draw(c, S, st, t) {
+    if (t < 0.5) { const k = Math.max(0, (t - 0.15) / 0.35), x = S.f2.x + (st.to.x - S.f2.x) * k, y = S.f2.y + (st.to.y - S.f2.y) * k; if (t > 0.15) { c.fillStyle = '#e8e2cc'; c.beginPath(); c.arc(X(x), Y(y) - 30 - Math.sin(k * Math.PI) * 50, 6, 0, 7); c.fill(); } }
+    else if (t < 0.75) { c.fillStyle = (Math.floor(t * 24) % 2) ? '#ffffff' : '#e8e2cc'; c.beginPath(); c.arc(X(st.to.x), Y(st.to.y) - 4, 6, 0, 7); c.fill(); ellipse(c, st.to.x, st.to.y, 3, null, 'rgba(255,255,255,0.25)', 1); }
+    else if (t < 1.15) { const k = (t - 0.75) / 0.4; ellipse(c, st.to.x, st.to.y, 3 * Math.min(1, k * 2.5), `rgba(255,255,240,${0.7 * (1 - k)})`, `rgba(255,230,110,${1 - k})`, 3); if (k < 0.3) { c.fillStyle = `rgba(255,255,255,${0.35 * (1 - k / 0.3)})`; c.fillRect(0, 0, W, H); } }
+  } };
+
+E.scrapShot = { f2x: 6.6, period: 1.4, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { pellets: [-20, -10, 0, 10, 20].map(d => ({ a: a + d * Math.PI / 180, d: 0, done: false })), dusted: new Set() }; },
+  step(S, st, t) {
+    if (t < 0.12) return;
+    for (const p of st.pellets) { if (p.done) continue; p.d = Math.min(4, (t - 0.12) * 16); const at = along(S.f2, p.a, p.d);
+      const e = S.enemies.find(e => fdist(at, e) <= e.r + 0.1); if (e) { p.done = true; p.at = at; hit(S, e, 11, { col: COL.magnet, dust: st.dusted.has(e) ? 0 : 1 }); st.dusted.add(e); } else if (p.d >= 4) p.done = true; p.pos = at; }
+  },
+  draw(c, S, st, t) { if (t < 0.12) return; for (const p of st.pellets) if (!p.done && p.pos) shard(c, X(p.pos.x), Y(p.pos.y) - 22, p.a, 7, '#c9cfd6');
+    if (t < 0.2) { c.fillStyle = 'rgba(159,192,224,0.6)'; c.beginPath(); c.arc(X(S.f2.x) + 16, Y(S.f2.y) - 24, 10, 0, 7); c.fill(); } } };
+
+E.magneticLift = { period: 2.2, setup(S) { const n = nearest(S, S.f2), a = aimFrom(S.f2, n); const c = along(S.f2, a, Math.min(6, fdist(S.f2, n)));
+    return { c, bits: Array.from({ length: 14 }, (_, i) => ({ ang: i * 2.4, rr: 0.4 + (i % 5) * 0.42, h: 0 })) }; },
+  step(S, st, t, prev) { if (fired(t, prev, 1.1)) hitWhere(S, e => inCircle(e, st.c, 2.5), 90, { col: COL.magnet, dust: 2 }); },
+  draw(c, S, st, t) {
+    if (t < 1.2) ellipse(c, st.c.x, st.c.y, 2.5, 'rgba(159,192,224,0.10)', 'rgba(159,192,224,0.7)', 2);
+    for (const b of st.bits) { const x = st.c.x + Math.cos(b.ang) * b.rr, y = st.c.y + Math.sin(b.ang) * b.rr * FLAT;
+      const h = t < 1.0 ? Math.min(1, t / 0.6) * 70 : t < 1.1 ? 70 * (1 - (t - 1.0) / 0.1) : 0;
+      if (t < 1.3) { c.fillStyle = '#8d939c'; c.save(); c.translate(X(x), Y(y) - h); c.rotate(t * 3 + b.ang); c.fillRect(-5, -3, 10, 6); c.restore(); } }
+    if (t > 1.1 && t < 1.5) { const k = (t - 1.1) / 0.4; ellipse(c, st.c.x, st.c.y, 2.5 * (0.6 + k * 0.5), null, `rgba(207,230,255,${1 - k})`, 4); }
+  } };
+
+E.noonMark = { period: 3.0, setup(S) { return { tg: nearest(S, S.f2, 7) }; },
+  step(S, st, t, prev) { const g = st.tg; if (!g) return;
+    for (let i = 0; i < 8; i++) if (fired(t, prev, 0.3 + i * 0.25)) hitWhere(S, e => inCircle(e, g, 1.5), 34, { reveal: 1, col: COL.fire });
+    if (fired(t, prev, 2.3)) hitWhere(S, e => inCircle(e, g, 2.4), 96, { reveal: 1, col: COL.fire }); },
+  draw(c, S, st, t) { const g = st.tg; if (!g || t > 2.7) return; const sx = X(g.x), sy = Y(g.y) - 150;
+    if (t < 2.3) { c.save(); c.globalAlpha = Math.min(1, t / 0.3); for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6 + t; c.strokeStyle = '#ffd257'; c.lineWidth = 2; c.beginPath(); c.moveTo(sx + Math.cos(a) * 16, sy + Math.sin(a) * 16); c.lineTo(sx + Math.cos(a) * 24, sy + Math.sin(a) * 24); c.stroke(); }
+      c.fillStyle = '#fff3b0'; c.beginPath(); c.arc(sx, sy, 13, 0, 7); c.fill(); c.fillStyle = '#ffb347'; c.beginPath(); c.arc(sx, sy, 8, 0, 7); c.fill(); c.restore();
+      const since = (t - 0.3) % 0.25; if (t > 0.3 && since < 0.12) { c.fillStyle = `rgba(255,214,120,${0.55 * (1 - since / 0.12)})`; c.fillRect(sx - 1.5 * U * 0.5, sy, 1.5 * U, Y(g.y) - sy); ellipse(c, g.x, g.y, 1.5, 'rgba(255,190,90,0.35)'); } }
+    else { const k = (t - 2.3) / 0.4; ellipse(c, g.x, g.y, 2.4 * (0.5 + k * 0.5), `rgba(255,200,90,${0.5 * (1 - k)})`, `rgba(255,240,180,${1 - k})`, 3); }
+  } };
+
+E.frostPrism = { period: 3.6, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { p: along(S.f2, a, 3), shots: [] }; },
+  step(S, st, t, prev) { for (let i = 0; i < 6; i++) if (fired(t, prev, 0.3 + i * 0.5)) {
+      const picks = S.enemies.filter(e => fdist(st.p, e) - e.r <= 5).sort((a, b) => fdist(st.p, a) - fdist(st.p, b)).slice(0, 3);
+      for (const e of picks) { hit(S, e, 62, { reveal: 1, col: COL.ice }); st.shots.push({ e, at: t }); } } },
+  draw(c, S, st, t) { if (t > 3.1) return; const p = st.p; ellipse(c, p.x, p.y, 0.5, 'rgba(191,233,244,0.25)');
+    c.save(); c.translate(X(p.x), Y(p.y)); c.fillStyle = '#d6f3fb'; c.strokeStyle = '#2b3345'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(0, -46); c.lineTo(13, -14); c.lineTo(0, 0); c.lineTo(-13, -14); c.closePath(); c.fill(); c.stroke(); c.fillStyle = '#ffffff'; c.fillRect(-3, -36, 4, 16); c.restore();
+    for (const s of st.shots) { const k = (t - s.at) / 0.18; if (k < 1) prismBeam(c, { x: p.x, y: p.y - 0.4 }, s.e, 0.25, 1 - k); } } };
+
+E.refractBeam = { period: 2.2, setup(S) { return { tg: nearest(S, S.f2, 8), refr: [] }; },
+  step(S, st, t, prev) { const g = st.tg; if (!g) return; for (let i = 0; i < 6; i++) if (fired(t, prev, 0.2 + i * 0.25)) {
+      hit(S, g, 63, { reveal: 1, col: COL.lightning }); const o = nearest(S, g, 99, g); if (o) { hit(S, o, 30, { reveal: 1, col: COL.lightning }); st.refr.push({ o, at: t }); } } },
+  draw(c, S, st, t) { const g = st.tg; if (!g || t < 0.15 || t > 1.75) return;
+    prismBeam(c, S.f2, g, 0.32 + 0.08 * Math.sin(t * 40), 0.85); beam(c, S.f2, g, 0.08, '#ffe086', 'rgba(255,224,134,0.3)', 22, 0.9);
+    for (const r of st.refr) { const k = (t - r.at) / 0.15; if (k < 1) beam(c, g, r.o, 0.12, '#ffffff', 'rgba(255,224,134,0.6)', 22, 1 - k); } } };
+
+E.lightDash = { f2x: 6.0, period: 2.4, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)), from = { ...S.f2 }; return { from, to: along(from, a, 4), crossed: new Set() }; },
+  step(S, st, t, prev) {
+    if (t >= 0.15 && t <= 0.4) { const k = (t - 0.15) / 0.25; S.f2.x = st.from.x + (st.to.x - st.from.x) * k; S.f2.y = st.from.y + (st.to.y - st.from.y) * k; hitWhere(S, e => onSeg(e, st.from, S.f2, 0.9), 180, { reveal: 1, col: COL.wind }, st.crossed); }
+    if (fired(t, prev, 1.4)) hitWhere(S, e => onSeg(e, st.from, st.to, 0.9), 180, { reveal: 1, col: COL.wind });
+    if (t > 2.2) { S.f2.x = st.from.x; S.f2.y = st.from.y; } },
+  draw(c, S, st, t) { if (t < 0.15) return; const end = t < 0.4 ? S.f2 : st.to;
+    if (t < 1.4) beam(c, st.from, end, 0.9 * 2 * FLAT, 'rgba(255,255,240,0.9)', 'rgba(214,240,230,0.35)', 0, 0.6 + 0.2 * Math.sin(t * 20));
+    else if (t < 1.8) { const k = (t - 1.4) / 0.4; beam(c, st.from, st.to, 1.8 * FLAT * (1 + k), '#ffffff', 'rgba(255,243,176,0.6)', 0, 1 - k); } } };
+
+E.lightConstellation = { period: 2.6, setup(S) { return { links: [] }; },
+  step(S, st, t, prev) {
+    if (fired(t, prev, 0.1)) { const picks = S.enemies.filter(e => fdist(S.f2, e) - e.r <= 6).sort((a, b) => fdist(S.f2, a) - fdist(S.f2, b)).slice(0, 5);
+      if (picks.length === 1) st.links = [[S.f2, picks[0]]]; else { const path = [picks.shift()]; while (picks.length) { const last = path[path.length - 1]; picks.sort((a, b) => fdist(last, a) - fdist(last, b)); path.push(picks.shift()); } for (let i = 1; i < path.length; i++) st.links.push([path[i - 1], path[i]]); }
+      st.members = new Set(st.links.flat().filter(p => S.enemies.includes(p))); }
+    for (let i = 0; i < 5; i++) if (fired(t, prev, 1.0 + i * 0.2)) hitWhere(S, e => st.members.has(e) || st.links.some(([a, b]) => onSeg(e, a, b, 0.3)), 72, { reveal: 1, col: COL.sound }); },
+  draw(c, S, st, t) { if (t < 0.1 || t > 2.1) return; const ring = t > 1.0 && ((t - 1.0) % 0.2) < 0.08;
+    for (const [a, b] of st.links) beam(c, a, b, ring ? 0.22 : 0.08, '#ffffff', ring ? 'rgba(244,211,138,0.8)' : 'rgba(255,255,255,0.25)', 34, Math.min(1, (t - 0.1) / 0.3));
+    for (const m of st.members || []) star(c, X(m.x), Y(m.y) - 34, ring ? 12 : 8, '#fff8dc'); } };
+
+E.rainbowBridge = { period: 3.0, setup(S) { return { tg: nearest(S, S.f2, 7) }; },
+  step(S, st, t, prev) { const g = st.tg; if (!g) return; for (let i = 0; i < 8; i++) if (fired(t, prev, 0.4 + i * 0.25)) hitWhere(S, e => inCircle(e, g, 1.2), 46, { reveal: 1, col: COL.water }); },
+  draw(c, S, st, t) { const g = st.tg; if (!g || t < 0.1 || t > 2.6) return; const a = { x: X(S.f2.x), y: Y(S.f2.y) - 30 }, b = { x: X(g.x), y: Y(g.y) - 20 }, mid = { x: (a.x + b.x) / 2, y: Math.min(a.y, b.y) - 110 };
+    const grow = Math.min(1, (t - 0.1) / 0.3); c.save(); c.globalAlpha = 0.85 * grow;
+    RAINBOW.forEach((col, i) => { c.strokeStyle = col; c.lineWidth = 3; c.beginPath(); c.moveTo(a.x, a.y + i * 3); c.quadraticCurveTo(mid.x, mid.y + i * 3, b.x, b.y + i * 3); c.stroke(); }); c.restore();
+    for (let i = 0; i < 8; i++) { const k = (t - (0.4 + i * 0.25 - 0.35)) / 0.35; if (k > 0 && k < 1) { const u = k, x = (1 - u) ** 2 * a.x + 2 * (1 - u) * u * mid.x + u * u * b.x, y = (1 - u) ** 2 * a.y + 2 * (1 - u) * u * mid.y + u * u * b.y; c.fillStyle = '#e8fbff'; c.beginPath(); c.arc(x, y + 9, 5, 0, 7); c.fill(); } }
+    const since = (t - 0.4) % 0.25; if (t > 0.4 && t < 2.45 && since < 0.12) ellipse(c, g.x, g.y, 1.2, `rgba(143,216,234,${0.45 * (1 - since / 0.12)})`, '#e8fbff', 2); } };
+
+E.moltenBall = { period: 3.4, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { a, start: along(S.f2, a, 0.8), d: 0, stuckAt: null, ticks: 0, burst: null }; },
+  step(S, st, t, prev) {
+    if (st.burst !== null) return;
+    if (st.stuckAt === null) { st.d = Math.min(8, Math.max(0, t - 0.1) * 5); st.pos = along(st.start, st.a, st.d); const big = S.enemies.find(e => e.boss && fdist(st.pos, e) <= e.r + 0.7); if (big) st.stuckAt = t; }
+    // Six heats in all, counted only when one touches a body (rolling up to the boss uses none of them).
+    while (st.ticks < 6 && t >= 0.35 + (st.beat || 0) * 0.25) { st.beat = (st.beat || 0) + 1; const before = S.total; hitWhere(S, e => inCircle(e, st.pos, 1.2), 40, { col: COL.fire, dust: st.ticks === 0 ? 1 : 0 }); if (S.total > before) st.ticks++; }
+    if ((st.stuckAt !== null && t - st.stuckAt >= 1.5) || (st.stuckAt === null && st.d >= 8) || st.pos.x > ROOM_W - 0.5) { st.burst = t; hitWhere(S, e => inCircle(e, st.pos, 2.4), 130, { col: COL.fire }); } },
+  draw(c, S, st, t) { if (!st.pos || t < 0.1) return; const p = st.pos;
+    if (st.burst === null) { ellipse(c, p.x, p.y, 0.6, 'rgba(0,0,0,0.3)'); const g = c.createRadialGradient(X(p.x) - 5, Y(p.y) - 22, 2, X(p.x), Y(p.y) - 18, 18); g.addColorStop(0, '#fff1a8'); g.addColorStop(0.5, '#ff8a3a'); g.addColorStop(1, '#8a3b1c'); c.fillStyle = g; c.beginPath(); c.arc(X(p.x), Y(p.y) - 18, 18, 0, 7); c.fill(); c.strokeStyle = '#d08a4c'; c.lineWidth = 2; c.stroke(); }
+    else { const k = (t - st.burst) / 0.5; if (k < 1) { ellipse(c, p.x, p.y, 2.4 * (0.5 + k * 0.5), `rgba(255,120,50,${0.5 * (1 - k)})`, `rgba(255,220,140,${1 - k})`, 3); for (let i = 0; i < 10; i++) { const a = i * 0.63; c.fillStyle = '#ff9a40'; c.beginPath(); c.arc(X(p.x) + Math.cos(a) * k * 70, Y(p.y) - 20 + Math.sin(a) * k * 40 + k * k * 30, 4, 0, 7); c.fill(); } } } } };
+
+E.frostShards = { period: 3.0, setup(S) { return { flights: [] }; },
+  step(S, st, t, prev) {
+    for (let i = 1; i <= 4; i++) if (fired(t, prev, i * 0.5)) hitWhere(S, e => Math.abs(fdist(S.f2, e) - 1.6) <= 0.4 + e.r, 18, { col: COL.ice });
+    if (fired(t, prev, 2.0)) { const order = [...S.enemies].sort((a, b) => fdist(S.f2, a) - fdist(S.f2, b)); for (let k = 0; k < 6; k++) st.flights.push({ e: order[k % Math.max(1, order.length)], at: 2.0 + k * 0.06, from: k, done: false }); }
+    for (const f of st.flights) if (!f.done && f.e && t >= f.at + 0.2) { f.done = true; hit(S, f.e, 50, { col: COL.ice, dust: f.from < order0(st, f) ? 1 : 0 }); } },
+  draw(c, S, st, t) {
+    if (t > 0.1 && t < 2.0) for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3 + t * 4, p = along(S.f2, a, 1.6); shard(c, X(p.x), Y(p.y) - 24, a + Math.PI / 2, 9, '#d6f3fb'); }
+    for (const f of st.flights) { const k = (t - f.at) / 0.2; if (k > 0 && k < 1 && f.e) { const a0 = f.from * Math.PI / 3 + 2.0 * 4, p0 = along(S.f2, a0, 1.6), x = p0.x + (f.e.x - p0.x) * k, y = p0.y + (f.e.y - p0.y) * k; shard(c, X(x), Y(y) - 24, Math.atan2(f.e.y - p0.y, f.e.x - p0.x), 10, '#d6f3fb'); } } } };
+// The first shard to reach a body is the one that adds 쇳가루 (one stack per cast per body).
+function order0(st, f) { return st.flights.findIndex(g => g.e === f.e) === st.flights.indexOf(f) ? 99 : -1; }
+
+E.railCannon = { period: 2.4, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { a, end: along(S.f2, a, 14) }; },
+  step(S, st, t, prev) { if (fired(t, prev, 0.75)) hitWhere(S, e => onSeg(e, S.f2, st.end, 0.45), 390, { col: COL.lightning, dust: 1 }); },
+  draw(c, S, st, t) { const hx = X(S.f2.x) + 14, hy = Y(S.f2.y) - 24;
+    if (t > 0.15 && t < 0.75) { const k = (t - 0.15) / 0.6; for (let i = 0; i < 3; i++) { c.strokeStyle = `rgba(208,138,76,${0.5 + k * 0.5})`; c.lineWidth = 3; c.beginPath(); c.ellipse(hx + i * 7, hy, 5, 10, 0, 0, 7); c.stroke(); } c.fillStyle = `rgba(255,224,134,${k})`; c.beginPath(); c.arc(hx + 22, hy, 3 + k * 6, 0, 7); c.fill(); }
+    if (t > 0.75 && t < 1.15) { const k = (t - 0.75) / 0.4; beam(c, S.f2, st.end, 0.9 * (1 - k * 0.5), '#e9f2ff', 'rgba(159,192,224,0.6)', 24, 1 - k); beam(c, S.f2, st.end, 0.15, '#ffe086', 'rgba(255,224,134,0.4)', 24, 1 - k); } } };
+
+E.scrapSaw = { period: 2.8, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); return { a, d: 0, stopAt: null, crossed: new Set(), ticks: 0 }; },
+  step(S, st, t, prev) {
+    if (st.stopAt === null && t > 0.1) { st.d = Math.min(6, (t - 0.1) * 12); st.pos = along(S.f2, st.a, st.d);
+      hitWhere(S, e => onSeg(e, S.f2, st.pos, 0.6), 60, { col: COL.wind, dust: 1 }, st.crossed);
+      if (st.d >= 6 || st.pos.x > ROOM_W - 0.5 || S.enemies.some(e => e.boss && fdist(st.pos, e) <= e.r + 0.3)) st.stopAt = t; }
+    while (st.stopAt !== null && st.ticks < 6 && t >= st.stopAt + 0.25 * (st.ticks + 1)) { st.ticks++; hitWhere(S, e => inCircle(e, st.pos, 1.3), 52, { col: COL.wind }); } },
+  draw(c, S, st, t) { if (!st.pos) return; if (st.stopAt !== null && t > st.stopAt + 1.6) return; const p = st.pos, spin = t * 30;
+    if (st.stopAt !== null) ellipse(c, p.x, p.y, 1.3, 'rgba(214,240,230,0.12)', 'rgba(214,240,230,0.4)', 1);
+    c.save(); c.translate(X(p.x), Y(p.y) - 22); c.rotate(spin); c.fillStyle = '#9aa3ad'; c.beginPath(); for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, r = i % 2 ? 13 : 19; c.lineTo(Math.cos(a) * r, Math.sin(a) * r); } c.closePath(); c.fill(); c.strokeStyle = '#2b3345'; c.lineWidth = 1.5; c.stroke(); c.fillStyle = '#d08a4c'; c.beginPath(); c.arc(0, 0, 5, 0, 7); c.fill(); c.restore(); } };
+
+E.ferroVine = { period: 3.0, setup(S) { const g = nearest(S, S.f2, 7); return { tg: g, crossed: new Set(), arrive: g ? 0.15 + fdist(S.f2, g) / 8 : 0 }; },
+  step(S, st, t, prev) { const g = st.tg; if (!g) return;
+    if (t > 0.15 && t <= st.arrive + 0.02) { const k = Math.min(1, (t - 0.15) / (st.arrive - 0.15)), head = { x: S.f2.x + (g.x - S.f2.x) * k, y: S.f2.y + (g.y - S.f2.y) * k }; hitWhere(S, e => e !== g && onSeg(e, S.f2, head, 0.4), 40, { col: COL.water, dust: 1 }, st.crossed); }
+    for (let i = 0; i < 8; i++) if (fired(t, prev, st.arrive + 0.1 + i * 0.25)) hitWhere(S, e => inCircle(e, g, 1.3), 41, { col: COL.water, dust: i === 0 ? 1 : 0 }); },
+  draw(c, S, st, t) { const g = st.tg; if (!g || t < 0.15 || t > st.arrive + 2.3) return; const k = Math.min(1, (t - 0.15) / (st.arrive - 0.15)), head = { x: S.f2.x + (g.x - S.f2.x) * k, y: S.f2.y + (g.y - S.f2.y) * k };
+    beam(c, S.f2, head, 0.4 * FLAT, '#1c1f2b', 'rgba(20,22,34,0.6)', 0, 0.9);
+    if (t >= st.arrive) { ellipse(c, g.x, g.y, 1.3, 'rgba(20,22,34,0.55)', 'rgba(159,192,224,0.5)', 1); const since = (t - st.arrive - 0.1) % 0.25, up = since < 0.12 ? 1 - since / 0.12 : 0;
+      for (let i = 0; i < 9; i++) { const a = i * 0.7 + Math.floor((t - st.arrive) / 0.25), rr = 0.3 + (i % 3) * 0.35, x = X(g.x + Math.cos(a) * rr), y = Y(g.y + Math.sin(a) * rr * FLAT), h = 12 + up * 34 * ((i % 2) + 0.6);
+        c.fillStyle = '#151824'; c.beginPath(); c.moveTo(x - 5, y); c.lineTo(x, y - h); c.lineTo(x + 5, y); c.closePath(); c.fill(); c.strokeStyle = 'rgba(159,192,224,0.7)'; c.lineWidth = 1; c.stroke(); } } } };
+
+E.auroraRing = { f2x: 5.6, period: 3.6, setup(S) { return { last: null, streak: 0, falls: [] }; },
+  step(S, st, t, prev) { for (let i = 0; i < 6; i++) if (fired(t, prev, 0.3 + i * 0.5)) {
+      const pool = S.enemies.filter(e => fdist(S.f2, e) - e.r <= 5); if (!pool.length) continue;
+      const left = e => (e.boss ? 18000 : 1000) - e.taken; let pick = [...pool].sort((a, b) => left(b) - left(a));
+      if (st.streak >= 2 && pick.length > 1 && pick[0] === st.last) pick.push(pick.shift());
+      const g = pick[0]; st.streak = g === st.last ? st.streak + 1 : 1; st.last = g; st.falls.push({ g, at: t });
+      hitWhere(S, e => inCircle(e, g, 1.2), 64, { reveal: 1, col: COL.magnet, dust: 1 }); } },
+  draw(c, S, st, t) { if (t > 3.3) return; const rx = X(S.f2.x), ry = Y(S.f2.y) - 120;
+    c.save(); c.globalAlpha = Math.min(1, t / 0.3); c.lineWidth = 5; c.strokeStyle = '#7be0b0'; c.beginPath(); c.ellipse(rx, ry, 36, 12, 0, 0, 7); c.stroke(); c.lineWidth = 2; c.strokeStyle = '#d58cff'; c.beginPath(); c.ellipse(rx, ry - 4, 30, 9, 0, 0, 7); c.stroke(); c.restore();
+    for (const f of st.falls) { const k = (t - f.at) / 0.4; if (k < 1) { const x = X(f.g.x), top = Y(f.g.y) - 180, bot = Y(f.g.y); const gr = c.createLinearGradient(0, top, 0, bot); gr.addColorStop(0, 'rgba(213,140,255,0)'); gr.addColorStop(0.5, `rgba(123,224,176,${0.55 * (1 - k)})`); gr.addColorStop(1, `rgba(220,255,240,${0.8 * (1 - k)})`); c.fillStyle = gr;
+        for (let s = -2; s <= 2; s++) c.fillRect(x + s * 9 - 3 + Math.sin(t * 12 + s) * 3, top + k * 40, 6, bot - top - k * 40); ellipse(c, f.g.x, f.g.y, 1.2, `rgba(123,224,176,${0.3 * (1 - k)})`); } } } };
+
+E.ironString = { period: 2.8, setup(S) { const a = aimFrom(S.f2, nearest(S, S.f2)); let end = along(S.f2, a, 7), held = null;
+    for (let d = 0.5; d <= 7; d += 0.1) { const p = along(S.f2, a, d); const big = S.enemies.find(e => e.boss && fdist(p, e) <= e.r * 0.5); if (big) { end = p; held = big; break; } if (p.x > ROOM_W - 0.3) { end = p; break; } }
+    return { a, end, held, from: { ...S.f2 }, plucks: [] }; },
+  step(S, st, t, prev) { for (let i = 0; i < 5; i++) if (fired(t, prev, 0.4 + i * 0.4)) { st.plucks.push(t); if (st.held) st.end = { x: st.held.x, y: st.held.y }; hitWhere(S, e => onSeg(e, st.from, st.end, 0.5), 74, { col: COL.sound, dust: i === 0 ? 1 : 0 }); } },
+  draw(c, S, st, t) { if (t < 0.1 || t > 2.5) return; if (st.held) st.end = { x: st.held.x, y: st.held.y }; const ax = X(st.from.x) + 12, ay = Y(st.from.y) - 24, bx = X(st.end.x), by = Y(st.end.y) - 24, len = Math.hypot(bx - ax, by - ay), nx = -(by - ay) / len, ny = (bx - ax) / len;
+    const last = st.plucks.length ? t - st.plucks[st.plucks.length - 1] : 9, amp = last < 0.35 ? 10 * (1 - last / 0.35) : 0, grow = Math.min(1, (t - 0.1) / 0.25);
+    c.strokeStyle = '#c9d6e4'; c.lineWidth = 2; c.beginPath();
+    for (let i = 0; i <= 40; i++) { const u = i / 40 * grow, w = Math.sin(u * Math.PI) * Math.sin(t * 90) * amp; c.lineTo(ax + (bx - ax) * u + nx * w, ay + (by - ay) * u + ny * w); } c.stroke();
+    if (amp > 0) { c.strokeStyle = `rgba(244,211,138,${amp / 10})`; c.lineWidth = 1.5; for (let i = 1; i <= 3; i++) { const u = i / 4; c.beginPath(); c.ellipse(ax + (bx - ax) * u, ay + (by - ay) * u, 14 + (10 - amp) * 2, 6 + (10 - amp), 0, 0, 7); c.stroke(); } }
+    c.fillStyle = '#d08a4c'; c.beginPath(); c.arc(ax, ay, 4, 0, 7); c.fill(); if (grow >= 1) { c.beginPath(); c.arc(bx, by, 5, 0, 7); c.fill(); } } };
+
+// ---------- cards on the page ----------
+const skillById = id => design.skills.find(s => s.id === id), fusionById = id => design.fusions.find(f => f.id === id);
+const GROUPS = { light: ['prismBeam', 'flashBomb'], magnet: ['scrapShot', 'magneticLift'],
+  fusion: ['noonMark', 'frostPrism', 'refractBeam', 'lightDash', 'lightConstellation', 'rainbowBridge', 'moltenBall', 'frostShards', 'railCannon', 'scrapSaw', 'ironString', 'ferroVine', 'auroraRing'] };
+const NAMES = { fire: '불', ice: '얼음', lightning: '전기', wind: '바람', sound: '소리', water: '물', light: '빛', magnet: '자력' };
+const cards = [];
+for (const [group, ids] of Object.entries(GROUPS)) {
+  const box = document.querySelector(`[data-group="${group}"]`);
+  for (const id of ids) {
+    const d = skillById(id) || fusionById(id), fx = E[id];
+    const el = document.createElement('div'); el.className = 'card';
+    const tag = d.pair ? d.pair.map(p => NAMES[p]).join(' + ') : `${NAMES[d.element]} · ${d.energyCost === 20 ? '짧은 기술' : '긴 기술'}`;
+    el.innerHTML = `<canvas width="${W}" height="${H}"></canvas><div class="info"><h3>${d.name} <span class="tag">${tag}</span><small>축전 ${d.energyCost} · 대기 ${d.cooldown}초 · 기획 피해 ${d.totalDirectDamage}</small></h3><p>${d.effect}</p><div class="tally">지난 시전에 들어간 피해: <b>—</b></div></div>`;
+    box.append(el);
+    cards.push({ id, fx, el, c: el.querySelector('canvas').getContext('2d'), tally: el.querySelector('.tally b'), visible: true, S: null, st: null, t: 0 });
+  }
+}
+const io = new IntersectionObserver(list => list.forEach(en => { const card = cards.find(k => k.el === en.target); if (card) card.visible = en.isIntersecting; }));
+cards.forEach(k => io.observe(k.el));
+
+let layout = 'crowd';
+function restart(card, keepEnemies) {
+  const f2x = card.fx.f2x ?? 5.0;
+  if (!keepEnemies || !card.S || card.S.layout !== layout) card.S = makeScene(layout, f2x);
+  card.S.f2 = { x: f2x, y: 4.4 }; card.S.total = 0; card.t = 0; card.st = card.fx.setup(card.S);
+}
+function describe(S, total) {
+  if (S.layout === 'boss') return `보스 ${total}`;
+  const most = Math.max(...S.enemies.map(e => e.loopTaken || 0));
+  return `무리 합계 ${total} (한 적에 가장 많이 ${most})`;
+}
+cards.forEach(k => restart(k));
+document.querySelectorAll('input[name=layout]').forEach(r => r.addEventListener('change', () => { layout = r.value; cards.forEach(k => { restart(k); k.tally.textContent = '—'; }); }));
+const slow = document.getElementById('slow');
+
+let before = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - before) / 1000) * (slow.checked ? 0.5 : 1); before = now;
+  for (const k of cards) {
+    if (!k.visible) continue;
+    const S = k.S, prev = k.t; k.t += dt; S.clock += dt;
+    moveEnemies(S);
+    const takenBefore = S.enemies.map(e => e.taken);
+    k.fx.step(S, k.st, k.t, prev);
+    S.enemies.forEach((e, i) => { e.loopTaken = (e.loopTaken || 0) + e.taken - takenBefore[i]; });
+    const c = k.c; floor(c);
+    const bodies = [...S.enemies.map(e => ({ y: e.y, draw: () => drawEnemy(c, S, e) })), { y: S.f2.y, draw: () => drawF2(c, S) }].sort((a, b) => a.y - b.y);
+    for (const b of bodies) b.draw();
+    k.fx.draw(c, S, k.st, k.t);
+    drawOverlay(c, S);
+    if (k.t >= k.fx.period) { k.tally.textContent = describe(S, S.total); S.enemies.forEach(e => e.loopTaken = 0); restart(k, true); }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ---------- mod and trait cards (text only) ----------
+const lmSkills = new Set([...GROUPS.light, ...GROUPS.magnet]);
+const list = document.getElementById('cardList');
+const TIER = { common: '보통', rare: '희귀', special: '특별' };
+for (const m of slice.skillMods.filter(m => lmSkills.has(m.skill))) list.insertAdjacentHTML('beforeend', `<div><b>${m.name}</b><span>개조 · ${skillById(m.skill).name} · ${TIER[m.tier]}</span><br>${m.description}</div>`);
+for (const t of slice.elementTraits.filter(t => t.element === 'light' || t.element === 'magnet')) list.insertAdjacentHTML('beforeend', `<div><b>${t.name}</b><span>특성 · ${NAMES[t.element]} · ${TIER[t.tier]}</span><br>${t.description}</div>`);
+</script>
+</body>
+</html>

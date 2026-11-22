@@ -246,3 +246,22 @@ test('residents whose north walk shows the face turn their back when walking awa
   assert.equal(walkDirection('R1', 0, -1), 'north');
   assert.equal(walkDirection('R3', 1, 0), 'east');
 });
+
+test('once Orden is gone the bell never stops the town again; the liberation freeze holds everyone, then they walk on', () => {
+  const d = new NpcDirector(library);
+  // Free: a minute and more of street, and nobody ever stands still for the bell.
+  let last = walking(0.1, d, { free: true });
+  for (let i = 0; i < 700; i++) {
+    const now = walking(0.1, d, { free: true });
+    assert.equal(d.stopped, false);
+    assert.ok(now.some((r, k) => Math.hypot(r.x - last[k].x, r.y - last[k].y) > 0.01), 'someone is walking');
+    last = now;
+  }
+  // The scene's freeze: everyone where they stood until it lets go, then walking from that same spot.
+  const held = walking(0.5, d, { free: true, freeze: true });
+  assert.equal(d.stopped, true);
+  const still = walking(1, d, { free: true, freeze: true });
+  assert.deepEqual(still.map(r => [r.x, r.y]), held.map(r => [r.x, r.y]));
+  const [moved] = walking(0.5, d, { free: true });
+  assert.ok(Math.hypot(moved.x - still[0].x, moved.y - still[0].y) > 0.1);
+});

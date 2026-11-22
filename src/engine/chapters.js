@@ -10,6 +10,8 @@ export const chapterOf = (slice, id) => chapterList(slice).find(chapter => chapt
 /** The stops of a chapter, in order. */
 export const chapterRooms = (slice, id) => chapterOf(slice, id).rooms || slice.rooms;
 /** Every room of every chapter (data checks, map lookups). */
+/** The difficulties a chapter offers (chapters[].difficulties, ids; every level where it names none). Chapter 3 has no easy (2026-11-16). */
+export const chapterLevels = (slice, id) => { const only = chapterOf(slice, id).difficulties, levels = slice.difficulty?.levels || []; return only ? levels.filter(level => only.includes(level.id)) : levels; };
 export const allRooms = slice => chapterList(slice).flatMap(chapter => chapterRooms(slice, chapter.id));
 
 /**

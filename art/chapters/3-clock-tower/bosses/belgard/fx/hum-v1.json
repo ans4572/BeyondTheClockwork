@@ -1,0 +1,171 @@
+{
+ "frames": [
+  {
+   "filename": "hum-thread 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "hum-thread 1",
+   "frame": {
+    "x": 36,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "hum-thread 2",
+   "frame": {
+    "x": 0,
+    "y": 16,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "hum-thread 3",
+   "frame": {
+    "x": 36,
+    "y": 16,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "hum-thread 4",
+   "frame": {
+    "x": 0,
+    "y": 32,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  },
+  {
+   "filename": "hum-thread 5",
+   "frame": {
+    "x": 36,
+    "y": 32,
+    "w": 36,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 16
+   },
+   "duration": 42
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "hum-thread.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 72,
+   "h": 48
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "hum-thread",
+    "from": 0,
+    "to": 5,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/hum-thread",
+   "name": "Humming thread",
+   "fps": 24,
+   "loop": true,
+   "frames": 6,
+   "frameSize": [
+    36,
+    16
+   ],
+   "pivot": [
+    2,
+    8
+   ],
+   "columns": 2
+  }
+ }
+}

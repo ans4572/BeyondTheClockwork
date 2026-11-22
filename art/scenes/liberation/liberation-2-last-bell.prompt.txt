@@ -1,0 +1,9 @@
+Use case: story cutscene still, image edit.
+Edit input image 1 (the existing 1536x1024 village court of a toy town, seen from a high three-quarter top-down game camera, painted cel-shaded) into the second still of the ending cutscene: the last bell, the whole town frozen.
+
+ADD THE TOWNSPEOPLE: about fourteen small wind-up doll residents exactly in the style of input image 2 (round cream faces with rosy cheeks, brass ear gears, a wind-up key on the back; bakers in white caps with bread, party hats, grey-faced postmen in caps with parcels, lace-collared maids in head scarves), each about the height of one paving tile group as people are on this map. Spread them naturally over the open paving of the square and its streets, some walking alone, some in twos, a few by the fountain and the workshop, several mid-step.
+THEY ARE FROZEN: every resident is stopped dead mid-motion, eyes blank and looking straight ahead, as if a clock had stopped; a raised foot hangs in the air, a dropped loaf falls, a hand reaches for a door and stops. Above every resident's head hangs the same small glowing cyan command seal: a ring with a raised open palm inside (a "stop" sign of light), the same on everyone.
+MOOD: the moment of the last toll. The colours of the whole square are drained toward a cold grey-blue, as if time stood still; faint concentric cyan rings of sound spread over the rooftops from the top of the picture (from the distant clock tower, which is not visible). Quiet, eerie, never horror.
+
+PRESERVE input image 1 entirely: the same camera, framing, buildings, workshop, fountain, plants, paving and paths. Add only the residents, their seals, the sound rings and the colour change.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, logos, UI, borders or watermarks.

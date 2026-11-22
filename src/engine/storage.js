@@ -121,7 +121,7 @@ export function decodeSave(raw, data) {
   if (p.attack && (!integerIn(p.attack.phase, 0, 2) || !validNumber(p.attack.elapsed) || !Array.isArray(p.attack.hit))) fail('저장된 렌치 동작이 올바르지 않습니다.');
   // A run saved on an older route cannot resume on this one; permanent progress stays.
   // A run of a chapter this version does not have is dropped the same way.
-  if (s.run && (chapterOf(data.slice, s.run.chapter).id !== (s.run.chapter ?? chapterList(data.slice)[0].id) || s.run.plan?.length !== chapterRooms(data.slice, s.run.chapter).length)) { s.run = null; s.mode = 'hub'; s.enemies = []; s.casts = []; s.projectiles = []; s.effects = []; p.attack = null; p.dodge = null; p.lastCast = null; }
+  if (s.run && (chapterOf(data.slice, s.run.chapter).id !== (s.run.chapter ?? chapterList(data.slice)[0].id) || s.run.plan?.length !== chapterRooms(data.slice, s.run.chapter).length)) { s.run = null; s.mode = 'hub'; s.collapse = null; s.ordenEnd = null; s.enemies = []; s.casts = []; s.projectiles = []; s.effects = []; p.attack = null; p.dodge = null; p.lastCast = null; }
   const runModes = ['combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete'];
   if (runModes.includes(s.mode) !== !!s.run) fail('저장된 원정과 화면 상태가 일치하지 않습니다.');
   if (s.run) {

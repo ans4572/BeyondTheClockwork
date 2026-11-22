@@ -36,15 +36,28 @@ const seeded = seed => () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 **
 /** Places a village's NPCs for the current moment. Purely visual; nothing here touches the game. */
 export class NpcDirector {
   constructor(library) { this.library = library; this.place = null; this.elapsed = 0; this.walked = 0; this.residents = []; this.greetedAt = null; this.stopped = false; this.bell = null; }
-  /** `bell`: 'soon' brings the next bell forward, 'hold' also keeps the town stopped once it has rung. */
-  update(delta, place, npcs, { crowd, lookAt, floor, paused = false, reducedMotion = false, bell = null } = {}) {
+  /**
+   * `bell`: 'soon' brings the next bell forward, 'hold' also keeps the town stopped once it has rung.
+   * `free`: Orden is gone (chapter 3 cleared, 2026-11-19): the bell never rings again and nobody stops on its clock.
+   * `freeze`: everyone stands where they are (the liberation scene holds the town still before the seals break).
+   */
+  update(delta, place, npcs, { crowd, lookAt, floor, paused = false, reducedMotion = false, bell = null, free = false, freeze = false } = {}) {
     if (place !== this.place) this.enter(place, crowd);
     const cycle = BELL_EVERY_SECONDS + (crowd?.bellHold ?? BELL_HOLD_SECONDS);
     if (bell && !this.bell) this.bringBellForward(cycle);
     this.bell = bell;
     if (!paused && !(bell === 'hold' && this.stopped)) this.elapsed += delta;
-    const beat = this.elapsed % cycle, stopped = this.stopped = beat >= BELL_EVERY_SECONDS;
-    const walked = Math.floor(this.elapsed / cycle) * BELL_EVERY_SECONDS + Math.min(beat, BELL_EVERY_SECONDS);
+    let stopped, walked;
+    if (free || freeze) {
+      // Off the bell's clock: walking on from wherever the town stood, on a clock of its own.
+      if (this.freeFrom === undefined) { this.freeFrom = this.walked; this.freeRun = 0; }
+      if (!paused && !freeze) this.freeRun += delta;
+      stopped = this.stopped = freeze; walked = this.freeFrom + this.freeRun;
+    } else {
+      this.freeFrom = undefined;
+      const beat = this.elapsed % cycle; stopped = this.stopped = beat >= BELL_EVERY_SECONDS;
+      walked = Math.floor(this.elapsed / cycle) * BELL_EVERY_SECONDS + Math.min(beat, BELL_EVERY_SECONDS);
+    }
     if (!reducedMotion) {
       const step = (walked - this.walked) * WALK_UNITS_PER_SECOND, space = crowd?.personalSpace, spots = this.residents.map(resident => this.spot(resident));
       this.residents.forEach((resident, i) => {
@@ -60,7 +73,7 @@ export class NpcDirector {
       if (space && !paused) this.residents.forEach((resident, i) => this.sidestep(resident, i, spots, [...npcs, ...(lookAt ? [lookAt] : [])], space, delta, floor));
     }
     this.walked = walked;
-    return [...npcs.map(npc => this.stander(npc, reducedMotion, lookAt)), ...this.residents.map(resident => this.pose(resident, stopped, reducedMotion))];
+    return [...npcs.map(npc => this.stander(npc, reducedMotion, lookAt)), ...this.residents.map(resident => ({ ...this.pose(resident, stopped, reducedMotion), resident: true }))];
   }
   /** Moves the clock without moving anyone: distance walked is rewritten along with the time. */
   bringBellForward(cycle) {
@@ -68,7 +81,7 @@ export class NpcDirector {
     this.elapsed = round * cycle + lead; this.walked = round * BELL_EVERY_SECONDS + lead; this.stopped = false;
   }
   enter(place, crowd) {
-    this.place = place; this.elapsed = 0; this.walked = 0; this.greetedAt = null; this.stopped = false; this.links = crowd?.points.map(() => []) || [];
+    this.place = place; this.elapsed = 0; this.walked = 0; this.greetedAt = null; this.stopped = false; this.freeFrom = undefined; this.links = crowd?.points.map(() => []) || [];
     for (const [a, b] of crowd?.links || []) { this.links[a].push(b); this.links[b].push(a); }
     // A stretch narrower than the usual lanes (maps.json crowds[].narrowLinks: [a, b, lane]) squeezes each resident's
     // own side of the street to that width there, e.g. under the court's flower arch (2026-11-15).

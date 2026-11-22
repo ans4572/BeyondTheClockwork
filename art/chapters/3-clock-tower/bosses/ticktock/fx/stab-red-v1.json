@@ -1,0 +1,281 @@
+{
+ "frames": [
+  {
+   "filename": "tt-stab 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 1",
+   "frame": {
+    "x": 124,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 2",
+   "frame": {
+    "x": 248,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 3",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 4",
+   "frame": {
+    "x": 124,
+    "y": 48,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 5",
+   "frame": {
+    "x": 248,
+    "y": 48,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 6",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 7",
+   "frame": {
+    "x": 124,
+    "y": 96,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 8",
+   "frame": {
+    "x": 248,
+    "y": 96,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 9",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  },
+  {
+   "filename": "tt-stab 10",
+   "frame": {
+    "x": 124,
+    "y": 144,
+    "w": 124,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 124,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 124,
+    "h": 48
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "tt-stab.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 372,
+   "h": 192
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "tt-stab",
+    "from": 0,
+    "to": 10,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/tt-stab",
+   "name": "Twin's thrust",
+   "fps": 30,
+   "loop": false,
+   "frames": 11,
+   "frameSize": [
+    124,
+    48
+   ],
+   "pivot": [
+    12,
+    24
+   ],
+   "columns": 3
+  }
+ }
+}

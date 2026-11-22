@@ -3,7 +3,7 @@
 // enemyActions calls in at a tell, a strike, each step, a phase break and a break swing (see the hooks in factory-mobs.js
 // and enemy-actions.js). Numbers live in slice.json bossAI.inspectorIris / bossAI.directorPress.
 import { fitsMap } from './map-geometry.js';
-import { distance, floorDistance, segmentDistance, inCone, reachesThing, FLOOR_FLAT } from './math.js';
+import { distance, floorDistance, segmentDistance, inCone, reachesThing, FLOOR_FLAT, angleTo, wrap } from './math.js';
 import { josa } from './nickname.js';
 
 const TURN = Math.PI * 2;
@@ -21,8 +21,6 @@ const BREAK_FIRST = {
 export const FACTORY_BREAKS = new Set(['mirrors', 'pylons', 'molds']);
 /** A mirror's footprint for the wrench, the size of the ring drawn under it (2026-11-11: judged by its centre alone). */
 const MIRROR_RADIUS = 0.6;
-const angleTo = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
-const wrap = a => ((a + Math.PI) % TURN + TURN) % TURN - Math.PI;
 const inBox = (p, f, pad = 0) => Math.abs(p.x - f.x) <= f.w / 2 + pad && Math.abs(p.y - f.y) <= f.h / 2 + pad;
 // A mould's look: teeth, flipped, which side its hole is on, a notch in its rim. Distractors differ in one of these.
 /** Press's moulds (PixelLab trays, art/chapters/2-silent-factory/fx/mold-*.png): a toy shape, and whether it is mirrored. */
@@ -100,6 +98,10 @@ export const factoryBosses = {
 
   /** What a tell needs when it starts: where plates and rows fall, the decoys, the sample mould, the safe cell. */
   fbTell(enemy, tell) {
+    // Chapter 3's twins have their own (clock-bosses.js); so for their steps, blows and hits below.
+    if (this.ttAI(enemy)) { this.ttTell(enemy, tell); return; }
+    if (this.bgAI(enemy)) { this.bgTell(enemy, tell); return; }
+    if (this.odAI(enemy)) { this.odTell(enemy, tell); return; }
     const ai = this.fbAI(enemy), p = this.p, t = this.s.time;
     if (!ai) return;
     if (ai.castPatterns?.includes(tell.type)) enemy.tellPose = 'cast'; else enemy.tellPose = null;
@@ -146,6 +148,9 @@ export const factoryBosses = {
   fbSample() { const pick = list => list[Math.floor(this.random() * list.length)]; return Object.fromEntries(MOLD_FEATURES.map(([k, v]) => [k, pick(v)])); },
   /** Each step: the laser turns after F2, the boss stays put while it is stuck, phase 2's lens inspectors come once. */
   fbStep(enemy, dt) {
+    if (this.ttAI(enemy)) return this.ttStep(enemy, dt);
+    if (this.bgAI(enemy)) return this.bgStep(enemy, dt);
+    if (this.odAI(enemy)) return this.odStep(enemy, dt);
     const ai = this.fbAI(enemy), tell = enemy.tell;
     if (!ai) return false;
     if (tell?.type === 'finalPress' && !tell.alarmed && tell.until - this.s.time <= 1.05) { tell.alarmed = true; this.sense({ kind: 'boss', id: 'finalAlarm' }); }
@@ -175,6 +180,9 @@ export const factoryBosses = {
 
   /** The bosses' blows. Returns true when the tell was one of theirs. */
   fbExecute(enemy, tell) {
+    if (this.ttAI(enemy)) return this.ttExecute(enemy, tell);
+    if (this.bgAI(enemy)) return this.bgExecute(enemy, tell);
+    if (this.odAI(enemy)) return this.odExecute(enemy, tell);
     const ai = this.fbAI(enemy);
     if (!ai) return false;
     // Press below a third: every pattern he finishes pumps his chest gauge up (2026-11-09).
@@ -380,6 +388,7 @@ export const factoryBosses = {
   },
   /** A blow landing on a boss: a counter, finding the real Iris, pressure let out of Press. */
   fbHit(enemy, amount, options) {
+    if (this.ttAI(enemy)) { this.ttHit(enemy, amount, options); return; }
     const ai = this.fbAI(enemy), tell = enemy.tell, t = this.s.time;
     // Hard blows let some of Press's pressure out: each 1% of his health takes `pressureCut`% off the gauge.
     if (ai?.pressureFrom && enemy.pressure > 0 && !options.dot && tell?.type !== 'steamBurst') enemy.pressure = Math.max(0, enemy.pressure - amount / enemy.maxHp * 100 * ai.pressureCut);
@@ -403,6 +412,12 @@ export const factoryBosses = {
   /** Fields and the floor flow, each frame (from tickBossHazards). */
   tickFactoryBoss(dt) {
     this.fbHallGates();
+    this.tickClockBoss();
+    if (!this.active) return;
+    this.tickBellBoss(dt);
+    if (!this.active) return;
+    this.tickOrdenBoss(dt);
+    if (!this.active) return;
     const s = this.s, p = this.p, t = s.time, R = this.config.arena.playerRadius;
     // The whole line runs one way, flips halfway, and stops.
     if (s.flow) {
@@ -508,6 +523,9 @@ export const factoryBosses = {
 
   // ---- phase breaks (chapter 2 names the shield the first time, and says how to break it only after it has once failed)
   fbBreakStart(enemy, b, rule) {
+    if (this.ttAI(enemy)) { this.ttBreakStart(enemy, b, rule); return; }
+    if (this.bgAI(enemy)) { this.bgBreakStart(enemy, b, rule); return; }
+    if (this.odAI(enemy)) { this.odBreakStart(enemy, b, rule); return; }
     const p = this.p, t = this.s.time;
     if (b.kind === 'mirrors') {
       b.sweep = angleTo(enemy, p); b.mirrors = [0, 1, 2].slice(0, rule.mirrors).map(i => { const a = b.sweep + Math.PI + (i - 1) * 2.1; return { ...this.fbFloor(enemy.x + Math.cos(a) * rule.mirrorReach, enemy.y + Math.sin(a) * rule.mirrorReach * FLOOR_FLAT, enemy), aimed: false, lit: false }; });
@@ -640,6 +658,8 @@ export const factoryBosses = {
   },
   /** A wrench swing on what a factory boss puts out: a decoy pops, a mirror turns, a twin piston takes a blow. */
   fbSwing(a, range) {
+    this.bgSwing(a, range);
+    this.odSwing(a, range);
     const reach = target => inCone(this.p, target, a.angle, range + 0.4, this.config.rules.comboArcDegrees);
     for (const f of this.s.bossFields || []) if (f.kind === 'valves') {
       const ai = this.config.bossAI.directorPress, owner = this.s.enemies.find(e => e.id === f.owner);

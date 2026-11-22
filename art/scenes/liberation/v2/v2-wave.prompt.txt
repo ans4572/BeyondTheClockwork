@@ -1,0 +1,8 @@
+Use case: story cutscene still, image edit (shot 2 of 5 in the village).
+Input image 1 is shot 1 (the frozen grey-blue town with the cyan seals). Input image 2 is the game screenshot of the same court in its normal colours. Input image 3 shows Moru and Nasa as game sprites.
+
+THE MOMENT: a wave of warm gold light rolls out from F2 across the court: a wide glowing gold ring laid flat on the paving, centred on F2 and reaching about halfway across the picture, with gold sparkles along its edge. Inside the ring the town has its normal warm colours back (as in input image 2), and the seals over those people burst into small gold sparks and shards; those people are still in their poses but blinking, starting to wake. Outside the ring everything is still grey-blue and frozen, with the seals still over the heads. Moru and Nasa are inside the ring.
+
+THE CHARACTERS ARE THE GAME'S OWN PIXEL-ART SPRITES. Keep every character drawn as crisp pixel art with visible square pixels and dark outlines, exactly the sprites in the input and the reference sheets: the same size on screen, the same outfit, colours and proportions (big round heads, small bodies). Change only what this prompt asks for (pose, expression, light). Never repaint them as smooth, painterly, anime or chibi illustrations, never make them bigger or smaller, never add people who are not asked for.
+PRESERVE input image 1: every person in exactly the same place, size and outfit (only their faces and the light change); the same buildings and camera.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, name tags, logos, UI, health bars, borders or watermarks. Clock markings are plain tick marks only.

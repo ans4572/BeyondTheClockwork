@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "bg-slash 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 1",
+   "frame": {
+    "x": 148,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 2",
+   "frame": {
+    "x": 296,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 3",
+   "frame": {
+    "x": 444,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 4",
+   "frame": {
+    "x": 0,
+    "y": 148,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 5",
+   "frame": {
+    "x": 148,
+    "y": 148,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 6",
+   "frame": {
+    "x": 296,
+    "y": 148,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 7",
+   "frame": {
+    "x": 444,
+    "y": 148,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 8",
+   "frame": {
+    "x": 0,
+    "y": 296,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 9",
+   "frame": {
+    "x": 148,
+    "y": 296,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 10",
+   "frame": {
+    "x": 296,
+    "y": 296,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-slash 11",
+   "frame": {
+    "x": 444,
+    "y": 296,
+    "w": 148,
+    "h": 148
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 148
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 148
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-slash.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 592,
+   "h": 444
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-slash",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-slash",
+   "name": "Greatsword cut",
+   "fps": 30,
+   "loop": false,
+   "frames": 12,
+   "frameSize": [
+    148,
+    148
+   ],
+   "pivot": [
+    74,
+    74
+   ],
+   "columns": 4
+  }
+ }
+}

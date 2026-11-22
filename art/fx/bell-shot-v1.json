@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "bell-shot 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 1",
+   "frame": {
+    "x": 40,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 2",
+   "frame": {
+    "x": 80,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 3",
+   "frame": {
+    "x": 120,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 4",
+   "frame": {
+    "x": 0,
+    "y": 36,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 5",
+   "frame": {
+    "x": 40,
+    "y": 36,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 6",
+   "frame": {
+    "x": 80,
+    "y": 36,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 7",
+   "frame": {
+    "x": 120,
+    "y": 36,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 8",
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 9",
+   "frame": {
+    "x": 40,
+    "y": 72,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 10",
+   "frame": {
+    "x": 80,
+    "y": 72,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  },
+  {
+   "filename": "bell-shot 11",
+   "frame": {
+    "x": 120,
+    "y": 72,
+    "w": 40,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 36
+   },
+   "duration": 42
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bell-shot.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 160,
+   "h": 108
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bell-shot",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/bell-shot",
+   "name": "Bell shot",
+   "fps": 24,
+   "loop": true,
+   "frames": 12,
+   "frameSize": [
+    40,
+    36
+   ],
+   "pivot": [
+    20,
+    20
+   ],
+   "columns": 4
+  }
+ }
+}

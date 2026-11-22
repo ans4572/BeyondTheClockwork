@@ -1,5 +1,5 @@
 import { createProfile, permanentStats, buyRank, refundAll, enterChapter } from './progression.js';
-import { chapterOf, chapterRooms, chapterOpen, chapterCleared, clearChapter, chapterRecords, FIRST_CHAPTER } from './chapters.js';
+import { chapterOf, chapterRooms, chapterLevels, chapterOpen, chapterCleared, clearChapter, chapterRecords, FIRST_CHAPTER } from './chapters.js';
 import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf, roomPlace } from './map-geometry.js';
 // How far back from the spawn point the player starts, walking in from the map's edge.
@@ -13,7 +13,11 @@ import { enemyActions } from './enemy-actions.js';
 import { roomWaves } from './room-waves.js';
 import { factoryMobs } from './factory-mobs.js';
 import { factoryBosses } from './factory-bosses.js';
+import { clockBosses } from './clock-bosses.js';
+import { bellBoss } from './bell-boss.js';
+import { ordenBoss } from './orden-boss.js';
 import { soundWaterFusions } from './sound-water-fusions.js';
+import { lightMagnet } from './light-magnet.js';
 import { rewardDraws } from './reward-draws.js';
 import { noteRecord } from './records.js';
 
@@ -23,6 +27,31 @@ export { clamp, distance, segmentDistance };
 const ROOM_MODES = new Set(['combat', 'reward', 'route', 'unwind']);
 /** How long before a summoned body appears its rift starts to open (the renderer's summonRift reaches its light column then). */
 export const SUMMON_RISE_SECONDS = 9 / 14;
+/**
+ * The tower breaking open after Orden 1 (docs/design/clock-tower-plan.md 7.3, rooms[].collapse), seconds from its start:
+ * the cracks come, the walls fall open, the summit picture takes over, F2 is on the summit (the next room) and the scene
+ * ends. src/render/tower-collapse.js draws it on the same clock.
+ */
+/**
+ * Orden at the last hour going (seconds from his fall). 2026-11-22 (the user's word: he stood straight up after the blow
+ * and vanished twice, here and in the cutscene): he staggers and goes down on one knee (by `kneel`) in the light; the first
+ * time his farewell plays at `talk`, then he rises in the light (to `stand`) and the screen goes white, the cutscene taking
+ * his vanishing; later times he fades upward where he knelt (to `gone`). `white` is how long the white takes.
+ */
+export const ORDEN_END = { kneel: 0.9, talk: 1.1, stand: 1.9, gone: 3.0, whiteFirst: 1.9, whiteAgain: 2.6, white: 1.0 };
+/** When the end of Orden is over: the white has filled the screen. */
+export const ordenEndAt = first => (first ? ORDEN_END.whiteFirst : ORDEN_END.whiteAgain) + ORDEN_END.white;
+// Orden 1 does not burst into parts (2026-11-21, the user's word): he stays, rises in the light while the tower cracks, and
+// at the flash his mask breaks and he is Orden at the last hour, drifting to where that fight begins.
+// 2026-11-21 (the user's word: it felt cheap): a longer awakening first, his line about his true power, the tower shaking
+// harder and harder in heartbeats until the walls go.
+// Longer again the same day, with a cut away to the town (2026-11-21, the user's word: show why the townsfolk stop): from
+// cutIn to cutOut the screen shows the village court at the last bell, every resident frozen under his seal and the
+// strength of their stopped springs drawn up toward the tower; then back to him, swollen with it, and the walls go.
+// 2026-11-22 (the user's word: he stood after the blow, and was his last form before anyone saw him change): he kneels
+// first (`kneel`), the mask cracking, and rises in the light; he comes down onto the summit still masked (`land`), a
+// pillar of light takes him and the mask breaks (`turn`); the fight's body takes over at `arrive`, his first words at `end`.
+export const COLLAPSE = { kneel: 0.9, rise: 1.2, cutIn: 2.4, cutOut: 6.6, crack: 7.2, open: 8.6, summit: 9.8, land: 10.2, turn: 11.0, arrive: 11.6, end: 12.4, beat: 0.6 };
 /** How long F2 lies fallen in the room before a lost run goes home (the fall plays first). */
 const DOWN_SECONDS = 1.8;
 const WAKE_SECONDS = 1.6, TALK_UNITS = 3, NPC_BODY_UNITS = 0.45, CLEAR_HOLD_SECONDS = 1, LEAVE_REFUSED_UNITS = 1.5, LAST_WAVE_ALREADY_PLAYED = 99;
@@ -136,7 +165,11 @@ export class Game {
   get onFoot() { return this.active || this.walking || this.leaving; }
   /** Where the current room's way out opens once it is cleared. */
   get portal() { return this.map?.portal || this.config.arena.portal; }
-  get nearbyNpc() { return this.walking && this.s.mode !== 'registration' ? this.village.npcs?.find(npc => npc.opens && distance(this.p, npc) <= TALK_UNITS) || null : null; }
+  get nearbyNpc() {
+    // In the back yard Moru stands by the entrance (maps.json practice.npcs) to change the fitted parts there (2026-11-21).
+    if (this.s.mode === 'practice') return !this.s.panel && !this.s.paused ? this.map?.npcs?.find(npc => npc.opens && distance(this.p, npc) <= TALK_UNITS) || null : null;
+    return this.walking && this.s.mode !== 'registration' ? this.village.npcs?.find(npc => npc.opens && distance(this.p, npc) <= TALK_UNITS) || null : null;
+  }
   get bounds() {
     const map = this.village || this.map, [width, height] = map?.size || [this.config.arena.width, this.config.arena.height];
     return map ? { left: 0, right: width, top: 0, bottom: height } : this.config.arena.bounds;
@@ -175,7 +208,9 @@ export class Game {
     const stats = this.stats, spawn = this.config.arena.spawn;
     this.s.player = { ...spawn, hp: this.c.player.maxHp + (stats.maxHp || 0), maxHp: this.c.player.maxHp + (stats.maxHp || 0), energy: 0, angle: 0, moveAngle: 0, attack: null, combo: 0, comboExpires: 0, invulnerableUntil: 0, dodge: null, dodgeReady: 0, cooldowns: {}, fusionReady: 0 };
   }
-  clearCombat() { this.s.clearAt = null; this.s.ranks = []; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.p.blown = null; this.p.grabbed = null; this.p.markedUntil = 0; this.p.failStacks = 0; this.p.failBlastAt = 0; this.p.heldUntil = 0; this.s.bossFields = []; this.s.flow = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; this.p.buffer = {}; this.p.charging = null; }
+  // (The tower's collapse and Orden's end go with the fight too, 2026-11-22, the code review: abandoning the run or a debug
+  // jump in the middle of either left it ticking with no run, and the next frame threw and froze the game, save and all.)
+  clearCombat() { this.s.collapse = null; this.s.ordenEnd = null; this.s.clearAt = null; this.s.ranks = []; this.s.bellWatch = null; this.s.panel = null; this.s.enemies = []; this.s.blasts = []; this.s.hazards = []; this.s.parades = []; this.s.drill = null; this.p.confiscated = null; this.p.blown = null; this.p.grabbed = null; this.p.markedUntil = 0; this.p.failStacks = 0; this.p.failBlastAt = 0; this.p.heldUntil = 0; this.s.bossFields = []; this.s.flow = null; this.s.casts = []; this.s.projectiles = []; this.s.effects = []; this.p.attack = null; this.p.dodge = null; this.p.lastCast = null; this.p.buffer = {}; this.p.charging = null; }
   /** `wake` opens on the player getting up, with the world held until they stand. */
   beginIntro({ wake = false, lesson = false } = {}) {
     if (!['opening', 'introDeath'].includes(this.s.mode)) return false;
@@ -203,10 +238,11 @@ export class Game {
   /** `variant` (0 = A, 1 = B) picks which painting of a room with variants is entered; left out, the run's own pick stays. */
   debugJump(node, chapter = FIRST_CHAPTER, difficulty, variant) {
     if (!Number.isInteger(node) || !chapterRooms(this.config, chapter)[node]) return false;
-    const level = this.config.difficulty?.levels.some(l => l.id === difficulty) ? difficulty : undefined;
+    // A level the chapter does not offer (easy in chapter 3) falls back to the default.
+    const level = chapterLevels(this.config, chapter).some(l => l.id === difficulty) ? difficulty : undefined;
     // A jump into another chapter, or on another difficulty (debug panel, 2026-11-10), starts a fresh run there.
     if (this.s.run && (this.chapter.id !== chapter || (level && (this.s.run.difficulty || this.config.difficulty?.default) !== level))) { this.clearCombat(); this.s.run = null; }
-    if (!this.s.run) { this.clearCombat(); this.s.profile.registered = true; this.s.tutorial = null; this.s.mode = 'hub'; this.startRun(undefined, level, chapter); }
+    if (!this.s.run) { this.clearCombat(); this.s.profile.registered = true; this.s.tutorial = null; this.s.practice = null; this.s.mode = 'hub'; this.startRun(undefined, level, chapter); }
     this.s.run.node = node; this.s.run.rewardChoices = [];
     const variants = this.rooms[node]?.variants?.length || 0;
     if (Number.isInteger(variant) && variant >= 0 && variant < variants) this.s.run.plan[node].variant = variant;
@@ -231,7 +267,12 @@ export class Game {
     return !!npc;
   }
   closePanel() { this.s.panel = null; }
-  openElements() { if (this.s.mode === 'hub') this.s.panel = 'elements'; }
+  openElements() { if (this.s.mode === 'hub' || this.s.mode === 'practice') this.s.panel = 'elements'; }
+  /** The back yard's skills follow the parts fitted there: the new pair, fresh waits and full charge. */
+  refitPractice() {
+    if (this.s.mode !== 'practice') return;
+    this.s.practice.slots = this.loadoutSlots; this.s.casts = []; this.p.cooldowns = {}; this.p.fusionReady = 0; this.p.energy = this.c.player.maxEnergy;
+  }
   /** Gears for the next element: the first is Moru's gift, chosen right after the safety pin is fitted. */
   get nextElementPrice() {
     const { ownedElements, registered } = this.s.profile, prices = this.config.rules.elementPrices;
@@ -247,18 +288,19 @@ export class Game {
   }
   buyElement(id) {
     const profile = this.s.profile, price = this.nextElementPrice;
-    if (this.s.mode !== 'hub' || !this.config.elements.includes(id) || !this.elementOpen(id) || profile.ownedElements.includes(id) || price === null || profile.freeGears < price) return false;
+    if (!['hub', 'practice'].includes(this.s.mode) || !this.config.elements.includes(id) || !this.elementOpen(id) || profile.ownedElements.includes(id) || price === null || profile.freeGears < price) return false;
     profile.freeGears -= price; profile.ownedElements.push(id);
     if (profile.loadout.length < 2) profile.loadout.push(id);
-    this.save(); return true;
+    this.refitPractice(); this.save(); return true;
   }
   /** Two owned elements go in the body; picking a third takes the place of the older one. */
   toggleElement(id) {
     const { loadout, ownedElements } = this.s.profile;
-    if (this.s.mode !== 'hub' || !ownedElements.includes(id)) return false;
-    if (loadout.includes(id)) loadout.splice(loadout.indexOf(id), 1);
+    if (!['hub', 'practice'].includes(this.s.mode) || !ownedElements.includes(id)) return false;
+    // In the back yard at least one part stays fitted: an empty body has nothing to try.
+    if (loadout.includes(id)) { if (this.s.mode === 'practice' && loadout.length === 1) return false; loadout.splice(loadout.indexOf(id), 1); }
     else { if (loadout.length === 2) loadout.shift(); loadout.push(id); }
-    this.save(); return true;
+    this.refitPractice(); this.save(); return true;
   }
   get loadoutSlots() { return this.s.profile.loadout.map(element => ({ element, level: 1, rarity: 'common' })); }
   // The wrench alone is enough to set out; elements are added as they are bought.
@@ -308,14 +350,17 @@ export class Game {
   }
   /** Setting out from the town portal: the difficulty picked in the popup, remembered as the next one offered. */
   depart(difficulty, chapter = FIRST_CHAPTER) {
-    if (this.s.mode !== 'hub' || this.s.panel !== 'difficulty' || !this.config.difficulty?.levels.some(level => level.id === difficulty)) return false;
+    if (this.s.mode !== 'hub' || this.s.panel !== 'difficulty' || !chapterLevels(this.config, chapter).some(level => level.id === difficulty)) return false;
     if (chapterOf(this.config, chapter).id !== chapter || !chapterOpen(this.config, this.s.profile, chapter, this.previews, this.unlockChapters)) return false;
     this.s.panel = null; this.s.profile.lastDifficulty = difficulty; this.s.profile.lastChapter = chapter;
     return this.startRun(undefined, difficulty, chapter);
   }
   startRun(seed = Date.now() >>> 0, difficulty = this.config.difficulty?.default, chapter = FIRST_CHAPTER) {
     if (this.s.mode !== 'hub' || !this.s.profile.registered) return false;
+    if (!chapterLevels(this.config, chapter).some(level => level.id === difficulty)) difficulty = this.config.difficulty?.default;
     this.s.rng = seed || 1; this.s.profile.runs++;
+    // (Only the run under way needs its rooms' paid marks; older runs' piled up in every save, 2026-11-22, the full test.)
+    this.s.profile.rewards = [];
     this.s.run = { id: `run-${this.s.profile.runs}-${seed}`, seed, node: 0, startedAt: this.s.time, elapsed: 0, coins: 0, slots: this.loadoutSlots, upgrades: {}, mods: [], skillMods: [], traits: [], clears: [], rewardChoices: [], shopBought: [], branches: [], damageTaken: 0, baseGears: 0, difficulty: difficulty || 'normal' };
     if (chapter !== FIRST_CHAPTER) this.s.run.chapter = chapter;
     // Nasa's bottle is drunk on setting out: it goes with this run and leaves the shelf.
@@ -341,9 +386,11 @@ export class Game {
   report(kind, event) { this.onRun(kind, event); }
   /** The chapter's last boss is down: the run ends in the chapter's ending. */
   finishChapter() { this.s.mode = 'complete'; this.s.profile.wins++; clearChapter(this.s.profile, this.chapter.id); }
+  /** Orden is gone for good once chapter 3 is cleared: the town bell no longer rings and nobody stops on it (npc-director.js). */
+  get villageFree() { return !!this.s.profile.cleared?.includes('clock-tower'); }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
-    const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
+    const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: template.startFacing ?? Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
     // On an expedition every body, boss or not, has the difficulty's health and attack (practice and the intro do not).
     if (this.s.run) { const k = this.difficulty.scale; enemy.hp = enemy.maxHp = Math.max(1, Math.round(template.hp * k)); if (Number.isFinite(template.damage)) enemy.damage = Math.max(1, Math.round(template.damage * k)); }
     this.s.enemies.push(enemy); return enemy;
@@ -351,8 +398,12 @@ export class Game {
   enterNode() {
     this.clearCombat();
     const room = this.room, plan = this.s.run.plan[this.s.run.node], map = this.map, spawn = map?.spawn || this.config.arena.spawn;
+    // A new room starts with a clean line of notices (2026-11-22, the UI review: the last room's could still be showing).
+    this.s.notices = [];
     this.p.x = spawn.x; this.p.y = spawn.y;
     this.s.mode = room.kind === 'shop' ? 'shop' : 'combat';
+    // A rest stop names itself on arrival as a fight room does (it showed nothing, 2026-11-22, the UI review).
+    if (room.kind === 'shop') this.notify(roomTitle(room));
     // The player walks in from the map's nearest edge, so each place reads as joined to the last one.
     this.s.entry = null;
     const area = this.village || map;
@@ -366,7 +417,12 @@ export class Game {
       for (let d = 0.25; d <= ENTRY_UNITS; d += 0.25) { if (!fitsMap(spawn.x + ex * d, spawn.y + ey * d, area.bodyRadius, area)) break; back = d; }
       if (back >= 1) { this.p.x = spawn.x + ex * back; this.p.y = spawn.y + ey * back; this.s.entry = { x: spawn.x, y: spawn.y, side: ex < 0 ? 'west' : ex > 0 ? 'east' : ey < 0 ? 'north' : 'south', until: this.s.time + back / this.c.player.speed + 0.3 }; }
     }
-    if (room.boss) { this.spawnEnemy(room.boss, map?.bossSpawn || { x: 18, y: 8.5 }); this.notify(room.description); }
+    // The way F2 looks as she arrives (maps rooms[].entryFacing, 2026-11-22: in the tuning chamber, up the stairs on its
+    // east side, she looks west into the room, not back at the stairwell). main.js turns the pointer that way too.
+    const FACE = { east: 0, south: Math.PI / 2, west: Math.PI, north: -Math.PI / 2 }, face = FACE[map?.entryFacing];
+    if (face !== undefined) { this.p.angle = this.p.moveAngle = face; this.s.faceTo = { x: this.p.x + Math.cos(face) * 3, y: this.p.y + Math.sin(face) * 3 }; }
+    // Tick·Tock come as two bodies (clock-bosses.js ttSpawn); every other boss is one.
+    if (room.boss) { const at = map?.bossSpawn || { x: 18, y: 8.5 }; if (!this.ttSpawn(room.boss, at)) this.spawnEnemy(room.boss, at); this.notify(room.description); }
     else if (room.waves) {
       // Every run lays out its own crates, plates, saw rails, fences and music boxes on this floor.
       const base = this.chapter.hazards ? { ...this.config.hazards, ...this.chapter.hazards } : this.config.hazards;
@@ -466,6 +522,18 @@ export class Game {
   upgradeAmount(id) {
     return (this.s.run?.upgrades[id] || 0) * (this.c.balance.temporaryUpgrades.find(u => u.id === id)?.perRank || 0);
   }
+  /**
+   * A boss's clear heal set down as a mending box on the way to the exit (slice.json rooms[].healBox; Belgard's belfry,
+   * 2026-11-21, the user's word): walked onto on the way out it mends `amount`, like any music box.
+   */
+  dropHealBox(amount) {
+    const portal = this.portal, from = this.map?.bossSpawn || { x: portal.x - 6, y: portal.y }, d = Math.hypot(from.x - portal.x, from.y - portal.y) || 1;
+    let at = { x: portal.x + (from.x - portal.x) / d * 2.6, y: portal.y + (from.y - portal.y) / d * 2.6 };
+    if (this.bgOpen && !this.bgOpen(at, 0.5) && this.fbFloor) at = this.fbFloor(at.x, at.y, from, 0.5);
+    (this.s.hazards ||= []).push({ id: this.id('hazard'), kind: 'musicbox', x: at.x, y: at.y, size: this.config.hazards.musicbox.size, reach: 1, mend: amount, droppedAt: this.s.time });
+    this.effect('spark', at.x, at.y, '#8fd8b0', 0.8, 1.4, { look: 'mend' });
+    this.notify('출구 앞에 회복 상자가 나타났습니다');
+  }
   heal(amount, quiet = false) {
     const actual = Math.min(this.p.maxHp - this.p.hp, amount);
     if (actual > 0 && !quiet) this.sense({ kind: 'mend' });
@@ -513,14 +581,15 @@ export class Game {
     const permanent = this.attackBonus;
     const brand = basic && enemy.burnStacks?.some(t => t > this.s.time) ? this.trait('burnBrand')?.damageBonus || 0 : 0;
     const frost = basic && this.trait('frostCrack'), crack = !frost ? 0 : enemy.frozenUntil > this.s.time ? frost.damageBonus : enemy.statuses.chill > this.s.time ? frost.chilledBonus || 0 : 0;
-    const runBonus = (basic ? this.upgradeAmount('basicDamage') : 0) + brand + crack;
+    const magnetic = basic ? this.ironDustOf(enemy) * (this.trait('magnetWrench')?.damageBonusPerStack || 0) : 0;
+    const runBonus = (basic ? this.upgradeAmount('basicDamage') : 0) + brand + crack + magnetic;
     const level = slot ? 1 + (slot.level - 1) * this.c.balance.skillLevelDamagePerLevel : 1;
     const rarity = slot ? this.c.balance.rarityDamage[slot.rarity] : 1;
     return (1 + permanent) * (1 + Math.min(this.c.caps.runDamageBonus, runBonus)) * level * rarity * (1 + (this.perk('overheatEngine')?.damageBonus || 0));
   }
   /** Skips the roll at zero chance so runs without the stat keep their random sequence. */
-  rollCrit() {
-    const chance = this.critChance;
+  rollCrit(enemy = null) {
+    const chance = this.critChance + (enemy ? this.revealCrit(enemy).chance : 0);
     return chance > 0 && this.random() < chance;
   }
   get statusPower() { return 1 + (this.stats.statusPower || 0); }
@@ -535,7 +604,7 @@ export class Game {
     // A parts supplier hit while opening its crate drops the plates: no supply, and a few coins on the floor.
     if (!options.dot && enemy.tell?.type === 'supply') { enemy.tell = null; enemy.state = 'recover'; enemy.ready = this.s.time + 1.5; if (this.s.run) this.giveLoot(0, enemy.spillCoins || 0); this.effect('scrap', enemy.x, enemy.y, '#e0b048', 0.5, 1); this.notify(`부품이 쏟아졌습니다! 동전 +${enemy.spillCoins || 0}`); }
     if (!enemy.aggro) this.rouse(enemy);
-    const crit = !options.dot && !options.exact && this.rollCrit();
+    const crit = !options.dot && !options.exact && this.rollCrit(enemy);
     // Each direct blow lands up to 10% either side of its value (2026-11-11: every hit of a skill showed the same number); the
     // average is unchanged. Burns, ticks and exact blows stay fixed.
     const spread = this.c.caps.damageSpread && !options.dot && !options.exact ? 1 + (this.random() * 2 - 1) * this.c.caps.damageSpread : 1;
@@ -553,12 +622,13 @@ export class Game {
     // 흠뻑 (2026-11-10): a wet body takes a little more from everything.
     const drenched = !options.exact && this.trait('soaked')?.damageTakenBonus && this.wet(enemy) ? 1 + this.trait('soaked').damageTakenBonus : 1;
     const versus = !options.exact && (enemy.boss || enemy.elite) ? 1 + (this.potion?.bossDamage || 0) : 1;
-    const amount = spread * versus * drenched * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) : 1) * (guarded ? 1 - enemy.frontGuard : 1);
+    // The debug panel's damage scale for F2 (main.js debug-damage, 2026-11-21; 1 outside debug).
+    const amount = (this.debugDamage || 1) * spread * versus * drenched * (options.exact ? 1 : ringing) * base * (options.dot || options.exact ? 1 : this.damageMultiplier(enemy, !!options.basic, options.slot)) * (crit ? this.c.caps.critMultiplier + (this.stats.critDamage || 0) + this.revealCrit(enemy).size : 1) * (guarded ? 1 - enemy.frontGuard : 1);
     // Hitting a boss during its alarm brings the claw straight back at whoever did it.
     if (!options.dot && enemy.alarmUntil > this.s.time && this.hurt(this.weakened(enemy, enemy.damage))) this.effect('beam', enemy.x, enemy.y, '#cf767a', 0.45, 1, { targetX: this.p.x, targetY: this.p.y, look: 'thrust' });
     if (guarded) this.effect('spark', enemy.x, enemy.y - enemy.radius, '#d8dde2', 0.2, 0.6);
     // Brass plates from a supplier and a drummer's beat soften blows; a body dazed against a wall takes more.
-    const beaten = (!options.dot && enemy.beatUntil > this.s.time ? 1 - this.config.enemies.drummer.beatArmor : 1) * (enemy.coatedUntil > this.s.time ? 1 - (enemy.coatArmor || 0) : 1) * (enemy.dazedUntil > this.s.time ? 1 + (enemy.dazedBonus || 0) : 1);
+    const beaten = (!options.dot && enemy.beatUntil > this.s.time ? 1 - (enemy.beatArmor ?? this.config.enemies.drummer.beatArmor) : 1) * (enemy.coatedUntil > this.s.time ? 1 - (enemy.coatArmor || 0) : 1) * (enemy.dazedUntil > this.s.time ? 1 + (enemy.dazedBonus || 0) : 1);
     enemy.hp = enemy.dummy ? enemy.maxHp : Math.max(this.tutorial.guardSurvives ? 1 : 0, enemy.hp - amount * beaten); enemy.flashUntil = this.s.time + HIT_FLASH_SECONDS;
     // 'Reinspect' trait: the first time it falls it stands up again with some health, untouchable for a second.
     this.fbHit(enemy, amount * beaten, options);
@@ -578,7 +648,10 @@ export class Game {
     if (enemy.hp <= 0) {
       // The body bursts into parts thrown away from F2: a few for the wrench, more for a skill, most for a fusion.
       const parts = options.source === 'fusion' ? PARTS.fusion : options.source === 'skill' ? PARTS.skill : PARTS.wrench;
-      enemy.tell = null; enemy.dash = null; enemy.spin = null; this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
+      // Orden 1 (a room that breaks open after him) does not burst: he turns into his last form in the collapse; nor does
+      // Orden at the last hour (2026-11-21, the user's word: no springs and gears from him), who fades into light.
+      const turning = enemy.boss && (this.room?.collapse || enemy.type === 'ordenFinal');
+      enemy.tell = null; enemy.dash = null; enemy.spin = null; if (!turning) this.effect('parts', enemy.x, enemy.y, enemy.color || '#dbbc6b', PARTS.seconds, parts, { angle: Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x), big: !!enemy.boss || enemy.type === 'elite' });
       if (enemy.statuses.chill > this.s.time && this.trait('coldReap')) this.refundCooldowns(this.trait('coldReap').cooldownRefund);
       // 불씨 전이 (2026-11-12, fire's special trait): a burning body that falls passes its fire to the bodies round it.
       const embers = this.trait('emberTransfer');
@@ -589,6 +662,7 @@ export class Game {
         }
         this.effect('ring', enemy.x, enemy.y, '#ff9a3c', 0.4, embers.radius);
       }
+      this.lmOnFall(enemy);
       const harvest = this.wrenchMod('scrapHarvest');
       if (harvest) this.p.hasteUntil = this.s.time + harvest.duration;
       if (!enemy.dummy && this.upgradeAmount('killHeal')) this.heal(this.upgradeAmount('killHeal'), true);
@@ -600,6 +674,16 @@ export class Game {
   }
   /** Queues a hit for the browser to feel; nobody drains it in tests, so it stops growing. */
   sense(hit) { if (this.feel.length < FEEL_LIMIT) this.feel.push(hit); }
+  /**
+   * A boss pattern landing big (2026-11-19, the user's word: make Tick·Tock's and Belgard's patterns feel grand): the
+   * floor's shock and dust as wide as `reach`, a column of light when `pillar`, and the screen rumbling with a flash of
+   * `color` (main.js feelHits -> renderer.bossImpact). Only looks and feel: nothing here hurts.
+   */
+  bossQuake(x, y, { power = 1, color = '#ffd257', reach = 2, pillar = false, feel = true } = {}) {
+    this.effect('ring', x, y, color, 0.6, reach, { look: 'quake' });
+    if (pillar) this.effect('ring', x, y, color, 0.8, reach, { look: 'bossPillar' });
+    if (feel) this.sense({ kind: 'quake', power, color });
+  }
   /** A wrench blow lands: the body jolts and light enemies give ground. */
   punch(enemy, attack, hit) {
     const heavy = attack.phase === 2, cos = Math.cos(attack.angle), sin = Math.sin(attack.angle);
@@ -618,7 +702,7 @@ export class Game {
     if (!enemy.boss || this.s.time < enemy.staggerLock) return;
     // Stagger is still counted (skills are tuned by it), but a full gauge no longer opens a 'wound-spring exposed' window:
     // it made bosses too easy (2026-11-06). Only a solved phase break stuns a boss now.
-    enemy.stagger = Math.min(this.c.balance.bossStaggerThreshold[enemy.kind], enemy.stagger + amount * (applyPressure && enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1));
+    enemy.stagger = Math.min(this.c.balance.bossStaggerThreshold[enemy.kind], enemy.stagger + amount * (applyPressure ? (enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1) * (1 + this.ironDustStagger(enemy)) : 1));
   }
   status(id) { return this.c.statuses.find(s => s.id === id); }
   /** Layers of resonance a body carries now (0 once it has worn off). */
@@ -630,9 +714,13 @@ export class Game {
   applyStatus(enemy, element, cast, stacks = 1) {
     const status = this.c.elements.find(e => e.id === element)?.status;
     if (!status || enemy.immuneTo === status) return;
+    if (this.lmApplyStatus(enemy, status, cast, stacks)) return;
     const key = `${cast.id}:${status}`, next = enemy.statusApplied[key] || 0;
     if (this.s.time + 1e-7 < next) return;
     enemy.statusApplied[key] = this.s.time + this.c.balance.statusApplyPerCastTargetCooldown;
+    // (Every blow is a new cast id, so the keys piled up into every save, 161 on one body in a test, 2026-11-22.)
+    enemy.statusKeys = (enemy.statusKeys || 0) + 1;
+    if (enemy.statusKeys > 32) { enemy.statusKeys = 0; for (const k in enemy.statusApplied) if (enemy.statusApplied[k] <= this.s.time) delete enemy.statusApplied[k]; }
     // Traits that make a status last longer: 깊은 불씨 (burn), 긴 여운 (resonance), 흠뻑 (wet).
     const info = this.c.statuses.find(s => s.id === status), ember = status === 'burn' ? this.trait('emberStacks') : null;
     const longer = { burn: ember, resonance: this.trait('longEcho'), wet: this.trait('soaked') }[status], lasts = info.duration + (longer?.extraDuration || 0);
@@ -662,7 +750,8 @@ export class Game {
   castStagger(enemy, amount, cast) {
     const used = cast.staggerUsed[enemy.id] || 0;
     const cap = cast.fusion ? this.c.balance.fusionStaggerPerCastCap : this.c.balance.skillStaggerPerCastCap;
-    const pressure = enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1;
+    // Wind pressure and 쇳가루 make a body take more, inside the cast's cap.
+    const pressure = (enemy.statuses.windPressure > this.s.time ? 1 + this.windBonus : 1) * (1 + this.ironDustStagger(enemy));
     const give = Math.max(0, Math.min(amount * pressure, cap - used));
     cast.staggerUsed[enemy.id] = used + give;
     if (give > 0) this.addStagger(enemy, give, false);
@@ -675,11 +764,15 @@ export class Game {
     const targets = this.s.enemies.filter(e => e.hp > 0 && distance(enemy, e) <= info.dischargeRadius && this.s.time >= e.shockReady).sort((a, b) => distance(enemy, a) - distance(enemy, b)).slice(0, info.maxTargets);
     for (const target of targets) { target.shockReady = this.s.time + info.targetCooldown; this.hitEnemy(target, info.dischargeDamage * this.statusPower, { color: '#ffe086' }); this.effect('spark', target.x, target.y, '#ffe086', 0.55, 0.7, { look: 'zap' }); if (target !== enemy) this.effect('beam', enemy.x, enemy.y, '#ffe086', 0.3, 1, { targetX: target.x, targetY: target.y, look: 'arc' }); }
   }
-  /** 렌치 조율 (a ringing body rings a layer more, once a second) and 물튀김 (a soaked body splashes the ones beside it). */
+  /**
+   * 렌치 조율 (a ringing body rings a layer more, once a second), 물튀김 (a soaked body splashes the ones beside it) and
+   * 자석 렌치 (2026-11-22: the wrench lays a layer of 쇳가루, once a second on each body; a magnet skill still sets it).
+   */
   wrenchOnSoundWater(enemy) {
     this.ringFilms(enemy);
     if (enemy.hp <= 0) return;
-    const tune = this.trait('wrenchTune'), splash = this.trait('splashBack'), t = this.s.time;
+    const tune = this.trait('wrenchTune'), splash = this.trait('splashBack'), t = this.s.time, dust = this.trait('magnetWrench');
+    if (dust?.wrenchStacks && t >= (enemy.dustWrenchReady || 0)) { enemy.dustWrenchReady = t + (dust.lock || 1); this.applyStatus(enemy, 'magnet', { id: this.id('dust'), staggerUsed: {}, fusion: false }, dust.wrenchStacks); }
     if (tune && this.resonanceOf(enemy) && t >= (enemy.tuneReady || 0)) { enemy.tuneReady = t + tune.lock; this.applyStatus(enemy, 'sound', { id: this.id('tune'), staggerUsed: {}, fusion: false }, tune.stacks); }
     if (splash && this.wet(enemy)) {
       const drops = { id: this.id('splash'), staggerUsed: {}, fusion: false };
@@ -730,7 +823,9 @@ export class Game {
   }
   // In town (no run, no back yard) the equipped elements still fill the skill bar, so the player sees what they set;
   // nothing can be cast there, since town is never `active` (2026-11-06: the bar stood empty).
-  get slots() { return this.s.run?.slots || this.s.practice?.slots || this.loadoutSlots; }
+  // The back yard's slots count only while in the back yard (2026-11-22: a yard left by a debug jump kept its old pair,
+  // and the village showed and cast it whatever Moru fitted).
+  get slots() { return this.s.run?.slots || (this.s.mode === 'practice' ? this.s.practice?.slots : null) || this.loadoutSlots; }
   /** A whole-run perk the player picked (coins, risk), or null. */
   perk(id) { return this.s.run?.perks?.includes(id) ? this.config.perks.find(perk => perk.id === id) : null; }
   wrenchMod(id) { return this.s.run?.mods.includes(id) ? this.config.mods.find(m => m.id === id) : null; }
@@ -773,7 +868,7 @@ export class Game {
     this.makeCast(entry.skill, behavior, entry.slot, target, false, { index }); return true;
   }
   /** F2 is gathering a charge or spraying a held stream: no other skill or fusion until it ends. */
-  get busyCasting() { return !!this.p.charging || this.s.casts.some(c => c.shape === 'jet') || this.fusionBusy(); }
+  get busyCasting() { return !!this.p.charging || this.s.casts.some(c => c.shape === 'jet') || this.fusionBusy() || this.lightMagnetBusy(); }
   /** How long a charged skill gathers and how fast the feet go meanwhile (짧은 숨 shortens it and keeps full speed). */
   chargeRule(skillId) {
     const behavior = this.config.skillBehavior[skillId], quick = skillId === 'roar' && this.skillMod('shortBreath');
@@ -809,6 +904,10 @@ export class Game {
   castFusion(target) {
     const fusion = this.fusion;
     if (!fusion || !this.active || this.p.dodge || this.stunned || this.busyCasting || this.p.fusionReady > this.s.time || this.p.energy < fusion.energyCost || this.s.casts.some(c => c.shape === 'dash')) return false;
+    // 굴절 광선, 공명 별자리 and 북극광 고리 with no body to work on are not cast and spend nothing (2026-11-22).
+    const blocked = this.lmFusionBlocked(fusion, target);
+    // (Said once a second: the input buffer tries again every frame for 0.15 s, and each try said it, 2026-11-22.)
+    if (blocked) { if (!(this.blockedSaidAt > this.s.time - 1)) { this.notify(blocked); this.blockedSaidAt = this.s.time; } return false; }
     this.p.energy -= fusion.energyCost;
     this.p.fusionReady = this.s.time + fusion.cooldown * this.fusionCooldownFactor;
     const rarityKeys = Object.keys(this.c.balance.rarityDamage);
@@ -843,13 +942,15 @@ export class Game {
       // 넓은 노즐: a broader stream (it already strikes every body on its line).
       if (mod.id === 'wideNozzle') cast.halfWidth = mod.halfWidth;
       if (mod.id === 'puddle') cast.puddle = mod;
+      // Light and magnet (light-magnet.js).
+      this.lmSkillMods(cast, mod);
     }
   }
   /** `extra.index`: the skill button that cast it (a held stream watches it); `extra.power`: 0 to 1 of a charge gathered. */
   makeCast(skill, behavior, slot, target = this.p, fusion, extra = {}) {
     const range = skill.range || behavior.range || skill.radius || 1;
     const d = Math.min(range, distance(this.p, target));
-    const angle = ['orb','clamp'].includes(behavior.shape) ? Math.atan2(target.y-this.p.y,target.x-this.p.x) : this.p.angle, elements = fusion ? skill.pair : [skill.element];
+    const angle = ['orb','clamp','shower'].includes(behavior.shape) ? Math.atan2(target.y-this.p.y,target.x-this.p.x) : this.p.angle, elements = fusion ? skill.pair : [skill.element];
     const cast = { id: this.id('cast'), skillId: skill.id, fusion, slot: { ...slot }, ...behavior, radius: skill.radius, range, angle, x: this.p.x + Math.cos(angle) * d, y: this.p.y + Math.sin(angle) * d, startX: this.p.x, startY: this.p.y, age: 0, pulse: 0, next: behavior.delay, hits: skill.hits, damage: skill.damagePerHit, finisher: skill.finisherDamage || 0, secondaryDamage: skill.secondaryDamage || 0, secondaryTargets: skill.secondaryTargets || 0, elements, staggerUsed: {}, hit: [], projectiles: [], statusAt: {}, color: this.config.presentation.colors[elements[0]] };
     // Sound: how many layers of resonance a blow lays on, and how much harder it lands on a body already ringing.
     Object.assign(cast, { resonanceStacks: skill.resonanceStacks || 1, resonantStacks: skill.resonantStacks || 0, resonantMultiplier: skill.resonantMultiplier || 0, index: extra.index });
@@ -862,13 +963,14 @@ export class Game {
     if (['self', 'moving', 'cone', 'dash', 'crosscut', 'crescent', 'beam', 'jet'].includes(cast.shape)) { cast.x = this.p.x; cast.y = this.p.y; }
     if (cast.shape === 'crescent') cast.travel = cast.startDistance || 0;
     if (cast.shape === 'moving' && cast.startDistance) this.move(cast, Math.cos(angle)*cast.startDistance, Math.sin(angle)*cast.startDistance, .2);
-    // 자성 빙쇄's jaws show their round reach while they rise, as the targeted blasts do (2026-11-16).
+    // 방전 빙쇄's jaws show their round reach while they rise, as the targeted blasts do (2026-11-16).
     if (['target', 'orb', 'clamp'].includes(cast.shape) && behavior.delay > 0) this.effect('friendlyTell', cast.x, cast.y, cast.color, behavior.delay, cast.radius, { skill: cast.skillId, mark: floorMark(cast.elements) });
     if (cast.shape === 'projectile') {
       // As many bolts as the cast has (a skill mod may add some: 서리 산탄), fanned evenly about the aim.
       for (let i = 0; i < cast.hits; i++) cast.projectiles.push({ x: this.p.x, y: this.p.y, angle: angle + (i - (cast.hits - 1) / 2) * behavior.spread, travelled: 0, done: false });
     }
     this.setupSoundWaterFusion(cast);
+    this.setupLightMagnetFusion(cast);
     this.s.casts.push(cast);
     if (cast.emberTrail) {
       const t = cast.emberTrail;
@@ -893,7 +995,10 @@ export class Game {
     const collapse = cast.elements.includes('sound') && ringing >= (this.status('resonance')?.maxStacks ?? Infinity);
     if (collapse) this.collapseResonance(enemy);
     const order = cast.elements.includes('water') ? ['water', ...cast.elements.filter(e => e !== 'water')] : cast.elements;
-    if (enemy.hp > 0) for (const element of order) if (!(collapse && element === 'sound')) this.applyStatus(enemy, element, cast, element === 'sound' ? (ringing && cast.resonantStacks) || cast.resonanceStacks || 1 : 1);
+    // 쇳가루: a magnet blow on a body already full of it sets the body before laying any more on.
+    if (cast.elements.includes('magnet')) this.lmIronHit(enemy);
+    if (enemy.hp > 0) for (const element of order) if (!(collapse && element === 'sound')) this.applyStatus(enemy, element, cast, element === 'sound' ? (ringing && cast.resonantStacks) || cast.resonanceStacks || 1 : element === 'magnet' ? cast.ironDustStacks || 1 : 1);
+    this.lmAfterHit(cast, enemy);
     // 수면 공명: a sound blow on a body standing on the film makes the film ring (the film's own ringing does not).
     if (cast.elements.includes('sound') && cast.shape !== 'film') this.ringFilms(enemy);
     this.castStagger(enemy, cast.fusion ? this.c.balance.fusionStaggerPerCastCap : this.c.balance.skillStaggerPerCastCap, cast);
@@ -946,6 +1051,7 @@ export class Game {
       // A crane is overhead: what a skill touches is its mark on the floor (checked below), not the crane.
       if (h.gone || (h.kind !== 'crane' && !touches(h))) continue;
       if (h.kind === 'crate' && cast.elements.includes('fire')) this.lightCrate(h, 0.05);
+      this.lmOnHazard(cast, h);
       if (h.kind === 'plate' && cast.elements.includes('ice') && !(h.cooledUntil > t)) { h.cooledUntil = t + rules.frostSeconds; this.effect('ring', h.x, h.y, '#9fe3f0', 0.6, h.half, { look: 'frostShatter' }); }
       // A belt: ice stops it, wind makes it run twice as fast for a moment.
       const belt = this.config.hazards.belt;
@@ -956,7 +1062,7 @@ export class Game {
       if (h.kind === 'press' && press) {
         const now = pressState(h, t, press);
         if ((has('lightning') || has('sound')) && now.state !== 'slam') slamNow(h, t, press);
-        else if (has('ice') && h.skipN === undefined) { h.skipN = now.state === 'slam' ? now.n + 1 : now.n; this.effect('ring', h.x, h.y, '#9fe3f0', 0.6, h.w / 2, { look: 'frostShatter' }); }
+        else if (has('ice') && !(h.skipN >= now.n)) { h.skipN = now.state === 'slam' ? now.n + 1 : now.n; this.effect('ring', h.x, h.y, '#9fe3f0', 0.6, h.w / 2, { look: 'frostShatter' }); }
       }
       if (h.kind === 'laser' && laser && !(h.downUntil > t)) {
         const off = has('lightning') || has('water') ? laser.shortSeconds : has('sound') ? laser.soundSeconds : 0;
@@ -977,9 +1083,12 @@ export class Game {
   }
   updateCasts(dt) {
     for (const cast of this.s.casts) {
+      if (HOSTILE_SHAPES.includes(cast.shape)) continue;
       cast.age += dt;
-      // The nine sound and water fusions run in sound-water-fusions.js.
+      this.lmBeforeStep(cast, dt);
+      // The nine sound and water fusions run in sound-water-fusions.js, the thirteen with light or magnet in light-magnet.js.
       if (this.updateSoundWaterFusion(cast, dt)) continue;
+      if (this.updateLightMagnetFusion(cast, dt)) continue;
       if (cast.shape === 'projectile') {
         for (const bullet of cast.projectiles) {
           if (bullet.done) continue;
@@ -998,7 +1107,7 @@ export class Game {
               if (cast.wallDaze && distance(from, target) < cast.knockback * 0.6) { target.stunUntil = Math.max(target.stunUntil, this.s.time + cast.wallDaze); target.dazedUntil = this.s.time + cast.wallDaze; target.dazedBonus = 0; this.effect('ring', target.x, target.y, '#ffd257', 0.4, 0.8, { look: 'quake' }); }
             }
             if (cast.skillId === 'frostBolt' && !bullet.shard) this.effect('ring', target.x, target.y, cast.color, 0.8, 0.5, { look: 'frostShatter' });
-            if (cast.pierce) (bullet.pierced ??= []).push(target.id); else bullet.done = true;
+            if (cast.pierce) { (bullet.pierced ??= []).push(target.id); if (cast.pierceMax && bullet.pierced.length >= cast.pierceMax) bullet.done = true; } else bullet.done = true;
             if (cast.shards && !bullet.shard) for (let i = 0; i < cast.shards.shards; i++) cast.projectiles.push({ x: target.x, y: target.y, angle: bullet.angle + (i - (cast.shards.shards - 1) / 2) * 0.9, travelled: 0, done: false, shard: true, share: cast.shards.damageShare, reach: cast.shards.range, pierced: [target.id] });
           }
           if (distance(before, bullet) < step * 0.5 || bullet.travelled >= (bullet.reach || cast.range)) {
@@ -1011,18 +1120,25 @@ export class Game {
             }
           }
         }
-        cast.done = cast.projectiles.every(p => p.done); continue;
+        cast.done = cast.projectiles.every(p => p.done); if (cast.done) this.lmAfterShots(cast); continue;
       }
       // 굉음: a straight column of sound out to its range, through every body on it, at once.
       if (cast.shape === 'beam') {
+        if (cast.age < (cast.delay || 0)) continue;
+        if (cast.reaim && !cast.aimed) { cast.aimed = true; cast.startX = this.p.x; cast.startY = this.p.y; cast.angle = this.p.angle; }
         // A column of sound in the air: its length runs over the floor (aimed up or down it reaches less far on the screen,
         // as a round reach does), its width is the same on the screen whichever way (2026-11-16: laid flat on the floor it
         // turned into a wide ladder aimed down).
         const fx = Math.cos(cast.angle), fy = Math.sin(cast.angle), reach = cast.range * floorShrink(cast.angle);
         const on = t => { const dx = t.x - cast.startX, dy = t.y - cast.startY, along = dx * fx + dy * fy, side = Math.abs(-dx * fy + dy * fx), r = t.radius || 0.4; return along >= -r && along <= reach + r && side <= cast.halfWidth + r; };
         this.elementOnHazards(cast, on);
-        for (const enemy of this.s.enemies) if (enemy.hp > 0 && on(enemy)) this.castHit(cast, enemy);
-        this.effect('soundBeam', cast.startX, cast.startY, cast.color, 0.45, cast.range, { angle: cast.angle, power: cast.power ?? 1, halfWidth: cast.halfWidth });
+        const struck = this.s.enemies.filter(enemy => enemy.hp > 0 && on(enemy));
+        for (const enemy of struck) this.castHit(cast, enemy);
+        if (cast.elements.includes('light')) {
+          const end = { x: cast.startX + fx * reach, y: cast.startY + fy * reach };
+          this.effect('lmBeam', cast.startX, cast.startY, cast.color, 0.35, 1, { targetX: end.x, targetY: end.y, width: cast.halfWidth * 2, prism: true });
+          this.lmBeamExtras(cast, end, struck);
+        } else this.effect('soundBeam', cast.startX, cast.startY, cast.color, 0.45, cast.range, { angle: cast.angle, power: cast.power ?? 1, halfWidth: cast.halfWidth });
         cast.done = true; continue;
       }
       // 고압 분사: a stream from F2 that swings after the aim; every beat it strikes every body on its line, or a wall.
@@ -1113,8 +1229,9 @@ export class Game {
           for (const enemy of this.s.enemies) if (enemy.hp > 0 && (cast.shape === 'cone' ? inCone(cast, enemy, cast.angle, cast.range, cast.arc) : floorDistance(cast, enemy) <= cast.radius + enemy.radius)) { this.castHit(cast, enemy); if (cast.shape === 'cone' && cast.knockback && !enemy.boss && !enemy.dummy && !enemy.stationary && enemy.hp > 0) { const a = Math.atan2(enemy.y - this.p.y, enemy.x - this.p.x); this.move(enemy, Math.cos(a) * cast.knockback, Math.sin(a) * cast.knockback); } if(cast.shape==='orb' && cast.knockback && !enemy.boss){const a=Math.atan2(enemy.y-cast.y,enemy.x-cast.x);this.move(enemy,Math.cos(a)*cast.knockback,Math.sin(a)*cast.knockback);} }
           // The last blast pushes after it lands (it used to push first, so the bodies it threw were out of its reach: 역류 cost damage).
           if (cast.finalKnockback && cast.pulse === cast.hits - 1) for (const enemy of this.s.enemies) if (enemy.hp > 0 && !enemy.boss && !enemy.stationary && floorDistance(cast, enemy) <= cast.radius + enemy.radius) { const a = Math.atan2(enemy.y - cast.y, enemy.x - cast.x); this.move(enemy, Math.cos(a) * cast.finalKnockback, Math.sin(a) * cast.finalKnockback); }
-          const look = cast.skillId === 'heatSwing' ? 'heatSwing' : cast.skillId === 'ringPalm' ? 'ringPalm' : cast.shape === 'charge' ? 'zapBig' : cast.finalKnockback && cast.pulse === cast.hits - 1 ? 'quake' : undefined;
+          const look = cast.skillId === 'heatSwing' ? 'heatSwing' : cast.skillId === 'ringPalm' ? 'ringPalm' : cast.skillId === 'flashBomb' ? 'lmFlash' : cast.skillId === 'magneticLift' ? 'lmSlam' : cast.shape === 'charge' ? 'zapBig' : cast.finalKnockback && cast.pulse === cast.hits - 1 ? 'quake' : undefined;
           this.effect(cast.shape === 'cone' ? 'swing' : 'ring', cast.x, cast.y, cast.color, look ? 0.7 : Math.max(0.18, cast.interval), cast.shape === 'cone' ? cast.range : cast.radius, { angle: cast.angle, phase: 1, arc: cast.arc, look, skill: cast.skillId });
+          this.lmAfterPulse(cast);
         }
         // 되울림: the palm's ring comes back once more a moment later, weaker.
         if (cast.echo && !cast.derived && cast.pulse === 0) this.s.casts.push({ ...cast, id: this.id('cast'), derived: true, echo: null, age: 0, pulse: 0, next: cast.echo.delay, hits: 1, damage: cast.damage * cast.echo.damageShare, knockback: 0, resonanceStacks: 1, resonantStacks: 0, resonantMultiplier: 0, felt: true, staggerUsed: {}, hit: [], statusAt: {} });
@@ -1244,7 +1361,10 @@ export class Game {
   holdClear() {
     this.s.projectiles = this.s.projectiles.filter(b => b.friendly); this.s.ranks = [];
     this.s.casts = this.s.casts.filter(c => !HOSTILE_SHAPES.includes(c.shape));
-    this.s.clearAt ??= this.s.time + CLEAR_HOLD_SECONDS;
+    // Orden 1's room breaks open at once: he has no fall to hold on (the collapse draws him turning from the same frame).
+    // (Orden's rooms go on at once: his body is not drawn once down, so a held second showed an empty floor before he
+    // knelt in his end scene; 2026-11-22, the user's word.)
+    this.s.clearAt ??= this.s.time + (this.room?.collapse || this.room?.kind === 'finalBoss' ? 0 : CLEAR_HOLD_SECONDS);
     if (this.s.time >= this.s.clearAt) this.finishCombat();
   }
   update(dt, input = {}) {
@@ -1253,6 +1373,9 @@ export class Game {
       if (this.s.time >= this.s.downUntil) { this.s.downUntil = null; this.returnToHub('defeat'); }
       return;
     }
+    // The tower breaking open after Orden 1 (startCollapse): the scene plays out and the player's input waits.
+    if (this.s.collapse) { if (!this.s.paused) this.tickCollapse(dt); return; }
+    if (this.s.ordenEnd) { if (!this.s.paused) this.tickOrdenEnd(dt); return; }
     if (this.walking) return this.walk(dt, input);
     if (this.leaving) return this.walkToPortal(dt, input);
     if (!this.active) return;
@@ -1268,6 +1391,7 @@ export class Game {
       else input = { x: dx / gap, y: dy / gap, aim: { x: entry.x + dx, y: entry.y + dy } };
     }
     if (input.aim && distance(p, input.aim) > 0.1) p.angle = Math.atan2(input.aim.y - p.y, input.aim.x - p.x);
+    if (input.aim) p.aimPoint = { x: input.aim.x, y: input.aim.y };
     let dx = input.x || 0, dy = input.y || 0;
     const length = Math.hypot(dx, dy);
     if (length > 0) { dx /= Math.max(1, length); dy /= Math.max(1, length); p.moveAngle = Math.atan2(dy, dx); }
@@ -1349,9 +1473,10 @@ export class Game {
     }
     this.tickPatches(dt); this.tickGrab();
     if (!this.active) return;
-    const hostile = this.s.casts.filter(c => HOSTILE_SHAPES.includes(c.shape) && !c.done);
-    this.s.casts = this.s.casts.filter(c => !HOSTILE_SHAPES.includes(c.shape));
-    this.updateCasts(dt); this.s.casts.push(...hostile);
+    // (The enemy-owned shapes stay in the list and are skipped in updateCasts, 2026-11-22, the full test: taken out for
+    // the call and put back after it, F2's casts never saw the floor patches they burn, wash or freeze, and a shield
+    // broken by a skill cleared a boss's casts only for them to be put back.)
+    this.updateCasts(dt);
     this.updateEnemies(dt);
     if (!this.active) return;
     this.updateProjectiles(dt);
@@ -1364,7 +1489,8 @@ export class Game {
   }
   /** What clearing the current room is worth in all: free gears kept for good, and coins for this run. */
   roomLoot() {
-    const region = this.data.progression.region, kind = this.room.kind;
+    // Orden's two rooms (finalBoss) pay what a region boss does.
+    const region = this.data.progression.region, kind = this.room.kind === 'finalBoss' ? 'regionBoss' : this.room.kind;
     // A room may set its own pay (slice.json rooms[].rewards): the early street pays less and the stretch after the night
     // market more, so a run is worth most for going deep (2026-11-06); others take the region's flat amounts.
     const gears = this.room.rewards?.gears ?? (kind === 'miniboss' ? region.miniReward : kind === 'regionBoss' ? region.bossReward : region.normalReward);
@@ -1385,7 +1511,7 @@ export class Game {
     const gears = Math.round(total.gears * loot.kills / planned) - loot.gears, coins = Math.round(total.coins * loot.kills / planned) - loot.coins;
     this.giveLoot(gears, coins); loot.gears += gears; loot.coins += coins;
     // What the kill paid flies to the player: a coin or a little gear for each piece, a few at most.
-    if (gears || coins) this.effect('loot', enemy.x, enemy.y - 0.3, '#ffd257', 0.6, Math.min(4, Math.max(1, coins + gears)), { gears: Math.min(2, gears) });
+    if ((gears || coins) && !(enemy.boss && room.collapse)) this.effect('loot', enemy.x, enemy.y - 0.3, '#ffd257', 0.6, Math.min(4, Math.max(1, coins + gears)), { gears: Math.min(2, gears) });
   }
   giveLoot(gears, coins) { this.s.profile.freeGears += gears; this.s.run.baseGears += gears; this.s.run.coins += coins; }
   finishCombat() {
@@ -1405,16 +1531,102 @@ export class Game {
       run.clears.push(this.room.id); this.s.profile.combatClears++;
       const bank = this.perk('piggyBank');
       if (bank) { const interest = Math.min(bank.cap, Math.floor(run.coins * bank.rate)); if (interest) { run.coins += interest; this.notify(`저금통 이자 · 동전 +${interest}`); } }
-      if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
+      if (this.room.kind === 'regionBoss' && this.room.healBox) this.dropHealBox(Number.isFinite(this.room.healBox) ? this.room.healBox : this.data.progression.run.regionBossClearHeal);
+      else if (this.room.kind === 'regionBoss') this.heal(this.data.progression.run.regionBossClearHeal);
       this.sense({ kind: 'loot' });
     }
     // The room's furniture stays where it stands while the reward is chosen and the portal walked to. A crate already lit
     // still goes off (2026-11-11: fuses used to go out, and a crate struck after the fight never went off at all), but
     // once the fight is won it no longer hurts F2 (room-waves.js blowCrate).
-    const furniture = (this.s.hazards || []).filter(h => !h.gone);
+    const furniture = (this.s.hazards || []).filter(h => !h.gone), fell = this.s.enemies.find(e => e.boss) || this.p;
     this.clearCombat(); this.s.hazards = furniture;
-    if (this.room.boss) this.s.mode = 'unwind'; else this.offerRewards();
+    if (this.room.collapse) this.startCollapse(fell);
+    else if (this.room.kind === 'finalBoss') this.startOrdenEnd(fell);
+    else if (this.room.boss) this.s.mode = 'unwind'; else this.offerRewards();
     this.save(); return true;
+  }
+  /**
+   * Orden 1 is down (chapter 3's tuning chamber, rooms[].collapse): instead of unwinding him, a reward and a portal, he
+   * wires his tuner into the whole tower and it breaks open round F2 (plan 7.3). No heal. The scene runs on the game's
+   * clock (tickCollapse; src/render/tower-collapse.js draws it from `s.collapse`), so a pause or a reload keeps its place.
+   */
+  startCollapse(fell) {
+    const records = this.s.profile.bossRecords;
+    if (!records.includes(this.room.boss)) records.push(this.room.boss);
+    // Where his last form will stand: the next room's boss spot (the two floors are painted to match).
+    const next = this.s.run ? roomPlace(this.data.maps, this.rooms[this.s.run.node + 1]?.id, this.s.run.plan?.[this.s.run.node + 1]?.variant || 0) : null;
+    const to = next?.bossSpawn || { x: fell.x, y: fell.y };
+    this.s.collapse = { at: this.s.time, x: fell.x, y: fell.y, to: { x: to.x, y: to.y }, step: 0 };
+  }
+  /** One step of the collapse: its sounds on time, F2 on the summit (the next room) where she stood, then the fight. */
+  tickCollapse(dt) {
+    dt = Math.min(dt, 1 / 30); this.s.time += dt; this.s.tick++; this.s.run.elapsed += dt;
+    this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
+    const fall = this.s.collapse, t = this.s.time - fall.at;
+    // One hour bell as he wires himself in (a step after the room's clear sound, which would cover it), then the breaks.
+    if (fall.step < 1) { fall.step = 1; this.sense({ kind: 'mob', id: 'bell' }); fall.beats = 0; }
+    // The tower's heartbeat as he wakes: a rumble every beat, each stronger, until the walls give way.
+    // The last bell over the town while the screen is there, twice.
+    for (const [n, at] of [[1, COLLAPSE.cutIn + 0.15], [2, COLLAPSE.cutIn + 1.9]]) if ((fall.tolls || 0) < n && t >= at) { fall.tolls = n; this.sense({ kind: 'mob', id: 'bell' }); this.sense({ kind: 'boss', id: 'bgToll' }); }
+    if (t < COLLAPSE.open && t >= (fall.beats + 1) * COLLAPSE.beat) {
+      fall.beats++; const k = Math.min(1, t / COLLAPSE.open), away = t > COLLAPSE.cutIn && t < COLLAPSE.cutOut;
+      if (!away) {
+      this.sense({ kind: 'quake', power: 0.5 + 0.9 * k, color: '#7fe8ff' }); if (fall.beats % 2 === 0) this.sense({ kind: 'heavy' });
+      }
+    }
+    if (fall.step < 2 && t >= COLLAPSE.crack) { fall.step = 2; this.sense({ kind: 'heavy' }); }
+    if (fall.step < 3 && t >= COLLAPSE.open) {
+      // The flash: the walls go and the summit opens round him, still masked, half-way to his spot.
+      fall.step = 3; this.sense({ kind: 'burst' }); this.sense({ kind: 'quake', power: 1.4, color: '#7fe8ff' });
+    }
+    const to = fall.to || fall;
+    if ((fall.lit || 0) < 1 && t >= COLLAPSE.land) {
+      // Down on the summit: a pillar of light rises round him until his mask breaks.
+      fall.lit = 1; this.effect('ring', to.x, to.y, '#7fe8ff', COLLAPSE.turn - COLLAPSE.land + 0.5, 2.2, { look: 'bossPillar' });
+      this.sense({ kind: 'mob', id: 'bell' });
+    }
+    if ((fall.lit || 0) < 2 && t >= COLLAPSE.turn) {
+      // The mask breaks: Orden at the last hour, in a burst of cyan.
+      fall.lit = 2; this.sense({ kind: 'boss', id: 'odStopBreak' }); this.sense({ kind: 'quake', power: 1.1, color: '#7fe8ff' });
+      this.effect('ring', to.x, to.y, '#7fe8ff', 0.8, 3, { look: 'bossPillar' });
+    }
+    if (fall.step < 4 && t >= COLLAPSE.arrive) {
+      fall.step = 4; this.s.run.node++; this.s.run.branches.push(0);
+      // The two floors are painted to match, so F2 stays put; only a spot the summit lost (the fallen bell) moves her.
+      const map = this.map, boss = this.room.boss, at = fall.to || map?.bossSpawn || this.p;
+      for (let i = 0; i < 40 && map?.walkable && !fitsMap(this.p.x, this.p.y, map.bodyRadius, map); i++) { this.p.x += (at.x - this.p.x) * 0.1; this.p.y += (at.y - this.p.y) * 0.1; }
+      // Orden at the last hour is already there (the scene drew him turning): no rift, he simply takes up the fight.
+      const enemy = this.spawnEnemy(boss, at), rise = fall.at + COLLAPSE.end;
+      // Facing the front through his first words (2026-11-22, the user's word: he looked left, a boss's default facing).
+      Object.assign(enemy, { ready: rise + this.config.rules.enemyInitialDelay, facing: Math.PI / 2 });
+      this.notify(this.room.description); this.save();
+    }
+    if (t >= COLLAPSE.end) { this.s.collapse = null; this.save(); }
+  }
+  /**
+   * Orden at the last hour is down (2026-11-19, the user's word: no part to plug in): he fades away where he fell, then
+   * the run ends and F2 is home. The first time, the town is freed on the way in (main.js playLiberation, from
+   * profile.liberationPending); after that the expedition simply ends in the village. Runs on the game's clock (tickOrdenEnd;
+   * orden-ending.js draws it from `s.ordenEnd`), with the controls locked.
+   */
+  startOrdenEnd(fell) {
+    const profile = this.s.profile, records = profile.bossRecords;
+    if (!records.includes(this.room.boss)) records.push(this.room.boss);
+    // 'First' is the town's first freeing: his farewell, the liberation and the end sheet. It goes by his farewell not yet
+    // heard (2026-11-21: by the chapter's clear mark until then, which the debug workbench's replay button cannot reset,
+    // so the scenes never came back); a save is first exactly when neither is set.
+    this.s.ordenEnd = { at: this.s.time, x: fell.x, y: fell.y, first: !profile.cleared?.includes(this.chapter.id) || !profile.bossTalks?.includes('ordenFarewell') };
+    this.effect('ring', fell.x, fell.y, '#7fe8ff', 1.2, 1.6, { look: 'bossPillar' }); this.sense({ kind: 'quake', power: 0.8, color: '#7fe8ff' });
+  }
+  tickOrdenEnd(dt) {
+    dt = Math.min(dt, 1 / 30); this.s.time += dt; this.s.tick++; this.s.run.elapsed += dt;
+    this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
+    const end = this.s.ordenEnd;
+    if (this.s.time - end.at < ordenEndAt(end.first)) return;
+    this.s.ordenEnd = null; this.finishChapter(); this.returnToHub('clear');
+    // The first time straight into the village for the liberation; later the usual welcome home.
+    if (end.first) { this.s.profile.liberationPending = true; this.acknowledgeReturn(); }
+    this.save();
   }
   /** Out of the scrapyard and into the town square, on foot and not yet known to anyone. */
   reachWorkshop() {
@@ -1433,13 +1645,17 @@ export class Game {
       if (record) this.s.profile.blueprints.push(record);
     }
     // The last boss of the slice ends the run here: the story takes over instead of a reward pick.
-    if (this.s.run.node === this.rooms.length - 1) this.finishChapter();
+    // A preview chapter (slice.json chapters[].preview) whose last built room is a boss goes on to a reward and home,
+    // unless that boss is the chapter's final one (chapter 3's Orden at the last hour, kind finalBoss).
+    if (this.s.run.node === this.rooms.length - 1 && (!this.chapter.preview || this.room.kind === 'finalBoss')) this.finishChapter();
     else this.offerRewards();
     this.save(); return true;
   }
   nextNode(branch = 0) {
     if (this.s.mode !== 'route' && this.s.mode !== 'shop') return false;
     if (![0, 1].includes(branch)) return false;
+    // A chapter still being made (preview) may stop before its last boss: past its last built room the run comes home.
+    if (this.s.run.node + 1 >= this.rooms.length) return this.returnToHub('preview');
     this.s.run.node++; this.s.run.branches.push(branch); this.sense({ kind: 'portal' });
     // Both alternatives are authored encounters at the same depth.
     const plan = this.s.run.plan[this.s.run.node], room = this.room;
@@ -1473,6 +1689,9 @@ export class Game {
     if (run.clears.length && !profile.firstReturnClaimed) { bonus = economy.firstReturnBonus; profile.freeGears += bonus; profile.firstReturnClaimed = true; }
     if (reason === 'defeat') this.sense({ kind: 'fail' });
     this.s.result = { reason, chapter: this.chapter.id, difficulty: run.difficulty || 'normal', node: run.node + 1, elapsed: run.elapsed, baseGears: run.baseGears, bonus, seed: run.seed, damageTaken: run.damageTaken, elements: run.slots.map(s => s.element) };
+    // The best before this run, for an end sheet shown after the record already holds it (chapter 3's, 2026-11-21).
+    const prior = chapterRecords(profile, this.chapter.id)[this.s.result.difficulty];
+    Object.assign(this.s.result, { priorBest: prior?.best ?? null, priorElements: prior?.elements ?? [] });
     profile.history.unshift(this.s.result); profile.history = profile.history.slice(0, 10);
     noteRecord(chapterRecords(profile, this.chapter.id), this.s.result);
     this.report('runEnd', { run: run.id, difficulty: run.difficulty || 'normal', chapter: this.chapter.id, elements: this.s.result.elements, reason: ['clear', 'defeat'].includes(reason) ? reason : 'abandon', node: this.s.result.node, seconds: Math.round(run.elapsed) });
@@ -1511,4 +1730,4 @@ const INPUT_BUFFER = 0.15;
 /** Parts a body bursts into when it falls (how many pieces by what struck it), and how long they fly and bounce. */
 const PARTS = { wrench: 7, skill: 10, fusion: 14, seconds: 0.9 };
 // The game's behaviour is split by subject; each part is installed on Game.prototype, so `this` is the game throughout.
-Object.assign(Game.prototype, enemyActions, roomWaves, factoryMobs, factoryBosses, rewardDraws, soundWaterFusions);
+Object.assign(Game.prototype, enemyActions, roomWaves, factoryMobs, factoryBosses, clockBosses, bellBoss, ordenBoss, rewardDraws, soundWaterFusions, lightMagnet);

@@ -22,11 +22,24 @@ export const MUSIC = {
   'factory-v2': { volume: 0.5, loop: [0.132, 171.56] },
   'factory-rest-v2': { volume: 0.5 },
   'iris-v2': { volume: 0.5 },
-  'press-v2': { volume: 0.5 }
+  'press-v2': { volume: 0.5 },
+  // Chapter 3, the Clock Tower (2026-11-18, art/audio/bgm/codex-ch3-bgm-v2.task.md, see art/audio/CREDITS.md): the rooms,
+  // the stopped-clock attic, Tick and Tock, Belgard. Mixed to -16 LUFS like chapter 2's; each file loops whole.
+  'tower-v2': { volume: 0.5 },
+  'tower-rest-v2': { volume: 0.5 },
+  'ticktock-v2': { volume: 0.5 },
+  'belgard-v2': { volume: 0.5 },
+  // Orden's two fights (2026-11-21, art/audio/bgm/codex-ch3-orden-bgm-v2.task.md, see art/audio/CREDITS.md): the tuning
+  // chamber (F# minor 4/4 126) and the last hour on the ruined summit (Eb minor 3/4 176). -16 LUFS; each loops whole.
+  'orden-chamber-v2': { volume: 0.5 },
+  'orden-lasthour-v2': { volume: 0.5 }
 };
 /** A chapter's own songs; a chapter missing here plays chapter 1's. */
 const CHAPTER_MUSIC = {
-  'silent-factory': { rooms: 'factory-v2', rest: 'factory-rest-v2', miniboss: 'iris-v2', regionBoss: 'press-v2' }
+  'silent-factory': { rooms: 'factory-v2', rest: 'factory-rest-v2', miniboss: 'iris-v2', regionBoss: 'press-v2' },
+  // Orden's two fights (finalBoss) each have their own song, by the boss (2026-11-21). orden.ogg is the quiet summit theme
+  // under the chapter endings' talk, not a fight.
+  'clock-tower': { rooms: 'tower-v2', rest: 'tower-rest-v2', miniboss: 'ticktock-v2', regionBoss: 'belgard-v2', finalBoss: { orden: 'orden-chamber-v2', ordenFinal: 'orden-lasthour-v2' } }
 };
 // Songs cross-fade over a second; a song that ends into silence stops almost at once.
 const FADE_SECONDS = 1, STOP_SECONDS = 0.25;
@@ -36,7 +49,7 @@ const FADE_SECONDS = 1, STOP_SECONDS = 0.25;
  * The run's first half (before the night-market rest stop) is bright; from the rest stop on it is dusk.
  * Chapter 2 has one song for its fighting rooms, one for its rest stop and one for each boss.
  */
-export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex, chapter, tower = false, talking = false }) {
+export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex, chapter, boss, tower = false, talking = false }) {
   if (onTitle) return 'title';
   // The clock tower summit (a chapter's ending scene, Orden and Belgard) has Orden's own theme.
   if (tower) return 'orden';
@@ -48,7 +61,7 @@ export function musicScene({ onTitle, mode, roomKind, roomIndex, restIndex, chap
   if (['hub', 'registration', 'practice'].includes(mode)) return 'town-v2';
   if (mode === 'complete') return 'title';
   const own = CHAPTER_MUSIC[chapter];
-  if (own) { if (roomIndex === undefined || roomIndex < 0) return null; return roomKind === 'miniboss' ? own.miniboss : roomKind === 'regionBoss' ? own.regionBoss : roomKind === 'shop' ? own.rest : own.rooms; }
+  if (own) { if (roomIndex === undefined || roomIndex < 0) return null; return roomKind === 'miniboss' ? own.miniboss : roomKind === 'regionBoss' ? own.regionBoss : roomKind === 'finalBoss' ? (typeof own.finalBoss === 'object' ? own.finalBoss[boss] || Object.values(own.finalBoss)[0] : own.finalBoss) || own.regionBoss : roomKind === 'shop' ? own.rest : own.rooms; }
   if (roomKind === 'miniboss') return 'roco-v2';
   if (roomKind === 'regionBoss') return 'brass-v2';
   if (roomIndex === undefined || roomIndex < 0) return null;
@@ -65,7 +78,8 @@ export class MusicPlayer {
     for (const name of names) {
       if (this.files.has(name)) continue;
       // The player is made from the downloaded file if it is ready by then; a song never changes source once made.
-      this.files.set(name, fetch(assetUrl(`/art/audio/bgm/${name}.ogg`)).then(r => (r.ok ? r.blob() : null)).then(blob => {
+      // (A failed download falls back to the file itself, 2026-11-22: it was swallowed and the song stayed silent.)
+      this.files.set(name, fetch(assetUrl(`/art/audio/bgm/${name}.ogg`)).then(r => (r.ok ? r.blob() : null)).catch(() => null).then(blob => {
         const url = blob ? URL.createObjectURL(blob) : assetUrl(`/art/audio/bgm/${name}.ogg`);
         (this.local ??= new Map()).set(name, url);
         // A player made while the file was still coming has no source yet: give it the file and start it if wanted.

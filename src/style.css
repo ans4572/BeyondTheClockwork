@@ -14,7 +14,10 @@
   --ink: #2b3345; --label: #5d6476; --paper: #f6ecd2; --paper-low: #ece0c0; --red: #a92f2b; --gold: #c79a3e; --sage: #d7e4d6;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: #16202a; }
+/* Korean breaks between words, not between any two syllables (2026-11-22, the UI review: a cutscene line broke '깨졌 / 다',
+   a sheet left '않습니다.' alone on its line); a word with no space in it still wraps rather than overflowing. */
+body { margin: 0; background: #16202a; word-break: keep-all; overflow-wrap: break-word; }
+p { text-wrap: pretty; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:disabled { cursor: not-allowed; }

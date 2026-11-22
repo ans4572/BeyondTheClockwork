@@ -1,0 +1,391 @@
+{
+ "frames": [
+  {
+   "filename": "path-gem 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 1",
+   "frame": {
+    "x": 13,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 2",
+   "frame": {
+    "x": 26,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 3",
+   "frame": {
+    "x": 39,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 4",
+   "frame": {
+    "x": 0,
+    "y": 11,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 5",
+   "frame": {
+    "x": 13,
+    "y": 11,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 6",
+   "frame": {
+    "x": 26,
+    "y": 11,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 7",
+   "frame": {
+    "x": 39,
+    "y": 11,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 8",
+   "frame": {
+    "x": 0,
+    "y": 22,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 9",
+   "frame": {
+    "x": 13,
+    "y": 22,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 10",
+   "frame": {
+    "x": 26,
+    "y": 22,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 11",
+   "frame": {
+    "x": 39,
+    "y": 22,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 12",
+   "frame": {
+    "x": 0,
+    "y": 33,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 13",
+   "frame": {
+    "x": 13,
+    "y": 33,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 14",
+   "frame": {
+    "x": 26,
+    "y": 33,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  },
+  {
+   "filename": "path-gem 15",
+   "frame": {
+    "x": 39,
+    "y": 33,
+    "w": 13,
+    "h": 11
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 13,
+    "h": 11
+   },
+   "sourceSize": {
+    "w": 13,
+    "h": 11
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "path-gem.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 52,
+   "h": 44
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "path-gem",
+    "from": 0,
+    "to": 15,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/path-gem",
+   "name": "Path gem",
+   "fps": 20,
+   "loop": true,
+   "frames": 16,
+   "frameSize": [
+    13,
+    11
+   ],
+   "pivot": [
+    6,
+    5
+   ],
+   "columns": 4
+  }
+ }
+}

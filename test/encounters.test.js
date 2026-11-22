@@ -374,3 +374,23 @@ test('every expedition finds 3 music boxes in either chapter, never in two rooms
     assert.ok(seen.size >= 8, `only ${seen.size} different sets in 12 runs`);
   }
 });
+
+test('a wave too small to read as a shape arrives scattered and unannounced; a big one keeps its shape (2026-11-22)', () => {
+  // The user's word: with fewer bodies, 'from one side' and 'from both sides' no longer meant anything.
+  const min = data.slice.rules.formationMin;
+  assert.ok(min >= 4);
+  const g = new Game(data); g.s.profile.registered = true; g.s.mode = 'hub'; g.startRun(4711);
+  const node = g.s.run.plan.findIndex((plan, i) => g.rooms[i]?.waves && plan.waves?.length > 1);
+  assert.ok(node >= 0);
+  g.s.run.node = node; g.enterNode(); g.s.entry = null;
+  const room = g.room, plan = g.s.run.plan[node], keep = room.waves[1], keepShape = plan.formations[1];
+  for (const [size, shape] of [[min - 1, 'flank'], [min - 1, 'ring'], [min + 1, 'flank'], [min + 1, 'pincer']]) {
+    room.waves[1] = Array(size).fill(room.waves[0][0]); plan.formations[1] = shape;
+    g.s.run.wave = 0; g.s.run.arrivals = []; g.s.notices = [];
+    g.callWave();
+    const noted = g.s.notices.some(n => /몰려온다|협공한다|에워싼다/.test(n.text));
+    if (size < min) assert.equal(noted, false, `${size} bodies: no ${shape} warning`);
+    else assert.equal(noted, true, `${size} bodies: the ${shape} is announced`);
+  }
+  room.waves[1] = keep; plan.formations[1] = keepShape; // the room data is shared with the other tests
+});

@@ -1,0 +1,217 @@
+{
+  "group_id": "5cc63540-ba99-4ff1-ada8-270f753c3d93",
+  "states": [
+    {
+      "character": {
+        "id": "67f1010f-de64-4c1d-a79e-68178b055fee",
+        "name": "Idle",
+        "prompt": "Orden, the masked gentleman mage of the clock tower. Tall navy top hat with a gold band, a white porcelain smiling mask with one red cheek, a long navy tailcoat with gold trim and brass buttons, white gloves. He holds a long gold staff topped with a small brass clock-dial ornament upright in his right hand. He is floating in midair: both feet hang well above the ground with toes pointing down, the coat tails drift loosely below him. No shadow, no background, no glow, no effects.",
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-11-17T10:30:23.378527+00:00"
+      },
+      "folder": "Idle",
+      "frames": {
+        "rotations": {
+          "south": "Idle/rotations/south.png",
+          "south-east": "Idle/rotations/south-east.png",
+          "east": "Idle/rotations/east.png",
+          "north-east": "Idle/rotations/north-east.png",
+          "north": "Idle/rotations/north.png",
+          "north-west": "Idle/rotations/north-west.png",
+          "west": "Idle/rotations/west.png",
+          "south-west": "Idle/rotations/south-west.png"
+        },
+        "animations": {
+          "staff-jab": {
+            "south-east": [
+              "Idle/animations/staff-jab/south-east/frame_000.png",
+              "Idle/animations/staff-jab/south-east/frame_001.png",
+              "Idle/animations/staff-jab/south-east/frame_002.png",
+              "Idle/animations/staff-jab/south-east/frame_003.png",
+              "Idle/animations/staff-jab/south-east/frame_004.png",
+              "Idle/animations/staff-jab/south-east/frame_005.png",
+              "Idle/animations/staff-jab/south-east/frame_006.png",
+              "Idle/animations/staff-jab/south-east/frame_007.png",
+              "Idle/animations/staff-jab/south-east/frame_008.png"
+            ],
+            "south-west": [
+              "Idle/animations/staff-jab/south-west/frame_000.png",
+              "Idle/animations/staff-jab/south-west/frame_001.png",
+              "Idle/animations/staff-jab/south-west/frame_002.png",
+              "Idle/animations/staff-jab/south-west/frame_003.png",
+              "Idle/animations/staff-jab/south-west/frame_004.png",
+              "Idle/animations/staff-jab/south-west/frame_005.png",
+              "Idle/animations/staff-jab/south-west/frame_006.png",
+              "Idle/animations/staff-jab/south-west/frame_007.png",
+              "Idle/animations/staff-jab/south-west/frame_008.png"
+            ],
+            "north-east": [
+              "Idle/animations/staff-jab/north-east/frame_000.png",
+              "Idle/animations/staff-jab/north-east/frame_001.png",
+              "Idle/animations/staff-jab/north-east/frame_002.png",
+              "Idle/animations/staff-jab/north-east/frame_003.png",
+              "Idle/animations/staff-jab/north-east/frame_004.png",
+              "Idle/animations/staff-jab/north-east/frame_005.png",
+              "Idle/animations/staff-jab/north-east/frame_006.png",
+              "Idle/animations/staff-jab/north-east/frame_007.png",
+              "Idle/animations/staff-jab/north-east/frame_008.png"
+            ],
+            "east": [
+              "Idle/animations/staff-jab/east/frame_000.png",
+              "Idle/animations/staff-jab/east/frame_001.png",
+              "Idle/animations/staff-jab/east/frame_002.png",
+              "Idle/animations/staff-jab/east/frame_003.png",
+              "Idle/animations/staff-jab/east/frame_004.png",
+              "Idle/animations/staff-jab/east/frame_005.png",
+              "Idle/animations/staff-jab/east/frame_006.png",
+              "Idle/animations/staff-jab/east/frame_007.png",
+              "Idle/animations/staff-jab/east/frame_008.png"
+            ],
+            "south": [
+              "Idle/animations/staff-jab/south/frame_000.png",
+              "Idle/animations/staff-jab/south/frame_001.png",
+              "Idle/animations/staff-jab/south/frame_002.png",
+              "Idle/animations/staff-jab/south/frame_003.png",
+              "Idle/animations/staff-jab/south/frame_004.png",
+              "Idle/animations/staff-jab/south/frame_005.png",
+              "Idle/animations/staff-jab/south/frame_006.png",
+              "Idle/animations/staff-jab/south/frame_007.png",
+              "Idle/animations/staff-jab/south/frame_008.png"
+            ],
+            "west": [
+              "Idle/animations/staff-jab/west/frame_000.png",
+              "Idle/animations/staff-jab/west/frame_001.png",
+              "Idle/animations/staff-jab/west/frame_002.png",
+              "Idle/animations/staff-jab/west/frame_003.png",
+              "Idle/animations/staff-jab/west/frame_004.png",
+              "Idle/animations/staff-jab/west/frame_005.png",
+              "Idle/animations/staff-jab/west/frame_006.png",
+              "Idle/animations/staff-jab/west/frame_007.png",
+              "Idle/animations/staff-jab/west/frame_008.png"
+            ],
+            "north-west": [
+              "Idle/animations/staff-jab/north-west/frame_000.png",
+              "Idle/animations/staff-jab/north-west/frame_001.png",
+              "Idle/animations/staff-jab/north-west/frame_002.png",
+              "Idle/animations/staff-jab/north-west/frame_003.png",
+              "Idle/animations/staff-jab/north-west/frame_004.png",
+              "Idle/animations/staff-jab/north-west/frame_005.png",
+              "Idle/animations/staff-jab/north-west/frame_006.png",
+              "Idle/animations/staff-jab/north-west/frame_007.png",
+              "Idle/animations/staff-jab/north-west/frame_008.png"
+            ],
+            "north": [
+              "Idle/animations/staff-jab/north/frame_000.png",
+              "Idle/animations/staff-jab/north/frame_001.png",
+              "Idle/animations/staff-jab/north/frame_002.png",
+              "Idle/animations/staff-jab/north/frame_003.png",
+              "Idle/animations/staff-jab/north/frame_004.png",
+              "Idle/animations/staff-jab/north/frame_005.png",
+              "Idle/animations/staff-jab/north/frame_006.png",
+              "Idle/animations/staff-jab/north/frame_007.png",
+              "Idle/animations/staff-jab/north/frame_008.png"
+            ]
+          },
+          "staff-raise": {
+            "south-east": [
+              "Idle/animations/staff-raise/south-east/frame_000.png",
+              "Idle/animations/staff-raise/south-east/frame_001.png",
+              "Idle/animations/staff-raise/south-east/frame_002.png",
+              "Idle/animations/staff-raise/south-east/frame_003.png",
+              "Idle/animations/staff-raise/south-east/frame_004.png",
+              "Idle/animations/staff-raise/south-east/frame_005.png",
+              "Idle/animations/staff-raise/south-east/frame_006.png",
+              "Idle/animations/staff-raise/south-east/frame_007.png",
+              "Idle/animations/staff-raise/south-east/frame_008.png"
+            ],
+            "west": [
+              "Idle/animations/staff-raise/west/frame_000.png",
+              "Idle/animations/staff-raise/west/frame_001.png",
+              "Idle/animations/staff-raise/west/frame_002.png",
+              "Idle/animations/staff-raise/west/frame_003.png",
+              "Idle/animations/staff-raise/west/frame_004.png",
+              "Idle/animations/staff-raise/west/frame_005.png",
+              "Idle/animations/staff-raise/west/frame_006.png",
+              "Idle/animations/staff-raise/west/frame_007.png",
+              "Idle/animations/staff-raise/west/frame_008.png"
+            ],
+            "south": [
+              "Idle/animations/staff-raise/south/frame_000.png",
+              "Idle/animations/staff-raise/south/frame_001.png",
+              "Idle/animations/staff-raise/south/frame_002.png",
+              "Idle/animations/staff-raise/south/frame_003.png",
+              "Idle/animations/staff-raise/south/frame_004.png",
+              "Idle/animations/staff-raise/south/frame_005.png",
+              "Idle/animations/staff-raise/south/frame_006.png",
+              "Idle/animations/staff-raise/south/frame_007.png",
+              "Idle/animations/staff-raise/south/frame_008.png"
+            ],
+            "north-west": [
+              "Idle/animations/staff-raise/north-west/frame_000.png",
+              "Idle/animations/staff-raise/north-west/frame_001.png",
+              "Idle/animations/staff-raise/north-west/frame_002.png",
+              "Idle/animations/staff-raise/north-west/frame_003.png",
+              "Idle/animations/staff-raise/north-west/frame_004.png",
+              "Idle/animations/staff-raise/north-west/frame_005.png",
+              "Idle/animations/staff-raise/north-west/frame_006.png",
+              "Idle/animations/staff-raise/north-west/frame_007.png",
+              "Idle/animations/staff-raise/north-west/frame_008.png"
+            ],
+            "north-east": [
+              "Idle/animations/staff-raise/north-east/frame_000.png",
+              "Idle/animations/staff-raise/north-east/frame_001.png",
+              "Idle/animations/staff-raise/north-east/frame_002.png",
+              "Idle/animations/staff-raise/north-east/frame_003.png",
+              "Idle/animations/staff-raise/north-east/frame_004.png",
+              "Idle/animations/staff-raise/north-east/frame_005.png",
+              "Idle/animations/staff-raise/north-east/frame_006.png",
+              "Idle/animations/staff-raise/north-east/frame_007.png",
+              "Idle/animations/staff-raise/north-east/frame_008.png"
+            ],
+            "north": [
+              "Idle/animations/staff-raise/north/frame_000.png",
+              "Idle/animations/staff-raise/north/frame_001.png",
+              "Idle/animations/staff-raise/north/frame_002.png",
+              "Idle/animations/staff-raise/north/frame_003.png",
+              "Idle/animations/staff-raise/north/frame_004.png",
+              "Idle/animations/staff-raise/north/frame_005.png",
+              "Idle/animations/staff-raise/north/frame_006.png",
+              "Idle/animations/staff-raise/north/frame_007.png",
+              "Idle/animations/staff-raise/north/frame_008.png"
+            ],
+            "east": [
+              "Idle/animations/staff-raise/east/frame_000.png",
+              "Idle/animations/staff-raise/east/frame_001.png",
+              "Idle/animations/staff-raise/east/frame_002.png",
+              "Idle/animations/staff-raise/east/frame_003.png",
+              "Idle/animations/staff-raise/east/frame_004.png",
+              "Idle/animations/staff-raise/east/frame_005.png",
+              "Idle/animations/staff-raise/east/frame_006.png",
+              "Idle/animations/staff-raise/east/frame_007.png",
+              "Idle/animations/staff-raise/east/frame_008.png"
+            ],
+            "south-west": [
+              "Idle/animations/staff-raise/south-west/frame_000.png",
+              "Idle/animations/staff-raise/south-west/frame_001.png",
+              "Idle/animations/staff-raise/south-west/frame_002.png",
+              "Idle/animations/staff-raise/south-west/frame_003.png",
+              "Idle/animations/staff-raise/south-west/frame_004.png",
+              "Idle/animations/staff-raise/south-west/frame_005.png",
+              "Idle/animations/staff-raise/south-west/frame_006.png",
+              "Idle/animations/staff-raise/south-west/frame_007.png",
+              "Idle/animations/staff-raise/south-west/frame_008.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-11-17T10:36:34.617392"
+}

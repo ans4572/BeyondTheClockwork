@@ -2,20 +2,48 @@
 // Recordings keep their fixed pitch; frequently repeated synthesized actions vary slightly.
 import { voiceContext } from './synthesis.js';
 // Loaded with the same query as this file, so a page that busts the cache for this module gets fresh recipes too.
-// All six at once (2026-11-12: one after another they held the title up by six round trips, about 2.6 s on a phone).
+// All at once (2026-11-12: one after another they held the title up by six round trips, about 2.6 s on a phone).
 const QUERY = new URL(import.meta.url).search;
-const [{ ELEMENT_SOUNDS }, { CODED_SOUNDS }, { WATER_SOUND_CANDIDATES }, { BOSS2_CANDIDATES }, { MOB2_CANDIDATES }, { REDO_CANDIDATES }] = await Promise.all(
-  ['elements', 'coded', 'water-sound', 'boss2-sound', 'mob2-sound', 'redo-sound'].map(name => import(`./${name}.js${QUERY}`)));
+const [{ ELEMENT_SOUNDS }, { CODED_SOUNDS }, { WATER_SOUND_CANDIDATES }, { BOSS2_CANDIDATES }, { MOB2_CANDIDATES }, { REDO_CANDIDATES }, { CLOCK_CANDIDATES }, { LIGHT_MAGNET_CANDIDATES }] = await Promise.all(
+  ['elements', 'coded', 'water-sound', 'boss2-sound', 'mob2-sound', 'redo-sound', 'clock-sound', 'light-magnet-sound'].map(name => import(`./${name}.js${QUERY}`)));
 /**
  * Every coded recipe: the player's, the world's, ice, the water and sound elements' (water-sound.js), chapter 2's bosses and
- * mobs, and the remade takes (redo-sound.js) under `redo:<sound>` so they never mix with the older candidates of that name.
+ * mobs, and the remade takes (redo-sound.js) under `redo:<sound>` so they never mix with the older candidates of that name;
+ * the light and magnet elements' (light-magnet-sound.js) under `lm:<sound>`.
  */
-const CODED = { ...CODED_SOUNDS, ...WATER_SOUND_CANDIDATES, ...BOSS2_CANDIDATES, ...MOB2_CANDIDATES, ...Object.fromEntries(Object.entries(REDO_CANDIDATES).map(([name, takes]) => [`redo:${name}`, takes])) };
+const CODED = { ...CODED_SOUNDS, ...WATER_SOUND_CANDIDATES, ...BOSS2_CANDIDATES, ...MOB2_CANDIDATES, ...CLOCK_CANDIDATES, ...Object.fromEntries(Object.entries(REDO_CANDIDATES).map(([name, takes]) => [`redo:${name}`, takes])), ...Object.fromEntries(Object.entries(LIGHT_MAGNET_CANDIDATES).map(([name, takes]) => [`lm:${name}`, takes])) };
 
 /**
  * file and takes name art/audio/sfx/<file>-<take>.ogg; rate is a random range; length (seconds) cuts long recordings with a short fade.
  * synth names a recipe in elements.js; code names a picked candidate in coded.js as [sound, candidate index].
  */
+/** Which chapter 3 recipe each boss-<id> plays (several blows share one). */
+export const CLOCK_BOSS = {
+  'boss-ttBeatTick': 'boss-ttBeatTick', 'boss-ttBeatTock': 'boss-ttBeatTock',
+  'boss-ttThrust': 'boss-ttThrust', 'boss-ttThrust2': 'boss-ttThrust', 'boss-ttThrust3': 'boss-ttThrust3', 'boss-ttSweep': 'boss-ttSweep', 'boss-ttDash': 'boss-ttDash',
+  'boss-ttPendulumBlast': 'boss-ttPendulum', 'boss-ttShuffleBurst': 'boss-ttShuffleBurst', 'boss-ttBladeSwing': 'boss-ttBladeSwing', 'boss-ttEchoBlow': 'boss-ttEchoBlow',
+  'boss-ttPincerClose': 'boss-ttPincerClose', 'boss-ttFlankWall': 'boss-ttFlank', 'boss-ttGearThrow': 'boss-ttGearThrow', 'boss-ttBlinkIn': 'boss-ttBlinkIn', 'boss-ttTwist': 'boss-ttTwist',
+  'boss-ttColourTick': 'boss-ttColourTick', 'boss-ttColourTock': 'boss-ttColourTock',
+  'boss-bgCombo': 'boss-bgCombo', 'boss-bgCombo2': 'boss-bgCombo', 'boss-bgCombo3': 'boss-bgCombo3', 'boss-bgSpin': 'boss-bgSpin', 'boss-bgSlam': 'boss-bgSlam', 'boss-bgCracks': 'boss-bgCracks',
+  'boss-bgGrab': 'boss-bgGrab', 'boss-bgPunch': 'boss-bgPunch', 'boss-bgToll': 'boss-bgToll', 'boss-bgCage': 'boss-bgCage', 'boss-bgCageLand': 'boss-bgCageLand', 'boss-bgArchers': 'boss-bgArchers',
+  'boss-bgFlySword': 'boss-bgFlySword', 'boss-bgSwordRain': 'boss-bgSwordRain', 'boss-bgNeedles': 'boss-bgNeedles', 'boss-bgLastToll': 'boss-bgLastToll',
+  'boss-bgResonance': 'boss-bgResonance',
+  'boss-bgOrder': 'boss-bgOrder', 'boss-bgForge': 'boss-bgForge', 'boss-bgClang': 'boss-bgClang', 'boss-bgCharge': 'boss-bgCharge', 'boss-bgCrack': 'boss-bgCrack',
+  'boss-bgCrescent': 'boss-bgSpin', 'boss-odChain': 'boss-odZap', 'boss-odFrostNova': 'boss-odIce', 'boss-odNovaRing': 'boss-odIce', 'boss-bgPendulum': 'boss-bgToll', 'boss-bgPendSwing': 'boss-bgPendSwing', 'boss-bgArcherIn': 'boss-bgArcherIn', 'boss-bgGrabHit': 'boss-bgGrabHit', 'boss-bgNeedleHit': 'boss-bgNeedleHit', 'boss-bgSwordHit': 'boss-bgSwordHit',
+  // Orden (orden-boss.js, 2026-11-19): borrowed from Tick·Tock's and Belgard's recipes until he has his own.
+  'boss-odNeedle': 'boss-bgNeedles', 'boss-odRune': 'boss-odRune', 'boss-odFence': 'boss-bgNeedles', 'boss-odOrbs': 'boss-bgResonance', 'boss-odOrbBack': 'boss-bgForge',
+  'boss-odLane_fire': 'boss-odFire', 'boss-odLane_ice': 'boss-odIce', 'boss-odLane_lightning': 'boss-odZap', 'boss-odLane_wind': 'boss-ttFlank',
+  'boss-odPress': 'boss-ttPincerClose', 'boss-odClones': 'boss-odBlink', 'boss-odClonePop': 'boss-odBlink', 'boss-odCollapse': 'boss-bgCracks', 'boss-odFall': 'boss-bgCrack',
+  'boss-odCannon': 'boss-odBeam', 'boss-odSigil': 'boss-ttTwist', 'boss-odSigilDone': 'boss-bgClang', 'boss-odLastHourStrike': 'boss-bgLastToll',
+  'boss-odStopCast': 'boss-bgOrder', 'boss-odStop': 'boss-odStop', 'boss-odResume': 'boss-odRewind', 'boss-odHeart': 'boss-odShatter', 'boss-odStopBreak': 'boss-odStop',
+  'boss-odFire': 'boss-odFire', 'boss-odZap': 'boss-odZap', 'boss-odIce': 'boss-odIce', 'boss-odBlink': 'boss-odBlink', 'boss-odBeam': 'boss-odBeam',
+  'boss-odFireSpread': 'boss-odFire', 'boss-odIceMirror': 'boss-odIce', 'boss-odVortex': 'boss-ttFlank', 'boss-odQuartet': 'boss-odRune', 'boss-odFan': 'boss-bgNeedles', 'boss-odCross': 'boss-odZap', 'boss-odLanes': 'boss-odRune'
+};
+/** Chapter 3's volumes, by recipe (measured on the preview page to sit with chapter 2's). */
+// Each recipe's loudest 300 ms matched to chapter 2's middle mob or boss sound (the beat's ticks at 0.3 of it, the twist,
+// a thrown gear and the blink-in at 0.6, a flank wall and a real order at 0.8: things that come often stay under the blows).
+// Orden's own (2026-11-21): set so each one's loudness (RMS over 2 s) matches the needles' and the ice pillar's.
+const CLOCK_VOL = { 'boss-odRune': 0.71, 'boss-odFire': 0.52, 'boss-odZap': 0.25, 'boss-odIce': 0.73, 'boss-odBlink': 1.8, 'boss-odStop': 0.2, 'boss-odRewind': 1.9, 'boss-odBeam': 0.22, 'boss-odShatter': 2.2, 'boss-bgArcherIn': 0.3, 'boss-bgGrabHit': 0.4, 'boss-bgNeedleHit': 0.9, 'boss-bgSwordHit': 1.1, 'secondHandKnight': 0.60533, 'bellTurret': 0.22368, 'signalOrb': 0.25917, 'hourglassShield': 0.12653, 'minuteArcher': 0.34595, 'pendulumGuard': 0.2163, 'gearRoller': 0.71632, 'twinHandCaptain': 0.44633, 'boss-ttBeatTick': 0.39767, 'boss-ttBeatTock': 0.52611, 'boss-ttThrust': 3.60923, 'boss-ttThrust3': 0.63347, 'boss-ttSweep': 1.29489, 'boss-ttDash': 1.14296, 'boss-ttPendulum': 0.24295, 'boss-ttShuffleBurst': 0.21567, 'boss-ttBladeSwing': 2.76178, 'boss-ttEchoBlow': 0.41917, 'boss-ttPincerClose': 0.30159, 'boss-ttBlinkIn': 1.08702, 'boss-ttTwist': 0.63618, 'boss-ttFlank': 0.88612, 'boss-ttGearThrow': 1.8673, 'boss-ttColourTick': 0.28154, 'boss-ttColourTock': 0.27024, 'boss-bgCombo': 3.11639, 'boss-bgCombo3': 0.18253, 'boss-bgSpin': 3.27605, 'boss-bgSlam': 0.156, 'boss-bgCracks': 0.27547, 'boss-bgGrab': 0.50319, 'boss-bgPunch': 0.34001, 'boss-bgToll': 0.24397, 'boss-bgCage': 0.17164, 'boss-bgPendSwing': 0.3, 'boss-bgCageLand': 0.14114, 'boss-bgArchers': 0.24231, 'boss-bgFlySword': 1.21021, 'boss-bgSwordRain': 2.68277, 'boss-bgNeedles': 1.06913, 'boss-bgLastToll': 0.24125, 'boss-bgResonance': 0.40295, 'boss-bgOrder': 0.49241, 'boss-bgForge': 0.51211, 'boss-bgClang': 0.32283, 'boss-bgCharge': 0.33112, 'boss-bgCrack': 0.66928 };
 /** Chapter 2 boss sound volumes, measured to sit with chapter 1's boss sounds (filled in below). */
 const VOL = { 'boss-irisLaser': 0.68831, 'boss-stampLand': 0.77992, 'boss-verdict': 0.34782, 'boss-tapeMeasure': 2.80783, 'boss-decoysAppear': 1.9873, 'boss-crossLaser': 0.7041, 'boss-gridBlow': 0.33249, 'boss-mirrorTurn': 2.53043, 'boss-mirrorLit': 0.63285, 'boss-plateDrop': 0.34283, 'boss-armSlam': 0.29117, 'boss-lineShift': 0.68925, 'boss-callGuards': 0.70859, 'boss-craneDrop': 0.42992, 'boss-twoRows': 0.42931, 'boss-wallSqueeze': 0.35822, 'boss-rhythmBeat': 0.5475, 'boss-twinSlam': 1.28921, 'boss-steamBurst': 0.51394, 'boss-finalAlarm': 0.56197, 'boss-finalPress': 0.56656, 'boss-moldOk': 0.53374, 'boss-moldNo': 0.61437 };
 /**
@@ -77,6 +105,28 @@ export const SFX = {
   magneticIceClamp: { synth: 'magneticIceClamp', volume: 0.2091 },
   frostCrosscut: { synth: 'frostCrosscut', volume: 1.60434 },
   stormFloat: { synth: 'stormFloat', volume: 0.77492 },
+  // Light and magnet (src/audio/light-magnet-sound.js, picked 2026-11-21 by earshot among two to four candidates each):
+  // white prism light as struck glass, bright air and glints; copper coils and scrap iron as a hum rung out of noise,
+  // iron chunks and plates. Each plays once at the cast and draws the fusion's whole action. Volumes match the other
+  // elements' skills and fusions (loudest 0.3 s through the game's bus: short skills, long skills, fusions).
+  prismBeam: { code: ['lm:prismBeam', 0], volume: 0.53065 },
+  flashBomb: { code: ['lm:flashBomb', 1], volume: 0.93189 },
+  scrapShot: { code: ['lm:scrapShot', 0], volume: 0.67473 },
+  magneticLift: { code: ['lm:magneticLift', 1], volume: 0.25983 },
+  noonMark: { code: ['lm:noonMark', 1], volume: 0.24122 },
+  frostPrism: { code: ['lm:frostPrism', 2], volume: 1.80048 },
+  refractBeam: { code: ['lm:refractBeam', 2], volume: 0.5518 },
+  lightDash: { code: ['lm:lightDash', 2], volume: 0.33335 },
+  lightConstellation: { code: ['lm:lightConstellation', 2], volume: 0.41023 },
+  // 소나기 무지개 (2026-11-21): fine rain on stone, then a clear chime as the sunlight strikes (matched to the fusions' loudness).
+  rainbowBridge: { code: ['lm:rainbowBridge', 4], volume: 0.30502 },
+  moltenBall: { code: ['lm:moltenBall', 0], volume: 0.18707 },
+  frostShards: { code: ['lm:frostShards', 1], volume: 1.09438 },
+  railCannon: { code: ['lm:railCannon', 0], volume: 0.17769 },
+  scrapSaw: { code: ['lm:scrapSaw', 0], volume: 0.38083 },
+  ironString: { code: ['lm:ironString', 2], volume: 0.13272 },
+  ferroVine: { code: ['lm:ferroVine', 0], volume: 0.89895 },
+  auroraRing: { code: ['lm:auroraRing', 0], volume: 0.91538 },
   // Ordinary enemies' attacks, by enemy type
   guard: { code: ['guard', 1], volume: 0.54877 },
   nutcracker: { code: ['nutcracker', 0], volume: 0.57407 },
@@ -97,6 +147,9 @@ export const SFX = {
   tapePacker: { code: ['redo:tapePacker', 0], volume: 0.26345 },
   oiler: { code: ['redo:oiler', 2], volume: 0.0895 },
   partsSupplier: { code: ['partsSupplier', 0], volume: MOB2_VOL.partsSupplier },
+  // Chapter 3's own (src/audio/clock-sound.js, 2026-11-19; borrowed from chapters 1 and 2 until then). CLOCK_VOL holds
+  // each one's volume, measured to sit with chapter 2's (art/chapters/3-clock-tower/sfx-preview).
+  ...Object.fromEntries(['secondHandKnight', 'bellTurret', 'signalOrb', 'hourglassShield', 'minuteArcher', 'pendulumGuard', 'gearRoller', 'twinHandCaptain'].map(name => [name, { code: [name, 0], volume: CLOCK_VOL[name] ?? 0.3 }])),
   // Progress and rewards
   portal: { synth: 'portal', volume: 0.50416 },
   cards: { code: ['cards', 0], volume: 1.19 },
@@ -114,6 +167,8 @@ export const SFX = {
   'boss-crane': { code: ['boss-crane', 0], volume: 0.26032 },
   'boss-fan': { code: ['boss-fan', 0], volume: 1.22724 },
   'boss-march': { code: ['boss-march', 0], volume: 0.65025 },
+  // Orden's golden march calls up Brass's own march (chapter 3, 2026-11-21): the same drum as each rank sets off.
+  'boss-odMarchStep': { code: ['boss-march', 0], volume: 0.65025 },
   'boss-stomp': { code: ['boss-stomp', 0], volume: 1.31877 },
   'boss-trumpetWave': { code: ['boss-trumpetWave', 1], volume: 0.39274 },
   'boss-charge': { code: ['boss-charge', 0], volume: 0.5736 },
@@ -134,6 +189,9 @@ export const SFX = {
   'boss-mirrorLit': { code: ['boss-mirrorLit', 0], volume: VOL['boss-mirrorLit'] },
   'boss-plateDrop': { code: ['boss-plateDrop', 0], volume: VOL['boss-plateDrop'] },
   'boss-armSlam': { code: ['boss-armSlam', 0], volume: VOL['boss-armSlam'] },
+  // Chapter 3's bosses, Tick·Tock and Belgard (src/audio/clock-sound.js, 2026-11-19): CLOCK_BOSS lists which recipe each
+  // boss-<id> plays (a few ids share one: the thrusts, the cuts), CLOCK_VOL its volume.
+  ...Object.fromEntries(Object.entries(CLOCK_BOSS).map(([name, take]) => [name, { code: [take, 0], volume: CLOCK_VOL[take] ?? 0.5 }])),
   'boss-lineShift': { code: ['redo:boss-lineShift', 0], volume: 0.34506 },
   'boss-callGuards': { code: ['boss-callGuards', 1], volume: VOL['boss-callGuards'] },
   'boss-craneDrop': { code: ['boss-craneGrab', 0], volume: VOL['boss-craneDrop'] },
@@ -187,6 +245,12 @@ function bodyCurve(peak) {
   return bodyCurves.get(peak);
 }
 
+/**
+ * The same sound again within SAME_GAP seconds is left out (2026-11-22, the user's word: Belgard's archers and sword
+ * rain together sounded piled up and swollen; archers loosing a frame or two apart rang their bowstring twice on top of
+ * itself, a doubled, metallic note). Menu sounds are left alone.
+ */
+const SAME_GAP = 0.06;
 export class SoundBank {
   constructor() { this.buffers = new Map(); this.loading = null; this.buses = new WeakMap(); }
   /** One room impulse and dynamics chain per audio context; recordings never enter it. */
@@ -243,11 +307,19 @@ export class SoundBank {
     voice.gate.gain.cancelScheduledValues(t); voice.gate.gain.setValueAtTime(1, t); voice.gate.gain.linearRampToValueAtTime(0, end);
     for (const source of voice.sources) { try { source.stop(end); } catch { /* Already ended. */ } }
   }
+  /** True when `name` started less than SAME_GAP seconds ago on this context (see SAME_GAP); else notes it as started now. */
+  again(audio, name) {
+    const now = audio.currentTime ?? 0, at = (this.startedAt ??= new Map()).get(name);
+    if (at !== undefined && now >= at && now - at < SAME_GAP) return true;
+    this.startedAt.set(name, now); return false;
+  }
   /** Plays a named effect. A preview recipe and volume can use the same bus and stop gate as the game. */
   play(audio, name, gainScale = 1, {
     recipe, volume, variation = REPEATED.has(name) || ((recipe || REMADE.has(name)) && MOB2_CANDIDATES[name]) ? 0.025 : 0
   } = {}) {
     const sound = SFX[name];
+    // (A preview, with its own recipe or volume, is heard as asked.)
+    if (!recipe && volume === undefined && !MENU.has(name) && (sound?.synth || sound?.code || sound?.file) && this.again(audio, name)) return true;
     if (recipe || sound?.synth || sound?.code) {
       const level = (volume ?? sound?.volume ?? 1) * gainScale;
       if (!Number.isFinite(Math.fround(level * 4))) return false;
@@ -255,7 +327,7 @@ export class SoundBank {
       out.gain.value = level;
       if (menu) out.connect(gate).connect(audio.destination);
       else {
-        const bus = this.bus(audio), alreadySoft = !!MOB2_CANDIDATES[name];
+        const bus = this.bus(audio), alreadySoft = !!MOB2_CANDIDATES[name] || !!(sound?.code && CLOCK_CANDIDATES[sound.code[0]]);
         let body = out;
         const softPeak = SOFT_BODY[name];
         if (softPeak) {

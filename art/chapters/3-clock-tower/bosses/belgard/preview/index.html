@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>벨가드 시안 · 태엽 밖으로</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<style>
+  @font-face { font-family: Galmuri11; src: url('../../../../../fonts/Galmuri11-sub-v1.woff2') format('woff2'); }
+  :root { --ink: #1f2433; --panel: #2b3345; --line: #11151f; --paper: #f6ecd2; --gold: #ffd34d; --dim: #aab3c8; --stage: #4a5266; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 14px/1.5 Galmuri11, "Malgun Gothic", sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 10px 16px; background: var(--panel); border-bottom: 2px solid var(--line); }
+  header h1 { font-size: 20px; margin: 0 12px 0 0; }
+  label { display: inline-flex; gap: 6px; align-items: center; color: var(--dim); }
+  select, button { font: inherit; color: var(--ink); background: var(--paper); border: 2px solid var(--line); padding: 2px 8px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--gold); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  main { max-width: 1240px; margin: 0 auto; padding: 16px; display: grid; gap: 18px; }
+  .note { color: var(--dim); margin: 0; }
+  .top { display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: var(--panel); border: 2px solid var(--line); padding: 14px 16px; }
+  .top img { width: 100%; image-rendering: pixelated; background: var(--stage); border: 2px solid var(--line); }
+  .top h2 { margin: 0 0 6px; color: var(--gold); font-size: 26px; line-height: 1.2; }
+  .rot { width: 100%; image-rendering: pixelated; background: var(--stage); border: 2px solid var(--line); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .use { color: var(--dim); margin: 6px 0 0; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .cell { background: var(--stage); border: 2px solid var(--line); position: relative; }
+  .cell canvas { display: block; width: 100%; image-rendering: pixelated; }
+  .cell span { position: absolute; left: 4px; top: 2px; font-size: 11px; color: var(--dim); text-shadow: 0 1px 0 #000; }
+  .cell b { position: absolute; right: 4px; top: 2px; font-size: 11px; font-weight: normal; color: var(--gold); text-shadow: 0 1px 0 #000; }
+  @media (max-width: 760px) { .top { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { header #pause { outline: 2px dashed var(--gold); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>3장 구역 보스 벨가드 시안</h1>
+  <label>보기 <select id="view">
+    <option value="clean">게임용 (이펙트 정리 후)</option>
+    <option value="raw">PixelLab 원본 (정리 전)</option>
+  </select></label>
+  <label>배경 <select id="stage">
+    <option value="#4a5266">회청</option>
+    <option value="#e9dcc4">대리석(밝음)</option>
+    <option value="#5b4a3a">청동 바닥</option>
+    <option value="#262b38">어두움</option>
+  </select></label>
+  <button id="pause" aria-pressed="false">멈춤</button>
+  <label><input type="checkbox" id="step"> 한 프레임씩(←→)</label>
+</header>
+<main>
+  <section class="top">
+    <img src="../front/b-shoulder-sword-v1.png" alt="벨가드 정면 시안 B (대검을 어깨에 멤)">
+    <div>
+      <h2>종루수호자 벨가드 · 대검의 충신</h2>
+      <p class="note">말없는 오르덴의 충신. 정면 시안 B로 만든 8방향 캐릭터와 동작 7개(PixelLab). 게임용은 PixelLab이 그린 폭발·궤적·불티·돌가루·바닥 금을 지운 그림이고, 칼에 붙어 지울 수 없던 프레임은 뺐습니다(칸 오른쪽 위에 뺀 프레임 번호). 충격·궤적은 게임이 따로 그립니다. 게임용은 실제 프레임 시간대로, 원본은 초당 10프레임으로 재생합니다.</p>
+      <p class="note" style="margin-top:8px">8방향 (남 · 남동 · 동 · 북동 · 북 · 북서 · 서 · 남서)</p>
+      <div class="tabs" id="tabs" style="margin-top:8px"></div>
+      <p class="use" id="use"></p>
+    </div>
+  </section>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const DIRS = ['south', 'south-east', 'east', 'north-east', 'north', 'north-west', 'west', 'south-west'];
+const DIR_KO = { south: '남(정면)', 'south-east': '남동', east: '동', 'north-east': '북동', north: '북(뒤)', 'north-west': '북서', west: '서', 'south-west': '남서' };
+const grid = document.getElementById('grid'), tabs = document.getElementById('tabs');
+let data, action, players = [], paused = matchMedia('(prefers-reduced-motion: reduce)').matches, images = {};
+const image = file => images[file] ??= Object.assign(new Image(), { src: file });
+
+function show(next) {
+  action = next;
+  for (const b of tabs.querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.key === action.key);
+  document.getElementById('use').textContent = '쓰는 곳: ' + action.use;
+  const view = document.getElementById('view').value, sheet = action[view], img = image(sheet.file);
+  grid.innerHTML = ''; players = [];
+  DIRS.forEach((dir, row) => {
+    const cell = document.createElement('div'); cell.className = 'cell';
+    const canvas = Object.assign(document.createElement('canvas'), { width: sheet.cell, height: sheet.cell });
+    const dropped = view === 'clean' && action.dropped?.[dir];
+    cell.append(canvas);
+    cell.insertAdjacentHTML('beforeend', `<span>${DIR_KO[dir]} · ${sheet.frames[dir]}프레임</span>${dropped ? `<b>뺀 프레임 ${dropped.join('·')}</b>` : ''}`);
+    grid.append(cell);
+    players.push({ canvas, img, row, count: sheet.frames[dir], cell: sheet.cell, durations: view === 'clean' ? sheet.durations[dir] : null, frame: 0, next: 0 });
+  });
+  img.onload = () => draw(true);
+  draw(true);
+}
+function draw(force) {
+  for (const p of players) {
+    if (!p.img.complete) continue;
+    const c = p.canvas.getContext('2d');
+    c.imageSmoothingEnabled = false; c.clearRect(0, 0, p.cell, p.cell);
+    c.drawImage(p.img, p.frame * p.cell, p.row * p.cell, p.cell, p.cell, 0, 0, p.cell, p.cell);
+  }
+}
+function tick(now) {
+  if (!paused && !document.getElementById('step').checked) {
+    let moved = false;
+    for (const p of players) {
+      if (now < p.next) continue;
+      p.frame = (p.frame + 1) % p.count;
+      // A one-shot blow rests a moment on its last frame before it starts again.
+      const ms = p.durations ? (p.frame === 0 ? 500 : p.durations[p.frame]) : 100;
+      p.next = now + ms; moved = true;
+    }
+    if (moved) draw();
+  }
+  requestAnimationFrame(tick);
+}
+const step = delta => { for (const p of players) p.frame = (p.frame + delta + p.count) % p.count; draw(); };
+document.getElementById('view').onchange = () => show(action);
+document.getElementById('stage').onchange = e => document.documentElement.style.setProperty('--stage', e.target.value);
+const pause = document.getElementById('pause');
+const setPause = v => { paused = v; pause.setAttribute('aria-pressed', paused); pause.textContent = paused ? '재생' : '멈춤'; };
+pause.onclick = () => setPause(!paused); setPause(paused);
+addEventListener('keydown', e => { if (!document.getElementById('step').checked) return; if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); });
+fetch('data.json').then(r => r.json()).then(d => {
+  data = d;
+  for (const a of data.actions) {
+    const b = Object.assign(document.createElement('button'), { textContent: a.name }); b.dataset.key = a.key; b.onclick = () => show(a); tabs.append(b);
+  }
+  show(data.actions[0]); requestAnimationFrame(tick);
+});
+</script>
+</body>
+</html>

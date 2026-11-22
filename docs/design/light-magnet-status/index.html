@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>빛·자력 지금 상태</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a workbench check sheet; plain, practical, a little warm, for deciding what to redraw.
+   IDEA: Moru's parts tray: each effect sits in its own slot with a tag saying how it is drawn now.
+   PICTURE: the 21 new PixelLab icons laid out on a brass tray, then every effect caught in the game.
+   COLOUR and TYPE: the game's own cream paper, navy ink and brass; floor brick behind sprites. Do Hyeon titles, Noto Sans KR text.
+   LAYOUT: one column on a phone; icon tray, filter, effect slots, a pinned pick bar with Copy. */
+:root{color-scheme:light dark;--bg:light-dark(#f4ead3,#1c1f2b);--paper:light-dark(#fffaf0,#262a39);--ink:light-dark(#2b3345,#eee6d2);--dim:light-dark(#5e6476,#a9aec0);--line:light-dark(#dccba4,#3a4058);--brass:light-dark(#9a6a24,#e2b45a);--brassbg:light-dark(#d9a441,#b98a35);--floor:#a8705f;--code:light-dark(#3f6f8f,#8fc0e0);--fx:light-dark(#8a4fa0,#d6a2ea);--pick:light-dark(#2f7a4d,#7fd39e)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip;padding-bottom:96px}
+.band{padding:clamp(22px,4vw,48px) max(5vw,16px);max-width:1240px;margin:auto}
+h1,h2,h3{font-family:"Do Hyeon","Noto Sans KR",sans-serif;font-weight:400;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,6vw,48px)}h2{font-size:28px;margin-bottom:6px}h3{font-size:22px}
+p{margin:6px 0 0;max-width:68ch}.dim{color:var(--dim)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.facts div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.facts b{display:block;font-family:"Do Hyeon",sans-serif;font-size:26px;font-weight:400;color:var(--brass)}
+.facts span{font-size:14px;color:var(--dim)}
+.tray{margin-top:18px;background:linear-gradient(var(--brassbg),color-mix(in srgb,var(--brassbg) 70%,#000));border-radius:14px;padding:12px;box-shadow:inset 0 2px 0 #ffffff55,0 3px 0 #00000033}
+.tray .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.tray figure{margin:0;background:#2b3345;border-radius:8px;padding:6px 2px 4px;text-align:center}
+.tray img{width:48px;height:48px;image-rendering:pixelated;display:block;margin:auto}
+.tray figcaption{color:#e9e1cc;font-size:13px;line-height:1.25;margin-top:3px;word-break:keep-all}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+button{font:inherit;color:inherit;cursor:pointer}
+.chip{min-height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--line);background:var(--paper)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px;margin-top:10px}
+.slot{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.slot.on{border-color:var(--pick);box-shadow:0 0 0 2px var(--pick)}
+.slot header{display:flex;gap:10px;align-items:center;padding:10px 12px}
+.slot header img{width:40px;height:40px;image-rendering:pixelated;flex:none}
+.pair{font-size:14px;color:var(--dim)}
+.shot{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:var(--floor)}
+.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:13px;padding:2px 9px;border-radius:10px;border:1px solid currentColor}
+.tag.fx{color:var(--fx)}.tag.code{color:var(--code)}.tag.pl{color:var(--pick);font-weight:600}
+.slot[data-kind=pl] header{background:color-mix(in srgb,var(--pick) 14%,transparent)}
+.sheets{display:flex;flex-wrap:wrap;gap:8px}
+.sheets figure{margin:0;background:var(--floor);border-radius:8px;padding:4px;text-align:center}
+.sheets canvas{display:block;image-rendering:pixelated;margin:auto}
+.sheets figcaption{font-size:13px;color:#fff3dc;line-height:1.3}
+.note{font-size:14px;color:var(--dim);margin:0}
+.cost{font-size:14px}
+.cost b{color:var(--brass)}
+.toggle{margin-top:auto;min-height:44px;border-radius:10px;border:1px solid var(--line);background:transparent}
+.slot.on .toggle{background:var(--pick);border-color:var(--pick);color:var(--paper)}
+.left{display:grid;gap:10px;margin-top:10px}
+.left div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);padding:10px max(5vw,16px) calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;z-index:9}
+.bar p{margin:0;flex:1 1 0;font-size:14px;line-height:1.35;max-width:none}
+.bar button{flex:none;min-height:44px;padding:0 12px;border-radius:10px;border:0;background:var(--brassbg);color:#2b3345;font-weight:600}
+.bar button.ghost{background:transparent;color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 50%,transparent)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--paper);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+textarea{width:100%;font:14px/1.5 "Noto Sans KR",sans-serif;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:8px;min-height:90px}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<section class="band">
+  <h1>빛·자력, 지금 이렇게 보여요</h1>
+  <p class="dim">2026-11-21 개발 서버의 연습장에서 찍은 실제 게임 화면과 지금 쓰는 그림 시트입니다. 고르신 11개는 <b>PixelLab 그림으로 바꿨어요</b>(초록 표시). 더 바꾸거나 다시 그리고 싶은 것이 있으면 골라서 <b>목록 복사</b>로 보내 주세요.</p>
+  <div class="facts">
+    <div><b>21 / 21</b><span>아이콘 PixelLab 완료</span></div>
+    <div><b>17개</b><span>새 융합·기술 모두 PixelLab (시트 30장)</span></div>
+    <div><b>3장</b><span>남은 pixelfx (굳힘·울림·빗줄기)</span></div>
+    <div><b>200회</b><span>이펙트에 쓴 PixelLab (남은 523회)</span></div>
+  </div>
+  <div class="tray" aria-label="새 아이콘 21개"><div class="grid" id="tray"></div></div>
+</section>
+
+<section class="band" style="padding-top:0">
+  <h2>이펙트 17개 + 굳힘</h2>
+  <p class="dim">사진은 게임 안의 한 순간이고, 갈색 칸의 움직이는 그림은 지금 쓰는 시트(게임 바닥색 위, 2배)입니다. 빛줄기·쇠줄·빛 띠는 한 토막 그림을 선 길이만큼 늘여 그립니다. 비용은 어림입니다.</p>
+  <div class="chips" role="group" aria-label="그리는 방식으로 거르기">
+    <button class="chip" data-f="all" aria-pressed="true">전체</button>
+    <button class="chip" data-f="pl" aria-pressed="false">PixelLab으로 바꿈</button>
+    <button class="chip" data-f="fx" aria-pressed="false">그대로 둔 것</button>
+    <button class="chip" data-f="on" aria-pressed="false">고른 것</button>
+  </div>
+  <div class="slots" id="slots"></div>
+</section>
+
+<section class="band" style="padding-top:0">
+  <h2>그 밖에 남은 것</h2>
+  <div class="left">
+    <div><h3>효과음</h3><p class="note">17개 모두 빛·자력 전용 소리를 코드로 새로 만들었습니다(<code>src/audio/light-magnet-sound.js</code>, 후보 50개 중 earshot 측정으로 고름, 음량은 다른 속성의 기술·융합에 맞춤). 아직 사람이 직접 들어 보지는 않았어요. 섬광탄·서리 쇳조각·굴절 광선·프리즘 광선은 측정상 덜 또렷하고, 공명 별자리는 실로폰처럼 들릴 수 있어요.</p></div>
+    <div><h3>F2 시전 동작</h3><p class="note">공용 시전 동작(앞으로 쏘기·바닥에 놓기·몸 주위 폭발)을 씁니다. 새 그림이 필요 없습니다.</p></div>
+    <div><h3>열리는 시점</h3><p class="note">2장을 깬 뒤 모루 선반에 나오지만, 지금은 개발 서버에서만 보입니다. 이펙트를 확정하면 배포판에 엽니다.</p></div>
+  </div>
+</section>
+
+<div class="bar" role="region" aria-label="고른 것">
+  <p id="sum">아직 고른 이펙트가 없어요.</p>
+  <button class="ghost" id="clear" type="button">비우기</button>
+  <button id="copy" type="button">목록 복사</button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+const SHEETS = {
+  // pixelfx (still in use)
+  lmPillar: ['lm-noon-pillar-pl-v1', 40, 94, 1, 1, 1, '햇빛 기둥'], lmSunBurst: ['lm-noon-burst-pl-v1', 128, 128, 4, 13, 26, '해 폭발'], lmMoltenBurst: ['lm-molten-burst-pl-v1', 128, 128, 4, 13, 26, '쇳물 폭발'], lmIceBeam: ['lm-ice-beam-pl-v1', 128, 32, 1, 1, 1, '얼음 광선 (늘여 씀)'], lmFerroTrail: ['lm-ferro-trail-pl-v1', 128, 32, 1, 1, 1, '기어가는 자국 (늘여 씀)'], lmFerroPool: ['lm-ferro-pool-pl-v1', 40, 19, 1, 1, 1, '검은 웅덩이'],
+  lmIronSet: ['lm-iron-set-v1', 64, 56, 4, 16, 30, '굳힘'], lmCurtain: ['lm-aurora-curtain-pl-v1', 46, 99, 4, 9, 18, '오로라 커튼'], lmSun: ['lm-noon-sun-pl-v1', 30, 28, 4, 8, 16, '작은 해'],
+  lmHalo: ['lm-aurora-halo-pl-v1', 41, 43, 4, 8, 12, '머리 위 오로라 고리'], lmPluck: ['lm-pluck-v1', 48, 48, 4, 12, 30, '놋쇠 울림'], lmRain: ['lm-rain-v1', 80, 76, 4, 16, 20, '소나기'], lmSpikes: ['lm-ferro-spikes-pl-v1', 51, 47, 4, 8, 16, '자성 유체 가시'], lmPrism: ['lm-ice-prism-pl-v1', 19, 33, 1, 1, 1, '얼음 프리즘'],
+  // PixelLab (2026-11-21)
+  lmBeamLight: ['lm-beam-light-pl-v1', 128, 32, 4, 4, 12, '빛줄기 (늘여 씀)'], lmBeamRefract: ['lm-beam-refract-pl-v1', 128, 32, 4, 8, 14, '번개 빛줄기 (늘여 씀)'], lmCable: ['lm-cable-pl-v1', 128, 32, 1, 1, 1, '꼰 강철 케이블 (늘여 씀)'], lmPost: ['lm-post-pl-v1', 20, 38, 1, 1, 1, '구리 기둥'],
+  lmRailBeam: ['lm-rail-beam-pl-v1', 128, 32, 4, 8, 16, '레일 탄 (늘여 씀)'], lmDashBand: ['lm-dash-band-pl-v1', 128, 32, 4, 5, 10, '빛 띠 (늘여 씀)'],
+  lmFlashBurst: ['lm-flash-pl-v1', 128, 128, 4, 13, 26, '섬광 폭발'], lmSlam: ['lm-slam-pl-v1', 128, 128, 4, 7, 18, '내리꽂기'], lmLiftHeap: ['lm-lift-heap-pl-v1', 86, 58, 4, 8, 8, '떠오른 고철'],
+  lmCoil: ['lm-coil-pl-v1', 56, 33, 4, 8, 14, '충전 코일'], lmStar: ['lm-star-pl-v1', 31, 32, 4, 8, 10, '별'], lmCan: ['lm-can-pl-v1', 16, 24, 2, 2, 3, '섬광 깡통'],
+  lmScrap: ['lm-scrap-pl-v1', 22, 12, 1, 1, 1, '쇳조각 (돌려 씀)'], lmIceShard: ['lm-ice-shard-pl-v1', 22, 15, 1, 1, 1, '얼음 쇳조각 (돌려 씀)'], lmSaw: ['lm-saw-pl-v1', 42, 45, 1, 1, 1, '톱날 (돌려 씀)'],
+  lmClamp: ['lm-clamp-pl-v1', 28, 23, 1, 1, 1, '구리 고정쇠'], lmBall: ['lm-ball-pl-v1', 31, 36, 4, 8, 14, '쇳물 공 (구름)'], lmCloud: ['lm-cloud-pl-v1', 49, 47, 4, 8, 8, '비구름'], lmArch: ['lm-arch-pl-v1', 77, 37, 1, 1, 1, '무지개']
+};
+const PL = new Set(['lmBeamLight', 'lmBeamRefract', 'lmRailBeam', 'lmDashBand', 'lmCable', 'lmPost', 'lmFlashBurst', 'lmSlam', 'lmLiftHeap', 'lmCoil', 'lmStar', 'lmCan', 'lmScrap', 'lmIceShard', 'lmSaw', 'lmClamp', 'lmBall', 'lmCloud', 'lmArch', 'lmSun', 'lmPillar', 'lmSunBurst', 'lmMoltenBurst', 'lmIceBeam', 'lmFerroTrail', 'lmFerroPool', 'lmCurtain', 'lmSpikes', 'lmPrism', 'lmHalo']);
+// id, name, pair, sheets, what is still drawn in code, cost of (re)drawing with PixelLab, note
+const ITEMS = [
+  ['prismBeam', '프리즘 광선', '빛 기술', ['lmBeamLight'], '', 8, 'PixelLab으로 바꿨어요. 이제 F2의 손에서 나가요. 분광(카드)의 갈래도 같은 그림이에요.'],
+  ['flashBomb', '섬광탄', '빛 기술', ['lmCan', 'lmFlashBurst'], '바닥 범위 원', 10, 'PixelLab으로 바꿨어요. 깡통은 날아가며 돌고, 바닥에서 깜빡여요.'],
+  ['scrapShot', '고철 산탄', '자력 기술', ['lmScrap'], '', 6, 'PixelLab으로 바꿨어요. 자석 회수(카드)로 돌아오는 조각도 같은 그림이에요.'],
+  ['magneticLift', '끌어올리기', '자력 기술', ['lmLiftHeap', 'lmSlam'], '바닥 자기장 원', 10, 'PixelLab으로 바꿨어요.'],
+  ['noonMark', '한낮 표적', '빛 + 불', ['lmSun', 'lmPillar', 'lmSunBurst'], '바닥 열 원', 15, '작은 해·햇빛 기둥·해 폭발을 PixelLab으로 다시 그렸어요(맵 화풍).'],
+  ['frostPrism', '서리 프리즘', '빛 + 얼음', ['lmPrism', 'lmIceBeam'], '', 10, '프리즘과 얼음 광선을 PixelLab으로 다시 그렸어요.'],
+  ['refractBeam', '굴절 광선', '빛 + 전기', ['lmBeamRefract', 'lmStar'], '', 8, 'F2의 손에서 나가고 손과 맞는 자리에 빛이 맺혀요. 꺾인 빛은 이제 셋까지 가요.'],
+  ['lightDash', '빛살 질주', '빛 + 바람', ['lmDashBand'], '', 8, 'PixelLab으로 바꿨어요. 질주 거리 4 → 5.5칸. 바닥에 남는 띠와 터질 때 같은 그림이에요.'],
+  ['lightConstellation', '공명 별자리', '빛 + 소리', ['lmStar', 'lmBeamLight'], '', 8, 'PixelLab으로 바꿨어요. 별 사이 줄은 프리즘 광선 그림을 가늘게 씁니다.'],
+  ['rainbowBridge', '소나기 무지개', '빛 + 물', ['lmCloud', 'lmRain', 'lmArch'], '젖은 바닥', 10, '무지개 다리를 바꿨어요. 노린 곳에 비구름이 2초 소나기를 뿌리고, 비가 그치면 무지개가 뜨며 햇빛이 내리꽂혀요(조준해 놓는 범위형).'],
+  ['moltenBall', '쇳물 공', '자력 + 불', ['lmBall', 'lmMoltenBurst'], '', 6, '공과 쇳물 폭발을 PixelLab으로 다시 그렸어요. 적 무리를 지지며 뚫고 굴러가다 마지막 적에서 터져요.'],
+  ['frostShards', '서리 쇳조각', '자력 + 얼음', ['lmIceShard'], '도는 길', 6, '고리가 넓어지고(2.4), F2 뒤쪽 조각은 F2 뒤에 그려 몸을 두른 것처럼 보여요. 꽂히면 작게 터져요.'],
+  ['railCannon', '전자 레일포', '자력 + 전기', ['lmCoil', 'lmRailBeam'], '총구 빛', 10, 'PixelLab으로 바꿨어요.'],
+  ['scrapSaw', '고철 회전톱', '자력 + 바람', ['lmSaw'], '바닥 회전 원', 6, 'PixelLab으로 바꿨어요.'],
+  ['ironString', '울리는 쇠줄', '자력 + 소리', ['lmPost', 'lmCable', 'lmClamp', 'lmPluck'], '처짐·떨림·바닥 그림자', 10, '맵의 밧줄 울타리처럼 구리 기둥 사이에 꼰 강철 케이블을 걸었어요(살짝 처지고 바닥에 그림자). 퉁길 때 놋쇠 울림(pixelfx)이 나가요. 적을 붙잡으면 그쪽 끝은 고정쇠예요.'],
+  ['ferroVine', '자성 유체 덩굴', '자력 + 물', ['lmFerroTrail', 'lmFerroPool', 'lmSpikes'], '', 10, '기어가는 자국·웅덩이·가시를 PixelLab으로 다시 그렸어요. 가시는 찌를 때마다 가라앉았다 솟아요.'],
+  ['auroraRing', '북극광 고리', '빛 + 자력', ['lmHalo', 'lmCurtain'], '', 10, '머리 위 고리와 오로라 커튼을 PixelLab으로 다시 그렸어요.'],
+  ['ironSet', '쇳가루 굳힘', '상태', ['lmIronSet'], '', 8]
+];
+const ICONS = [['el-light', '빛'], ['el-magnet', '자력'], ['st-reveal', '드러냄'], ['st-ironDust', '쇳가루'], ...ITEMS.filter(i => i[0] !== 'ironSet').map(i => [i[0], i[1]])];
+const $ = id => document.getElementById(id);
+$('tray').innerHTML = ICONS.map(([f, n]) => `<figure><img src="icons/${f}.png" alt="" width="48" height="48"><figcaption>${n}</figcaption></figure>`).join('');
+
+let picked = new Set();
+try { picked = new Set(JSON.parse(localStorage.getItem('lm-picks') || '[]')); } catch {}
+const save = () => { try { localStorage.setItem('lm-picks', JSON.stringify([...picked])); } catch {} };
+
+$('slots').innerHTML = ITEMS.map(([id, name, pair, sheets, code, cost, note]) => {
+  const pl = sheets.filter(n => PL.has(n)).length, fx = sheets.length - pl;
+  const tags = (pl ? `<span class="tag pl">PixelLab ${pl}장</span>` : '') + (fx ? `<span class="tag fx">pixelfx ${fx}장</span>` : '') + (code ? `<span class="tag code">코드: ${code}</span>` : '');
+  const shot = id === 'ironSet' ? '' : `<img class="shot" src="shots/${id}.webp" alt="${name} 게임 화면" loading="lazy" width="480" height="320">`;
+  const icon = id === 'ironSet' ? 'st-ironDust' : id;
+  const figs = sheets.map(s => `<figure><canvas data-s="${s}"></canvas><figcaption>${SHEETS[s][6]}</figcaption></figure>`).join('');
+  return `<article class="slot" data-id="${id}" data-kind="${pl ? 'pl' : 'fx'}">
+    <header><img src="icons/${icon}.png" alt=""><div><h3>${name}</h3><div class="pair">${pair}</div></div></header>${shot}
+    <div class="body"><div class="tags">${tags}</div>${figs ? `<div class="sheets">${figs}</div>` : ''}
+    ${note ? `<p class="note">${note}</p>` : ''}<div class="cost">${pl ? '다시 그리면' : 'PixelLab으로 바꾸면'} 약 <b>${cost}회</b></div>
+    <button class="toggle" type="button" aria-pressed="false">PixelLab으로 바꾸고 싶어요</button></div></article>`;
+}).join('');
+
+const sync = () => {
+  let n = 0, cost = 0;
+  for (const el of document.querySelectorAll('.slot')) {
+    const on = picked.has(el.dataset.id), item = ITEMS.find(i => i[0] === el.dataset.id);
+    el.classList.toggle('on', on); const b = el.querySelector('.toggle'); b.setAttribute('aria-pressed', on); b.textContent = on ? '골랐어요 (다시 누르면 빼기)' : (el.dataset.kind === 'pl' ? 'PixelLab으로 다시 그리고 싶어요' : 'PixelLab으로 바꾸고 싶어요');
+    if (on) { n++; cost += item[5]; }
+  }
+  $('sum').textContent = n ? `${n}개 골랐어요 · 약 ${cost}회 (남은 723회)` : '아직 고른 이펙트가 없어요.';
+  applyFilter();
+};
+let filter = 'all';
+const applyFilter = () => { for (const el of document.querySelectorAll('.slot')) el.hidden = !(filter === 'all' || (filter === 'on' ? el.classList.contains('on') : el.dataset.kind === filter)); };
+document.querySelector('.chips').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return; filter = b.dataset.f;
+  for (const c of document.querySelectorAll('.chip')) c.setAttribute('aria-pressed', c === b); applyFilter();
+});
+$('slots').addEventListener('click', e => {
+  const b = e.target.closest('.toggle'); if (!b) return; const id = b.closest('.slot').dataset.id;
+  picked.has(id) ? picked.delete(id) : picked.add(id); save(); sync();
+});
+const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 1800); };
+$('clear').addEventListener('click', () => { picked.clear(); save(); sync(); });
+$('copy').addEventListener('click', async () => {
+  const list = ITEMS.filter(i => picked.has(i[0]));
+  const text = list.length ? `PixelLab으로 (다시) 그릴 이펙트: ${list.map(i => `${i[1]}(${i[0]})`).join(', ')} · 약 ${list.reduce((a, i) => a + i[5], 0)}회` : '빛·자력 이펙트는 지금 그대로 둘게요.';
+  try { await navigator.clipboard.writeText(text); toast('복사했어요. 대화창에 붙여 넣어 주세요.'); }
+  catch { const box = document.createElement('textarea'); box.value = text; $('copy').closest('.bar').after(box); box.style.cssText = 'position:fixed;left:16px;right:16px;bottom:96px;width:auto;z-index:11'; box.select(); toast('길게 눌러 복사해 주세요.'); setTimeout(() => box.remove(), 15000); }
+});
+sync();
+
+// The sheets play at their own rate on the game's floor colour, twice their size (smaller where the card is narrow).
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const players = [...document.querySelectorAll('canvas[data-s]')].map(cv => {
+  const [file, w, h, cols, frames, fps] = SHEETS[cv.dataset.s];
+  const k = w * 2 > 200 ? 200 / w : h <= 16 ? 4 : 2; cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  const img = new Image(); img.src = `sheets/${file}.png`;
+  const ctx = cv.getContext('2d'); ctx.imageSmoothingEnabled = false;
+  return { cv, ctx, img, w, h, cols, frames, fps, k };
+});
+const start = performance.now();
+const tick = now => {
+  const t = (now - start) / 1000;
+  for (const p of players) {
+    if (!p.img.complete) continue;
+    const cycle = p.frames / p.fps + 0.4, f = reduce ? Math.floor(p.frames / 2) : Math.min(p.frames - 1, Math.floor((t % cycle) * p.fps));
+    p.ctx.clearRect(0, 0, p.cv.width, p.cv.height); p.ctx.imageSmoothingEnabled = false;
+    p.ctx.drawImage(p.img, (f % p.cols) * p.w, Math.floor(f / p.cols) * p.h, p.w, p.h, 0, 0, p.w * p.k, p.h * p.k);
+  }
+  if (!reduce) requestAnimationFrame(tick);
+};
+requestAnimationFrame(tick);
+}
+</script>
+</body>
+</html>

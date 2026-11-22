@@ -14,7 +14,8 @@ export function restoreOptions(data) {
     ranksPerChapter: data.slice.statChapters.ranksPerChapter,
     stats: data.slice.permanentStats.map(s => ({ id: s.id, name: s.name, maxRank: s.maxRank })),
     elements: data.slice.elements.map(id => ({ id, name: data.combat.elements.find(e => e.id === id)?.name || id })),
-    chapters: chapterList(data.slice).map(c => ({ id: c.id, number: c.number || 1, name: c.name,
+    // A chapter still being made (preview) is not in the published game, so no save is rebuilt with it.
+    chapters: chapterList(data.slice).filter(c => !c.preview).map(c => ({ id: c.id, number: c.number || 1, name: c.name,
       bosses: [...new Set(chapterRooms(data.slice, c.id).filter(r => r.boss).map(r => r.boss))].map(id => ({ id, name: names[id] || id })) }))
   };
 }

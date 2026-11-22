@@ -1,0 +1,237 @@
+{
+ "frames": [
+  {
+   "filename": "bg-wave-crest 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 1",
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 2",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 3",
+   "frame": {
+    "x": 0,
+    "y": 56,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 4",
+   "frame": {
+    "x": 72,
+    "y": 56,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 5",
+   "frame": {
+    "x": 144,
+    "y": 56,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 6",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 7",
+   "frame": {
+    "x": 72,
+    "y": 112,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-wave-crest 8",
+   "frame": {
+    "x": 144,
+    "y": 112,
+    "w": 72,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 56
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-wave-crest.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 216,
+   "h": 168
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-wave-crest",
+    "from": 0,
+    "to": 8,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-wave-crest",
+   "name": "Blade wave crest",
+   "fps": 30,
+   "loop": true,
+   "frames": 9,
+   "frameSize": [
+    72,
+    56
+   ],
+   "pivot": [
+    52,
+    28
+   ],
+   "columns": 3
+  }
+ }
+}

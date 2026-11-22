@@ -5,7 +5,7 @@ import { imageSize } from './image-size.js';
 import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { CanvasRenderer, hitSquash } from '../src/render/canvas.js';
-import { MobAnimator } from '../src/animation/mob-animator.js';
+import { MobAnimator, viewOf } from '../src/animation/mob-animator.js';
 import { SpriteLibrary, frameAtProgress } from '../src/animation/sprite-library.js';
 
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
@@ -139,3 +139,46 @@ test('a struck mob squashes wide and low, stretches a little, and is back in sha
   assert.ok(hitSquash(0.14)[1] > 1 && hitSquash(0.14)[1] < 1.04);
   assert.equal(hitSquash(0.15), null);
 });
+
+test('a body whose sheet changes mid-blow drops a pose the new sheet lacks instead of failing', () => {
+  const { g, enemy } = battle(), a = new MobAnimator(library);
+  g.beginEnemyTell(enemy, 'melee'); tick(a, g);
+  g.s.time = enemy.tell.until; g.executeEnemy(enemy);
+  // Belgard puts his sword away while his command pose still plays (bell-boss.js bareUntil): here, a sheet with no clips.
+  enemy.sprite = 'no-such-sheet';
+  assert.doesNotThrow(() => tick(a, g));
+});
+
+test('the gear roller shows the clip whose wheel lies along its way (its sheets are drawn a quarter-turn off)', () => {
+  const roller = { type: 'gearRoller' };
+  // Heading east or west the wheel is seen side-on: the south clip. Heading toward or away from the camera, edge-on.
+  assert.equal(viewOf(roller, 'east'), 'south');
+  assert.equal(viewOf(roller, 'west'), 'south');
+  assert.equal(viewOf(roller, 'south'), 'east');
+  assert.equal(viewOf(roller, 'north'), 'east');
+  assert.equal(viewOf(roller, 'south-east'), 'south-west');
+  assert.equal(viewOf(roller, 'north-east'), 'south-east');
+  // Every other body keeps its own direction.
+  assert.equal(viewOf({ type: 'guard' }, 'east'), 'east');
+});
+
+test('a body timed to its warnings (Belgard) lands its strike frame as the warning ends and swings again for each cut', () => {
+  const swing = { frameCount: 7, frameDurationsMs: [113, 112, 113, 112, 183, 184, 183], durationMs: 1000, lastEventMs: 450, loop: false };
+  const library = { clip: name => (name.startsWith('belgard-') ? swing : null) };
+  const a = new MobAnimator(library), g = { s: { paused: false, time: 10, enemies: [] } };
+  const belgard = { id: 'bg', type: 'bellguard', sprite: 'belgard', hp: 100, x: 5, y: 5, facing: 0, speed: 1.5, syncStrike: true, tellPose: 'swing' };
+  g.s.enemies.push(belgard);
+  const at = seconds => { g.s.time = seconds; return a.update(1 / 60, g).get('bg'); };
+  // The first cut: a 0.75 s warning; the clip strikes at 450 ms, so it is stretched to strike at 0.75 s.
+  belgard.tell = { type: 'bgCombo', started: 10, until: 10.75 };
+  at(10);
+  assert.equal(at(10.75 - 1e-6).frame, frameAtProgress(swing, (450 - 0.01) / 1000));
+  assert.equal(at(10.75).frame, frameAtProgress(swing, 450 / 1000), 'the strike frame where the warning ends');
+  // The second cut, 0.45 s on, while the first clip has not finished: it starts its own swing.
+  belgard.tell = { type: 'bgCombo2', started: 10.8, until: 11.25 };
+  const second = at(10.8);
+  assert.equal(second.action, 'belgard-swing');
+  assert.equal(second.frame, 0, 'a new swing from its first frame');
+  assert.equal(at(11.25).frame, frameAtProgress(swing, 450 / 1000), 'and its strike lands with the second cut');
+});
+

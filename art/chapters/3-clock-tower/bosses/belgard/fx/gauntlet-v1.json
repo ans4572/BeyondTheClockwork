@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "bg-gauntlet 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 1",
+   "frame": {
+    "x": 80,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 2",
+   "frame": {
+    "x": 160,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 3",
+   "frame": {
+    "x": 0,
+    "y": 56,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 4",
+   "frame": {
+    "x": 80,
+    "y": 56,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 5",
+   "frame": {
+    "x": 160,
+    "y": 56,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 6",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 7",
+   "frame": {
+    "x": 80,
+    "y": 112,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 8",
+   "frame": {
+    "x": 160,
+    "y": 112,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 9",
+   "frame": {
+    "x": 0,
+    "y": 168,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 10",
+   "frame": {
+    "x": 80,
+    "y": 168,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-gauntlet 11",
+   "frame": {
+    "x": 160,
+    "y": 168,
+    "w": 80,
+    "h": 56
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 56
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 56
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-gauntlet.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 240,
+   "h": 224
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-gauntlet",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-gauntlet",
+   "name": "Bronze gauntlet grab",
+   "fps": 30,
+   "loop": false,
+   "frames": 12,
+   "frameSize": [
+    80,
+    56
+   ],
+   "pivot": [
+    44,
+    28
+   ],
+   "columns": 3
+  }
+ }
+}

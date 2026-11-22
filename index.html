@@ -59,6 +59,7 @@
   <link rel="modulepreload" href="src/engine/map-geometry.js">
   <link rel="modulepreload" href="src/engine/progression.js">
   <link rel="modulepreload" href="src/render/canvas.js">
+  <link rel="modulepreload" href="src/ui/liberation-cutscene.js">
   <link rel="modulepreload" href="src/render/fx-sprites.js">
   <link rel="modulepreload" href="src/animation/sprite-library.js">
   <link rel="modulepreload" href="src/render/map-loader.js">
@@ -87,7 +88,11 @@
   <link rel="modulepreload" href="src/engine/room-waves.js">
   <link rel="modulepreload" href="src/engine/factory-mobs.js">
   <link rel="modulepreload" href="src/engine/factory-bosses.js">
+  <link rel="modulepreload" href="src/engine/clock-bosses.js">
+  <link rel="modulepreload" href="src/engine/bell-boss.js">
+  <link rel="modulepreload" href="src/engine/orden-boss.js">
   <link rel="modulepreload" href="src/engine/sound-water-fusions.js">
+  <link rel="modulepreload" href="src/engine/light-magnet.js">
   <link rel="modulepreload" href="src/engine/reward-draws.js">
   <link rel="modulepreload" href="src/engine/fusion-geometry.js">
   <link rel="modulepreload" href="src/animation/player-animator.js">
@@ -98,6 +103,11 @@
   <link rel="modulepreload" href="src/render/lighting.js">
   <link rel="modulepreload" href="src/render/floor-marks.js">
   <link rel="modulepreload" href="src/render/factory-boss-draw.js">
+  <link rel="modulepreload" href="src/render/clock-boss-draw.js">
+  <link rel="modulepreload" href="src/render/bell-boss-draw.js">
+  <link rel="modulepreload" href="src/render/light-magnet-draw.js">
+  <link rel="modulepreload" href="src/render/boss-grandeur.js">
+  <link rel="modulepreload" href="src/render/tower-collapse.js">
   <link rel="modulepreload" href="src/audio/synthesis.js">
   <link rel="modulepreload" href="src/audio/elements.js">
   <link rel="modulepreload" href="src/audio/coded.js">
@@ -105,8 +115,12 @@
   <link rel="modulepreload" href="src/audio/boss2-sound.js">
   <link rel="modulepreload" href="src/audio/mob2-sound.js">
   <link rel="modulepreload" href="src/audio/redo-sound.js">
+  <link rel="modulepreload" href="src/audio/clock-sound.js">
+  <link rel="modulepreload" href="src/audio/light-magnet-sound.js">
   <link rel="modulepreload" href="src/engine/stats.js">
   <link rel="modulepreload" href="src/animation/locomotion.js">
+  <link rel="modulepreload" href="src/render/orden-boss-draw.js">
+  <link rel="modulepreload" href="src/render/orden-ending.js">
   <!-- preload:end -->
   <link rel="stylesheet" href="src/style.css">
   <link rel="stylesheet" href="src/layout.css">
@@ -120,12 +134,14 @@
       <div id="scene" hidden></div>
       <div id="boss-card" hidden></div>
       <div id="wipe" hidden></div>
+      <div id="cutscene" hidden></div>
       <div id="hud">
         <div class="hud-tag hud-vitals"><canvas id="hud-face" width="56" height="56"></canvas><div class="hud-bars"><div class="hud-bar"><i id="hp-fill"></i><b id="hp-text"></b></div><div class="hud-bar energy"><i id="energy-fill"></i><b id="energy-text"></b></div></div></div>
         <canvas id="minimap" class="hud-minimap" width="336" height="224" aria-label="미니맵" hidden></canvas>
         <div id="boss-bar" class="hud-boss" hidden><b id="boss-name"></b><div class="boss-track"><i id="boss-fill"></i><span id="boss-marks"></span></div><small id="boss-note"></small></div>
         <div class="hud-tag hud-wallet"><span title="자유 톱니" data-icon="gear"><b id="gears">0</b></span><span title="동전" data-icon="coin"><b id="coins">0</b></span></div>
         <button id="practice-reset" class="hud-tag" hidden></button>
+        <button id="practice-exit" class="hud-tag" hidden>시험 끝내기</button>
         <div class="hud-tools"><button id="fullscreen" class="hud-tag" aria-label="게임 전체화면"></button><button id="hud-map" class="hud-tag" aria-label="지도"></button><button id="hud-menu" class="hud-tag" aria-label="환경설정"></button></div>
         <div id="skills"></div>
         <div id="skill-tip" role="tooltip" hidden></div>

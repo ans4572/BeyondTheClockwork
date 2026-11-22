@@ -1,0 +1,113 @@
+{
+  "tick": {
+    "id": "99f105ab-ee15-4d7c-965b-8bae895b7a78",
+    "file": "c-metronome",
+    "clips": {
+      "idle": "3b8e6215-1fb8-406d-9542-a00cbdedde21",
+      "move": "9e304850-53ea-4086-a051-c8a166b948a1",
+      "attack-thrust": "369b1c55-a3d6-4176-9718-50c477ce1e32",
+      "attack-sweep": "2c33225c-79e9-416c-b870-5d1a05e8e205",
+      "cast": "8fc19f02-ff4c-4eeb-84c2-e8fad6c98f5e"
+    },
+    "twin": {
+      "name": "tock"
+    },
+    "timings": {
+      "attack": {
+        "durationMs": 900,
+        "strikeMs": 450
+      },
+      "sweep": {
+        "durationMs": 1000,
+        "strikeMs": 550
+      },
+      "cast": {
+        "durationMs": 1300,
+        "strikeMs": 700
+      }
+    },
+    "drop": {
+      "attack": {
+        "east": [
+          1,
+          5
+        ],
+        "south-east": [
+          1,
+          2
+        ],
+        "south": [
+          2
+        ],
+        "south-west": [
+          2
+        ],
+        "west": [
+          1,
+          2,
+          6
+        ],
+        "north-west": [
+          1
+        ],
+        "north": [
+          1
+        ],
+        "north-east": [
+          4,
+          5
+        ]
+      },
+      "sweep": {
+        "east": [
+          5
+        ],
+        "south-east": [
+          4,
+          5,
+          6
+        ],
+        "south": [
+          3,
+          4
+        ],
+        "south-west": [
+          2,
+          3
+        ],
+        "west": [
+          5,
+          6,
+          7
+        ],
+        "north-west": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "north": [
+          4,
+          5,
+          6
+        ],
+        "north-east": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    "gray": {
+      "name": "ttgray",
+      "actions": [
+        "idle",
+        "move"
+      ]
+    }
+  },
+  "_note": "Only Tick (red) is generated. Tock (blue) is every Tick frame with the crimson (hue 335-13 deg, saturation > 0.55) turned to blue, skin and cheeks left alone (2 px round any skin pixel), so the twins match exactly. Slash trails PixelLab drew on attack-thrust / attack-sweep are removed or their frames dropped on import; the game draws the attacks. ttgray: the same with the crimson turned steel grey (idle and move only), for the shuffle (2026-11-15).",
+  "_dropNote": "drop: frames with a slash trail PixelLab drew joined to the body (more than 80 bright white, hot yellow or pale blue pixels over the clip's first or last frame, 2026-11-15); the game draws the thrust and the sweep itself."
+}

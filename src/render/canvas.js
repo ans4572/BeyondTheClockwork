@@ -9,6 +9,11 @@ import { Lighting } from './lighting.js';
 import { FX, NOTE_ART, MARKS, LOOT_ART, HAZARD_ART, DEBRIS_ART, BOSS_UNWIND_ART, UNWIND_VERBS, LIFT_ART } from './fx-sprites.js';
 import { floorMarks, ELEMENT_TINTS } from './floor-marks.js';
 import { factoryBossDraw } from './factory-boss-draw.js';
+import { clockBossDraw } from './clock-boss-draw.js';
+import { bellBossDraw } from './bell-boss-draw.js';
+import { lightMagnetDraw } from './light-magnet-draw.js';
+import { bossGrandeur } from './boss-grandeur.js';
+import { towerCollapse } from './tower-collapse.js';
 import { FLOOR_FLAT, floorAngle, floorShrink } from '../engine/math.js';
 import { SUMMON_RISE_SECONDS, HIT_FLASH_SECONDS, JOLT_SECONDS } from '../engine/game.js';
 import { GROUND, sawAt, plateState, beltState, pressState, laserState, steamState, steamAt } from '../engine/hazards.js';
@@ -24,7 +29,9 @@ const STREAM_SCALE = 0.5, STREAM_THICKNESS = 0.32;
 const STREAM_HANDS = { east: [9.5, -23.4], 'south-east': [10.8, -20.7], south: [10.4, -19.8], 'south-west': [5.4, -17.1], west: [-11.7, -17.1], 'north-west': [-18, -23.4], north: [-17.6, -25.2], 'north-east': [4.5, -23.4] };
 // The painted water stream and the dash streak were drawn for these widths (units); wider casts are drawn wider to match.
 const STREAM_HALF_WIDTH = 0.35, DASH_DRAWN_RADIUS = 0.7;
-export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure', 'resonance', 'wet'].map(id => [id, `/art/ui/status-icons/${id}.png`]));
+// 드러냄 and 쇳가루 are PixelLab pictures under a new name (2026-11-21).
+const STATUS_FILES = { reveal: 'reveal-v1', ironDust: 'ironDust-v1' };
+export const STATUS_ICONS = Object.fromEntries(['burn', 'chill', 'frozen', 'shock', 'windPressure', 'resonance', 'wet', 'reveal', 'ironDust'].map(id => [id, `/art/ui/status-icons/${STATUS_FILES[id] || id}.png`]));
 /** Brass's march drums in the drum break (PixelLab object); main.js loads it with the place art. */
 export const BRASS_DRUM_ART = 'art/bosses/brass/drum.png';
 /** Brass's flag bearers in his second phase break: PixelLab, drawn like the wooden guard, one still per direction. */
@@ -41,9 +48,9 @@ const LIFT_OPEN_REACH = 3, LIFT_HALF_SECONDS = 0.18;
 /** Effect looks that lie flat on the floor: drawn under the bodies with the other floor marks. */
 /** The ice crescent's sheet is drawn at this share of its pixels (its blade then spans the cut's width), this far off the floor. */
 const CRESCENT_SCALE = 0.65, CRESCENT_LIFT = 14;
-/** Elite trait tags over the head, drawn at this share of their old size (2026-11-06: they crowded the fight). */
 /** The blade's span the sheet was fitted to at CRESCENT_SCALE, on the screen, aimed sideways. */
 const CRESCENT_SPAN = 1.4;
+/** Elite trait tags over the head, drawn at this share of their old size (2026-11-06: they crowded the fight). */
 const AFFIX_TAG_SCALE = 0.6;
 /** Roco's PixelLab cans (32px pictures) drawn at this share, about the size of the old drawn ones. */
 const CAN_SCALE = 0.75;
@@ -85,7 +92,7 @@ const SPANNER_SCALE = 0.7;
 const MARKER_FRONT_UNITS = 0.42, MARKER_HALF_UNITS = 1.0, MARKER_TALL_UNITS = 0.9;
 /** 도전 스패너's chain and the saw rail's current: a 4 px rim, 2 px gold, 1 px core (2026-11-11, asked a little thinner than 5/3/1). */
 const THIN_BOLT = 0.5;
-const GROUND_LOOKS = new Set(['pressSlam', 'quake', 'drumBeat', 'march', 'carpetRoll', 'stampHit']);
+const GROUND_LOOKS = new Set(['pressSlam', 'quake', 'drumBeat', 'march', 'carpetRoll', 'stampHit', 'bellToll', 'signalPulse', 'bgSlam', 'bgToll', 'bgTollCyan', 'bgStrike']);
 const TAG_SIZE = 7, TAU = Math.PI * 2, SCREEN_UNITS = VIEW_UNITS, TELL_BLINK_SECONDS = 0.1, TELL_BLINKS = 3;
 // F2's clips stand taller than the townsfolk; this brings them to the same height everywhere.
 // Bodies are drawn a little over their sheet size so they read clearly on the 640-pixel grid.
@@ -107,8 +114,8 @@ export class CanvasRenderer {
   constructor(canvas, game, { view = null, letters = null } = {}) { this.view = view; this.letters = letters; this.mood = 'day';
     // Light and shade are only drawn in the browser, where the frame is set on its pixel grid.
     this.lighting = view ? new Lighting((w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h })) : null; this.canvas = canvas; this.game = game; this.ctx = canvas.getContext('2d'); this.visualTime = 0; this.camera = { x: 0, y: 0 }; this.talkKey = 'E'; this.shakeUntil = 0; this.shakeSize = 0; this.hurtUntil = 0; }
-  /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still. */
-  kick(size, angle) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + SHAKE_MS; this.shakeAngle = angle; } }
+  /** A short shake in screen pixels, on the wall clock so it still plays while a hit holds the game still; a boss's pattern landing rumbles longer (`ms`). */
+  kick(size, angle, ms = SHAKE_MS) { const now = performance.now(); if (now > this.shakeUntil || size >= this.shakeSize) { this.shakeSize = size; this.shakeUntil = now + ms; this.shakeMs = ms; this.shakeAngle = angle; } }
   /** A critical hit: the view leans in a few percent and a gold light passes over it. */
   critPulse() { this.pulseUntil = performance.now() + CRIT_PULSE_MS; }
   /** A fusion goes off: edges lit in its two elements, the floor dimmed, the view leaning in (see render). */
@@ -173,7 +180,7 @@ export class CanvasRenderer {
   shakeOffset() {
     const left = this.shakeUntil - performance.now();
     if (left <= 0) return [0, 0];
-    const size = this.shakeSize * left / SHAKE_MS;
+    const size = this.shakeSize * left / (this.shakeMs || SHAKE_MS);
     // A directed kick moves the view along the blow, with only a little wobble across it.
     if (this.shakeAngle !== undefined) { const along = size, wobble = (Math.random() * 2 - 1) * size * 0.25; return [Math.round(Math.cos(this.shakeAngle) * along - Math.sin(this.shakeAngle) * wobble), Math.round(Math.sin(this.shakeAngle) * along + Math.cos(this.shakeAngle) * wobble)]; }
     return [Math.round((Math.random() * 2 - 1) * size), Math.round((Math.random() * 2 - 1) * size)];
@@ -238,6 +245,13 @@ export class CanvasRenderer {
     s.globalCompositeOperation = 'destination-in'; s.fillStyle = fade; s.fillRect(0, 0, w, h); s.globalCompositeOperation = 'source-over';
     const alpha = c.globalAlpha; c.globalAlpha = alpha * amount; c.drawImage(scratch, 0, 0, w, h, dx, dy, dw, dh); c.globalAlpha = alpha;
   }
+  /** F2 drawn once more in her pose this frame, over a full-screen tint that greyed her with the world (Orden's stopped time). */
+  redrawPlayer() {
+    const p = this.game.p, pose = this.playerPose;
+    if (!pose || this.game.s.mode !== 'combat') return;
+    const air = this.bellThrowLift?.() || 0;
+    this.drawSprite(p.x * 20, p.y * 20 - air, pose, this.sprites, false, PLAYER_SCALE) || this.drawSprite(p.x * 20, p.y * 20 - air, { action: 'idle', direction: pose.direction, frame: 0 }, this.sprites, false, PLAYER_SCALE);
+  }
   /** How white a struck body is now: solid white for the first frames after the blow, then fading out (0 when untouched). */
   hitWhite(enemy) {
     const left = (enemy.flashUntil || 0) - this.game.s.time;
@@ -252,6 +266,9 @@ export class CanvasRenderer {
     for (const id of ['shock', 'windPressure', 'wet']) if (enemy.statuses[id] > time) badges.push({ id });
     // Resonance shows its layers like burn does (×2, ×3).
     if (enemy.statuses.resonance > time && enemy.resonanceStacks) badges.push({ id: 'resonance', count: enemy.resonanceStacks });
+    // Light's 드러냄, and magnet's 쇳가루 with its layers.
+    if (enemy.statuses.reveal > time) badges.push({ id: 'reveal' });
+    if (enemy.statuses.ironDust > time && enemy.ironDust) badges.push({ id: 'ironDust', count: enemy.ironDust });
     return badges;
   }
   /**
@@ -650,6 +667,8 @@ export class CanvasRenderer {
   drawWaiting() {
     const c = this.ctx; this.minimapPlace = null; this.overlays = []; this.shownMap = null;
     c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1c2230'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore();
+    // The last place's names, numbers and 'G 말 걸기' go too (2026-11-22: they stood frozen over the dark frame).
+    if (this.letters) { const t = this.letters.getContext('2d'); t.setTransform(1, 0, 0, 1, 0, 0); t.clearRect(0, 0, this.letters.width, this.letters.height); }
     if (this.view) { const v = this.view.getContext('2d'); v.imageSmoothingEnabled = false; v.drawImage(this.canvas, 0, 0, this.view.width, this.view.height); }
   }
   /** A small map of the area in the corner: the art itself, the view, people, enemies and where to go next. */
@@ -815,7 +834,7 @@ export class CanvasRenderer {
   }
   /** Keeps a drawn body behind whatever scenery stands in front of its feet. */
   coverBody(mask, x, y, halfWidth = 1.3, tall = 2.9) { return mask?.cover(this.ctx, x, y, halfWidth, tall) || 0; }
-  drawNpc({ x, y, pose, label }, mask) {
+  drawNpc({ x, y, pose, label, resident }, mask) {
     // A walk sheet still on its way (they load after the standing ones, main.js loadNpcs): the resident stands meanwhile.
     const walking = pose.action.endsWith('-walk'), still = walking && !this.npcSprites.image(this.npcSprites.clip(pose.action, pose.direction)?.sheet) ? { ...pose, action: pose.action.replace(/-walk$/, '-idle'), frame: 0 } : pose;
     const clip = this.npcSprites.clip(still.action, still.direction);
@@ -848,12 +867,12 @@ export class CanvasRenderer {
     c.drawImage(image, (f % fx.cols) * fx.w, Math.floor(f / fx.cols) * fx.h, fx.w, fx.h, -fx.anchor[0], -fx.anchor[1], fx.w, fx.h);
     c.restore(); return true;
   }
-  /** A still from MARKS (see fx-sprites.js), or undefined while it is not loaded or not drawn yet. */
   /** Turns the drawing to screen heading `angle` laid on the floor: x runs along it, y across it, squashed as the floor is. */
   floorTurn(angle) {
     const a = floorAngle(angle), cos = Math.cos(a), sin = Math.sin(a);
     this.ctx.transform(cos, sin * FLOOR_FLAT, -sin, cos * FLOOR_FLAT, 0, 0);
   }
+  /** A still from MARKS (see fx-sprites.js), or undefined while it is not loaded or not drawn yet. */
   mark(name) { return this.mapImages?.get(MARKS[name]); }
   /**
    * Draws a still centred on x, y, `width` render pixels wide. `flat` squashes a mark seen from above onto the floor;
@@ -1009,6 +1028,29 @@ export class CanvasRenderer {
       case 'pressSlam': { const k = fx.value * 20 / 30; return this.drawFxFrame('pressSlam', frameAt('pressSlam'), x, y, { sx: k, sy: k }); }
       // 공명 낙뢰's bolt coming down on its body.
       case 'boltStrike': return this.drawFxFrame('boltStrike', frameAt('boltStrike'), x, y, { sx: 1.25, sy: 1.25 });
+      // Chapter 3 (pixelfx): the bell turret's bell landing and ringing, drawn for a 26 px reach; the signal orb's signal, 54 px.
+      // Belgard (pixelfx): the blade striking the floor (drawn for 1.5 units), a toll over the floor (3 units), cyan for Orden's needles.
+      // Tick·Tock (pixelfx): a thrust fitted to its line, red or blue by the twin; a clock face bursting, by colour.
+      case 'ttStab': {
+        const name = fx.color === '#5b8fe0' ? 'ttStabBlue' : 'ttStabRed', tx = fx.targetX * 20, ty = fx.targetY * 20 - 8, sy = y - 8, len = Math.hypot(tx - x, ty - sy);
+        return this.drawFxFrame(name, frameAt(name), x, sy, { angle: Math.atan2(ty - sy, tx - x), sx: len / 92, sy: 1 });
+      }
+      // A column of light where a boss's big blow landed (boss-grandeur.js).
+      case 'bossPillar': return this.drawBossPillar(fx, x, y, t);
+      // Belgard's blade biting into the floor (pixelfx), fitted to the blow's reach; the cracks fade over its last quarter.
+      case 'bgStrike': { const name = fx.cyan ? 'bgStrikeCyan' : 'bgStrike', k = fx.value * 20 / 40; return this.drawFxFrame(name, Math.min(FX[name].frames - 1, t * fx.duration * FX[name].fps), x, y, { sx: k, sy: k, alpha: t > 0.75 ? (1 - t) / 0.25 : 1 }); }
+      case 'ttBurst': { const k = fx.value * 20 / 30, name = fx.color === '#5b8fe0' ? 'ttBurstBlue' : fx.color === '#ffd257' ? 'ttBurstGold' : 'ttBurstRed'; return this.drawFxFrame(name, frameAt(name), x, y, { sx: k, sy: k }); }
+      // Belgard's grab: the gauntlet shoots along the line in the first half and closes at its end.
+      case 'bgGrabHand': {
+        const tx = fx.targetX * 20, ty = fx.targetY * 20 - 16, sy = y - 16, reach = Math.min(1, t / 0.45);
+        return this.drawFxFrame('bgGauntlet', frameAt('bgGauntlet'), x + (tx - x) * reach, sy + (ty - sy) * reach, { angle: Math.atan2(ty - sy, tx - x) });
+      }
+      case 'bgSlam': { const k = fx.value * 20 / 30; return this.drawFxFrame('bgSlam', frameAt('bgSlam'), x, y, { sx: k, sy: k }); }
+      // Orden's spells landing (pixelfx od-burst, 2026-11-20): cyan his own, gold the echoes and the last hour, violet the dark.
+      case 'odBurst': { const name = { '#ffd257': 'odBurstGold', '#a070e0': 'odBurstViolet', '#ff8a3c': 'odBurst_fire', '#9ad8f8': 'odBurst_ice', '#ffe066': 'odBurst_volt', '#8fe8c8': 'odBurst_wind' }[fx.color] || 'odBurstCyan', k = Math.max(0.6, fx.value * 20 / 62); return this.drawFxFrame(name, frameAt(name), x, y, { sx: k, sy: Math.max(0.8, k * 0.8) }); }
+      case 'bgToll': case 'bgTollCyan': { const k = fx.value * 20 / 60, name = fx.look === 'bgToll' ? 'bgTollRing' : 'bgTollRingCyan'; return this.drawFxFrame(name, frameAt(name), x, y, { sx: k, sy: k }); }
+      case 'bellToll': { const k = fx.value * 20 / 26; return this.drawFxFrame('bellToll', frameAt('bellToll'), x, y, { sx: k, sy: k }); }
+      case 'signalPulse': { const k = fx.value * 20 / 54; return this.drawFxFrame('signalPulse', frameAt('signalPulse'), x, y, { sx: k, sy: k }); }
       case 'quake': { const k = fx.value * 20 / 32; return this.drawFxFrame('floorShock', frameAt('floorShock'), x, y, { sx: k, sy: k }) || this.drawFxFrame('groundShockwave', frameAt('groundShockwave'), x, y, { sx: fx.value * 20 / 44, sy: fx.value * 20 / 44, alpha: 0.85 }); }
       case 'boom': { const k = Math.max(1, fx.value * 20 / 20); return this.drawFxFrame('ratExplosion', frameAt('ratExplosion'), x, y + 4, { sx: k, sy: k }); }
       case 'wave': { const k = Math.max(0.7, fx.value * 20 / 84); return this.drawFxFrame('trumpetWave', frameAt('trumpetWave'), x, y - 10, { angle: fx.angle, sx: k, sy: k }); }
@@ -1088,6 +1130,7 @@ export class CanvasRenderer {
       const r = 3; c.save(); c.translate(x, y); c.rotate(this.visualTime * 12); c.fillStyle = '#d7f3fb'; c.strokeStyle = '#3f8fb0'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -r); c.lineTo(r, 0); c.lineTo(0, r); c.lineTo(-r, 0); c.closePath(); c.fill(); c.stroke(); c.restore();
       return;
     }
+    if (cast.skillId === 'scrapShot') return this.drawScrapBolt(bullet, cast);
     if (cast.skillId === 'frostBolt' && this.drawFxFrame('frostBolt', this.visualTime * 12, x, y, { angle: bullet.angle })) return;
     if (cast.skillId === 'waterCannon') return this.drawFxFrame('waterShot', this.visualTime * 12, x, y, { angle: bullet.angle, sx: 0.5, sy: 0.5 }) || this.drawWaterShot(x, y, bullet.angle);
     this.circle(bullet.x * 20, bullet.y * 20, 4, cast.color); this.rect(bullet.x * 20 - 2, bullet.y * 20 - 2, 4, 4, '#e7fbec');
@@ -1150,6 +1193,7 @@ export class CanvasRenderer {
     }
     for (const cast of s.casts.filter(k => k.shape === 'jet' && k.endX !== undefined)) this.drawStream(cast);
     this.drawFusionMarks();
+    this.drawLightMagnetOver();
   }
   /**
    * The painted stream (FX hydroStream) from x0, y0 to x1, y1 at half size: the gush and the tip as drawn, the middle
@@ -1167,6 +1211,8 @@ export class CanvasRenderer {
     piece(fx.w - tail, tail, head * squeeze + middle, tail * squeeze);
     c.restore(); return true;
   }
+  /** Where F2's casting hand is on the screen for a cast aimed at `angle` (the same hands the water stream leaves from). */
+  handPoint(angle) { const hand = STREAM_HANDS[nearestDirection(angle)], p = this.game.p; return { x: p.x * 20 + hand[0], y: p.y * 20 + hand[1] }; }
   /** 고압 분사's stream from F2's hand to where it lands, in code until its painted sheet is loaded. */
   drawStream(cast) {
     const hand = STREAM_HANDS[nearestDirection(cast.angle)], c = this.ctx, p = this.game.p, x0 = p.x * 20 + hand[0], y0 = p.y * 20 + hand[1], x1 = cast.endX * 20, y1 = cast.endY * 20 - 12;
@@ -1509,6 +1555,7 @@ export class CanvasRenderer {
     const g = this.game, s = g.s, c = this.ctx;
     if (!s.paused && !s.profile.settings.reducedMotion) this.visualTime += delta;
     const playerPose = this.animator?.update(delta, g, { reducedMotion: s.profile.settings.reducedMotion });
+    this.playerPose = playerPose;
     const mobPoses = this.mobAnimator?.update(delta, g), castFx = this.castEffects?.update(g) || [], spriteFx = !!this.castEffects;
     const hub = ['hub', 'registration', 'returned', 'opening'].includes(s.mode);
     const map = hub ? g.hubMap : g.map, mapImage = map && this.mapImages?.get(map.background), size = map?.size || SCREEN_UNITS;
@@ -1529,7 +1576,12 @@ export class CanvasRenderer {
     const toward = this.leanByWalk ? g.p.moveAngle ?? g.p.angle : g.p.angle;
     const want = fighting ? { x: Math.cos(toward) * CAMERA_LEAD[0], y: Math.sin(toward) * CAMERA_LEAD[1] } : { x: 0, y: 0 }, ease = 1 - Math.exp(-delta / CAMERA_LEAD_SECONDS);
     lead.x += (want.x - lead.x) * ease; lead.y += (want.y - lead.y) * ease;
-    const focus = body && fighting ? { x: body.x + lead.x, y: body.y + lead.y } : body;
+    // A boss's first words (2026-11-21, the chapter 3 UI review: in Orden's two wide rooms the view on F2 left him half
+    // off the top of the screen): while a talk runs in a fight the view holds F2 and the boss both, their midpoint a
+    // little above the middle so the talk box along the bottom covers neither: the span from the boss's head (a boss
+    // stands about 3 units tall) to F2's feet is centred in the 72% of the screen above the box.
+    const speaker = this.talking && s.mode === 'combat' && s.enemies.find(e => e.boss && e.hp > 0);
+    const focus = speaker ? { x: (g.p.x + speaker.x) / 2, y: (g.p.y + speaker.y - 3) / 2 + SCREEN_UNITS[1] * 0.14 } : body && fighting ? { x: body.x + lead.x, y: body.y + lead.y } : body;
     let follow = this.follow;
     if (focus) {
       if (!follow || follow.map !== map || Math.hypot(focus.x - follow.x, focus.y - follow.y) > CAMERA_SNAP) follow = this.follow = { x: focus.x, y: focus.y, map };
@@ -1584,6 +1636,7 @@ export class CanvasRenderer {
     for (const spot of [goal, streetPortal]) if (spot) { this.marker(spot); this.coverBody(floorMask, spot.x, spot.y + MARKER_FRONT_UNITS, MARKER_HALF_UNITS, MARKER_TALL_UNITS); }
     this.minimapPlace = { map, mapImage, size, goal: goal || streetPortal || (hub && g.village ? { x: map.exit.at[0], y: map.exit.at[1] } : null) };
     this.overlays = [];
+    this.drawTowerCollapse(mapImage && map, size);
     // The floor, bottom to top: flat hazards (plates, saw rails), where F2's fusions and ground skills reach, and over
     // them every enemy warning, so a blast of F2's own never hides what is about to hit her.
     for (const h of g.roomHazards) if (!h.gone && (GROUND.has(h.kind) || TWO_LAYER.has(h.kind))) this.drawHazard(h, 'ground');
@@ -1591,13 +1644,19 @@ export class CanvasRenderer {
     // Reaches painted on the floor stop where the floor does: not over planters, walls or stalls.
     const floorClip = this.clipToFloor(mapImage && map);
     this.drawFusionFloors();
+    this.drawLightMagnetFloor();
     for (const enemy of s.enemies.filter(e => e.hp > 0)) this.drawTell(enemy);
     // Marks painted on the floor (where a skill lands, a blast's reach, a hatch) lie under every body, like the tells.
     for (const fx of s.effects) if (fx.type === 'friendlyTell' || fx.type === 'danger') { const fraction = Math.min(1, (s.time - fx.created) / fx.duration); if (fx.type === 'danger') this.drawDanger(fx, fx.x * 20, fx.y * 20, fraction); else this.drawLandingMark(fx, fx.x * 20, fx.y * 20, fraction); }
     if (floorClip) c.restore();
     // Bodies hastened and hardened by the drum: a gold ring at the feet and red arrows rising while it lasts.
     for (const fx of s.effects) if (fx.look && GROUND_LOOKS.has(fx.look)) { c.save(); this.drawLook(fx, fx.x * 20, fx.y * 20, Math.min(1, (s.time - fx.created) / fx.duration)); c.restore(); }
-    for (const enemy of s.enemies) if (enemy.hp > 0 && enemy.beatUntil > s.time) this.drawFxFrame('drumBuff', this.visualTime * 12 + enemy.x, enemy.x * 20, enemy.y * 20, { alpha: 0.9 });
+    // A signal orb's haste (chapter 3, beatLook 'signal'): a sky-blue ring at the feet instead of the drum's gold.
+    for (const enemy of s.enemies) if (enemy.hp > 0 && enemy.beatUntil > s.time) {
+      if (enemy.beatLook !== 'signal') { this.drawFxFrame('drumBuff', this.visualTime * 12 + enemy.x, enemy.x * 20, enemy.y * 20, { alpha: 0.9 }); continue; }
+      const r = (enemy.radius + 0.25) * 20, pulse = 0.65 + 0.35 * Math.sin(this.visualTime * 8 + enemy.x);
+      c.save(); c.globalAlpha = pulse; for (const [w, col] of [[4, '#2b3345'], [2, '#8fe3f0']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.ellipse(enemy.x * 20, enemy.y * 20, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke(); } c.restore();
+    }
     for (const enemy of s.enemies) {
       if (enemy.hp <= 0) continue;
       const ex = enemy.x * 20, ey = enemy.y * 20;
@@ -1618,6 +1677,7 @@ export class CanvasRenderer {
     for (const cast of s.casts) if (['film', 'pool', 'spout', 'marks'].includes(cast.shape)) this.drawFusionFloor(cast);
     for (const cast of s.casts) if (cast.shape === 'floorMark') this.drawFloorMark(cast);
     this.drawFactoryBossFloor();
+    this.drawClockBossFloor();
     for (const cast of s.casts) {
       if (cast.shape === 'patch') {
         // A fire patch from the ember trail: a low flickering flame on the floor, fading as its pulses run out.
@@ -1631,7 +1691,9 @@ export class CanvasRenderer {
         const left = Math.max(0, cast.next - cast.age), share = left / (cast.delayed?.delay || 3) || left / 3, x = cast.x * 20, y = cast.y * 20 - 10;
         // A brass dial over the body whose gold hand sweeps round to the burst; a closing ring while the dial is missing.
         this.overlay(() => {
-          if (this.drawMark('dial', x, y - 28, 18)) { const a = -Math.PI / 2 + TAU * (1 - Math.min(1, share)); c.save(); c.lineCap = 'round'; for (const [w, col] of [[3, '#2b3345'], [1.5, '#ffe086']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, y - 28); c.lineTo(x + Math.cos(a) * 6, y - 28 + Math.sin(a) * 6); c.stroke(); } c.restore(); }
+          // The stopwatch (pixelfx) whose hand sweeps once round to the burst; the brass dial mark, then a closing ring, while it loads.
+          if (this.drawFxFrame('chargeClock', (1 - Math.min(1, share)) * (FX.chargeClock.frames - 1), x, y - 26)) { /* drawn */ }
+          else if (this.drawMark('dial', x, y - 28, 18)) { const a = -Math.PI / 2 + TAU * (1 - Math.min(1, share)); c.save(); c.lineCap = 'round'; for (const [w, col] of [[3, '#2b3345'], [1.5, '#ffe086']]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(x, y - 28); c.lineTo(x + Math.cos(a) * 6, y - 28 + Math.sin(a) * 6); c.stroke(); } c.restore(); }
           else { c.save(); c.strokeStyle = '#ffe086'; c.lineWidth = 2; c.globalAlpha = 0.9; c.beginPath(); c.arc(x, y, 6 + 10 * Math.min(1, share), 0, TAU); c.stroke(); c.restore(); }
           if (!this.drawFxFrame('chargeArcs', this.visualTime * 12, x, y - 8)) { c.fillStyle = '#ffe086'; c.fillRect(Math.round(x - 1), Math.round(y - 14), 2, 6); }
         });
@@ -1704,11 +1766,11 @@ export class CanvasRenderer {
     const effects = castFx.filter(fx => !fx.effect.ground).map(fx => ({ y: fx.y - 0.01, fx }));
     // F2's shots fly at body height, so they pass in front of bodies behind them and behind bodies in front.
     const bolts = s.casts.flatMap(cast => (cast.projectiles || []).filter(bullet => !bullet.done).map(bullet => ({ y: bullet.y, bolt: bullet, cast })));
-    const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null }).map(npc => ({ y: npc.y, npc })) : [];
+    const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : s.mode === 'practice' ? 'practice' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null, free: g.villageFree }).map(npc => ({ y: npc.y, npc })) : [];
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
     // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
     const hazards = g.roomHazards.filter(h => !h.gone && !GROUND.has(h.kind)).map(h => ({ y: h.y + (UPPER_Y[h.kind] || 0) + (h.kind === 'crane' && h.mark ? h.mark.y : 0), hazard: h }));
-    const actors = [...hazards, ...bolts, ...s.enemies.filter(e => (e.hp > 0 || mobPoses?.has(e.id)) && !(e.summonUntil > s.time)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer].sort((a, b) => a.y - b.y);
+    const actors = [...hazards, ...bolts, ...s.enemies.filter(e => (e.hp > 0 || mobPoses?.has(e.id)) && !(e.summonUntil > s.time)), ...((hub ? g.village && mapImage : s.mode !== 'shop' || mapImage) ? [{ ...g.p, type: 'player', player: true }] : []), ...occluders, ...props, ...effects, ...npcs, ...hubPlayer, ...this.lightMagnetActors()].sort((a, b) => a.y - b.y);
     // Iris's decoys stand among the bodies (sorted by feet like her), not over them.
     actors.push(...s.enemies.flatMap(e => e.hp > 0 && e.decoys ? e.decoys.filter(d => !d.popped).map(d => ({ y: d.y, decoy: d, owner: e })) : []));
     actors.push(...this.marchers().map(marcher => ({ y: marcher.y, marcher })), ...s.casts.filter(cast => cast.shape === 'crescent' && cast.age >= (cast.delay || 0) && !cast.done).map(cast => ({ y: cast.y, crescent: cast })));
@@ -1716,6 +1778,7 @@ export class CanvasRenderer {
     // Health bars, statuses and trait names are drawn after every body and effect, so nothing walks or bursts over them.
     const labels = [];
     for (const actor of actors) {
+      if (actor.lm) { actor.lm(); continue; }
       if (actor.marcher) { this.drawMarcher(actor.marcher); continue; }
       if (actor.decoy) { const pose = mobPoses?.get(actor.owner.id); if (!this.fbIrisStill(actor.decoy.x * 20, actor.decoy.y * 20, false) && pose) this.drawSprite(actor.decoy.x * 20, actor.decoy.y * 20, pose, this.mobSprites, false, BOSS_SPRITE_SCALE); continue; }
       if (actor.crescent) { this.drawCrescent(actor.crescent); continue; }
@@ -1755,10 +1818,12 @@ export class CanvasRenderer {
       const squash = !actor.player && !actor.boss && !s.profile.settings.reducedMotion ? hitSquash(s.time - (actor.joltUntil - JOLT_SECONDS)) : null;
       if (squash) { const fx = actor.x * 20 + jolt, fy = actor.y * 20 - lift; c.save(); c.translate(fx, fy); c.scale(squash[0], squash[1]); c.translate(-fx, -fy); }
       if (shielded) this.drawOutline(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, BOSS_SPRITE_SCALE, SHIELD_RIM);
+      // Belgard as Orden's puppet (bell-boss.js bgPuppet): a cyan aura round his body, flickering, and cyan eyes (drawBellOver).
+      if (actor.bgAura && actor.hp > 0 && mobPose && !shielded) this.drawOutline(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, BOSS_SPRITE_SCALE, ['#5fe3ff', 'rgba(95, 227, 255, 0.45)']);
       if (!actor.player && actor.affixes?.length && actor.hp > 0 && mobPose) this.drawOutline(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, actor.boss ? BOSS_SPRITE_SCALE : 1, this.affixColors(actor));
       // During her decoys the real Iris stands as the same south-facing still as her copies, only holding the stamp.
       const still = !actor.player && actor.decoys && actor.tell?.type === 'decoys' && this.fbIrisStill(actor.x * 20 + jolt, actor.y * 20 - lift, true, this.hitWhite(actor));
-      const drawn = actor.player ? playerPose && (this.drawSprite(actor.x * 20, actor.y * 20, playerPose, this.sprites, false, PLAYER_SCALE) || this.drawSprite(actor.x * 20, actor.y * 20, { action: 'idle', direction: playerPose.direction, frame: 0 }, this.sprites, false, PLAYER_SCALE)) : still || mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, this.hitWhite(actor) || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
+      const air = actor.player ? this.bellThrowLift?.() || 0 : 0, drawn = actor.player ? playerPose && (this.drawSprite(actor.x * 20, actor.y * 20 - air, playerPose, this.sprites, false, PLAYER_SCALE) || this.drawSprite(actor.x * 20, actor.y * 20 - air, { action: 'idle', direction: playerPose.direction, frame: 0 }, this.sprites, false, PLAYER_SCALE)) : still || mobPose && this.drawSprite(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, this.hitWhite(actor) || this.tellBlink(actor) || (actor.frozenUntil > s.time && FROZEN_LOOK), actor.boss ? BOSS_SPRITE_SCALE : 1);
       if (drawn && shielded) this.shieldSheen(actor.x * 20 + jolt, actor.y * 20 - lift, mobPose, this.mobSprites, BOSS_SPRITE_SCALE);
       if (!drawn) this.drawDoll(actor.x * 20, actor.y * 20, { ...actor, moving: actor.player ? !!g.p.dodge || !!g.p.attack : actor.state === 'approach' });
       if (squash) c.restore();
@@ -1766,7 +1831,8 @@ export class CanvasRenderer {
       if (actor.player) playerHidden = this.coverBody(depthMask, actor.x, actor.y);
       if (!actor.player && actor.hp > 0 && !still) labels.push(() => {
         const width = actor.boss ? 48 : 23, yy = actor.y * 20 - (mobClip ? mobClip.bodyHeight * (actor.boss ? BOSS_SPRITE_SCALE : 1) * BODY_SCALE / 2 + 6 : actor.boss ? 66 : actor.type === 'rabbit' ? 48 : 38);
-        if (!actor.boss) { const left = actor.x * 20 - width / 2; this.rect(left - 1, yy - 1, width + 2, 6, '#2b3345'); this.rect(left, yy, width, 4, '#5e4a52'); this.rect(left, yy, width * Math.max(0, actor.hp / actor.maxHp), 4, '#e0564c'); }
+        // (Orden's mirror images show no bar: it would tell them from him at a glance.)
+        if (!actor.boss && !actor.odClone) { const left = actor.x * 20 - width / 2; this.rect(left - 1, yy - 1, width + 2, 6, '#2b3345'); this.rect(left, yy, width, 4, '#5e4a52'); this.rect(left, yy, width * Math.max(0, actor.hp / actor.maxHp), 4, '#e0564c'); }
         if (actor.exposedUntil > s.time || actor.dazedUntil > s.time) this.drawDaze(actor.x * 20, yy - 26);
         if (actor.exposedUntil > s.time) this.text('기절', actor.x * 20, yy - 17, '#af8345', 8);
         if (actor.dazedUntil > s.time) this.text('쾅! 빈틈', actor.x * 20, yy - 17, '#d8423c', 8);
@@ -1789,6 +1855,10 @@ export class CanvasRenderer {
     const note = this.mapImages?.get(NOTE_ART);
     for (const bullet of s.projectiles) {
       const bx = bullet.x * 20, by = bullet.y * 20;
+      // Tock's gears (clock-boss-draw.js).
+      if (bullet.look === 'gear' && this.drawGearShot(bullet)) continue;
+      // The minute archer's arrow flies point first (pixelfx), at the height it leaves the bow.
+      if (bullet.look === 'minuteHand' && this.drawFxFrame('minuteArrow', this.visualTime * FX.minuteArrow.fps, bx, by - 12, { angle: bullet.angle })) continue;
       // A riveter's rivet flies point first.
       if (bullet.look === 'rivet' && !bullet.friendly && this.drawMark('rivetShot', bx, by - 8, 8, { angle: bullet.angle })) continue;
       // An enemy's shot is a note with a gold tail; one batted back stays a plain pellet.
@@ -1821,6 +1891,7 @@ export class CanvasRenderer {
         if (this.drawMark(name, x, y - 10, (fx.type === 'dodge' ? 18 : 16) * fx.value * (0.7 + 0.5 * pop), { angle: fx.type === 'dodge' ? 0 : fraction * 1.2, alpha: 1 - fraction * fraction, smooth: true })) continue;
       }
       // Blows and skills with a picture of their own play it; the plain shapes below are the fallback.
+      if ((fx.type.startsWith('lm') || fx.look?.startsWith('lm')) && this.drawLightMagnetFx(fx, x, y, fraction)) continue;
       if (fx.look && this.drawLook(fx, x, y, fraction)) continue;
       // The wrench swing, its hit and anything breaking play their pixelfx sheets; the shapes below are the fallback.
       if (this.drawSheetFx(fx, x, y, fraction)) continue;
@@ -1874,6 +1945,8 @@ export class CanvasRenderer {
       const lights = [{ x: g.p.x, y: g.p.y - 0.6, radius: 3.6 }, ...s.casts.map(cast => ({ x: cast.x, y: cast.y, radius: 2.4, color: glow[cast.elements?.[0]] }))];
       this.lighting.draw(c, { mood: this.mood, image: mapImage, size, view: { x: this.camera.x, y: this.camera.y, w: SCREEN_UNITS[0], h: SCREEN_UNITS[1] }, lights, time: this.visualTime, still: s.profile.settings.reducedMotion });
     }
+    this.drawClockBossOver();
+    this.drawBossGloom();
     for (const { label, x, y } of this.labels) this.nameplate(label, x, y);
     if (goal && mapImage) this.pointTo(goal);
     // Enemies wait spread over the room; when none is in view, a red arrow points to the nearest.
@@ -1882,7 +1955,7 @@ export class CanvasRenderer {
       const seen = living.some(e => e.x > this.camera.x && e.x < this.camera.x + SCREEN_UNITS[0] && e.y > this.camera.y && e.y < this.camera.y + SCREEN_UNITS[1]);
       if (near && !seen) this.pointTo(near, ENEMY_ARROW);
     }
-    if (g.walking && mapImage) {
+    if ((g.walking || g.s.mode === 'practice') && mapImage) {
       const npc = g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
       // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
@@ -1918,6 +1991,7 @@ export class CanvasRenderer {
       c.save(); c.translate(0, H); c.scale(1, -1); c.drawImage(this.fusionBand(W, Math.round(depth * 0.6), left, right), 0, 0); c.restore();
       c.restore();
     }
+    this.drawBossImpact();
     const flashLeft = (this.flashUntil || 0) - performance.now();
     if (flashLeft > 0) { c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 0.7 * flashLeft / FLASH_MS; c.fillStyle = '#fff8e8'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); c.restore(); }
     if (this.view) {
@@ -1929,4 +2003,4 @@ export class CanvasRenderer {
 }
 export { HAZARD_ART };
 // Floor reaches and danger warnings (src/render/floor-marks.js) are drawn by the same renderer.
-Object.assign(CanvasRenderer.prototype, floorMarks, factoryBossDraw);
+Object.assign(CanvasRenderer.prototype, floorMarks, factoryBossDraw, clockBossDraw, bellBossDraw, bossGrandeur, towerCollapse, lightMagnetDraw);

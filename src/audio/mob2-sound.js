@@ -42,6 +42,9 @@ function soft(a, o) { const f = a.createBiquadFilter(); f.type = 'lowpass'; f.fr
 const vary = () => 0.97 + Math.random() * 0.06;
 const recipe = draw => (a, o) => draw(a, soft(a, o), vary());
 
+/** The shared pieces, for chapter 3's recipes (clock-sound.js). */
+export { env, tone, band, whoosh, clang, thud, recipe };
+
 export const MOB2_CANDIDATES = {
   // 집게 운반공: the grabber pole thrust out and its jaws snapping shut.
   clampCarrier: [['집게 뻗음 + 철컥', recipe((a, o, k) => {

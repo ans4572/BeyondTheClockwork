@@ -53,3 +53,8 @@ index.built.html
 # Chapter 3 mob preview sheets (rebuilt by scripts/build-ch3-mob-preview.py); the page itself is kept.
 art/chapters/3-clock-tower/mobs/preview/*.png
 art/chapters/3-clock-tower/mobs/preview/data.json
+# Openverse recordings for the chapter 3 sound preview (candidates only; manifest.json with the credits is kept).
+art/chapters/3-clock-tower/sfx-preview/openverse/*.ogg
+scripts/openverse-sfx/ov-dl/
+scripts/openverse-sfx/ov-wav/
+scripts/openverse-sfx/render-*/

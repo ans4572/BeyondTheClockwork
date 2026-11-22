@@ -7,16 +7,24 @@
     "lightning",
     "wind",
     "sound",
-    "water"
+    "water",
+    "light",
+    "magnet"
   ],
   "elementUnlocks": {
-    "note": "Elements that are not on Moru's shelf from the start. after: the chapter that must be beaten first (the local test server's unlock switch skips it). preview: still being made, shown only where chapter previews are on (the local dev server), like chapters[].preview."
+    "note": "Elements that are not on Moru's shelf from the start. after: the chapter that must be beaten first (the local test server's unlock switch skips it). preview: still being made, shown only where chapter previews are on (the local dev server), like chapters[].preview. 2026-11-22 (the user's word, before the chapter 3 release): light and magnet are on the shelf from the start like the rest (they waited for chapter 2 and were previews); kept here empty.",
+    "light": {},
+    "magnet": {}
   },
   "bosses": [
     "collectorRoco",
     "captainBrass",
     "inspectorIris",
-    "directorPress"
+    "directorPress",
+    "twinTickTock",
+    "bellguard",
+    "orden",
+    "ordenFinal"
   ],
   "arena": {
     "width": 28,
@@ -68,12 +76,14 @@
     "waveHpShare": 0.9,
     "waveHpNote": "2026-11-11, at the user's word: ordinary wave bodies spawn with this share of their health (elites and bosses keep theirs), paired with one more body a wave (waveTrim 3 -> 2).",
     "introEnemyHp": 52,
-    "aggroUnits": 12,
+    "aggroUnits": 12, "formationMin": 6,
     "aggroLinkUnits": 3.5,
     "spreadMinUnits": 5,
     "spreadGapUnits": 2.5,
     "elementPrices": [
       0,
+      50,
+      50,
       50,
       50,
       50,
@@ -121,7 +131,11 @@
       "ringPalm": "왼손바닥으로 앞쪽을 짧게 울려 적을 밀어냅니다. 공명이 걸린 적에게는 더 세게 들어가고 공명이 두 겹 쌓입니다.",
       "roar": "누르고 있으면 소리를 모으고, 놓으면 앞쪽으로 곧은 음파를 쏩니다. 오래 모을수록 셉니다. 맞은 적에게 공명이 한 겹 걸립니다. 회피하면 취소됩니다.",
       "waterCannon": "물덩이 세 발을 좁게 퍼뜨려 쏩니다. 발마다 지나가는 길의 적을 모두 맞히고 조금 밀어냅니다. 가까이 있는 적은 세 발을 다 맞습니다.",
-      "hydroJet": "누르고 있는 동안 커서를 따라 도는 물줄기를 뿜습니다. 줄기 위의 적을 모두 맞힙니다. 뿜는 동안에는 느리게 걷습니다."
+      "hydroJet": "누르고 있는 동안 커서를 따라 도는 물줄기를 뿜습니다. 줄기 위의 적을 모두 맞힙니다. 뿜는 동안에는 느리게 걷습니다.",
+      "prismBeam": "프리즘에서 가는 빛줄기를 앞으로 곧게 쏩니다. 지나는 길의 적을 모두 꿰뚫고 약점을 드러냅니다.",
+      "flashBomb": "섬광탄을 던집니다. 떨어진 자리에서 터져 둘레의 적을 드러내고, 일반 적은 잠깐 눈이 부셔 멈춥니다.",
+      "scrapShot": "장갑이 쇳조각 다섯 개를 앞으로 좁게 흩뿌립니다. 조각마다 적 하나를 뚫고 지나가고, 가까이서 쏠수록 많이 맞습니다.",
+      "magneticLift": "노린 곳 바닥의 쇳조각을 끌어올렸다가 0.65초 뒤 한꺼번에 내리꽂습니다."
       },
       "fusions": {
         "steamShatter": "내 주변에서 뜨거운 김과 냉기가 번갈아 네 번 터집니다.",
@@ -138,7 +152,20 @@
         "steamVeil": "내 주변이 2초 동안 뜨거운 증기로 덮여, 안의 적이 계속 데고 젖습니다. 증기막은 나를 따라옵니다.",
         "iceSheet": "노린 곳에 빙판을 깝니다. 위의 적은 느려지고, 2초 뒤 빙판이 한꺼번에 깨지며 크게 다칩니다.",
         "shockPool": "노린 곳에 전기가 흐르는 웅덩이를 깝니다. 0.5초마다 방전하고, 젖은 적이 많을수록 셉니다.",
-        "waterspout": "노린 곳에 물기둥을 세워 적을 빨아올렸다가, 2초 뒤 한꺼번에 내리꽂습니다."
+        "waterspout": "노린 곳에 물기둥을 세워 적을 빨아올렸다가, 2초 뒤 한꺼번에 내리꽂습니다.",
+      "noonMark": "커서에 가까운 적 머리 위에 작은 해가 떠서 따라다니며 열빛 기둥을 내리고, 끝에 터집니다.",
+      "frostPrism": "앞에 얼음 프리즘을 세웁니다. 3초 동안 가까운 적 넷에게 굴절된 광선을 쏩니다.",
+      "refractBeam": "커서에 가까운 적에게 광선이 붙어 계속 태우고, 칠 때마다 빛이 꺾여 옆의 적 다섯까지 맞힙니다. 커서를 다른 적에게 옮기면 광선도 옮겨 갑니다.",
+      "lightDash": "빛이 되어 앞으로 미끄러지며 적을 꿰뚫고, 지나온 자리에 남은 빛의 띠가 1초 뒤 터집니다.",
+      "lightConstellation": "가까운 적들을 빛의 줄로 이어 별자리를 그리고, 줄 전체를 다섯 번 울립니다.",
+      "rainbowBridge": "노린 곳에 비구름을 불러 소나기를 뿌리고, 비가 그치면 무지개와 함께 햇빛이 내리꽂힙니다.",
+      "moltenBall": "쇳조각을 모은 달군 쇠공을 굴립니다. 적 무리를 지지며 뚫고 굴러가다 마지막 적이나 큰 적에 달라붙어 터집니다.",
+      "frostShards": "얼음 입힌 쇳조각 여섯 개가 내 둘레를 넓게 돌다가 7칸 안의 가까운 적에게 하나씩 꽂혀 터집니다.",
+      "railCannon": "코일에 전기를 모았다가 앞으로 길게 꿰뚫는 쇠막대를 쏩니다.",
+      "scrapSaw": "고철 톱날을 날립니다. 처음 맞힌 적에 박혀 돌며 베다가, 한 번 튕겨 가까운 다른 적에게 박혀 마저 벱니다.",
+      "ironString": "앞쪽으로 쇠줄을 걸고 다섯 번 튕깁니다. 줄 위의 적이 울릴 때마다 맞습니다.",
+      "ferroVine": "검은 자성 유체가 앞쪽 첫 적의 발밑으로 기어가 감아 오르며 가시로 찌릅니다.",
+      "auroraRing": "머리 위 오로라 고리에서 체력이 많은 적부터 넓은 빛의 커튼이 여덟 번 내려옵니다."
       },
       "targets": {
         "note": "How many a move strikes, for the codex: single (one body) or multi (several), and how it reaches them.",
@@ -168,7 +195,75 @@
         "shockPool": ["multi", "지점 범위"],
         "echoGust": ["multi", "직선 왕복"],
         "waterspout": ["multi", "지점 범위"],
-        "surfaceResonance": ["multi", "물막 위 전체"]
+        "surfaceResonance": ["multi", "물막 위 전체"],
+      "prismBeam": [
+        "multi",
+        "직선 꿰뚫기"
+      ],
+      "flashBomb": [
+        "multi",
+        "노린 곳 둘레"
+      ],
+      "scrapShot": [
+        "multi",
+        "5발 부채꼴"
+      ],
+      "magneticLift": [
+        "multi",
+        "노린 곳 둘레"
+      ],
+      "noonMark": [
+        "multi",
+        "한 적을 따라가는 범위"
+      ],
+      "frostPrism": [
+        "multi",
+        "가까운 적 4기"
+      ],
+      "refractBeam": [
+        "multi",
+        "한 적 + 꺾인 빛 5기"
+      ],
+      "lightDash": [
+        "multi",
+        "지나는 길"
+      ],
+      "lightConstellation": [
+        "multi",
+        "최대 5기 연결"
+      ],
+      "rainbowBridge": [
+        "multi",
+        "노린 자리의 비"
+      ],
+      "moltenBall": [
+        "multi",
+        "굴러가는 길"
+      ],
+      "frostShards": [
+        "multi",
+        "가까운 적 6번"
+      ],
+      "railCannon": [
+        "multi",
+        "직선 꿰뚫기"
+      ],
+      "scrapSaw": [
+        "multi",
+        "날아가는 길 + 박힌 자리"
+      ],
+      "ironString": [
+        "multi",
+        "줄 위"
+      ],
+      "ferroVine": [
+        "multi",
+        "한 적 둘레 가시"
+      ],
+      "auroraRing": [
+        "multi",
+        "큰 적부터 범위"
+      ]
       },
       "statuses": {
         "burn": [
@@ -194,7 +289,15 @@
         "wet": [
           "젖음",
           "6초 동안 젖은 적이 나에게 주는 피해가 20% 줄어듭니다."
-        ]
+        ],
+      "reveal": [
+        "드러냄",
+        "4초 동안 약점이 드러나, 이 적에게 맞는 공격의 치명타 확률이 15% 늘고 치명타 피해가 1.5배에서 1.8배가 됩니다."
+      ],
+      "ironDust": [
+        "쇳가루",
+        "4초 동안 받는 경직이 겹마다 8% 늘어납니다(4겹까지, 한 번 시전에 적마다 1겹). 4겹이 되면 다음 자력 공격에 쇳가루가 굳으며 50 피해를 주고, 일반 적은 0.8초 굳습니다(같은 적은 4초에 한 번)."
+      ]
       }
     },
     "colors": {
@@ -203,7 +306,9 @@
       "lightning": "#e9bd59",
       "wind": "#89bea0",
       "sound": "#e0a43c",
-      "water": "#3f9fb5"
+      "water": "#3f9fb5",
+      "light": "#f3e2a0",
+      "magnet": "#9fbbd8"
     }
   },
   "enemies": {
@@ -383,11 +488,24 @@
     "tapePacker": {"name": "테이프 포장공", "hp": 240, "damage": 7, "speed": 3.2, "radius": 0.4, "attackRange": 7, "tell": 0.6, "recovery": 2.0, "color": "#b46a7a", "attack": "dash", "dashDistance": 7, "dashDuration": 1.6, "trail": "tape", "tapeSeconds": 8, "tapeSlow": 0.45, "tapeWidth": 0.45},
     "oiler": {"name": "기름칠공", "hp": 240, "damage": 7, "speed": 2.2, "radius": 0.4, "attackRange": 6, "tell": 0.7, "recovery": 2.2, "color": "#6b5a48", "attack": "oil", "oilRadius": 1.3, "oilSeconds": 8, "oilMax": 2, "burnSeconds": 3, "burnDamage": 8, "burnTick": 0.5},
     "partsSupplier": {"name": "부품 보급공", "hp": 220, "damage": 0, "speed": 2.3, "radius": 0.45, "attackRange": 6, "tell": 1.0, "recovery": 3.0, "color": "#5d7489", "attack": "supply", "supplyRadius": 4, "supplyCount": 2, "coatSeconds": 4, "coatArmor": 0.3, "spillCoins": 2},
-    "pressCaptain": {"name": "압축 경비대장", "hp": 560, "damage": 16, "speed": 1.6, "radius": 0.6, "attackRange": 6, "tell": 1.0, "recovery": 1.6, "color": "#2f3a57", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true, "dashTwice": 0.5}
+    "pressCaptain": {"name": "압축 경비대장", "hp": 560, "damage": 16, "speed": 1.6, "radius": 0.6, "attackRange": 6, "tell": 1.0, "recovery": 1.6, "color": "#2f3a57", "attack": "dash", "dashDistance": 6, "dashDuration": 0.45, "wallStun": 1.5, "wallBonus": 0.3, "crashCrates": true, "dashTwice": 0.5},
+    "secondHandKnight": {"note": "Chapter 3 (docs/design/clock-tower-plan.md 5): health set at about 1.25x chapter 2's same role (2026-11-16, the user's word: a little more than chapter 1 to 2, which was about 1.18x on average). A half-turn sweep: a melee blow with a 180-degree arc (meleeArc).", "name": "초침 기사", "hp": 350, "damage": 13, "speed": 2.2, "radius": 0.45, "attackRange": 2.8, "tell": 0.8, "recovery": 1.4, "color": "#c9a24a", "attack": "melee", "meleeArc": 180},
+    "bellTurret": {"name": "종 탄환 포탑", "hp": 300, "damage": 10, "speed": 0, "radius": 0.5, "attackRange": 9, "tell": 1.0, "recovery": 1.8, "color": "#b8873a", "attack": "lob", "stationary": true, "lobRadius": 1.3},
+    "signalOrb": {"name": "신호 구체", "hp": 230, "damage": 0, "speed": 2.0, "radius": 0.4, "attackRange": 6, "tell": 0.8, "recovery": 3.0, "color": "#6fc7d6", "attack": "beat", "beatRadius": 4, "beatSeconds": 4, "beatCount": 3, "beatHaste": 0.3, "beatArmor": 0, "beatLook": "signal"},
+    "hourglassShield": {"name": "모래시계 방패병", "hp": 490, "damage": 14, "speed": 1.6, "radius": 0.55, "attackRange": 3.2, "tell": 0.9, "recovery": 1.8, "color": "#7a6a9a", "attack": "melee", "frontGuard": 0.6, "guardArcDegrees": 120},
+    "ordenEcho": {"name": "오르덴의 거울상", "note": "Orden's mirror image (orden-boss.js odClones): held, casts with him, pops at one blow, leaves with him.", "hp": 1, "damage": 0, "speed": 0, "radius": 0.9, "attackRange": 0, "tell": 9, "recovery": 9, "color": "#7fe8ff", "attack": "shot", "sprite": "orden"},
+    "minuteArcher": {"name": "분침 궁수", "hp": 260, "damage": 10, "speed": 1.8, "radius": 0.4, "attackRange": 9, "tell": 0.8, "recovery": 1.6, "color": "#4f6fa0", "attack": "shot", "projectileSpeed": 9, "shots": 3, "shotGap": 1.0, "shotLook": "minuteHand"},
+    "pendulumGuard": {"name": "추 경비", "hp": 420, "damage": 15, "speed": 1.8, "radius": 0.5, "attackRange": 3.4, "tell": 1.0, "recovery": 1.8, "color": "#5c6b7c", "attack": "melee", "meleeArc": 220},
+    "gearRoller": {"name": "톱니 굴림병", "hp": 370, "damage": 15, "speed": 1.9, "radius": 0.55, "attackRange": 7, "tell": 1.0, "recovery": 1.6, "color": "#a0703a", "attack": "dash", "dashDistance": 7, "dashDuration": 0.5, "wallStun": 1.5, "wallBonus": 0.3},
+    "twinHandCaptain": {"name": "쌍침 기사단장", "hp": 700, "damage": 18, "speed": 2.0, "radius": 0.6, "attackRange": 2.8, "tell": 0.9, "recovery": 1.5, "color": "#3d5b8f", "attack": "doubleWave", "followupDelay": 0.6, "followupRadiusBonus": 1.2}
   },
   "bossAI": {
     "inspectorIris": {"note": "Chapter 2 midboss (docs/design/silent-factory-plan.md 7.1, src/engine/factory-bosses.js).", "radius": 0.6, "speed": 1.8, "recovery": 0.96, "attackRange": 9, "patterns": ["irisLaser", "rejectStamps", "verdict", "tapeMeasure", "irisLaser", "decoys"], "phasePatterns": [{"pattern": "crossLaser", "below": 0.5}, {"pattern": "gridCheck", "below": 0.5}], "castPatterns": ["irisLaser", "crossLaser", "gridCheck", "decoys"], "tellSeconds": {"irisLaser": 1.0, "rejectStamps": 1.0, "verdict": 1.2, "tapeMeasure": 0.8, "decoys": 4.0, "crossLaser": 1.2, "gridCheck": 1.5}, "laserLength": 10, "laserWidth": 0.5, "coneDegrees": 40, "turnDegrees": 50, "stampCount": 3, "stampCountPhaseTwo": 5, "stampRadius": 1.3, "stampGap": 0.35, "stampWarn": 0.8, "markSeconds": 5, "markSlow": 0.4, "passSeconds": 6, "passRadius": 1.1, "failStacks": 3, "failBlast": 35, "failBlastDelay": 1.5, "failSeconds": 10, "verdictWindow": 0.5, "verdictRange": 3.5, "verdictDegrees": 120, "verdictStun": 2.5, "measureLength": 7, "measureWidth": 0.45, "measureFront": 1.5, "decoySpread": 6.5, "decoySpreadNote": "Units between Iris and each decoy (4.5 until 2026-11-09, widened at the user's word). Near a wall the row is tried shorter (80%, 65%) and turned.", "decoyStun": 1, "decoyStunNote": "Striking a decoy stuns F2 this many seconds (no step, swing, dodge or skill). 2026-11-09: 0.5, then 1 at the user's word.", "crossSeconds": 3, "crossTurnDegrees": 40, "crossWidth": 0.45, "crossLength": 12, "gridShow": 1.5, "gridDelay": 1, "gridReach": 0.5, "gridReachNote": "The inspection rings cover the whole hall from its middle (2026-11-09), so a safe piece can be across it: they show this many seconds longer (1, then 0.5 at the user's word: a little sooner).", "gridDamage": 23, "phaseTwoSummon": {"type": "lensInspector", "count": 2}, "phaseBreaks": [{"at": 0.5, "kind": "mirrors", "seconds": 18, "mirrors": 3, "mirrorReach": 5.5, "sweepDegrees": 45, "beamWidth": 0.5, "beamDamage": 11, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
     "directorPress": {"note": "Chapter 2 region boss (docs/design/silent-factory-plan.md 7.2, src/engine/factory-bosses.js).", "radius": 1.0, "speed": 1.2, "recovery": 0.9, "attackRange": 9, "patterns": ["plateDrop", "armSlam", "lineShift", "craneGrab", "plateDrop", "callGuards", "armSlam"], "phasePatterns": [{"pattern": "twoRows", "below": 0.66}, {"pattern": "wallSqueeze", "below": 0.66}, {"pattern": "rhythmPress", "below": 0.66, "soon": true}, {"pattern": "twinPistons", "below": 0.33}, {"pattern": "finalPress", "below": 0.33}], "castPatterns": ["lineShift", "callGuards", "finalPress", "twinPistons", "rhythmPress", "craneGrab", "steamBurst"], "tellSeconds": {"plateDrop": 0.8, "armSlam": 1.0, "lineShift": 1.0, "callGuards": 0.9, "twoRows": 1.0, "wallSqueeze": 1.0, "twinPistons": 1.0, "rhythmPress": 1.0, "craneGrab": 0.4, "steamBurst": 1.5, "finalPress": 6.0}, "plates": 2, "plateW": 2.6, "plateH": 1.6, "plateBlock": 1.5, "plateSpread": 2.5, "armLength": 7, "armWidth": 0.8, "armStuck": 2, "flowSpeed": 2.6, "flowSeconds": 10, "flowFlip": 5, "flowWarn": 1, "guardType": "pressGuard", "guardMax": 3, "phaseThreeExtra": "partsSupplier", "rowWidth": 2.0, "rowGap": 2.4, "wallSeconds": 3, "wallHold": 1.2, "wallLeave": 3.4, "wallGap": 2.6, "wallGapSpeed": 2.2, "wallDamage": 30, "wallPush": 2, "moldCount": 5, "moldRadius": 1.0, "moldChoose": 2.6, "moldSpread": 4.5, "moldDamage": 27, "moldStun": 1, "rhythmLanes": 5, "rhythmLaneW": 0, "rhythmLaneWNote": "Unused since 2026-11-10: the lanes are the arena width split in rhythmLanes, no gaps", "rhythmBeats": 7, "rhythmBeat": 1.0, "rhythmCount": 1, "rhythmDamage": 21, "rhythmRest": 1.5, "craneChase": 4, "craneSpeed": 3.0, "craneWarn": 0.6, "craneRadius": 1.1, "craneCarry": 1.0, "craneHold": 1.2, "craneDamage": 30, "craneLock": 6, "craneEscape": 3, "craneStun": 2, "pressureFrom": 0.33, "pressurePerPattern": 25, "pressureCut": 2, "steamDamage": 54, "valveRadius": 1.6, "valveHits": 3, "valveOpen": 6, "twinSpeed": 2.6, "twinSide": 3, "twinSeconds": 9, "twinHits": 4, "twinStun": 2.5, "twinSlamEvery": 1.4, "twinSlamWarn": 0.9, "twinSlamRadius": 1.4, "finalNeed": 0.07, "finalDamage": 36, "finalStun": 1, "phaseBreaks": [{"at": 0.66, "kind": "pylons", "seconds": 18, "pylons": 4, "need": 3, "plateEvery": 1.5, "plateWarn": 0.8, "pylonRadius": 0.7, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}, {"at": 0.33, "kind": "molds", "seconds": 22, "need": 3, "stunSeconds": 4, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
+    "bellguard": {"note": "Chapter 3 region boss Belgard, the belfry guardian (docs/design/clock-tower-boss-drafts.md 2-D, src/engine/bell-boss.js). Silent: no words before a blow. round (phase 1) and round2 (phase 2, after the pillars at half health: Orden's puppet, tells x puppetTell, steps x puppetSpeed, every cut leaves an afterimage for trailSeconds). Damage figures multiply his attack (26); grabDamage, ringDamage, cageDamage, needleBurst and tollDamage are set amounts scaled by the difficulty. ringRadii, slam, spin, needles and the toll's reach are floor units (round on the floor). Archers: archerSides of the four sides in phase 1, all four in phase 2, each at a random spot along its side. 2026-11-19 (the user's word: the pillar break was far too easy): the half-health break is the forged orders (pillars tuning pillars round the floor, pillarReach from the middle, each with a needle swinging once every needleSeconds; a real order orderGap after each blow lights the pillar nearest F2, orderWarn ahead, and he charges there at chargeSpeed, hurting chargeDamage on the way, and strikes strikeRadius round it strikeWarn after arriving; a wrench blow on a pillar with its needle within tune of the middle is a forged order he turns to at once, and striking that pillar breaks it and cracks his bell, need cracks; off the pitch he charges F2 instead, punishDamage; fewer pillars left than cracks still needed fails at once. Before it, the same day, a ring rally with his bell; and the three pillars all ringing before that), the tuning pillars became the resonance (res*: three pillars rise resRadius round F2 and ring resGap apart; the line between two ringing pillars blows resLineWarn later, the floor inside all three resGap after that; a wrench blow silences a pillar), and the combo's third cut lunges comboLastStep (fixed as it begins) with comboLastRange and comboLastDegrees. 2026-11-20 (the user's picks): the cage drops three bells, each following F2 till cageAim before it lands, cageGap apart, the last wide (cageWide); caught, the others are called off and he knocks on it every cageKnock (cageKnockDamage, first after cageKnockFirst). The resonance blows only its lines, round the triangle twice resLineGap apart, while the pillars close from resRadius to resInner (no blast inside; a silenced pillar's lines stay quiet, shown green). The needles are joined by threads of light as they land, a fence F2 cannot cross (needleFence); needleHits wrench blows pull one; the inside blows needleClose after the last lands. In phase 2 Orden's strings hang on him, taut through his blows, and he speaks as he takes over. The sword rain (2026-11-19, the user's word: rows planted in lines looked stiff) pours rainRate swords a second for rainSeconds, each on its own spot (rainAim of them at F2, scattered rainScatter, the rest within rainReach), rainWarn ahead, radius rainRadius, stuck rainStay once down. The flying sword (the same day: it had no weight) hunts for flyHunt, stops and takes aim for flyAim (its lane washed red), then darts flyDash a second up to flyDashLength (flyDashDamage), again and again for flySeconds, with afterimages and a shadow. Later on 2026-11-19 (the user's word: standing still through his floor attacks was easy): after the rings, cracks, resonance, sword rain and needles he comes after F2 while they play out (floorChaseSpeed times his speed, his next blow floorChaseReady on, only combos till then), and in the last toll he strides tollStride from F2 to a new spot before each planting after the first (tollGlide; tollMove between plantings 1.2 to 2.0); since 2026-11-21 (the user's word: the shadow at his feet made him easy to strike) he flings the sword instead, which lands tollStride from F2 and at least tollSwordGap from him and flies on each planting, while he waits barehanded, and his archers fall back as it begins; the punch reaches punchReach 3.2 over punchDegrees 130 (1.7 and 80 before) stepping in up to punchStep; the toll rings' red is washed into the floor like his other warnings. 2026-11-18 (the user's word, no openings): the grab catches, lifts (grabLift), throws grabThrowUnits on (grabThrow) and drops the bell over F2 (grabDrop), the cage's rules from there; he no longer stands through the rings or a missed cage, and with his sword flying he keeps full speed (bareSpeed 1) and punches quicker (punchRecovery 0.35). 2026-11-21 code review: the resonance (res* keys) is gone from code and data now that the bell pendulum replaced it; in the last toll he flings his sword (it flies tollGlide before each planting) and waits barehanded, no longer striding or kneeling. 2026-11-22 (the user's word: striking anywhere worked): tune 0.25 and grace 0.06 (0.45 and 0.12 before: the green held about 43% of every swing, now about 22%); a pillar struck off the pitch jams for jamSeconds (its needle stops, red, and it cannot be forged meanwhile), and a forged order waits for the charge a miss set off instead of cancelling it.", "radius": 1.0, "speed": 1.5, "recovery": 0.8, "attackRange": 9, "sprite": "belgard", "syncStrike": true, "stand": 2.4, "patterns": ["bgCombo"], "round": ["bgCombo", "bgSlam", "bgRings", "bgArchers", "bgCombo", "bgGrab", "bgSlam", "bgCracks", "bgCombo", "bgCage", "bgPendulum", "bgArchers"], "round2": ["bgCombo", "bgFlySword", "bgCrescent", "bgSlam", "bgArchers", "bgSwordRain", "bgCombo", "bgCrescent", "bgRings", "bgNeedles", "bgSlam", "bgCombo", "bgPendulum", "bgCrescent", "bgArchers", "bgLastToll"], "tellSeconds": {"bgCombo": 0.75, "bgSpin": 0.7, "bgSlam": 0.95, "bgGrab": 0.8, "bgCracks": 0.9, "bgRings": 0.9, "bgArchers": 0.8, "bgCage": 0.9, "bgFlySword": 0.9, "bgPunch": 0.55, "bgSwordRain": 0.8, "bgNeedles": 0.8, "bgLastToll": 1.2, "bgCrescent": 1.0, "bgPendulum": 0.8}, "pendulumPasses": 3, "pendulumWarn": 0.8, "pendulumPass": 1.1, "pendulumGap": 0.35, "pendulumRadius": 1.3, "pendulumDamage": 1.0, "crescentStart": 1.2, "crescentRange": 15, "crescentSpeed": 10, "crescentDegrees": 100, "crescentWidth": 0.45, "crescentDamage": 1.2, "comboRange": 3.4, "comboLastRange": 4.4, "comboLastDegrees": 170, "comboLastStep": 2.6, "comboDegrees": 150, "comboDamage": 0.7, "comboLastDamage": 1.2, "comboStep": 0.6, "comboGap": 0.42, "comboFollow": 0.2, "comboGlide": 0.14, "comboLastDelay": 0.35, "spinNear": 1.8, "spinEvery": 6, "spinRadius": 2.8, "spinDamage": 0.9, "slamAhead": 1.6, "slamRadius": 1.5, "slamDamage": 1.3, "waveLength": 11, "waveSpeed": 11, "waveWidth": 0.55, "waveDamage": 0.8, "grabReach": 4.5, "grabWidth": 0.8, "grabDamage": 24, "grabLift": 0.45, "grabThrow": 0.4, "grabThrowUnits": 5, "grabDrop": 0.35, "crackSpread": 22, "crackLength": 12, "crackWidth": 0.6, "crackWarn": 1.0, "crackDamage": 1.1, "ringRadii": [2.8, 5.6, 8.4], "ringWarn": 1.0, "ringGap": 0.9, "ringDamage": 32, "archerType": "minuteArcher", "archerHp": 100, "archerSides": 2, "archerDelay": 1.2, "archerLife": 5.5, "cageRadius": 1.6, "cageWide": 2.4, "cageGap": 0.6, "cageAim": 0.55, "cageKnock": 0.8, "cageKnockFirst": 0.5, "cageKnockDamage": 9, "cageFall": 1.1, "cageSeconds": 3.5, "cageHits": 6, "cageDamage": 44, "puppetTell": 0.8, "puppetSpeed": 1.25, "trailSeconds": 2, "trailDamage": 0.35, "trailTick": 0.6, "flySeconds": 7, "flyHunt": 1.1, "flyAim": 0.55, "flyDash": 17, "flyDashLength": 9, "flyDashDamage": 1.1, "bareSpeed": 1.0, "punchReach": 3.2, "punchDegrees": 130, "punchStep": 1.0, "punchDamage": 0.6, "punchRecovery": 0.35, "flySpeed": 6.5, "flyTurn": 2.2, "flyRadius": 0.7, "flyTick": 0.8, "flyDamage": 0.8, "rainSeconds": 4.5, "rainRate": 7, "rainAim": 0.35, "rainScatter": 1.2, "rainReach": 6, "rainWarn": 0.7, "rainRadius": 0.7, "rainStay": 0.7, "rainDamage": 0.9, "needleRadius": 3.6, "needleWarn": 0.8, "needleGap": 0.3, "needleClose": 1.5, "needleHit": 1.0, "needleHits": 2, "needleFence": 12, "needleDamage": 0.8, "needleBurst": 34, "tollCount": 6, "tollsPerPlant": 2, "tollEvery": 1.5, "tollSpin": 60, "tollLight": 2.4, "tollShadowLength": 6.5, "tollMove": 2.0, "tollGlide": 1.2, "tollStride": 3.2, "tollSwordGap": 6, "floorChaseSpeed": 1.8, "floorChaseReady": 0.35, "tollWarn": 1.6, "tollShadowDegrees": 30, "tollDamage": 26, "phaseBreaks": [{"at": 0.5, "kind": "orders", "seconds": 40, "need": 3, "pillars": 4, "pillarReach": 5.5, "pillarRadius": 0.8, "needleSeconds": 1.8, "tune": 0.25, "grace": 0.06, "jamSeconds": 1.8, "firstOrder": 1.4, "orderWarn": 0.6, "orderGap": 0.9, "chargeSpeed": 8, "chargeWidth": 0.9, "chargeDamage": 24, "strikeWarn": 0.4, "strikeRadius": 2.2, "strikeDamage": 30, "punishDamage": 30, "recover": 0.5, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
+    "orden": {"note": "Chapter 3 final boss 1, the grand tuner Orden (docs/design/clock-tower-boss-drafts.md 3-D/3-E, src/engine/orden-boss.js). Magic only (2026-11-19, the user's word: no physical blows). round (phase 1): magic needles (three bolts needleGap apart, the later two led needleLead s ahead of F2), runes (a ring of six at runeInner round F2, then the middle and a ring at runeOuter; runeWarn each), the needle fence (fenceStart to fenceEnd over fenceSeconds; touching it fenceDamage and pushed back, still inside at the end fenceBurst; fenceHits wrench blows pull a needle and open its quarter), the element lanes (laneRows lanes across the room or laneCols down it, laneSafe of them safe, never the one F2 stands in, laneWarn; fire, ice, lightning, wind in turn: fire burns burnDamage every 0.5 s for burnSeconds, ice slows iceSlow for iceSeconds, lightning warns lightningWarn and strikes twice lightningSecond apart, wind pushes windPush a second for windSeconds away from the next safe lane) and the reflecting orbs (orbs, homing, a wrench blow sends one back for orbReturn of his health; he does not stagger). Half health, the break E-1 (stopTime): he scatters bullets[attempt] bolts, stops time for stopSeconds (heartBonus more for each heart broken); heartHits blows break a heart; touching a bolt bulletDamage; all watches broken: the next phase at once, no daze (2026-11-21); smaller and more bolts since 2026-11-21 (the user's word: 40/52/64 at spacing 1.8, radius 0.3 before); each bolt a watch hand that hurts along its length, bulletHalf either side of its spot and bulletRadius thick (2026-11-21; a 0.22 dot at its middle before), every clearance round F2, the watches and the way grown by bulletHalf; the way kept clear is the chain from F2 through the watches plus a spoke from F2 to each (2026-11-21); since later that day (the user's word: too easy, make it a maze) the bolts are a maze instead (mazeLoops[attempt] of the walls knocked out; odMazeScatter), and the same day (the user's pick: the square maze looked like a fence) a clock-face maze round him: mazeRings rings mazeCell apart from mazeCore (the floor beyond open), sectors about mazeArc long, the rings laid like a dial's minute marks and the walls between sectors like its hands; in a room with a dial painted on its floor (maps.json dial: the tuning chamber) the maze is that dial instead (odDialScatter, 2026-11-21, the user's words: the round rings sat apart from the map and felt easy): rings on its ellipse at mazeRingsAt of its size, the last on the gold line, walls on its twelve hour marks, Orden at its middle, and a minute and an hour hand of needles turning mazeHands turns a second through the stop (a dodge passes the hands, not the walls), a dodge stops at a needle wall, and the stop lasts stopSeconds 12 (8 before; simulations of 60 fields: the best route through the clock-face maze needs 8 to 10 s for 95% of them) within seconds 80 for the three tries (30 before); attempts tries, then the usual fail. round2: echoes in gold (Brass's march, Press's plates, Belgard's rings) and his mirror images (cloneCast after they stand, all three throw needles; only his hurt). Damage figures multiply his attack (34); fenceDamage, fenceBurst, burnDamage and ringDamage are set amounts scaled by the difficulty. Numbers are a first pass. 2026-11-21 code review: the stop-time maze is only the dial maze now (odDialScatter; a room without a painted dial gets one fitted to its floor), its watches placed by the dial, so bullets, bulletSpacing, wayWidth, heartApart and the maze* keys are gone; lightning strikes once (lightningWarn, lightningSecond gone); a wind lane pushes toward the middle of its nearest safe lane. 2026-11-22 (the user's word: often no room to get out of the minute hand's way; it reached over the whole dial and outran F2): the minute hand has a gap handGap units long in the middle of the outer band (the whole band where it is narrower), the floor each hand sweeps in the next handWarn seconds is washed red with the gap left clear, the notice says a dodge passes the hands, and a dodge stopped at a wall is spared the hands for handGrace seconds.", "radius": 0.9, "speed": 1.6, "recovery": 0.55, "attackRange": 9, "stand": 5, "needleGap": 0.35, "needleSpeed": 12, "needleRange": 11, "needleRadius": 0.3, "needleLead": 0.35, "needleDamage": 0.6, "runeGap": 0.8, "runeWarn": 0.8, "runeRadius": 1.5, "runeInner": 2.9, "runeOuter": 5.2, "runeDamage": 0.8, "fenceSeconds": 4, "fenceStart": 6, "fenceEnd": 1.5, "fenceDamage": 12, "fenceBurst": 36, "fenceHits": 2, "laneRows": 7, "laneCols": 7, "laneSafe": 4, "lightningTell": 0.8, "laneDamage": 0.9, "burnSeconds": 1.5, "burnDamage": 5, "iceSeconds": 2, "iceSlow": 0.4, "windPush": 2, "windSeconds": 1, "orbs": 3, "orbSeconds": 8, "orbSpeed": 2.5, "orbTurn": 1.6, "orbRadius": 0.4, "orbBack": 9, "orbReturn": 0.008, "orbDamage": 0.7, "marchWarn": 1.0, "marchGap": 1.2, "marchSpeed": 4, "marchHalf": 1.7, "marchShift": 3.5, "marchNear": 2, "marchFar": 5, "marchDamage": 0.8, "pressWarn": 1.0, "pressCell": 3, "pressDamage": 1.0, "ringRadii": [3.5, 7.5, 13], "ringWarn": 1.0, "ringGap": 0.9, "ringDamage": 32, "teleportFar": 7, "teleportEvery": 3.5, "cloneReach": 5, "cloneCast": 0.9, "cloneSwap": 0, "cloneDamage": 0.6, "sprite": "orden", "syncStrike": true, "patterns": ["odNeedles"], "round": ["odNeedles", "odLanes", "odRunes", "odFireSpread", "odLanes", "odOrbs", "odChain", "odNeedles", "odLanes", "odFence", "odVortex", "odRunes", "odLanes"], "round2": ["odMarch", "odLanes", "odIceMirror", "odNeedles", "odClones", "odQuartet", "odLanes", "odFrostNova", "odPress", "odOrbs", "odLanes", "odRings", "odClones", "odRunes", "odLanes"], "tellSeconds": {"odNeedles": 0.6, "odRunes": 0.5, "odFence": 0.7, "odLanes": 1.25, "odOrbs": 0.7, "odMarch": 0.8, "odPress": 0.8, "odRings": 0.9, "odClones": 1.0, "odFireSpread": 0.7, "odIceMirror": 0.8, "odChain": 0.7, "odVortex": 0.8, "odQuartet": 0.9, "odFrostNova": 0.9}, "phaseBreaks": [{"at": 0.5, "kind": "stopTime", "seconds": 80, "hearts": 5, "heartHits": 2, "heartBonus": 2, "stopSeconds": 15, "scatterSeconds": 1.2, "resumeSeconds": 1.2, "resumeSpeed": 8, "bulletRadius": 0.12, "bulletHalf": 0.6, "mazeRingsAt": [0.25, 0.62, 1], "mazeHands": [0.1429, 0.0357], "handGap": 2.4, "handWarn": 0.6, "handGrace": 0.35, "mazeLoops": [0.35, 0.25, 0.15], "bulletDamage": 0.5, "attempts": 3, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
+    "ordenFinal": {"note": "Chapter 3 final boss 2, Orden at the last hour (docs/design/clock-tower-boss-drafts.md 3-D): Orden 1's spells made stronger (a fan of fanBolts needles over fanDegrees that glance once off walls and holes, three rune waves, a turning fence whose pulled needle comes back after fenceBack s, two element lanes crossing (crossDamage), orbs2 orbs of which darkOrbs cannot be struck back, four images that swap places cloneSwap s before casting, two echoes echoOffset apart) and his own: the falling floor (holes pieces of holeSize, holeWarn then gone holeSeconds, falling through holeDamage), the apparatus cannon (the half F2 is in, cannonDamage; no opening after it, 2026-11-21), the command sigil (from sigilFrom of his health on every other spell: stop or move, sigilSeconds, sigilDamage) and the last hour (from lastHourFrom, every lastHourEvery s: twelve tolls lastHourGap apart, only three gold spots of lastHourSafe are safe, lastHourDamage). Numbers are a first pass. 2026-11-22 (the user's words): recovery 0.45 (0.6 before; Orden 1 0.55, 0.7 before), the falling floor in 12 pieces spread over the room on a grid (one under F2), the last hour rings lastHourTolls 6 times (12 before), and the command sigil comes from the start (sigilFrom 1, 0.6 before).", "radius": 0.9, "speed": 1.7, "recovery": 0.45, "attackRange": 9, "stand": 5, "needleGap": 0.35, "needleSpeed": 12, "needleRange": 11, "needleRadius": 0.3, "needleLead": 0.35, "needleDamage": 0.6, "runeGap": 0.8, "runeWarn": 0.8, "runeRadius": 1.5, "runeInner": 2.9, "runeOuter": 5.2, "runeDamage": 0.8, "fenceSeconds": 4, "fenceStart": 6, "fenceEnd": 1.5, "fenceDamage": 12, "fenceBurst": 36, "fenceHits": 2, "laneRows": 7, "laneCols": 7, "laneSafe": 4, "lightningTell": 0.8, "laneDamage": 0.9, "burnSeconds": 1.5, "burnDamage": 5, "iceSeconds": 2, "iceSlow": 0.4, "windPush": 2, "windSeconds": 1, "orbs": 3, "orbSeconds": 8, "orbSpeed": 2.5, "orbTurn": 1.6, "orbRadius": 0.4, "orbBack": 9, "orbReturn": 0.008, "orbDamage": 0.7, "marchWarn": 1.0, "marchGap": 1.2, "marchSpeed": 4, "marchHalf": 1.7, "marchShift": 3.5, "marchNear": 2, "marchFar": 5, "marchDamage": 0.8, "pressWarn": 1.0, "pressCell": 3, "pressDamage": 1.0, "ringRadii": [3.5, 7.5, 13], "ringWarn": 1.0, "ringGap": 0.9, "ringDamage": 32, "teleportFar": 7, "teleportEvery": 3.5, "cloneReach": 5, "cloneCast": 0.9, "cloneSwap": 0.6, "cloneDamage": 0.6, "sprite": "ordenx", "syncStrike": true, "patterns": ["odFan"], "round": ["odFan", "odCross", "odCollapse", "odQuartet", "odRunes", "odCross", "odCannon", "odIceMirror", "odOrbs", "odClones", "odCross", "odChain", "odFence", "odEcho2", "odFrostNova", "odVortex", "odCross", "odFireSpread"], "tellSeconds": {"odFan": 0.6, "odRunes": 0.5, "odFence": 0.7, "odCross": 1.35, "odOrbs": 0.7, "odClones": 1.0, "odCollapse": 0.8, "odCannon": 1.4, "odLastHour": 1.0, "odEcho2": 0.9, "odFireSpread": 0.7, "odIceMirror": 0.8, "odChain": 0.7, "odVortex": 0.8, "odQuartet": 0.9, "odFrostNova": 0.9}, "fanBolts": 5, "fanDegrees": 40, "fanDamage": 0.55, "crossDamage": 0.9, "orbs2": 5, "darkOrbs": 2, "fenceSpin": 0.6, "fenceBack": 4, "holes": 12, "holeSize": 2, "holeWarn": 1.2, "holeSeconds": 6, "holeDamage": 24, "cannonDamage": 1.6, "sigilFrom": 1, "sigilSeconds": 3, "sigilDamage": 30, "lastHourFrom": 0.3, "lastHourEvery": 25, "lastHourGap": 0.4, "lastHourTolls": 6, "lastHourSafe": 1.6, "lastHourDamage": 48},
+    "twinTickTock": {"note": "Chapter 3 midboss, the metronome twins (docs/design/clock-tower-boss-drafts.md 1-D, src/engine/clock-bosses.js). Two bodies share one health; one acts on each beat (ttBeat in difficulty bossRepeats): red ('tick') on even beats, blue ('tock') on odd. round: what comes next, in order; thrust and dash wait for red's beat, sweep for blue's, pendulum and shuffle take both. 2026-11-15 at the user's word: the colour swap became the shuffle (a shell game: the real Tick bursts, only beside the real Tock is safe), the dash throws gears as it runs instead of Tock's gear ring after it, the conduct (both reel when struck together) is gone, and the pendulum's line runs through F2 (pendulumOverlap past it) instead of down the room's middle. The flank's gaps stay in the middle 60% of the floor, each flankShift to flankShiftMax from the last (2026-11-18: one at the floor's edge, or across the room in one beat, could not be reached). Tick's thrusts reach 4 (2.6 until 2026-11-18, then 3.4, the user's word: a little longer). Damage figures multiply the boss's attack; pendulumDamage is a set amount scaled by the difficulty. At half health the colour floor (phaseBreaks: a columns × rows grid of red and blue squares; need calls of each twin, each callWarn long, stand on the caller's colour; replaced the tether 2026-11-15, the user's idea); then round2 on the quicker beat2 (ttBeat2) with the giant metronome (blade*: the floor under it cut into bladeZones bands, a weight in every band but the free one, which moves one band each swing; bladeSwings swings of ttBladeSwing seconds by difficulty, bladeSwingSeconds if none), the echo (runs under the other blows; echo*: F2's spot marked each beat, blowing echoDelay beats later) and the pincer (2026-11-15). flank (both rounds): they blink to opposite ends and send flankWalls walls of gears across in turn, each with a flankGap gap at least flankShift from the last; in round2 flankWalls2 walls from the same two ends (user's ask, 2026-11-15). 2026-11-19 (the user's word: too easy to dodge): tells about 17% shorter (0.6/0.7/0.9 before), the thrust and dash aim leadSeconds ahead of F2's pace (at most leadMax), now and then a solo blow starts half a beat early (offbeatShare, offbeatShare2 in phase 2), and through phase 2's giant metronome the twin of the beat throws a gear at F2 every overlapBeats beats; the colour floor's squares under the twins are a grey dais (no colour, a miss to stand on). No gem borders on the colour floor (they read as go stones); the caller shows the brass stopwatch (2026-11-19). Until the fight they stand turned south-west (startFacing, 2.356 radians: 135 degrees) with their faces to F2 at the door (2026-11-21, the chapter 3 UI review: the west pose they had hid both faces behind the metronome). 2026-11-20 (the user's word): through the colour floor they stand still in the middle again (a day of gliding round it went); instead through the pendulum and the giant metronome they circle F2 on opposite sides (jointOrbit away, jointTurn a second) and the twin of the beat throws a gear at F2 every overlapBeats beats; the echo blows echoDelay 1.2 beats after its mark (2 before); the pincer gathers in pincerGather 0.45, closes after pincerBeats 3 (4 before) and its gap is pincerGapDegrees 18 either side (27 before).", "radius": 0.7, "speed": 2.2, "recovery": 0.5, "attackRange": 9, "startFacing": 2.356, "twins": ["tick", "tock"], "twinGap": 4, "beat": 0.9, "patterns": ["ttThrust"], "round": ["thrust", "sweep", "thrust", "sweep", "pendulum", "dash", "sweep", "flank", "thrust", "sweep", "shuffle"], "tellSeconds": {"ttThrust": 0.5, "ttSweep": 0.58, "ttDash": 0.75}, "leadSeconds": {"ttThrust": 0.45, "ttDash": 0.55}, "leadMax": 3, "overlapBeats": 2, "jointOrbit": 4, "jointTurn": 0.8, "offbeatShare": 0.2, "offbeatShare2": 0.35, "redStand": 2.2, "blueStand": 3.4, "thrustLength": 4, "thrustWidth": 0.45, "thrustGap": 0.32, "thrustLunge": 0.7, "thrustDamage": 0.6, "sweepRange": 3.2, "sweepDegrees": 180, "sweepDamage": 1, "gearShots": 3, "gearSpread": 28, "gearSpeed": 6, "gearReach": 10, "gearRadius": 0.3, "gearDamage": 0.5, "gearBounces": 1, "pendulumBlasts": 4, "pendulumWarn": 1.2, "pendulumOverlap": 1.6, "pendulumDamage": 24, "dashLength": 9, "dashSeconds": 0.45, "dashGearDrops": 3, "dashGearBurst": 8, "dashGearSpeed": 5, "dashGearReach": 7, "shuffles": 3, "shuffleStep": 0.55, "shuffleSwapShare": 0.65, "shuffleSpread": 3.5, "shuffleRadius": 2.1, "shuffleDamage": 30, "beat2": 0.6, "round2": ["thrust", "sweep", "blade", "dash", "sweep", "shuffle", "flank", "thrust", "echo", "sweep", "pincer", "thrust", "sweep", "shuffle"], "flankWalls": 4, "flankBeats": 2, "flankWalls2": 5, "flankWarn": 0.9, "flankSpeed": 5.5, "flankSpacing": 0.95, "flankGap": 2.4, "flankShift": 3, "flankShiftMax": 5, "flankDamage": 0.6, "flankReach": 12.5, "bladeSwings": 6, "bladeSwingSeconds": 1.2, "bladeWarn": 1.4, "bladeAbove": 1.5, "bladeDegrees": 88, "bladeZones": 4, "bladeHalf": 1.4, "bladeDamage": 30, "echoMarks": 6, "echoWarn": 0.6, "echoDelay": 1.2, "echoRadius": 1.4, "echoDamage": 20, "pincerRadiusStart": 7, "pincerRadius": 3.8, "pincerGather": 0.45, "pincerTurn": 0.9, "pincerBeats": 3, "pincerJab": 2.6, "pincerGapDegrees": 18, "pincerCloseSeconds": 0.3, "pincerFenceDamage": 12, "pincerDamage": 32, "phaseBreaks": [{"at": 0.5, "kind": "colours", "seconds": 26, "columns": 5, "rows": 5, "need": 3, "firstCall": 1.0, "callWarn": 1.5, "callRest": 0.4, "twistShare": 0.35, "twistWarn": 0.7, "missDamage": 30, "failWarn": 1.2, "failDamage": 40, "failHeal": 0.05}]},
     "collectorRoco": {
       "radius": 0.8,
       "speed": 1.6,
@@ -689,6 +807,39 @@
       "interval": 0.25,
       "delay": 0,
       "pull": 1.6
+    },
+    "prismBeam": {
+      "note": "A thin straight beam of light out to range at once (the 'beam' shape, as 굉음 without the charge), through every body on it.",
+      "shape": "beam",
+      "halfWidth": 0.3,
+      "interval": 0,
+      "delay": 0
+    },
+    "flashBomb": {
+      "note": "Thrown at the aimed spot (range): lands after delay and bursts over the skill radius; ordinary bodies hit are blinded (stopped) for blind seconds.",
+      "shape": "target",
+      "throwSeconds": 0.35,
+      "blind": 0.6,
+      "interval": 0,
+      "delay": 0.6
+    },
+    "scrapShot": {
+      "note": "Five scrap pellets fanned spread radians apart; each goes through one body and stops at the second (pierceMax, 2026-11-21; it stopped at the first before). 쇳가루 once per cast per body.",
+      "shape": "projectile",
+      "spread": 0.131,
+      "speed": 16,
+      "width": 0.25,
+      "interval": 0,
+      "delay": 0,
+      "pierce": true,
+      "pierceMax": 2
+    },
+    "magneticLift": {
+      "note": "At the aimed spot: scrap rises for delay seconds and slams down over the radius, laying ironDustStacks of 쇳가루.",
+      "shape": "target",
+      "ironDustStacks": 2,
+      "interval": 0,
+      "delay": 0.65
     }
   },
   "fusionBehavior": {
@@ -705,8 +856,8 @@
       "shape": "shatter",
       "range": 6,
       "damages": [
-        154,
-        190
+        163,
+        201
       ],
       "frozenSeconds": 0.8,
       "frozenBonus": 1.3,
@@ -778,7 +929,7 @@
       "range": 6,
       "pull": 2.5,
       "slamAt": 2,
-      "slamDamage": 206,
+      "slamDamage": 223,
       "stun": 0.6,
       "interval": 0.4,
       "delay": 0
@@ -829,6 +980,145 @@
       "closeMs": 120,
       "interval": 0.18,
       "delay": 0.6
+    },
+    "noonMark": {
+      "note": "A sun over the body nearest the cursor (within cursorReach of it, else the nearest to F2; in range and in her sight) follows it, dropping a heat pillar (pillarRadius) every interval from delay, pillars times, then bursts (burstRadius). If the body falls it moves to the nearest one within hopReach, else stays.",
+      "shape": "sun",
+      "range": 7,
+      "cursorReach": 2.5,
+      "hopReach": 3,
+      "pillarRadius": 2.0,
+      "interval": 0.25,
+      "delay": 0.3
+    },
+    "frostPrism": {
+      "note": "An ice prism forward units ahead of F2; every interval from delay, pulses times, it fires a refracted beam at each of the targets nearest bodies within reach of it.",
+      "shape": "prism",
+      "forward": 3,
+      "reach": 5,
+      "targets": 4,
+      "pulses": 6,
+      "interval": 0.5,
+      "delay": 0.3
+    },
+    "refractBeam": {
+      "note": "A beam fastens on the first body in the aim (acquisitionArc, range) and burns it every interval from delay, ticks times; each tick bends on to the bendTargets nearest other bodies (within 5) for refractDamage each. Since 2026-11-22 it fastens on the body nearest the cursor (within cursorReach of it), else the nearest in the aim's arc, never one behind F2, and is not cast without one; the cursor laid within switchReach of another body moves it there; past leash or behind a wall, or when its body falls, it takes the next by the same rule or ends.",
+      "shape": "refract",
+      "range": 8,
+      "acquisitionArc": 60,
+      "ticks": 6,
+      "interval": 0.25,
+      "delay": 0.2,
+      "bendTargets": 5,
+      "cursorReach": 2.5,
+      "switchReach": 1.5,
+      "leash": 9
+    },
+    "lightDash": {
+      "note": "F2 slides distance units over duration (untouchable for invulnerable), striking each body she passes once; the band she leaves bursts bandDelay later over halfWidth.",
+      "shape": "lightDash",
+      "distance": 5.5,
+      "duration": 0.34,
+      "halfWidth": 0.9,
+      "invulnerable": 0.4,
+      "bandDelay": 1,
+      "interval": 0,
+      "delay": 0
+    },
+    "lightConstellation": {
+      "note": "Links up to targets nearest bodies in range (F2 and the body when there is only one); rings times interval apart from delay, every linked body and every body on a line (lineHalfWidth) is hit.",
+      "shape": "constellation",
+      "range": 6,
+      "targets": 5,
+      "rings": 5,
+      "lineHalfWidth": 0.3,
+      "interval": 0.2,
+      "delay": 1
+    },
+    "rainbowBridge": {
+      "note": "소나기 무지개 (2026-11-21, replacing the rainbow bridge): a little rain cloud gathers over the spot aimed at (range); from delay it rains every interval, ticks times, over the fusion's radius; then the cloud clears, a rainbow stands over the spot and sunlight strikes at strikeAt over burstRadius.",
+      "shape": "shower",
+      "range": 7,
+      "ticks": 8,
+      "interval": 0.2,
+      "delay": 0.3,
+      "strikeAt": 2.1
+    },
+    "moltenBall": {
+      "note": "A hot ball rolls from startDistance at speed up to range; each interval it heats bodies within rollRadius (counted only when it touches one, at most rollHits). The first body it touches stops it (any body since 2026-11-21; before, only a boss or elite): an ordinary body with more bodies within aheadReach in its path holds it only clingSeconds and it rolls on; otherwise it clings stickSeconds, then bursts (burstRadius); it bursts at a wall or the range's end too.",
+      "shape": "ball",
+      "range": 8,
+      "speed": 5,
+      "startDistance": 0.8,
+      "rollRadius": 1.8,
+      "stickSeconds": 1.5,
+      "interval": 0.25,
+      "delay": 0.1,
+      "clingSeconds": 0.5,
+      "aheadReach": 3.5
+    },
+    "frostShards": {
+      "note": "Six iced shards circle F2 at orbit for orbitSeconds, hitting bodies they touch every interval; then each flies (flight) at one of the nearest bodies, shardGap apart, and bursts there over shardRadius.",
+      "shape": "shards",
+      "orbit": 3.0,
+      "orbitSeconds": 2,
+      "band": 0.4,
+      "flight": 0.2,
+      "shardGap": 0.06,
+      "interval": 0.5,
+      "delay": 0,
+      "shardRadius": 1.8,
+      "shardReach": 7
+    },
+    "railCannon": {
+      "note": "Charges for charge seconds, then a rod through every body on a straight line to range (a wall stops it).",
+      "shape": "rail",
+      "range": 9,
+      "charge": 0.6,
+      "halfWidth": 0.7,
+      "interval": 0,
+      "delay": 0
+    },
+    "scrapSaw": {
+      "note": "A saw flies at speed, cutting each body it passes (flyHalfWidth) once; it lodges in the first body it cuts (any body since 2026-11-21; before, only a boss or elite), a wall or range, and spins there over spinRadius every interval, spinHits times; half-way it springs once to the nearest other body within hopReach and spins out the rest there.",
+      "shape": "saw",
+      "range": 6,
+      "speed": 12,
+      "flyHalfWidth": 0.6,
+      "spinRadius": 2.2,
+      "interval": 0.25,
+      "delay": 0,
+      "hopReach": 4
+    },
+    "ironString": {
+      "note": "A string from where F2 cast to a big body, a wall or range (following the big body); plucked plucks times interval apart from delay, hitting every body within halfWidth of it.",
+      "shape": "string",
+      "range": 7,
+      "halfWidth": 0.7,
+      "plucks": 5,
+      "interval": 0.4,
+      "delay": 0.4
+    },
+    "ferroVine": {
+      "note": "Black fluid creeps at speed to the first body in the aim (acquisitionArc, range; else the range's end), hitting bodies it passes once (travelHalfWidth); then it stabs every interval, stabs times, over stabRadius round that body.",
+      "shape": "vine",
+      "range": 7,
+      "acquisitionArc": 60,
+      "speed": 8,
+      "travelHalfWidth": 0.4,
+      "stabRadius": 2.3,
+      "interval": 0.25,
+      "delay": 0.1
+    },
+    "auroraRing": {
+      "note": "A ring over F2; every interval from delay, falls times, a curtain (fallRadius) comes down on the body in range with the most health left, the same one at most sameMax times in a row unless it is the only one.",
+      "shape": "aurora",
+      "range": 5,
+      "falls": 8,
+      "fallRadius": 2.2,
+      "sameMax": 2,
+      "interval": 0.5,
+      "delay": 0.3
     }
   },
   "mods": [
@@ -1429,6 +1719,36 @@
           "short": "정형실"
         }
       ]
+    },
+    {
+      "id": "clock-tower",
+      "number": 3,
+      "name": "중앙시계탑",
+      "after": "silent-factory",
+      "description": "마을 한가운데 시계탑. 박자를 맞추는 쌍둥이와 종지기가 계단을 지킵니다.",
+      "note": "Chapter 3 preview (2026-11-15; rooms 1-8 2026-11-16): the clock tower's first three floors, stations 1-8 of docs/design/clock-tower-plan.md 4, with the chapter's own mobs (slice.json enemies secondHandKnight ... twinHandCaptain) and maps (maps.json tower-01 ... tower-08). Belgard (9, the belfry, src/engine/bell-boss.js) since 2026-11-16; Orden's two rooms since 2026-11-19: the tuning chamber (10, kind finalBoss, `collapse`: beating Orden plays the tower breaking open, game.js startCollapse and src/render/tower-collapse.js, with no unwinding, reward or heal) and the ruined summit (11, Orden at the last hour), whose fall ends the chapter as a clear (the liberation ending is not made yet). Shown only on the local test server (preview). Each tower room names its floor (`floor`: 1층 for stations 1-4, 2층 for 5-7, 3층 for 8-9, 4층 for 10, 꼭대기 for 11), shown before its name. Mob health is about 1.25x chapter 2's same role (the user's word: a little more than chapter 1 to 2). Room furniture: only chapter 1's crates and music boxes until the tower's own devices (plan 6) are made.",
+      "scale": 1,
+      "loot": 1.5,
+      "merchantAfterRoom": "tower-08",
+      "merchant": { "boss": "벨가드", "place": "종루", "title": "종루에 오르기 전에, 하나 챙겨 가." },
+      "difficulties": ["normal", "hard"],
+      "affixesFrom": "tower-07",
+      "eliteType": "twinHandCaptain",
+      "eliteRoomWaves": [3, 3],
+      "hazards": { "note": "Chapter 3 keeps chapter 1's crates and music boxes until the tower's own devices (plan 6: turning gear floor, second-hand sweep, pendulum, hour bell, signal relay) are made.", "ramp": [], "musicboxesPerRun": 3, "only": ["crate", "musicbox"], "counts": { "crate": [2, 2], "musicbox": [0, 0] } },
+      "rooms": [
+        {"id": "tower-01", "variants": ["A", "B"], "kind": "normal", "power": 1.0, "floor": "1층", "name": "시계탑 정문", "description": "새 몹이 문을 지키는 탑의 첫 층", "short": "정문", "rewards": {"gears": 14, "coins": 21}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["secondHandKnight", "secondHandKnight", "secondHandKnight", "secondHandKnight"], ["secondHandKnight", "secondHandKnight", "secondHandKnight", "minuteArcher"], ["secondHandKnight", "secondHandKnight", "minuteArcher", "minuteArcher"]]},
+        {"id": "tower-02", "variants": ["A", "B"], "kind": "normal", "power": 1.06, "floor": "1층", "name": "톱니 승강로", "description": "큰 톱니가 맞물려 도는 승강로", "short": "승강로", "rewards": {"gears": 16, "coins": 23}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["secondHandKnight", "secondHandKnight", "secondHandKnight", "gearRoller"], ["gearRoller", "gearRoller", "secondHandKnight", "secondHandKnight", "minuteArcher"], ["gearRoller", "gearRoller", "secondHandKnight", "minuteArcher", "minuteArcher"]]},
+        {"id": "tower-03", "variants": ["A", "B"], "kind": "normal", "power": 1.12, "floor": "1층", "name": "초침 회랑", "description": "커다란 문자판 창이 있는 회랑", "short": "회랑", "rewards": {"gears": 17, "coins": 25}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["secondHandKnight", "secondHandKnight", "hourglassShield", "bellTurret"], ["hourglassShield", "hourglassShield", "secondHandKnight", "secondHandKnight", "minuteArcher"], ["hourglassShield", "bellTurret", "bellTurret", "secondHandKnight", "gearRoller"]]},
+        {"id": "tower-04", "kind": "miniboss", "floor": "1층", "name": "계단 기관실", "description": "시간지기 틱·톡이 계단의 박자를 맞춥니다.", "boss": "twinTickTock", "short": "기관실"},
+        {"id": "tower-05", "kind": "shop", "floor": "2층", "name": "멈춘 시계 다락", "description": "고장 판정을 받고 숨은 시계 주민들이 가게를 열었습니다.", "short": "다락"},
+        {"id": "tower-06", "variants": ["A", "B"], "kind": "normal", "power": 1.18, "floor": "2층", "name": "진자 홀", "description": "거대한 진자 추가 흔들리는 홀", "short": "진자 홀", "rewards": {"gears": 16, "coins": 23}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["pendulumGuard", "pendulumGuard", "secondHandKnight", "secondHandKnight", "minuteArcher", "elite"], ["hourglassShield", "hourglassShield", "gearRoller", "gearRoller", "minuteArcher", "elite"], ["pendulumGuard", "pendulumGuard", "bellTurret", "bellTurret", "elite"]]},
+        {"id": "tower-07", "variants": ["A", "B"], "kind": "normal", "power": 1.24, "floor": "2층", "name": "신호 구체 저장실", "description": "신호 구체를 모아 둔 저장실", "short": "저장실", "rewards": {"gears": 17, "coins": 25}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["pendulumGuard", "pendulumGuard", "signalOrb", "minuteArcher", "minuteArcher", "secondHandKnight", "secondHandKnight"], ["hourglassShield", "hourglassShield", "secondHandKnight", "secondHandKnight", "signalOrb", "elite"], ["gearRoller", "gearRoller", "gearRoller", "signalOrb", "elite"]]},
+        {"id": "tower-08", "variants": ["A", "B"], "kind": "normal", "power": 1.3, "floor": "3층", "name": "종루 아래 배선실", "description": "신호선이 종루로 모이는 방", "short": "배선실", "rewards": {"gears": 19, "coins": 28}, "hazardCounts": {"crate": [2, 3], "musicbox": [0, 1]}, "waves": [["pendulumGuard", "pendulumGuard", "gearRoller", "gearRoller", "minuteArcher", "minuteArcher", "elite"], ["signalOrb", "elite", "elite", "hourglassShield", "hourglassShield", "bellTurret"], ["bellTurret", "bellTurret", "secondHandKnight", "secondHandKnight", "minuteArcher", "elite"]]},
+        {"id": "tower-09", "kind": "regionBoss", "floor": "3층", "name": "종루", "description": "종루수호자 벨가드가 대검을 들고 종 앞을 지킵니다.", "boss": "bellguard", "short": "종루", "healBox": 100},
+        {"id": "tower-10", "kind": "finalBoss", "floor": "4층", "name": "조율실", "description": "대조율사 오르덴이 마을 전체와 이어진 조율 장치 앞에서 기다립니다.", "boss": "orden", "short": "조율실", "collapse": true},
+        {"id": "tower-11", "kind": "finalBoss", "floor": "꼭대기", "name": "무너진 탑 꼭대기", "description": "무너진 탑 꼭대기, 오르덴 · 마지막 정각", "boss": "ordenFinal", "short": "꼭대기", "mapStop": "tower-10"}
+      ]
     }
   ],
   "roomLayouts": [
@@ -1860,6 +2180,84 @@
       "slow": 0.2,
       "spacing": 0.7,
       "tier": "common"
+    },
+    {
+      "id": "splitBeam",
+      "skill": "prismBeam",
+      "name": "분광",
+      "description": "광선이 처음 맞힌 적에서 세 갈래로 갈라져 3칸 더 나간다(갈래 피해 40%, 광선에 이미 맞은 적은 빼고).",
+      "branches": 3,
+      "branchRange": 3,
+      "damageShare": 0.4,
+      "tier": "common"
+    },
+    {
+      "id": "twinLens",
+      "skill": "prismBeam",
+      "name": "연사 렌즈",
+      "description": "0.25초 간격으로 광선을 두 번 쏜다(각 65%). 두 번째는 그때 커서 쪽으로 다시 겨눈다.",
+      "shots": 2,
+      "gap": 0.25,
+      "damageShare": 0.65,
+      "tier": "common"
+    },
+    {
+      "id": "delayFuse",
+      "skill": "flashBomb",
+      "name": "지연 신관",
+      "description": "바로 터지지 않고 바닥에 1.5초 남아, 적이 밟거나 시간이 다 되면 터진다. 눈부셔 멈추는 시간이 1.2초로 늘어난다.",
+      "waitSeconds": 1.5,
+      "blindSeconds": 1.2,
+      "tier": "common"
+    },
+    {
+      "id": "bounceFlash",
+      "skill": "flashBomb",
+      "name": "튀는 섬광탄",
+      "description": "터진 뒤 조준 방향으로 2칸 튀어 한 번 더 터진다(반지름 2, 피해 60%).",
+      "bounceDistance": 2,
+      "radius": 2,
+      "damageShare": 0.6,
+      "tier": "rare"
+    },
+    {
+      "id": "heavySlug",
+      "skill": "scrapShot",
+      "name": "대구경",
+      "description": "다섯 발 대신 큰 쇳덩이 한 발을 쏜다(사거리 5, 첫 적과 그 뒤 두 기를 꿰뚫음). 피해 85, 쇳가루 2겹. 산탄 한 알보다 두 배 크고 그만큼 넓게 맞는다.",
+      "range": 5,
+      "pierce": 2,
+      "damage": 85,
+      "ironDustStacks": 2,
+      "width": 0.45,
+      "tier": "rare"
+    },
+    {
+      "id": "magnetReturn",
+      "skill": "scrapShot",
+      "name": "자석 회수",
+      "description": "쏜 쇳조각이 1초 뒤 F2에게 돌아오며 길 위의 적을 한 번 더 친다(피해 40%, 쇳가루는 쌓이지 않음).",
+      "returnAfter": 1,
+      "damageShare": 0.4,
+      "tier": "common"
+    },
+    {
+      "id": "trackingField",
+      "skill": "magneticLift",
+      "name": "따라가는 자기장",
+      "description": "쇳조각을 띄우는 0.65초 동안 노린 곳이 커서를 따라 움직인다(최대 3칸).",
+      "maxShift": 3,
+      "tier": "common"
+    },
+    {
+      "id": "scrapSwirl",
+      "skill": "magneticLift",
+      "name": "쇳조각 소용돌이",
+      "description": "띄우는 동안 쇳조각이 원 안을 돌며 안의 적을 0.25초마다 8씩 4번 친다.",
+      "damage": 8,
+      "hits": 4,
+      "interval": 0.25,
+      "tier": "common"
     }
   ],
   "elementTraits": [
@@ -1984,6 +2382,44 @@
       "description": "젖은 적을 렌치로 치면 물이 튀어 반지름 1.5 안의 적도 젖는다.",
       "radius": 1.5,
       "tier": "rare"
+    },
+    {
+      "id": "clearLens",
+      "element": "light",
+      "name": "맑은 렌즈",
+      "description": "드러냄 지속시간이 2초 늘고, 드러난 적에게 맞는 치명타 확률이 10% 더 늘어난다.",
+      "extraDuration": 2,
+      "critChanceBonus": 0.1,
+      "tier": "rare"
+    },
+    {
+      "id": "flashKill",
+      "element": "light",
+      "name": "번쩍 처치",
+      "description": "드러난 적이 쓰러지면 섬광이 터져 반지름 2.5 안의 적을 드러내고 피해 45를 준다.",
+      "radius": 2.5,
+      "damage": 45,
+      "tier": "special"
+    },
+    {
+      "id": "magnetWrench",
+      "element": "magnet",
+      "name": "자석 렌치",
+      "description": "렌치로 치면 쇳가루가 1겹 쌓이고(같은 적에게 1초에 한 번), 쇳가루 걸린 적에게 렌치 피해가 겹마다 6% 늘어난다(최대 24%).",
+      "damageBonusPerStack": 0.06,
+      "wrenchStacks": 1,
+      "lock": 1,
+      "tier": "rare"
+    },
+    {
+      "id": "setShatter",
+      "element": "magnet",
+      "name": "굳힘 파쇄",
+      "description": "쇳가루로 굳힐 때(보스는 경직이 들어갈 때) 몸의 쇳가루가 터져 반지름 2 안의 적에게 피해 30과 쇳가루 1겹을 준다.",
+      "radius": 2,
+      "damage": 30,
+      "stacks": 1,
+      "tier": "special"
     }
   ],
   "statChapters": {
@@ -2045,8 +2481,8 @@
     "default": "normal",
     "levels": [
       { "id": "easy", "name": "쉬움", "scale": 0.6, "loot": 0.6, "description": "적이 약하고 장애물이 적습니다. 처치 보상도 적습니다.", "fewerEnemies": 1, "bossRepeats": { "rhythmBeat": 1.3, "rhythmCount": 1, "valveOpen": 8,  "stickerCount": 5, "crateTossCount": 1, "ranks": 2, "waveVolleys": 2, "stompRings": 2 , "stampCount": 2, "stampCountPhaseTwo": 4, "plates": 1, "moldCount": 4, "guardMax": 2, "verdictWindow": 0.7, "armStuck": 2.5, "wallGap": 3.2, "gridShow": 2.0, "decoySeconds": 5, "lensHelpers": 3}, "phaseBreaks": { "cans": { "cans": 4, "bombShare": 0.2, "canEvery": 1.0, "seconds": 20 }, "drums": { "drums": 3, "showStep": 0.85, "laneEvery": 3.8, "seconds": 20 }, "flags": { "flags": 2, "turn": 0.35, "seconds": 20 } , "mirrors": {"seconds": 20, "sweepDegrees": 35}, "pylons": {"need": 2, "plateEvery": 1.8, "seconds": 20}, "molds": {"need": 2, "seconds": 24}} },
-      { "id": "normal", "name": "보통", "scale": 1.0, "loot": 1.0, "description": "이 장의 기본 원정입니다.", "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 2, "valveOpen": 6,  "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 , "stampCount": 3, "stampCountPhaseTwo": 5, "plates": 2, "moldCount": 5, "guardMax": 3, "verdictWindow": 0.5, "armStuck": 2, "wallGap": 2.6, "gridShow": 1.5, "decoySeconds": 4, "lensHelpers": 4}, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } , "mirrors": {"seconds": 18, "sweepDegrees": 45}, "pylons": {"need": 3, "plateEvery": 1.5, "seconds": 18}, "molds": {"need": 3, "seconds": 22}} },
-      { "id": "hard", "name": "어려움", "scale": 1.4, "loot": 1.4, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "eliteTraits": 2, "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 3, "valveOpen": 4,  "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 , "stampCount": 4, "stampCountPhaseTwo": 6, "plates": 3, "moldCount": 6, "guardMax": 4, "verdictWindow": 0.35, "armStuck": 1.5, "wallGap": 2.2, "gridShow": 1.0, "decoySeconds": 3, "lensHelpers": 5}, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } , "mirrors": {"seconds": 16, "sweepDegrees": 55}, "pylons": {"need": 4, "plateEvery": 1.2, "seconds": 16}, "molds": {"need": 4, "seconds": 20}} }
+      { "id": "normal", "name": "보통", "scale": 1.0, "loot": 1.0, "description": "이 장의 기본 원정입니다.", "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 2, "valveOpen": 6,  "stickerCount": 7, "crateTossCount": 2, "ranks": 3, "waveVolleys": 3, "stompRings": 3 , "stampCount": 3, "stampCountPhaseTwo": 5, "plates": 2, "moldCount": 5, "guardMax": 3, "verdictWindow": 0.5, "armStuck": 2, "wallGap": 2.6, "gridShow": 1.5, "decoySeconds": 4, "lensHelpers": 4, "ttBeat": 0.9, "ttShuffles": 3, "ttShuffleStep": 0.55, "ttBeat2": 0.6, "ttBladeSwing": 1.2}, "phaseBreaks": { "cans": { "cans": 5, "bombShare": 0.3, "canEvery": 0.9, "seconds": 18 }, "drums": { "drums": 4, "showStep": 0.7, "laneEvery": 3.2, "seconds": 18 }, "flags": { "flags": 3, "turn": 0.45, "seconds": 18 } , "mirrors": {"seconds": 18, "sweepDegrees": 45}, "pylons": {"need": 3, "plateEvery": 1.5, "seconds": 18}, "molds": {"need": 3, "seconds": 22}, "colours": {"need": 3, "seconds": 26}} },
+      { "id": "hard", "name": "어려움", "scale": 1.4, "loot": 1.4, "description": "적이 강하고 장애물이 많습니다. 처치 보상도 많습니다.", "eliteTraits": 2, "bossRepeats": { "rhythmBeat": 1.0, "rhythmCount": 3, "valveOpen": 4,  "stickerCount": 9, "crateTossCount": 4, "ranks": 4, "waveVolleys": 4, "stompRings": 4 , "stampCount": 4, "stampCountPhaseTwo": 6, "plates": 3, "moldCount": 6, "guardMax": 4, "verdictWindow": 0.35, "armStuck": 1.5, "wallGap": 2.2, "gridShow": 1.0, "decoySeconds": 3, "lensHelpers": 5, "ttBeat": 0.8, "ttShuffles": 4, "ttShuffleStep": 0.45, "ttBeat2": 0.55, "ttBladeSwing": 1.0}, "phaseBreaks": { "cans": { "cans": 6, "bombShare": 0.4, "canEvery": 0.8, "seconds": 16 }, "drums": { "drums": 5, "showStep": 0.6, "laneEvery": 2.6, "seconds": 16 }, "flags": { "flags": 4, "turn": 0.55, "seconds": 16 } , "mirrors": {"seconds": 16, "sweepDegrees": 55}, "pylons": {"need": 4, "plateEvery": 1.2, "seconds": 16}, "molds": {"need": 4, "seconds": 20}, "colours": {"need": 4, "seconds": 30, "callWarn": 1.2}, "orders": {"needleSeconds": 1.1, "tune": 0.2, "orderGap": 0.6, "orderWarn": 0.5}} }
     ]
   },
   "hazards": {

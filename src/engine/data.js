@@ -22,7 +22,12 @@ export function validateData(data) {
   for (const move of [...c.skills, ...c.fusions]) assert(['single', 'multi'].includes(s.presentation?.codex?.targets?.[move.id]?.[0]), `도감 단일/다수: ${move.id}`);
   for (const chapter of chapterList(s)) {
     const rooms = chapterRooms(s, chapter.id);
-    assert(rooms.length === 12 && rooms[0].kind === 'normal' && rooms[5].kind === 'shop' && rooms[11].boss, `12구간 구조: ${chapter.id}`);
+    // A chapter still being made (preview, the local test server only) may hold only the rooms built so far. A published
+    // one has twelve stops, the shop sixth and a boss last, or (the clock tower, 2026-11-22) ends on its final boss with
+    // one shop on the way.
+    const twelve = rooms.length === 12 && rooms[5]?.kind === 'shop' && rooms[11].boss;
+    const toFinal = rooms.at(-1)?.kind === 'finalBoss' && rooms.filter(r => r.kind === 'shop').length === 1;
+    assert(chapter.preview ? rooms.length > 0 : rooms[0]?.kind === 'normal' && (twelve || toFinal), `12구간 구조: ${chapter.id}`);
     assert(!chapter.after || chapterList(s).some(c => c.id === chapter.after), `앞 장 없음: ${chapter.id}`);
   }
   const roomIds = allRooms(s).map(r => r.id);

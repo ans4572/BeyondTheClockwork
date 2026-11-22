@@ -1,0 +1,9 @@
+Use case: story cutscene still, image edit.
+Edit input image 1 (the existing 1536x1024 ruined clock tower summit at sunrise, a painted cel-shaded game background) into the first still of the ending cutscene: the grand tuner Orden vanishing.
+
+ADD ONE FIGURE: Orden, exactly as drawn in input image 2 (a slim clockwork puppet magician in a long dark navy coat with gold trim, a tall staff with a glowing cyan gem, wild dark hair, a smiling white mask broken down the middle so the right half has fallen away from a brass face with one cyan eye). He floats a little above the cracked floor ring, slightly right of centre, in front of the broken giant clock dial, life-size for the floor (about one fifth of the image height). He faces the viewer, arms lowered, staff slipping from his hand, calm, almost relieved, not defeated or in pain.
+HE IS DISSOLVING: from his feet and the hem of his coat upward, his body breaks into countless tiny squares of cyan and pale gold light that drift up into the dawn sky in a slow, gentle stream; the lower third of him is already mostly light, the upper body still whole but translucent at the edges. The broken half of the mask is falling, catching the sun. A soft vertical column of cyan light rises from the floor where he floats.
+LIGHT: warm sunrise from behind the dial as in input image 1; the light motes glow but do not blind; a faint cyan haze round him only.
+
+PRESERVE input image 1 entirely: the same camera, framing, floor ring with its gold trim and cracks, broken parapet, pillars with red banners, the giant broken clock dial and gears, the fallen bell, clouds and sky, colours and painted style. Change nothing but adding Orden, his light and the motes.
+Output ONE opaque full-bleed 1536x1024 PNG. No other people, no text, letters, numerals, logos, UI, borders, watermarks or lens flares. Clock markings are plain tick marks only, never numbers.

@@ -6,10 +6,9 @@
 // 'tape' (the packer's sticky strip, slows F2 and enemies, burns away), 'oil' (the oiler's slick, F2 slides, catches fire)
 // and 'screw' (a rivet stuck in the floor, stings when stepped on). Fire, water and ice act on them (elementOnPatches).
 import { fitsMap } from './map-geometry.js';
-import { distance, floorDistance, segmentDistance, FLOOR_FLAT } from './math.js';
+import { distance, floorDistance, segmentDistance, FLOOR_FLAT, angleTo } from './math.js';
 
 const TURN = Math.PI * 2;
-const angleTo = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
 const turnToward = (from, to, most) => { let d = ((to - from + Math.PI) % TURN + TURN) % TURN - Math.PI; return from + Math.max(-most, Math.min(most, d)); };
 
 /** How long a mark that goes once stepped on takes to fade after F2's foot lands on it. */
@@ -115,6 +114,7 @@ export const factoryMobs = {
   },
   /** A charging body: tape laid behind it, crates on its path set off, a wall that stops it short leaves it dazed. */
   factoryDash(enemy, start, dt) {
+    if (this.ttAI(enemy)) { this.ttDashStep(enemy); return false; }
     const d = enemy.dash, t = this.s.time, moved = distance(start, enemy), meant = enemy.dashDistance / enemy.dashDuration * dt;
     if (enemy.trail === 'tape') {
       d.laid = (d.laid || 0) + moved;
@@ -131,6 +131,7 @@ export const factoryMobs = {
   },
   /** When a dash runs out: a captain turns and goes again at F2. */
   factoryDashDone(enemy, d) {
+    if (this.ttAI(enemy)) { this.ttDashDone(enemy, d); return; }
     if (enemy.dashTwice && !d.second) enemy.followup = { type: 'dash2', at: this.s.time + enemy.dashTwice };
   },
   addPatch(patch) { this.s.casts.push({ id: this.id('mark'), shape: 'floorMark', age: 0, ...patch }); },
@@ -141,6 +142,8 @@ export const factoryMobs = {
     let slow = 0;
     // F2's own puddles (friendly) slow only enemies.
     for (const c of this.s.casts) if (c.shape === 'floorMark' && !c.done && c.slow && (enemy ? c.slowsEnemies : !c.friendly) && floorDistance(c, body) < c.radius) slow = Math.max(slow, c.slow);
+    // Orden's ice lanes, for a while after they blow (orden-boss.js).
+    if (!enemy) slow = Math.max(slow, this.odSlow(body));
     return slow;
   },
   /** Patches age, rivets sting the feet that step on them, burning oil hurts everyone in it. */

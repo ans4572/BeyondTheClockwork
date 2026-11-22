@@ -34,6 +34,15 @@ test('the Silent Factory plays its own songs: rooms, rest stop, Iris and Press',
   assert.equal(musicScene({ onTitle: false, mode: 'hub', chapter: 'silent-factory' }), 'town-v2');
 });
 
+test('the Clock Tower plays its own songs: rooms, the stopped-clock attic, Tick and Tock, Belgard', () => {
+  const tower = data.slice.chapters.find(c => c.id === 'clock-tower').rooms;
+  tower.forEach((room, i) => {
+    const want = room.kind === 'miniboss' ? 'ticktock-v2' : room.kind === 'regionBoss' ? 'belgard-v2' : room.kind === 'finalBoss' ? { orden: 'orden-chamber-v2', ordenFinal: 'orden-lasthour-v2' }[room.boss] : room.kind === 'shop' ? 'tower-rest-v2' : 'tower-v2';
+    for (const mode of ['combat', 'reward']) assert.equal(musicScene({ onTitle: false, mode, roomKind: room.kind, roomIndex: i, restIndex, chapter: 'clock-tower', boss: room.boss }), want, room.id);
+  });
+  assert.equal(musicScene({ mode: 'complete', talking: true, chapter: 'clock-tower' }), 'belgard-v2');
+});
+
 test('every track is on disk, and old saves get music switched on', async () => {
   for (const name of Object.keys(MUSIC)) assert.ok((await stat(new URL(`../art/audio/bgm/${name}.ogg`, import.meta.url))).size > 100000, name);
   const g = new Game(data), saved = JSON.parse(encodeSave(g.s));

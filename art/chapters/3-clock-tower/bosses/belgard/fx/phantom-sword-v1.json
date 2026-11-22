@@ -1,0 +1,391 @@
+{
+ "frames": [
+  {
+   "filename": "bg-phantom-sword 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 1",
+   "frame": {
+    "x": 88,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 2",
+   "frame": {
+    "x": 176,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 3",
+   "frame": {
+    "x": 0,
+    "y": 36,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 4",
+   "frame": {
+    "x": 88,
+    "y": 36,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 5",
+   "frame": {
+    "x": 176,
+    "y": 36,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 6",
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 7",
+   "frame": {
+    "x": 88,
+    "y": 72,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 8",
+   "frame": {
+    "x": 176,
+    "y": 72,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 9",
+   "frame": {
+    "x": 0,
+    "y": 108,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 10",
+   "frame": {
+    "x": 88,
+    "y": 108,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 11",
+   "frame": {
+    "x": 176,
+    "y": 108,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 12",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 13",
+   "frame": {
+    "x": 88,
+    "y": 144,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 14",
+   "frame": {
+    "x": 176,
+    "y": 144,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-phantom-sword 15",
+   "frame": {
+    "x": 0,
+    "y": 180,
+    "w": 88,
+    "h": 36
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 88,
+    "h": 36
+   },
+   "sourceSize": {
+    "w": 88,
+    "h": 36
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-phantom-sword.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 264,
+   "h": 216
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-phantom-sword",
+    "from": 0,
+    "to": 15,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-phantom-sword",
+   "name": "Phantom greatsword",
+   "fps": 20,
+   "loop": true,
+   "frames": 16,
+   "frameSize": [
+    88,
+    36
+   ],
+   "pivot": [
+    44,
+    18
+   ],
+   "columns": 3
+  }
+ }
+}

@@ -1,0 +1,567 @@
+{
+ "frames": [
+  {
+   "filename": "od-cast-circle 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 1",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 2",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 3",
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 4",
+   "frame": {
+    "x": 768,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 5",
+   "frame": {
+    "x": 0,
+    "y": 142,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 6",
+   "frame": {
+    "x": 192,
+    "y": 142,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 7",
+   "frame": {
+    "x": 384,
+    "y": 142,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 8",
+   "frame": {
+    "x": 576,
+    "y": 142,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 9",
+   "frame": {
+    "x": 768,
+    "y": 142,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 10",
+   "frame": {
+    "x": 0,
+    "y": 284,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 11",
+   "frame": {
+    "x": 192,
+    "y": 284,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 12",
+   "frame": {
+    "x": 384,
+    "y": 284,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 13",
+   "frame": {
+    "x": 576,
+    "y": 284,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 14",
+   "frame": {
+    "x": 768,
+    "y": 284,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 15",
+   "frame": {
+    "x": 0,
+    "y": 426,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 16",
+   "frame": {
+    "x": 192,
+    "y": 426,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 17",
+   "frame": {
+    "x": 384,
+    "y": 426,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 18",
+   "frame": {
+    "x": 576,
+    "y": 426,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 19",
+   "frame": {
+    "x": 768,
+    "y": 426,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 20",
+   "frame": {
+    "x": 0,
+    "y": 568,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 21",
+   "frame": {
+    "x": 192,
+    "y": 568,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 22",
+   "frame": {
+    "x": 384,
+    "y": 568,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-cast-circle 23",
+   "frame": {
+    "x": 576,
+    "y": 568,
+    "w": 192,
+    "h": 142
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 142
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 142
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "od-cast-circle.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 960,
+   "h": 710
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "od-cast-circle",
+    "from": 0,
+    "to": 23,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/od-cast-circle",
+   "name": "Orden's casting circle",
+   "fps": 20,
+   "loop": true,
+   "frames": 24,
+   "frameSize": [
+    192,
+    142
+   ],
+   "pivot": [
+    96,
+    96
+   ],
+   "columns": 5
+  }
+ }
+}

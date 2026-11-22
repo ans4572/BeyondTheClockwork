@@ -1,0 +1,20 @@
+(async () => {
+  const { CLOCK_CANDIDATES } = await import('/src/audio/clock-sound.js?v=' + Date.now());
+  const target = {"secondHandKnight": 0.01701, "bellTurret": 0.01686, "signalOrb": 0.01686, "hourglassShield": 0.01686, "minuteArcher": 0.01685, "pendulumGuard": 0.01679, "gearRoller": 0.0165, "twinHandCaptain": 0.01695, "boss-ttBeatTick": 0.01708, "boss-ttBeatTock": 0.01835, "boss-ttThrust": 0.05975, "boss-ttThrust2": 0.05869, "boss-ttThrust3": 0.06321, "boss-ttSweep": 0.05942, "boss-ttDash": 0.06138, "boss-ttPendulumBlast": 0.06014, "boss-ttShuffleBurst": 0.06033, "boss-ttBladeSwing": 0.05741, "boss-ttEchoBlow": 0.06009, "boss-ttPincerClose": 0.06003, "boss-ttFlankWall": 0.04878, "boss-ttGearThrow": 0.03758, "boss-ttBlinkIn": 0.03604, "boss-ttTwist": 0.03596, "boss-ttColourTick": 0.06016, "boss-ttColourTock": 0.06011, "boss-bgCombo": 0.05791, "boss-bgCombo2": 0.058, "boss-bgCombo3": 0.06024, "boss-bgSpin": 0.05913, "boss-bgSlam": 0.06002, "boss-bgCracks": 0.06015, "boss-bgGrab": 0.06023, "boss-bgPunch": 0.06018, "boss-bgToll": 0.06012, "boss-bgCage": 0.06015, "boss-bgCageLand": 0.06012, "boss-bgArchers": 0.0602, "boss-bgFlySword": 0.05992, "boss-bgSwordRain": 0.05964, "boss-bgNeedles": 0.06013, "boss-bgLastToll": 0.06017, "boss-bgResonance": 0.06009, "boss-bgPillar": 0.05991, "boss-bgResLine": 0.06006, "boss-bgOrder": 0.04824, "boss-bgForge": 0.06016, "boss-bgClang": 0.06057, "boss-bgCharge": 0.0601, "boss-bgCrack": 0.06006};
+  const page = { 'boss-ttPendulum': 'boss-ttPendulumBlast', 'boss-ttFlank': 'boss-ttFlankWall' };
+  async function loud(draw) {
+    let sum = 0;
+    for (let n = 0; n < 5; n++) {
+      const ctx = new OfflineAudioContext(1, 44100 * 3, 44100), out = ctx.createGain(); out.connect(ctx.destination);
+      draw(ctx, out);
+      const data = (await ctx.startRendering()).getChannelData(0), win = 13230;
+      let best = 0, acc = 0;
+      for (let i = 0; i < data.length; i++) { acc += data[i] * data[i]; if (i >= win) acc -= data[i - win] * data[i - win]; if (i >= win - 1) best = Math.max(best, acc); }
+      sum += Math.sqrt(best / win);
+    }
+    return sum / 5;
+  }
+  const out = {};
+  for (const [name, takes] of Object.entries(CLOCK_CANDIDATES)) if (name.startsWith('boss-')) out[name] = +(target[page[name] ?? name] / await loud(takes[0][1])).toFixed(5);
+  return JSON.stringify(out);
+})()

@@ -1,0 +1,151 @@
+{
+  "secondHandKnight": {
+    "id": "7b9f67e9-ba56-4e47-ac21-48a1fb49b08c",
+    "file": "second-hand-knight",
+    "attack": "4d4b4305-b23e-47a4-a771-eed0a07a1b73",
+    "moveGroup": "e01e5fc1-4709-43c5-b6b6-0d94d3816194",
+    "moveNote": "move = walking-8-frames template (spear vanished west/north-west), move-v2 = PixMiniMax walking (used)",
+    "final": {
+      "attack": {
+        "default": "attack-v2",
+        "north": "attack-v3",
+        "north-east": {
+          "from": "attack-v2",
+          "dir": "north-west",
+          "flip": true
+        }
+      },
+      "move": {
+        "default": "move-v2",
+        "west": {
+          "from": "move-v2",
+          "dir": "east",
+          "flip": true
+        }
+      }
+    }
+  },
+  "bellTurret": {
+    "id": "a0e7a9f3-d35f-4a21-b9f5-b86b5345519e",
+    "file": "bell-turret",
+    "attack": "e61aeea1-9964-4395-bd3f-c922d37fc859",
+    "attackV2": "b4f2b14a-7b98-4fd1-88e3-c2bdedba7980",
+    "moveNote": "fixed turret: no walk clip",
+    "final": {
+      "attack": {
+        "default": "attack-v3",
+        "south": "attack"
+      },
+      "move": null
+    }
+  },
+  "signalOrb": {
+    "id": "0c3fd0b5-0014-47f4-965f-5ec34fdf65ef",
+    "file": "signal-orb",
+    "attack": "80f95748-818b-4f4b-8de4-da72cbed1414",
+    "moveGroup": "c5360708-4037-4c6e-80aa-b99b2a4e4df1",
+    "final": {
+      "attack": {
+        "default": "attack"
+      },
+      "move": {
+        "default": "move",
+        "east": "move-v2",
+        "west": "move-v2",
+        "south-west": "move-v2"
+      }
+    }
+  },
+  "hourglassShield": {
+    "id": "75fb2219-bf70-4420-8cf2-44d2c3565faa",
+    "file": "hourglass-shield",
+    "attack": "fdbff1a6-1709-4d2b-a6a3-86699f841de4",
+    "moveGroup": "71a4be34-0102-4439-822d-d489ba4fab0e",
+    "final": {
+      "attack": {
+        "default": "attack"
+      },
+      "move": {
+        "default": "move"
+      }
+    }
+  },
+  "minuteArcher": {
+    "id": "910e1b99-d9a0-4c69-b166-5a473a70f696",
+    "file": "minute-archer",
+    "attack": "cb13ece7-5cdb-45cc-b8d8-1cd228197f73",
+    "moveGroup": "71866904-1875-476f-aaae-ab06625cee19",
+    "final": {
+      "attack": {
+        "default": "attack"
+      },
+      "move": {
+        "default": "move"
+      }
+    }
+  },
+  "pendulumGuard": {
+    "id": "9ae9cfba-95d8-46d2-8832-305747588f1d",
+    "file": "pendulum-guard",
+    "attack": "98fe9299-ccda-4fcb-bafb-92be1e371843",
+    "moveGroup": "ae03870f-c4a5-4100-a558-4ad9c9fbe722",
+    "final": {
+      "attack": {
+        "default": "attack",
+        "east": "attack-v2",
+        "west": {
+          "from": "attack-v2",
+          "dir": "east",
+          "flip": true
+        }
+      },
+      "move": {
+        "default": "move"
+      }
+    }
+  },
+  "gearRoller": {
+    "id": "cd61b410-982c-4460-b7d9-1201de4c11ea",
+    "file": "gear-roller",
+    "attack": "46be08c4-e22d-45cf-9e1d-b0aa21e26d11",
+    "attackV2": "046f4f24-601a-43c4-95fa-74064af4872d",
+    "moveGroup": "c7c22efe-e884-4785-bea9-989fab7729c4",
+    "final": {
+      "attack": {
+        "default": "attack-v2"
+      },
+      "move": {
+        "default": "move"
+      }
+    }
+  },
+  "twinHandCaptain": {
+    "id": "a69f4865-b7fd-4335-9bd0-7ca3c6ef7bd3",
+    "file": "elite-a",
+    "attack": "c4978698-c4f9-4f71-bf22-15bf14cc6d83",
+    "attackV2": "af47c50d-c32d-43d1-b6c1-60d28f0f2450",
+    "recolor": "attack frames in north and north-east show a red undergarment: map red hues to the cape blue when importing (attack-v2 for those two directions came out the same)",
+    "moveGroup": "5be7a6ee-b3ee-4ac5-9cef-e20a2672d50c",
+    "final": {
+      "attack": {
+        "default": "attack"
+      },
+      "move": {
+        "default": "move",
+        "east": "move-v2",
+        "west": "move-v2",
+        "north-east": {
+          "from": "move",
+          "dir": "north-west",
+          "flip": true
+        },
+        "south-west": {
+          "from": "move",
+          "dir": "south-east",
+          "flip": true
+        }
+      }
+    }
+  },
+  "_note": "final = what the game uses per direction: a clip name, or {from, dir, flip} = another direction's clip mirrored left-right (used where PixelLab kept dropping a weapon). Flashes, smoke and trails PixelLab drew are cleaned on import as for chapter 2. twinHandCaptain.recolor: red undergarment in attack north/north-east -> cape blue on import."
+}

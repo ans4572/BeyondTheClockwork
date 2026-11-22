@@ -1,0 +1,61 @@
+{
+ "frames": [
+  {
+   "filename": "tt-pieces 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 12
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 12
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 12
+   },
+   "duration": 100
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "tt-pieces.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 36,
+   "h": 12
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "tt-pieces",
+    "from": 0,
+    "to": 0,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/tt-pieces",
+   "name": "Tick·Tock parts",
+   "fps": 10,
+   "loop": true,
+   "frames": 1,
+   "frameSize": [
+    36,
+    12
+   ],
+   "pivot": [
+    3,
+    6
+   ],
+   "columns": 1
+  }
+ }
+}

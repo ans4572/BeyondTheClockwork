@@ -1,0 +1,9 @@
+Use case: story cutscene still, image edit.
+Edit input image 1 (the frozen village court from the previous still: residents stopped mid-motion with a cyan "stop" seal over each head, colours drained to grey-blue) into the third still: the wave of light that frees them.
+
+A WAVE OF WARM GOLD LIGHT rolls across the square from the workshop door, a wide luminous ring lying flat on the paving and expanding outward; it has already passed over the nearer half of the square. Where it has passed, the full warm colours of input image 2 (the same square in normal daylight) come back; beyond it, the cold grey-blue frozen look remains.
+THE SEALS: over every resident the wave has reached, the cyan seal is shattering into small gold and cyan sparks that scatter upward and fade. Residents beyond the wave still have their whole seals.
+THE RESIDENTS the wave has passed are waking: blinking, a head lifting, one looking at her own hands in wonder, the baker catching his falling loaf, two looking at each other; still standing in the same places and poses as in input image 1, only their faces and heads changing.
+
+PRESERVE input image 1 exactly: the same camera, framing, every building and object, and every resident in the same position and outfit. Change only the light wave, the colours behind it, the breaking seals and the waking faces.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, logos, UI, borders or watermarks.

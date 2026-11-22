@@ -1,0 +1,23 @@
+Use case: image edit (same framing, the scene a few seconds later).
+Asset type: static production pixel-art game background, Beyond the Clockwork (a cute, toy-like game), chapter 3: the ruined summit of the Central Clock Tower, the arena of the final fight "Orden, the Last Hour".
+Input image 1 is the EDIT TARGET: the tuning chamber at the top of the tower at the very moment it breaks open (walls and ceiling flying outward, sunrise behind the great broken clock face). The game cross-fades from input image 1 straight into this picture, so this picture must be input image 1 a few seconds LATER, when everything that was flying has fallen away and the dust has cleared.
+Input image 2 is an older painting of the same ruined summit: take ONLY its mood from it (clear morning sky, sun breaking through, clouds level with the floor, the toy island far below, a few torn red banners, a fallen small bronze bell on the rim). Do NOT copy its camera, its floor, its round floating rock island, the gears and pipes under it, its white balustrade ring or its broken stair.
+
+KEEP EXACTLY FROM INPUT IMAGE 1 (most important):
+- The camera, framing, perspective, pixel density and rendering, native 1536x1024. Do not zoom, rotate, re-centre or restyle.
+- The marble fighting floor: the same position, size and shape, the same single thin gold ring with its short radial tick marks, the same flower medallions, the same tile joints and the same thin dark cracks. Do not add a second ring, a grey stone band or new medallions.
+- The great broken clock face at the top centre: the same position and size, cracked and half shattered, both hands pointing straight UP.
+- The right-hand stair: the same place and footprint, its upper flight now broken off in mid-air above the clouds.
+- The sun position and the colours of the sunrise.
+
+WHAT CHANGES (the collapse has finished):
+- Nothing is in the air any more: no flying blocks, beams, cabinets, window frames, drawers, debris clouds or falling pieces anywhere.
+- The ceiling and walls are gone. Around the floor's rim only low jagged wall stumps, snapped pillar bases and broken edges of marble and dark-blue stone remain, at most knee height, so the open sky is seen all around.
+- The FRONT (bottom edge): what were the three glass display cases are now only their wrecked lower parts and bases sitting in the SAME places along the bottom edge, split and half fallen away; between and past them the edge of the floor is broken off, and through the gaps the clouds far below can be seen. The tower's own broken stone wall continues DOWN out of the picture under the floor (this is still the top of the tower, not a floating rock): no rock underside, no gears or pipes hanging under the floor.
+- The left and right sides: the workbenches and cabinets are gone; the broken floor edge with a few stumps, a fallen small bronze bell and one or two torn red banners caught on a stump. Beyond the edges: clouds level with the floor and, far below, the toy island in morning light (pink roofs, the grey factory, the sea).
+- Behind the clock face: the same house-sized broken gears tilted and jammed, a few snapped cyan signal cables hanging loose with faint sparks.
+- Light: sunrise, the sun breaking through behind the shattered dial, warm gold and pink rim light, the dust settled, the sky clear morning blue at the top.
+
+Combat readability: the open fighting floor inside and around the gold ring stays clear and level: no holes, rubble, debris, glass or loose parts on it. All wreckage stays on the rim band and along the edges.
+Mood: the end of control: the tower is broken open to the sky and for the first time the light comes in. Dramatic, windswept and hopeful, never horror.
+No UI, labels, text, letters, numbers, logos, watermarks, people, toy residents, characters, bosses or player. Clock faces show tick marks only. One cohesive scene. Opaque full-bleed PNG, native 1536x1024.

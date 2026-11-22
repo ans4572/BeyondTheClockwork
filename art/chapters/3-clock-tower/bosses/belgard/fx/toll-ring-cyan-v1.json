@@ -1,0 +1,435 @@
+{
+ "frames": [
+  {
+   "filename": "bg-toll-ring 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 1",
+   "frame": {
+    "x": 136,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 2",
+   "frame": {
+    "x": 272,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 3",
+   "frame": {
+    "x": 408,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 4",
+   "frame": {
+    "x": 0,
+    "y": 88,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 5",
+   "frame": {
+    "x": 136,
+    "y": 88,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 6",
+   "frame": {
+    "x": 272,
+    "y": 88,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 7",
+   "frame": {
+    "x": 408,
+    "y": 88,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 8",
+   "frame": {
+    "x": 0,
+    "y": 176,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 9",
+   "frame": {
+    "x": 136,
+    "y": 176,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 10",
+   "frame": {
+    "x": 272,
+    "y": 176,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 11",
+   "frame": {
+    "x": 408,
+    "y": 176,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 12",
+   "frame": {
+    "x": 0,
+    "y": 264,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 13",
+   "frame": {
+    "x": 136,
+    "y": 264,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 14",
+   "frame": {
+    "x": 272,
+    "y": 264,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 15",
+   "frame": {
+    "x": 408,
+    "y": 264,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 16",
+   "frame": {
+    "x": 0,
+    "y": 352,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-toll-ring 17",
+   "frame": {
+    "x": 136,
+    "y": 352,
+    "w": 136,
+    "h": 88
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 136,
+    "h": 88
+   },
+   "sourceSize": {
+    "w": 136,
+    "h": 88
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-toll-ring.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 544,
+   "h": 440
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-toll-ring",
+    "from": 0,
+    "to": 17,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-toll-ring",
+   "name": "Toll ring",
+   "fps": 30,
+   "loop": false,
+   "frames": 18,
+   "frameSize": [
+    136,
+    88
+   ],
+   "pivot": [
+    68,
+    44
+   ],
+   "columns": 4
+  }
+ }
+}

@@ -1,0 +1,721 @@
+{
+ "frames": [
+  {
+   "filename": "bg-fissure 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 1",
+   "frame": {
+    "x": 36,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 2",
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 3",
+   "frame": {
+    "x": 108,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 4",
+   "frame": {
+    "x": 0,
+    "y": 18,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 5",
+   "frame": {
+    "x": 36,
+    "y": 18,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 6",
+   "frame": {
+    "x": 72,
+    "y": 18,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 7",
+   "frame": {
+    "x": 108,
+    "y": 18,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 8",
+   "frame": {
+    "x": 0,
+    "y": 36,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 9",
+   "frame": {
+    "x": 36,
+    "y": 36,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 10",
+   "frame": {
+    "x": 72,
+    "y": 36,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 11",
+   "frame": {
+    "x": 108,
+    "y": 36,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 12",
+   "frame": {
+    "x": 0,
+    "y": 54,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 13",
+   "frame": {
+    "x": 36,
+    "y": 54,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 14",
+   "frame": {
+    "x": 72,
+    "y": 54,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 15",
+   "frame": {
+    "x": 108,
+    "y": 54,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 16",
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 17",
+   "frame": {
+    "x": 36,
+    "y": 72,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 18",
+   "frame": {
+    "x": 72,
+    "y": 72,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 19",
+   "frame": {
+    "x": 108,
+    "y": 72,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 20",
+   "frame": {
+    "x": 0,
+    "y": 90,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 21",
+   "frame": {
+    "x": 36,
+    "y": 90,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 22",
+   "frame": {
+    "x": 72,
+    "y": 90,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 23",
+   "frame": {
+    "x": 108,
+    "y": 90,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 24",
+   "frame": {
+    "x": 0,
+    "y": 108,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 25",
+   "frame": {
+    "x": 36,
+    "y": 108,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 26",
+   "frame": {
+    "x": 72,
+    "y": 108,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 27",
+   "frame": {
+    "x": 108,
+    "y": 108,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 28",
+   "frame": {
+    "x": 0,
+    "y": 126,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 29",
+   "frame": {
+    "x": 36,
+    "y": 126,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-fissure 30",
+   "frame": {
+    "x": 72,
+    "y": 126,
+    "w": 36,
+    "h": 18
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 36,
+    "h": 18
+   },
+   "sourceSize": {
+    "w": 36,
+    "h": 18
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-fissure.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 144,
+   "h": 144
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-fissure",
+    "from": 0,
+    "to": 30,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-fissure",
+   "name": "Floor fissure piece",
+   "fps": 30,
+   "loop": false,
+   "frames": 31,
+   "frameSize": [
+    36,
+    18
+   ],
+   "pivot": [
+    2,
+    10
+   ],
+   "columns": 4
+  }
+ }
+}

@@ -1,0 +1,391 @@
+{
+ "frames": [
+  {
+   "filename": "od-lane-charge 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 1",
+   "frame": {
+    "x": 80,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 2",
+   "frame": {
+    "x": 160,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 3",
+   "frame": {
+    "x": 240,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 4",
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 5",
+   "frame": {
+    "x": 80,
+    "y": 72,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 6",
+   "frame": {
+    "x": 160,
+    "y": 72,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 7",
+   "frame": {
+    "x": 240,
+    "y": 72,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 8",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 9",
+   "frame": {
+    "x": 80,
+    "y": 144,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 10",
+   "frame": {
+    "x": 160,
+    "y": 144,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 11",
+   "frame": {
+    "x": 240,
+    "y": 144,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 12",
+   "frame": {
+    "x": 0,
+    "y": 216,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 13",
+   "frame": {
+    "x": 80,
+    "y": 216,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 14",
+   "frame": {
+    "x": 160,
+    "y": 216,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-lane-charge 15",
+   "frame": {
+    "x": 240,
+    "y": 216,
+    "w": 80,
+    "h": 72
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 72
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 72
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "od-lane-charge.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 320,
+   "h": 288
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "od-lane-charge",
+    "from": 0,
+    "to": 15,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/od-lane-charge",
+   "name": "Orden's element lane gathering",
+   "fps": 20,
+   "loop": true,
+   "frames": 16,
+   "frameSize": [
+    80,
+    72
+   ],
+   "pivot": [
+    40,
+    50
+   ],
+   "columns": 4
+  }
+ }
+}

@@ -1,0 +1,303 @@
+{
+ "frames": [
+  {
+   "filename": "tuner-dial 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 1",
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 2",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 3",
+   "frame": {
+    "x": 0,
+    "y": 40,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 4",
+   "frame": {
+    "x": 64,
+    "y": 40,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 5",
+   "frame": {
+    "x": 128,
+    "y": 40,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 6",
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 7",
+   "frame": {
+    "x": 64,
+    "y": 80,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 8",
+   "frame": {
+    "x": 128,
+    "y": 80,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 9",
+   "frame": {
+    "x": 0,
+    "y": 120,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 10",
+   "frame": {
+    "x": 64,
+    "y": 120,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  },
+  {
+   "filename": "tuner-dial 11",
+   "frame": {
+    "x": 128,
+    "y": 120,
+    "w": 64,
+    "h": 40
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 40
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 40
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "tuner-dial.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 192,
+   "h": 160
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "tuner-dial",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/tuner-dial",
+   "name": "Tuner dial",
+   "fps": 20,
+   "loop": true,
+   "frames": 12,
+   "frameSize": [
+    64,
+    40
+   ],
+   "pivot": [
+    32,
+    33
+   ],
+   "columns": 3
+  }
+ }
+}

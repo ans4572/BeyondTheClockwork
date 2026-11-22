@@ -4,7 +4,7 @@
 import { cleanNickname } from './nickname.js';
 
 // Sound and water came later (2026-11-08); they go last so the keys of the older pairs ('fire+ice') never change.
-export const ELEMENT_IDS = ['fire', 'ice', 'lightning', 'wind', 'sound', 'water'];
+export const ELEMENT_IDS = ['fire', 'ice', 'lightning', 'wind', 'sound', 'water', 'light', 'magnet'];
 export const FORMS = ['phone', 'tablet', 'desktop'];
 export const SYSTEMS = ['ios', 'android', 'windows', 'mac', 'chromeos', 'linux', 'other'];
 export const BROWSERS = ['chrome', 'safari', 'samsung', 'whale', 'edge', 'firefox', 'inapp', 'other'];

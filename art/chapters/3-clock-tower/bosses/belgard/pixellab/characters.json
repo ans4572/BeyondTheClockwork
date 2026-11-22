@@ -1,0 +1,131 @@
+{
+  "_note": "Belgard the Belfry Guardian with his greatsword (concept B, art/chapters/3-clock-tower/bosses/belgard/front/b-shoulder-sword-v1.png; concept A's planted-sword pose became the 'plant' clip). PixelLab 2026-11-16: 8 rotations from the concept, 7 clips x 8 directions in pixminimax (180px canvas, 9 frames each incl. the reference). Side views were asked for in profile and the north views 'viewed from behind' where the first take turned the body to the viewer (slam north; swing east, north-east, north, north-west). Attack frames carry slash arcs and impact bursts: drop or strip them when importing. Review sheets in review/.",
+  "belgard": {
+    "id": "58ea0fa2-0d03-47fa-8ab3-1bfc1a00f471",
+    "clips": {
+      "idle": "d0c15e75-8037-4cb0-87ac-536cad8b70e7",
+      "move": "50d3ec7b-4dc3-414b-bfbf-1f0c0a3a1dee",
+      "attack-slam": "9890fd1f-dbc2-47dc-bc8c-ebe1b55795f0",
+      "attack-swing": "36e18e0c-668a-425f-a10a-fbc3dc02bc58",
+      "plant": "9f7a8273-6d4c-4e8a-90e2-003f12e0287d",
+      "grab": "6bc8579e-4b5a-482d-a3dd-00b017b3cc69",
+      "command": "d1105940-5f4a-40ad-907b-8585b1734eee"
+    },
+    "uses": {
+      "attack-slam": "내려찍기 + 직선 검기, 지면 균열",
+      "attack-swing": "3연 베기, 회전 베기, 잔상 검무",
+      "plant": "삼단 종격, 공명 기둥 파훼의 보호막, 검 뒤의 마지막 타종",
+      "grab": "잡기",
+      "command": "부하 지휘(궁수 호출), 검비·조율 바늘 예고"
+    },
+    "drop": {
+      "swing": {
+        "south": [
+          2
+        ],
+        "south-east": [
+          2,
+          3
+        ],
+        "east": [
+          1,
+          2
+        ],
+        "north-east": [
+          3,
+          4
+        ],
+        "north": [
+          3,
+          4
+        ],
+        "north-west": [
+          3,
+          4,
+          5
+        ],
+        "west": [
+          3,
+          4
+        ],
+        "south-west": [
+          2
+        ]
+      },
+      "plant": {
+        "south": [
+          3
+        ],
+        "south-east": [
+          2
+        ],
+        "east": [
+          2
+        ],
+        "north-east": [
+          3
+        ],
+        "north-west": [
+          3
+        ],
+        "west": [
+          2
+        ]
+      },
+      "slam": {
+        "south": [
+          5
+        ],
+        "south-east": [
+          4,
+          5
+        ],
+        "east": [
+          2,
+          3
+        ],
+        "north-east": [
+          3
+        ],
+        "north": [
+          6
+        ],
+        "west": [
+          5
+        ],
+        "south-west": [
+          7
+        ]
+      }
+    },
+    "dropNote": "Frames left out by number (0 is the reference pose): the slash arcs and the gold blade joined to the blade in its own colours, and the slam's impact frames where PixelLab drew the burst over the blade, so nothing of the blade is under it (2026-11-16: cleaning them left the blade in pieces just before it reached the floor). The rest is cleaned by colour in scripts/import-ch3-belgard.mjs.",
+    "_slamRedo": "2026-11-16: slam east, north-east and north-west remade (they ended with the blade planted upright like the plant clip); now the blade ends lying on the floor at a slant. East came out at a three-quarter angle facing right after two tries and was kept.",
+    "_plantRedo": "2026-11-16: plant south-east, east, north-east, north, north-west and west remade so both hands rest stacked on the pommel, as south and south-west (they had one hand on it). North is a true back view: his body hides the sword and his hands."
+  },
+  "barehanded": {
+    "_note": "State 'Barehanded' of the same character (2026-11-17, user request: barehanded art for the flying sword). The state cost ~25; a first walk and punch in template mode (walking-8-frames, cross-punch) were drawn in two batches that did not match (a slimmer body halfway through the walk, the punch turning round) and were deleted; both redone in pixminimax, 8 each. Idle is the rotation. Punch frames dropped: south 3 (white arm smear), south-west 3 (motion lines), north 2-3 (turned to face the viewer).",
+    "id": "4777a34b-7da8-43c4-b13f-cacd0be1971a",
+    "clips": {
+      "move": "9d1b94d5-1055-4b56-a903-b7df0469eca3",
+      "attack": "888872c9-b49a-48a5-b844-e59745c0a5a5"
+    },
+    "uses": {
+      "move": "추적 비검 동안 F2를 따라 걷기",
+      "attack": "추적 비검 동안 맨손 주먹"
+    },
+    "drop": {
+      "attack": {
+        "south": [
+          3
+        ],
+        "south-west": [
+          3
+        ],
+        "north": [
+          2,
+          3
+        ]
+      }
+    }
+  }
+}

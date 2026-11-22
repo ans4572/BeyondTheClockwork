@@ -1,11 +1,12 @@
 import { loadData } from './engine/data.js';
-import { Game } from './engine/game.js';
+import { Game, ORDEN_END } from './engine/game.js';
 import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } from './ui/tool-icons.js';
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { PIXELS_PER_UNIT, placeOf } from './engine/map-geometry.js';
 import { statCost, rankCap } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART, FLAG_BEARER_ART } from './render/canvas.js';
+import { playLiberationCutscene, preloadLiberation } from './ui/liberation-cutscene.js';
 import { FX_FILES, UNWIND_VERBS } from './render/fx-sprites.js';
 import { SpriteLibrary, assetUrl, browserImage, atlasPlaces } from './animation/sprite-library.js';
 import { createMapLoader } from './render/map-loader.js';
@@ -22,7 +23,7 @@ import { formatCode } from './engine/transfer-code.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from './ui/device-transfer.js';
 import { browserReporter, mailbox, fetchRecords, rememberPass, handInPass, PING_SECONDS } from './ui/stats-report.js';
 import { mergeMine, formatClock } from './engine/records.js';
-import { chapterList, chapterOf, chapterRooms, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
+import { chapterList, chapterOf, chapterRooms, chapterLevels, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, josa, NICKNAME_MAX } from './engine/nickname.js';
 import { CURSOR_MIN, CURSOR_MAX, CURSOR_STEP, cursorSize, cursorImage, cursorCss } from './ui/cursor.js';
 import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
@@ -66,16 +67,21 @@ const SHORTER_WAITS = new Set(['cooldownReduction']);
 const STAT_GROUPS = [['외장', ['maxHp', 'damageReduction', 'moveSpeed']], ['렌치', ['attackDamage', 'attackSpeed', 'critChance', 'critDamage']], ['회로', ['cooldownReduction', 'energyGain', 'statusPower']], ['주머니', ['gearGain', 'coinGain']]];
 /** Parser errors arrive in English; players get one plain sentence instead. */
 /** Every picture the menus show at once: element parts, skill slots, status marks and the map. Loaded right after the title. */
-const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind', 'sound', 'water'].map(id => `art/ui/element-icons/${id}.png`),
+// Element parts redrawn under a new name (PixelLab, 2026-11-21), so a browser never keeps the old picture.
+const ELEMENT_FILES = { light: 'light-v1', magnet: 'magnet-v1' };
+const elementIconUrl = id => `art/ui/element-icons/${ELEMENT_FILES[id] || id}.png`;
+const UI_ICONS = [...['fire', 'ice', 'lightning', 'wind', 'sound', 'water', 'light', 'magnet'].map(elementIconUrl),
   ...['heatSwing', 'exhaustBurst', 'frostBolt', 'coolingField', 'conductiveSpanner', 'capacitorStrike', 'pressureDash', 'vortexIntake', 'ringPalm', 'roar', 'waterCannon', 'hydroJet',
     'steamShatter', 'arcFurnace', 'fireCyclone', 'magneticIceClamp', 'frostCrosscut', 'stormFloat',
     // the nine fusions with sound or water (2026-11-09: they were missing here, so their icons popped in late)
-    'overheatResonance', 'steamVeil', 'highNoteShatter', 'iceSheet', 'resonantBolt', 'shockPool', 'echoGust', 'waterspout', 'surfaceResonance'].map(skillIcon), ...ICON_FILES,
+    'overheatResonance', 'steamVeil', 'highNoteShatter', 'iceSheet', 'resonantBolt', 'shockPool', 'echoGust', 'waterspout', 'surfaceResonance',
+    // light and magnet: four skills and thirteen fusions
+    'prismBeam', 'flashBomb', 'scrapShot', 'magneticLift', 'noonMark', 'frostPrism', 'refractBeam', 'lightDash', 'lightConstellation', 'rainbowBridge', 'moltenBall', 'frostShards', 'railCannon', 'scrapSaw', 'ironString', 'ferroVine', 'auroraRing'].map(skillIcon), ...ICON_FILES,
   // The map's painting, so the map opens whole the first time.
   WORLD_MAP_ART, ...WORLD_MAP_MARKERS];
 /** The decoded icons are held here so the browser keeps them ready. */
 const keptIcons = [];
-const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="art/ui/element-icons/${id}.png" alt="">`;
+const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" src="${elementIconUrl(id)}" alt="">`;
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
 // Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck. Skills shake and fusions hold and slow (2026-11-06):
 // they hit harder than the wrench and should feel it.
@@ -93,7 +99,7 @@ function finishBoot() { showTitleNow(); markTitleDrawn?.(); markBootDone?.(); }
 function showTitleNow() { document.body.classList.add('booted'); document.getElementById('boot')?.remove(); }
 /** Places on Moru's parts shelf: six elements now, two more planned (2026-11-08). */
 const ELEMENT_SHELF = 8;
-const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure', sound: 'resonance', water: 'wet' };
+const ELEMENT_STATUS = { fire: 'burn', ice: 'chill', lightning: 'shock', wind: 'windPressure', sound: 'resonance', water: 'wet', light: 'reveal', magnet: 'ironDust' };
 const saveProblem = message => (/[가-힣]/.test(message) ? message : '저장 내용을 읽을 수 없습니다. 저장이 잘렸거나 손상되었을 수 있습니다.');
 /** Below this many sheet pixels of height, panels drop their side notes and tighten up. */
 const CRAMPED_SHEET_HEIGHT = 600;
@@ -185,8 +191,11 @@ try {
     mobsHeld = key;
     const rooms = chapter && chapter !== FIRST_CHAPTER ? JSON.stringify(chapterRooms(data.slice, chapter)) : '';
     const typeOf = clip => clip.split('-')[0], onField = clip => types.includes(typeOf(clip));
-    street.hold(clip => chapter === FIRST_CHAPTER || onField(clip) || rooms.includes(`"${typeOf(clip)}"`)).catch(() => {});
+    // Chapter 3 keeps Brass's marching guard (south only) for Orden's gold march (2026-11-20).
+    street.hold(clip => chapter === FIRST_CHAPTER || onField(clip) || rooms.includes(`"${typeOf(clip)}"`) || (chapter === 'clock-tower' && clip === 'guard-move/south')).catch(() => {});
     factory?.hold(clip => chapter === 'silent-factory' || onField(clip)).catch(() => {});
+    // Chapter 3's clips are named by look (tick, tock), not by the boss's type.
+    mobLibraries.tower?.hold(() => chapter === 'clock-tower' || types.includes('twinTickTock')).catch(() => {});
   }
   // Chapter 2's factory mobs (280 sheets, about 3 MB) join the chapter 1 mob library once chapter 2 is open to this
   // player (2026-11-12: every visitor fetched them, a new player hours before they could meet one). Asked again when the
@@ -196,11 +205,19 @@ try {
   const factoryWanted = () => game.previews || game.s.run?.chapter === 'silent-factory' || chapterOpen(data.slice, game.s.profile, 'silent-factory', game.previews, game.unlockChapters);
   function wantFactoryMobs() {
     chapterOneMobs ||= !!renderer.mobSprites;
+    wantTowerMobs();
     if (factoryMobs || !factoryWanted()) return;
     // The effects, belts and places wait in the map loader until now (heldBack); it is asked once to fetch them.
     if (!factoryArt) { factoryArt = true; mapArt.fetchImages(); }
     if (!chapterOneMobs) return;
     factoryMobs = SpriteLibrary.load('/art/animations/mobs/silent-factory/game-clips.json', browserImage, () => true, NEVER).then(library => { mobLibraries.factory = library; renderer.mobSprites?.merge(library); mobsHeld = ''; dressMobs(); }).catch(error => console.warn(error));
+  }
+  // Chapter 3's bosses (Tick·Tock so far, 80 sheets) join the same way once chapter 3 can be reached (a preview: the local
+  // test server only, 2026-11-15).
+  let towerMobs = null;
+  function wantTowerMobs() {
+    if (towerMobs || !chapterOneMobs || !(game.s.run?.chapter === 'clock-tower' || chapterOpen(data.slice, game.s.profile, 'clock-tower', game.previews, game.unlockChapters))) return;
+    towerMobs = SpriteLibrary.load('/art/animations/mobs/clock-tower/game-clips.json', browserImage, () => true, NEVER).then(library => { mobLibraries.tower = library; renderer.mobSprites?.merge(library); mobsHeld = ''; dressMobs(); }).catch(error => console.warn(error));
   }
   // Standing sheets first (about 0.4 MB) so everyone shows at once; the walks (about 1.7 MB) follow, and a resident whose
   // walk has not arrived yet is drawn standing (canvas.js drawNpc).
@@ -345,8 +362,10 @@ try {
   async function talk(name) {
     const { scripts } = data.dialogue;
     screen = 'talk'; clearInput(); $('hud').classList.add('talking'); document.body.classList.add('talking'); renderOverlay(true);
+    // Once the town is free, Moru's reason to go out is no longer the bell (2026-11-22, the user's pick: moruWhyFree).
+    const side = c => (c === 'moruWhy' && game.villageFree && scripts.moruWhyFree ? 'moruWhyFree' : c);
     let choice = await talkBox.play(scripts[name]);
-    while (scripts[choice]) { await talkBox.play(scripts[choice]); choice = await talkBox.play(scripts[name]); }
+    while (scripts[choice]) { await talkBox.play(scripts[side(choice)]); choice = await talkBox.play(scripts[name]); }
     $('hud').classList.remove('talking'); document.body.classList.remove('talking'); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
     return choice;
   }
@@ -354,9 +373,10 @@ try {
     // Nasa's first words, once: he knows F2 from the assembly line.
     const seen = (game.s.profile.bossTalks ??= []);
     if (npc.character === 'nasa' && !seen.includes('nasaMeet')) { seen.push('nasaMeet'); game.save(); await talk('nasaMeet'); }
-    const choice = await talk(npc.character);
+    const choice = await talk(npc.script || npc.character);
     if (choice === 'open') game.talk();
     if (choice === 'elements') game.openElements();
+    if (choice === 'endPractice') { game.leavePractice(); updateHUD(); }
     if (choice === 'practice' && !game.enterPractice()) game.notify('속성 부품을 하나 이상 장착하면 시험할 수 있습니다.');
     renderOverlay(true);
   }
@@ -370,26 +390,43 @@ try {
     await talk('firstElement'); game.openElements(); renderOverlay(true);
   }
   // A boss speaks once, the first time the player walks into its room; the fight waits until the talk ends.
-  const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet', inspectorIris: 'irisMeet', directorPress: 'pressMeet' };
+  const BOSS_TALKS = { collectorRoco: 'rocoMeet', captainBrass: 'brassMeet', inspectorIris: 'irisMeet', directorPress: 'pressMeet', twinTickTock: 'tickTockMeet', bellguard: 'belgardMeet', orden: 'ordenMeet', ordenFinal: 'ordenAwaken' };
   // What F2 does to a beaten boss, as the sheet says it: the heading, then what is taken and what stays.
   const UNWIND_SHEETS = {
     collectorRoco: ['이제 무엇을 주울지는 네가 정해.', '로코의 집게에 꽂힌 명령 회로를 뽑아냅니다.<br>모으는 손은 남고, 고르는 명령만 사라집니다.'],
     captainBrass: ['일어나, 이번엔 네 박자로.', '멈춘 태엽을 한 바퀴씩 감아 줍니다.<br>머릿속에서 북을 치던 회로는 다시 넣지 않습니다.'],
     inspectorIris: ['재는 건 해도, 버리는 건 안 돼.', '아이리스의 손에서 불량 도장을 떼어 냅니다.<br>렌즈는 남고, 판정만 사라집니다.'],
     directorPress: ['누르지 않아도 모양은 남아.', '프레스의 가슴 압력계를 0까지 풀어 줍니다.<br>팔은 남고, 누르는 명령만 사라집니다.'],
+    twinTickTock: ['박자는 각자 세면 돼.', '틱과 톡의 등에서 메트로놈 추를 풀어 줍니다.<br>시계는 남고, 맞추라는 명령만 사라집니다.'],
+    bellguard: ['검을 들지, 내려놓을지 네가 정해.', '벨가드의 투구에 꽂힌 오르덴의 조율 바늘을 뽑아 줍니다.<br>대검은 남고, 꼭두각시 줄만 사라집니다.'],
   };
+  /**
+   * The saved marks of the boss talks that play once per save, by kind, for the debug workbench's replay buttons
+   * (2026-11-21, the user's word): first meetings (boss ids, BOSS_TALKS), and what comes after a boss falls (the
+   * unwind talks, Brass's and Orden's last words and the chapter endings' scenes).
+   */
+  const talkMarks = kind => kind === 'meet' ? Object.keys(BOSS_TALKS) : [...Object.values(AFTER_TALKS), 'ordenFarewell', ...Object.values(ENDINGS).flatMap(e => [e.seen, e.after].filter(Boolean))];
   // Chapter 2's bosses say what F2 has just learned once they are unwound (once per save); Brass's words come with the ending.
-  const AFTER_TALKS = { inspectorIris: 'irisAfter', directorPress: 'pressAfter' };
+  // Tick·Tock and Belgard speak too once unwound (chapter 3, 2026-11-21: Codex's dialogue rewrite).
+  const AFTER_TALKS = { inspectorIris: 'irisAfter', directorPress: 'pressAfter', twinTickTock: 'tickTockAfter', bellguard: 'belgardAfter' };
   async function unwindBoss() {
     const after = AFTER_TALKS[game.room?.boss], seen = (game.s.profile.bossTalks ??= []);
     if (!game.unwind() || !after || seen.includes(after)) return;
     seen.push(after); game.save();
     game.s.paused = true; await talk(after); game.s.paused = false;
   }
+  let liberationFetched = false;
   async function meetBoss(boss) {
     (game.s.profile.bossTalks ??= []).push(boss); game.save();
     // The ending scene comes right after this fight: its picture and Orden's theme download meanwhile.
     if (boss === 'captainBrass' || boss === 'directorPress') { new Image().src = TOWER_ART; music.preload(['orden']); }
+    // The town's liberation follows Orden's last hour the first time: its paintings download during the two fights.
+    // (Also from the rooms themselves, below: this talk plays once per save.)
+    if (boss === 'orden' && !game.villageFree) { preloadLiberation(); music.preload(['orden']); }
+    if (boss === 'orden') music.preload(['orden-lasthour-v2']);
+    // Orden at the last hour rings the last bell as he speaks (2026-11-20, the user's word: the town stands frozen in the
+    // ending because of it): every resident's spring stops, and their strength goes into the tower.
+    if (boss === 'ordenFinal') { cutsceneSound('bell'); renderer.bossImpact(1, '#7fe8ff', reducedMotion()); }
     game.s.paused = true; await talk(BOSS_TALKS[boss]); game.s.paused = false;
     bossCard(boss);
   }
@@ -399,6 +436,43 @@ try {
   const ENDINGS = { [FIRST_CHAPTER]: { seen: 'ending', after: 'brassAfter', tower: 'ordenScene' }, 'silent-factory': { seen: 'factoryEnding', tower: 'ordenFactory' } };
   /** True while a chapter's ending shows the clock tower summit: Orden's theme plays, at full volume (playMusic). */
   let atTower = false;
+  /**
+   * The first time Orden at the last hour falls, the town is freed (2026-11-19, the user's word): out of the summit's
+   * white, a cutscene of four paintings (ui/liberation-cutscene.js: he dissolves into light; the last bell stops the town;
+   * a wave of gold light breaks his seals; the first free morning), then a few words (dialogue 'liberation') in the
+   * village as it now is. After this the bell never rings again (game.villageFree).
+   */
+  let cutscene = null;
+  // A cutscene's sounds play while the game is held (sfx() stays quiet then).
+  const cutsceneSound = name => { if (soundLive() && game.s.profile.settings.sound) sounds.play(audio, name); };
+  // The liberation cutscene has music and no sound effects (2026-11-20, the user's word): it names the song as it goes ('' a silence).
+  let cutSong = null;
+  const cutsceneMusic = name => { cutSong = name; playMusic(); };
+  async function playLiberation() {
+    screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true);
+    cutscene = playLiberationCutscene($('cutscene'), { reduced: reducedMotion(), music: cutsceneMusic });
+    await cutscene.done; cutscene = null; cutSong = null;
+    game.s.profile.liberationPending = false; game.save();
+    // The hub's hint (enterHub) waited through the cutscene; it is not said over the town's first free words.
+    game.s.notices = [];
+    game.s.paused = false; screen = null; await talk('liberation');
+    // Then chapter 3's end sheet, as chapters 1 and 2 have (2026-11-21, the chapter 3 review: the game's ending had none).
+    if (game.s.result?.reason === 'clear' && game.s.result.chapter === 'clock-tower') pause('towerEnd'); else game.save();
+  }
+  /** Chapter 3's end sheet, from the run just brought home: the closing words, the climb, its record and server place. */
+  function towerEndSheet(result, action, label) {
+    const rooms = chapterRooms(data.slice, result.chapter).length;
+    return panel(`<h2>3장 · 중앙시계탑 끝</h2><p>오르덴의 마지막 정각을 멈췄습니다. 마을의 종은 더 이상 울리지 않습니다.<br>모두 자기 걸음으로 걷습니다.</p>`
+      + `<div class="result-stats"><span><b>${rooms} / ${rooms}</b>통과한 구간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${endRecord(result)}`
+      + `<div class="actions">${button(label, action, '', 'primary')}</div>`, 'compact ending');
+  }
+  /** Debug only: the cutscene by itself, nothing in the save changes. */
+  async function watchLiberation() {
+    screen = 'cinematic'; game.s.paused = true; clearInput(); renderOverlay(true);
+    cutscene = playLiberationCutscene($('cutscene'), { reduced: reducedMotion(), music: cutsceneMusic });
+    await cutscene.done; cutscene = null; cutSong = null;
+    game.s.paused = false; screen = null; renderOverlay(true);
+  }
   async function playEnding() {
     const ending = ENDINGS[game.chapter.id], seen = (game.s.profile.bossTalks ??= []), first = ending.after && !seen.includes(ending.after);
     seen.push(ending.seen); if (first) seen.push(ending.after); game.save();
@@ -460,9 +534,9 @@ try {
   /** `now` starts the wanted song even before the sound context reports it is running: used inside the first tap. */
   function playMusic(now = false) {
     const s = game.s, settings = s.profile.settings, room = game.room;
-    const name = settings.music ? musicScene({ onTitle, mode: s.mode, roomKind: room?.kind, roomIndex: s.run ? s.run.node : undefined, restIndex: REST_INDEX, chapter: s.run?.chapter, tower: atTower, talking: screen === 'talk' }) : null;
+    const name = !settings.music ? null : cutSong !== null ? cutSong || null : musicScene({ onTitle, mode: s.mode, roomKind: room?.kind, roomIndex: s.run ? s.run.node : undefined, restIndex: REST_INDEX, chapter: s.run?.chapter, boss: room?.boss, tower: atTower, talking: screen === 'talk' });
     // Menus over the game keep the music, a little quieter (not the tower scene, which is its own moment).
-    music.update(audio, name, settings.musicVolume * (s.paused && !onTitle && !atTower ? 0.5 : 1), now);
+    music.update(audio, name, settings.musicVolume * (s.paused && !onTitle && !atTower && cutSong === null ? 0.5 : 1), now);
   }
   /**
    * Browsers let a page make sound only after a tap or a key on it (a desktop visitor who has played here before is
@@ -504,9 +578,15 @@ try {
   /** A recorded effect if it is loaded; otherwise the synthesized stand-in, if there is one. */
   // Menu sounds still play while the game is paused behind the panel.
   const MENU_SOUNDS = new Set(['click', 'buy', 'deny', 'tune', 'equip']);
-  function sfx(name, fallback) { if (!audio || !game.s.profile.settings.sound || (game.s.paused && !MENU_SOUNDS.has(name))) return; if (!sounds.play(audio, name)) fallback?.(); }
+  /**
+   * The sound context is running (2026-11-22, the memory check): while it is held (no tap yet, an iPhone call or another
+   * app taking the sound) a started sound never ends, so every one asked for stayed in memory with its 'ended' listener,
+   * some 30 a second in a fight, and all of them would sound at once when it came back.
+   */
+  function soundLive() { return audio?.state === 'running'; }
+  function sfx(name, fallback) { if (!soundLive() || !game.s.profile.settings.sound || (game.s.paused && !MENU_SOUNDS.has(name))) return; if (!sounds.play(audio, name)) fallback?.(); }
   function beep(frequency = 420, duration = 0.05, volume = 0.025) {
-    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    if (!soundLive() || !game.s.profile.settings.sound || game.s.paused) return;
     const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = 'triangle'; osc.frequency.value = frequency;
     gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
     osc.connect(gain).connect(audio.destination); osc.start(); osc.stop(audio.currentTime + duration);
@@ -514,7 +594,7 @@ try {
   let noiseBuffer = null;
   /** A burst of filtered noise: the body of every whoosh, clank and crunch. */
   function noise(duration, volume, frequency, q = 1.2) {
-    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    if (!soundLive() || !game.s.profile.settings.sound || game.s.paused) return;
     if (!noiseBuffer) { noiseBuffer = audio.createBuffer(1, audio.sampleRate * 0.5, audio.sampleRate); const d = noiseBuffer.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
     const source = audio.createBufferSource(), filter = audio.createBiquadFilter(), gain = audio.createGain();
     source.buffer = noiseBuffer; filter.type = 'bandpass'; filter.frequency.value = frequency; filter.Q.value = q;
@@ -523,7 +603,7 @@ try {
   }
   /** A pitch that falls as it fades, for the weight under a hit. */
   function thump(from, to, duration, volume, type = 'triangle') {
-    if (!audio || !game.s.profile.settings.sound || game.s.paused) return;
+    if (!soundLive() || !game.s.profile.settings.sound || game.s.paused) return;
     const osc = audio.createOscillator(), gain = audio.createGain(); osc.type = type;
     osc.frequency.setValueAtTime(from, audio.currentTime); osc.frequency.exponentialRampToValueAtTime(to, audio.currentTime + duration);
     gain.gain.setValueAtTime(volume, audio.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
@@ -579,6 +659,8 @@ try {
       const repeat = hit.swing && hit.swing === feltSwing;
       if (hit.swing) feltSwing = hit.swing;
       if (repeat) continue;
+      // A boss pattern landing big (game.bossQuake): its own longer rumble and a flash of its colour, nothing held.
+      if (hit.kind === 'quake') { renderer.bossImpact(hit.power, hit.color, calm); continue; }
       // An ordinary kill no longer holds the frame on top of the blow that made it (2026-11-06: it read as a slow-down);
       // only a boss's fall still does.
       // Nor does it shake the screen: the blow's own kick is enough, and the extra shake on every kill read as a zoom.
@@ -648,7 +730,7 @@ try {
     const cards = [...shown, ...Array(Math.max(0, ELEMENT_SHELF - shown.length)).fill(blank)].join('');
     const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.'
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
-    return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid element-grid">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide element-panel');
+    return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid element-grid">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${game.s.mode === 'practice' ? '' : button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide element-panel');
   }
   /**
    * A run part's effect with `rank` of them fitted, counting the permanent tuning that adds to the same thing, the way the
@@ -740,19 +822,23 @@ try {
    */
   const endStanding = { key: '', state: 'idle', data: null };
   if (window.__btc) window.__btc.endStanding = endStanding;
-  function endRecord() {
-    const run = game.s.run, chapter = game.chapter.id, difficulty = run.difficulty || 'normal', seconds = Math.round(run.elapsed), elements = run.slots.map(s => s.element);
+  /**
+   * With `result` (a run already brought home, chapter 3's end sheet) the record is read from it: its time, and the
+   * best before it (priorBest), since the saved record already holds this clear and the server may too.
+   */
+  function endRecord(result = null) {
+    const run = result || game.s.run, chapter = result?.chapter || game.chapter.id, difficulty = run.difficulty || 'normal', seconds = Math.round(run.elapsed), elements = result ? result.elements || [] : run.slots.map(s => s.element);
     const key = `${chapter}:${difficulty}:${seconds}`;
     if (endStanding.key !== key) {
       Object.assign(endStanding, { key, state: 'loading', data: null });
       fetchRecords({ storage: localStorage, hostname: location.hostname, protocol: location.protocol, chapter, difficulty, at: seconds }).then(found => {
         if (endStanding.key !== key) return;
         Object.assign(endStanding, { state: found ? 'ready' : 'offline', data: found?.[difficulty] || null });
-        if (game.s.mode === 'complete') renderOverlay(true);
+        if (game.s.mode === 'complete' || game.s.mode === 'returned' || screen === 'towerEnd') renderOverlay(true);
       });
     }
     const level = data.slice.difficulty.levels.find(l => l.id === difficulty), server = endStanding.data;
-    const before = mergeMine(chapterRecords(game.s.profile, chapter)[difficulty], server?.me), fresh = before.best === null || seconds < before.best;
+    const before = result ? { best: result.priorBest ?? null, elements: result.priorElements || [] } : mergeMine(chapterRecords(game.s.profile, chapter)[difficulty], server?.me), fresh = before.best === null || seconds < before.best;
     // The board as it will be: this device's row holds the better of its old best and this clear.
     const best = fresh ? { seconds, elements, mine: true } : { seconds: before.best, elements: before.elements, mine: true };
     const board = server ? [...(server.tops || []).filter(t => !t.mine), best].sort((a, b) => a.seconds - b.seconds).slice(0, 3) : [];
@@ -786,15 +872,59 @@ try {
   }
   /** The chapters this copy of the game shows (one still being made only on the local dev server). */
   const shownChapters = () => chapterList(data.slice).filter(chapter => chapterShown(data.slice, chapter.id, game.previews));
-  /** The debug panel's difficulty buttons: the next room jump runs on the one picked (a different one starts a fresh run). */
-  function debugDifficultyRow() {
-    const { levels, default: base } = data.slice.difficulty, pick = game.debugDifficulty || game.s.run?.difficulty || base;
-    return `<div class="debug-give"><span>난이도</span>${levels.map(level => button(level.id === pick ? `${level.name} ✓` : level.name, 'debug-difficulty', `data-level="${level.id}" aria-pressed="${level.id === pick}"`, level.id === pick ? 'primary' : '')).join('')}</div>`;
+  /**
+   * The debug workbench (F9, the local dev server only; redrawn 2026-11-21, the user's word: add a heal and tidy it up).
+   * A blueprint sheet, apart from the game's cream panels so it never reads as part of the game: on the left what F2 is
+   * (health, god mode, damage scale) and what she has; on the right one chapter's rooms at a time, by its tab.
+   */
+  function debugPanel() {
+    const s = game.s, p = game.p, run = s.run, levels = data.slice.difficulty.levels;
+    const pick = game.debugDifficulty || run?.difficulty || data.slice.difficulty.default, scale = game.debugDamage || 1;
+    const chapters = chapterList(data.slice), tab = chapters.find(c => c.id === game.debugChapter) || (run && chapters.find(c => c.id === game.chapter.id)) || chapters[0];
+    const hp = Math.max(0, Math.round(p.hp)), max = Math.round(p.maxHp) || 1, share = Math.max(0, Math.min(1, hp / max));
+    const where = run ? `${game.chapter.number}장 ${escapeHTML(game.room?.name || '')}` : '마을';
+    const seg = (items, action, isOn, label, key = 'amount') => `<div class="dbg-seg" role="group">${items.map(v => `<button data-action="${action}" data-${key}="${v.id ?? v}" aria-pressed="${isOn(v)}" class="${isOn(v) ? 'on' : ''}">${label(v)}</button>`).join('')}</div>`;
+    const rooms = chapterRooms(data.slice, tab.id).map((room, i) => {
+      const here = run && game.chapter.id === tab.id && run.node === i, shown = here ? run.plan?.[i]?.variant || 0 : -1;
+      const pickRow = room.variants?.length > 1 ? `<div class="dbg-room-pick">${room.variants.map((name, v) => `<button class="${shown === v ? 'on' : ''}" data-action="debug-room" data-room="${i}" data-chapter="${tab.id}" data-variant="${v}" aria-label="${escapeHTML(room.name)} ${name} 그림으로 이동">${name}</button>`).join('')}</div>` : '';
+      const short = room.name.replace(/\s+[A-Z]$/, ''), kind = room.boss ? 'boss' : room.kind === 'shop' ? 'rest' : '';
+      return `<li class="dbg-room${here ? ' here' : ''}${kind ? ` ${kind}` : ''}"><button class="dbg-room-go" data-action="debug-room" data-room="${i}" data-chapter="${tab.id}" title="${escapeHTML(room.name)}"><small>${i + 1}</small><span>${escapeHTML(short)}</span></button>${pickRow}</li>`;
+    }).join('');
+    return panel(`<header class="dbg-head"><strong class="dbg-title">디버그 작업대</strong><p>지금 ${where}${run ? `, ${escapeHTML(levels.find(l => l.id === run.difficulty)?.name || '')}` : ''}</p>${button('닫기', 'resume', '', 'dbg-close')}</header>
+      <div class="dbg-body">
+        <div class="dbg-side">
+          <section class="dbg-block"><h3>F2</h3>
+            <div class="dbg-hp"><div class="dbg-hp-bar" style="--hp:${share}"><i></i></div><b>${hp} / ${max}</b></div>
+            <div class="dbg-row">${button('가득 회복', 'debug-heal', 'data-amount="1"', 'dbg-mend')}${button('절반 회복', 'debug-heal', 'data-amount="0.5"', 'dbg-mend')}</div>
+            <div class="dbg-row"><span class="dbg-label">무적</span>${seg([0, 1], 'debug-god', v => !!v === !!game.godMode, v => (v ? '켜기' : '끄기'), 'on')}</div>
+            <div class="dbg-row"><span class="dbg-label">주는 피해</span>${seg([0.5, 1, 2, 5, 10, 100], 'debug-damage', v => v === scale, v => `×${v}`)}</div>
+          </section>
+          <section class="dbg-block"><h3>재화</h3>
+            <div class="dbg-row"><span class="dbg-label">${ico('gear')} ${Math.floor(s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}</div>
+            ${run ? `<div class="dbg-row"><span class="dbg-label">${ico('coin')} ${run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}</div>` : ''}
+            <div class="dbg-row">${button(data.slice.permanentStats.every(stat => s.profile.stats[stat.id] >= stat.maxRank) ? '조율판 모두 최대 ✓' : '조율판 모두 최대', 'debug-tune-max')}</div>
+          </section>
+          <section class="dbg-block"><h3>진행</h3>
+            <div class="dbg-row"><span class="dbg-label">다음 이동 난이도</span>${seg(levels, 'debug-difficulty', l => l.id === pick, l => l.name, 'level')}</div>
+            <div class="dbg-row">${button('튜토리얼부터 시작', 'debug-tutorial')}${button('해방 컷신 보기', 'debug-liberation')}</div>
+          </section>
+          <section class="dbg-block"><h3>대사</h3>
+            ${(() => { const seen = s.profile.bossTalks || [], count = kind => talkMarks(kind).filter(m => seen.includes(m)).length;
+              const tip = 'title="본 대사 기록을 지웁니다. 다음에 그 보스 방에 들어가거나 쓰러뜨리면 다시 나옵니다."';
+              return `<div class="dbg-row"><span class="dbg-label">다시 보기</span>${button(`첫 조우 (${count('meet')})`, 'debug-talks', `data-kind="meet" ${tip}`)}${button(`처치 뒤 (${count('after')})`, 'debug-talks', `data-kind="after" ${tip}`)}</div>`; })()}
+          </section>
+        </div>
+        <section class="dbg-rooms-block"><div class="dbg-tabs" role="tablist">${chapters.map(c => `<button role="tab" data-action="debug-chapter" data-chapter="${c.id}" aria-selected="${c.id === tab.id}" class="${c.id === tab.id ? 'on' : ''}">${c.number}장 ${escapeHTML(c.name)}</button>`).join('')}</div>
+          <ol class="dbg-rooms">${rooms}</ol>
+          <p class="dbg-note">방을 고르면 그 방부터 새로 시작합니다. 영구 재화와 보상은 실제 저장에 쌓입니다.</p>
+        </section>
+      </div>`, 'debug-bench');
   }
   function difficultyPanel() {
     const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
     askRecords(chapter);
-    const { levels, default: base } = data.slice.difficulty, normal = levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
+    // Only the levels this chapter offers (chapter 3 has no easy); the percentages still compare with normal.
+    const { default: base } = data.slice.difficulty, levels = chapterLevels(data.slice, chapter), normal = data.slice.difficulty.levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
     const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
     const harder = info.scale && info.scale !== 1 ? ` 이 장의 적은 1장보다 ${Math.round((info.scale - 1) * 100)}% 강하고, 보상은 ${Math.round(((info.loot || 1) - 1) * 100)}% 많습니다.` : '';
@@ -907,26 +1037,41 @@ try {
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
   function codexPanel() {
-    const words = data.slice.presentation.codex, element = id => data.combat.elements.find(e => e.id === id);
+    const words = data.slice.presentation.codex, element = id => data.combat.elements.find(e => e.id === id), colors = data.slice.presentation.colors;
     const tab = (id, label) => button(label, 'codex-tab', `data-id="${id}" aria-pressed="${codexTab === id}"`, codexTab === id ? 'tab on' : 'tab');
-    const status = id => `<span class="tag status"><img src="${assetUrl(STATUS_ICONS[id])}" alt="">${words.statuses[id][0]}</span>`;
-    // Single or several bodies, and how it reaches them (slice.json presentation.codex.targets).
-    const reach = id => { const [kind, how] = words.targets?.[id] || []; return kind ? `<span class="tag reach ${kind}">${kind === 'single' ? '단일' : '다수'} · ${how}</span>` : ''; };
-    const tags = (move, statuses) => `<div class="tags">${reach(move.id)}<span class="tag">피해 ${move.totalDirectDamage}</span>${move.energyCost ? `<span class="tag">축전 ${move.energyCost}</span>` : ''}<span class="tag">대기시간 ${move.cooldown}초</span>${statuses.map(status).join('')}</div>`;
+    // A status tag explains itself under the move when tapped, and on a pointer's hover (2026-11-22): the list of statuses
+    // stood only at the very bottom of the elements tab, and nowhere on the fusions tab.
+    const status = id => `<button type="button" class="tag status" tabindex="-1" data-status-tip="${id}" title="${escapeHTML(`${words.statuses[id][0]}: ${words.statuses[id][1]}`)}" aria-expanded="false"><img src="${assetUrl(STATUS_ICONS[id])}" alt="">${words.statuses[id][0]}</button>`;
+    // How it reaches its bodies (slice.json presentation.codex.targets); 단일 is called out, several is the plain case.
+    const reach = id => { const [kind, how] = words.targets?.[id] || []; return kind ? `<span class="tag reach ${kind}">${kind === 'single' ? `단일 · ${how}` : how}</span>` : ''; };
+    // Reach and damage lead; cost and wait drop to a small line (every fusion waits 30 s, so they told nothing apart).
+    const tags = (move, statuses) => `<div class="tags">${reach(move.id)}<span class="tag damage">피해 ${move.totalDirectDamage}</span>${statuses.map(status).join('')}</div><p class="move-cost">${[move.energyCost ? `축전 ${move.energyCost}` : '', `대기시간 ${move.cooldown}초`].filter(Boolean).join(' · ')}</p>`;
     const move = (m, line, statuses, extra = '') => `<div class="codex-move"><img class="move-icon" src="${skillIcon(m.id)}" alt=""><div><h4>${m.name}${extra}</h4><p>${line}</p>${tags(m, statuses)}</div></div>`;
     const shownElements = data.combat.elements.filter(e => game.elementShown(e.id));
-    // 2026-11-11: each element names its role under its heading, as the reward cards do.
-    const elements = shownElements.map(e => `<article class="codex-entry" style="--accent:${data.slice.presentation.colors[e.id]}"><h3>${elementIcon(e.id, 'codex-icon')}${e.name} · ${e.device}</h3>${e.role ? `<p class="codex-role">${escapeHTML(e.role)}</p>` : ''}${data.combat.skills.filter(s => s.element === e.id).map(s => move(s, words.skills[s.id], [ELEMENT_STATUS[e.id]])).join('')}</article>`).join('');
+    // 2026-11-11: each element names its role under its heading, as the reward cards do. 2026-11-22: and its status is
+    // explained at the foot of its own card (it was in one list under all eight).
+    const statusNote = id => words.statuses[id] ? `<p class="codex-status"><img src="${assetUrl(STATUS_ICONS[id])}" alt=""><strong>${words.statuses[id][0]}</strong><span>${words.statuses[id][1]}</span></p>` : '';
+    const elements = shownElements.map(e => `<article class="codex-entry" style="--accent:${colors[e.id]}"><h3>${elementIcon(e.id, 'codex-icon')}${e.name} · ${e.device}</h3>${e.role ? `<p class="codex-role">${escapeHTML(e.role)}</p>` : ''}${data.combat.skills.filter(s => s.element === e.id).map(s => move(s, words.skills[s.id], [ELEMENT_STATUS[e.id]])).join('')}${statusNote(ELEMENT_STATUS[e.id])}</article>`).join('');
     const shownFusions = data.combat.fusions.filter(f => f.pair.every(id => game.elementShown(id)));
-    // The fusion list filters by one element (2026-11-09): 전체 first, then the elements in their own order (불 얼음 전기 바람 소리 물).
+    // The fusion list filters by a row of chips (2026-11-22, a dropdown before): 전체, then one element each in their own order.
+    const owned = game.s.profile.ownedElements || [];
     if (codexFilter !== 'all' && !shownElements.some(e => e.id === codexFilter)) codexFilter = 'all';
-    const filter = `<label class="codex-filter">속성 <select data-codex-filter aria-label="융합 속성 고르기">${[['all', '전체'], ...shownElements.map(e => [e.id, e.name])].map(([id, name]) => `<option value="${id}"${codexFilter === id ? ' selected' : ''}>${name}</option>`).join('')}</select></label>`;
+    const chip = (id, label, extra = '') => button(label, 'codex-filter', `data-id="${id}" aria-pressed="${codexFilter === id}"${extra}`, `chip${codexFilter === id ? ' on' : ''}`);
+    const filter = `<div class="codex-chips" role="group" aria-label="융합 속성 고르기">${chip('all', '전체')}${shownElements.map(e => chip(e.id, `${elementIcon(e.id, 'chip-icon')}<span>${e.name}</span>`, ` title="${e.name}" style="--accent:${colors[e.id]}"`)).join('')}</div>`;
     // The fusion of the two elements fitted now comes first, marked (2026-11-11), so it is found without scrolling.
     const fitted = game.fusion?.id;
-    const fusions = shownFusions.filter(f => codexFilter === 'all' || f.pair.includes(codexFilter)).sort((a, b) => (b.id === fitted) - (a.id === fitted)).map(f => `<article class="codex-entry${f.id === fitted ? ' fitted' : ''}">${f.id === fitted ? '<span class="fitted-tag">지금 장착</span>' : ''}<div class="pair">${f.pair.map(id => `${elementIcon(id, 'codex-icon')}${element(id).name}`).join('<b>+</b>')}</div>${move(f, words.fusions[f.id], f.pair.map(id => ELEMENT_STATUS[id]), game.s.profile.discoveredFusions.includes(f.id) ? ' <small>✓ 써 봄</small>' : '')}</article>`).join('');
-    const legend = `<div class="status-legend">${Object.entries(words.statuses).filter(([id]) => shownElements.some(e => ELEMENT_STATUS[e.id] === id)).map(([id, [name, text]]) => `<p><img src="${assetUrl(STATUS_ICONS[id])}" alt=""><strong>${name}</strong> ${text}</p>`).join('')}</div>`;
+    const keep = f => codexFilter === 'all' || f.pair.includes(codexFilter);
+    // Each fusion card carries both its elements' colours on top, and one needing a part not owned yet reads faded.
+    const fusionCard = f => {
+      const missing = f.pair.filter(id => !owned.includes(id)), flag = f.id === fitted ? '<span class="fitted-tag">지금 장착</span>' : missing.length ? `<span class="need-tag">${missing.map(id => element(id).name).join('·')} 부품 필요</span>` : '';
+      return `<article class="codex-entry pair-entry${f.id === fitted ? ' fitted' : ''}${missing.length ? ' unowned' : ''}" style="--accent:${colors[f.pair[0]]};--accent2:${colors[f.pair[1]]}">${flag}<div class="pair">${f.pair.map(id => `${elementIcon(id, 'codex-icon')}${element(id).name}`).join('<b>+</b>')}</div>${move(f, words.fusions[f.id], f.pair.map(id => ELEMENT_STATUS[id]), game.s.profile.discoveredFusions.includes(f.id) ? ' <small>✓ 써 봄</small>' : '')}</article>`;
+    };
+    const kept = shownFusions.filter(keep).sort((a, b) => (b.id === fitted) - (a.id === fitted));
+    const fusions = kept.map(fusionCard).join('');
     const how = isTouch ? '융합 버튼' : '우클릭';
-    return panel(`<div class="panel-header"><div><h2>속성과 융합의 기록</h2></div>${button('닫기', 'codex-close')}</div><div class="codex-tabs">${tab('elements', `속성 ${shownElements.length}`)}${tab('fusions', `융합 ${shownFusions.length}`)}</div>${codexTab === 'fusions' ? filter : ''}<div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? `<p class="notice">장착한 두 속성의 융합 하나를 ${how}으로 씁니다. 축전은 렌치로 때리면 찹니다.</p>` : legend}`, 'wide');
+    // The heading, the tabs and the chips stay at the top while the list scrolls under them (2026-11-22).
+    const head = `<div class="codex-head"><div class="panel-header"><h2>속성과 융합의 기록</h2><div class="codex-tabs">${tab('elements', `속성 ${shownElements.length}`)}${tab('fusions', `융합 ${shownFusions.length}`)}</div>${button('닫기', 'codex-close')}</div>${codexTab === 'fusions' ? filter : ''}</div>`;
+    return panel(`${head}<div class="codex-list">${codexTab === 'fusions' ? fusions : elements}</div>${codexTab === 'fusions' ? `<p class="notice">장착한 두 속성의 융합 하나를 ${how}으로 씁니다. 축전은 렌치로 때리면 찹니다. 상태 이름을 누르면 설명이 나옵니다.</p>` : ''}`, 'wide codex');
   }
   const stopIcon = (room, i) => (room.kind === 'shop' ? ico('coin') : room.boss ? ico('crown') : i + 1);
   /** Who waits in a stop, named once each, so the map can say what an area is like before walking in. */
@@ -937,14 +1082,18 @@ try {
   /** The region drawn like a world map: each stop is a small view of its own art, joined by the road walked in order. */
   function mapPanel() {
     const s = game.s, rooms = game.rooms, node = s.run?.node ?? -1;
-    const picked = mapPick ?? (s.run ? rooms[node]?.id : 'town');
+    // A room fought in the same place as one before it (slice.json mapStop: the tower's top is the tuning room fallen in)
+    // shares that room's stop (2026-11-22, the user's word): one marker, both rooms in its note.
+    const groups = [];
+    rooms.forEach((room, i) => { const host = room.mapStop && groups.find(g => g.some(k => rooms[k].id === room.mapStop)); if (host) host.push(i); else groups.push([i]); });
+    const groupOf = id => groups.find(g => g.some(k => rooms[k].id === id));
+    const shown = groupOf(mapPick ?? (s.run ? rooms[node]?.id : 'town')), picked = shown ? rooms[shown[0]].id : 'town';
     const stops = [{ id: 'town', icon: 'home', label: HOME_NAME, state: s.run ? 'done' : 'current', kind: 'town' },
-      ...rooms.map((room, i) => ({ id: room.id, icon: room.kind === 'shop' ? 'coin' : room.boss ? 'crown' : i + 1, label: room.short, state: i === node ? 'current' : i < node ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }))];
-    const index = rooms.findIndex(room => room.id === picked), room = rooms[index];
-    const detail = room
-      ? `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`
+      ...groups.map(g => { const room = rooms[g[0]], i = g[0]; return { id: room.id, icon: room.kind === 'shop' ? 'coin' : room.boss ? 'crown' : i + 1, label: g.map(k => rooms[k].short).join(' · '), state: g.includes(node) ? 'current' : node > g.at(-1) ? 'done' : 'ahead', kind: room.boss ? 'boss' : room.kind === 'shop' ? 'shop' : '' }; })];
+    const detail = shown
+      ? shown.map(index => { const room = rooms[index]; return `<strong>${stopIcon(room, index)} ${roomTitle(room)}</strong>${room.kind === 'shop' ? '<em>동전으로 수리와 부품을 삽니다.</em>' : `<em>${room.boss ? '보스' : '등장'}: ${stopFoes(room).join(', ')}</em>`}`; }).join(' ')
       : `<strong>${ico('home')} ${HOME_NAME}</strong><em>원정 출발지</em>`;
-    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked, { chapter: game.chapter.id, factoryOpen: chapterOpen(data.slice, s.profile, 'silent-factory', game.previews, game.unlockChapters) })}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
+    return panel(`<div class="panel-header"><div><h2>태엽 섬 지도</h2></div>${button('닫기', 'resume')}</div><div class="atlas">${worldMapSvg(stops, picked, { chapter: game.chapter.id, factoryOpen: chapterOpen(data.slice, s.profile, 'silent-factory', game.previews, game.unlockChapters), towerOpen: chapterOpen(data.slice, s.profile, 'clock-tower', game.previews, game.unlockChapters) })}</div><p class="atlas-detail">${detail}</p>`, 'atlas-panel');
   }
   /** Where each scrolled box in `root` stands, keyed by its tag, classes and place among boxes like it. */
   function scrollPlaces(root) {
@@ -963,10 +1112,13 @@ try {
       const top = places.get(`${name}#${n}`); if (top) box.scrollTop = top;
     }
   }
+  /** Someone is typing in an open sheet (a transfer code, a name): a background redraw would wipe it (2026-11-22). */
+  const typingInSheet = () => { const el = document.activeElement; return !!el && /^(INPUT|TEXTAREA)$/.test(el.tagName) && !!el.closest('#overlay'); };
   function renderOverlay(force = false) {
     wantFactoryMobs(); dressMobs(); dressPlayer();
     const s = game.s, mode = screen || (game.village && !s.panel ? 'walking' : s.mode);
-    const key = `${mode}:${s.run?.node}`;
+    // (The open sheet is part of it: in the back yard the mode stays 'practice' with or without one, 2026-11-22.)
+    const key = `${mode}:${s.run?.node}:${s.panel || ''}`;
     if (!force && key === overlayKey) return;
     // Redrawing the same sheet (buying a rank, toggling a part) keeps every list where the player had scrolled it.
     const scrolled = key === overlayKey ? scrollPlaces($('overlay')) : null;
@@ -978,15 +1130,10 @@ try {
     if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 이번 원정에서 올린 기술 단계·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'controls') html = controlsPanel();
-    if (mode === 'debug') html = panel(`<h2>어디로 갈까요?</h2><div class="actions">${button('튜토리얼부터 시작', 'debug-tutorial', '', 'primary')}${button('닫기', 'resume')}</div><div class="debug-give"><span>무적</span>${button(game.godMode ? '켜짐' : '꺼짐', 'debug-god', `aria-pressed="${!!game.godMode}"`, game.godMode ? 'primary' : '')}<span>조율판</span>${button(data.slice.permanentStats.every(stat => game.s.profile.stats[stat.id] >= stat.maxRank) ? '모두 최대 ✓' : '모두 최대', 'debug-tune-max')}</div><div class="debug-give"><span>자유 톱니 ${ico('gear')} ${Math.floor(game.s.profile.freeGears)}</span>${[100, 1000, 10000].map(n => button(`+${n}`, 'debug-gears', `data-amount="${n}"`)).join('')}${s.run ? `<span>동전 ${ico('coin')} ${s.run.coins}</span>${[100, 1000].map(n => button(`+${n}`, 'debug-coins', `data-amount="${n}"`)).join('')}` : ''}</div>${debugDifficultyRow()}${chapterList(data.slice).map(chapter => `<p class="debug-chapter">${chapter.number}장 · ${escapeHTML(chapter.name)}</p><div class="debug-rooms">${chapterRooms(data.slice, chapter.id).map((room, i) => {
-      const here = s.run && game.chapter.id === chapter.id && s.run.node === i, shown = here ? s.run.plan?.[i]?.variant || 0 : -1;
-      // One ticket per room: the name on top, and for rooms painted twice a torn-off strip below to enter painting A or B.
-      const pick = room.variants?.length > 1 ? `<div class="debug-room-pick">${room.variants.map((name, v) => `<button class="${shown === v ? 'current' : ''}" data-action="debug-room" data-room="${i}" data-chapter="${chapter.id}" data-variant="${v}" aria-label="${escapeHTML(room.name)} ${name} 그림으로 이동">${name}</button>`).join('')}</div>` : '';
-      // The room names' closing design letter ('사탕 수레마당 C') would read as a painting next to the A·B strip: shown on hover only.
-      const short = room.name.replace(/\s+[A-Z]$/, '');
-      return `<div class="debug-room${here ? ' here' : ''}"><button class="debug-room-go${here ? ' current' : ''}" data-action="debug-room" data-room="${i}" data-chapter="${chapter.id}" title="${escapeHTML(room.name)}"><small>${String(i + 1).padStart(2, '0')}</small><span>${escapeHTML(short)}</span></button>${pick}</div>`;
-    }).join('')}</div>`).join('')}<p class="notice">영구 재화는 유지됩니다. 이동하면 지금 방의 진행은 사라지고, 보상은 실제 저장에 쌓입니다.</p>`, 'compact');
+    if (mode === 'debug') html = debugPanel();
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
+    // The back yard opens one sheet: Moru's parts, to change what is fitted while trying it.
+    if (mode === 'practice' && s.panel === 'elements') html = elementsPanel();
     if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : s.panel === 'potions' ? potionsPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
     // The night market's shop and the travelling merchant before the boss sell the same things; each has its own once-only list.
@@ -1006,7 +1153,9 @@ try {
     if (mode === 'complete') html = panel(`${game.chapter.id === FIRST_CHAPTER
       ? `<h2>1장 · 웃음거리 끝</h2><p>브라스의 태엽을 다시 감았습니다. 순찰 설계도와 첫 인장이 기록됩니다.<br>다음 이야기는 무음공장에서 이어집니다.${shownChapters().length > 1 ? ' 원정 창에서 2장을 고를 수 있습니다.' : ''}</p>`
       : '<h2>2장 · 무음공장 끝</h2><p>프레스의 압력을 풀었습니다. 원본 조립 기록과 구형 자율 조율 설계도가 기록됩니다.<br>신호선은 모두 중앙시계탑을 가리킵니다.</p>'}<div class="result-stats"><span><b>${game.rooms.length} / ${game.rooms.length}</b>통과한 구간</span><span><b>${s.run.baseGears}</b>기본 자유 톱니</span></div>${endRecord()}<div class="actions">${button('모루의 수리점으로', 'return-complete', '', 'primary')}</div><p class="notice">수리점으로 돌아가 원정을 다시 떠날 수 있습니다.</p>`, 'compact ending');
-    if (mode === 'returned') {
+    if (mode === 'towerEnd' && s.result) html = towerEndSheet(s.result, 'resume', '마을로 나가기');
+    if (mode === 'returned' && s.result?.reason === 'clear' && s.result.chapter === 'clock-tower') html = towerEndSheet(s.result, 'acknowledge', '마을로 나가기');
+    else if (mode === 'returned') {
       const result = s.result;
       html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>기술 단계·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${chapterRooms(data.slice, result.chapter).length}</b>${escapeHTML((chapterRooms(data.slice, result.chapter)[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');
     }
@@ -1109,6 +1258,14 @@ try {
     const p = game.p, until = slot.dodge ? p.dodgeReady : slot.fusion ? p.fusionReady : slot.skill ? p.cooldowns[slot.skill.id] || 0 : 0;
     return { remaining: Math.max(0, until - game.s.time), total: slot.dodge ? data.combat.player.dodge.cooldown : slot.skill?.cooldown || 1 };
   }
+  /**
+   * Orden's stopped time under his bar (2026-11-22, the user's pick: the whole break's 80 s read as far too long): the
+   * watches broken and this try's time, not the shield's outer limit, which only matters after three failed tries.
+   */
+  function stopNote(b) {
+    const left = Math.max(0, Math.ceil(b.phaseAt - game.s.time)), watches = `회중시계 ${b.hearts.filter(h => h.broken).length}/${b.hearts.length}`;
+    return b.phase === 'stop' ? `${watches} · 멈춤 ${left}초` : b.phase === 'resume' ? `${watches} · 시간이 다시 흐릅니다` : `${watches} · 시간이 멈춥니다`;
+  }
   function updateHUD() {
     const s = game.s, p = game.p, maxEnergy = data.combat.player.maxEnergy, slots = hudSlots();
     put($('hp-fill'), 'width', `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`);
@@ -1128,7 +1285,7 @@ try {
       put($('boss-fill'), 'width', `calc((100% - 6px) * ${Math.max(0, boss.hp / boss.maxHp)})`);
       const breaking = boss.breaking, rule = breaking && game.breakRule(boss, breaking.index);
       $('boss-bar').classList.toggle('shielded', !!breaking);
-      put($('boss-note'), 'text', breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : breaking.kind === 'flags' ? `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}` : breaking.kind === 'mirrors' ? `거울판 ${breaking.mirrors.filter(m => m.lit).length}/${breaking.mirrors.length}` : breaking.kind === 'pylons' ? `전력 기둥 ${breaking.pylons.filter(x => x.broken).length}/${rule.need}` : breaking.kind === 'molds' ? `거푸집 ${breaking.matched || 0}/${rule.need}` : '파훼 중'} · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`) : boss.exposedUntil > s.time ? '휘청' : '');
+      put($('boss-note'), 'text', breaking ? (breaking.failAt !== null ? '파훼 실패 · 폭발!' : `보호막 · ${breaking.kind === 'cans' ? `깡통 ${breaking.fed}/${rule.cans}` : breaking.kind === 'drums' ? (breaking.phase === 'show' ? '북 순서 보는 중' : `북 ${breaking.next}/${breaking.order.length}`) : breaking.kind === 'flags' ? `깃발 병정 ${breaking.soldiers.filter(x => x.flag && x.down).length}/${rule.flags}` : breaking.kind === 'mirrors' ? `거울판 ${breaking.mirrors.filter(m => m.lit).length}/${breaking.mirrors.length}` : breaking.kind === 'pylons' ? `전력 기둥 ${breaking.pylons.filter(x => x.broken).length}/${rule.need}` : breaking.kind === 'molds' ? `거푸집 ${breaking.matched || 0}/${rule.need}` : breaking.kind === 'colours' ? `틱 ${breaking.done?.tick ?? 0}/${breaking.need} · 톡 ${breaking.done?.tock ?? 0}/${breaking.need}` : breaking.kind === 'orders' ? `가짜 명령 ${breaking.cracks ?? 0}/${breaking.need}` : breaking.kind === 'stopTime' ? stopNote(breaking) : '파훼 중'}${breaking.kind === 'stopTime' ? '' : ` · ${Math.max(0, Math.ceil(breaking.until - s.time))}초`}`) : boss.exposedUntil > s.time ? '휘청' : '');
     }
     put($('coins'), 'text', s.run?.coins || 0);
     const slotKey = JSON.stringify(slots.map(({ key, skill, level, icon }) => [key, skill?.id, level, icon, skill?.energyCost]));
@@ -1154,6 +1311,7 @@ try {
     const resetting = game.s.practice?.resetCooldowns;
     // On a phone the switch is a thumb button over the skill pad (touch-controls.js); the keyboard's T label is for desktops.
     put($('practice-reset'), 'hidden', game.s.mode !== 'practice' || isTouch);
+    put($('practice-exit'), 'hidden', game.s.mode !== 'practice');
     if (isTouch) touch.practice(game.s.mode === 'practice' && !screen, !!resetting);
     put($('practice-reset'), 'text', `T · 대기시간 초기화 ${resetting ? '켜짐' : '꺼짐'}`);
     $('practice-reset').classList.toggle('on', !!resetting);
@@ -1166,6 +1324,10 @@ try {
         const hintTop = hint.hidden || !hint.offsetHeight ? Infinity : (hint.getBoundingClientRect().top - hud.top) / k;
         put(button, 'left', `${bar.offsetLeft + bar.offsetWidth / 2 - button.offsetWidth}px`);
         put(button, 'top', `${Math.round(Math.min(bar.offsetTop, hintTop) - button.offsetHeight - 6)}px`);
+        // 시험 끝내기 on the bar's other (left) end, at the same height.
+        const leave = $('practice-exit');
+        put(leave, 'left', `${bar.offsetLeft - bar.offsetWidth / 2}px`);
+        put(leave, 'top', `${Math.round(Math.min(bar.offsetTop, hintTop) - leave.offsetHeight - 6)}px`);
       }
     }
     if (isTouch) touch.update(slots.map(slot => {
@@ -1181,7 +1343,7 @@ try {
     // stayed up the whole visit and covered the yard on a phone), under any fresh notice.
     if (s.mode !== 'practice') practiceSince = null; else practiceSince ??= s.time;
     const yardTip = !screen && practiceSince !== null && s.time - practiceSince < PRACTICE_TIP_SECONDS;
-    const notice = s.notices.at(-1)?.text || (yardTip ? '허수아비에게 기술을 써 보세요 · 노란 표시로 나가면 마을로 돌아갑니다' : '');
+    const notice = s.notices.at(-1)?.text || (yardTip ? '허수아비에게 기술을 써 보세요 · 모루에게 말을 걸면 부품을 바꿀 수 있습니다' : '');
     $('toast').classList.toggle('visible', !!notice && game.onFoot);
     put($('toast'), 'text', notice);
   }
@@ -1195,7 +1357,7 @@ try {
   async function syncUpload(byHand = false) {
     const played = game.s.profile.playSeconds || 0;
     if (syncBusy || !game.s.profile.registered || (link && !byHand && progressMark(game.s) === link.mark && played - (link.played || 0) < PLAY_UPLOAD_SECONDS)) return;
-    syncBusy = true; syncNote = ''; if (screen === 'pause') renderOverlay(true);
+    syncBusy = true; syncNote = ''; if (screen === 'pause' && !typingInSheet()) renderOverlay(true);
     try {
       game.save();
       const save = encodeSave(game.s), at = new Date().toISOString();
@@ -1209,7 +1371,7 @@ try {
       // Off-line in the village is normal; only a save asked for by hand reports it.
       if (byHand || error.reason !== 'network') syncNote = error.message;
     }
-    syncBusy = false; if (screen === 'pause') renderOverlay(true);
+    syncBusy = false; if (screen === 'pause' && !typingInSheet()) renderOverlay(true);
   }
   /** Takes another device's save as this one's. */
   function takeRemote(state, remote) {
@@ -1278,7 +1440,17 @@ try {
     if (name === 'potion-return') game.returnPotion();
     // Every tuning stat at its top rank (slice.json permanentStats[].maxRank), past the chapter cap, at no cost.
     if (name === 'debug-tune-max') { for (const stat of data.slice.permanentStats) game.s.profile.stats[stat.id] = stat.maxRank; game.save(); game.notify('조율판: 모두 최대 (디버그)'); }
-    if (name === 'debug-god') { game.godMode = !game.godMode; game.notify(game.godMode ? '무적: 켜짐 (디버그)' : '무적: 꺼짐'); }
+    if (name === 'debug-liberation') { leaveTitle(); resume(); watchLiberation(); }
+    if (name === 'debug-talks') {
+      const marks = talkMarks(d.kind), seen = game.s.profile.bossTalks || [], gone = seen.filter(m => marks.includes(m)).length;
+      game.s.profile.bossTalks = seen.filter(m => !marks.includes(m)); game.save();
+      game.notify(`${d.kind === 'meet' ? '첫 조우' : '처치 뒤'} 대사 ${gone}개를 다시 볼 수 있습니다 (디버그)`); renderOverlay(true);
+    }
+    if (name === 'debug-damage') { game.debugDamage = Number(d.amount) || 1; game.notify(`F2 데미지 ×${game.debugDamage} (디버그)`); }
+    if (name === 'debug-heal') { const healed = game.heal(game.p.maxHp * (Number(d.amount) || 1), true); game.notify(healed > 0 ? `체력 +${Math.round(healed)} (디버그)` : '체력이 이미 가득합니다'); updateHUD(); }
+    if (name === 'debug-chapter') game.debugChapter = d.chapter;
+    if (name === 'debug-god' && d.on !== undefined) { game.godMode = d.on === '1'; game.notify(game.godMode ? '무적: 켜짐 (디버그)' : '무적: 꺼짐'); }
+    else if (name === 'debug-god') { game.godMode = !game.godMode; game.notify(game.godMode ? '무적: 켜짐 (디버그)' : '무적: 꺼짐'); }
     if (name === 'debug-room') { leaveTitle(); game.debugJump(Number(d.room), d.chapter || FIRST_CHAPTER, game.debugDifficulty, d.variant === undefined ? undefined : Number(d.variant)); resume(); }
     if (name === 'debug-difficulty') game.debugDifficulty = d.level;
     if (name === 'intro') game.beginIntro();
@@ -1314,6 +1486,7 @@ try {
     if (name === 'codex') openCodex(screen === 'pause' ? 'pause' : null);
     if (name === 'codex-close') closeCodex();
     if (name === 'codex-tab') codexTab = d.id;
+    if (name === 'codex-filter') codexFilter = d.id;
     if (name === 'settings-tab') settingsTab = d.id;
     if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
@@ -1330,7 +1503,22 @@ try {
     renderOverlay(true); updateHUD();
     if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
   }
-  $('overlay').addEventListener('click', e => { const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target); });
+  $('overlay').addEventListener('click', e => {
+    const tip = e.target.closest('[data-status-tip]');
+    if (tip) { toggleStatusTip(tip); return; }
+    const target = e.target.closest('[data-action]'); if (target && !target.disabled) action(target);
+  });
+  /** A codex status tag opens (or closes) its explanation in a line under its move; one open per move. */
+  function toggleStatusTip(tag) {
+    const words = data.slice.presentation.codex.statuses[tag.dataset.statusTip], host = tag.closest('.codex-move > div');
+    if (!words || !host) return;
+    const open = host.querySelector('.status-tip'), same = open?.dataset.id === tag.dataset.statusTip;
+    open?.remove(); host.querySelectorAll('[data-status-tip]').forEach(t => t.setAttribute('aria-expanded', 'false'));
+    if (same) return;
+    const line = document.createElement('p'); line.className = 'status-tip'; line.dataset.id = tag.dataset.statusTip;
+    line.innerHTML = `<strong>${escapeHTML(words[0])}</strong> ${escapeHTML(words[1])}`;
+    host.querySelector('.tags').after(line); tag.setAttribute('aria-expanded', 'true');
+  }
   /** The cursor slider: the size is kept and the preview beside it and the cursor itself follow as it moves. */
   const setCursor = slider => {
     const px = cursorSize(Number(slider.value)), img = slider.parentElement.querySelector('.cursor-preview img');
@@ -1341,15 +1529,14 @@ try {
   $('overlay').addEventListener('change', e => {
     const setting = e.target.dataset.setting;
     if (setting) { game.s.profile.settings[setting] = e.target.checked; game.save(); return; }
-    // The redrawn filter takes the keyboard focus back on a computer only: a phone opens its picker again on focus
-    // (2026-11-10: picking an element reopened the list).
-    if (e.target.matches('[data-codex-filter]')) { codexFilter = e.target.value; renderOverlay(true); if (!isTouch) $('overlay').querySelector('[data-codex-filter]')?.focus({ preventScroll: true }); return; }
     if (e.target.dataset.volume) { game.s.profile.settings[e.target.dataset.volume] = Number(e.target.value) / 100; game.save(); return; }
     if (e.target.matches('[data-cursor]')) { setCursor(e.target); game.save(); return; }
   });
   // The row under the pointer or the keyboard explains itself in the line below the list.
   for (const type of ['focusin', 'pointerover']) $('overlay').addEventListener(type, e => { const row = e.target.closest?.('.stat-row'), hint = $('overlay').querySelector('.stat-hint'); if (row && hint) hint.textContent = row.dataset.tip; });
   $('practice-reset').addEventListener('click', () => { game.togglePracticeReset(); $('game').focus({ preventScroll: true }); });
+  // Leaving the back yard without walking to its gate (2026-11-21).
+  $('practice-exit').addEventListener('click', () => { if (game.s.mode !== 'practice' || screen) return; game.closePanel(); game.leavePractice(); renderOverlay(true); updateHUD(); $('game').focus({ preventScroll: true }); });
   // The button enters full screen, or leaves it when already there; its picture shows which.
   const toggleFullscreen = () => (document.fullscreenElement ? document.exitFullscreen?.() : $('app').requestFullscreen?.())?.catch(() => {});
   $('fullscreen').addEventListener('click', toggleFullscreen);
@@ -1362,7 +1549,7 @@ try {
 
   function interact() {
     if (screen) return;
-    if (game.village) { if (game.s.panel) game.closePanel(); else if (game.nearbyNpc) talkToNpc(game.nearbyNpc); }
+    if (game.village || game.s.mode === 'practice') { if (game.s.panel) game.closePanel(); else if (game.nearbyNpc) talkToNpc(game.nearbyNpc); }
     else if (game.s.mode === 'unwind') unwindBoss();
     else if (game.s.mode === 'returned') game.acknowledgeReturn();
     else if (game.s.mode === 'complete') game.returnToHub('clear');
@@ -1380,7 +1567,7 @@ try {
     if (step && e.key !== 'Tab' && document.activeElement?.matches('select')) return true;
     if (step) {
       e.preventDefault();
-      const controls = [...sheet.querySelectorAll('button:not(:disabled), input[type=checkbox], select, summary')].filter(control => control.matches('summary') || !control.closest('details:not([open])')), at = controls.indexOf(document.activeElement);
+      const controls = [...sheet.querySelectorAll('button:not(:disabled):not([tabindex="-1"]), input[type=checkbox], select, summary')].filter(control => control.matches('summary') || !control.closest('details:not([open])')), at = controls.indexOf(document.activeElement);
       controls[at < 0 ? 0 : (at + step + controls.length) % controls.length]?.focus({ preventScroll: true });
       return true;
     }
@@ -1527,7 +1714,7 @@ try {
     const pad = navigator.getGamepads?.().find(p => p?.connected);
     if (!pad) { gamepadLast = []; return null; }
     const edge = index => pad.buttons[index]?.pressed && !gamepadLast[index];
-    if (screen === 'cinematic') { gamepadLast = pad.buttons.map(b => b.pressed); return null; }
+    if (screen === 'cinematic') { if (cutscene && (edge(0) || edge(9))) cutscene.skip(); gamepadLast = pad.buttons.map(b => b.pressed); return null; }
     if (screen === 'talk') {
       if (edge(12) || edge(14)) talkBox.move(-1);
       if (edge(13) || edge(15)) talkBox.move(1);
@@ -1586,13 +1773,29 @@ try {
     const boss = game.room?.boss;
     // After Brass, F2 says what the title means: the spring stays, but who winds it changes.
     if (!screen && game.s.mode === 'complete' && ENDINGS[game.chapter.id] && !game.s.profile.bossTalks?.includes(ENDINGS[game.chapter.id].seen)) playEnding();
+    // Orden's last words, the first time he falls at the last hour, once he stands in the light (game.js startOrdenEnd).
+    if (!screen && game.s.ordenEnd?.first && game.s.time - game.s.ordenEnd.at >= ORDEN_END.talk && !game.s.profile.bossTalks?.includes('ordenFarewell')) {
+      (game.s.profile.bossTalks ??= []).push('ordenFarewell'); game.s.paused = true; talk('ordenFarewell').then(() => { game.s.paused = false; });
+    }
+    if (!screen && game.s.mode === 'hub' && game.s.profile.liberationPending) playLiberation();
+    // The liberation's paintings and Orden's themes, fetched once a page whenever F2 reaches his rooms before the town is
+    // freed (2026-11-22, the code review: only his first-meeting talk fetched them, once per save, so a later page loaded
+    // nothing and a slow line showed the cutscene empty at first).
+    if (!liberationFetched && (game.room?.id === 'tower-10' || game.room?.id === 'tower-11') && (!game.villageFree || !game.s.profile.bossTalks?.includes('ordenFarewell'))) {
+      liberationFetched = true; preloadLiberation(); music.preload(['orden', 'orden-lasthour-v2']);
+    }
     // A boss waiting behind a corridor (Press's forming hall) speaks once F2 is in and the laser gates have shut.
-    if (!screen && game.s.mode === 'combat' && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0) && game.fbHallReady()) meetBoss(boss);
+    // (Not while the tower is still breaking open: Orden at the last hour speaks once his mask has broken, 2026-11-22.)
+    if (!screen && game.s.mode === 'combat' && !game.s.collapse && BOSS_TALKS[boss] && !game.s.profile.bossTalks?.includes(boss) && game.s.enemies.some(e => e.boss && e.hp > 0) && game.fbHallReady()) meetBoss(boss);
     // After the waking lines, before the first step: how F2 is moved (touch has one way and skips it).
     if (game.s.mode === 'intro' && !screen && game.tutorial.takeAwakening()) talk('awakening').then(() => { if (!isTouch && game.s.mode === 'intro') { pause('controls'); $('overlay').querySelector('[data-action="controls-start"]')?.focus({ preventScroll: true }); } });
     const pad = pollGamepad(), map = bindings();
     // Phones aim at the nearest enemy unless that is switched off in the settings (2026-11-10); then F2 aims the way it faces.
-    if (isTouch) { touch.show(game.onFoot && !screen, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
+    // A room that names the way F2 faces as she arrives points the mouse's aim there until the mouse moves (game.js).
+    // (lastMouse dropped too, or the old mouse spot turned her straight back the same frame; 2026-11-22, the code review.)
+    if (game.s.faceTo) { pointer = game.s.faceTo; renderer.pointer = pointer; game.s.faceTo = null; lastMouse = null; }
+    // No stick or buttons over the tower's collapse or Orden's end (its menu button led to abandoning mid-scene).
+    if (isTouch) { touch.show(game.onFoot && !screen && !game.s.collapse && !game.s.ordenEnd, !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
     else if (arrowMove()) pointer = autoAim(game.p, game.aimTargets);
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;
@@ -1610,7 +1813,8 @@ try {
       // A landed hit holds the rules still for a few frames; input pressed meanwhile waits for the next step.
       if (hitstop > 0) { hitstop -= 1 / 60; accumulator -= 1 / 60; drawnFrom = { x: game.p.x, y: game.p.y }; continue; }
       const walk = walkToTarget();
-      const input = screen === 'talk' ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0) + walk.x, y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0) + walk.y, aim: pointer, basic: mouseHeld || (!!map.attack && held.has(map.attack)) || pad?.basic || touch?.attacking, skillHeld: [...new Set([...[0, 1, 2, 3].filter(i => held.has(map[`skill${i}`])), ...(pad?.skillHeld || []), ...(touch?.skillHeld || [])])], ...pending };
+      // (Nor in the back yard while a sheet is open over it: F2 walked and cast under Moru's parts sheet, 2026-11-22.)
+      const input = screen === 'talk' || (game.s.mode === 'practice' && game.s.panel) ? {} : { x: Number(held.has(map.right)) - Number(held.has(map.left)) + (pad?.x || 0) + (touch?.move.x || 0) + walk.x, y: Number(held.has(map.down)) - Number(held.has(map.up)) + (pad?.y || 0) + (touch?.move.y || 0) + walk.y, aim: pointer, basic: mouseHeld || (!!map.attack && held.has(map.attack)) || pad?.basic || touch?.attacking, skillHeld: [...new Set([...[0, 1, 2, 3].filter(i => held.has(map[`skill${i}`])), ...(pad?.skillHeld || []), ...(touch?.skillHeld || [])])], ...pending };
       drawnFrom = { x: game.p.x, y: game.p.y }; game.update(1 / 60, input); pending = {}; accumulator -= 1 / 60; feelHits();
       noteWalk(walk);
     }
@@ -1632,7 +1836,10 @@ try {
     mapArt.prepareNextFloor();
     const controlsLabel = arrowMove() ? '방향키 이동, 자동 조준, Space 공격, Shift 회피, QWER 기술, F 융합' : mouseMove() ? '우클릭 이동, 마우스 조준, 좌클릭 공격, QWER 기술, Space 회피' : 'WASD 이동, 마우스 조준, 좌클릭 공격, Space 회피';
     if ($('game').getAttribute('aria-label') !== controlsLabel) $('game').setAttribute('aria-label', controlsLabel);
-    renderer.moveTarget = moveTarget; renderer.talkKey = isTouch ? '▸' : keyName(map.interact); renderer.talking = screen === 'talk'; drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    renderer.moveTarget = moveTarget; renderer.talkKey = isTouch ? '▸' : keyName(map.interact); renderer.talking = screen === 'talk';
+    // The tower's collapse and the liberation are scenes, not play: the HUD stands down for them (2026-11-21, the chapter 3
+    // review: health, skills and the tuning chamber's minimap stayed up over the frozen village).
+    $('hud').classList.toggle('cinematic', screen === 'cinematic' || !!game.s.collapse || !!game.s.ordenEnd); drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   /** One step of the walk to the clicked spot: a direction, or none once F2 is there. */
   function walkToTarget() {

@@ -25,8 +25,9 @@ const cast = (g, id, target = { x: 14, y: 8 }) => {
 };
 const pass = (g, seconds) => { g.s.time += seconds; g.s.casts.forEach(c => { c.age += seconds; }); };
 
-// Two sound and water fusions draw in the FX table (과열 공진's marks, 메아리 돌풍's ring), not as a cast sheet.
-const FX_FUSIONS = ['frostCrosscut', 'overheatResonance', 'echoGust'];
+// Two sound and water fusions draw in the FX table (과열 공진's marks, 메아리 돌풍's ring), not as a cast sheet, and so do the
+// thirteen with light or magnet (src/render/light-magnet-draw.js, pixelfx sheets and code).
+const FX_FUSIONS = ['frostCrosscut', 'overheatResonance', 'echoGust', 'noonMark', 'frostPrism', 'refractBeam', 'lightDash', 'lightConstellation', 'rainbowBridge', 'moltenBall', 'frostShards', 'railCannon', 'scrapSaw', 'ironString', 'ferroVine', 'auroraRing'];
 test('every skill and fusion in the combat data has an action in eight directions', () => {
   for (const { id } of [...data.combat.skills, ...data.combat.fusions]) {
     const action = clips.castActions[id];

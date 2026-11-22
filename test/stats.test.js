@@ -309,7 +309,8 @@ test('a save rebuilt on the admin page loads in the game, held to the levels its
   const { buildRestoreSave, restoreOptions, BOSS_BLUEPRINTS } = await import('../src/engine/restore-save.js');
   const { decodeSave } = await import('../src/engine/storage.js');
   const options = restoreOptions(data);
-  assert.deepEqual(options.chapters.map(c => c.bosses.length), [2, 2]);
+  // (Chapter 3 is published since 2026-11-22: Tick·Tock, Belgard and both Orden fights.)
+  assert.deepEqual(options.chapters.map(c => c.bosses.length), [2, 2, 4]);
   const save = buildRestoreSave(data, { nickname: '복구', freeGears: 1234, stats: { maxHp: 30, attackDamage: 15 }, owned: ['fire', 'sound', 'water'], bosses: ['collectorRoco', 'captainBrass'], cleared: ['smile-street'], runs: 12, playSeconds: 3600 });
   const s = decodeSave(save, data);
   assert.equal(s.mode, 'hub'); assert.equal(s.profile.registered, true);

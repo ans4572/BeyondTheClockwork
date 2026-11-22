@@ -1,0 +1,589 @@
+{
+ "frames": [
+  {
+   "filename": "bg-erupt 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 1",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 2",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 3",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 4",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 5",
+   "frame": {
+    "x": 480,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 6",
+   "frame": {
+    "x": 0,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 7",
+   "frame": {
+    "x": 96,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 8",
+   "frame": {
+    "x": 192,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 9",
+   "frame": {
+    "x": 288,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 10",
+   "frame": {
+    "x": 384,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 11",
+   "frame": {
+    "x": 480,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 12",
+   "frame": {
+    "x": 0,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 13",
+   "frame": {
+    "x": 96,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 14",
+   "frame": {
+    "x": 192,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 15",
+   "frame": {
+    "x": 288,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 16",
+   "frame": {
+    "x": 384,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 17",
+   "frame": {
+    "x": 480,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 18",
+   "frame": {
+    "x": 0,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 19",
+   "frame": {
+    "x": 96,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 20",
+   "frame": {
+    "x": 192,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 21",
+   "frame": {
+    "x": 288,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 22",
+   "frame": {
+    "x": 384,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 23",
+   "frame": {
+    "x": 480,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  },
+  {
+   "filename": "bg-erupt 24",
+   "frame": {
+    "x": 0,
+    "y": 416,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-erupt.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 576,
+   "h": 520
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-erupt",
+    "from": 0,
+    "to": 24,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-erupt",
+   "name": "Floor split burst",
+   "fps": 30,
+   "loop": false,
+   "frames": 25,
+   "frameSize": [
+    96,
+    104
+   ],
+   "pivot": [
+    48,
+    80
+   ],
+   "columns": 6
+  }
+ }
+}

@@ -1,0 +1,8 @@
+Use case: story cutscene still, image edit (shot 3 of 5 in the village).
+Input image 1 is shot 2 (the gold wave halfway across the court). Input image 2 is the game screenshot of the court in normal colours.
+
+THE MOMENT: the wave has passed over the whole court. All the colours are back as in input image 2, with a soft gold glow in the air. The last seals over the outer townspeople are breaking into gold sparks. Everyone has just woken: blinking, looking at their own hands, turning to each other in surprise; one drops a parcel, one sits down on the paving. Moru pushes his goggles up and looks round; Nasa looks up at the sky with wide eyes. F2 stands where it is.
+
+THE CHARACTERS ARE THE GAME'S OWN PIXEL-ART SPRITES. Keep every character drawn as crisp pixel art with visible square pixels and dark outlines, exactly the sprites in the input and the reference sheets: the same size on screen, the same outfit, colours and proportions (big round heads, small bodies). Change only what this prompt asks for (pose, expression, light). Never repaint them as smooth, painterly, anime or chibi illustrations, never make them bigger or smaller, never add people who are not asked for.
+PRESERVE input image 1: every person in exactly the same place and size; the same buildings and camera. No seals or grey left except the few breaking ones.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, name tags, logos, UI, health bars, borders or watermarks. Clock markings are plain tick marks only.

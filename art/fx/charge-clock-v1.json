@@ -1,0 +1,721 @@
+{
+ "frames": [
+  {
+   "filename": "charge-clock 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 1",
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 2",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 3",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 4",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 5",
+   "frame": {
+    "x": 240,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 6",
+   "frame": {
+    "x": 0,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 7",
+   "frame": {
+    "x": 48,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 8",
+   "frame": {
+    "x": 96,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 9",
+   "frame": {
+    "x": 144,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 10",
+   "frame": {
+    "x": 192,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 11",
+   "frame": {
+    "x": 240,
+    "y": 50,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 12",
+   "frame": {
+    "x": 0,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 13",
+   "frame": {
+    "x": 48,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 14",
+   "frame": {
+    "x": 96,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 15",
+   "frame": {
+    "x": 144,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 16",
+   "frame": {
+    "x": 192,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 17",
+   "frame": {
+    "x": 240,
+    "y": 100,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 18",
+   "frame": {
+    "x": 0,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 19",
+   "frame": {
+    "x": 48,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 20",
+   "frame": {
+    "x": 96,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 21",
+   "frame": {
+    "x": 144,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 22",
+   "frame": {
+    "x": 192,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 23",
+   "frame": {
+    "x": 240,
+    "y": 150,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 24",
+   "frame": {
+    "x": 0,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 25",
+   "frame": {
+    "x": 48,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 26",
+   "frame": {
+    "x": 96,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 27",
+   "frame": {
+    "x": 144,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 28",
+   "frame": {
+    "x": 192,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 29",
+   "frame": {
+    "x": 240,
+    "y": 200,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  },
+  {
+   "filename": "charge-clock 30",
+   "frame": {
+    "x": 0,
+    "y": 250,
+    "w": 48,
+    "h": 50
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 50
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 50
+   },
+   "duration": 100
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "charge-clock.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 288,
+   "h": 300
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "charge-clock",
+    "from": 0,
+    "to": 30,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "btc/charge-clock",
+   "name": "Charge clock",
+   "fps": 10,
+   "loop": false,
+   "frames": 31,
+   "frameSize": [
+    48,
+    50
+   ],
+   "pivot": [
+    24,
+    28
+   ],
+   "columns": 6
+  }
+ }
+}

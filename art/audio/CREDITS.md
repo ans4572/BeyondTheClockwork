@@ -60,3 +60,16 @@ factory-v2의 원곡 권리와 이용 조건은 그 MP3를 만든 곳의 약관�
 | orden | 1·2장 끝 시계탑 꼭대기 장면(오르덴과 벨가드) | 94.7초 | 사용자가 makebestmusic.com에서 `bgm/orden.prompt.md`로 만듦. 이용 조건은 그 사이트 약관을 따름 |
 
 76 BPM 3/4 40마디. 마지막 마디는 길게 끄는 음이 잦아드는 것이라(약 -10 dB) 페이드아웃이 아니며, 곡 전체를 그대로 반복한다.
+
+## 3장 중앙시계탑 배경음악 (2026-11-18)
+
+작업서는 `bgm/codex-ch3-bgm-v2.task.md`, 보고서는 `bgm/codex-ch3-bgm-v2.report-20261118.md`. 네 곡 모두 Codex가 새로 작곡해 FluidR3 GM 3.1 사운드폰트(MIT, Copyright 2000-2002, 2008 Frank Wen; 2008 Toby Smithe)로 연주했고, MIT 전문은 각 파일의 OGG 태그(LICENSE_TEXT)에 있다. 파일 전체가 그대로 반복된다. v1(`tower`·`tower-rest`·`ticktock`·`belgard.ogg`)은 남겨 두되 게임에서 쓰지 않는다.
+
+| 게임 이름 | 장면 | 길이 | 출처 |
+|---|---|---|---|
+| tower-v2 | 3장 전투 방(01·02·03·06·07·08) | 101.8초 | Codex 작곡, 6/8 E 도리안, 오보에·비올라·하프시코드 |
+| tower-rest-v2 | 3장 05 멈춘 시계 다락(쉼터) | 116.4초 | Codex 작곡, 4/4 66 BPM Eb장조, 오카리나·나일론 기타 |
+| ticktock-v2 | 3장 04 계단 기관실(틱·톡) | 107.6초 | Codex 작곡, 116 BPM A단조 바로크 실내악 |
+| belgard-v2 | 3장 09 종루(벨가드) | 100.0초 | Codex 작곡, 144 BPM C#단조, 저음 금관·큰 종 |
+| orden-chamber-v2 | 3장 10 조율실(오르덴) | 114.3초 | Codex 작곡(2026-11-21, `bgm/codex-ch3-orden-bgm-v2.task.md`, 보고서 `bgm/codex-ch3-orden-bgm-v2.report-20261121.md`), 4/4 126 BPM F#단조, 현악·오르간·호른 |
+| orden-lasthour-v2 | 3장 11 무너진 탑 꼭대기(오르덴 · 마지막 정각) | 155.5초 | Codex 작곡(같은 작업), 3/4 176 BPM Eb단조, 현악·호른·큰 종·가사 없는 합창 패드 |

@@ -1,0 +1,743 @@
+{
+ "frames": [
+  {
+   "filename": "od-aura 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 1",
+   "frame": {
+    "x": 140,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 2",
+   "frame": {
+    "x": 280,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 3",
+   "frame": {
+    "x": 420,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 4",
+   "frame": {
+    "x": 560,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 5",
+   "frame": {
+    "x": 700,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 6",
+   "frame": {
+    "x": 840,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 7",
+   "frame": {
+    "x": 980,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 8",
+   "frame": {
+    "x": 0,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 9",
+   "frame": {
+    "x": 140,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 10",
+   "frame": {
+    "x": 280,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 11",
+   "frame": {
+    "x": 420,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 12",
+   "frame": {
+    "x": 560,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 13",
+   "frame": {
+    "x": 700,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 14",
+   "frame": {
+    "x": 840,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 15",
+   "frame": {
+    "x": 980,
+    "y": 220,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 16",
+   "frame": {
+    "x": 0,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 17",
+   "frame": {
+    "x": 140,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 18",
+   "frame": {
+    "x": 280,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 19",
+   "frame": {
+    "x": 420,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 20",
+   "frame": {
+    "x": 560,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 21",
+   "frame": {
+    "x": 700,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 22",
+   "frame": {
+    "x": 840,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 23",
+   "frame": {
+    "x": 980,
+    "y": 440,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 24",
+   "frame": {
+    "x": 0,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 25",
+   "frame": {
+    "x": 140,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 26",
+   "frame": {
+    "x": 280,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 27",
+   "frame": {
+    "x": 420,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 28",
+   "frame": {
+    "x": 560,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 29",
+   "frame": {
+    "x": 700,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 30",
+   "frame": {
+    "x": 840,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "od-aura 31",
+   "frame": {
+    "x": 980,
+    "y": 660,
+    "w": 140,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 140,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 140,
+    "h": 220
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "od-aura.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1120,
+   "h": 880
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "od-aura",
+    "from": 0,
+    "to": 31,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/od-aura",
+   "name": "Orden's aura",
+   "fps": 20,
+   "loop": true,
+   "frames": 32,
+   "frameSize": [
+    140,
+    220
+   ],
+   "pivot": [
+    70,
+    196
+   ],
+   "columns": 8
+  }
+ }
+}

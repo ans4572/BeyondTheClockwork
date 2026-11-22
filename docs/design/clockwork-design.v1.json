@@ -70,8 +70,6 @@
     "critMultiplier": 1.5,
     "damageSpread": 0.1,
     "shieldFractionMaxHp": 0.5,
-    "lightHealBasePerRoom": 12,
-    "erosionHealBasePerRoom": 8,
     "bossSlow": 0.1,
     "bossStaggerWindowSeconds": 1.5,
     "bossStaggerReapplyLockSeconds": 8,
@@ -879,11 +877,11 @@
           80,
           110
         ],
-        "stat": "lightShield",
-        "perRank": 2,
-        "unit": "flat",
-        "maxEffect": 10,
-        "description": "빛 보호막"
+        "stat": "revealDuration",
+        "perRank": 0.2,
+        "unit": "seconds",
+        "maxEffect": 1,
+        "description": "드러냄 지속 시간"
       },
       {
         "id": "light_efficiency",
@@ -903,9 +901,9 @@
         "maxEffect": 0.05
       },
       {
-        "id": "shadow_output",
-        "element": "shadow",
-        "name": "어둠 출력 조율",
+        "id": "magnet_output",
+        "element": "magnet",
+        "name": "자력 출력 조율",
         "maxRank": 5,
         "costs": [
           20,
@@ -920,9 +918,9 @@
         "maxEffect": 0.15
       },
       {
-        "id": "shadow_characteristic",
-        "element": "shadow",
-        "name": "어둠 특성 연마",
+        "id": "magnet_characteristic",
+        "element": "magnet",
+        "name": "자력 특성 연마",
         "maxRank": 5,
         "costs": [
           20,
@@ -931,16 +929,16 @@
           80,
           110
         ],
-        "stat": "erosionKillHeal",
+        "stat": "ironDustDuration",
         "perRank": 0.2,
-        "unit": "flat",
+        "unit": "seconds",
         "maxEffect": 1,
-        "description": "침식 적 처치 회복"
+        "description": "쇳가루 지속 시간"
       },
       {
-        "id": "shadow_efficiency",
-        "element": "shadow",
-        "name": "어둠 효율 튜닝",
+        "id": "magnet_efficiency",
+        "element": "magnet",
+        "name": "자력 효율 튜닝",
         "maxRank": 5,
         "costs": [
           20,
@@ -1002,16 +1000,16 @@
     {
       "id": "light",
       "name": "빛",
-      "device": "프리즘 전구",
-      "role": "관통·생존 보조",
+      "device": "프리즘 렌즈",
+      "role": "꿰뚫는 광선·약점 드러내기",
       "status": "reveal"
     },
     {
-      "id": "shadow",
-      "name": "어둠",
-      "device": "폐기 흡수관",
-      "role": "표식·처치 회복",
-      "status": "erosion"
+      "id": "magnet",
+      "name": "자력",
+      "device": "전자석 장갑",
+      "role": "쇳조각 쏘기·경직 쌓기",
+      "status": "ironDust"
     }
   ],
   "skills": [
@@ -1179,56 +1177,64 @@
       "effect": "누르고 있는 동안 최대 1.5초 커서를 따라 도는 물줄기(0.1초마다 줄 위의 적 모두에게 7); 이동 60%; 벽에 닿으면 물보라; 젖음"
     },
     {
-      "id": "prismPierce",
+      "id": "prismBeam",
+      "energyCost": 20,
       "element": "light",
-      "name": "프리즘 관통",
-      "cooldown": 6,
-      "hits": 1,
-      "damagePerHit": 46,
-      "totalDirectDamage": 46,
-      "range": 8,
-      "radius": 0.4,
-      "effect": "직선 관통; 현광 표식"
-    },
-    {
-      "id": "guardianBulb",
-      "element": "light",
-      "name": "수호 전구",
-      "cooldown": 16,
-      "hits": 0,
-      "damagePerHit": 0,
-      "totalDirectDamage": 0,
-      "range": 0,
-      "radius": 2,
-      "effect": "4초간 보호막 18, 생성 때 일반 탄환 소거 1회; HP 6 회복",
-      "shield": 18,
-      "duration": 4,
-      "heal": 6
-    },
-    {
-      "id": "shadowHook",
-      "element": "shadow",
-      "name": "그림자 갈고리",
+      "name": "프리즘 광선",
       "cooldown": 5,
       "hits": 1,
-      "damagePerHit": 34,
-      "totalDirectDamage": 34,
-      "range": 6,
-      "radius": 0.5,
-      "effect": "일반 적을 조금 끌어당김; 침식; 보스 이동 없음"
+      "damagePerHit": 48,
+      "totalDirectDamage": 48,
+      "range": 7,
+      "radius": 0,
+      "effect": "앞쪽 7칸 가는 직선 광선(폭 0.6)이 바로 꿰뚫음; 드러냄",
+      "width": 0.6
     },
     {
-      "id": "inkRupture",
-      "element": "shadow",
-      "name": "먹빛 파열",
+      "id": "flashBomb",
+      "energyCost": 30,
+      "element": "light",
+      "name": "섬광탄",
       "cooldown": 10,
       "hits": 1,
-      "damagePerHit": 38,
-      "totalDirectDamage": 38,
-      "range": 0,
-      "radius": 2.8,
-      "effect": "침식 적에게 추가 12 피해 후 침식 소모",
-      "markedBonus": 12
+      "damagePerHit": 96,
+      "totalDirectDamage": 96,
+      "range": 7,
+      "radius": 3,
+      "effect": "커서 쪽(최대 7칸)으로 섬광탄을 던짐; 0.35초 날아가 떨어진 뒤 0.25초 뒤 터짐(반지름 3); 드러냄; 일반 적은 0.6초 눈부셔 멈춤",
+      "flightSeconds": 0.35,
+      "fuseSeconds": 0.25,
+      "blindSeconds": 0.6
+    },
+    {
+      "id": "scrapShot",
+      "energyCost": 20,
+      "element": "magnet",
+      "name": "고철 산탄",
+      "cooldown": 5,
+      "hits": 5,
+      "damagePerHit": 13,
+      "totalDirectDamage": 65,
+      "range": 4,
+      "radius": 0,
+      "effect": "앞쪽 30도 부채꼴로 쇳조각 5발(사거리 4, 조각마다 적 하나를 꿰뚫음); 가까이서 다 맞으면 65; 쇳가루 1(시전 하나에 적마다 1)",
+      "pellets": 5,
+      "spreadDegrees": 30
+    },
+    {
+      "id": "magneticLift",
+      "energyCost": 30,
+      "element": "magnet",
+      "name": "끌어올리기",
+      "cooldown": 10,
+      "hits": 1,
+      "damagePerHit": 90,
+      "totalDirectDamage": 90,
+      "range": 6,
+      "radius": 2.5,
+      "effect": "노린 곳(사거리 6, 반지름 2.5) 바닥의 쇳조각을 0.65초 띄웠다가 내리꽂음; 쇳가루 2",
+      "delay": 1,
+      "ironDustStacks": 2
     }
   ],
   "fusions": [
@@ -1258,8 +1264,8 @@
       "cooldown": 30,
       "energyCost": 65,
       "hits": 4,
-      "damagePerHit": 103,
-      "totalDirectDamage": 412,
+      "damagePerHit": 96,
+      "totalDirectDamage": 384,
       "radius": 2.4,
       "effect": "지정 지점 4연쇄 폭발; 화상과 감전",
       "pairKey": "fire+lightning"
@@ -1274,8 +1280,8 @@
       "cooldown": 30,
       "energyCost": 65,
       "hits": 8,
-      "damagePerHit": 48,
-      "totalDirectDamage": 384,
+      "damagePerHit": 46,
+      "totalDirectDamage": 368,
       "radius": 3,
       "effect": "전방 1.2에서 생겨 천천히 나아가는 소형 불 회오리; 약한 흡입; 화상과 풍압",
       "pairKey": "fire+wind",
@@ -1324,44 +1330,12 @@
       "pairKey": "fire+water"
     },
     {
-      "id": "solarGear",
-      "pair": [
-        "fire",
-        "light"
-      ],
-      "name": "태양 톱니",
-      "cooldown": 22,
-      "energyCost": 70,
-      "hits": 4,
-      "damagePerHit": 27,
-      "totalDirectDamage": 108,
-      "radius": 3.2,
-      "effect": "자신을 중심으로 퍼지는 빛나는 열 톱니; 화상과 현광",
-      "pairKey": "fire+light"
-    },
-    {
-      "id": "blackFlame",
-      "pair": [
-        "fire",
-        "shadow"
-      ],
-      "name": "검은 불씨",
-      "cooldown": 24,
-      "energyCost": 70,
-      "hits": 10,
-      "damagePerHit": 12,
-      "totalDirectDamage": 120,
-      "radius": 2.5,
-      "effect": "5초 동안 따라붙는 검은 불꽃; 화상과 침식",
-      "pairKey": "fire+shadow"
-    },
-    {
       "id": "magneticIceClamp",
       "pair": [
         "ice",
         "lightning"
       ],
-      "name": "자성 빙쇄",
+      "name": "방전 빙쇄",
       "cooldown": 30,
       "energyCost": 60,
       "hits": 3,
@@ -1425,10 +1399,10 @@
       "cooldown": 30,
       "energyCost": 60,
       "hits": 2,
-      "damagePerHit": 172,
-      "totalDirectDamage": 344,
+      "damagePerHit": 182,
+      "totalDirectDamage": 364,
       "radius": 2.2,
-      "effect": "지정 반지름 2.2 안을 얼린(일반 적 0.8초) 뒤 높은 음으로 산산조각(154 + 190); 언 적은 깨질 때 1.3배; 둔화와 공명",
+      "effect": "지정 반지름 2.2 안을 얼린(일반 적 0.8초) 뒤 높은 음으로 산산조각(163 + 201); 언 적은 깨질 때 1.3배; 둔화와 공명",
       "pairKey": "ice+sound",
       "range": 6
     },
@@ -1453,38 +1427,6 @@
       "pairKey": "ice+water"
     },
     {
-      "id": "frostPrism",
-      "pair": [
-        "ice",
-        "light"
-      ],
-      "name": "서리 프리즘",
-      "cooldown": 22,
-      "energyCost": 70,
-      "hits": 4,
-      "damagePerHit": 28,
-      "totalDirectDamage": 112,
-      "radius": 2.5,
-      "effect": "네 방향에서 교차하는 얼음 광선; 둔화와 현광",
-      "pairKey": "ice+light"
-    },
-    {
-      "id": "stillNight",
-      "pair": [
-        "ice",
-        "shadow"
-      ],
-      "name": "고요한 밤",
-      "cooldown": 20,
-      "energyCost": 60,
-      "hits": 1,
-      "damagePerHit": 96,
-      "totalDirectDamage": 96,
-      "radius": 3,
-      "effect": "원형 암빙 폭발; 둔화와 침식; 일반 적 짧은 빙결",
-      "pairKey": "ice+shadow"
-    },
-    {
       "id": "stormFloat",
       "pair": [
         "lightning",
@@ -1494,8 +1436,8 @@
       "cooldown": 30,
       "energyCost": 60,
       "hits": 1,
-      "damagePerHit": 372,
-      "totalDirectDamage": 372,
+      "damagePerHit": 398,
+      "totalDirectDamage": 398,
       "radius": 3,
       "effect": "지정 지점의 부유 구체가 0.85초 뒤 한 번 파열; 감전과 풍압; 일반 적만 0.65 밀침; 보스 이동 없음",
       "pairKey": "lightning+wind",
@@ -1550,38 +1492,6 @@
       "pairKey": "lightning+water"
     },
     {
-      "id": "prismRail",
-      "pair": [
-        "lightning",
-        "light"
-      ],
-      "name": "프리즘 레일",
-      "cooldown": 24,
-      "energyCost": 70,
-      "hits": 6,
-      "damagePerHit": 20,
-      "totalDirectDamage": 120,
-      "radius": 0.8,
-      "effect": "직선 관통 광선 6타; 감전과 현광",
-      "pairKey": "light+lightning"
-    },
-    {
-      "id": "blackoutCircuit",
-      "pair": [
-        "lightning",
-        "shadow"
-      ],
-      "name": "정전 회로",
-      "cooldown": 22,
-      "energyCost": 65,
-      "hits": 4,
-      "damagePerHit": 24,
-      "totalDirectDamage": 96,
-      "radius": 3,
-      "effect": "검은 회로가 대상 주변에서 4회 방전; 감전과 침식",
-      "pairKey": "lightning+shadow"
-    },
-    {
       "id": "echoGust",
       "pair": [
         "wind",
@@ -1591,10 +1501,10 @@
       "cooldown": 30,
       "energyCost": 60,
       "hits": 2,
-      "damagePerHit": 172,
-      "totalDirectDamage": 344,
+      "damagePerHit": 190,
+      "totalDirectDamage": 380,
       "radius": 1.2,
-      "effect": "조준 방향으로 음파 고리가 날아가 벽이나 끝에 닿으면 되돌아옴; 오갈 때 한 번씩 맞음(2 × 172); 풍압과 공명",
+      "effect": "조준 방향으로 음파 고리가 날아가 벽이나 끝에 닿으면 되돌아옴; 오갈 때 한 번씩 맞음(2 × 190); 풍압과 공명",
       "pairKey": "sound+wind",
       "range": 6
     },
@@ -1608,47 +1518,15 @@
       "cooldown": 30,
       "energyCost": 60,
       "hits": 5,
-      "damagePerHit": 34,
-      "totalDirectDamage": 376,
+      "damagePerHit": 37,
+      "totalDirectDamage": 408,
       "radius": 2,
       "range": 6,
-      "effect": "노린 곳에 물기둥이 서서 2초 동안 일반 적을 빨아올리고 0.4초마다 때림(5 × 34), 2초 뒤 한꺼번에 내리꽂아 안의 적에게 206(일반 적 0.6초 기절); 보스는 끌려가지 않음; 풍압과 젖음",
+      "effect": "노린 곳에 물기둥이 서서 2초 동안 일반 적을 빨아올리고 0.4초마다 때림(5 × 37), 2초 뒤 한꺼번에 내리꽂아 안의 적에게 223(일반 적 0.6초 기절); 보스는 끌려가지 않음; 풍압과 젖음",
       "legacyIds": [
         "whirlSpray"
       ],
       "pairKey": "water+wind"
-    },
-    {
-      "id": "auroraTrail",
-      "pair": [
-        "wind",
-        "light"
-      ],
-      "name": "오로라 궤적",
-      "cooldown": 20,
-      "energyCost": 60,
-      "hits": 5,
-      "damagePerHit": 20,
-      "totalDirectDamage": 100,
-      "radius": 2.5,
-      "effect": "전방에 남기는 빛의 바람 5타; 풍압과 현광",
-      "pairKey": "light+wind"
-    },
-    {
-      "id": "shadowDrill",
-      "pair": [
-        "wind",
-        "shadow"
-      ],
-      "name": "그림자 천공",
-      "cooldown": 20,
-      "energyCost": 60,
-      "hits": 2,
-      "damagePerHit": 48,
-      "totalDirectDamage": 96,
-      "radius": 2,
-      "effect": "빠른 직선 왕복 타격; 풍압과 침식; 무적 없음",
-      "pairKey": "shadow+wind"
     },
     {
       "id": "surfaceResonance",
@@ -1667,84 +1545,251 @@
       "pairKey": "sound+water"
     },
     {
-      "id": "crystalBastion",
+      "id": "noonMark",
       "pair": [
-        "sound",
+        "fire",
         "light"
       ],
-      "name": "수정 보루",
-      "cooldown": 24,
-      "energyCost": 70,
-      "hits": 1,
-      "damagePerHit": 72,
-      "totalDirectDamage": 72,
-      "radius": 3,
-      "effect": "주변 수정 폭발과 보호막 20; 균열과 현광 (대지 시절의 안: 소리로 바뀌어 다시 정해야 함)",
+      "name": "한낮 표적",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 9,
+      "damagePerHit": 29,
+      "totalDirectDamage": 315,
+      "radius": 2,
+      "range": 7,
+      "effect": "7칸 안의 가장 가까운 적 머리 위에 작은 해가 떠 2초 동안 그 적을 따라가며 0.25초마다 열빛 기둥(반지름 2, 29)을 내리고, 끝에 터짐(반지름 2.4, 83); 그 적이 쓰러지면 가장 가까운 다음 적으로 옮겨 감; 화상과 드러냄",
+      "pillarDamage": 29,
+      "pillars": 8,
+      "burstDamage": 83,
+      "burstRadius": 2.4,
+      "pairKey": "fire+light"
+    },
+    {
+      "id": "frostPrism",
+      "pair": [
+        "ice",
+        "light"
+      ],
+      "name": "서리 프리즘",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 6,
+      "damagePerHit": 61,
+      "totalDirectDamage": 366,
+      "radius": 5,
+      "range": 3,
+      "effect": "앞 3칸에 얼음 프리즘을 세움; 3초 동안 0.5초마다 프리즘 반지름 5 안의 가까운 적 넷에게 굴절 광선(61); 둔화와 드러냄",
+      "pairKey": "ice+light"
+    },
+    {
+      "id": "refractBeam",
+      "pair": [
+        "light",
+        "lightning"
+      ],
+      "name": "굴절 광선",
+      "cooldown": 30,
+      "energyCost": 65,
+      "hits": 6,
+      "damagePerHit": 63,
+      "totalDirectDamage": 378,
+      "radius": 0,
+      "range": 8,
+      "effect": "8칸 안에서 커서에 가장 가까운 적(커서 둘레 2.5칸, 없으면 조준 방향 60도 안의 가장 가까운 적; 앞에 적이 없으면 시전하지 않고 기력도 쓰지 않음)에게 광선이 1.5초 붙어(F2가 움직여도 따라감, 커서를 다른 적 1.5칸 안에 대면 그 적으로 옮김, 9칸보다 멀어지거나 벽 뒤로 가면 놓음) 0.25초마다 63; 칠 때마다 광선이 그 적 몸에서 꺾여 가까운 다른 적 최대 다섯에게 30씩(5칸 안, 다른 적이 없으면 꺾이지 않음); 붙은 적이 쓰러지면 같은 규칙으로 다음 적에게 옮겨 붙음(없으면 끝남); 감전과 드러냄",
+      "tickSeconds": 0.25,
+      "refractDamage": 30,
+      "pairKey": "light+lightning"
+    },
+    {
+      "id": "lightDash",
+      "pair": [
+        "light",
+        "wind"
+      ],
+      "name": "빛살 질주",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 2,
+      "damagePerHit": 200,
+      "totalDirectDamage": 400,
+      "radius": 0.9,
+      "range": 5.5,
+      "effect": "F2가 조준 방향으로 5.5칸 미끄러지며(무적 0.4초) 지나는 적을 치고(200), 지난 자리에 남은 빛의 띠가 1초 뒤 터짐(200); 풍압과 드러냄",
+      "pairKey": "light+wind"
+    },
+    {
+      "id": "lightConstellation",
+      "pair": [
+        "light",
+        "sound"
+      ],
+      "name": "공명 별자리",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 5,
+      "damagePerHit": 65,
+      "totalDirectDamage": 325,
+      "radius": 0.6,
+      "range": 6,
+      "effect": "반지름 6 안의 가까운 적 최대 5기를 빛 줄로 잇고(줄 끝은 적을 따라감), 1초 뒤부터 0.2초 간격으로 줄 전체가 5번 울림; 울릴 때마다 이어진 적과 줄 위의 적이 65씩; 적이 하나뿐이면 F2와 그 적을 이음(F2는 맞지 않음); 공명과 드러냄",
       "pairKey": "light+sound"
     },
     {
-      "id": "gravePress",
+      "id": "rainbowBridge",
       "pair": [
-        "sound",
-        "shadow"
+        "light",
+        "water"
       ],
-      "name": "심연 압착",
-      "cooldown": 24,
-      "energyCost": 70,
-      "hits": 1,
-      "damagePerHit": 112,
-      "totalDirectDamage": 112,
-      "radius": 2.8,
-      "effect": "느린 예고 뒤 강한 압착; 균열과 침식 (대지 시절의 안: 소리로 바뀌어 다시 정해야 함)",
-      "pairKey": "shadow+sound"
-    },
-    {
-      "id": "reflectedCurrent",
-      "pair": [
-        "water",
-        "light"
-      ],
-      "name": "반사 수류",
-      "cooldown": 22,
-      "energyCost": 65,
-      "hits": 1,
-      "damagePerHit": 80,
-      "totalDirectDamage": 80,
-      "radius": 3.2,
-      "effect": "관통 물결과 HP 8 회복; 젖음과 현광; 회복 예산 공유",
+      "name": "소나기 무지개",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 9,
+      "damagePerHit": 42,
+      "totalDirectDamage": 378,
+      "radius": 2.2,
+      "range": 7,
+      "effect": "노린 곳(사거리 7) 위에 작은 비구름이 생겨 1.6초 동안 0.2초마다 비를 뿌림(반지름 2.2, 26 × 8); 비가 그치면 그 자리에 무지개가 뜨며 햇빛이 내리꽂힘(반지름 2.6, 170); 젖음과 드러냄",
+      "rainDamage": 26,
+      "rainTicks": 8,
+      "burstDamage": 170,
+      "burstRadius": 2.6,
       "pairKey": "light+water"
     },
     {
-      "id": "inkFlood",
+      "id": "moltenBall",
       "pair": [
-        "water",
-        "shadow"
+        "fire",
+        "magnet"
       ],
-      "name": "먹빛 범람",
-      "cooldown": 22,
-      "energyCost": 65,
-      "hits": 8,
-      "damagePerHit": 14,
-      "totalDirectDamage": 112,
-      "radius": 3,
-      "effect": "4초 장판; 젖음과 침식",
-      "pairKey": "shadow+water"
+      "name": "쇳물 공",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 7,
+      "damagePerHit": 53,
+      "totalDirectDamage": 370,
+      "radius": 1.8,
+      "range": 8,
+      "effect": "쇳조각을 모아 달군 쇠공을 조준 방향으로 8칸 굴림; 둘레(반지름 1.8)의 적을 0.25초마다 데우고(40, 닿았을 때만 세어 최대 6번), 일반 적에 닿으면 0.5초 지진 뒤 앞쪽(3.5칸 안)에 다른 적이 있으면 계속 굴러가고, 큰 적(보스·정예)이나 마지막 적에 닿으면 그 앞에서 멈춰 1.5초 동안 달라붙어 데운 뒤 터짐; 벽이나 끝에서도 터져 쇳물이 튐(반지름 2.8, 130); 화상과 쇳가루",
+      "rollDamage": 40,
+      "rollHits": 6,
+      "burstDamage": 130,
+      "burstRadius": 2.8,
+      "pairKey": "fire+magnet"
     },
     {
-      "id": "twilightBalance",
+      "id": "frostShards",
+      "pair": [
+        "ice",
+        "magnet"
+      ],
+      "name": "서리 쇳조각",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 10,
+      "damagePerHit": 43,
+      "totalDirectDamage": 432,
+      "radius": 3,
+      "effect": "얼음 입힌 쇳조각 6개가 2초 동안 F2 둘레(반지름 3)를 돌며 닿는 적을 0.5초마다 치고(30 × 4), 끝에 가까운 적에게 하나씩 꽂혀 반지름 1.8로 터짐(52 × 6); 둔화와 쇳가루",
+      "orbitDamage": 30,
+      "orbitHits": 4,
+      "shardDamage": 52,
+      "shards": 6,
+      "pairKey": "ice+magnet"
+    },
+    {
+      "id": "railCannon",
+      "pair": [
+        "lightning",
+        "magnet"
+      ],
+      "name": "전자 레일포",
+      "cooldown": 30,
+      "energyCost": 65,
+      "hits": 1,
+      "damagePerHit": 420,
+      "totalDirectDamage": 420,
+      "radius": 0.7,
+      "range": 9,
+      "effect": "0.6초 충전 뒤 9칸을 꿰뚫는 쇠막대(폭 1.4); 감전과 쇳가루",
+      "chargeSeconds": 0.6,
+      "pairKey": "lightning+magnet"
+    },
+    {
+      "id": "scrapSaw",
+      "pair": [
+        "magnet",
+        "wind"
+      ],
+      "name": "고철 회전톱",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 7,
+      "damagePerHit": 62,
+      "totalDirectDamage": 436,
+      "radius": 2.2,
+      "range": 6,
+      "effect": "고철 톱날이 조준 방향으로 날아가(지나는 적 70) 처음 맞힌 적이나 벽, 6칸 끝에 박혀 돌다가(반지름 2.2, 0.25초마다 61 × 3) 한 번 튕겨 4칸 안의 가장 가까운 다른 적에게 박혀 마저 돎(61 × 3; 다른 적이 없으면 그 자리에서 6번); 풍압과 쇳가루",
+      "flyDamage": 70,
+      "spinDamage": 61,
+      "spinHits": 6,
+      "pairKey": "magnet+wind"
+    },
+    {
+      "id": "ironString",
+      "pair": [
+        "magnet",
+        "sound"
+      ],
+      "name": "울리는 쇠줄",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 5,
+      "damagePerHit": 76,
+      "totalDirectDamage": 380,
+      "radius": 0.7,
+      "range": 7,
+      "effect": "조준 방향으로 쇠줄을 걸고(한쪽 끝은 F2가 시전한 자리에 고정, 다른 끝은 큰 적·벽·7칸; 큰 적에 걸리면 그 적을 따라감), 2초 동안 0.4초마다 줄을 튕겨 줄 위(폭 ±0.7)의 적을 76씩 5번; 전기 기타 픽업(자석 + 떨리는 쇠줄)과 같은 원리; 공명과 쇳가루",
+      "plucks": 5,
+      "pluckInterval": 0.4,
+      "pairKey": "magnet+sound"
+    },
+    {
+      "id": "ferroVine",
+      "pair": [
+        "magnet",
+        "water"
+      ],
+      "name": "자성 유체 덩굴",
+      "cooldown": 30,
+      "energyCost": 60,
+      "hits": 9,
+      "damagePerHit": 51,
+      "totalDirectDamage": 454,
+      "radius": 2.3,
+      "range": 7,
+      "effect": "검은 물(자성 유체)이 조준 방향 7칸 안 첫 적의 발밑으로 기어가며(지나는 적 46) 2초 동안 그 적을 감아 올라 0.25초마다 가시로 찌름(반지름 2.3, 51); 적이 없으면 7칸 끝에서 찌름; 젖음과 쇳가루",
+      "travelDamage": 46,
+      "stabDamage": 51,
+      "stabs": 8,
+      "pairKey": "magnet+water"
+    },
+    {
+      "id": "auroraRing",
       "pair": [
         "light",
-        "shadow"
+        "magnet"
       ],
-      "name": "황혼 평형",
-      "cooldown": 24,
-      "energyCost": 70,
-      "hits": 2,
-      "damagePerHit": 48,
-      "totalDirectDamage": 96,
-      "radius": 3,
-      "effect": "명암 두 차례 폭발과 보호막 12; 현광과 침식",
-      "pairKey": "light+shadow"
+      "name": "북극광 고리",
+      "cooldown": 30,
+      "energyCost": 65,
+      "hits": 8,
+      "damagePerHit": 47,
+      "totalDirectDamage": 376,
+      "radius": 2.2,
+      "range": 5,
+      "effect": "머리 위에 오로라 고리가 4초 떠서 0.5초마다 반지름 5 안의 적 하나에게 빛 커튼이 내려옴(반지름 2.2, 47); 체력이 가장 많은 적부터 고르고 같은 적은 연달아 두 번까지(다른 적이 없으면 계속); 드러냄과 쇳가루",
+      "pairKey": "light+magnet"
     }
   ],
   "regions": [
@@ -1858,7 +1903,7 @@
       "id": "twinTickTock",
       "name": "시간지기 틱·톡",
       "kind": "miniboss",
-      "hp": 1300,
+      "hp": 16000,
       "damage": 22,
       "minimumTell": 0.7,
       "region": "centralTower",
@@ -1868,7 +1913,7 @@
       "id": "bellguard",
       "name": "종루수호자 벨가드",
       "kind": "regionBoss",
-      "hp": 3400,
+      "hp": 20000,
       "damage": 26,
       "minimumTell": 0.85,
       "region": "centralTower",
@@ -1878,11 +1923,21 @@
       "id": "orden",
       "name": "대조율사 오르덴",
       "kind": "finalBoss",
-      "hp": 6400,
-      "damage": 28,
-      "minimumTell": 0.85,
+      "hp": 25000,
+      "damage": 34,
+      "minimumTell": 0.6,
       "region": "centralTower",
-      "concept": "완벽한 행복을 위해 선택권을 제거한 중앙 관리 인형"
+      "concept": "마을의 모든 선택을 표준화한 친절한 시계공 인형, 지팡이와 마법으로만 싸운다"
+    },
+    {
+      "id": "ordenFinal",
+      "name": "오르덴 · 마지막 정각",
+      "kind": "finalBoss",
+      "hp": 20000,
+      "damage": 36,
+      "minimumTell": 0.6,
+      "region": "centralTower",
+      "concept": "탑 전체를 직접 쥔 오르덴, 가면이 깨진 각성 모습"
     }
   ],
   "references": [
@@ -1948,15 +2003,20 @@
     {
       "id": "reveal",
       "duration": 4,
-      "incomingCritChanceBonus": 0.05
+      "maxStacks": 1,
+      "incomingCritChanceBonus": 0.15,
+      "incomingCritMultiplierBonus": 0.3
     },
     {
-      "id": "erosion",
-      "duration": 6,
-      "damagePerSecond": 2,
-      "maxStacks": 1,
-      "healPerKill": 1,
-      "tickInterval": 0.5
+      "id": "ironDust",
+      "duration": 4,
+      "maxStacks": 4,
+      "staggerTakenPerStack": 0.08,
+      "setAtStacks": 4,
+      "normalSetSeconds": 0.8,
+      "setDamage": 50,
+      "setReapplyLock": 4,
+      "stacksPerCastPerTarget": 1
     }
   ],
   "run": {

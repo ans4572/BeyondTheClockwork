@@ -1,0 +1,237 @@
+{
+ "frames": [
+  {
+   "filename": "fall-streaks 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 1",
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 2",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 3",
+   "frame": {
+    "x": 216,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 4",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 5",
+   "frame": {
+    "x": 72,
+    "y": 96,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 6",
+   "frame": {
+    "x": 144,
+    "y": 96,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 7",
+   "frame": {
+    "x": 216,
+    "y": 96,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  },
+  {
+   "filename": "fall-streaks 8",
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 72,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 72,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 72,
+    "h": 96
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "fall-streaks.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 288,
+   "h": 288
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "fall-streaks",
+    "from": 0,
+    "to": 8,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/fall-streaks",
+   "name": "Falling streaks",
+   "fps": 30,
+   "loop": true,
+   "frames": 9,
+   "frameSize": [
+    72,
+    96
+   ],
+   "pivot": [
+    36,
+    92
+   ],
+   "columns": 4
+  }
+ }
+}

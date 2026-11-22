@@ -1,0 +1,9 @@
+Use case: story cutscene still, image edit (shot 5 of 5 in the village, a closer view).
+Input image 1 is a real game screenshot enlarged twice: the forge and the shop on the left of the court, with Moru (anvil-headed blacksmith with orange goggle lenses and a leather apron), Nasa (small bald cream-headed doll in a grey waistcoat with a tool belt) and F2 (small robot with a cream helmet, red scarf and a wrench). Input image 2 shows Moru (left) and Nasa (right) as game sprites. Input image 3 is shot 4 (the morning), for the light and colours.
+
+THE MOMENT: F2, Moru and Nasa together in front of the forge in the morning sun, a warm and quiet ending. F2 comes down to stand between Moru and Nasa, facing them. Moru rests one big gloved hand on F2's head; Nasa laughs with both arms up. They keep the same size relative to the buildings as in input image 1. Behind them, two or three townspeople walk past. Warm light, a few petals.
+Redraw the enlarged picture crisply in the same pixel-art style as the game (input image 1 is blurry only because it was enlarged).
+
+THE CHARACTERS ARE THE GAME'S OWN PIXEL-ART SPRITES. Keep every character drawn as crisp pixel art with visible square pixels and dark outlines, exactly the sprites in the input and the reference sheets: the same size on screen, the same outfit, colours and proportions (big round heads, small bodies). Change only what this prompt asks for (pose, expression, light). Never repaint them as smooth, painterly, anime or chibi illustrations, never make them bigger or smaller, never add people who are not asked for.
+PRESERVE the camera, framing, forge, shop and planters of input image 1.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, name tags, logos, UI, health bars, borders or watermarks. Clock markings are plain tick marks only.

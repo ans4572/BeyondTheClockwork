@@ -1,3 +1,64 @@
+/* The debug workbench (main.js debugPanel, 2026-11-21): a blueprint sheet, apart from the game's cream panels so a
+   developer tool never reads as part of the game. Chalk on blue, brass where something is switched on, mint to mend. */
+.panel.debug-bench {
+  --bp: #1e3656; --bp-deep: #172a44; --bp-line: #33547d; --chalk: #e9f0f6; --chalk-dim: #a3b7cc; --brass: #e2b24c; --mint: #79d8a4;
+  width: min(900px, 100%); padding: 0; color: var(--chalk); box-shadow: 6px 6px 0 #0e121a99;
+  background-color: var(--bp);
+  background-image: linear-gradient(#33547d55 1px, transparent 1px), linear-gradient(90deg, #33547d55 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.debug-bench .dbg-head { display: flex; align-items: baseline; gap: 14px; padding: 14px 18px 10px; border-bottom: 2px solid var(--chalk); }
+.panel.debug-bench .dbg-title { font-size: 20px; line-height: 1.2; color: var(--chalk); }
+.panel.debug-bench .dbg-head p { flex: 1; margin: 0; font-size: 13px; color: var(--chalk-dim); }
+.debug-bench .dbg-body { display: grid; grid-template-columns: minmax(250px, 310px) 1fr; }
+.debug-bench .dbg-side { padding: 4px 18px 14px; border-right: 2px dashed var(--bp-line); }
+.debug-bench .dbg-block { padding: 10px 0 12px; }
+.debug-bench .dbg-block + .dbg-block { border-top: 1px solid var(--bp-line); }
+.debug-bench h3 { margin: 0 0 4px; font-size: 14px; color: var(--brass); }
+.debug-bench .dbg-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.debug-bench .dbg-label { display: inline-flex; align-items: center; gap: 4px; min-width: 62px; font-size: 13px; font-weight: 700; color: var(--chalk-dim); }
+/* Buttons on the sheet: chalk outlines; brass fill when on, mint for mending. */
+.panel.debug-bench button { background: transparent; color: var(--chalk); box-shadow: inset 0 0 0 2px var(--chalk-dim); padding: 6px 11px; font-size: 13px; }
+@media (hover: hover) { .panel.debug-bench button:hover:not(:disabled) { background: #ffffff1a; box-shadow: inset 0 0 0 2px var(--chalk); } }
+.panel.debug-bench button:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.panel.debug-bench button.on, .panel.debug-bench button[aria-pressed="true"] { background: var(--brass); color: var(--bp-deep); box-shadow: inset 0 0 0 2px var(--brass); }
+.panel.debug-bench button.dbg-mend { color: var(--mint); box-shadow: inset 0 0 0 2px var(--mint); }
+@media (hover: hover) { .panel.debug-bench button.dbg-mend:hover:not(:disabled) { background: var(--mint); color: var(--bp-deep); box-shadow: inset 0 0 0 2px var(--mint); } }
+.panel.debug-bench .dbg-close { margin-left: auto; }
+.debug-bench .dbg-seg { display: inline-flex; flex-wrap: wrap; }
+.panel.debug-bench .dbg-seg button { padding: 5px 8px; }
+.panel.debug-bench .dbg-seg button + button { margin-left: -2px; }
+/* F2's health: a chalk gauge filling mint. */
+.debug-bench .dbg-hp { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.debug-bench .dbg-hp-bar { flex: 1; height: 12px; box-shadow: inset 0 0 0 2px var(--chalk); background: var(--bp-deep); }
+.debug-bench .dbg-hp-bar i { display: block; width: calc(var(--hp) * 100%); height: 100%; background: var(--mint); }
+.debug-bench .dbg-hp b { font-size: 14px; font-variant-numeric: tabular-nums; }
+/* The rooms: one chapter at a time by its tab, in order, the one F2 stands in filled brass; bosses rimmed red, rests mint. */
+.debug-bench .dbg-rooms-block { padding: 12px 18px 16px; min-width: 0; }
+.debug-bench .dbg-tabs { display: flex; flex-wrap: wrap; border-bottom: 2px solid var(--chalk); }
+.panel.debug-bench .dbg-tabs button, .panel.debug-bench .dbg-tabs button:hover { box-shadow: none; padding: 7px 12px; color: var(--chalk-dim); border-bottom: 4px solid transparent; margin-bottom: -2px; background: transparent; }
+.panel.debug-bench .dbg-tabs button.on { color: var(--chalk); border-bottom-color: var(--brass); background: transparent; box-shadow: none; }
+.debug-bench .dbg-rooms { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.debug-bench .dbg-room { display: flex; flex-direction: column; min-width: 0; box-shadow: inset 0 0 0 2px var(--chalk-dim); background: #ffffff08; }
+.debug-bench .dbg-room.boss { box-shadow: inset 0 0 0 2px #e98a84; }
+.debug-bench .dbg-room.rest { box-shadow: inset 0 0 0 2px var(--mint); }
+.debug-bench .dbg-room.here { background: var(--brass); box-shadow: inset 0 0 0 2px var(--brass); }
+.panel.debug-bench .dbg-room button { box-shadow: none; }
+.panel.debug-bench .dbg-room-go { display: flex; gap: 8px; align-items: center; flex: 1; min-height: 42px; padding: 6px 9px; text-align: left; }
+.debug-bench .dbg-room-go small { min-width: 1.4em; font-size: 12px; color: var(--chalk-dim); }
+.debug-bench .dbg-room-go span { min-width: 0; line-height: 1.3; word-break: keep-all; overflow-wrap: anywhere; }
+.debug-bench .dbg-room.here .dbg-room-go, .debug-bench .dbg-room.here small { color: var(--bp-deep); }
+.debug-bench .dbg-room-pick { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px dashed var(--bp-line); }
+.debug-bench .dbg-room.here .dbg-room-pick { border-top-color: #172a4466; }
+.panel.debug-bench .dbg-room-pick button { padding: 3px 0; font-size: 12px; color: var(--chalk-dim); }
+.panel.debug-bench .dbg-room-pick button.on { background: var(--bp-deep); color: var(--brass); }
+.debug-bench .dbg-room.here .dbg-room-pick button:not(.on) { color: var(--bp-deep); }
+.panel.debug-bench .dbg-note { margin: 12px 0 0; font-size: 12px; color: var(--chalk-dim); }
+@media (max-width: 720px) {
+  .debug-bench .dbg-body { grid-template-columns: 1fr; }
+  .debug-bench .dbg-side { border-right: 0; border-bottom: 2px dashed var(--bp-line); }
+  .debug-bench .dbg-rooms { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+}
 .debug-give { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 12px; }
 .debug-give span { display: inline-flex; gap: 4px; align-items: center; font-weight: 700; margin-right: 4px; }
 .debug-give span:not(:first-child) { margin-left: 10px; }
@@ -139,7 +200,11 @@ html, body { height: 100%; margin: 0; background: #16202a; overflow: hidden; }
 #toast { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); max-width: 56%; padding: 6px 14px; background: var(--paper); color: var(--ink); font-size: 13px; font-weight: 700; text-align: center; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 6; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 #toast.visible { opacity: 1; }
 /* With a boss bar across the top, notices drop just below it. */
-#toast.below-boss { top: calc(var(--hud-scale, 1) * 62px); }
+/* In a boss fight the notices sit just above the skill bar, not under the boss bar where they covered a boss standing at
+   the back of the room (2026-11-21, the chapter 3 UI review: the tuning chamber's line over Orden's head). Touch
+   screens keep theirs at the top, clear of the thumb controls. */
+#toast.below-boss { top: auto; bottom: 70px; }
+body.touch #toast.below-boss { bottom: auto; }
 
 /* Paper tags from the disposal form, laid out on a fixed 1120x640 sheet that scales with the window. */
 #hud { position: absolute; left: 0; top: 0; width: 1120px; height: 640px; transform-origin: 0 0; pointer-events: none; z-index: 2; font: 700 14px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #2b3345; }
@@ -200,6 +265,11 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 #practice-reset { position: absolute; left: 14px; top: 96px; padding: 5px 14px; font-size: 13px; }
 #practice-reset[hidden] { display: none; }
 #practice-reset.on { background: #ffd257; }
+/* Leaves the back yard (2026-11-21): main.js sets it over the skill bar's left end (the reset switch takes the right end);
+   these are the places it takes before that, and on phones, whose skill bar is the touch pad. */
+#practice-exit { position: absolute; left: 14px; top: 128px; padding: 5px 14px; font-size: 13px; }
+#practice-exit[hidden] { display: none; }
+body.touch #practice-exit { top: 96px; }
 /* Moru's parts shelf: six elements in three columns of two rows, each card short enough that the shelf never scrolls
    (2026-11-08, when sound and water made six). A card's two skills sit side by side. */
 .panel.element-panel { width: min(1080px, 100%); }
@@ -226,7 +296,7 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 .reward-card.picked { outline: 3px solid var(--ink); }
 .talk-choices:has(button:nth-child(4)) { grid-template-columns: 1fr 1fr; }
 #dialogue:has(.talk-choices) .talk-skip { display: none; }
-#hud.talking > :not(#dialogue) { display: none; }
+#hud.talking > :not(#dialogue), #hud.cinematic > :not(#dialogue) { display: none; }
 #dialogue { position: absolute; inset: 0; pointer-events: auto; user-select: none; -webkit-user-select: none; font: 400 18px/1.55 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
 #dialogue[hidden] { display: none; }
 .talk-box { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: #f6ecd2; box-shadow: 0 -4px 0 #2b3345, 0 -8px 0 #c79a3e; }
@@ -234,7 +304,9 @@ body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 .talk-who.other { left: 8px; bottom: -33px; }
 .talk-who.player { right: -44px; bottom: -69px; }
 .talk-who.quiet { filter: brightness(.55) saturate(.7); transform: translateY(14px); }
-.talk-name { position: absolute; left: 310px; top: -18px; padding: 2px 16px; background: #2b3345; color: #f6ecd2; font-size: 17px; font-weight: 700; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+/* The speaker's name in NeoDunggeunmo, as on the boss card (2026-11-21, the user's word: 톡 read as 독 in Galmuri11 Bold,
+   whose ㅌ loses its middle bar over ㅗ at every size). */
+.talk-name { position: absolute; left: 310px; top: -18px; padding: 2px 16px; background: #2b3345; color: #f6ecd2; font: 400 20px/1.2 "NeoDunggeunmo Pro", "Galmuri11", "Galmuri11 Rest", sans-serif; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .player-talks .talk-name { left: auto; right: 310px; }
 .talk-unread { visibility: hidden; }
 .talk-text { position: absolute; left: 310px; right: 310px; top: 24px; color: #2b3345; word-break: keep-all; }
@@ -271,7 +343,7 @@ body.touch #hint { top: 72px; bottom: auto; }
 body.touch #toast { top: 112px; }
 body.touch #dialogue { font-size: 25px; }
 body.touch .talk-box { height: 208px; }
-body.touch .talk-name { font-size: 24px; top: -24px; }
+body.touch .talk-name { font-size: 26px; top: -24px; }
 body.touch .talk-text { left: 268px; right: 268px; top: 26px; }
 body.touch .alone .talk-text { left: 60px; right: 300px; }
 body.touch .talk-skip, body.touch .talk-name { left: 268px; }
@@ -328,8 +400,25 @@ body.touch .panel .stat-row button { min-height: 36px; }
 #scene.fade { animation: scene-in 1.2s ease-out both; }
 @keyframes scene-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #scene.fade { animation: none; } }
+/* The town's liberation (2026-11-19): four paintings crossing into each other, light over them, a line of narration. */
+#cutscene { position: absolute; inset: 0; z-index: 6; overflow: hidden; background: #fff8ec; }
+#cutscene[hidden] { display: none; }
+#cutscene .cut-stage { position: absolute; inset: 0; will-change: transform; }
+#cutscene img, #cutscene canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; opacity: 0; }
+#cutscene canvas { opacity: 1; }
+#cutscene .cut-white { position: absolute; inset: 0; background: #fff8ec; pointer-events: none; }
+/* Centred by margins, not left 50% and a half-width shift: that left a line only half the screen to wrap in, so a long
+   line broke in two at half width (2026-11-22, the chapter 3 review). */
+#cutscene .cut-line { position: absolute; left: 0; right: 0; bottom: 7%; margin: 0 auto; width: max-content; max-width: 88%; transform: translateY(6px); padding: .45em 1.2em; background: #16202acc; color: #fff4d6; font: 400 clamp(13px, 2.2vw, 22px) / 1.5 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; text-align: center; opacity: 0; transition: opacity .6s, transform .6s; pointer-events: none; }
+#cutscene .cut-line.on { opacity: 1; transform: translateY(0); }
+#cutscene .cut-line { text-wrap: balance; }
+#cutscene .cut-line.top { bottom: auto; top: 8%; }
+#cutscene .cut-skip { position: absolute; right: 2.5%; top: 4%; padding: .35em .9em; border: 0; background: #16202a99; color: #fff4d6; font: 700 clamp(11px, 1.5vw, 15px) "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; cursor: pointer; }
+#cutscene .cut-skip:focus-visible { outline: 2px solid #ffd257; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { #cutscene .cut-line { transition: none; } }
 /* The chapter's end record (2026-11-12, where "To be continued" stood): the record rows of the departure cards, wider. */
 .ending .end-rec { margin: 4px 0 10px; --accent: #a92f2b; }
+.ending > p:first-of-type { text-wrap: balance; }
 .ending .end-rec .rec-row { grid-template-columns: 64px auto auto 1fr; }
 .ending .end-rec .rec-row.rank { grid-template-columns: 64px auto auto minmax(0, 1fr); }
 .ending .end-rec .rec-who { grid-column: auto; justify-self: end; margin: 0; }
@@ -562,3 +651,53 @@ body.cramped .panel > p.notice.keep { display: block; font-size: 12px; margin: 4
 #art-lost b { display: block; font-size: 20px; }
 #art-lost span { display: block; margin-top: 10px; font-size: 13px; line-height: 1.5; color: #5d6476; word-break: keep-all; }
 #art-lost button { margin-top: 16px; padding: 10px 22px; border: 0; background: #2b3345; color: #f6ecd2; font: inherit; font-size: 15px; cursor: pointer; }
+
+/* ---- Codex (2026-11-22) ---- */
+/* 1. The heading row (title, tabs, close) and the chips stay pinned while the list scrolls under them. */
+.panel.codex { padding-top: 0; }
+.codex-head { position: sticky; top: 0; z-index: 2; margin: 0 -22px 10px; padding: 18px 22px 8px; background: var(--paper); box-shadow: 0 6px 6px -6px #2b334540; }
+.codex-head .panel-header { align-items: center; margin-bottom: 0; }
+.codex-head .panel-header h2 { flex: none; }
+.codex-head .codex-tabs { margin: 0 auto 0 8px; }
+body.cramped .panel.codex { padding-top: 0; }
+body.cramped .codex-head { margin: 0 -16px 8px; padding: 8px 16px 6px; }
+body.cramped .codex-head .panel-header { padding-bottom: 4px; }
+body.cramped .codex-head h2 canvas { height: 28px; width: auto; image-rendering: pixelated; }
+body.cramped .codex-head .codex-tabs button { padding: 4px 10px; }
+/* 3. Element chips in place of the dropdown: one tap each. */
+.codex-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.panel .codex-chips .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px 3px 6px; font-size: 12px; }
+.panel .codex-chips .chip:first-child { padding: 3px 10px; }
+.panel .codex-chips .chip.on { background: var(--ink); color: var(--paper); box-shadow: inset 0 -3px 0 var(--accent, var(--ink)); }
+.codex-chips .chip-icon { width: 20px; height: 20px; margin: -3px 0; image-rendering: pixelated; }
+body.cramped .codex-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-top: 6px; }
+body.cramped .panel .codex-chips .chip span { display: none; }
+body.cramped .panel .codex-chips .chip { flex: none; padding: 3px 6px; }
+/* 2. Status tags open their sentence under the move. */
+.panel .tag.status { border: 0; border-radius: 0; color: var(--ink); cursor: help; font: inherit; font-size: 11px; font-weight: 700; padding: 1px 6px; }
+.panel .tag.status:hover, .panel .tag.status[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+.panel .codex-move p.status-tip { margin: 5px 0 2px; padding: 5px 8px; background: var(--paper); box-shadow: inset 3px 0 0 var(--ink); font-size: 12px; line-height: 1.5; }
+.status-tip strong { margin-right: 4px; }
+/* Each element's status, explained at the foot of its card (2026-11-22). */
+.panel .codex-entry p.codex-status { display: grid; grid-template-columns: 16px auto 1fr; align-items: start; column-gap: 6px; margin: 6px 0 0; padding: 7px 8px; background: var(--paper); box-shadow: inset 3px 0 0 var(--accent, var(--ink)); font-size: 12px; line-height: 1.5; }
+.codex-status img { width: 16px; height: 16px; margin-top: 2px; image-rendering: pixelated; }
+.codex-status strong { white-space: nowrap; }
+body.touch .panel .codex-entry p.codex-status { font-size: 13px; }
+.codex-entry:has(> .codex-status) { display: flex; flex-direction: column; }
+.panel .codex-entry > p.codex-status { margin-top: auto; }
+.codex-entry:has(> .codex-status) > .codex-move:last-of-type { margin-bottom: 6px; }
+/* 5. Reach and damage lead; cost and wait sit in a small line under them. */
+.tag.damage { font-size: 12px; box-shadow: inset 0 0 0 2px var(--ink); }
+.panel .codex-move p.move-cost { margin: 4px 0 0; font-size: 11px; line-height: 1.3; color: var(--label); }
+body.touch .panel .tag.status { min-height: 0; font-size: 12px; padding: 2px 6px; box-shadow: inset 0 0 0 1px #2b334555; }
+.tags { align-items: center; }
+body.touch.cramped .panel .codex-chips .chip { min-height: 36px; }
+body.touch.cramped .panel .codex-head .codex-tabs button, body.touch.cramped .panel .codex-head [data-action="codex-close"] { min-height: 36px; }
+body.touch .panel .codex-move p.move-cost { font-size: 12px; }
+/* 6. A fusion carries both its colours along the top. */
+.codex-entry.pair-entry { border-top: 0; padding-top: 14px; background: linear-gradient(90deg, var(--accent) 50%, var(--accent2) 50%) top / 100% 4px no-repeat, var(--paper-low); }
+.codex-entry .fitted-tag, .codex-entry .need-tag { top: 12px; }
+/* 7. A fusion needing a part not owned yet reads faded, with what it needs. */
+.codex-entry .need-tag { position: absolute; right: 10px; padding: 1px 7px; box-shadow: inset 0 0 0 1px var(--label); color: var(--label); font-size: 11px; font-weight: 700; }
+.codex-entry.unowned .codex-icon, .codex-entry.unowned .move-icon { filter: grayscale(1); opacity: .55; }
+.codex-entry.unowned h4, .panel .codex-entry.unowned .codex-move > div > p:not(.status-tip), .codex-entry.unowned .pair { color: var(--label); }

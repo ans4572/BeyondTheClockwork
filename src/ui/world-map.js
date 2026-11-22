@@ -1,6 +1,7 @@
 // The world map: the painted Clockwork Island (art/world-map/clockwork-island-v6.webp, 2026-11-08: the three regions as equal thirds) with the route drawn over it.
-// Smile Street's stops sit on the painted walks between Moru's shop and the shops' square (see SMILE_STOPS). The Silent Factory and the Central
-// Clock Tower are painted too; until those regions exist they are greyed under a veil with locked `?` stops.
+// Smile Street's stops sit on the painted walks between Moru's shop and the shops' square (see SMILE_STOPS); the Silent Factory's zigzag up
+// its floors (FACTORY_STOPS) and the Central Clock Tower's up its terraces to the top (TOWER_STOPS). A region not open yet is greyed under a
+// veil, its stops locked `?` markers.
 // Every position below is in pixels of the painting (1672 x 941) and scaled to the SVG.
 
 export const WORLD_MAP_ART = 'art/world-map/clockwork-island-v6.webp';
@@ -43,10 +44,24 @@ function along(pts, count) {
 }
 /** The Silent Factory's stops in order, from the brass gate to the forming hall, in SVG units. */
 const FACTORY_STOPS = FACTORY.length === 12 ? FACTORY : along(FACTORY, 12);
-/** Where each chapter's stops stand: chapter 1 by stop id, a later chapter by stop order after the town. */
-const spotsOf = (chapter, stops) => chapter === 'silent-factory' ? stops.map((stop, i) => i ? FACTORY_STOPS[i - 1] : ATLAS_SPOTS.town) : stops.map(stop => ATLAS_SPOTS[stop.id]);
 // The tower's way: over the bridge from the factory roof, round its terrace and up its balconies to the bell.
 const TOWER = [[1095, 282], [830, 352], [650, 396], [470, 332], [545, 238]].map(px);
+/**
+ * The clock tower's ten stops (2026-11-22, the user's word: the map had not caught up with chapter 3), placed by hand
+ * on the painting: the main gate where the bridge from the factory roof meets the terrace; the lift, the corridor and the
+ * stair engine room (Tick·Tock) along the lower terrace; the attic, the pendulum hall and the store room along the second
+ * balcony; the wiring room and the belfry (Belgard) at the bell; and on the clock face's upper half, over the belfry, the
+ * tuning room (Orden), whose fallen top (tower-11, slice.json mapStop) shares its stop (the user's pick, 2026-11-22; any
+ * higher and the 'me' arrow over it fell off the map).
+ */
+const TOWER_STOPS = [[790, 370], [680, 405], [565, 412], [455, 410], [370, 335], [470, 318], [640, 318], [665, 232], [545, 236], [545, 145]].map(px);
+/** The tower's road from the brass gate: up the factory's left stairs to its roof and over the bridge. */
+const TOWER_WAY = [[1078, 548], [1110, 548], [1150, 452], [1150, 362], [1095, 282], [960, 300]].map(px);
+/** Where each chapter's stops stand: chapter 1 by stop id, a later chapter by stop order after the town. */
+const spotsOf = (chapter, stops) => {
+  const later = chapter === 'silent-factory' ? FACTORY_STOPS : chapter === 'clock-tower' ? TOWER_STOPS : null;
+  return stops.map((stop, i) => (later ? (i ? later[i - 1] : ATLAS_SPOTS.town) : ATLAS_SPOTS[stop.id]));
+};
 /** The painted areas that stay greyed until their region exists. */
 const VEILS = {
   factory: [[1048, 250], [1100, 190], [1190, 140], [1330, 130], [1460, 120], [1560, 190], [1605, 300], [1610, 560], [1560, 650], [1500, 780], [1300, 810], [1100, 790], [1070, 640], [1048, 520]],
@@ -65,23 +80,28 @@ const locked = pts => `<path class="road-dash" d="${path(pts)}"/>` + pts.map(([x
 
 const sceneries = {};
 /** The painting, with the regions not yet open shown again in grey through their outlines. */
-function drawScenery(factoryOpen) {
+function drawScenery(factoryOpen, towerOpen) {
   const veils = Object.entries(VEILS).map(([id, pts]) => `<clipPath id="wm-${id}"><path d="${path(pts.map(px), true)}"/></clipPath>`).join('');
   const grey = id => `<g clip-path="url(#wm-${id})"><image href="${WORLD_MAP_ART}" width="${W}" height="${H}" filter="url(#wm-grey)"/><rect class="veil" width="${W}" height="${H}"/></g>`;
   return `<defs>${veils}<filter id="wm-grey"><feColorMatrix type="saturate" values="0.15"/></filter></defs>
-    <image href="${WORLD_MAP_ART}" width="${W}" height="${H}"/>${factoryOpen ? '' : grey('factory')}${grey('tower')}`;
+    <image href="${WORLD_MAP_ART}" width="${W}" height="${H}"/>${factoryOpen ? '' : grey('factory')}${towerOpen ? '' : grey('tower')}`;
 }
-const labels = factoryOpen => `${banner(300, 478, '웃음거리')}${banner(800, 52, '무음공장', 'dark')}${factoryOpen ? '' : soon(800, 78, '브라스 다음 · 준비 중')}${banner(130, 40, '중앙시계탑', 'blue')}${soon(130, 66, '무음공장 다음 · 준비 중')}`;
+const labels = (factoryOpen, towerOpen) => `${banner(300, 478, '웃음거리')}${banner(800, 52, '무음공장', 'dark')}${factoryOpen ? '' : soon(800, 78, '브라스 다음 · 준비 중')}${banner(130, 40, '중앙시계탑', 'blue')}${towerOpen ? '' : soon(130, 66, '무음공장 다음 · 준비 중')}`;
 
 /**
  * Stops: { id, icon, label, state: 'done'|'current'|'ahead', kind: ''|'boss'|'shop'|'town' }, the town first.
- * `chapter` says whose stops these are; `factoryOpen` lifts the factory's grey veil once chapter 1 is beaten.
+ * `chapter` says whose stops these are; `factoryOpen` lifts the factory's grey veil once chapter 1 is beaten, `towerOpen`
+ * the tower's once chapter 2 is.
  */
-export function worldMapSvg(stops, picked, { chapter = 'smile-street', factoryOpen = false } = {}) {
-  const scenery = sceneries[factoryOpen] ??= drawScenery(factoryOpen), factory = chapter === 'silent-factory';
+export function worldMapSvg(stops, picked, { chapter = 'smile-street', factoryOpen = false, towerOpen = false } = {}) {
+  const factory = chapter === 'silent-factory', tower = chapter === 'clock-tower';
+  if (tower) factoryOpen = towerOpen = true;
+  const scenery = sceneries[`${factoryOpen}:${towerOpen}`] ??= drawScenery(factoryOpen, towerOpen);
   const points = spotsOf(chapter, stops), reached = Math.max(0, stops.findIndex(stop => stop.state === 'current'));
-  // On the factory's road the walk from the town runs down Smile Street to the brass gate first.
-  const road = factory ? [ATLAS_SPOTS.town, ...SMILE_STOPS.slice(1).map(px), ...FACTORY_WAY, ...points.slice(1)] : points, lead = factory ? SMILE_STOPS.length + FACTORY_WAY.length - 1 : 0;
+  // On a later chapter's road the walk from the town runs down Smile Street to the brass gate first (and for the tower
+  // on up the factory to its roof and over the bridge).
+  const way = factory ? FACTORY_WAY : tower ? TOWER_WAY : null;
+  const road = way ? [ATLAS_SPOTS.town, ...SMILE_STOPS.slice(1).map(px), ...way, ...points.slice(1)] : points, lead = way ? SMILE_STOPS.length + way.length - 1 : 0;
   const node = (stop, [x, y]) => {
     const on = stop.id === picked, kind = ['boss', 'shop', 'town'].includes(stop.kind) ? stop.kind : 'stop';
     const size = MARKER_SIZE[kind === 'shop' ? 'market' : kind], art = kind === 'stop' ? `stop-${stop.state}` : kind === 'shop' ? 'market' : kind;
@@ -96,8 +116,8 @@ export function worldMapSvg(stops, picked, { chapter = 'smile-street', factoryOp
   };
   return `<svg class="world-map" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="태엽 섬 지도">${scenery}
     <path class="road-trail" d="${path(road)}"/>${reached ? `<path class="road-walked" d="${path(road.slice(0, lead + reached + 1))}"/>` : ''}
-    ${factory ? '' : `<path class="road-dash" d="${path(FACTORY_WAY)}"/>${locked(FACTORY)}`}${locked(TOWER)}
+    ${factory || tower ? '' : `<path class="road-dash" d="${path(FACTORY_WAY)}"/>${locked(FACTORY)}`}${tower ? '' : locked(TOWER)}
     ${stops.map((stop, i) => node(stop, points[i])).join('')}
-    ${labels(factoryOpen)}
+    ${labels(factoryOpen, towerOpen)}
   </svg>`;
 }

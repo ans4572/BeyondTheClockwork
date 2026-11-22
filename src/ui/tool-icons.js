@@ -42,7 +42,9 @@ const SMOOTH = {
 };
 const smooth = (name, cls) => `<svg class="${cls} smooth-icon" data-icon="${name}" viewBox="0 0 24 24" aria-hidden="true">${SMOOTH[name]}</svg>`;
 // A redrawn icon gets a new file name (browsers keep the old picture at the old path).
-const FILES = { 'action-dodge': 'action-dodge-v7' };
+const FILES = { 'action-dodge': 'action-dodge-v7', 'skill-magneticIceClamp': 'skill-magneticIceClamp-v2',
+  // Light and magnet (PixelLab, 2026-11-21; the code-drawn stand-ins had the plain names).
+  ...Object.fromEntries(['prismBeam', 'flashBomb', 'scrapShot', 'magneticLift', 'noonMark', 'frostPrism', 'refractBeam', 'lightDash', 'lightConstellation', 'rainbowBridge', 'moltenBall', 'frostShards', 'railCannon', 'scrapSaw', 'ironString', 'ferroVine', 'auroraRing'].map(id => [`skill-${id}`, `skill-${id}-v1`])) };
 export const iconUrl = name => `art/ui/icons/px/${FILES[name] || name}.png`;
 export const ICON_FILES = [...ART].map(iconUrl);
 const svg = (name, cls) => SMOOTH[name] ? smooth(name, cls) : ART.has(name)

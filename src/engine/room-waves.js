@@ -211,7 +211,7 @@ export const roomWaves = {
     const p = this.p;
     for (const h of this.s.hazards || []) {
       if (h.kind !== 'musicbox' || h.gone || h.used || p.hp >= p.maxHp || distance(p, h) > h.size * 0.6 + this.config.arena.playerRadius) continue;
-      h.used = true; h.gone = true; this.heal(p.maxHp * this.config.hazards.musicbox.heal);
+      h.used = true; h.gone = true; this.heal(h.mend ?? p.maxHp * this.config.hazards.musicbox.heal);
       // The pixelfx collect burst in mint (art/fx/mend-burst-v1.png), on F2 as she walks on.
       this.effect('spark', p.x, p.y, '#8fd8b0', MEND_BURST_SECONDS, 1, { look: 'mend', follow: true });
       this.sense({ kind: 'mend' });
@@ -282,7 +282,10 @@ export const roomWaves = {
   callWave() {
     const { run } = this.s, { waveWarnSeconds } = this.config.rules;
     run.wave++;
-    const types = this.room.waves[run.wave], kind = run.plan?.[run.node]?.formations?.[run.wave], spots = this.formation(kind, types);
+    // A wave too small to read as a shape (rules.formationMin, 2026-11-22, the user's pick: two or three bodies 'from one
+    // side' or 'from both sides' looked the same) arrives scattered, with no warning.
+    const types = this.room.waves[run.wave], planned = run.plan?.[run.node]?.formations?.[run.wave];
+    const kind = types.length >= (this.config.rules.formationMin ?? 0) ? planned : 'spread', spots = this.formation(kind, types);
     // The warning names the shape the bodies really stand in (a ring that did not fit round the player is a pincer).
     const shape = spots.kind || kind;
     if (ARRIVAL_NOTES[shape]) this.notify(ARRIVAL_NOTES[shape]);
@@ -304,11 +307,11 @@ export const roomWaves = {
   /** The portal only takes someone walking into it, so a player already standing there is not whisked away. */
   walkToPortal(dt, input) {
     // The clock keeps running on the way out, so a spark or a mending burst (a music box picked up here) plays out and
-    // goes: with the clock stopped it hung on F2, stuck on its first frame, until the next room.
-    this.s.time += Math.min(dt, 1 / 30);
+    // goes: with the clock stopped it hung on F2, stuck on its first frame, until the next room. (stepFeet moves it; it
+    // was moved here as well until 2026-11-22, the full test: cooldowns and fuses ran twice as fast on the way out.)
+    this.stepFeet(dt, input, this.config.arena.playerRadius, true);
     this.s.effects = this.s.effects.filter(e => e.until > this.s.time);
     this.s.notices = this.s.notices.filter(e => e.until > this.s.time);
-    this.stepFeet(dt, input, this.config.arena.playerRadius, true);
     // A music box left in the cleared room can still be picked up on the way out, and a crate lit then (the wrench still
     // swings here) goes off, harmless to F2 (2026-11-11: its fuse burned forever).
     this.pickUpMusicBoxes(); this.tickHazards(dt);

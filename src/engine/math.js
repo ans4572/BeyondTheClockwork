@@ -24,6 +24,15 @@ export function floorFrame(origin, target, a) {
   return { along: dx * Math.cos(a) + dy * Math.sin(a), side: Math.abs(-dx * Math.sin(a) + dy * Math.cos(a)) };
 }
 export const angleDiff = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+// The bosses' shared steps (2026-11-21, the chapter 3 code review: each boss file kept its own copy).
+/** The heading from `a` to `b`. */
+export const angleTo = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
+/** An angle brought into -pi..pi. */
+export const wrap = a => ((a + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+/** The spot `d` floor units from `o` along heading `a`, flattened up and down as the floor is. */
+export const along = (o, a, d) => ({ x: o.x + Math.cos(a) * d, y: o.y + Math.sin(a) * d * FLOOR_FLAT });
+/** The spot `d` units from `o` along heading `a`, not flattened (a line on the screen). */
+export const ray = (o, a, d) => ({ x: o.x + Math.cos(a) * d, y: o.y + Math.sin(a) * d });
 export const inCone = (origin, target, angle, range, degrees) => distance(origin, target) <= range + (target.radius || 0) && Math.abs(angleDiff(Math.atan2(target.y - origin.y, target.x - origin.x), angle)) <= degrees * Math.PI / 360;
 /**
  * Whether a swing reaches a thing of `radius` (a drum, a mirror, a flag soldier: 2026-11-11, judged by their centre point

@@ -1,0 +1,13 @@
+Use case: image edit (precise, same framing).
+Input image 1 is a game background in the middle of a collapse: the tuning chamber at the top of the Central Clock Tower in Beyond the Clockwork (a cute, toy-like pixel-art game), cracked all over. Input image 2 is where this collapse ends: the ruined summit, open to the sunrise, where the final fight happens.
+Produce the moment BETWEEN them: the room breaking open. The game cross-fades input image 1 → this picture → input image 2, so this picture must line up with both: keep input image 1's camera, framing, size (1536x1024), pixel density and rendering, and keep the FLOOR exactly where it is in input image 1 (the same round footprint, the same marble and gold ring, now cracked like the floor of input image 2). Do not zoom, re-centre or restyle.
+WHAT CHANGES:
+- The ceiling and the upper half of every wall are breaking away OUTWARD: big blocks, brass ribs, cabinets and window frames caught in mid-air as they fall away from the floor, leaving jagged broken wall stumps around the floor's rim.
+- Through the gaps: open sunrise sky like input image 2, gold at the horizon to clear blue at the top, drifting clouds level with the floor, the sun breaking through behind the clock face.
+- The great clock face at the top centre: cracked across and half shattered, its brass rim bent, both hands pointing straight UP (twelve), in the same place and size as in input image 1, already looking like the broken dial of input image 2.
+- The tuning console is torn apart: snapped cyan cables whipping loose with sparks, house-sized gears behind the dial tilting.
+- A big cloud of pale dust and small debris thrown outward around the rim, NOT over the floor.
+- Floor: level and continuous, a few thin dark cracks through the marble and the gold ring. NO holes, NO rubble, NO debris on the open floor, so the fighters stay readable.
+LIGHT: strong warm sunrise light flooding in from behind the dial and through the gaps, long soft shadows toward the viewer, the room's cyan glow fading.
+MOOD: dramatic but hopeful, the end of control: the tower breaks open and the light comes in. Never horror.
+No UI, text, letters, numbers, people, characters, bosses or player. Opaque full-bleed PNG, 1536x1024.

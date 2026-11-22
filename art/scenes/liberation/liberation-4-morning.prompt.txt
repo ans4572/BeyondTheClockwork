@@ -1,0 +1,9 @@
+Use case: story cutscene still, image edit.
+Edit input image 1 (the village court after the wave of light, residents waking) into the last still of the ending cutscene: the first free morning.
+
+THE SAME SQUARE IN BRIGHT CLEAR MORNING LIGHT, full warm colours like input image 2, a few petals or bunting in a light breeze.
+THE SAME RESIDENTS, now moving freely and each in their OWN way, no two walking the same direction or pace: one strolling off down a side street, two chatting face to face, a baker handing a loaf to a postman, someone sitting on the fountain's edge, a small one running, one stretching in the sun, one turning to wave. Relaxed, varied, natural poses and small smiles. No seals, no cyan light, no sound rings anywhere.
+Keep each resident's outfit as in input image 1; their positions may change a little so the crowd reads as people going their own ways.
+
+PRESERVE the camera, framing and every building, plant and object of input image 1. Change only the light and the residents' poses and places.
+Output ONE opaque full-bleed 1536x1024 PNG. No text, letters, numerals, logos, UI, borders or watermarks.

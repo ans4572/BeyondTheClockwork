@@ -8,7 +8,7 @@ import { josa } from './nickname.js';
  * patterns and phase breaks, their floor hazards, and the shots in the air. Installed on Game.prototype (game.js), so
  * `this` is the game.
  */
-const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat', 'searchlight', 'rivets', 'oil', 'supply'];
+const TAU_ENEMY = Math.PI * 2, RANGED_ATTACKS = ['shot', 'spiral', 'beat', 'searchlight', 'rivets', 'oil', 'supply', 'lob'];
 const KNOCKBACK_SECONDS = 0.12, DIRECT_UNITS = 2, BELL_DRIFT_UNITS = 0.2, CARPET_REACH_SHARE = 0.7;
 /** How far a parade rank reaches past the outer carpets on each side, so it cannot be walked round. */
 const RANK_OVERHANG_UNITS = 1.5;
@@ -88,6 +88,8 @@ export const enemyActions = {
   },
   /** Each frame of a break: its own mechanics, then success, or the burst and heal when time runs out. */
   updatePhaseBreak(enemy, dt) {
+    // Tick·Tock's colour floor runs both twins' shields itself (clock-bosses.js ttBreakStep).
+    if (this.ttAI(enemy)) { this.ttBreakStep(enemy, dt); return; }
     const rule = this.breakRule(enemy, enemy.breaking.index), b = enemy.breaking, p = this.p, now = this.s.time;
     if (b.failAt !== null) {
       // Out of time: a burst from the whole body, then the shield drops, the boss patches itself and the break waits again.
@@ -101,6 +103,8 @@ export const enemyActions = {
     }
     if (b.kind === 'cans') { this.updateCans(enemy, rule, dt); if (!this.active) return; }
     if (b.kind === 'drums') { this.updateDrums(enemy, rule); if (!this.active) return; }
+    if (b.kind === 'orders') { this.bgBreakStep(enemy, rule, dt); if (!this.active) return; }
+    if (b.kind === 'stopTime') { this.odBreakStep(enemy, rule, dt); if (!this.active) return; }
     if (FACTORY_BREAKS.has(b.kind)) { this.fbBreak(enemy, rule, dt); if (!this.active) return; }
     if (b.kind === 'flags') {
       b.turn += rule.turn * dt; this.placeSoldiers(enemy, rule);
@@ -341,7 +345,8 @@ export const enemyActions = {
     // Each boss pattern has its own sound when it lands (the bell and alarm already ring at their warning).
     else if (tell?.type) this.sense({ kind: 'boss', id: tell.type });
     if (!this.factoryExecute(enemy, tell)) switch (tell.type) {
-      case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, this.config.rules.enemyMeleeArc)) damage(); break;
+      // A body may swing wider than the usual arc (meleeArc: chapter 3's second-hand knight, pendulum guard).
+      case 'melee': if (inCone(tell, p, tell.angle, enemy.attackRange, enemy.meleeArc ?? this.config.rules.enemyMeleeArc)) damage(); break;
       case 'burst':
         // The rat goes off where its warning ring was drawn, and the ring counts the player's body, not only its centre.
         enemy.hp = 0; this.effect('scrap', tell.x, tell.y, enemy.color, 0.6, 1); this.effect('ring', tell.x, tell.y, '#e8914e', 1, enemy.burstRadius, { look: 'boom' }); this.sense({ kind: 'burst' });
@@ -351,7 +356,17 @@ export const enemyActions = {
         if (floorDistance(tell, p) < enemy.burstRadius + this.config.arena.playerRadius) damage(); break;
       case 'dash': enemy.dash = { angle: tell.angle, elapsed: 0 }; break;
       // A trumpet's note fades where its range ends too (2026-11-10, like the music box).
-      case 'shot': this.fireBullet(enemy, tell.angle, enemy.projectileSpeed, enemy.attackRange); break;
+      // `shots` (chapter 3's minute archer): that many in a row, each aimed again after its own short warning.
+      case 'shot':
+        this.fireBullet(enemy, tell.angle, enemy.projectileSpeed, enemy.attackRange);
+        // A mob's own shot picture (slice.json shotLook: the minute archer's minute hand); the note otherwise.
+        if (enemy.shotLook) this.s.projectiles[this.s.projectiles.length - 1].look = enemy.shotLook;
+        if (enemy.shots > 1) { enemy.shotsLeft = (enemy.shotsLeft ?? enemy.shots) - 1; if (enemy.shotsLeft > 0) { enemy.followup = { type: 'shot', at: this.s.time + enemy.shotGap }; enemy.ready = this.s.time; } else enemy.shotsLeft = undefined; }
+        break;
+      // A lobbed bell (chapter 3's bell turret): lands where F2 stood when the warning began and rings once round there.
+      case 'lob':
+        if (floorDistance({ x: tell.targetX, y: tell.targetY }, p) < enemy.lobRadius + this.config.arena.playerRadius) damage();
+        this.effect('ring', tell.targetX, tell.targetY, '#e0a43c', 0.75, enemy.lobRadius, { look: 'bellToll' }); break;
       // Music box: a ring of shots, turned a little each volley so the gaps move.
       case 'spiral': {
         enemy.spiralTurn = (enemy.spiralTurn || 0) + Math.PI / enemy.bullets;
@@ -373,8 +388,10 @@ export const enemyActions = {
       case 'spin': enemy.spin = { angle: tell.angle, until: this.s.time + enemy.spinSeconds, hitReady: 0 }; break;
       // Drummer: no damage of its own; nearby soldiers move faster and shrug off hits for a while.
       case 'beat':
-        for (const ally of this.s.enemies) if (ally !== enemy && !ally.boss && ally.hp > 0 && distance(ally, enemy) <= enemy.beatRadius) { ally.beatUntil = this.s.time + enemy.beatSeconds; if (!ally.aggro) ally.noticedAt = this.s.time; ally.aggro = true; }
-        this.effect('ring', enemy.x, enemy.y, '#ffd257', 0.85, enemy.beatRadius, { look: 'drumBeat' }); break;
+        // A signal orb (chapter 3) reaches only its beatCount nearest and gives its own haste and armour (drummer's by default).
+        for (const ally of this.s.enemies.filter(a => a !== enemy && !a.boss && a.hp > 0 && distance(a, enemy) <= enemy.beatRadius).sort((a, b) => distance(a, enemy) - distance(b, enemy)).slice(0, enemy.beatCount || Infinity)) { ally.beatUntil = this.s.time + enemy.beatSeconds; ally.beatHaste = enemy.beatHaste; ally.beatArmor = enemy.beatArmor; ally.beatLook = enemy.beatLook; if (!ally.aggro) ally.noticedAt = this.s.time; ally.aggro = true; }
+        // A signal orb (beatLook 'signal') sends cyan rings out on the floor (pixelfx); the drum, its gold rings and notes.
+        this.effect('ring', enemy.x, enemy.y, enemy.beatLook === 'signal' ? '#5fe0ec' : '#ffd257', 0.85, enemy.beatRadius, { look: enemy.beatLook === 'signal' ? 'signalPulse' : 'drumBeat' }); break;
       // Pikeman: a long thrust, then a shorter one re-aimed at where the player went.
       case 'thrust': case 'thrust2': {
         const length = tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength, end = { x: tell.x + Math.cos(tell.angle) * length, y: tell.y + Math.sin(tell.angle) * length };
@@ -511,6 +528,7 @@ export const enemyActions = {
       if (enemy.summonUntil) {
         if (this.s.time < enemy.summonUntil) continue;
         enemy.summonUntil = 0; this.effect('dodge', enemy.x, enemy.y, '#e0a03c', 0.3, 1.2); this.sense({ kind: 'summon' });
+        if (enemy.landSound) this.sense({ kind: 'boss', id: enemy.landSound });
       }
       if (enemy.shove) {
         const ease = u => 1 - (1 - u) ** 2, s = enemy.shove, from = ease(Math.min(1, s.elapsed / KNOCKBACK_SECONDS)), to = ease(Math.min(1, (s.elapsed + dt) / KNOCKBACK_SECONDS));
@@ -565,7 +583,7 @@ export const enemyActions = {
         // 흠뻑: a soaked body drags its feet too (a boss no more than the boss cap).
         const soaked = this.trait('soaked'), wetSlow = soaked && this.wet(enemy) ? (enemy.boss ? Math.min(this.c.caps.bossSlow, soaked.slow) : soaked.slow) : 0;
         const slow = 1 - (1 - chillSlow) * (1 - wetSlow);
-        const step = enemy.speed * (1 - slow) * (enemy.boss ? 1 : 1 - this.patchSlow(enemy, true)) * (enemy.beatUntil > this.s.time ? 1 + this.config.enemies.drummer.beatHaste : 1) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
+        const step = enemy.speed * (1 - slow) * (enemy.boss ? 1 : 1 - this.patchSlow(enemy, true)) * (enemy.beatUntil > this.s.time ? 1 + (enemy.beatHaste ?? this.config.enemies.drummer.beatHaste) : 1) * dt, way = (d > DIRECT_UNITS ? flow?.heading(enemy.x, enemy.y) : null) ?? a;
         this.move(enemy, Math.cos(way) * step, Math.sin(way) * step);
       }
     }
@@ -579,8 +597,14 @@ export const enemyActions = {
   updateProjectiles(dt) {
     for (const b of this.s.projectiles) {
       const before = { x: b.x, y: b.y }, step = b.speed * dt;
-      this.move(b, Math.cos(b.angle) * step, Math.sin(b.angle) * step, b.radius);
-      if (distance(before, b) < step * 0.6) { b.until = 0; this.shotStopped(b); }
+      // A ghost (Tick·Tock's flank walls) flies over walls and crates and ends only when its time is up.
+      if (b.ghost) { b.x += Math.cos(b.angle) * step; b.y += Math.sin(b.angle) * step; }
+      else this.move(b, Math.cos(b.angle) * step, Math.sin(b.angle) * step, b.radius);
+      // Tock's gears turn back from the first wall they meet (clock-bosses.js ttBounce).
+      if (!b.ghost && distance(before, b) < step * 0.6) {
+        if (b.bounces > 0) { b.bounces--; b.x = before.x; b.y = before.y; b.angle = this.ttBounce(b, step); }
+        else { b.until = 0; this.shotStopped(b); }
+      }
       if (b.friendly) {
         const target = this.s.enemies.find(e => e.hp > 0 && segmentDistance(e, before, b) < e.radius + b.radius);
         // A bullet the wrench turned round hits for exactly what it would have taken off F2: no crit, no damage bonus.

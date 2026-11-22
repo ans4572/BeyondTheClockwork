@@ -24,8 +24,8 @@ function pick(g, kind) { const index = kind ? g.s.run.rewardChoices.findIndex(r 
 test('source data retains the full 8 elements / 28 fusions while runtime selects the built ones', async () => {
   const source = JSON.parse(await readFile(new URL('../docs/design/clockwork-design.v1.json', import.meta.url), 'utf8'));
   assert.equal(source.elements.length, 8); assert.equal(source.fusions.length, 28);
-  // Six fusions of the first four elements and nine with sound or water (2026-11-08).
-  assert.equal(data.combat.fusions.length, 15); assert.equal(data.slice.permanentStats.length, 12);
+  // Six fusions of the first four elements, nine with sound or water (2026-11-08) and thirteen with light or magnet (2026-11-21).
+  assert.equal(data.combat.fusions.length, 28); assert.equal(data.slice.permanentStats.length, 12);
   assert.deepEqual(data.combat.player, source.player);
   const keys = new Set(source.fusions.map(f => [...f.pair].sort().join('+'))); assert.equal(keys.size, 28);
 });
@@ -189,7 +189,9 @@ test('every fusion actually deals its direct damage', () => {
     // 빙결 호스 breaks its ice two seconds after the stream ends; 수면 공명 rings only when a body on it is struck (here the wrench).
     const film = data.slice.fusionBehavior[fusion.id].shape === 'film';
     assert.equal(g.castFusion(e), true); step(g, 5, film ? { basic: true, aim: { x: e.x, y: e.y } } : {});
-    assert.ok(100000 - e.hp >= fusion.totalDirectDamage - 0.001, `${fusion.id} did not deal the expected damage`);
+    // 자성 유체 덩굴's blow on the way is for the bodies it creeps past, not the one it reaches.
+    const passing = fusion.id === 'ferroVine' ? fusion.travelDamage : 0;
+    assert.ok(100000 - e.hp >= fusion.totalDirectDamage - passing - 0.001, `${fusion.id} did not deal the expected damage`);
     // (The wrench that rings the film staggers on its own.)
     if (!film) assert.ok(e.stagger <= data.combat.balance.fusionStaggerPerCastCap, `${fusion.id} exceeded stagger budget`);
   }

@@ -22,7 +22,7 @@ test('every element offers as many element cards (skill mods and traits) as ever
   // Each element has one special card, and since 2026-11-12 it is always a trait (과부하 and 조율 박자 were skill mods).
   for (const element of madeElements) assert.deepEqual(data.slice.elementTraits.filter(t => t.element === element.id && t.tier === 'special').length, 1, element.id);
   assert.equal(data.slice.skillMods.filter(m => m.tier === 'special').length, 0);
-  const cards = madeElements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill).element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
+  const cards = madeElements.map(element => data.slice.skillMods.filter(m => data.combat.skills.find(s => s.id === m.skill)?.element === element.id).length + data.slice.elementTraits.filter(t => t.element === element.id).length);
   assert.ok(cards.every(n => n === cards[0]), `element cards per element: ${cards}`);
   assert.equal(data.slice.mods.length, 8);
   assert.deepEqual(data.slice.rooms.filter(r => r.guaranteedMod).map(r => r.id), ['stop-04', 'stop-10']);

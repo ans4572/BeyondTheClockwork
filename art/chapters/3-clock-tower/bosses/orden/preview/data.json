@@ -1,0 +1,336 @@
+{
+ "cell": 180,
+ "v": 1794932212,
+ "forms": [
+  {
+   "key": "masked",
+   "name": "가면 오르덴",
+   "rotations": "masked-rotations.png",
+   "clips": {
+    "staff-jab": {
+     "raw": {
+      "file": "masked-staff-jab-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "masked-staff-jab-clean.png",
+      "frames": {
+       "south": 7,
+       "south-east": 9,
+       "east": 7,
+       "north-east": 8,
+       "north": 6,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "dropped": {
+      "south": [
+       2,
+       3
+      ],
+      "east": [
+       1,
+       8
+      ],
+      "north-east": [
+       1
+      ],
+      "north": [
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    "staff-raise": {
+     "raw": {
+      "file": "masked-staff-raise-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "masked-staff-raise-clean.png",
+      "frames": {
+       "south": 7,
+       "south-east": 8,
+       "east": 7,
+       "north-east": 9,
+       "north": 8,
+       "north-west": 9,
+       "west": 6,
+       "south-west": 9
+      }
+     },
+     "dropped": {
+      "south": [
+       5,
+       6
+      ],
+      "south-east": [
+       5
+      ],
+      "east": [
+       5,
+       6
+      ],
+      "north": [
+       5
+      ],
+      "west": [
+       5,
+       6,
+       7
+      ]
+     }
+    }
+   }
+  },
+  {
+   "key": "awakened",
+   "name": "정각 오르덴",
+   "rotations": "awakened-rotations.png",
+   "clips": {
+    "staff-jab": {
+     "raw": {
+      "file": "awakened-staff-jab-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "awakened-staff-jab-clean.png",
+      "frames": {
+       "south": 7,
+       "south-east": 7,
+       "east": 8,
+       "north-east": 7,
+       "north": 7,
+       "north-west": 9,
+       "west": 8,
+       "south-west": 7
+      }
+     },
+     "dropped": {
+      "south": [
+       3,
+       4
+      ],
+      "south-east": [
+       2,
+       3
+      ],
+      "east": [
+       4
+      ],
+      "north-east": [
+       2,
+       3
+      ],
+      "north": [
+       6,
+       7
+      ],
+      "west": [
+       4
+      ],
+      "south-west": [
+       1,
+       2
+      ]
+     }
+    },
+    "staff-raise": {
+     "raw": {
+      "file": "awakened-staff-raise-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "awakened-staff-raise-clean.png",
+      "frames": {
+       "south": 8,
+       "south-east": 6,
+       "east": 9,
+       "north-east": 8,
+       "north": 6,
+       "north-west": 8,
+       "west": 9,
+       "south-west": 7
+      }
+     },
+     "dropped": {
+      "south": [
+       6
+      ],
+      "south-east": [
+       4,
+       5,
+       6
+      ],
+      "north-east": [
+       5
+      ],
+      "north": [
+       1,
+       2,
+       7
+      ],
+      "north-west": [
+       6
+      ],
+      "south-west": [
+       6,
+       7
+      ]
+     }
+    }
+   }
+  },
+  {
+   "key": "awakened-shard",
+   "name": "정각 오르덴 (가면 조각 있는 원본)",
+   "rotations": "awakened-shard-rotations.png",
+   "clips": {
+    "staff-jab": {
+     "raw": {
+      "file": "awakened-shard-staff-jab-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "awakened-shard-staff-jab-clean.png",
+      "frames": {
+       "south": 7,
+       "south-east": 7,
+       "east": 8,
+       "north-east": 7,
+       "north": 7,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 8
+      }
+     },
+     "dropped": {
+      "south": [
+       3,
+       4
+      ],
+      "south-east": [
+       2,
+       3
+      ],
+      "east": [
+       4
+      ],
+      "north-east": [
+       2,
+       3
+      ],
+      "north": [
+       6,
+       7
+      ],
+      "south-west": [
+       2
+      ]
+     }
+    },
+    "staff-raise": {
+     "raw": {
+      "file": "awakened-shard-staff-raise-raw.png",
+      "frames": {
+       "south": 9,
+       "south-east": 9,
+       "east": 9,
+       "north-east": 9,
+       "north": 9,
+       "north-west": 9,
+       "west": 9,
+       "south-west": 9
+      }
+     },
+     "clean": {
+      "file": "awakened-shard-staff-raise-clean.png",
+      "frames": {
+       "south": 8,
+       "south-east": 6,
+       "east": 9,
+       "north-east": 8,
+       "north": 6,
+       "north-west": 8,
+       "west": 9,
+       "south-west": 7
+      }
+     },
+     "dropped": {
+      "south": [
+       6
+      ],
+      "south-east": [
+       4,
+       5,
+       6
+      ],
+      "north-east": [
+       5
+      ],
+      "north": [
+       1,
+       2,
+       7
+      ],
+      "north-west": [
+       6
+      ],
+      "south-west": [
+       6,
+       7
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

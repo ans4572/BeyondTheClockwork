@@ -1,0 +1,567 @@
+{
+ "frames": [
+  {
+   "filename": "bg-strings 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 1",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 2",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 3",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 4",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 5",
+   "frame": {
+    "x": 480,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 6",
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 7",
+   "frame": {
+    "x": 672,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 8",
+   "frame": {
+    "x": 0,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 9",
+   "frame": {
+    "x": 96,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 10",
+   "frame": {
+    "x": 192,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 11",
+   "frame": {
+    "x": 288,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 12",
+   "frame": {
+    "x": 384,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 13",
+   "frame": {
+    "x": 480,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 14",
+   "frame": {
+    "x": 576,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 15",
+   "frame": {
+    "x": 672,
+    "y": 220,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 16",
+   "frame": {
+    "x": 0,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 17",
+   "frame": {
+    "x": 96,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 18",
+   "frame": {
+    "x": 192,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 19",
+   "frame": {
+    "x": 288,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 20",
+   "frame": {
+    "x": 384,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 21",
+   "frame": {
+    "x": 480,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 22",
+   "frame": {
+    "x": 576,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  },
+  {
+   "filename": "bg-strings 23",
+   "frame": {
+    "x": 672,
+    "y": 440,
+    "w": 96,
+    "h": 220
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 220
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 220
+   },
+   "duration": 50
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "bg-strings.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 768,
+   "h": 660
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "bg-strings",
+    "from": 0,
+    "to": 23,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "belfry/bg-strings",
+   "name": "Puppet strings",
+   "fps": 20,
+   "loop": true,
+   "frames": 24,
+   "frameSize": [
+    96,
+    220
+   ],
+   "pivot": [
+    48,
+    210
+   ],
+   "columns": 8
+  }
+ }
+}
