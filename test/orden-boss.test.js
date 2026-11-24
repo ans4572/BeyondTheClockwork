@@ -274,3 +274,24 @@ test('far from F2 he blinks back to her side, then not again for a while', () =>
   const at = { x: od.x, y: od.y }; Object.assign(od, { x: room.right - 1 }); g.s.time += 1; g.odStep(od, 1 / 60);
   assert.ok(od.x > room.right - 1.5, 'not again within teleportEvery');
 });
+
+// The warnings show what lands (2026-11-24).
+test("his first needle flies along the warning's arrows, not at where F2 has gone", () => {
+  const { g, od } = chamber(); od.ready = 1e9;
+  g.beginEnemyTell(od, 'odNeedles'); const warned = od.tell; g.p.y += 3; g.s.time = warned.until; g.executeEnemy(od);
+  step(g, 0.05);
+  const f = g.s.bossFields.find(x => x.kind === 'odBolts');
+  assert.ok(f.bolts.length >= 1); assert.ok(Math.abs(f.bolts[0].angle - warned.angle) < 1e-9);
+});
+test('the fire burns as far as it is drawn, and a pit is the oval drawn in its piece', () => {
+  const { g, od } = chamber(), t = g.s.time, p = g.p;
+  const cell = { x: p.x + 1.15, y: p.y, x0: p.x + 0.15, x1: p.x + 2.15, y0: p.y - 0.6, y1: p.y + 0.6, r: 1, at: t, until: t + 3, lit: false };
+  g.fbField({ kind: 'odFire', owner: od.id, cells: [cell], seedCell: -1, from: t, nextHit: 0, damage: 10, burn: 5 });
+  let hp = p.hp; step(g, 0.3); assert.ok(p.hp < hp, 'standing 1.15 out from a patch of radius 1, in its flames');
+  g.s.bossFields = [];
+  const piece = (cx, cy) => ({ x0: cx - 1, x1: cx + 1, y0: cy - 0.6, y1: cy + 0.6, fall: g.s.time, back: g.s.time + 5, fell: false });
+  g.fbField({ kind: 'odHoles', owner: od.id, pieces: [piece(p.x + 0.9, p.y + 0.5)], damage: 10, hitAt: -1 });
+  hp = p.hp; step(g, 0.2); assert.equal(p.hp, hp, "the piece's corner, outside its pit, holds her");
+  g.s.bossFields = []; g.fbField({ kind: 'odHoles', owner: od.id, pieces: [piece(p.x, p.y)], damage: 10, hitAt: -1 });
+  step(g, 0.2); assert.ok(p.hp < hp, 'over the pit she drops');
+});

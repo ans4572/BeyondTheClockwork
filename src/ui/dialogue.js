@@ -111,7 +111,8 @@ export class DialogueBox {
     const last = this.lines.length - 1;
     if (this.asking) return this.asking.requestSubmit();
     if (this.at === last && this.lines[last].choices && !this.typing) return this.choices.at(-1).click();
-    if (this.at === last && !this.lines[last].choices) return this.finish(null);
+    // A talk with no question at its end closes at once (review 2026-11-24: it jumped to the last line, a second press closed it).
+    if (!this.lines[last].choices) return this.finish(null);
     this.at = last; this.show(); this.finishLine();
   }
   move(delta) {

@@ -265,3 +265,24 @@ test('once Orden is gone the bell never stops the town again; the liberation fre
   const [moved] = walking(0.5, d, { free: true });
   assert.ok(Math.hypot(moved.x - still[0].x, moved.y - still[0].y) > 0.1);
 });
+
+test('a resident spoken to stops, turns to F2 and says the line in a bubble, then walks on (2026-11-24)', () => {
+  const d = new NpcDirector(library);
+  walking(1, d);
+  const near = d.nearest(d.at(d.residents[0]).x, d.at(d.residents[0]).y, 0.5);
+  assert.equal(near.index, 0); assert.equal(d.nearest(500, 500, 1.8), null);
+  d.say(0, '안녕!', 2);
+  const lookAt = { x: near.x - 3, y: near.y }, [a] = walking(1, d, { lookAt });
+  assert.ok(Math.hypot(a.x - near.x, a.y - near.y) < 0.05, 'held where it stood'); assert.equal(a.say, '안녕!');
+  assert.ok(a.pose.direction.includes('west'), a.pose.direction);
+  const [b] = walking(1.5, d, { lookAt });
+  assert.equal(b.say, null); assert.ok(Math.hypot(b.x - near.x, b.y - near.y) > 0.3, 'walks on after the line');
+});
+
+test('from chapter 1 on, a few residents murmur while the bell holds them', () => {
+  const d = new NpcDirector(library), lines = ['…또?', '쉿.'];
+  walking(BELL_EVERY_SECONDS - 0.05, d, { murmurs: lines, lookAt: { x: 0, y: 0 } });
+  const held = walking(0.1, d, { murmurs: lines, lookAt: { x: 0, y: 0 } });
+  assert.ok(held.some(r => lines.includes(r.say)), 'someone murmurs');
+  assert.equal(walking(0.1, new NpcDirector(library), { lookAt: { x: 0, y: 0 } }).filter(r => r.say).length, 0);
+});

@@ -96,7 +96,7 @@
   background-repeat: no-repeat; background-size: 100% 24px, 100% 24px, 100% 10px, 100% 10px; background-attachment: local, local, scroll, scroll; }
 .stat-group { margin: 8px 0 2px; font-size: 12px; color: var(--label); }
 .panel p.stat-hint { min-height: 2.6em; margin: 4px 0 0; white-space: pre-line; }
-.stat-row { display: grid; grid-template-columns: 110px 42px 1fr 100px 58px; gap: 8px; align-items: center; padding: 2px 2px; border-bottom: 1px solid #2b334533; }
+.stat-row { display: grid; grid-template-columns: 110px 42px 1fr 100px 24px 58px; gap: 8px; align-items: center; padding: 2px 2px; border-bottom: 1px solid #2b334533; }
 .stat-row strong { font-size: 13px; white-space: nowrap; }
 .stat-level { font-size: 11px; color: var(--label); text-align: right; white-space: nowrap; }
 .stat-bar { position: relative; height: 8px; background: #d8ccb0; box-shadow: inset 0 0 0 1px var(--ink); }
@@ -104,6 +104,15 @@
 .stat-bar i { display: block; height: 100%; background: var(--gold); }
 .stat-value { font-size: 12px; font-weight: 700; text-align: right; white-space: nowrap; }
 .panel .stat-row button { padding: 2px 4px; font-size: 12px; white-space: nowrap; }
+/* One level back (2026-11-24): a narrow −, faint while the row has nothing to give back. */
+.panel .stat-row button.tune-down { padding: 2px 0; font-size: 15px; line-height: 1; }
+.panel .stat-row button.tune-down:disabled { box-shadow: inset 0 0 0 1px #2b334555; color: #2b334566; }
+.panel.side:has(.stat-list) { width: min(532px, 100%); }
+/* A sheet's tip the first time it opens (main.js firstLook). */
+.panel p.first-look { margin: 6px 0 8px; padding: 6px 10px; background: #fff4d6; box-shadow: inset 3px 0 0 var(--gold), inset 0 0 0 1px #2b334533; color: var(--ink); font-size: 13px; line-height: 1.5; }
+.panel p.first-look b { margin-right: 6px; color: var(--red); }
+/* On the departure board the tip stands in for one plain line, so it keeps nearly that line's height. */
+.panel.difficulty > p.first-look { margin: 4px 0 6px; padding: 3px 10px; }
 
 .panel.shop .reward-grid { grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
 .panel.shop .reward-card { display: grid; grid-template: auto auto / 1fr 104px; gap: 2px 12px; align-items: center; padding: 8px 12px; border-top: 0; }
@@ -220,6 +229,16 @@ body.touch #toast.below-boss { bottom: auto; }
 .hud-bar.energy b { display: flex; justify-content: center; align-items: center; gap: 3px; }
 .hud-bar.energy b::before { content: ''; width: 16px; height: 16px; flex: none; background: url('../art/ui/icons/px/charge.png') center / contain no-repeat; image-rendering: pixelated; }
 .hud-bar b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; line-height: 1; }
+/* What is on F2 (main.js showEffects, 2026-11-24): small marks under the bars; red edged for what hurts her, a draining
+   line under a timed one, the count of stacked marks in the corner. */
+.hud-effects { display: flex; gap: 3px; height: 18px; }
+.hud-effects[hidden] { display: none; }
+.hud-effects .effect { position: relative; display: grid; place-items: center; width: 18px; height: 18px; background: #f6ecd2; box-shadow: inset 0 0 0 1px #2b3345; pointer-events: auto; cursor: help; }
+.hud-effects .effect.buff { background: #e4f0d0; box-shadow: inset 0 0 0 1px #2b3345, inset 0 0 0 2px #6f9a4a; }
+.hud-effects .effect.debuff { background: #f6d6cc; box-shadow: inset 0 0 0 1px #2b3345, inset 0 0 0 2px #c43c36; }
+.hud-effects .effect .ico { width: 14px; height: 14px; vertical-align: 0; image-rendering: pixelated; }
+.hud-effects .effect i { position: absolute; left: 2px; bottom: 2px; height: 2px; max-width: calc(100% - 4px); background: #2b3345; }
+.hud-effects .effect b { position: absolute; right: -3px; bottom: -4px; min-width: 9px; padding: 0 1px; background: #c43c36; color: #fff4d6; font: 700 10px/11px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", sans-serif; text-align: center; }
 .hud-minimap { position: absolute; right: 14px; top: 12px; width: 168px; height: 112px; box-shadow: 0 0 0 3px rgba(43, 51, 69, .6); }
 .hud-minimap:not([hidden]) ~ .hud-tools { top: 12px; right: 196px; }
 /* The boss bar: name above, health below, a black line where each new phase begins. */
@@ -247,6 +266,7 @@ body.touch #toast.below-boss { bottom: auto; }
 body:not(.touch) #skills .slot { pointer-events: auto; cursor: help; }
 #skill-tip { position: absolute; z-index: 7; width: max-content; max-width: 300px; padding: 8px 12px; background: #2b3345; color: #f6ecd2; font: 400 13px/1.45 "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; transform: translate(-50%, -100%); pointer-events: none; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
 #skill-tip[hidden] { display: none; }
+#skill-tip.below { transform: translate(-50%, 0); }
 #skill-tip b { display: block; font-weight: 700; color: #ffd257; }
 #skill-tip small { display: block; margin-top: 3px; color: #c9c2ad; font-size: 12px; }
 .slot { position: relative; display: grid; place-items: center; width: 48px; height: 48px; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
@@ -452,8 +472,9 @@ body.touch #cutscene .council-text { font-size: max(16px, 3.4cqh); }
 /* Words drawn in the world sit on their own sharp layer over the pixel-grid frame. */
 #letters { position: absolute; inset: 0; z-index: 1; pointer-events: none; image-rendering: auto; }
 
-/* The charge a skill spends, small in the slot's bottom-right corner; red while there is not enough. */
-.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #ffd257; font: 700 12px/14px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", sans-serif; font-style: normal; }
+/* The charge a skill spends, small in the slot's bottom-right corner: cream, and red only while a fight's charge is short
+   (2026-11-24: it was yellow, and red in the village where nothing can be spent). */
+.slot .cost, #touch .cost { position: absolute; right: 1px; bottom: 0; z-index: 1; padding: 0 2px; background: #2b3345; color: #f6ecd2; font: 700 12px/14px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", sans-serif; font-style: normal; }
 .slot.short .cost, #touch .short .cost { color: #ff8a80; }
 #touch .cost { right: 50%; bottom: 2px; transform: translateX(50%); font-size: 14px; line-height: 16px; }
 #touch .cost:empty { display: none; }
@@ -638,11 +659,24 @@ body.cramped .stat-list > * { break-inside: avoid; }
 body.cramped .stat-group { margin: 4px 0 0; break-after: avoid; }
 /* 2026-11-12: the level ("10 / 20") and the value ("+25% → +27.5%") ran into the bar and the button at 30px and 84px;
    the name now takes what is left and the bar gives way, so every figure has room. */
-body.cramped .stat-row { grid-template-columns: minmax(0, 1fr) 44px 48px 108px 50px; gap: 5px; padding: 1px 2px; }
+body.cramped .stat-row { grid-template-columns: minmax(0, 1fr) 40px 36px 100px 22px 50px; gap: 4px; padding: 1px 2px; }
 body.cramped .stat-level { font-size: 10.5px; }
 body.cramped .stat-row strong { font-size: 11.5px; letter-spacing: -0.3px; overflow: hidden; text-overflow: ellipsis; }
 body.cramped .stat-value { font-size: 11px; overflow: hidden; text-overflow: clip; }
 body.touch.cramped .panel .stat-row button { min-height: 26px; padding: 1px 4px; }
+body.touch.cramped .panel .stat-row button.tune-down { padding: 1px 0; }
+body.cramped .panel p.first-look { margin: 2px 0 4px; padding: 3px 8px; font-size: 12px; }
+body.cramped .panel.difficulty .chapter-tabs:has(~ .first-look) { float: left; margin: 0 8px 4px 0; }
+body.cramped .panel.difficulty > p.first-look.notice { overflow: hidden; margin: 0 0 3px; padding: 1px 8px; font-size: 11px; line-height: 1.3; }
+body.cramped .panel.difficulty p.first-look b { display: none; }
+/* The tuning board's tip is in its header: a row under the title on a desktop, the space between the title and the
+   gears on a phone (where the board fits whole without it). */
+.panel-header:has(> .first-look) { flex-wrap: wrap; }
+.panel .panel-header > p.first-look { order: 3; flex-basis: 100%; margin: 4px 0 0; }
+body.cramped .panel .panel-header:has(> .first-look) { flex-wrap: nowrap; }
+body.cramped .panel .panel-header > p.first-look { order: 0; flex: 1 1 0; align-self: center; margin: 0 4px; padding: 2px 8px; font-size: 11px; line-height: 1.3; }
+body.cramped .panel .panel-header > p.first-look b { display: none; }
+body.cramped .panel.difficulty .reward-grid { clear: both; }
 body.cramped .panel p.stat-hint { display: none; }
 /* 6. The HUD bars read on a dark empty track (the light label sat on a light track and could not be read). */
 .hud-bar { background: #4a4538; }
@@ -728,3 +762,22 @@ body.touch .panel .codex-move p.move-cost { font-size: 12px; }
 .codex-entry .need-tag { position: absolute; right: 10px; padding: 1px 7px; box-shadow: inset 0 0 0 1px var(--label); color: var(--label); font-size: 11px; font-weight: 700; }
 .codex-entry.unowned .codex-icon, .codex-entry.unowned .move-icon { filter: grayscale(1); opacity: .55; }
 .codex-entry.unowned h4, .panel .codex-entry.unowned .codex-move > div > p:not(.status-tip), .codex-entry.unowned .pair { color: var(--label); }
+
+/* ---- Review fixes (2026-11-24) ---- */
+/* The number key that picks a reward card or a departure level, beside its label. */
+.panel .pick .pick-key { display: inline-block; margin-left: 6px; padding: 0 4px; font: 800 11px/15px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; box-shadow: inset 0 0 0 1px currentColor; opacity: .7; vertical-align: 1px; }
+/* The tuning board's long names have a short form where the row is narrow (both 치명타 rows read the same, cut off). */
+.stat-row .short-name { display: none; }
+body.cramped .stat-row .long-name { display: none; }
+body.cramped .stat-row .short-name { display: inline; }
+/* Moru's part buttons are tapped: 36px tall on a touch screen before the sheet's zoom (they were 28, about 24 on screen). */
+body.touch .panel.element-panel .element-card .pick { min-height: 36px; }
+/* Moru's pick on the first shelf: the badge in the owned badge's place, in the fire card's warm colour. */
+.element-card .owned-badge.recommend { background: #c4572f; color: #fff4d6; }
+/* A phone's dark strip too narrow for the tools in a row holds them in a column (main.js fitHud); the back yard's two
+   buttons then take the place under the minimap the tools left. */
+#touch.tools-column .touch-tools { flex-direction: column; }
+#touch.tools-column .touch-practice-exit { right: var(--yard-right); top: var(--yard-top); }
+#touch.tools-column .touch-practice { right: var(--yard-right); top: calc(var(--yard-top) + 50px); }
+/* Moru's parts sheet on a short screen keeps its 닫기 row in view at the bottom (it sat below the fold). */
+body.cramped .element-panel > .actions { position: sticky; bottom: -10px; margin: 6px -16px -10px; padding: 6px 16px 10px; background: var(--paper); box-shadow: 0 -6px 6px -6px #2b334540; }

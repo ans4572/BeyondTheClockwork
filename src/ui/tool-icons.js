@@ -19,6 +19,8 @@ const BODIES = {
   wrench: '<path d="M10 1h4v1h1v4h-1v1h-3v1l-6 6v1H2v-1H1v-3h1l6-6V2h1V1z" fill="#2b3345"/><path d="M10 2h2v2h2v1h-1v1h-3v1H9v1L3 14H2v-1l6-6V6h1V3h1z" fill="#5c9a9a"/>',
   spark: '<path d="M7 0h2v5h2v2h5v2h-5v2H9v5H7v-5H5V9H0V7h5V5h2z" fill="#2b3345"/><path d="M7 2h2v4h1v1h4v2h-4v1H9v4H7v-4H6V9H2V7h4V6h1z" fill="#e0b048"/>',
   crown: '<path d="M1 3h2v2h1V3h2v2h1V2h2v3h1V3h2v2h1V3h2v12H1z" fill="#2b3345"/><path d="M2 6h12v8H2z" fill="#e0b048"/><path d="M4 9h2v2H4zM10 9h2v2h-2z" fill="#c43c36"/>',
+  // Iris's failing mark: a red cross stamped on (the marks under F2's bars, 2026-11-24).
+  stamp: '<path d="M1 1h4l3 3 3-3h4v4l-3 3 3 3v4h-4l-3-3-3 3H1v-4l3-3-3-3z" fill="#2b3345"/><path d="M2 2h3l3 3 3-3h3v3l-3 3 3 3v3h-3l-3-3-3 3H2v-3l3-3-3-3z" fill="#c43c36"/><path d="M2 2h3v1H3v2H2z" fill="#e8807a"/>',
   home: '<path d="M7 1h2v1h1v1h1v1h1v1h1v1h1v1h1v2h-1v6H2V9H1V7h1V6h1V5h1V4h1V3h1V2h1z" fill="#2b3345"/><path d="M7 3h2v1h1v1h1v1h1v1h1v1H3V7h1V6h1V5h1V4h1z" fill="#c43c36"/><path d="M3 9h10v5H3z" fill="#f6ecd2"/><path d="M7 11h2v3H7z" fill="#2b3345"/>'
 };
 // The painted pixel icons (art/ui/icons/px, each a 24, 32 or 48 pixel grid). A name found here is shown as its picture;

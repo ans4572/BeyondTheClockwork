@@ -606,13 +606,27 @@ export const clockBosses = {
     }
     if (f.walls.every(w => w.done)) f.done = true;
   },
+  /** Where a wall's gears fly across it: every flankSpacing from lo to hi, but for those within its gap. */
+  ttFlankGears(f, w) {
+    const ai = this.config.bossAI.twinTickTock, gears = [];
+    for (let u = w.lo; u <= w.hi + 1e-6; u += ai.flankSpacing) if (Math.abs(u - w.gap) >= f.half) gears.push(u);
+    return gears;
+  },
+  /**
+   * The stretch across a wall where F2 is safe as it passes: clear of the nearest gear either side of the gap by its
+   * radius and hers (2026-11-24: the gap's own width was drawn, 2.4, where 1.5 to 2.5 was clear, off its middle).
+   */
+  ttFlankSafe(f, w) {
+    const clear = this.config.bossAI.twinTickTock.gearRadius + this.config.arena.playerRadius, gears = this.ttFlankGears(f, w);
+    const below = gears.filter(u => u < w.gap).at(-1), above = gears.find(u => u > w.gap);
+    return [below === undefined ? w.lo - 0.3 : below + clear, above === undefined ? w.hi + 0.3 : above - clear];
+  },
   /** One wall of gears from a twin's end of the room to the other, with its gap. */
   ttFlankWall(f, w, body) {
     const ai = this.config.bossAI.twinTickTock, along = w.axis, across = along === 'x' ? 'y' : 'x', far = w.far;
     const angle = along === 'x' ? (w.side < 0 ? 0 : Math.PI) : (w.side < 0 ? Math.PI / 2 : -Math.PI / 2);
     const damage = this.weakened(body, body.damage * ai.flankDamage), speed = ai.flankSpeed;
-    for (let u = w.lo; u <= w.hi + 1e-6; u += ai.flankSpacing) {
-      if (Math.abs(u - w.gap) < f.half) continue;
+    for (const u of this.ttFlankGears(f, w)) {
       // The wall flies over crates and pillars (ghost): a straight line right across, its gap the only way through.
       const at = { [along]: w.edge, [across]: u };
       this.s.projectiles.push({ id: this.id('bullet'), x: at.x, y: at.y, angle, speed, radius: ai.gearRadius, damage, friendly: false, until: this.s.time + (far + 0.5) / speed, look: 'gear', bounces: 0, ghost: true });

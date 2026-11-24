@@ -59,6 +59,17 @@ let practiceSince = null;
 /** What each run part changes, named on its reward card with the value now and with the part fitted. */
 const PART_VALUES = { basicDamage: ['렌치 피해', '+'], maxHp: ['최대 체력', ''], skillCooldownReduction: ['기술 대기시간', '−'], moveSpeed: ['이동속도', '+'], critChance: ['치명타 확률', ''], attackSpeed: ['렌치 속도', '+'], killHeal: ['처치마다 회복 HP', ''], damageReduction: ['받는 피해', '−'], energyGain: ['렌치 축전', '+'], fusionDamage: ['융합 피해', '+'], fusionGuard: ['융합 뒤 5초 받는 피해', '−'] };
 const PERK_ICONS = { piggyBank: 'reward-piggy-bank', overheatEngine: 'reward-overheat', glassSpring: 'reward-glass-spring' };
+// The pictures of the timed marks under F2's bars (oils, perks and traits bring their own).
+const EFFECT_ICONS = { haste: 'haste', guard: 'shield', marked: 'target', fail: 'stamp', slow: 'boot' };
+// 수리 장부 (review 2026-11-24): the end sheets said a plan, a record and a seal "기록됩니다", with nowhere to see them.
+// Each boss's face is its talk-box portrait (dialogue speakers); the papers are what the bosses hand over (game.unwind).
+const LEDGER_FACES = { collectorRoco: 'roco', captainBrass: 'brass', inspectorIris: 'iris', directorPress: 'press', twinTickTock: 'tick', bellguard: 'belgard', orden: 'orden' };
+const LEDGER_AFTER = { captainBrass: 'brassAfter', orden: 'ordenFarewell' };
+const LEDGER_PAPERS = [
+  { id: 'patrolBlueprint', name: '순찰 설계도', from: 'captainBrass', text: '브라스의 행진 경로와 박자표입니다. 북을 치던 명령 회로를 뽑고 남은 종이입니다.' },
+  { id: 'assemblyRecord', name: '원본 조립 기록', from: 'inspectorIris', text: "F2의 조립 기록입니다. '구형 자율 조율형 · 조율 기능 막음'이라고 적혀 있습니다. 아이리스가 판정 근거로 내주었습니다." },
+  { id: 'selfTuningBlueprint', name: '구형 자율 조율 설계도', from: 'directorPress', text: '설계실 금고에 있던 처음 도면입니다. 막는 칸 없이, 태엽이 스스로 박자를 맞추던 때의 설계입니다.' },
+];
 const PART_ICONS = { basicDamage: 'reward-wrench-damage', maxHp: 'reward-max-hp', skillCooldownReduction: 'reward-skill-cooldown', moveSpeed: 'reward-move-speed', critChance: 'reward-crit', attackSpeed: 'reward-attack-speed', killHeal: 'reward-kill-heal', damageReduction: 'reward-armor', energyGain: 'charge' };
 const KIND_COLORS = { heal: '#c43c36', gears: '#c79a3e', upgrade: '#5c9a9a', mod: '#8a8f9c', level: '#c79a3e', perk: '#a92f2b' };
 const TIER_NAMES = { common: '일반', rare: '희귀', special: '전설' };
@@ -86,7 +97,7 @@ const elementIcon = (id, classes = 'element-icon') => `<img class="${classes}" s
 // How each kind of hit is felt: seconds the game holds still, and screen shake in pixels.
 // Hit-stop halved on 2026-11-05: the full holds made a combo feel stuck. Skills shake and fusions hold and slow (2026-11-06):
 // they hit harder than the wrench and should feel it.
-const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.05, shake: 6 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, thud: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
+const FEEL = { hit: { stop: 0.03, shake: 1.5 }, heavy: { stop: 0.06, shake: 5 }, phase: { stop: 0.125, shake: 5 }, skill: { stop: 0.015, shake: 3 }, fusion: { stop: 0.05, shake: 6 }, fusionBurst: { stop: 0.06, shake: 6 }, ironSet: { stop: 0.04, shake: 3 }, kill: { stop: 0.05, shake: 4 }, hurt: { stop: 0 }, block: { stop: 0 }, burst: { stop: 0, shake: 3 }, thud: { stop: 0, shake: 3 }, pop: { stop: 0 }, dodge: { stop: 0 }, summon: { stop: 0 }, clear: { stop: 0 } }, NO_FEEL = { stop: 0 };
 const FUSION_SLOW_MS = 100, MULTI_STOP = 0.005, MULTI_STOP_CAP = 0.015, CRIT_STOP = 0.01, CRIT_SHAKE = 3, SLOW_RATE = 0.3, BOSS_SLOW_MS = 1100, WHOOSH_WAIT_MS = 70, BOSS_CARD_MS = 1700, BOSS_CARD_HOLD_MS = 1200;
 /**
  * The loading card waits only for what the title shows: its paper form and song. Everything else is held back until
@@ -269,10 +280,15 @@ try {
     // Touch tools (full screen, map, menu): in the dark strip right of the picture where a wide phone leaves one, else just
     // under the minimap (it is 168 x 112, 14px from the right, 12px down on the sheet). (2026-11-22, the phone review: they
     // sat left of the minimap's top edge, over the boss's health bar.)
-    const shown = $('game').getBoundingClientRect(), wide = document.documentElement.clientWidth - shown.right >= 160;
+    const shown = $('game').getBoundingClientRect(), gutter = document.documentElement.clientWidth - shown.right, wide = gutter >= 160;
+    // 2026-11-24 (review: under the minimap they covered the town): a strip too narrow for the row still takes them one
+    // above another, and the back yard's two buttons move to where the tools were, under the minimap.
+    const column = !wide && gutter >= 56, underMinimap = Math.round(shown.top + (12 + 112 + 8) * scale), pictureRight = Math.round(document.documentElement.clientWidth - shown.left - (1120 - 14) * scale);
+    $('touch').classList.toggle('tools-column', column);
     if (wide) $('touch').style.removeProperty('--tools-right'); // (layout.css: 10px in from the edge, past any notch)
-    else $('touch').style.setProperty('--tools-right', `${Math.round(document.documentElement.clientWidth - shown.left - (1120 - 14) * scale)}px`);
-    $('touch').style.setProperty('--tools-top', `${Math.round(shown.top + (wide ? 12 : (12 + 112 + 8) * scale))}px`);
+    else $('touch').style.setProperty('--tools-right', column ? `${Math.round(Math.max(4, (gutter - 44) / 2))}px` : `${pictureRight}px`);
+    $('touch').style.setProperty('--tools-top', `${wide || column ? Math.round(shown.top + 12) : underMinimap}px`);
+    $('touch').style.setProperty('--yard-right', `${pictureRight}px`); $('touch').style.setProperty('--yard-top', `${underMinimap}px`);
     for (const id of ['toast', 'hint']) $(id).style.zoom = isTouch ? Math.max(scale, TOUCH_TEXT_ZOOM) : scale;
     // Panels never shrink past a readable size; on a short screen they switch to a compact layout so nothing scrolls.
     const zoom = Math.max(scale, TOUCH_PANEL_ZOOM);
@@ -317,7 +333,11 @@ try {
   }
   fetchImages();
   const gameViewport = $('overlay').parentElement;
-  let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', bindingTarget = null;
+  let screen = loadError ? 'loadError' : 'title', onTitle = false, overlayKey = '', overlaySince = 0, bindingTarget = null;
+  // The marks under F2's bars and their tooltip (showEffects), a sheet's first-look tip (firstLook), the ledger's faces.
+  let heldEffects = [], tipEffect = -1, effectTipTimer = 0, firstLookOpen = null, talkFaces = null;
+  /** The number key that picks a card, shown on its button where there is a keyboard (review 2026-11-24). */
+  const numberKey = i => (isTouch || i < 0 || i > 8 ? '' : ` <kbd class="pick-key">${i + 1}</kbd>`);
   // Moving the save to another device: the code this device made, what the player typed, and a save waiting to be accepted.
   let transfer = { code: null, expiresAt: null, typed: '', busy: '', error: '', incoming: null };
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
@@ -657,9 +677,13 @@ try {
   };
   let lastSplash = 0, lastFilm = 0;
   let hitstop = 0, slowUntil = 0, landedAt = 0, pendingWhoosh = null, feltSwing = null;
-  // Lowest to highest: when several things happen in one step, only the last of these that happened is heard.
+  // Lowest to highest: when several things happen on F2's side in one step, only the last of these that happened is heard.
   // thud (a stamp inspector landing) only shakes the view: its own mob sound is heard.
-  const SOUND_RANK = ['thud', 'dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'splash', 'film', 'mob', 'block', 'hit', 'boss', 'cast', 'resonance', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
+  const SOUND_RANK = ['thud', 'dodge', 'portal', 'pick', 'cards', 'loot', 'charged', 'mend', 'summon', 'pop', 'splash', 'film', 'block', 'hit', 'cast', 'resonance', 'burst', 'heavy', 'kill', 'phase', 'hurt', 'clear', 'down', 'fail'];
+  // The enemies' side of a step (a boss pattern landing, a mob's blow) is heard as well, beside F2's (2026-11-24): with
+  // one sound a step, a pattern that struck F2 was heard only as her hurt, and some boss sounds were never heard at all
+  // (프레스 판·벨가드 붙잡기 착지·오르덴 대포, under burst, heavy or hurt).
+  const ENEMY_SOUND = new Set(['boss', 'mob']), ENEMY_SOUNDS_A_STEP = 2;
   /** Turns the rules' hits into a held frame, a shake, a red edge and a sound, once per kind per step. */
   function feelHits() {
     const hits = game.feel.splice(0);
@@ -698,10 +722,21 @@ try {
     const fusionCast = hits.find(hit => hit.kind === 'cast' && hit.fusion);
     if (fusionCast) renderer.fusionBurst(fusionCast.pair, calm);
     if (hits.some(hit => hit.kind === 'fusion') && !calm) slowUntil = Math.max(slowUntil, performance.now() + FUSION_SLOW_MS);
-    // One sound per moment: the most telling thing that happened in this step, and nothing layered under it.
-    const top = hits.reduce((best, hit) => (SOUND_RANK.indexOf(hit.kind) > SOUND_RANK.indexOf(best.kind) ? hit : best));
-    if (['hit', 'heavy'].includes(top.kind)) { landedAt = performance.now(); pendingWhoosh = null; }
-    HIT_SOUNDS[top.crit && top.kind === 'hit' ? 'heavy' : top.kind]?.(top);
+    // F2's side: the most telling thing that happened in this step, and nothing layered under it.
+    const own = hits.filter(hit => !ENEMY_SOUND.has(hit.kind));
+    if (own.length) {
+      const top = own.reduce((best, hit) => (SOUND_RANK.indexOf(hit.kind) > SOUND_RANK.indexOf(best.kind) ? hit : best));
+      if (['hit', 'heavy'].includes(top.kind)) { landedAt = performance.now(); pendingWhoosh = null; }
+      HIT_SOUNDS[top.crit && top.kind === 'hit' ? 'heavy' : top.kind]?.(top);
+    }
+    // The enemies' side: each boss sound of the step once (a pattern and its landing can share one), else one mob's blow.
+    const bossSounds = [...new Set(hits.filter(hit => hit.kind === 'boss').map(hit => hit.id))].slice(0, ENEMY_SOUNDS_A_STEP);
+    for (const id of bossSounds) HIT_SOUNDS.boss({ id });
+    const mob = !bossSounds.length && hits.find(hit => hit.kind === 'mob');
+    if (mob) HIT_SOUNDS.mob(mob);
+    // A fusion's last blow (2026-11-24). Most fusions' own sounds already strike at that moment; one whose sound ended
+    // long before (빙판, broken two seconds after it formed) names one to play again, over whatever else is heard.
+    for (const name of new Set(hits.filter(hit => hit.kind === 'fusionBurst' && hit.sound).map(hit => hit.sound))) sfx(name);
   }
   /** Two slow strokes of the town bell. */
   function toll() { sfx('bell'); }
@@ -716,16 +751,18 @@ try {
     const rank = game.s.profile.stats[stat.id], cap = rankCap(data, game.s.profile, stat, game.previews), maxed = rank >= stat.maxRank, capped = !maxed && rank >= cap;
     const cost = statCost(stat, rank), blocked = maxed || capped || game.s.profile.freeGears < cost, nextChapter = cap / data.slice.statChapters.ranksPerChapter + 1;
     const tip = `${stat.name}: ${stat.description}${cap < stat.maxRank ? `\n지금은 ${cap}단계까지 · ${nextChapter}장이 열리면 ${cap + data.slice.statChapters.ranksPerChapter}단계까지 열림` : ''}`;
-    return `<div class="stat-row" data-tip="${tip}"><strong>${stat.name}</strong><span class="stat-level">${rank} / ${cap}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i>${cap < stat.maxRank ? `<b class="stat-locked" style="left:${cap / stat.maxRank * 100}%"></b>` : ''}</div><span class="stat-value">${statValue(stat, rank)}${maxed || capped ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : capped ? `${ico('lock')} ${nextChapter}장` : `${ico('gear')} ${cost}`}</button></div>`;
+    return `<div class="stat-row" data-tip="${tip}"><strong>${stat.short ? `<span class="long-name">${stat.name}</span><span class="short-name">${stat.short}</span>` : stat.name}</strong><span class="stat-level">${rank} / ${cap}</span><div class="stat-bar"><i style="width:${rank / stat.maxRank * 100}%"></i>${cap < stat.maxRank ? `<b class="stat-locked" style="left:${cap / stat.maxRank * 100}%"></b>` : ''}</div><span class="stat-value">${statValue(stat, rank)}${maxed || capped ? '' : ` → ${statValue(stat, rank + 1)}`}</span><button class="tune-down" data-action="tune-down" data-row="${stat.id}" aria-label="${stat.name} 한 단계 되돌리기" title="${rank ? `한 단계 되돌리기 · 톱니 ${statCost(stat, rank - 1)} 돌려받음` : '되돌릴 단계 없음'}" ${rank ? '' : 'disabled'}>−</button><button data-action="tune-buy" data-row="${stat.id}" ${blocked ? 'disabled' : ''}>${maxed ? 'MAX' : capped ? `${ico('lock')} ${nextChapter}장` : `${ico('gear')} ${cost}`}</button></div>`;
   }
   function statGroups() {
     const stats = data.slice.permanentStats, grouped = STAT_GROUPS.flatMap(([, ids]) => ids), rest = stats.filter(stat => !grouped.includes(stat.id));
     return [...STAT_GROUPS, ...(rest.length ? [['기타', rest.map(stat => stat.id)]] : [])].map(([name, ids]) => `<h3 class="stat-group">${name}</h3>${ids.map(id => stats.find(stat => stat.id === id)).filter(Boolean).map(statRow).join('')}`).join('');
   }
   function tuningPanel() {
-    return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div><strong>${ico('gear')} ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.blueprints.includes('selfTuningBlueprint') ? '구형 자율 조율 설계도와 원본 조립 기록이 남았습니다.' : game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
+    return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div>${firstLook('tuning', '처음이라면 체력이나 렌치 공격력부터 올려 보세요. 가격 옆&nbsp;−&nbsp;버튼은 한 단계씩, 전체 무료 환급은 한꺼번에 톱니를 그대로 돌려줍니다.')}<strong>${ico('gear')} ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.blueprints.includes('selfTuningBlueprint') ? '구형 자율 조율 설계도와 원본 조립 기록이 남았습니다. 멈춤 창의 수리 장부에서 볼 수 있습니다.' : game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다. 멈춤 창의 수리 장부에서 볼 수 있습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
   /** Moru's parts shelf: owned elements are equipped (two at most), the rest are bought with gears one at a time. */
+  /** The part Moru points to for a first pick (review 2026-11-24): fire's swing and blast need no aim. */
+  const FIRST_PICK = 'fire';
   function elementsPanel() {
     const { loadout, ownedElements, freeGears } = game.s.profile, price = game.nextElementPrice, fusion = data.combat.fusions.find(f => f.pair.every(id => loadout.includes(id)));
     // Sound and water join the shelf once chapter 1 is beaten (shown locked until then; hidden while still being made).
@@ -738,13 +775,13 @@ try {
         : button(price === 0 ? '무료로 달기' : `${ico('gear')} ${price} 구매`, 'buy-element', `data-id="${element.id}" ${freeGears < price ? 'disabled' : ''}`, 'pick');
       // Each part shows its two skills as icon rows, with the numbers that matter when choosing.
       const moves = skills.map(skill => `<li><img src="${skillIcon(skill.id)}" alt=""><span><b>${skill.name}</b><small>피해 ${skill.totalDirectDamage} · 축전 ${skill.energyCost}</small><small>대기시간 ${skill.cooldown}초</small></span></li>`).join('');
-      return `<article class="reward-card element-card ${picked ? 'picked' : ''} ${owned ? 'owned' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${owned ? `<span class="owned-badge">${picked ? '장착 중' : '보유'}</span>` : ''}<div class="element-head">${elementIcon(element.id)}<div><h3>${element.name}</h3><span class="device">${element.device}</span></div></div><span class="element-role">${element.role}</span><ul class="element-skills">${moves}</ul>${action}</article>`;
+      return `<article class="reward-card element-card ${picked ? 'picked' : ''} ${owned ? 'owned' : 'unowned'}" style="--accent:${data.slice.presentation.colors[element.id]}">${owned ? `<span class="owned-badge">${picked ? '장착 중' : '보유'}</span>` : !ownedElements.length && element.id === FIRST_PICK ? '<span class="owned-badge recommend">모루 추천</span>' : ''}<div class="element-head">${elementIcon(element.id)}<div><h3>${element.name}</h3><span class="device">${element.device}</span></div></div><span class="element-role">${element.role}</span><ul class="element-skills">${moves}</ul>${action}</article>`;
     });
     // The shelf always has ELEMENT_SHELF places: the ones not on it yet (still being made, or not made at all) stand as
     // black cards with a lock, so the player sees more is coming.
     const blank = `<article class="reward-card element-card future" aria-label="아직 없는 속성 부품">${ico('lock')}<b>???</b></article>`;
     const cards = [...shown, ...Array(Math.max(0, ELEMENT_SHELF - shown.length)).fill(blank)].join('');
-    const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 하나를 고르세요.'
+    const note = !ownedElements.length ? '첫 속성 부품은 모루가 무료로 달아 줍니다. 처음이라면 휘두르고 터뜨리기만 해도 되는 불을 권합니다.'
       : `산 부품은 계속 남고, 원정에는 2개까지 장착합니다.${price ? ` 다음 부품은 ${ico('gear')} ${price}입니다.` : ''}`;
     return panel(`<div class="panel-header"><div><h2>모루의 속성 부품</h2></div><div class="header-stats"><strong>장착 ${loadout.length} / 2</strong><strong title="보유 자유 톱니">${ico('gear')} ${freeGears}</strong></div></div><p>${note}</p><div class="reward-grid element-grid">${cards}</div><p>${fusion ? `융합: <strong>${fusion.name}</strong> · ${data.slice.presentation.codex.fusions[fusion.id] || fusion.effect}` : '두 속성을 장착하면 융합 기술이 열립니다.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${game.s.mode === 'practice' ? '' : button('뒷마당에서 시험하기', 'practice', loadout.length ? '' : 'disabled')}</div>`, 'wide element-panel');
   }
@@ -940,12 +977,12 @@ try {
     const chapter = shownChapter(), info = chapterOf(data.slice, chapter), many = chapterList(data.slice).length > 1;
     askRecords(chapter);
     // Only the levels this chapter offers (chapter 3 has no easy); the percentages still compare with normal.
-    const { default: base } = data.slice.difficulty, levels = chapterLevels(data.slice, chapter), normal = data.slice.difficulty.levels.find(level => level.id === base), last = game.s.profile.lastDifficulty || base;
+    const { default: base } = data.slice.difficulty, levels = chapterLevels(data.slice, chapter), normal = data.slice.difficulty.levels.find(level => level.id === base), chosen = game.s.profile.lastDifficulty, last = chosen || base;
     const versus = (value, of) => { const change = Math.round((value / of - 1) * 100); return change ? `${change > 0 ? '+' : '−'}${Math.abs(change)}%` : '기준'; };
-    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
+    const cards = levels.map(level => `<article class="reward-card difficulty-card${level.id === last ? ' last' : ''}" style="--accent:${DIFFICULTY_COLORS[level.id] || '#9fae83'}">${chosen && level.id === last ? '<span class="rarity">지난번 선택</span>' : ''}<span class="card-label">난이도</span><h3>${level.name}</h3><p>${escapeHTML(level.description)}</p><dl class="difficulty-values"><dt>적·보스 체력과 공격력</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>방의 장애물</dt><dd>${versus(level.scale, normal.scale)}</dd><dt>처치 보상</dt><dd>${versus(level.loot, normal.loot)}</dd></dl>${recordBlock(level.id, chapter)}${button(`${level.name}으로 출발${numberKey(levels.indexOf(level))}`, 'depart', `data-id="${level.id}" data-chapter="${chapter}"`, 'pick')}</article>`).join('');
     const harder = info.scale && info.scale !== 1 ? ` 이 장의 적은 1장보다 ${Math.round((info.scale - 1) * 100)}% 강하고, 보상은 ${Math.round(((info.loot || 1) - 1) * 100)}% 많습니다.` : '';
     const about = many ? `<p class="chapter-about"><b>${info.number}장 · ${escapeHTML(info.name)}</b> ${escapeHTML(info.description || '')}${harder}</p>` : '';
-    return panel(`<h2>${many ? '어디로, 어떤 난이도로 떠날까요?' : '어떤 난이도로 떠날까요?'}</h2>${chapterTabs(chapter)}${about}<p>원정 중에는 장과 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p>${(() => { const oil = data.slice.potions?.list.find(p => p.id === game.s.profile.potion); return oil ? `<p class="notice">${ico(oil.icon)} 출발할 때 <b>${oil.name}</b>을 마십니다: ${oil.description}</p>` : ''; })()}<div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
+    return panel(`<h2>${many ? '어디로, 어떤 난이도로 떠날까요?' : '어떤 난이도로 떠날까요?'}</h2>${chapterTabs(chapter)}${about}${firstLook('depart', '처음이라면 보통을 권합니다. 쓰러져도 모은 자유 톱니는 남고, 난이도는 떠날 때마다 다시 고릅니다.') || '<p>원정 중에는 장과 난이도를 바꿀 수 없습니다. 퍼센트는 보통과 비교한 값입니다.</p>'}${(() => { const oil = data.slice.potions?.list.find(p => p.id === game.s.profile.potion); return oil ? `<p class="notice">${ico(oil.icon)} 출발할 때 <b>${oil.name}</b>을 마십니다: ${oil.description}</p>` : ''; })()}<div class="reward-grid">${cards}</div><div class="actions">${button('마을에 남기', 'close-panel')}</div>`, 'wide difficulty');
   }
   /** Nasa's oil shelf: one bottle for the next expedition, bought with free gears; another one swaps it (the first refunded). */
   function potionsPanel() {
@@ -961,7 +998,7 @@ try {
   function rewardsPanel() {
     return panel(`<h2>어떤 가능성을 조립할까요?</h2><p>이 구간의 자유 톱니와 동전은 이미 받았습니다. 부품을 하나 더 고르세요.</p><div class="reward-grid">${game.s.run.rewardChoices.map((reward, i) => {
       const info = describeReward(reward), tier = game.rewardTier(reward), replace = reward.kind === 'element' && game.slots.length >= 2;
-      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button('선택', 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
+      return `<article class="reward-card tier-${tier}" style="--accent:${info.color || KIND_COLORS[reward.kind] || '#9fae83'};--tint:${info.color ? info.color + '22' : '#e9eddc'}"><span class="rarity">${TIER_NAMES[tier]}</span>${info.skills ? `<span class="reward-skills">${info.skills.map(id => `<img class="px-icon" src="${skillIcon(id)}" alt="">`).join('')}</span>` : info.art ? `<span class="reward-icon">${elementIcon(info.art, 'tile-art')}</span>` : info.icon ? `<span class="reward-icon">${info.icon}</span>` : ''}<span class="card-label">${info.label}</span><h3>${info.name}</h3><p>${info.description}</p><div class="values">${info.value}</div>${replace ? `<p class="replace-note">속성 칸이 다 찼습니다. 하나를 빼고 넣습니다.</p><div class="replace">${game.slots.map((slot, j) => button(`${data.combat.elements.find(e => e.id === slot.element).name} 빼기`, 'reward', `data-index="${i}" data-replacement="${j}"`)).join('')}</div>` : button(`선택${numberKey(i)}`, 'reward', `data-index="${i}"`, 'pick')}${button(game.s.run.rerolledCards?.[i] ? '다시 뽑음' : '이 카드 다시 뽑기', 'reroll-card', `data-index="${i}" ${game.s.run.rerolledCards?.[i] ? 'disabled' : ''}`, 'quiet reroll-one')}</article>`;
     }).join('')}</div><p class="notice aside">속성과 부품은 이번 원정에만 남고, 자유 톱니는 귀환해도 남습니다.</p>`, 'wide rewards');
   }
   /** When this device last wrote its save, for the summaries shown before one save replaces another. */
@@ -1036,6 +1073,48 @@ try {
     const arrowArt = `<span class="cs-mods">${cap(a.dodge, 'skill')}${cap(a.attack, 'skill')}${cap(a.fusion, 'skill')}</span><span class="cs-keys">${cap(a.skill0, 'skill')}${cap(a.skill1, 'skill')}${cap(a.skill2, 'skill')}${cap(a.skill3, 'skill')}${cap('', 'blank')}${cap(a.up, 'move')}${cap('', 'blank')}${cap('', 'blank')}${cap(a.left, 'move')}${cap(a.down, 'move')}${cap(a.right, 'move')}${cap('', 'blank')}</span>`;
     return panel(`<h2>어떻게 움직일까요?</h2><p>손에 맞는 쪽을 고르세요. 고른 방식으로 튜토리얼이 이어집니다.</p><div class="cs-cards">${card('keys', '키보드로 걷기', keyboardArt, [['이동', [k.up, k.left, k.down, k.right].map(keyName).join(' ')], ['기술', skills(k)], ['렌치', '왼쪽 클릭'], ['융합', '오른쪽 클릭'], ['회피', keyName(k.dodge)]])}${card('mouse', '마우스로 걷기', mouseArt, [['이동', '오른쪽 클릭 (누르면 따라감)'], ['기술', skills(m)], ['렌치', '왼쪽 클릭'], ['융합', keyName(m.fusion)], ['회피', keyName(m.dodge)]])}${card('arrows', '방향키로 걷기', arrowArt, [['이동', [a.up, a.left, a.down, a.right].map(keyName).join(' ')], ['기술', skills(a)], ['렌치', `${keyName(a.attack)} (자동 조준)`], ['융합', keyName(a.fusion)], ['회피', keyName(a.dodge)]])}</div><div class="cs-common">세 방식 공통 <span><b>${keyName(k.interact)}</b> 말 걸기</span><span><b>Esc</b> 멈춤</span></div><div class="actions cs-foot"><p class="notice">← → 방향키로 고르고 Enter로 시작해요. 환경설정 › 조작 키에서 언제든 바꿀 수 있어요.</p>${button('이걸로 시작', 'controls-start', '', 'primary')}</div>`, 'wide controls-choice');
   }
+  /**
+   * A sheet's one-line tip, the first time it opens (review 2026-11-24: 조율판 and the departure board said nothing to a
+   * first-timer). Kept in profile.tips like the fight's tips, and shown for as long as that first opening lasts.
+   */
+  function firstLook(id, text) {
+    const told = game.s.profile.tips ||= [];
+    if (!told.includes(id)) { told.push(id); game.save(); firstLookOpen = id; }
+    return firstLookOpen === id ? `<p class="notice first-look keep"><b>처음 안내</b>${text}</p>` : '';
+  }
+  /** The ledger tab of the pause sheet: the chapter seals, the bosses F2 has unwound, and the papers she carried home. */
+  function ledgerBody() {
+    const profile = game.s.profile, seen = profile.bossTalks || [], records = profile.bossRecords || [], chapters = shownChapters();
+    const bossName = id => data.combat.bosses.find(b => b.id === id)?.name || id;
+    // Every chapter's bosses in order; Orden's two fights are one entry.
+    const bosses = chapters.flatMap(chapter => [...new Set(chapterRooms(data.slice, chapter.id).filter(room => room.boss).map(room => (room.boss === 'ordenFinal' ? 'orden' : room.boss)))].map(id => ({ id, chapter })));
+    const done = id => (id === 'orden' ? chapterCleared(profile, 'clock-tower') : records.includes(id)), met = id => done(id) || seen.includes(id);
+    const replays = game.s.mode === 'hub';
+    const bossCards = bosses.map(({ id, chapter }) => {
+      const face = talkFaces?.[LEDGER_FACES[id]], meet = BOSS_TALKS[id], after = AFTER_TALKS[id] || LEDGER_AFTER[id];
+      const state = done(id) ? 'done' : met(id) ? 'met' : 'unknown';
+      const words = state === 'done' ? `<q>${id === 'orden' ? '그럼 고치면 돼. 버리지 말고.' : UNWIND_SHEETS[id]?.[0] || '태엽을 다시 감았습니다.'}</q>` : `<span class="waiting">${state === 'met' ? (id === 'orden' ? '아직 멈추지 못했습니다' : '아직 풀어 주지 못했습니다') : '아직 만나지 못했습니다'}</span>`;
+      const again = replays ? [meet && seen.includes(id) ? button('만남 보기', 'ledger-talk', `data-id="${meet}" title="첫 만남 이야기를 다시 봅니다"`) : '', after && seen.includes(after) ? button('그 뒤 보기', 'ledger-talk', `data-id="${after}" title="싸움이 끝난 뒤의 이야기를 다시 봅니다"`) : ''].filter(Boolean).join('') : '';
+      return `<article class="ledger-boss ${state}"><span class="face">${face ? `<img src="${face}" alt="">` : ''}</span><b>${state === 'unknown' ? '???' : escapeHTML(bossName(id))}</b><small>${chapter.number}장 · ${escapeHTML(chapter.name)}</small>${words}${again ? `<div class="replay">${again}</div>` : ''}</article>`;
+    }).join('');
+    const papers = LEDGER_PAPERS.map(paper => {
+      const have = profile.blueprints?.includes(paper.id), chapter = bosses.find(b => b.id === paper.from)?.chapter;
+      return have ? `<article class="ledger-record">${ico('map')}<div><b>${paper.name}<small>${escapeHTML(bossName(paper.from))}에게서</small></b><p>${paper.text}</p></div></article>`
+        : `<article class="ledger-record locked">${ico('lock')}<div><b>???<small>${chapter ? `${chapter.number}장 보스에게서` : ''}</small></b><p>아직 받지 못한 기록입니다.</p></div></article>`;
+    }).join('');
+    // A chapter's seal is stamped when its last boss falls; under it, each difficulty's fastest clear and how many.
+    const seals = chapters.map(chapter => {
+      const stamped = chapterCleared(profile, chapter.id), kept = chapter.id === FIRST_CHAPTER ? profile.records : profile.chapterRecords?.[chapter.id];
+      const rows = chapterLevels(data.slice, chapter.id).map(level => { const r = kept?.[level.id]; return `<li>${escapeHTML(level.name)} ${r?.clears ? `<strong>${formatClock(r.best)}</strong> · ${r.clears}회` : '—'}</li>`; }).join('');
+      const hidden = chapter.id === 'clock-tower' && seen.includes('council') ? '<small class="seal-extra">숨은 결말을 보았습니다</small>' : '';
+      return `<article class="ledger-seal${stamped ? ' stamped' : ''}"><span class="seal" aria-label="${stamped ? '인장 찍힘' : '인장 없음'}">${chapter.number}</span><b>${chapter.number}장 · ${escapeHTML(chapter.name)}</b><ul>${rows}</ul>${hidden}</article>`;
+    }).join('');
+    const count = (have, of) => `<b>${have}</b>/${of}`;
+    return `<div class="ledger"><p class="ledger-sum"><b>${escapeHTML(callName(profile))}</b>의 수리 장부<span>인장 ${count(chapters.filter(c => chapterCleared(profile, c.id)).length, chapters.length)}</span><span>마주한 태엽 ${count(bosses.filter(b => met(b.id)).length, bosses.length)}</span><span>설계도와 기록 ${count(LEDGER_PAPERS.filter(p => profile.blueprints?.includes(p.id)).length, LEDGER_PAPERS.length)}</span></p>`
+      + `<section class="ledger-part"><h3>장 인장</h3><div class="ledger-seals">${seals}</div></section>`
+      + `<section class="ledger-part"><h3>마주한 태엽</h3>${replays ? '' : '<p class="ledger-note">이야기는 마을에서 다시 볼 수 있습니다.</p>'}<div class="ledger-bosses">${bossCards}</div></section>`
+      + `<section class="ledger-part"><h3>설계도와 기록</h3><div class="ledger-records">${papers}</div></section></div>`;
+  }
   function settingsPanel() {
     const settings = game.s.profile.settings, map = bindings();
     const tab = (id, label) => button(label, 'settings-tab', `data-id="${id}" aria-pressed="${settingsTab === id}"`, settingsTab === id ? 'tab on' : 'tab');
@@ -1045,10 +1124,10 @@ try {
     const keys = `<div class="actions control-scheme"><span>이동 방식</span>${schemeButton('keys', '키보드 이동 (WASD)')}${schemeButton('mouse', '마우스 이동 (우클릭)')}${schemeButton('arrows', '방향키 (Space 공격)')}</div><p>바꿀 동작을 누른 다음 새 키를 입력하세요. Esc는 취소합니다.</p><div class="binding-list">${Object.keys(SCHEME_KEYS[now]()).map(key => `<label class="binding">${bindingNames[key]}${button(bindingTarget === key ? '입력…' : keyName(map[key]), 'rebind', `data-key="${key}"`)}</label>`).join('')}</div><p class="notice">${mouseNote}<br>패드: 왼쪽 스틱 이동, 오른쪽 스틱 조준, RB 렌치, B 회피, X/Y/LB/LT 기술, RT 융합, A 말 걸기, View 지도, Menu 멈춤</p><div class="actions">${button('키 기본값으로', 'reset-bindings')}</div>`;
     // A touch screen moves with its on-screen pad: there are no keys to change, so it has no keys tab.
     const onRun = !onTitle && !!game.s.run, current = (settingsTab === 'run' && !onRun) || (settingsTab === 'keys' && isTouch) ? 'general' : settingsTab;
-    const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
+    const body = current === 'run' ? runPicks() : current === 'stats' && !onTitle ? statsBody() : current === 'ledger' && !onTitle && game.s.profile.registered ? ledgerBody() : current === 'keys' ? keys : current === 'devices' ? transferBlock() : general;
     // Paused on an expedition: how long it has run so far (2026-11-11), the clock the clear records use.
     const runClock = onRun ? `<span class="run-clock">${ico('clock')} 이번 원정 ${formatClock(game.s.run.elapsed || 0)}</span>` : '';
-    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2>${runClock}</div><div class="header-actions">${onRun ? button('원정 포기', 'abandon', '', 'danger') : ''}${button('닫기', 'resume', '', 'primary')}</div></div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
+    return panel(`<div class="panel-header"><div><h2>${onTitle ? '환경설정' : '잠시 멈춤'}</h2>${runClock}</div><div class="header-actions">${onRun ? button('원정 포기', 'abandon', '', 'danger') : ''}${button('닫기', 'resume', '', 'primary')}</div></div><div class="codex-tabs">${onRun ? tab('run', '이번 원정') : ''}${!onTitle && game.s.profile.registered ? tab('stats', 'F2 정보') + tab('ledger', '수리 장부') : ''}${tab('general', '설정')}${isTouch ? '' : tab('keys', '조작 키')}${tab('devices', '다른 기기와 연동')}${onTitle ? '' : button('속성 도감', 'codex', '', 'tab')}</div>${body}${storageError ? `<p class="error">${escapeHTML(storageError)}</p>` : ''}`, 'wide settings');
   }
 
   /** One plain sentence per move, then the numbers and what it leaves on the enemy, as small tags. */
@@ -1138,6 +1217,7 @@ try {
     // (The open sheet is part of it: in the back yard the mode stays 'practice' with or without one, 2026-11-22.)
     const key = `${mode}:${s.run?.node}:${s.panel || ''}`;
     if (!force && key === overlayKey) return;
+    if (key !== overlayKey) { overlaySince = performance.now(); firstLookOpen = null; }
     // Redrawing the same sheet (buying a rank, toggling a part) keeps every list where the player had scrolled it.
     const scrolled = key === overlayKey ? scrollPlaces($('overlay')) : null;
     overlayKey = key;
@@ -1157,11 +1237,11 @@ try {
     // The night market's shop and the travelling merchant before the boss sell the same things; each has its own once-only list.
     // The travelling merchant waits before each chapter's boss (slice.json chapters[].merchant names who and where).
     const merchant = game.chapter.merchant || { boss: '브라스', place: '브라스의 광장', title: '행진 전에, 하나 챙겨 가.' };
-    if (mode === 'shop' || mode === 'merchant') html = panel(`${mode === 'merchant' ? `<h2>${merchant.title}</h2><p>떠돌이 수리상이 ${merchant.place} 앞에서 짐을 풀었습니다. 동전은 이번 원정이 끝나면 사라지니 여기서 쓰세요. 남는 동전은 자유 톱니로 바꿔 두면 마을에 가져갈 수 있습니다.</p>` : '<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p>'}<p class="notice">${ico('coin')} 남은 동전 ${s.run.coins}</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map(id => {
+    if (mode === 'shop' || mode === 'merchant') html = panel(`${mode === 'merchant' ? `<h2>${merchant.title}</h2><p>떠돌이 수리상이 ${merchant.place} 앞에서 짐을 풀었습니다. 동전은 이번 원정이 끝나면 사라지니 여기서 쓰세요. 남는 동전은 자유 톱니로 바꿔 두면 마을에 가져갈 수 있습니다.</p>` : '<h2>이것도, 아직 쓸 만하지.</h2><p>동전은 이번 원정에만 쓰입니다. 필요한 것부터 골라요.</p>'}<p class="notice">${ico('coin')} 남은 동전 ${s.run.coins}</p><div class="reward-grid">${['heal', 'skillLevel', 'persistentGears'].map((id, i) => {
       const item = data.progression.economy.shop.find(i => i.id === id), sold = item.oncePerShop && (mode === 'merchant' ? s.run.merchantBought || [] : s.run.shopBought).includes(id);
       const unavailable = sold || s.run.coins < item.cost || (id === 'heal' && game.p.hp >= game.p.maxHp) || (id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel));
       const reason = sold ? '구매 완료' : id === 'heal' && game.p.hp >= game.p.maxHp ? '체력 가득' : id === 'skillLevel' && !game.slots.some(slot => slot.level < data.combat.balance.skillMaxLevel) ? '모두 최고 단계' : s.run.coins < item.cost ? '동전 부족' : '구매';
-      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `최대 체력의 ${Math.round(item.share * 100)}%(최소 ${item.min}, 지금 ${game.healShare(item.share, item.min)}) 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(reason, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
+      return `<article class="reward-card"><span class="reward-icon">${ico({ heal: 'reward-repair', skillLevel: 'reward-skill-level', persistentGears: 'reward-gear-pouch' }[id])}</span><h3>${{ heal: '응급 수리', skillLevel: '정밀 조율', persistentGears: '자유 톱니' }[id]}</h3><p>${{ heal: `최대 체력의 ${Math.round(item.share * 100)}%(최소 ${item.min}, 지금 ${game.healShare(item.share, item.min)}) 회복 · 상점당 한 번`, skillLevel: '최고 단계가 아닌 첫 속성의 기술 단계 +1', persistentGears: `자유 톱니 ${item.amount}개 · 귀환해도 남음 · 상점당 한 번` }[id]}</p><div class="values">${ico('coin')} ${item.cost} 동전</div>${button(`${reason}${unavailable ? '' : numberKey(i)}`, 'shop-buy', `data-id="${id}" ${unavailable ? 'disabled' : ''}`, 'pick')}</article>`;
     }).join('')}</div><div class="actions">${mode === 'merchant' ? button(`${merchant.boss}에게 가기`, 'merchant-leave', '', 'primary') : button('닫기', 'close-panel', '', 'primary')}</div>`, 'side shop');
     if (mode === 'unwind') {
       const boss = game.room.boss, verb = UNWIND_VERBS[boss] || UNWIND_VERBS.collectorRoco, [title, line] = UNWIND_SHEETS[boss] || UNWIND_SHEETS.collectorRoco;
@@ -1177,7 +1257,7 @@ try {
     if (mode === 'returned' && s.result?.reason === 'clear' && s.result.chapter === 'clock-tower') html = towerEndSheet(s.result, 'acknowledge', '마을로 나가기');
     else if (mode === 'returned') {
       const result = s.result;
-      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>기술 단계·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${chapterRooms(data.slice, result.chapter).length}</b>${escapeHTML((chapterRooms(data.slice, result.chapter)[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}</div>`, 'side result');
+      html = panel(`<h2>${result.reason === 'defeat' ? '고치면 돼. 버리지 말고.' : result.reason === 'clear' ? '네 걸음으로 돌아왔구나.' : '돌아오는 것도 네 선택이지.'}</h2><p>${result.reason === 'defeat' ? '안전핀이 코어를 지켰고, 모루가 같은 몸을 다시 조립했습니다.' : '확보한 자유 톱니와 기록은 작업대에 남았습니다.'}<br>기술 단계·임시 부품·동전·축전은 다음 원정에서 새로 시작합니다.</p><div class="result-stats"><span><b>${result.node} / ${chapterRooms(data.slice, result.chapter).length}</b>${escapeHTML((chapterRooms(data.slice, result.chapter)[result.node - 1]?.name || '도달 구간').replace(/ [A-Z]$/, ''))}</span><span><b>${result.elapsed >= 1 ? formatTime(result.elapsed) : '—'}</b>원정 시간</span><span><b>+${result.baseGears}</b>자유 톱니</span></div>${result.elements?.length ? `<p class="result-build">함께 간 속성 ${result.elements.map(id => elementIcon(id, 'inline-element')).join('')}</p>` : ''}${result.bonus ? `<p>첫 귀환 보너스 <strong>${ico('gear')} +${result.bonus}</strong>(한 번만)</p>` : ''}<p class="result-next">${game.s.profile.freeGears >= 10 ? `자유 톱니 ${ico('gear')} ${game.s.profile.freeGears}개가 있습니다. 모루의 조율판에서 체력이나 공격력을 올려 보세요.` : '조금 더 모으면 모루의 조율판에서 능력을 올릴 수 있습니다.'}</p><div class="actions">${button('마을로 나가기', 'acknowledge', '', 'primary')}${result.reason === 'clear' ? '' : button('바로 다시 출발', 'redepart')}</div>`, 'side result');
     }
     if (mode === 'pause') html = settingsPanel();
     if (mode === 'codex') html = codexPanel();
@@ -1218,7 +1298,7 @@ try {
     return {
       walk: `${moveWord} 노란 표시까지 걸어가세요`,
       attack: `${isTouch ? '렌치 버튼으로' : keys.attack ? `${keyName(keys.attack)} 키로` : '좌클릭으로'} 경비를 때리세요 ${lesson.state?.hits ?? 0} / ${HITS_TO_LEARN}`,
-      dodge: `경비 머리 위에 ! 가 뜨면 ${isTouch ? '회피 버튼으로' : `${keyName(keys.dodge)} 키로`} 피하세요`,
+      dodge: `바닥이 붉게 물들면 ${isTouch ? '회피 버튼으로' : `${keyName(keys.dodge)} 키로`} 피하세요`,
       door: '노란 표시로 걸어 나가세요',
       moru: '노란 화살표를 따라 모루에게 걸어가세요'
     }[lesson.step] || '';
@@ -1259,6 +1339,10 @@ try {
   }
   $('skills').addEventListener('pointerover', e => { const element = e.target.closest('.slot'); if (element && !isTouch) showSlotTip([...$('skills').children].indexOf(element)); });
   $('skills').addEventListener('pointerleave', () => { tipSlot = -1; $('skill-tip').hidden = true; });
+  // The marks under F2's bars explain themselves on a pointer's hover, and for a few seconds on a tap.
+  $('effects').addEventListener('pointerover', e => { const mark = e.target.closest('.effect'); if (mark && e.pointerType === 'mouse') showEffectTip([...$('effects').children].indexOf(mark)); });
+  $('effects').addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideEffectTip(); });
+  $('effects').addEventListener('pointerdown', e => { const mark = e.target.closest('.effect'); if (!mark || e.pointerType === 'mouse') return; e.stopPropagation(); showEffectTip([...$('effects').children].indexOf(mark)); clearTimeout(effectTipTimer); effectTipTimer = setTimeout(hideEffectTip, 2600); });
   /** Health fractions where a boss changes phase: where its later patterns unlock, and where Brass adds a march lane. */
   function bossPhaseMarks(ai) {
     const marks = (ai.phasePatterns || []).map(p => p.below).concat(ai.phaseTwoHpFraction ?? []);
@@ -1286,13 +1370,62 @@ try {
     const left = Math.max(0, Math.ceil(b.phaseAt - game.s.time)), watches = `회중시계 ${b.hearts.filter(h => h.broken).length}/${b.hearts.length}`;
     return b.phase === 'stop' ? `${watches} · 멈춤 ${left}초` : b.phase === 'resume' ? `${watches} · 시간이 다시 흐릅니다` : `${watches} · 시간이 멈춥니다`;
   }
+  /**
+   * One-time tips in the fight (review 2026-11-24: 축전, the skills and the fusion were taught nowhere in play): the first
+   * time the charge pays for a skill, and the first time the fusion is ready. Each is shown once per save (profile.tips).
+   */
+  function teachInPlay() {
+    const s = game.s, p = game.p, profile = s.profile;
+    if (screen || s.mode !== 'combat' || !game.active) return;
+    const told = profile.tips ||= [], tell = (id, text) => { told.push(id); game.notify(text); s.notices.at(-1).until = s.time + 6; game.save(); };
+    const keys = bindings(), entries = game.skillSlots;
+    if (!told.includes('energy')) {
+      const i = entries.findIndex(entry => p.energy >= entry.skill.energyCost && !(p.cooldowns?.[entry.skill.id] > s.time));
+      if (i >= 0) return tell('energy', isTouch ? `축전이 찼습니다 · 오른쪽 기술 버튼으로 ${entries[i].skill.name} 써 보기` : `축전이 찼습니다 · ${keyName(keys['skill' + i])} 키로 ${entries[i].skill.name} 써 보기`);
+    }
+    const fusion = game.fusion;
+    if (fusion && !told.includes('fusion') && p.energy >= fusion.energyCost && !(p.fusionReady > s.time))
+      tell('fusion', isTouch ? `융합 준비 완료 · 융합 버튼으로 ${fusion.name}` : `융합 준비 완료 · ${keys.fusion ? keyName(keys.fusion) : '우클릭'}으로 ${fusion.name}`);
+  }
+  /**
+   * What is on F2 (game.playerEffects), as small marks under her bars (review 2026-11-24): the oil, perks and traits of
+   * the expedition, then the timed ones, red for what hurts her, each timed one with a draining line.
+   */
+  function showEffects() {
+    const row = $('effects'), effects = game.playerEffects, key = effects.map(e => `${e.id}${e.stacks || ''}`).join();
+    heldEffects = effects;
+    if (row.dataset.key !== key) {
+      row.dataset.key = key;
+      row.innerHTML = effects.map(e => `<span class="effect ${e.kind}">${e.element ? elementIcon(e.element, 'ico') : ico(e.icon || PERK_ICONS[e.id] || EFFECT_ICONS[e.id] || 'spark')}${e.stacks ? `<b>${e.stacks}</b>` : ''}${e.total ? '<i></i>' : ''}</span>`).join('');
+      if (tipEffect >= 0) showEffectTip(tipEffect);
+    }
+    put(row, 'hidden', !effects.length || !!screen);
+    effects.forEach((e, i) => { const bar = e.total && row.children[i]?.querySelector('i'); if (bar) put(bar, 'width', `${Math.max(0, Math.min(1, e.left / e.total)) * 100}%`); });
+  }
+  /** A mark's name and what it does, in the skill bar's tooltip set under the mark. */
+  function showEffectTip(index) {
+    const tip = $('skill-tip'), element = $('effects').children[index], effect = heldEffects[index];
+    tipEffect = element && effect ? index : -1;
+    if (tipEffect < 0) { tip.hidden = true; tip.classList.remove('below'); return; }
+    tip.innerHTML = `<b>${escapeHTML(effect.name)}</b>${escapeHTML(effect.text)}<small>${effect.total ? `${Math.ceil(effect.left)}초 남음` : '이번 원정 동안'}</small>`;
+    const hud = $('hud').getBoundingClientRect(), box = element.getBoundingClientRect(), scale = hud.width / 1120;
+    tip.style.left = `${Math.min(1120 - 160, Math.max(160, (box.left + box.width / 2 - hud.left) / scale))}px`;
+    tip.style.top = `${(box.bottom - hud.top) / scale + 8}px`;
+    tip.classList.add('below'); tip.hidden = false;
+  }
+  function hideEffectTip() { if (tipEffect < 0) return; tipEffect = -1; $('skill-tip').hidden = true; $('skill-tip').classList.remove('below'); }
   function updateHUD() {
+    teachInPlay();
     const s = game.s, p = game.p, maxEnergy = data.combat.player.maxEnergy, slots = hudSlots();
+    // Charge is spent only where skills can be used (an expedition, the back yard, the scrapyard lesson). In the village
+    // every skill stood greyed out with a red price, which read as something broken (review 2026-11-24).
+    const spends = !!s.run || s.mode === 'practice' || s.mode === 'intro';
     put($('hp-fill'), 'width', `calc(${Math.max(0, p.hp / p.maxHp) * 100}% - 4px)`);
     put($('hp-text'), 'text', `${Math.ceil(p.hp)} / ${p.maxHp}`);
     put($('energy-fill'), 'width', `calc(${p.energy / maxEnergy * 100}% - 4px)`);
     put($('energy-text'), 'text', `축전 ${Math.floor(p.energy)}`);
     put($('gears'), 'text', s.profile.freeGears);
+    showEffects();
     // The boss bar: shown while a boss is in the room, marked where each of its phases begins.
     const boss = s.enemies.find(e => e.boss && e.hp > 0);
     put($('boss-bar'), 'hidden', !boss); $('toast').classList.toggle('below-boss', !!boss);
@@ -1324,7 +1457,7 @@ try {
       put(element.querySelector('.left'), 'text', remaining > 0 ? remaining.toFixed(1) : '');
       element.classList.toggle('ready', !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost);
       // A skill or the fusion without enough charge greys out the same way.
-      element.classList.toggle('short', !!skill?.energyCost && p.energy < skill.energyCost);
+      element.classList.toggle('short', spends && !!skill?.energyCost && p.energy < skill.energyCost);
       // A skill Roco has taken shows a padlock until it is won back.
       element.classList.toggle('locked', !!slot.locked);
     });
@@ -1352,7 +1485,7 @@ try {
     }
     if (isTouch) touch.update(slots.map(slot => {
       const { skill } = slot, { remaining, total } = slotCooldown(slot);
-      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!slot.locked || !!skill?.energyCost && p.energy < skill.energyCost };
+      return { art: slot.icon || skill?.id, cost: skill?.energyCost || 0, share: Math.min(1, remaining / total), left: remaining > 0 ? Math.ceil(remaining) : '', ready: !!slot.fusion && !!skill && !remaining && p.energy >= skill.energyCost, short: !!slot.locked || spends && !!skill?.energyCost && p.energy < skill.energyCost };
     }));
     const hint = lessonHint();
     put($('hint'), 'text', hint);
@@ -1490,14 +1623,17 @@ try {
     if (name === 'practice') { game.closePanel(); game.enterPractice(); }
     if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
+    if (name === 'tune-down') game.tune(d.row, 'down');
     if (name === 'reroll-card') { bought = game.rerollRewardCard(Number(d.index)); }
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
     if (name === 'merchant-leave') game.leaveMerchant();
     if (name === 'unwind') unwindBoss();
     if (name === 'nickname-save') { saveNickname(); return; }
-    if (name === 'return-complete') game.returnToHub('clear');
+    if (name === 'return-complete') finishChapter();
     if (name === 'acknowledge') game.acknowledgeReturn();
+    // Straight back to the departure board for the same chapter, without the walk to the south gate (review 2026-11-24).
+    if (name === 'redepart') { departChapter = game.s.result?.chapter || null; if (game.acknowledgeReturn()) game.s.panel = 'difficulty'; }
     if (name === 'abandon') screen = 'confirmAbandon';
     // Back to the title: everything is saved first, and 이어하기 picks up exactly here.
     if (name === 'to-title') { game.save(); sfx('click'); openTitle(); return; }
@@ -1509,6 +1645,7 @@ try {
     if (name === 'codex-tab') codexTab = d.id;
     if (name === 'codex-filter') codexFilter = d.id;
     if (name === 'settings-tab') settingsTab = d.id;
+    if (name === 'ledger-talk') { if (game.s.mode !== 'hub' || !data.dialogue.scripts[d.id]) return; sfx('click'); await talk(d.id); pause(); return; }
     if (name === 'map-stop') mapPick = d.id;
     if (name === 'rebind') bindingTarget = d.key;
     if (name === 'reset-bindings') { game.s.profile.settings[CHANGED_KEYS[scheme()]] = {}; game.save(); }
@@ -1569,21 +1706,65 @@ try {
   // Drawn icons rather than ⚙ and ◈, which phones set at different sizes (or as colour emoji).
   for (const span of document.querySelectorAll('.hud-wallet [data-icon]')) span.insertAdjacentHTML('afterbegin', TOOL_ICONS[span.dataset.icon]);
 
+  /** Lines said lately, so the same resident (or the next) seldom repeats one. */
+  const residentRecent = [];
+  // Who F2 spoke to last: talking to the next one closes that bubble, so two neighbours never cover each other (2026-11-24).
+  let residentLast = null;
+  /**
+   * A resident answers in a bubble over the head (2026-11-24, the review: the 19 residents never spoke). The line comes
+   * from dialogue.json residents: by how far the story has gone and the resident's look (baker, mail, festival, ...), or
+   * the waiting line of those at Moru's after the liberation; held by the bell, they only keep smiling.
+   */
+  function chatResident(who) {
+    const lines = data.dialogue.residents, stage = game.villageStage, director = renderer.npcDirector;
+    if (!lines || !director) return;
+    const held = who.resident && director.stopped && stage < 3;
+    // A rest stop speaks for itself (dialogue.json residents.places, 2026-11-24): the night market's walkers by the crowd
+    // they walk in, the reject store's workers by their talk; a stage without lines takes the one before it.
+    const place = lines.places?.[who.talk || (who.resident && game.s.mode === 'shop' ? game.village?.crowd : '')];
+    const staged = place && [...place.stages.slice(0, stage + 1)].reverse().find(group => group?.length);
+    const pool = place ? place.characters?.[who.character] || staged || place.stages.find(group => group?.length) || [] : who.talk ? lines[who.talk] || [] : [...(lines.stages[stage]?.common || []), ...(lines.stages[stage]?.[lines.roles[who.character]] || [])];
+    const fresh = pool.filter(line => !residentRecent.includes(line)), pick = held ? '(웃는 얼굴 그대로 굳어 있다)' : (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length || pool.length))];
+    if (!pick) return;
+    if (!held) { residentRecent.push(pick); if (residentRecent.length > 10) residentRecent.shift(); }
+    const text = fillName(pick, game.s.profile);
+    const key = who.resident ? who.index : who.key;
+    if (residentLast !== null && residentLast !== key) { director.said.delete(residentLast); if (director.residents[residentLast]) director.residents[residentLast].holdUntil = 0; }
+    residentLast = key;
+    director.say(key, text, Math.min(6, 2.6 + text.length * 0.06));
+  }
+  /**
+   * From a chapter's end sheet straight into the village (review 2026-11-24: a clear showed two result sheets in a row).
+   * The return sheet still shows when it has news: the one-time first-return bonus, or chapter 3's town end sheet.
+   */
+  function finishChapter() {
+    game.returnToHub('clear');
+    const result = game.s.result;
+    if (game.s.mode === 'returned' && result?.chapter !== 'clock-tower' && !result?.bonus) game.acknowledgeReturn();
+  }
   function interact() {
     if (screen) return;
-    if (game.village || game.s.mode === 'practice') { if (game.s.panel) game.closePanel(); else if (game.nearbyNpc) talkToNpc(game.nearbyNpc); }
+    if (game.village || game.s.mode === 'practice') { if (game.s.panel) { game.closePanel(); return renderOverlay(); } const resident = renderer.talkableResident(); if (resident) chatResident(resident); else if (game.nearbyNpc) talkToNpc(game.nearbyNpc); }
     else if (game.s.mode === 'unwind') unwindBoss();
     else if (game.s.mode === 'returned') game.acknowledgeReturn();
-    else if (game.s.mode === 'complete') game.returnToHub('clear');
+    else if (game.s.mode === 'complete') finishChapter();
     renderOverlay();
   }
   /** Buttons that commit a choice. A keyboard press never activates them: only a click or a tap does. */
-  const DECISIONS = new Set(['reward', 'reroll-card', 'element', 'buy-element', 'depart', 'shop-buy', 'tune-buy', 'refund', 'abandon', 'abandon-confirmed', 'new-game', 'confirm-new', 'sync-take', 'sync-keep', 'transfer-apply', 'to-title']);
+  const DECISIONS = new Set(['reward', 'reroll-card', 'element', 'buy-element', 'depart', 'shop-buy', 'tune-buy', 'tune-down', 'refund', 'abandon', 'abandon-confirmed', 'new-game', 'confirm-new', 'sync-take', 'sync-keep', 'transfer-apply', 'to-title']);
   const isDecision = control => !!control?.closest?.('.panel') && (control.matches('.pick') || DECISIONS.has(control.dataset?.action));
   // Space on a button fires its click when the key comes up; a decision swallows that too.
   document.addEventListener('keyup', e => { if ((e.key === ' ' || e.key === 'Enter') && isDecision(document.activeElement)) e.preventDefault(); }, true);
   /** A sheet owns the keyboard: Tab and arrows walk its controls, and game keys stay out of Space and Enter. */
   function sheetKeys(e, sheet) {
+    // 1 · 2 · 3 pick a reward card or a departure level (review 2026-11-24: every pick needed the mouse). Only keys no action
+    // is bound to, and only half a second after the sheet opened, so a key still held from the fight never picks.
+    const digit = /^(?:Digit|Numpad)([1-9])$/.exec(e.code)?.[1];
+    if (digit && !Object.values(bindings()).includes(e.code)) {
+      // The card in that place (a card whose slots are full asks which part to take out, so it has no key).
+      const pick = sheet.querySelectorAll('.reward-card')[Number(digit) - 1]?.querySelector('[data-action="reward"].pick, [data-action="depart"], [data-action="shop-buy"]');
+      if (pick) { e.preventDefault(); if (!e.repeat && !pick.disabled && performance.now() - overlaySince > 500) action(pick); return true; }
+    }
     const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, Tab: e.shiftKey ? -1 : 1 }[e.key];
     // A focused dropdown (the codex's element filter) keeps its own arrow keys.
     if (step && e.key !== 'Tab' && document.activeElement?.matches('select')) return true;
@@ -1824,7 +2005,7 @@ try {
     // No stick or buttons over the tower's collapse or Orden's end (its menu button led to abandoning mid-scene).
     // (Nor over Moru's parts sheet in the back yard, 2026-11-22, the user's phone: the skill buttons, the reset switch
     // and the map and menu buttons stood on top of the sheet.)
-    if (isTouch) { touch.show(game.onFoot && !screen && !game.s.collapse && !game.s.ordenEnd && !yardSheet(), !!game.nearbyNpc); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
+    if (isTouch) { touch.show(game.onFoot && !screen && !game.s.collapse && !game.s.ordenEnd && !yardSheet(), !!game.nearbyNpc || !!renderer.talkableResident()); pointer = autoAim(game.p, game.s.profile.settings.autoAim === false ? [] : game.aimTargets); }
     else if (arrowMove()) pointer = autoAim(game.p, game.aimTargets);
     if (pad?.dodge) pending.dodge = true;
     if (pad?.fusion) pending.fusion = true;
@@ -1868,7 +2049,7 @@ try {
     renderer.moveTarget = moveTarget; renderer.talkKey = isTouch ? '▸' : keyName(map.interact); renderer.talking = screen === 'talk';
     // The tower's collapse and the liberation are scenes, not play: the HUD stands down for them (2026-11-21, the chapter 3
     // review: health, skills and the tuning chamber's minimap stayed up over the frozen village).
-    $('hud').classList.toggle('cinematic', screen === 'cinematic' || !!game.s.collapse || !!game.s.ordenEnd); drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
+    $('hud').classList.toggle('cinematic', screen === 'cinematic' || !!game.s.collapse || !!game.s.ordenEnd); drawBetween(() => renderer.render(delta)); $('minimap').hidden = onTitle || game.s.mode === 'intro' || !renderer.drawMinimap($('minimap')); document.body.classList.toggle('has-minimap', !$('minimap').hidden); renderOverlay(); updateHUD(); requestAnimationFrame(frame);
   }
   /** One step of the walk to the clicked spot: a direction, or none once F2 is there. */
   function walkToTarget() {
@@ -1892,13 +2073,16 @@ try {
     try { draw(); } finally { p.x = x; p.y = y; }
   }
   const talkBox = new DialogueBox($('dialogue'), data.dialogue, { reducedMotion, skipLabel: isTouch ? '건너뛰기 ▸▸' : 'Esc 건너뛰기', nameOf: id => (id === data.dialogue.player ? callName(game.s.profile) : data.dialogue.speakers[id].name), fill: text => fillName(text, game.s.profile) });
+  talkBox.faces.then(faces => { talkFaces = faces; if (screen === 'pause' && settingsTab === 'ledger') renderOverlay(true); }).catch(() => {});
   $('dialogue').addEventListener('pointerdown', e => { openAudio(); if (e.target.closest('.talk-skip')) talkBox.skip(); else if (!e.target.closest('button, .talk-ask')) talkBox.advance(); });
   const title = new TitleScreen($('title'), {
     // The player's sheets keep loading behind the title; leaving it waits for them, so F2 is never drawn without them.
     // (2026-11-12) A choice made before F2's sheets are in shows 불러오는 중… on its line, and further taps wait with it
     // instead of starting the game twice.
     onNew: () => { openAudio(); title.busyUntil('new', playerSprites).then(go => go && startNew()); },
-    onLoad: () => { openAudio(); title.busyUntil('load', playerSprites).then(go => go && (leaveTitle(), resume())); },
+    // 이어하기 into a fight with bodies still standing opens on the pause sheet (review 2026-11-24: it dropped straight
+    // back into Orden's attack before the player's hands were on the keys).
+    onLoad: () => { openAudio(); title.busyUntil('load', playerSprites).then(go => go && (leaveTitle(), game.s.mode === 'combat' && game.s.enemies.some(e => e.hp > 0) ? pause() : resume())); },
     onSettings: () => { screen = 'pause'; renderOverlay(true); },
     // The stamp lands with a heavy 쾅 (sfx.js stamp); the old low beep is only the fallback.
     onThud: () => { openAudio(); const paused = game.s.paused; game.s.paused = false; sfx('stamp', () => beep(70, 0.2, 0.09)); game.s.paused = paused; },

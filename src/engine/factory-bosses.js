@@ -154,7 +154,9 @@ export const factoryBosses = {
     const ai = this.fbAI(enemy), tell = enemy.tell;
     if (!ai) return false;
     if (tell?.type === 'finalPress' && !tell.alarmed && tell.until - this.s.time <= 1.05) { tell.alarmed = true; this.sense({ kind: 'boss', id: 'finalAlarm' }); }
-    if (tell?.type === 'irisLaser') tell.angle = tell.angle + wrap(angleTo(tell, this.p) - tell.angle) * Math.min(1, ai.turnDegrees * Math.PI / 180 * dt * 3);
+    // Her searchlight follows F2 until laserLock before the shot, then holds where the red band shows (2026-11-24: it
+    // turned until the very moment it fired, so a band seen was not the band shot).
+    if (tell?.type === 'irisLaser' && tell.until - this.s.time > (ai.laserLock ?? 0)) tell.angle = tell.angle + wrap(angleTo(tell, this.p) - tell.angle) * Math.min(1, ai.turnDegrees * Math.PI / 180 * dt * 3);
     if (ai.phaseTwoSummon && !enemy.summonedTwo && enemy.breaksDone?.length) {
       enemy.summonedTwo = true;
       // How many lens inspectors join is set by the difficulty (bossRepeats.lensHelpers, 3 to 5): left and right of her,
@@ -236,7 +238,8 @@ export const factoryBosses = {
         for (const from of [enemy, ...(enemy.decoys || [])]) beam(from, angleTo(from, p), ai.laserLength, ai.laserWidth, 0.8, '#ff5a6e', 'searchlight');
         enemy.decoys = null; return true;
       }
-      case 'crossLaser': this.fbField({ kind: 'cross', owner: enemy.id, angle: angleTo(enemy, p) + Math.PI / 4, until: t + ai.crossSeconds, next: t }); return true;
+      // The cross starts where its warning lay (2026-11-24: it aimed again at F2 as it fired).
+      case 'crossLaser': this.fbField({ kind: 'cross', owner: enemy.id, angle: tell.angle + Math.PI / 4, until: t + ai.crossSeconds, next: t }); return true;
       case 'gridCheck': this.fbGrid(enemy, 1); return true;
       // ---- Press
       case 'plateDrop':

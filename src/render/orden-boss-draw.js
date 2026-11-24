@@ -306,7 +306,7 @@ export const ordenBossDraw = {
           if (far.length) { blob(far, cell => cell.r * 1.15); this.dangerWash(0.22); }
           if (near.length) { blob(near, cell => cell.r * 1.35); this.dangerWash(0.45); }
           const burning = f.cells.filter(cell => cell.lit && t < cell.until);
-          if (burning.length) { blob(burning, cell => cell.r * 1.35 * Math.min(1, 0.5 + (t - cell.at) * 3)); this.washFloor(0.3 * Math.min(1, Math.max(...burning.map(cell => (cell.until - t) / 0.4))), '#ff5a1e'); }
+          if (burning.length) { blob(burning, cell => g.odFireReach(cell, t)); this.washFloor(0.3 * Math.min(1, Math.max(...burning.map(cell => (cell.until - t) / 0.4))), '#ff5a1e'); }
           for (const cell of burning) {
             const age = t - cell.at, fade = Math.max(0, Math.min(1, (cell.until - t) / 0.4));
             if (age < 0.5) this.odTile('odLaneBlow_fire', cell, 2, lag => (age - lag) * 30 < FX.odLaneBlow_fire.frames ? (age - lag) * 30 : null, { size: [0.6, 0.8] });
@@ -337,6 +337,10 @@ export const ordenBossDraw = {
         // The whirlwind on the floor, its pull washed faintly round it.
         case 'odVortex': {
           const k = Math.min(1, (t - f.from) / 0.4, (f.until - t) / 0.4);
+          // It pulls from anywhere in the room (2026-11-24: only a ring of 3.2 was washed): faint rings closing in on it
+          // from the farthest corner, as Roco's suction draws its arcs in.
+          const room = g.bgRoom(), far = Math.max(...[[room.left, room.top], [room.right, room.top], [room.left, room.bottom], [room.right, room.bottom]].map(([x, y]) => Math.hypot(x - f.x, (y - f.y) / FLOOR_FLAT)));
+          for (let i = 0; i < 4; i++) { const u = (t * 0.45 + i / 4) % 1, r = f.eye + (1 - u) * (far - f.eye); ellipse(c, f.x * 20, f.y * 20, r); c.save(); c.globalAlpha = 0.5 * k * Math.min(1, u * 4, (1 - u) * 6); c.strokeStyle = '#8fe8c8'; c.lineWidth = 2; c.stroke(); c.restore(); }
           ellipse(c, f.x * 20, f.y * 20, 3.2); this.washFloor(0.22 * k, '#3c8a6c'); ellipse(c, f.x * 20, f.y * 20, f.eye); this.dangerWash(0.45 * k);
           this.drawFxFrame('odVortex', this.visualTime * FX.odVortex.fps, f.x * 20, f.y * 20, { sx: 1.5, sy: 1.5, alpha: k });
           this.drawFxFrame('odVortex', this.visualTime * FX.odVortex.fps * 1.6 + 5, f.x * 20, f.y * 20, { sx: -1.05, sy: 1.05, alpha: 0.7 * k });

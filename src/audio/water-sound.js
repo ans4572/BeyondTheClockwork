@@ -186,6 +186,10 @@ export const WATER_SOUND_CANDIDATES = {
     ['물막 전체가 울림 (맞을 때마다)', (a, o) => { ring(a, o, { base: 659, dur: 0.35, peak: 0.3, partials: BOWL }); bubbles(a, o, { count: 5, dur: 0.15, peak: 0.2 }); }],
     ['물결 퍼지는 웅', (a, o) => { throb(a, o, { freq: 330, rate: 14, dur: 0.3, peak: 0.25 }); band(a, o, { freq: 900, to: 400, q: 1.5, dur: 0.25, peak: 0.3 }); }],
   ],
+  // An ice fusion's last blow (2026-11-24): 빙판 breaking, 고음 파쇄's second stage. 고음 파쇄's own crash, at once.
+  iceBreak: [
+    ['얼음 와장창 (바로)', (a, o) => { crackle(a, o, { count: 24, dur: 0.35, peak: 0.5 }); ring(a, o, { base: 1240, dur: 0.4, peak: 0.22, partials: GLASS }); thump(a, o, { from: 200, to: 70, dur: 0.22, peak: 0.45 }); }],
+  ],
 };
 
 /** The building blocks, for the chapter 2 boss candidates (boss2-sound.js). */

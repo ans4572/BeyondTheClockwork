@@ -35,14 +35,16 @@ const seeded = seed => () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 **
 
 /** Places a village's NPCs for the current moment. Purely visual; nothing here touches the game. */
 export class NpcDirector {
-  constructor(library) { this.library = library; this.place = null; this.elapsed = 0; this.walked = 0; this.residents = []; this.greetedAt = null; this.stopped = false; this.bell = null; }
+  constructor(library) { this.library = library; this.place = null; this.elapsed = 0; this.walked = 0; this.residents = []; this.greetedAt = null; this.stopped = false; this.bell = null; this.clock = 0; this.said = new Map(); }
   /**
    * `bell`: 'soon' brings the next bell forward, 'hold' also keeps the town stopped once it has rung.
    * `free`: Orden is gone (chapter 3 cleared, 2026-11-19): the bell never rings again and nobody stops on its clock.
    * `freeze`: everyone stands where they are (the liberation scene holds the town still before the seals break).
    */
-  update(delta, place, npcs, { crowd, lookAt, floor, paused = false, reducedMotion = false, bell = null, free = false, freeze = false } = {}) {
+  update(delta, place, npcs, { crowd, lookAt, floor, paused = false, reducedMotion = false, bell = null, free = false, freeze = false, murmurs = null } = {}) {
     if (place !== this.place) this.enter(place, crowd);
+    if (!paused) this.clock += delta;
+    const wasStopped = this.stopped;
     const cycle = BELL_EVERY_SECONDS + (crowd?.bellHold ?? BELL_HOLD_SECONDS);
     if (bell && !this.bell) this.bringBellForward(cycle);
     this.bell = bell;
@@ -58,6 +60,8 @@ export class NpcDirector {
       const beat = this.elapsed % cycle; stopped = this.stopped = beat >= BELL_EVERY_SECONDS;
       walked = Math.floor(this.elapsed / cycle) * BELL_EVERY_SECONDS + Math.min(beat, BELL_EVERY_SECONDS);
     }
+    // A few of those nearest F2 murmur while the bell holds them, from chapter 1 on (dialogue.json residents.bell).
+    if (stopped && !wasStopped && !freeze && murmurs?.length && lookAt) this.murmur(murmurs, lookAt, crowd?.bellHold ?? BELL_HOLD_SECONDS);
     if (!reducedMotion) {
       const step = (walked - this.walked) * WALK_UNITS_PER_SECOND, space = crowd?.personalSpace, spots = this.residents.map(resident => this.spot(resident));
       this.residents.forEach((resident, i) => {
@@ -68,12 +72,36 @@ export class NpcDirector {
         const waiting = blocked && !resident.passing;
         resident.settle = Math.max(0, resident.settle - (paused ? 0 : delta));
         if (waiting !== resident.waiting && (!resident.settle || resident.passing)) { resident.waiting = waiting; resident.settle = SETTLE_SECONDS; }
-        if (!resident.waiting) this.advance(resident, step);
+        // One talking with F2 stays where they are until the line is done (2026-11-24).
+        if (!resident.waiting && !(resident.holdUntil > this.clock)) this.advance(resident, step);
       });
       if (space && !paused) this.residents.forEach((resident, i) => this.sidestep(resident, i, spots, [...npcs, ...(lookAt ? [lookAt] : [])], space, delta, floor));
     }
     this.walked = walked;
-    return [...npcs.map(npc => this.stander(npc, reducedMotion, lookAt)), ...this.residents.map(resident => ({ ...this.pose(resident, stopped, reducedMotion), resident: true }))];
+    return [...npcs.map((npc, i) => ({ ...this.stander(npc, reducedMotion, lookAt), key: `npc:${i}`, say: this.saying(`npc:${i}`), talk: npc.talk, character: npc.character })), ...this.residents.map((resident, index) => ({ ...this.pose(resident, stopped, reducedMotion, lookAt), resident: true, index, character: resident.character, say: this.saying(index) }))];
+  }
+  /** Where a walking resident stands now, with their side-step. */
+  at(resident) { const { x, y } = this.spot(resident); return { x: x + resident.nudge[0], y: y + resident.nudge[1] }; }
+  /** The walking resident nearest (x, y) within reach, as { index, x, y, character }, or null. */
+  nearest(x, y, reach) {
+    let best = null;
+    this.residents.forEach((resident, index) => { const at = this.at(resident), d = Math.hypot(at.x - x, at.y - y); if (d <= reach && (!best || d < best.d)) best = { index, ...at, character: resident.character, d }; });
+    return best;
+  }
+  /** A line over a resident's head (an index) or a stander's (`npc:<its place in the map's npcs>`: two workers may share a look) for `seconds`; a resident also stops. */
+  say(who, text, seconds = 3.5, hold = true) {
+    this.said.set(who, { text, until: this.clock + seconds });
+    if (typeof who === 'number' && hold && this.residents[who]) this.residents[who].holdUntil = this.clock + seconds;
+  }
+  saying(who) { const line = this.said.get(who); return line && line.until > this.clock ? line.text : null; }
+  /** Two or three of those nearest F2 (within 9 units) murmur a line each while the bell holds the town. */
+  murmur(lines, lookAt, seconds) {
+    const near = this.residents.map((resident, index) => ({ index, d: Math.hypot(this.at(resident).x - lookAt.x, this.at(resident).y - lookAt.y) })).filter(r => r.d <= 9).sort((a, b) => a.d - b.d);
+    const pool = [...lines], count = Math.min(near.length, pool.length, lines.length > 4 ? 3 : 2), chosen = [];
+    // Every other one by distance first, so two bubbles seldom sit on neighbours.
+    for (let k = 0; chosen.length < count && k < near.length; k += 2) chosen.push(near[k].index);
+    for (let k = 1; chosen.length < count && k < near.length; k += 2) chosen.push(near[k].index);
+    for (const index of chosen) this.say(index, pool.splice(Math.floor(Math.random() * pool.length), 1)[0], seconds, false);
   }
   /** Moves the clock without moving anyone: distance walked is rewritten along with the time. */
   bringBellForward(cycle) {
@@ -157,12 +185,15 @@ export class NpcDirector {
     const breathing = idle.loop && !reducedMotion, frame = breathing ? frameAtProgress(idle, ((elapsedMs + offset) % idle.durationMs) / idle.durationMs) : 0;
     return { x, y, label, pose: { action: `${character}-idle`, direction, frame } };
   }
-  pose(resident, stopped, reducedMotion) {
+  pose(resident, stopped, reducedMotion, lookAt = null) {
     const { character, nudge } = resident, { x: baseX, y: baseY, dx, dy } = this.spot(resident), x = baseX + nudge[0], y = baseY + nudge[1];
     // Residents always draw from their walk clips: the idle stills are a different drawing of a different size.
     const action = `${character}-walk`;
     if (reducedMotion) return { x, y, pose: { action, direction: 'south', frame: 0 } };
-    const direction = walkDirection(character, dx, dy);
+    // Talking, a resident turns to F2 (and stands, the walk held on its frame).
+    const facing = resident.holdUntil > this.clock && lookAt ? [lookAt.x - x, lookAt.y - y] : null;
+    const direction = facing ? walkDirection(character, ...facing) : walkDirection(character, dx, dy);
+    if (facing) return { x, y, pose: { action, direction, frame: 0 } };
     if (stopped) return { x, y, pose: { action, direction, frame: resident.frame } };
     if (!resident.waiting) { const walk = this.library.clip(action, direction); resident.frame = frameAtProgress(walk, (this.walked * 1000 % walk.durationMs) / walk.durationMs); }
     return { x, y, pose: { action, direction, frame: resident.frame } };

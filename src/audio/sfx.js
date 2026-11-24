@@ -92,6 +92,7 @@ export const SFX = {
   steamVeil: { code: ['steamVeil', 0], volume: 2.86976 },
   highNoteShatter: { code: ['highNoteShatter', 1], volume: 0.84169 },
   iceSheet: { code: ['iceSheet', 1], volume: 1.88761 },
+  iceBreak: { code: ['iceBreak', 0], volume: 1.6 },
   resonantBolt: { code: ['resonantBolt', 0], volume: 0.89546 },
   shockPool: { code: ['shockPool', 0], volume: 4.98713 },
   echoGust: { code: ['echoGust', 0], volume: 4.1957 },

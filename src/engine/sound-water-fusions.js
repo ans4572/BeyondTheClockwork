@@ -70,6 +70,8 @@ export const soundWaterFusions = {
         // A body frozen (by this or anything else) breaks harder.
         for (const e of this.s.enemies) if (inside(e)) { const frozen = (e.frozenUntil || 0) + 1e-6 >= t; this.castHit(cast, e, cast.damages[1] * (frozen ? cast.frozenBonus : 1)); if (frozen) this.effect('ring', e.x, e.y, '#bfe9f4', 0.5, 0.6, { look: 'frostShatter' }); }
         this.effect('ring', cast.x, cast.y, '#9fe3f0', 0.5, cast.radius + 0.4, { look: 'resonanceBurst', skill: cast.skillId });
+        // The break is the fusion's last blow: held and shaken, and heard (its own sound has ended by now).
+        this.sense({ kind: 'fusionBurst', sound: 'iceBreak' });
       }
       return true;
     }
@@ -133,6 +135,7 @@ export const soundWaterFusions = {
         cast.done = true;
         for (const e of this.s.enemies) if (on(e)) { this.castHit(cast, e, cast.breakDamage); this.effect('ring', e.x, e.y, '#bfe9f4', 0.5, 0.6, { look: 'frostShatter' }); }
         this.effect('ring', cast.x, cast.y, '#9fe3f0', 0.5, cast.radius + 0.3, { look: 'resonanceBurst', skill: cast.skillId });
+        this.sense({ kind: 'fusionBurst', sound: 'iceBreak' });
         for (const c of this.s.casts) if (c.shape === 'floorMark' && c.owner === cast.id) c.done = true;
       }
       return true;
@@ -175,6 +178,8 @@ export const soundWaterFusions = {
         }
         this.effect('ring', cast.x, cast.y, '#3f9fb5', 0.5, cast.radius + 0.4, { look: 'quake' });
         this.effect('ring', cast.x, cast.y, '#7fd0dc', 0.6, cast.radius, { look: 'splash', angle: -Math.PI / 2, skill: cast.skillId });
+        // Held and shaken; the slam is already in the waterspout's own sound, at slamAt.
+        this.sense({ kind: 'fusionBurst' });
       }
       return true;
     }

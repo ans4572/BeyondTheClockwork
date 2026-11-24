@@ -40,7 +40,8 @@ export const bellBossDraw = {
         c.translate(Math.cos(tell.angle) * step, Math.sin(tell.angle) * step); sector(ai.comboLastRange, ai.comboLastDegrees);
         break;
       }
-      case 'bgPunch': sector(ai.punchReach, ai.punchDegrees); break;
+      // The punch: its reach from where his step in will take him (bgTell fixed it), as the cuts' are.
+      case 'bgPunch': { const step = (tell.step ?? 0) * 20; c.translate(Math.cos(tell.angle) * step, Math.sin(tell.angle) * step); sector(ai.punchReach, ai.punchDegrees); break; }
       // The great sweep's fan: as far and as wide as the crescent of blade light will fly.
       case 'bgCrescent': sector(ai.crescentRange, ai.crescentDegrees); break;
       case 'bgPendulum': { const p = g.p; c.beginPath(); c.rect(-4000, (p.y - ai.pendulumRadius * FLOOR_FLAT - 0.2) * 20, 8000, (ai.pendulumRadius * FLOOR_FLAT * 2 + 0.4) * 20); this.dangerWash(0.2 + 0.3 * progress); break; }
@@ -335,10 +336,11 @@ export const bellBossDraw = {
     c.save(); c.globalAlpha = 0.25 + 0.35 * k; c.fillStyle = TOLL_RED; c.fillRect(-4000, -4000, 8000, 8000); c.restore();
     if (t < plant.at) return;
     // The shadow the circling light throws from the sword (2026-11-20, the user's pick): a dark wedge in floor shape,
-    // turning with the light, a band as wide as F2 along its middle near the sword.
-    const away = this.game.bgTollLight(f, plant, t) + Math.PI, L = f.length * 20;
+    // turning with the light, a band as wide as F2 along its middle near the sword. Exactly the safe floor (bgShaded):
+    // the wedge from the sword and the band, not the hull round both (2026-11-24: that was up to half a unit wider).
+    const away = this.game.bgTollLight(f, plant, t) + Math.PI, L = f.length * 20, band = 14;
     c.save(); c.translate(plant.x * 20, plant.y * 20); c.scale(1, FLOOR_FLAT); c.rotate(away); c.beginPath();
-    c.moveTo(0, -14); c.lineTo(L * Math.cos(f.shadow), -L * Math.sin(f.shadow)); c.arc(0, 0, L, -f.shadow, f.shadow); c.lineTo(0, 14); c.closePath();
+    c.moveTo(0, 0); c.arc(0, 0, L, -f.shadow, f.shadow); c.closePath(); c.rect(0, -band, Math.sqrt(L * L - band * band), band * 2);
     c.globalAlpha = 0.72; c.fillStyle = '#121626'; c.fill(); c.globalAlpha = 0.25; c.fillStyle = '#2a3a5a'; c.fill();
     c.restore();
   },

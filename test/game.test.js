@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game, distance } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
-import { buyRank, refundAll, permanentStats } from '../src/engine/progression.js';
+import { buyRank, refundRank, refundAll, permanentStats } from '../src/engine/progression.js';
 import { encodeSave, decodeSave, hasProgress } from '../src/engine/storage.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
@@ -45,6 +45,33 @@ test('stats level to twenty in chapter 2 at a rising price, and refunds conserve
   for (let n = 0; n < 5; n++) g.tune(null, 'refund');
   assert.equal(g.s.profile.freeGears, 100000); assert.equal(g.s.profile.stats.maxHp, 0); assert.equal(g.p.maxHp, 100);
   g.startRun(1); assert.equal(g.tune('maxHp', 'buy'), false);
+});
+test('one row gives back one level at a time, at what that level cost (review 2026-11-24)', () => {
+  const g = hub(); g.s.profile.freeGears = 1000;
+  for (let i = 0; i < 3; i++) assert.equal(g.tune('maxHp', 'buy'), true);
+  const stat = data.slice.permanentStats.find(s => s.id === 'maxHp'), spent = 1000 - g.s.profile.freeGears;
+  assert.equal(g.tune('maxHp', 'down'), true); assert.equal(g.s.profile.stats.maxHp, 2);
+  assert.equal(g.s.profile.freeGears, 1000 - spent + stat.baseCost + stat.costStep * 2);
+  assert.equal(g.p.maxHp, 100 + 2 * stat.perRank);
+  g.tune('maxHp', 'down'); g.tune('maxHp', 'down');
+  assert.equal(g.s.profile.freeGears, 1000); assert.equal(g.tune('maxHp', 'down'), false);
+  assert.equal(refundRank(data, g.s.profile, 'nothing'), 0);
+  g.tune('maxHp', 'buy'); g.startRun(1); assert.equal(g.tune('maxHp', 'down'), false); assert.equal(g.s.profile.stats.maxHp, 1);
+});
+test("the marks under F2's bars: the oil, perks and traits for the run, then timed states with the time left", () => {
+  const g = hub(); assert.deepEqual(g.playerEffects, []);
+  g.s.profile.potion = 'spare'; g.startRun(3);
+  assert.deepEqual(g.playerEffects.map(e => e.id), ['oil']);
+  g.s.run.potionSpent = true; assert.deepEqual(g.playerEffects, []);
+  const trait = data.slice.elementTraits[0], perk = data.slice.perks[0];
+  g.s.run.traits = [trait.id]; g.s.run.perks = [perk.id];
+  assert.deepEqual(g.playerEffects.map(e => [e.id, e.kind]), [[perk.id, 'run'], [trait.id, 'run']]);
+  assert.equal(g.playerEffects[1].element, trait.element);
+  g.p.markedUntil = g.s.time + 2; g.p.failStacks = 2; g.p.failUntil = g.s.time + 5;
+  const marked = g.playerEffects.find(e => e.id === 'marked'), fail = g.playerEffects.find(e => e.id === 'fail');
+  assert.equal(marked.kind, 'debuff'); assert.ok(Math.abs(marked.left - 2) < 1e-9); assert.equal(marked.total, data.slice.enemies.lensInspector.markSeconds);
+  assert.equal(fail.stacks, 2);
+  g.p.markedUntil = g.s.time - 1; assert.equal(g.playerEffects.some(e => e.id === 'marked'), false);
 });
 test('insufficient funds never modify a purchase or a rank', () => {
   const g = hub(); g.s.profile.freeGears = 9;

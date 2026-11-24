@@ -60,6 +60,8 @@ export const bellBoss = {
     // The third cut lunges: how far he will step is fixed as it begins, so the warning stands where the blow lands.
     if (tell.type === 'bgCombo3') tell.step = Math.min(ai.comboLastStep, Math.max(0, distance(enemy, p) - 0.9));
     else if (tell.type === 'bgCombo' || tell.type === 'bgCombo2') tell.step = Math.min(ai.comboStep, Math.max(0, distance(enemy, p) - 1.2));
+    // So is the punch's step in (2026-11-24: it was measured as it landed, up to punchStep past the warning).
+    else if (tell.type === 'bgPunch') tell.step = Math.min(ai.punchStep, Math.max(0, distance(enemy, p) - 1));
     if (tell.type === 'bgGrab') tell.end = { x: enemy.x + Math.cos(tell.angle) * ai.grabReach, y: enemy.y + Math.sin(tell.angle) * ai.grabReach };
   },
 
@@ -241,7 +243,7 @@ export const bellBoss = {
         enemy.bareUntil = t + ai.flySeconds; enemy.ready = t + 0.8;
         return true;
       case 'bgPunch': {
-        const step = Math.min(ai.punchStep, Math.max(0, distance(enemy, p) - 1));
+        const step = tell.step ?? 0;
         this.move(enemy, Math.cos(tell.angle) * step, Math.sin(tell.angle) * step);
         if (inCone(enemy, p, tell.angle, ai.punchReach + R, ai.punchDegrees)) hit(ai.punchDamage);
         this.effect('ring', enemy.x + Math.cos(tell.angle) * ai.punchReach * 0.7, enemy.y + Math.sin(tell.angle) * ai.punchReach * 0.7, '#e8e2d2', 0.5, 0.7, { look: 'bgSlam' });

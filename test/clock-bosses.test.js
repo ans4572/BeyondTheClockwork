@@ -481,3 +481,13 @@ test('through phase 2\'s giant metronome the twins throw gears at F2 in turn', (
   // 2026-11-21: the thrower was picked by the beat, and with overlapBeats even only Tick ever threw.
   assert.deepEqual([...throwers].sort(), ['tick', 'tock'], 'both throw, in turn');
 });
+
+test("the flank's green lane is where F2 is really clear of the gears (2026-11-24)", () => {
+  const { g, lead, other, ai } = twinsRoom(); startJoint(g, lead, other, ai, 'flank');
+  const f = g.s.bossFields.find(x => x.kind === 'ttFlank'), clear = ai.gearRadius + g.config.arena.playerRadius;
+  for (const w of f.walls) {
+    const [s0, s1] = g.ttFlankSafe(f, w);
+    assert.ok(s0 <= w.gap && w.gap <= s1, 'the gap itself is in it');
+    assert.ok(g.ttFlankGears(f, w).every(u => u <= s0 - clear + 1e-9 || u >= s1 + clear - 1e-9), 'no gear reaches into the green');
+  }
+});

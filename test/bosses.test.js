@@ -298,3 +298,26 @@ test('break targets are struck by their size, the nearest drum is the one struck
   assert.deepEqual(g.aimTargets.slice(0, 2).map(t => [t.x, t.y]), [[11.9, 8.2], [10.9, 8]], 'auto-aim knows the drums');
   assert.ok(!g.aimTargets.includes(brass), 'and not the shielded boss');
 });
+
+// The warnings show what lands (2026-11-24).
+test("Roco's spit lands on the red floor drawn round him: inside its ellipse hurts, above it does not", () => {
+  const ai = data.slice.bossAI.collectorRoco, reach = ai.spitRadius + data.slice.arena.playerRadius;
+  for (const [up, hurt] of [[0.9, true], [1.2, false]]) {
+    const [g, e] = boss('collectorRoco'); g.p.x = 18; g.p.y = 8; e.speed = 0;
+    g.beginEnemyTell(e, 'suction'); g.s.time = e.tell.until; g.executeEnemy(e); e.ready = 1e9;
+    // Below him, out of the cone that pulls: the floor ellipse is FLOOR_FLAT as tall as it is wide.
+    g.p.x = e.x; g.p.y = e.y + reach * 0.55 * up; const hp = g.p.hp;
+    for (let i = 0; i < Math.ceil(ai.suctionSeconds * 60) + 5; i++) g.update(1 / 60, {});
+    assert.equal(g.p.hp < hp, hurt, up < 1 ? 'inside the drawn spit' : 'outside it, though within its old circle');
+  }
+});
+test("a spinning top's warning is its whole roll, off the walls, and it rolls along it", () => {
+  const [g] = boss('collectorRoco'); g.s.enemies = [];
+  const top = g.spawnEnemy('spintop', { x: 14, y: 8 }); g.p.x = 20; g.p.y = 8.5;
+  g.beginEnemyTell(top, 'spin'); const path = top.tell.path;
+  const length = path.slice(1).reduce((sum, b, i) => sum + Math.hypot(b.x - path[i].x, b.y - path[i].y), 0);
+  assert.ok(length > top.attackRange, `the roll (${length.toFixed(1)}) runs past its old six-unit lane`);
+  const frames = Math.ceil((top.tell.until - g.s.time + top.spinSeconds) * 60) + 1;
+  for (let i = 0; i < frames; i++) g.update(1 / 60, {});
+  const end = path.at(-1); assert.ok(Math.hypot(top.x - end.x, top.y - end.y) < 0.5, 'it stops where its warning ends');
+});

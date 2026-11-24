@@ -220,6 +220,50 @@ canvas:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 body.cramped .f2-card { grid-template-columns: 150px 1fr; gap: 12px; }
 body.cramped .f2-face { width: 120px; height: 120px; background-position: -60px -30px; background-size: 960px 480px; }
 
+/* 수리 장부 (main.js ledgerBody, 2026-11-24): Moru's ledger of what F2 has done. The chapter seals, the bosses unwound
+   (their faces from the talk box, black until met) and the papers carried home. */
+.ledger-sum { margin: 0 0 10px; font-size: 13px; }
+.ledger-sum span { margin-left: 14px; color: var(--label); white-space: nowrap; }
+.ledger-sum span b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.ledger-part { margin-bottom: 12px; }
+.ledger-part h3 { margin: 0 0 6px; font-size: 12px; color: #7a6a52; border-bottom: 2px solid var(--ink); padding-bottom: 2px; }
+.ledger-note { margin: -2px 0 6px; font-size: 12px; color: var(--label); }
+.ledger-seals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ledger-seal { display: grid; grid-template-columns: 44px 1fr; gap: 4px 10px; align-items: start; align-content: start; padding: 8px; background: #fff8e8; box-shadow: inset 0 0 0 1px #2b334533; }
+.ledger-seal .seal { grid-row: span 2; display: grid; place-items: center; width: 40px; height: 40px; margin: 2px; color: #c9bc9c; font: 700 18px/1 "NeoDunggeunmo Pro", "Galmuri11", "Galmuri11 Rest", sans-serif; box-shadow: inset 0 0 0 2px #c9bc9c; }
+.ledger-seal.stamped .seal { color: #b8322c; background: #f6d6cc; box-shadow: inset 0 0 0 2px #b8322c, inset 0 0 0 4px #f6d6cc, inset 0 0 0 5px #b8322c; transform: rotate(-8deg); }
+.ledger-seal b { font-size: 13px; line-height: 1.3; }
+.ledger-seal ul { grid-column: 2; margin: 0; padding: 0; list-style: none; font-size: 12px; line-height: 1.55; color: var(--label); }
+.ledger-seal li strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.ledger-seal .seal-extra { grid-column: 1 / 3; font-size: 11px; color: var(--red); }
+.ledger-bosses { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 8px; }
+.ledger-boss { display: grid; grid-template-columns: 52px 1fr; grid-template-rows: auto auto 1fr auto; gap: 2px 8px; align-items: start; padding: 6px; background: #fff8e8; box-shadow: inset 0 0 0 1px #2b334533; }
+.ledger-boss .face { grid-row: span 3; width: 52px; height: 52px; background: #3b4560; }
+.ledger-boss .face img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+/* Not met yet: only the shape, black on a paler card. */
+.ledger-boss.unknown .face { background: #8a8f9e; }
+.ledger-boss.unknown .face img { filter: brightness(0); opacity: .75; }
+.ledger-boss b { font-size: 13px; line-height: 1.25; }
+.ledger-boss small { font-size: 11px; color: var(--label); }
+.ledger-boss q { font-size: 12px; line-height: 1.4; quotes: '“' '”'; }
+.ledger-boss.unknown b, .ledger-boss .waiting { color: var(--label); }
+.ledger-boss .waiting { font-size: 12px; }
+.ledger-boss .replay { grid-column: 1 / 3; display: flex; gap: 4px; margin-top: 4px; }
+.panel .ledger-boss .replay button { flex: 1; padding: 3px 4px; font-size: 11px; }
+.ledger-records { display: grid; gap: 6px; }
+.ledger-record { display: grid; grid-template-columns: 24px 1fr; gap: 0 10px; align-items: start; padding: 6px 8px; background: #fff8e8; box-shadow: inset 0 0 0 1px #2b334533; }
+.ledger-record .ico { width: 22px; height: 22px; }
+.ledger-record b { font-size: 13px; }
+.ledger-record b small { margin-left: 6px; font-weight: 400; font-size: 11px; color: var(--label); }
+.ledger-record p { margin: 2px 0 0; font-size: 12px; line-height: 1.5; }
+.ledger-record.locked b, .ledger-record.locked p { color: var(--label); }
+body.cramped .ledger-seals { gap: 6px; }
+body.cramped .ledger-seal { grid-template-columns: 34px 1fr; padding: 6px; }
+body.cramped .ledger-seal .seal { width: 30px; height: 30px; font-size: 14px; }
+body.cramped .ledger-bosses { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+body.cramped .ledger-boss { grid-template-columns: 40px 1fr; }
+body.cramped .ledger-boss .face { width: 40px; height: 40px; }
+
 /* Clear records on the difficulty cards (main.js recordBlock): this device's best and the server's fastest clear. */
 .rec { margin: 0 0 12px; border-top: 2px solid var(--ink); padding-top: 6px; font-size: 13px; }
 .rec-head { display: flex; justify-content: space-between; align-items: baseline; color: var(--label); font-size: 12px; margin-bottom: 3px; }

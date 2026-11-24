@@ -844,6 +844,44 @@ export class CanvasRenderer {
     this.labels.push({ label, x: x * 20, y: y * 20 - clip.bodyHeight * clip.scale * BODY_SCALE / 2 - NAME_GAP });
   }
   /** A resident's name floats just over the head: pale letters edged in ink, no box, like a caption in the world. */
+  /** The top of a villager's drawn body, in screen pixels (from their walk or idle clip). */
+  headOf(npc) {
+    const clip = this.npcSprites?.clip(`${npc.character}-walk`, 'south') || this.npcSprites?.clip(`${npc.character}-idle`, npc.direction || 'south');
+    return npc.y * 20 - (clip ? clip.bodyHeight * clip.scale * BODY_SCALE / 2 : 30);
+  }
+  /**
+   * The villager F2 can talk to now (2026-11-24): a stander with lines (maps.json npcs[].talk) within 2.4 units, else the
+   * nearest walking resident within 1.8, as { x, y, character, index | npc, say }; null away from the village or mid-sheet,
+   * and null when Moru, Bolt or Nasa (a sheet to open) stands nearer: the nearer one answers the talk key.
+   */
+  talkableResident() {
+    const g = this.game, far = body => Math.hypot(body.x - g.p.x, body.y - g.p.y);
+    if (!g.walking) return null;
+    const near = (this.shownNpcs || []).map(({ npc }) => npc).filter(npc => (npc.talk || npc.resident) && far(npc) <= (npc.resident ? 1.8 : 2.4));
+    const best = near.sort((a, b) => far(a) - far(b))[0] || null, sheet = g.nearbyNpc;
+    return best && (!sheet || far(best) < far(sheet)) ? best : null;
+  }
+  /** A cream speech bubble with an ink edge and a small tail, its tail's tip at (x, bottom), the line wrapped to fit. */
+  speechBubble(text, x, bottom) {
+    const c = this.ink(), size = NAME_SIZE, lineHeight = size + 3, maxWidth = 118, pad = 4;
+    c.save(); c.font = `600 ${size}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
+    const lines = [];
+    for (const word of text.split(' ')) {
+      const last = lines.at(-1);
+      if (last !== undefined && c.measureText(`${last} ${word}`).width <= maxWidth) lines[lines.length - 1] = `${last} ${word}`; else lines.push(word);
+    }
+    const width = Math.min(maxWidth, Math.max(...lines.map(line => c.measureText(line).width))) + pad * 2, height = lines.length * lineHeight + pad * 2 - 2;
+    // The box stays on screen at the edges (2026-11-24: a worker by the wall had half a line cut off); the tail still points at the speaker.
+    const view = this.camera ? [this.camera.x * 20 + 2, (this.camera.x + SCREEN_UNITS[0]) * 20 - 2] : [-Infinity, Infinity];
+    const left = Math.round(Math.max(view[0], Math.min(view[1] - width, x - width / 2))), top = Math.round(bottom - 5 - height), mid = left + width / 2;
+    x = Math.max(left + 5, Math.min(left + width - 5, x));
+    c.fillStyle = '#fff8e8'; c.strokeStyle = '#2b3345'; c.lineWidth = 1.2;
+    c.beginPath(); c.roundRect(left, top, width, height, 3); c.moveTo(x - 3, top + height); c.lineTo(x, bottom); c.lineTo(x + 3, top + height); c.fill(); c.stroke();
+    c.fillStyle = '#fff8e8'; c.fillRect(x - 2.4, top + height - 1.2, 4.8, 1.8);
+    c.fillStyle = '#2b3345'; c.textAlign = 'center'; c.textBaseline = 'top';
+    lines.forEach((line, i) => c.fillText(line, mid, top + pad + i * lineHeight));
+    c.restore(); if (c !== this.ctx) c.globalAlpha = 1;
+  }
   nameplate(label, x, bottom, fill = '#fff4d6') {
     const c = this.ink();
     c.save(); c.font = `700 ${NAME_SIZE}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
@@ -1706,6 +1744,10 @@ export class CanvasRenderer {
       }
       if(cast.shape === 'orb' && !spriteFx){ const x=cast.x*20,y=cast.y*20-16; this.circle(x,y,9,'#a4c7b1');this.circle(x,y,5,'#dfca6a');this.line(x-5,y,x+4,y+3,'#fff1a2',2); }
       if (cast.shape === 'suction') {
+        // Where the spit at the end hits, filling as the pull runs out (2026-11-24: the spit was not drawn at all).
+        const clipped = this.clipToFloor(mapImage && map);
+        this.dangerDisc(cast.x * 20, cast.y * 20, cast.spitRadius * 20, Math.min(1, cast.age / cast.duration));
+        if (clipped) c.restore();
         // The air rushing in: arcs that close toward Roco's mouth.
         const half = cast.degrees * Math.PI / 360;
         if (this.mapImages?.get(FX.pressureDash.sheet)) {
@@ -1723,11 +1765,16 @@ export class CanvasRenderer {
         }
       }
       if (cast.shape === 'stompRing' && cast.age >= 0) {
-        // A shock ring spreading over the floor as a thin ellipse, the same line all the way out (the stretched sheet thickened
-        // as it grew), fading as it goes. Its hit is the same ellipse (floorDistance).
+        // A shock ring spreading over the floor, the same band all the way out (the stretched sheet thickened as it grew),
+        // fading as it goes. The band is as wide as it hits, `width` either side of the ring (2026-11-24: a 2px line stood
+        // for an 18px band); its hit is the same ellipse (floorDistance).
         const r = cast.age * cast.speed * 20, alpha = Math.max(0.25, 1 - r / (cast.reach * 20)), x = cast.x * 20, y = cast.y * 20;
-        c.save(); c.globalAlpha = alpha * 0.5; c.strokeStyle = '#2b3345'; c.lineWidth = 4; c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke();
-        c.globalAlpha = alpha; c.strokeStyle = '#ff9a4a'; c.lineWidth = 2; c.stroke(); c.restore();
+        const w = cast.width * 20, out = r + w, inner = Math.max(0, r - w);
+        c.save(); c.beginPath(); c.ellipse(x, y, out, out * FLOOR_FLAT, 0, 0, TAU);
+        if (inner > 0) { c.moveTo(x + inner, y); c.ellipse(x, y, inner, inner * FLOOR_FLAT, 0, 0, TAU); }
+        c.globalAlpha = alpha * 0.4; c.fillStyle = '#ff9a4a'; c.fill('evenodd');
+        c.globalAlpha = alpha * 0.6; c.strokeStyle = '#2b3345'; c.lineWidth = 2; c.stroke();
+        c.globalAlpha = alpha; c.strokeStyle = '#ffc27a'; c.lineWidth = 2; c.beginPath(); c.ellipse(x, y, r, r * FLOOR_FLAT, 0, 0, TAU); c.stroke(); c.restore();
       }
       if (cast.shape === 'stickerFall') {
         // Where the next sticker lands: the red danger disc, filling until it hits.
@@ -1766,7 +1813,8 @@ export class CanvasRenderer {
     const effects = castFx.filter(fx => !fx.effect.ground).map(fx => ({ y: fx.y - 0.01, fx }));
     // F2's shots fly at body height, so they pass in front of bodies behind them and behind bodies in front.
     const bolts = s.casts.flatMap(cast => (cast.projectiles || []).filter(bullet => !bullet.done).map(bullet => ({ y: bullet.y, bolt: bullet, cast })));
-    const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : s.mode === 'practice' ? 'practice' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null, free: g.villageFree }).map(npc => ({ y: npc.y, npc })) : [];
+    const npcs = mapImage && (map.npcs || map.crowd) && this.npcDirector ? this.npcDirector.update(delta, hub ? 'hub' : s.mode === 'practice' ? 'practice' : g.room?.id, map.npcs || [], { crowd: g.data.maps?.crowds?.[map.crowd], lookAt: focus, floor: map.walkable ? map : null, paused: s.paused, reducedMotion: s.profile.settings.reducedMotion, bell: s.mode === 'registration' ? g.tutorial.bell : null, free: g.villageFree, murmurs: g.data.dialogue?.residents?.bell?.[g.villageStage] }).map(npc => ({ y: npc.y, npc })) : [];
+    this.shownNpcs = npcs;
     const hubPlayer = hub && !g.village && mapImage && this.animator ? [{ y: map.spawn.y, hubPlayer: true }] : [];
     // Room hazards: plates and saw rails lie flat under everyone; crates, fences and music boxes stand in the sort.
     const hazards = g.roomHazards.filter(h => !h.gone && !GROUND.has(h.kind)).map(h => ({ y: h.y + (UPPER_Y[h.kind] || 0) + (h.kind === 'crane' && h.mark ? h.mark.y : 0), hazard: h }));
@@ -1956,11 +2004,16 @@ export class CanvasRenderer {
       if (near && !seen) this.pointTo(near, ENEMY_ARROW);
     }
     if ((g.walking || g.s.mode === 'practice') && mapImage) {
-      const npc = g.nearbyNpc;
+      // The nearer of a villager with a sheet and a resident with a line answers the talk key (2026-11-24).
+      const resident = !this.talking ? this.talkableResident() : null, npc = resident ? null : g.nearbyNpc;
       const clip = npc && this.npcSprites?.clip(`${npc.character}-idle`, npc.direction);
       // Within reach, what can be done shows in gold just over the name, in the same boxless lettering.
       if (clip && !this.talking) this.nameplate(`${this.talkKey} 말 걸기`, npc.x * 20, npc.y * 20 - clip.bodyHeight * clip.scale * BODY_SCALE / 2 - NAME_GAP - (npc.label ? NAME_SIZE + 3 : 0), ACTION_GOLD);
+      // A resident in reach (2026-11-24): the same gold prompt over their head, unless they are already talking.
+      if (resident && !resident.say) this.nameplate(`${this.talkKey} 말 걸기`, resident.x * 20, this.headOf(resident) - NAME_GAP, ACTION_GOLD);
     }
+    // What residents say, in a bubble over the head (dialogue.json residents).
+    if (mapImage && !this.talking) for (const { npc } of this.shownNpcs || []) if (npc.say) this.speechBubble(npc.say, npc.x * 20, this.headOf(npc) - NAME_GAP - (npc.label ? NAME_SIZE + 3 : 0));
     if (g.wakeProgress !== null) {
       // Eyes opening: two dark lids part, then the world holds until the player is up.
       const open = Math.min(1, g.wakeProgress / EYES_OPEN_SHARE), lid = 160 * (1 - open * open * (3 - 2 * open));

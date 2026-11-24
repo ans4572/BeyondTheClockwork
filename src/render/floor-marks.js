@@ -262,7 +262,8 @@ export const floorMarks = {
       case 'suction': sector(ai.suctionRange, ai.suctionDegrees); this.glyph('suction', x + Math.cos(tell.angle) * ai.suctionRange * 10, y + Math.sin(tell.angle) * ai.suctionRange * 10 + 3, '‹ ‹ 吸'); break;
       case 'stickers': { const n = g.bossRepeat(enemy, 'stickerCount'); counted('sticker', '불량 ×' + n, n, x, y - 46); break; }
       case 'stomp': { const n = g.bossRepeat(enemy, 'stompRings'); ring(x, y, 1.2); counted('stomp', '쿵 ×' + n, n, x, y - 46); break; }
-      case 'charge': box(ai.chargeLength * 20, ai.chargeWidth * 20); this.glyph('chevrons', ai.chargeLength * 10, 3, '» » »'); break;
+      // As wide as the charge hurts, his body and F2's (2026-11-24: chargeWidth 0.9 drew it narrower than its 1.11).
+      case 'charge': box(ai.chargeLength * 20, reach()); this.glyph('chevrons', ai.chargeLength * 10, 3, '» » »'); break;
       case 'chargeHorn': sector(ai.hornRange, ai.hornDegrees); break;
       case 'overcharge': ring(x, y, ai.overchargeRadius); this.glyph('alert', x, y - 12, '!', '#b85863', 15); break;
       case 'burst': ring(x, y, enemy.burstRadius); break;
@@ -270,7 +271,28 @@ export const floorMarks = {
       // The bell turret's bell: where it will land, and the bell itself arcing over to it.
       case 'lob': { ring(tell.targetX * 20, tell.targetY * 20, enemy.lobRadius); const k = Math.min(1, progress), bx = (x + (tell.targetX * 20 - x) * k), by = (y + (tell.targetY * 20 - y) * k) - Math.sin(k * Math.PI) * 60 - 14; this.overlay(() => { if (!this.drawFxFrame('bellShot', this.visualTime * FX.bellShot.fps, bx, by)) { this.circle(bx, by, 5, '#2b3345'); this.circle(bx, by, 4, '#e0a43c'); } }); break; }
       case 'ambush': ring(tell.targetX * 20, tell.targetY * 20, enemy.popRadius); this.glyph('alert', tell.targetX * 20, tell.targetY * 20 + 4, '!', '#b85863', 14); break;
-      case 'spin': this.text('↻', x, y - 18, '#b85863', 12); box(enemy.attackRange * 20, reach()); this.glyph('chevrons', enemy.attackRange * 10, 3, '» » »'); break;
+      // The whole roll, off the walls too (tell.path), as wide as the top hurts; it fills along the path as the spin nears.
+      case 'spin': {
+        this.text('↻', x, y - 18, '#b85863', 12);
+        const path = tell.path || [{ x: tell.x, y: tell.y }, { x: tell.x + Math.cos(tell.angle) * enemy.attackRange, y: tell.y + Math.sin(tell.angle) * enemy.attackRange }], w = reach();
+        const lanes = upTo => {
+          c.beginPath();
+          let left = upTo;
+          for (let i = 1; i < path.length && left > 0; i++) {
+            const a = path[i - 1], b = path[i], len = Math.hypot(b.x - a.x, b.y - a.y) * 20; if (len < 0.5) continue;
+            const k = Math.min(1, left / len), ux = (b.x - a.x) * 20 / len, uy = (b.y - a.y) * 20 / len, ex = a.x * 20 + ux * len * k, ey = a.y * 20 + uy * len * k;
+            // Clockwise, as the joints' circles are, so the overlaps stay filled (non-zero).
+            c.moveTo(a.x * 20 + uy * w, a.y * 20 - ux * w); c.lineTo(ex + uy * w, ey - ux * w); c.lineTo(ex - uy * w, ey + ux * w); c.lineTo(a.x * 20 - uy * w, a.y * 20 + ux * w); c.closePath();
+            if (k < 1) break;
+            c.moveTo(b.x * 20 + w, b.y * 20); c.arc(b.x * 20, b.y * 20, w, 0, TAU); left -= len;
+          }
+        };
+        const total = path.slice(1).reduce((sum, b, i) => sum + Math.hypot(b.x - path[i].x, b.y - path[i].y) * 20, 0);
+        lanes(total); paint(); lanes(total * progress); this.washFloor(TELL_FILL, tone);
+        const first = Math.hypot(path[1].x - path[0].x, path[1].y - path[0].y) * 20;
+        c.translate(x, y); c.rotate(tell.angle); this.glyph('chevrons', Math.min(first, enemy.attackRange * 20) / 2, 3, '» » »');
+        break;
+      }
       case 'beat': tone = '#e0a83a'; ring(x, y, enemy.beatRadius); tone = TELL_RED; break;
       case 'thrust': case 'thrust2': {
         const length = (tell.type === 'thrust' ? enemy.attackRange : enemy.followupLength) * 20, width = enemy.thrustWidth * 20;
@@ -278,10 +300,23 @@ export const floorMarks = {
       }
       // Chapter 2 bosses (src/engine/factory-bosses.js).
       // Her searchlight (PixelLab cone) sweeping after F2; the red line is where the beam will run.
-      case 'irisLaser': if (!this.fbSearchCone(x, y, tell.angle, ai.laserLength, ai.coneDegrees, progress)) { tone = '#e8c860'; sector(ai.laserLength, ai.coneDegrees); tone = TELL_RED; } this.line(x, y, x + Math.cos(tell.angle) * ai.laserLength * 20, y + Math.sin(tell.angle) * ai.laserLength * 20, '#b85863', 2); break;
+      // The band is what the shot hits (laserWidth and F2's body, 2026-11-24: only a 2px line stood for 1.7 units); the
+      // cone is her light. Locked (laserLock before the shot) it stops turning and a white core shows along it.
+      case 'irisLaser': {
+        if (!this.fbSearchCone(x, y, tell.angle, ai.laserLength, ai.coneDegrees, progress * 0.5)) { tone = '#e8c860'; sector(ai.laserLength, ai.coneDegrees); tone = TELL_RED; }
+        box(ai.laserLength * 20, (ai.laserWidth + g.config.arena.playerRadius) * 20);
+        // (box has turned the canvas along the beam.)
+        if (tell.until - g.s.time <= (ai.laserLock ?? 0)) this.line(0, 0, ai.laserLength * 20, 0, '#fff4e8', 2);
+        break;
+      }
       case 'verdict': sector(ai.verdictRange, ai.verdictDegrees); break;
       case 'tapeMeasure': box(ai.measureLength * 20, ai.measureWidth * 20); break;
-      case 'crossLaser': for (let k = 0; k < 4; k++) { const a = tell.angle + Math.PI / 4 + k * Math.PI / 2; this.line(x, y, x + Math.cos(a) * ai.crossLength * 20, y + Math.sin(a) * ai.crossLength * 20, '#b85863', 1.5); } break;
+      // Four bands as wide as the beams hurt (crossWidth and F2's body; 1.5px lines before, 2026-11-24), where they start.
+      case 'crossLaser': {
+        const w = (ai.crossWidth + g.config.arena.playerRadius) * 20;
+        for (let k = 0; k < 4; k++) { c.save(); c.translate(x, y); c.rotate(tell.angle + Math.PI / 4 + k * Math.PI / 2); c.beginPath(); c.rect(0, -w, ai.crossLength * 20, w * 2); paint(); fillTo(() => c.rect(0, -w, ai.crossLength * 20 * progress, w * 2)); c.restore(); }
+        break;
+      }
       // The same ring under all three, so the floor does not give the real one away.
       case 'decoys': ring(x, y, 1.2); for (const d of enemy.decoys || []) if (!d.popped) { c.save(); ring(d.x * 20, d.y * 20, 1.2); c.restore(); } break;
       case 'rejectStamps': case 'gridCheck': case 'rejectOne': ring(x, y, 0.8); break;

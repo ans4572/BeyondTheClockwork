@@ -36,6 +36,9 @@ export const OD_ELEMENTS = ['fire', 'ice', 'lightning', 'wind'];
 const CROSS = [['fire', 'ice'], ['lightning', 'wind'], ['ice', 'lightning'], ['wind', 'fire']];
 /** Each element's colour, for its bursts, quakes and warnings (orden-boss-draw.js too). */
 export const OD_COLOURS = { fire: '#ff8a3c', ice: '#9ad8f8', lightning: '#ffe066', wind: '#8fe8c8' };
+/** How far a spreading-fire patch burns round its centre, as a share of its radius: as far as it is drawn (2026-11-24:
+ *  it was drawn out to 1.35 but hurt only within 0.9, so F2 could stand in the flames unhurt). */
+export const OD_FIRE_SIZE = 1.35;
 /**
  * His spells that lay something on the floor, and the floor fields they leave (2026-11-21, the user's word: floor spells
  * came out on top of one another, sometimes with no way out). One waits for the last to be gone (odStep, odFloorBusy).
@@ -144,9 +147,10 @@ export const ordenBoss = {
     const hold = until => { enemy.busyUntil = until; enemy.ready = Math.max(enemy.ready, until + enemy.recovery); };
     switch (tell.type) {
       case 'odNeedles': case 'odFan': {
-        // Three volleys; each aims as it locks, 0.3 s before it flies (the warning shows the locked line).
-        const fan = tell.type === 'odFan';
-        this.odVolleys(enemy, enemy, [0, 1, 2].map(i => t + i * ai.needleGap), this.odDamage(enemy, fan ? ai.fanDamage : ai.needleDamage), ai.needleSpeed, fan ? { n: ai.fanBolts, spread: ai.fanDegrees * Math.PI / 180, bounces: 1 } : {});
+        // Three volleys; each aims as it locks, 0.3 s before it flies (the warning shows the locked line). The first flies
+        // at once, so along the warning's own arrows (2026-11-24: it aimed afresh at F2 as it flew).
+        const fan = tell.type === 'odFan', shot = fan ? { n: ai.fanBolts, spread: ai.fanDegrees * Math.PI / 180, bounces: 1 } : {};
+        this.odVolleys(enemy, enemy, [0, 1, 2].map(i => t + i * ai.needleGap), this.odDamage(enemy, fan ? ai.fanDamage : ai.needleDamage), ai.needleSpeed, i => (i === 0 ? { ...shot, angle: tell.angle } : shot));
         hold(t + ai.needleGap * 2 + 0.2);
         this.sense({ kind: 'boss', id: 'odNeedle' }); return true;
       }
@@ -232,6 +236,8 @@ export const ordenBoss = {
     this.fbField({ kind: 'odBolts', owner: enemy.id, from: { x: from.x, y: from.y }, volleys, bolts: [], damage, speed });
   },
   /** What a blown lane or quarter leaves on the floor for a while: fire burns burnSeconds, ice slows iceSeconds. */
+  /** How far a lit fire patch reaches round its centre at `t`: it flares up to OD_FIRE_SIZE in its first 0.17 s. */
+  odFireReach(cell, t) { return cell.r * OD_FIRE_SIZE * Math.min(1, 0.5 + (t - cell.at) * 3); },
   odMark(r, element, t, ai) { return { x0: r.x0, x1: r.x1, y0: r.y0, y1: r.y1, element, at: t, until: t + (element === 'fire' ? ai.burnSeconds : element === 'ice' ? ai.iceSeconds : 0.5) }; },
   /**
    * The spreading fire: a spark lands where F2 stands (fireWarn), and the fire runs out over the floor a ring of cells
@@ -807,7 +813,7 @@ const OD_TICK = {
       else if (this.random() < 0.3) this.effect('ring', c.x, c.y, '#ff8a3c', 0.8, 1.2, { look: 'odBurst' });
     }
     const on = f.cells.filter(c => c.lit && t < c.until);
-    const under = c => floorDistance(p, c) < c.r * 0.9;
+    const under = c => floorDistance(p, c) < this.odFireReach(c, t);
     if (!p.dodge && t >= f.nextHit && on.some(under)) { const fresh = on.some(c => under(c) && t - c.at < 0.3); f.nextHit = t + 0.5; if (hit(fresh ? f.damage : f.burn)) return true; }
     if (f.cells.every(c => c.lit && t >= c.until)) f.done = true;
   },
@@ -939,8 +945,10 @@ const OD_TICK = {
       if (!h.fell && t >= h.fall) { h.fell = true; this.effect('ring', (h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2, '#c9b48f', 0.6, 1.2, { look: 'quake' }); }
       if (t >= h.back && !h.backDone) { h.backDone = true; this.effect('dodge', (h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2, '#c9b48f', 0.4, 1.4); }
     }
-    // Standing where the floor is gone: she drops through, and is set back on the nearest floor.
-    const under = f.pieces.find(h => h.fell && t < h.back && inRect(p, h));
+    // Standing where the floor is gone: she drops through, and is set back on the nearest floor. The pit is the oval drawn
+    // in its piece (2026-11-24: the piece's corners, a fifth of it, dropped her where no pit showed).
+    const inPit = h => { const rx = (h.x1 - h.x0) / 2, ry = (h.y1 - h.y0) / 2; return ((p.x - h.x0 - rx) / rx) ** 2 + ((p.y - h.y0 - ry) / ry) ** 2 <= 1; };
+    const under = f.pieces.find(h => h.fell && t < h.back && inPit(h));
     if (under && !p.dodge && t >= f.hitAt + 0.8) {
       f.hitAt = t;
       const exits = [{ x: under.x0 - 0.6, y: p.y }, { x: under.x1 + 0.6, y: p.y }, { x: p.x, y: under.y0 - 0.5 }, { x: p.x, y: under.y1 + 0.5 }].filter(e => this.odSolid(e, 0.3)).sort((a, b) => distance(a, p) - distance(b, p));

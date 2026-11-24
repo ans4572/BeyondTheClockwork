@@ -670,60 +670,70 @@
         },
         {
           "character": "W1",
+          "talk": "rejectStore",
           "x": 15,
           "y": 8.2,
           "direction": "south-east"
         },
         {
           "character": "W1",
+          "talk": "rejectStore",
           "x": 17.8,
           "y": 8.3,
           "direction": "south-west"
         },
         {
           "character": "W4",
+          "talk": "rejectStore",
           "x": 26.2,
           "y": 8.8,
           "direction": "south-east"
         },
         {
           "character": "W3",
+          "talk": "rejectStore",
           "x": 29,
           "y": 9.1,
           "direction": "south-west"
         },
         {
           "character": "W2",
+          "talk": "rejectStore",
           "x": 14.2,
           "y": 18.5,
           "direction": "south-east"
         },
         {
           "character": "W2",
+          "talk": "rejectStore",
           "x": 22.4,
           "y": 18,
           "direction": "south-west"
         },
         {
           "character": "W1",
+          "talk": "rejectStore",
           "x": 18.6,
           "y": 18.6,
           "direction": "south-east"
         },
         {
           "character": "W4",
+          "talk": "rejectStore",
           "x": 8.2,
           "y": 16.2,
           "direction": "south-west"
         },
         {
           "character": "W3",
+          "talk": "rejectStore",
           "x": 31.2,
           "y": 17,
           "direction": "south-east"
         },
         {
           "character": "W4",
+          "talk": "rejectStore",
           "x": 27.4,
           "y": 15.8,
           "direction": "south-west"
@@ -1308,6 +1318,22 @@
         "label": "나사",
         "opens": "potions",
         "after": "silent-factory"
+      },
+      {
+        "character": "C4",
+        "x": 7.2,
+        "y": 18.05,
+        "direction": "north-west",
+        "after": "clock-tower",
+        "talk": "repair"
+      },
+      {
+        "character": "R16",
+        "x": 7.95,
+        "y": 18.0,
+        "direction": "north-west",
+        "after": "clock-tower",
+        "talk": "repair"
       }
     ],
     "exit": {

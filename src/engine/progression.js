@@ -41,6 +41,19 @@ export function buyRank(data, profile, statId, previews = false) {
   return true;
 }
 
+/**
+ * One level of a stat back to free gears, at what that level cost (review 2026-11-24: a misclick could only be undone by
+ * refunding the whole board). Like the full refund it is free. Returns the gears given back, 0 when there was no level.
+ */
+export function refundRank(data, profile, statId) {
+  const stat = data.slice.permanentStats.find(s => s.id === statId);
+  if (!stat || !(profile.stats[statId] > 0)) return 0;
+  profile.stats[statId]--;
+  const refund = statCost(stat, profile.stats[statId]);
+  profile.freeGears += refund;
+  return refund;
+}
+
 export function refundAll(data, profile) {
   let refund = 0;
   for (const stat of data.slice.permanentStats) {

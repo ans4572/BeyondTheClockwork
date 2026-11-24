@@ -417,3 +417,16 @@ test('chapter 2 bosses\' set pattern damage follows the difficulty like their bl
   const scale = Object.fromEntries(data.slice.difficulty.levels.map(l => [l.id, l.scale]));
   assert.equal(normal, Math.round(data.slice.bossAI.directorPress.steamDamage * scale.normal * (data.slice.chapters.find(c => c.id === 'silent-factory').scale ?? 1)));
 });
+
+test("Iris's searchlight holds still for laserLock before the shot, and the cross fires where its warning lay (2026-11-24)", () => {
+  const { g, boss } = bossRoom(4), ai = g.config.bossAI.inspectorIris; boss.ready = 1e9;
+  const shot = tell(g, boss, 'irisLaser');
+  while (shot.until - g.s.time > ai.laserLock + 1e-6) { g.p.y += 0.03; g.s.time += 1 / 60; g.fbStep(boss, 1 / 60); }
+  const locked = shot.angle;
+  g.p.y += 2; for (let i = 0; i < 10; i++) { g.s.time += 1 / 60; g.fbStep(boss, 1 / 60); }
+  assert.equal(shot.angle, locked, 'locked, it no longer turns after F2');
+  boss.tell = null; g.s.time += 1;
+  const cross = tell(g, boss, 'crossLaser'); g.p.y -= 3; g.s.time = cross.until; g.executeEnemy(boss);
+  const field = g.s.bossFields.find(f => f.kind === 'cross');
+  assert.ok(Math.abs(field.angle - (cross.angle + Math.PI / 4)) < 1e-9, 'the cross starts as warned, not aimed again');
+});

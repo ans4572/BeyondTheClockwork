@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { Game } from '../src/engine/game.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { fitsMap, cameraFor, placeOf, pointInPolygon, VIEW_UNITS } from '../src/engine/map-geometry.js';
-import { laneOn } from '../src/animation/npc-director.js';
+import { laneOn, NpcDirector } from '../src/animation/npc-director.js';
 import { closeSlivers, columnDepths, ghostFor, raiseDepths, seeThroughAlpha } from '../src/render/depth-mask.js';
 
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
@@ -291,7 +291,8 @@ test('every dialogue line has a known speaker, fits the box, and every choice le
   }
   for (const { sheet } of Object.values(speakers)) assert.ok(fs.existsSync(new URL(`..${sheet}`, import.meta.url)), sheet);
   assert.equal(scripts.registration.at(-1).choices[0].id, 'register');
-  for (const npc of [...maps.hub.npcs, ...maps.maps['stop-07'].npcs]) assert.ok(scripts[npc.character].at(-1).choices.some(choice => choice.id === 'open'), npc.character);
+  // (Residents who only say a line in a bubble, npcs[].talk, have no sheet to open.)
+  for (const npc of [...maps.hub.npcs, ...maps.maps['stop-07'].npcs].filter(npc => !npc.talk)) assert.ok(scripts[npc.character].at(-1).choices.some(choice => choice.id === 'open'), npc.character);
 });
 
 test('the first talk says why the player must fight and why they must leave', () => {
@@ -499,4 +500,45 @@ test('every rest stop\'s exit lies under its yellow marker, on floor F2 can reac
     checked++;
   }
   assert.ok(checked >= 3);
+});
+
+test('every resident has lines for each stage of the story, and the waiting residents at Moru come after the liberation', () => {
+  const { roles, stages, bell, repair } = dialogue.residents;
+  for (const id of [...maps.crowds.village.cast, ...maps.crowds.market.cast]) assert.ok(roles[id], id);
+  assert.equal(stages.length, 4);
+  for (const [i, stage] of stages.entries()) {
+    assert.ok(stage.common.length >= 5, `stage ${i}`);
+    for (const role of new Set(Object.values(roles))) assert.ok(stage[role]?.length >= 2, `stage ${i} ${role}`);
+  }
+  for (const level of ['1', '2']) assert.ok(bell[level].length >= 3); assert.ok(repair.length >= 3);
+  const waiting = maps.hub.npcs.filter(npc => npc.talk);
+  assert.ok(waiting.length >= 2); for (const npc of waiting) { assert.equal(npc.after, 'clock-tower'); assert.ok(dialogue.residents[npc.talk]?.length); }
+  const g = atHub();
+  assert.equal(g.villageStage, 0); assert.ok(!g.village.npcs.some(npc => npc.talk));
+  g.s.profile.cleared = ['smile-street']; assert.equal(g.villageStage, 1);
+  g.s.profile.cleared = ['smile-street', 'silent-factory']; assert.equal(g.villageStage, 2);
+  g.s.profile.cleared.push('clock-tower'); assert.equal(g.villageStage, 3); assert.equal(g.village.npcs.filter(npc => npc.talk).length, waiting.length);
+});
+
+test("the night market and chapter 2's reject store have their own lines, with a hint at the boss ahead (2026-11-24)", () => {
+  const { places } = dialogue.residents;
+  // The market is walked from chapter 1 on (stages 0-3); the reject store only once chapter 1 is beaten (1-3).
+  for (const [key, from, boss] of [['market', 0, /브라스|카펫|구령|북|나팔/], ['rejectStore', 1, /압착|크레인|압력계|벽이/]]) {
+    for (let stage = from; stage < 4; stage++) assert.ok(places[key].stages[stage].length >= 4, `${key} stage ${stage}`);
+    assert.ok(places[key].stages[from].filter(line => boss.test(line)).length >= 2, `${key}: hints on first visit`);
+    for (const line of places[key].stages.flat()) assert.ok(line.length <= 40, `${key}: a bubble's worth: ${line}`);
+  }
+  assert.equal(placeOf(maps, maps.maps['stop-07']).crowd, 'market');
+  const workers = maps.maps['factory-06'].npcs.filter(npc => npc.character.startsWith('W'));
+  assert.equal(workers.length, 10); for (const npc of workers) assert.equal(npc.talk, 'rejectStore');
+  assert.ok(places.rejectStore.characters.W2.length >= 2);
+});
+
+test('standers that share a look each keep their own bubble (2026-11-24: three workers wear W1)', () => {
+  const director = new NpcDirector(null), npcs = maps.maps['factory-06'].npcs, at = { x: 0, y: 0 };
+  director.stander = npc => ({ npc });
+  const [first] = director.update(0.016, 'factory-06', npcs, { lookAt: at }).filter(n => n.character === 'W1');
+  director.say(first.key, '쉿.');
+  const shown = director.update(0.016, 'factory-06', npcs, { lookAt: at }).filter(n => n.character === 'W1');
+  assert.deepEqual(shown.map(n => n.say), ['쉿.', null, null]);
 });

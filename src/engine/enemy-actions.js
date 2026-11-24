@@ -25,6 +25,8 @@ export const enemyActions = {
     if (type === 'crateToss') enemy.tell.drops = this.craneDrops(enemy).slice(0, this.bossRepeat(enemy, 'crateTossCount'));
     // Both soldier patterns show where their ranks will come from, and which way they will walk.
     if (type === 'parade' || type === 'column') enemy.tell.path = this.rankPath(type);
+    // A spinning top shows the whole roll it will take, off the walls too (2026-11-24: a 6-unit lane stood for 12.8).
+    if (type === 'spin') enemy.tell.path = this.spinPath(enemy, angle);
     this.factoryTell(enemy, enemy.tell);
     enemy.state = 'tell';
   },
@@ -495,13 +497,25 @@ export const enemyActions = {
     }
   },
   /** One frame of a spinning top: straight on, turning back from whatever wall it meets, hurting on contact. */
-  spinEnemy(enemy, dt) {
-    const s = enemy.spin, step = enemy.spinSpeed * dt, before = { x: enemy.x, y: enemy.y };
+  /** One step of a spinning top's roll: on along its heading, turning off a wall it runs into. */
+  spinRoll(enemy, s, dt) {
+    const step = enemy.spinSpeed * dt, before = { x: enemy.x, y: enemy.y };
     this.move(enemy, Math.cos(s.angle) * step, Math.sin(s.angle) * step);
     if (distance(before, enemy) < step * 0.5) {
       const across = Math.PI - s.angle, back = -s.angle;
       s.angle = [across, back, s.angle + Math.PI].find(angle => { const test = { ...enemy }; this.move(test, Math.cos(angle) * step, Math.sin(angle) * step); return distance(test, enemy) >= step * 0.5; }) ?? s.angle + Math.PI;
     }
+  },
+  /** The roll a top will take from where it stands along `angle`, as the corners of its path (for its warning). */
+  spinPath(enemy, angle) {
+    const body = { x: enemy.x, y: enemy.y, radius: enemy.radius, spinSpeed: enemy.spinSpeed }, s = { angle }, dt = 1 / 60, path = [{ x: body.x, y: body.y }];
+    for (let t = 0; t < enemy.spinSeconds; t += dt) { const heading = s.angle; this.spinRoll(body, s, dt); if (s.angle !== heading) path.push({ x: body.x, y: body.y }); }
+    path.push({ x: body.x, y: body.y });
+    return path;
+  },
+  spinEnemy(enemy, dt) {
+    const s = enemy.spin;
+    this.spinRoll(enemy, s, dt);
     enemy.facing = s.angle;
     if (this.s.time >= s.hitReady && distance(this.p, enemy) <= enemy.radius + this.config.arena.playerRadius && this.hurt(this.weakened(enemy, enemy.damage))) s.hitReady = this.s.time + enemy.spinHitGap;
     if (this.s.time >= s.until) { enemy.spin = null; enemy.ready = this.s.time + enemy.recovery; }

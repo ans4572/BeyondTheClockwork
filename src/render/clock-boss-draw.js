@@ -170,12 +170,13 @@ export const clockBossDraw = {
     // Like the other bosses' sweeps (Belgard's sword rain, Press's rows): the whole lane the wall crosses washed red,
     // deepening as it nears, the gap's lane across the room washed green (2026-11-18: was a red band at the far end and
     // two dashed green lines, which did not read as a safe zone). The twin's own colour stays on the end it comes from.
-    const lane = (b0, b1) => { c.beginPath(); c.rect(...rect(far[0], far[1], b0, b1)); };
-    lane(w.lo - 0.3, w.gap - f.half); this.dangerWash(0.18 + 0.3 * k);
-    lane(w.gap + f.half, w.hi + 0.3); this.dangerWash(0.18 + 0.3 * k);
-    lane(w.gap - f.half, w.gap + f.half); this.washFloor(0.35 + 0.25 * k, SAFE);
+    // The green is where F2 is really clear of the gears (ttFlankSafe), not the gap's nominal width.
+    const lane = (b0, b1) => { c.beginPath(); c.rect(...rect(far[0], far[1], b0, b1)); }, [s0, s1] = g.ttFlankSafe(f, w);
+    lane(w.lo - 0.3, s0); this.dangerWash(0.18 + 0.3 * k);
+    lane(s1, w.hi + 0.3); this.dangerWash(0.18 + 0.3 * k);
+    lane(s0, s1); this.washFloor(0.35 + 0.25 * k, SAFE);
     c.save(); c.globalAlpha = 0.3 + 0.4 * k; c.fillStyle = LOOKS[g.s.enemies.find(b => b.id === w.id)?.look] || RED;
-    c.fillRect(...rect(e0, e0 + 1.2, w.lo - 0.3, w.gap - f.half)); c.fillRect(...rect(e0, e0 + 1.2, w.gap + f.half, w.hi + 0.3)); c.restore();
+    c.fillRect(...rect(e0, e0 + 1.2, w.lo - 0.3, s0)); c.fillRect(...rect(e0, e0 + 1.2, s1, w.hi + 0.3)); c.restore();
     if (clipped) c.restore();
   },
   /**

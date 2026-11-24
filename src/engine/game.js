@@ -1,4 +1,4 @@
-import { createProfile, permanentStats, buyRank, refundAll, enterChapter } from './progression.js';
+import { createProfile, permanentStats, buyRank, refundRank, refundAll, enterChapter } from './progression.js';
 import { chapterOf, chapterRooms, chapterLevels, chapterOpen, chapterCleared, clearChapter, chapterRecords, FIRST_CHAPTER } from './chapters.js';
 import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf, roomPlace } from './map-geometry.js';
@@ -110,6 +110,32 @@ export class Game {
   }
   /** The oil this expedition set out with (slice.json potions.list), or null. */
   get potion() { const id = this.s.run?.potion; return id ? this.config.potions?.list.find(p => p.id === id) || null : null; }
+  /**
+   * What is on F2 right now, for the marks under her bars (review 2026-11-24: an oil, a trait or a lens mark showed
+   * nowhere): first what lasts the whole expedition (the oil, perks, element traits), then the timed states with the
+   * seconds `left` of `total`. Outside an expedition there is nothing.
+   */
+  get playerEffects() {
+    const s = this.s, p = this.p, t = s.time, run = s.run, out = [];
+    if (!run) return out;
+    const oil = this.potion;
+    // The spare spring is gone once it has stood F2 back up.
+    if (oil && !(oil.revive && run.potionSpent)) out.push({ id: 'oil', kind: 'run', icon: oil.icon, name: oil.name, text: oil.description });
+    for (const perk of this.config.perks || []) if (run.perks?.includes(perk.id)) out.push({ id: perk.id, kind: 'run', name: perk.name, text: perk.description });
+    for (const trait of this.config.elementTraits || []) if (run.traits?.includes(trait.id)) out.push({ id: trait.id, kind: 'run', element: trait.element, name: trait.name, text: trait.description });
+    const timed = (id, kind, until, total, name, text, more) => { if (until > t) out.push({ id, kind, name, text, left: until - t, total, ...more }); };
+    const harvest = this.wrenchMod('scrapHarvest');
+    if (harvest) timed('haste', 'buff', p.hasteUntil, harvest.duration, harvest.name, `렌치 속도 +${Math.round(harvest.speedBonus * 100)}%`);
+    if (this.upgradeAmount('fusionGuard')) timed('guard', 'buff', p.fusionGuardUntil, this.c.balance.temporaryUpgrades.find(u => u.id === 'fusionGuard').seconds, this.config.rewards.fusionGuard?.name || '융합 방호', `받는 피해 −${Math.round(this.upgradeAmount('fusionGuard') * 100)}%`);
+    const lens = this.config.enemies.lensInspector;
+    if (lens) timed('marked', 'debuff', p.markedUntil, lens.markSeconds, '검수 표식', `다음에 받는 피해 +${Math.round(lens.markBonus * 100)}%`);
+    const iris = this.config.bossAI.inspectorIris;
+    if (iris && p.failStacks) timed('fail', 'debuff', p.failUntil, iris.failSeconds, '불합격 표시', `${iris.failStacks}개가 모이면 터집니다 · 초록 합격 도장 위에서 지워집니다`, { stacks: p.failStacks });
+    // A glue sticker underfoot, or a slowing floor (Orden's ice lanes and frost rings).
+    const stuck = s.casts?.find(c => c.shape === 'sticker' && floorDistance(p, c) < c.radius), slow = Math.max(stuck?.slow || 0, this.patchSlow(p));
+    if (slow > 0) out.push({ id: 'slow', kind: 'debuff', name: '느려짐', text: `이동속도 −${Math.round(slow * 100)}%` });
+    return out;
+  }
   /** Nasa stands at the workshop once the chapter he is rescued in (potions.joinsAfter) has been beaten. */
   get nasaJoined() { const after = this.config.potions?.joinsAfter; return !!after && chapterCleared(this.s.profile, after); }
   /** Buys one bottle from Nasa's shelf for the next expedition. Only one goes along: another one swaps it, the first refunded. */
@@ -337,6 +363,8 @@ export class Game {
     let result = false;
     if (action === 'buy') result = buyRank(this.data, this.s.profile, statId, this.previews);
     if (action === 'refund') { refundAll(this.data, this.s.profile); result = true; }
+    // One level of one row back (review 2026-11-24): the row's − button.
+    if (action === 'down') result = refundRank(this.data, this.s.profile, statId) > 0;
     if (result) { const { x, y } = this.p; this.resetPlayer(); Object.assign(this.p, { x, y }); this.save(); }
     return result;
   }
@@ -388,6 +416,8 @@ export class Game {
   finishChapter() { this.s.mode = 'complete'; this.s.profile.wins++; clearChapter(this.s.profile, this.chapter.id); }
   /** Orden is gone for good once chapter 3 is cleared: the town bell no longer rings and nobody stops on it (npc-director.js). */
   get villageFree() { return !!this.s.profile.cleared?.includes('clock-tower'); }
+  /** How far the story has gone, for what the residents say (dialogue.json residents.stages): 0 to 3 chapters beaten. */
+  get villageStage() { return this.villageFree ? 3 : chapterCleared(this.s.profile, 'silent-factory') ? 2 : chapterCleared(this.s.profile, 'smile-street') ? 1 : 0; }
   spawnEnemy(type, position) {
     const boss = this.c.bosses.find(b => b.id === type), template = boss ? { ...boss, ...this.config.bossAI[type] } : this.config.enemies[type];
     const enemy = { ...template, ...position, home: { x: position.x, y: position.y }, id: this.id('enemy'), type, boss: !!boss, maxHp: template.hp, facing: template.startFacing ?? Math.PI, state: 'approach', aggro: true, ready: this.s.time + this.config.rules.enemyInitialDelay, tell: null, pattern: 0, stagger: 0, exposedUntil: 0, staggerLock: 0, stunUntil: 0, statuses: {}, statusApplied: {}, burnStacks: [], chillCount: 0, freezeLock: 0, shockReady: 0, flashUntil: 0 };
@@ -1448,7 +1478,8 @@ export class Game {
       if (inCone(cast, p, cast.angle, cast.range, cast.degrees) && !p.dodge) { const angle = Math.atan2(cast.y - p.y, cast.x - p.x); this.move(p, Math.cos(angle) * cast.pull * dt, Math.sin(angle) * cast.pull * dt); }
       if (cast.age >= cast.duration) {
         cast.done = true;
-        if (distance(p, cast) <= cast.spitRadius + this.config.arena.playerRadius) { const angle = Math.atan2(p.y - cast.y, p.x - cast.x); this.hurt(cast.enemyDamage); this.move(p, Math.cos(angle) * cast.spitPush, Math.sin(angle) * cast.spitPush); if (!this.active) return; }
+        // The spit lands on the red floor drawn round Roco while it pulls (2026-11-24: it was not drawn).
+        if (floorDistance(p, cast) <= cast.spitRadius + this.config.arena.playerRadius) { const angle = Math.atan2(p.y - cast.y, p.x - cast.x); this.hurt(cast.enemyDamage); this.move(p, Math.cos(angle) * cast.spitPush, Math.sin(angle) * cast.spitPush); if (!this.active) return; }
       }
     }
     for (const cast of this.s.casts.filter(c => c.shape === 'stompRing')) {

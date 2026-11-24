@@ -66,7 +66,8 @@ export class Tutorial {
     const { game } = this, { p, s } = game, guard = s.enemies[0], yard = game.map;
     Object.assign(p, yard.spawn, { hp: p.maxHp, attack: null, dodge: null, invulnerableUntil: s.time + RISE_INVULNERABLE_SECONDS });
     if (guard) Object.assign(guard, yard.enemySpawns[0], { tell: null, dash: null, ready: s.time + RISE_INVULNERABLE_SECONDS });
-    game.notify('안전핀 없이도 일어났습니다. 다시 해 보세요.');
+    // (2026-11-24: it named the safety pin before Moru had told of it.)
+    game.notify('다시 일어났습니다. 처음 자리에서 다시 해 보세요.');
   }
   guardBeaten() {
     this.state.step = 'door';

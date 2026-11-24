@@ -438,3 +438,11 @@ test('his death or his shield in the middle of a throw lets F2 go (2026-11-21: s
     assert.ok(!(g.p.heldUntil > g.s.time) && !(g.p.stunUntil > g.s.time), `let go on his ${cut}`);
   }
 });
+
+test('his punch steps in as far as its warning said, fixed as it began (2026-11-24)', () => {
+  const { g, bg, ai } = belfry(); bg.ready = 1e9;
+  g.p.x = bg.x - 3; g.p.y = bg.y; g.beginEnemyTell(bg, 'bgPunch'); const warned = bg.tell, from = { x: bg.x, y: bg.y };
+  assert.ok(warned.step > 0 && warned.step <= ai.punchStep);
+  g.p.x = bg.x - 1.3; g.s.time = warned.until; g.executeEnemy(bg);
+  assert.ok(Math.abs(Math.hypot(bg.x - from.x, bg.y - from.y) - warned.step) < 1e-6, 'he lands where the warning was drawn from');
+});

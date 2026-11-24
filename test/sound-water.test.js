@@ -296,3 +296,15 @@ test('과열 공진 marks up to five bodies, at most three bursts on one; 공명
   { const { g, cast } = fuse(['lightning', 'sound']), bodies = [9, 10, 11, 12, 13, 14].map((x, i) => dummy(g, x, 6 + (i % 3) * 1.5)); const c = cast(); assert.equal(c.bolts.length, 3); step(g, 0.1);
     assert.equal(bodies.filter(b => lost(b) >= bolt).length, 3, 'three bolts'); }
 });
+
+test("the ice fusions' last blows are felt and heard: 빙판 breaking, 고음 파쇄's second stage (2026-11-24)", () => {
+  let { g, cast } = fuse(['ice', 'water']); dummy(g, 11); cast();
+  step(g, data.slice.fusionBehavior.iceSheet.duration - 0.1); g.feel.length = 0; step(g, 0.2);
+  assert.ok(g.feel.some(h => h.kind === 'fusionBurst' && h.sound === 'iceBreak'), '빙판');
+  ({ g, cast } = fuse(['ice', 'sound'])); dummy(g, 11); cast();
+  const shatter = data.slice.fusionBehavior.highNoteShatter; step(g, shatter.delay + shatter.breakDelay - 0.1); g.feel.length = 0; step(g, 0.2);
+  assert.ok(g.feel.some(h => h.kind === 'fusionBurst' && h.sound === 'iceBreak'), '고음 파쇄');
+  ({ g, cast } = fuse(['wind', 'water'])); dummy(g, 11); cast();
+  step(g, data.slice.fusionBehavior.waterspout.slamAt - 0.1); g.feel.length = 0; step(g, 0.2);
+  assert.ok(g.feel.some(h => h.kind === 'fusionBurst'), '물기둥 회오리');
+});
