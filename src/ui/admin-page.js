@@ -4,6 +4,8 @@
 // transfer code made from its newest uploaded save, 2026-11-12).
 import { apiBase } from './device-transfer.js';
 import { formatCode } from '../engine/transfer-code.js';
+// Icon files by the game's own table: redrawn icons carry a new file name (light and magnet's are -v1).
+import { iconUrl } from './tool-icons.js';
 
 const TOKEN_KEY = 'beyond-the-clockwork.admin-token.v1';
 const RANGES = [[7, '7일'], [30, '30일'], [0, '전체']];
@@ -49,10 +51,10 @@ async function loadNames() {
 
 function comboCell(combo) {
   const { elements, fusions, firstSkill, colors } = state.names, parts = combo ? combo.split('+') : [];
-  if (!parts.length) return `<div class="combo"><img src="art/ui/icons/px/action-wrench.png" alt=""><span>렌치만</span></div>`;
+  if (!parts.length) return `<div class="combo"><img src="${esc(iconUrl('action-wrench'))}" alt=""><span>렌치만</span></div>`;
   const fusion = fusions[combo], icon = fusion ? `skill-${fusion.id}` : `skill-${firstSkill[parts[0]]}`;
   const title = parts.map(p => elements[p] || p).join(' + ');
-  return `<div class="combo" title="${esc(title)}"><img src="art/ui/icons/px/${esc(icon)}.png" alt=""><span>${esc(fusion ? fusion.name : `${title} 하나`)}</span><span class="sw">${parts.map(p => `<i style="background:${esc(colors[p] || '#999')}"></i>`).join('')}</span></div>`;
+  return `<div class="combo" title="${esc(title)}"><img src="${esc(iconUrl(icon))}" alt=""><span>${esc(fusion ? fusion.name : `${title} 하나`)}</span><span class="sw">${parts.map(p => `<i style="background:${esc(colors[p] || '#999')}"></i>`).join('')}</span></div>`;
 }
 
 function login(message = '') {
