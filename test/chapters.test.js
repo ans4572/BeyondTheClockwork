@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Game } from '../src/engine/game.js';
+import { Game, COLLAPSE } from '../src/engine/game.js';
 import { validateData } from '../src/engine/data.js';
 import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { chapterOpen, chapterCleared, chapterRooms } from '../src/engine/chapters.js';
@@ -246,6 +246,22 @@ test('abandoning the run in the tower collapse or in Orden at the last hour leav
     assert.doesNotThrow(() => { for (let i = 0; i < 120; i++) g.update(1 / 60, {}); });
     assert.doesNotThrow(() => reload(g).update(1 / 60, {}));
   }
+});
+
+test('the tower collapse seen once starts at the flash the next time (2026-11-25, the user\'s word)', () => {
+  const tower = chapterRooms(data.slice, 'clock-tower');
+  const scene = seen => {
+    const g = new Game(data); g.previews = true; g.unlockChapters = true; g.s.profile.registered = true; g.s.mode = 'hub';
+    if (seen) g.s.profile.bossRecords.push('orden');
+    assert.ok(g.startRun(5, 'normal', 'clock-tower'));
+    g.s.run.node = tower.length - 2; g.enterNode(); g.s.entry = null; g.clearCombat(); g.startCollapse({ x: 12, y: 18 });
+    let frames = 0; for (; frames < 20 * 60 && g.s.collapse; frames++) g.update(1 / 60, {});
+    assert.equal(g.room.id, 'tower-11'); assert.equal(g.s.enemies.find(e => e.boss)?.type, 'ordenFinal');
+    return frames / 60;
+  };
+  const first = scene(false), again = scene(true);
+  assert.ok(Math.abs(first - COLLAPSE.end) < 0.1, `the whole scene the first time (${first})`);
+  assert.ok(Math.abs(again - (COLLAPSE.end - COLLAPSE.open)) < 0.1, `from the flash after that (${again})`);
 });
 
 test('the clock tower ends on Orden: the tuning chamber breaks open into the summit, whose fall clears the chapter', () => {

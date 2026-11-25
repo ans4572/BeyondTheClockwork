@@ -1588,12 +1588,14 @@ export class Game {
    * clock (tickCollapse; src/render/tower-collapse.js draws it from `s.collapse`), so a pause or a reload keeps its place.
    */
   startCollapse(fell) {
-    const records = this.s.profile.bossRecords;
-    if (!records.includes(this.room.boss)) records.push(this.room.boss);
+    // Seen once (he has fallen here before), the scene starts at the flash: the walls go, his mask breaks and the fight is
+    // on, without his waking and the town (2026-11-25, the user's word: after one viewing, straight on).
+    const records = this.s.profile.bossRecords, seen = records.includes(this.room.boss);
+    if (!seen) records.push(this.room.boss);
     // Where his last form will stand: the next room's boss spot (the two floors are painted to match).
     const next = this.s.run ? roomPlace(this.data.maps, this.rooms[this.s.run.node + 1]?.id, this.s.run.plan?.[this.s.run.node + 1]?.variant || 0) : null;
     const to = next?.bossSpawn || { x: fell.x, y: fell.y };
-    this.s.collapse = { at: this.s.time, x: fell.x, y: fell.y, to: { x: to.x, y: to.y }, step: 0 };
+    this.s.collapse = { at: this.s.time - (seen ? COLLAPSE.open : 0), x: fell.x, y: fell.y, to: { x: to.x, y: to.y }, step: seen ? 2 : 0, ...(seen && { beats: 0, tolls: 2 }) };
   }
   /** One step of the collapse: its sounds on time, F2 on the summit (the next room) where she stood, then the fight. */
   tickCollapse(dt) {

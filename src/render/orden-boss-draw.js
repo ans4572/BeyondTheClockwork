@@ -489,13 +489,17 @@ export const ordenBossDraw = {
         }
       }
       if (f.kind === 'odSigil' && !f.done) {
-        // The command over F2's head, and beside it the brass stopwatch running out its three seconds.
-        const p = g.p, gone = Math.min(1, Math.max(0, (t - f.from) / (f.at - f.from))), x = p.x * 20, y = p.y * 20 - 62;
-        // As it is given, the command comes down on her from big to small (2026-11-21, the review), with its word.
-        const fall = Math.min(1, (t - f.from) / 0.35), big = 1 + 2.2 * (1 - fall) ** 2;
-        this.drawFxFrame(f.mode === 'stop' ? 'odSigilStop' : 'odSigilMove', this.visualTime * FX.odSigilStop.fps, x, y, { sx: big, sy: big, alpha: 0.4 + 0.6 * fall });
-        if (t - f.from < 1.1) this.text(f.mode === 'stop' ? '멈춰라' : '움직여라', x, y - 46, f.mode === 'stop' ? '#9ff4ff' : '#ffd257', Math.round(15 * (0.8 + 0.2 * fall)));
-        this.drawFxFrame('chargeClock', gone * (FX.chargeClock.frames - 1), x + 24, y - 6, { sx: 0.55, sy: 0.55 });
+        // The command on the screen itself, top middle, over everything (2026-11-25, the user's word: on the screen, not
+        // over a body), its word staying to the end, and beside it the brass stopwatch running out its three seconds.
+        const p = g.p, gone = Math.min(1, Math.max(0, (t - f.from) / (f.at - f.from))), m = this.ctx.getTransform?.();
+        const x = m ? (this.canvas.width / 2 - m.e) / m.a : p.x * 20, y = m ? (this.canvas.height * 0.3 - m.f) / m.d : p.y * 20 - 62;
+        // As it is given, the command comes down from big to small (2026-11-21, the review), with its word.
+        const fall = Math.min(1, (t - f.from) / 0.35), big = 1.5 * (1 + 2.2 * (1 - fall) ** 2);
+        this.overlay(() => {
+          this.drawFxFrame(f.mode === 'stop' ? 'odSigilStop' : 'odSigilMove', this.visualTime * FX.odSigilStop.fps, x, y, { sx: big, sy: big, alpha: 0.4 + 0.6 * fall });
+          this.text(f.mode === 'stop' ? '멈춰라' : '움직여라', x, y - 58, f.mode === 'stop' ? '#9ff4ff' : '#ffd257', Math.round(22 * (0.8 + 0.2 * fall)));
+          this.drawFxFrame('chargeClock', gone * (FX.chargeClock.frames - 1), x + 38, y - 8, { sx: 0.8, sy: 0.8 });
+        });
       }
       if (f.kind === 'odLastHour') {
         // Over him, the stopwatch counting the tolls through.
