@@ -295,3 +295,13 @@ test('the fire burns as far as it is drawn, and a pit is the oval drawn in its p
   g.s.bossFields = []; g.fbField({ kind: 'odHoles', owner: od.id, pieces: [piece(p.x, p.y)], damage: 10, hitAt: -1 });
   step(g, 0.2); assert.ok(p.hp < hp, 'over the pit she drops');
 });
+
+test('the command sigil is drawn in the pass after the bodies, never queued for a flush that already ran (2026-11-26)', async () => {
+  // canvas.js empties its overlay queue onto the screen before drawClockBossOver runs, so anything Orden's "over" pass
+  // queues with overlay() is dropped: the stop/move command never showed (11-25 to 11-26).
+  const canvas = await readFile(new URL('../src/render/canvas.js', import.meta.url), 'utf8');
+  const draw = await readFile(new URL('../src/render/orden-boss-draw.js', import.meta.url), 'utf8');
+  assert.ok(canvas.indexOf('for (const draw of this.overlays) draw();') < canvas.indexOf('this.drawClockBossOver();'), 'the queue is flushed before the clock bosses draw over the bodies');
+  const over = draw.slice(draw.indexOf('  drawOrdenOver() {'), draw.indexOf('\n  }', draw.indexOf('  drawOrdenOver() {')));
+  assert.ok(over.includes("'멈춰라'") && !over.includes('this.overlay('), 'the sigil and its word are drawn directly');
+});

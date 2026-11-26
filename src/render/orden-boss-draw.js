@@ -492,14 +492,19 @@ export const ordenBossDraw = {
         // The command on the screen itself, top middle, over everything (2026-11-25, the user's word: on the screen, not
         // over a body), its word staying to the end, and beside it the brass stopwatch running out its three seconds.
         const p = g.p, gone = Math.min(1, Math.max(0, (t - f.from) / (f.at - f.from))), m = this.ctx.getTransform?.();
-        const x = m ? (this.canvas.width / 2 - m.e) / m.a : p.x * 20, y = m ? (this.canvas.height * 0.3 - m.f) / m.d : p.y * 20 - 62;
+        const x = m ? (this.canvas.width / 2 - m.e) / m.a : p.x * 20, y = m ? (this.canvas.height * 0.32 - m.f) / m.d : p.y * 20 - 62;
         // As it is given, the command comes down from big to small (2026-11-21, the review), with its word.
         const fall = Math.min(1, (t - f.from) / 0.35), big = 1.5 * (1 + 2.2 * (1 - fall) ** 2);
-        this.overlay(() => {
-          this.drawFxFrame(f.mode === 'stop' ? 'odSigilStop' : 'odSigilMove', this.visualTime * FX.odSigilStop.fps, x, y, { sx: big, sy: big, alpha: 0.4 + 0.6 * fall });
-          this.text(f.mode === 'stop' ? '멈춰라' : '움직여라', x, y - 58, f.mode === 'stop' ? '#9ff4ff' : '#ffd257', Math.round(22 * (0.8 + 0.2 * fall)));
-          this.drawFxFrame('chargeClock', gone * (FX.chargeClock.frames - 1), x + 38, y - 8, { sx: 0.8, sy: 0.8 });
-        });
+        // Drawn here and now: this pass already runs after every body. (2026-11-26: queued with overlay() it never showed,
+        // since the queue is emptied onto the screen before this pass.)
+        this.drawFxFrame(f.mode === 'stop' ? 'odSigilStop' : 'odSigilMove', this.visualTime * FX.odSigilStop.fps, x, y, { sx: big, sy: big, alpha: 0.4 + 0.6 * fall });
+        // The word sits right over the sigil, clear of the boss's health bar at the top (2026-11-26: 58 up, it hid under it),
+        // outlined in ink like the nameplates so it reads on the bright floor.
+        { const c = this.ink(), size = Math.round(22 * (0.8 + 0.2 * fall)), word = f.mode === 'stop' ? '멈춰라' : '움직여라';
+          c.save(); c.font = `700 ${size}px "Galmuri11", "Galmuri11 Rest", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+          c.lineJoin = 'round'; c.lineWidth = 5; c.strokeStyle = '#2b3345'; c.strokeText(word, x, y - 30);
+          c.fillStyle = f.mode === 'stop' ? '#9ff4ff' : '#ffd257'; c.fillText(word, x, y - 30); c.restore(); if (c !== this.ctx) c.globalAlpha = 1; }
+        this.drawFxFrame('chargeClock', gone * (FX.chargeClock.frames - 1), x + 38, y - 8, { sx: 0.8, sy: 0.8 });
       }
       if (f.kind === 'odLastHour') {
         // Over him, the stopwatch counting the tolls through.
