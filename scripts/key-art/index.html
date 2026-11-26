@@ -28,14 +28,16 @@
   .slip .row span { color: #6b5c45; }
   .slip .row b { font-weight: bold; }
   .slip .tag { margin: 16px 0 0; font: 22px/1.55 Galmuri11, sans-serif; }
-  .f2 { position: absolute; left: 600px; bottom: -36px; width: 600px; height: 600px; image-rendering: pixelated; filter: drop-shadow(10px 10px 0 rgba(17, 21, 31, 0.55)); }
+  /* Exactly 3x; a cream outline the colour of the slip lifts F2 off the busy factory side of the island. */
+  .f2 { position: absolute; left: 612px; bottom: -24px; width: 576px; height: 576px; image-rendering: pixelated;
+    filter: drop-shadow(3px 0 0 var(--paper)) drop-shadow(-3px 0 0 var(--paper)) drop-shadow(0 3px 0 var(--paper)) drop-shadow(0 -3px 0 var(--paper)) drop-shadow(10px 10px 0 rgba(17, 21, 31, 0.55)); }
   .stamp { position: absolute; left: 445px; top: 300px; width: 200px; height: 112px; display: grid; place-items: center; border: 8px solid var(--red); color: var(--red);
     font: 76px/1 "NeoDunggeunmo Pro", sans-serif; transform: rotate(-11deg); opacity: 0.92; mix-blend-mode: multiply; }
 </style>
 </head>
 <body>
 <div id="art">
-  <img class="island" src="../../art/world-map/clockwork-island-v3.png" alt="">
+  <img class="island" src="../../art/world-map/clockwork-island-v6.png" alt="">
   <div class="shade"></div>
   <section class="slip">
     <div class="office">웃음거리 품질관리국 · 불량 판정서</div>
@@ -48,7 +50,7 @@
     <p class="tag">모두가 행복하도록 만들어진 마을.<br>당신은 고장 나서, 자유로워졌다.</p>
   </section>
   <div class="stamp">폐기</div>
-  <img class="f2" src="../../art/ui/title/f2-title-v5.png" alt="">
+  <img class="f2" src="../../art/ui/title/f2-title-v6.png" alt="">
 </div>
 </body>
 </html>

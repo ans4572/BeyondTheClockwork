@@ -34,6 +34,9 @@ export function validateData(data) {
   assert(new Set(roomIds).size === roomIds.length, '방 ID 중복');
   assert(s.permanentStats.length >= 4, '영구 스탯');
   assert(s.statChapters?.ranksPerChapter > 0, '챕터별 스탯 한도');
+  // The wrench's enhancement: one chance and one attack share for each step from level 1 up to maxLevel.
+  const we = s.wrenchEnhance;
+  assert(we?.maxLevel > 1 && we.baseCost > 0 && we.costStep >= 0 && [we.chances, we.attackDamage].every(list => Array.isArray(list) && list.length === we.maxLevel - 1) && we.chances.every(c => c > 0 && c <= 1) && we.attackDamage.every(a => a > 0), '렌치 강화');
   for (const [room, place] of Object.entries(maps?.maps || {})) {
     assert(roomIds.includes(room), `맵의 방 없음: ${room}`);
     const map = placeOf(maps, place);

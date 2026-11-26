@@ -55,9 +55,9 @@ test('skill clips play at their authored speed and the same character size as mo
   assert.equal(clips.clips['cast-forwardCast/north'].scale, 1);
 });
 
-test('the only direction without its own fusion body is marked as borrowing one', () => {
-  const borrowed = Object.entries(clips.clips).filter(([, clip]) => clip.directionFallback).map(([key]) => key).sort();
-  assert.deepEqual(borrowed, ['cast-forwardCast/south-east', 'cast-placeCast/south-east', 'cast-selfBurst/south-east']);
+test('every direction has its own cast body (F2 v2 drew south-east too)', () => {
+  const borrowed = Object.entries(clips.clips).filter(([, clip]) => clip.directionFallback).map(([key]) => key);
+  assert.deepEqual(borrowed, []);
 });
 
 test('casting plays the body clip toward the cast and then returns to idle', () => {
@@ -139,7 +139,9 @@ test('a short skill plays through its peak while walking', () => {
   g.update(1 / 60, { ...input, skill: 0 });
   const frames = new Set();
   for (let i = 0; i < 30; i++) { g.update(1 / 60, input); const pose = a.update(1 / 60, g); if (pose.action === 'heatSwing') frames.add(pose.frame); }
-  assert.ok(Math.max(...frames) >= 11, `reached frame ${Math.max(...frames)}`);
+  // The peak sits about two thirds in (frame 11 of 17 before the v2 redraw, 8 of 12 now).
+  const peak = Math.floor(library.clip('heatSwing', 'east').frameCount * 2 / 3);
+  assert.ok(Math.max(...frames) >= peak, `reached frame ${Math.max(...frames)} of peak ${peak}`);
 });
 
 test('effects appear at the point the cast damages, after the hand releases', () => {

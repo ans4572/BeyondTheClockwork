@@ -1,5 +1,5 @@
 // The title's own F2: the idle pose redrawn cleaner and larger (PixelLab, 192 px), shown at 2x on the form.
-const F2_TITLE = 'art/ui/title/f2-title-v5.png';
+const F2_TITLE = 'art/ui/title/f2-title-v6.png';
 const INK = '#2b3345', LABEL = '#6d7486', RED = '#c43c36', PAPER = '#f6ecd2';
 const STAGE = [1120, 640], LINE_MS = 1800, LAST_LINE_MS = 3000, LINE_READ_MS = 700, OPENING_SCALE = 3, OPENING_WIDTH = 0.92, OPENING_SIZE = 15;
 // A choice waiting on loading says so after this long; a quick one shows nothing.

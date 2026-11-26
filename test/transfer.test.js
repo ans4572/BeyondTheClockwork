@@ -7,7 +7,7 @@ import { encodeSave, decodeSave } from '../src/engine/storage.js';
 import { makeCode, normalizeCode, formatCode, looksLikeSave, CODE_ALPHABET } from '../src/engine/transfer-code.js';
 import { api, CODES_PER_HOUR } from '../worker/index.js';
 import { sendSave, fetchSave, forgetCode, startSync, pullSync, pushSync } from '../src/ui/device-transfer.js';
-import { progressMark, syncPlan, readLink, writeLink, SYNC_STORE_KEY } from '../src/engine/sync.js';
+import { progressMark, progressBehind, syncPlan, readLink, writeLink, SYNC_STORE_KEY } from '../src/engine/sync.js';
 
 const data = validateData(Object.fromEntries(await Promise.all(['combat', 'progression', 'slice'].map(async name => [name, JSON.parse(await readFile(new URL(`../src/data/${name}.json`, import.meta.url), 'utf8'))]))));
 /** Cloudflare KV as a Map, enough for the worker. */
@@ -83,6 +83,29 @@ test('linked devices: one uploads on returning to the village, the other takes i
   const settled = { ...pcLink, mark: progressMark(pc.s) }; pc.s.profile.settings.sound = !pc.s.profile.settings.sound;
   assert.equal(progressMark(pc.s), settled.mark);
   await assert.rejects(pullSync('AAAAAAAAAAAAAAAA', viaWorker(env), ''), error => error.reason === 'unlinked');
+});
+
+test('a linked device that started over is never taken without asking (2026-11-26: progress vanished on the other device)', async () => {
+  const env = { TRANSFER: kv() }, pc = new Game(data);
+  pc.s.profile.registered = true; pc.s.mode = 'hub'; pc.s.profile.runs = 12; pc.s.profile.combatClears = 80; pc.s.profile.bossRecords = ['captainBrass'];
+  const { key, rev } = await startSync(encodeSave(pc.s), viaWorker(env), '');
+  const pcLink = { key, rev, mark: progressMark(pc.s) };
+  // The phone shares the key, starts over and reaches the village: its fresh save goes up over the old one.
+  const fresh = new Game(data); fresh.s.profile.registered = true; fresh.s.mode = 'hub';
+  await pushSync(key, encodeSave(fresh.s), rev, viaWorker(env), '');
+  const remote = await pullSync(key, viaWorker(env), ''), remoteState = decodeSave(remote.save, data);
+  assert.equal(progressBehind(remoteState, pc.s), true);
+  assert.equal(syncPlan(pc.s, pcLink, remote), 'take', 'without the decoded save the old rule would take it');
+  assert.equal(syncPlan(pc.s, pcLink, remote, remoteState), 'ask', 'the PC, untouched since, is asked instead of losing 12 expeditions');
+  // A save that only moved forward is still taken quietly.
+  const ahead = decodeSave(encodeSave(pc.s), data); ahead.profile.runs = 13;
+  assert.equal(progressBehind(ahead, pc.s), false);
+  assert.equal(syncPlan(pc.s, pcLink, { rev: remote.rev }, ahead), 'take');
+  // Each measure on its own counts: chapters cleared, bosses beaten, not registered yet.
+  for (const change of [s => { s.profile.cleared = []; pc.s.profile.cleared = ['smile-street']; }, s => { s.profile.bossRecords = []; }, s => { s.profile.registered = false; }]) {
+    const other = decodeSave(encodeSave(pc.s), data); change(other);
+    assert.equal(progressBehind(other, pc.s), true);
+  }
 });
 
 test('the sync link is kept apart from the save and survives a broken entry', () => {

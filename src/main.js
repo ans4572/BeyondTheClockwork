@@ -4,7 +4,7 @@ import { TOOL_ICONS, ICON_FILES, ico, slotArt, skillIcon, syncFullscreenIcon } f
 import { roomTitle } from './engine/room-title.js';
 import { encodeSave, decodeSave, hasProgress, saveSummary, SAVE_KEY } from './engine/storage.js';
 import { PIXELS_PER_UNIT, placeOf } from './engine/map-geometry.js';
-import { statCost, rankCap } from './engine/progression.js';
+import { statCost, rankCap, wrenchLevel, wrenchStep, wrenchAttack } from './engine/progression.js';
 import { CanvasRenderer, STATUS_ICONS, BRASS_DRUM_ART, HAZARD_ART, FLAG_BEARER_ART } from './render/canvas.js';
 import { playLiberationCutscene, preloadLiberation } from './ui/liberation-cutscene.js';
 import { playCouncilScene, COUNCIL_ART } from './ui/council-scene.js';
@@ -27,7 +27,7 @@ import { mergeMine, formatClock } from './engine/records.js';
 import { chapterList, chapterOf, chapterRooms, chapterLevels, chapterOpen, chapterShown, chapterCleared, chapterRecords, FIRST_CHAPTER } from './engine/chapters.js';
 import { callName, fillName, josa, NICKNAME_MAX } from './engine/nickname.js';
 import { CURSOR_MIN, CURSOR_MAX, CURSOR_STEP, cursorSize, cursorImage, cursorCss } from './ui/cursor.js';
-import { progressMark, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
+import { progressMark, progressBehind, syncPlan, readLink, writeLink, readPlayTime, writePlayTime, mergePlayTime, PLAY_UPLOAD_SECONDS } from './engine/sync.js';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = text => String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -295,13 +295,33 @@ try {
     $('overlay').style.zoom = zoom; document.documentElement.style.setProperty('--overlay-zoom', zoom);
     document.body.classList.toggle('cramped', document.documentElement.clientHeight / zoom < CRAMPED_SHEET_HEIGHT);
   };
-  addEventListener('resize', () => { fitHud(); fitAtlas(); }); document.addEventListener('fullscreenchange', fitHud); fitHud();
   const hudFace = $('hud-face').getContext('2d'), portrait = new Image();
+  // F2's bust (48 px of the idle sheet, past the wrench) in the 56 px photo plate, drawn at the screen's own pixels so it
+  // never stretches by an odd amount (2026-11-26 review: 1.14x and 1.58x gave uneven pixel columns). A whole number of
+  // screen pixels per sprite pixel when one fits snugly; on larger plates it is enlarged in whole steps and then eased
+  // down to size, so the columns stay even.
+  const drawHudFace = () => {
+    const canvas = $('hud-face'), ratio = canvas.getBoundingClientRect().width / 56;
+    if (!ratio) return; // hidden (a talk or a cutscene): keep the last drawing, the next resize redraws it
+    const size = Math.max(48, Math.round(56 * ratio * devicePixelRatio));
+    if (canvas.width !== size) { canvas.width = canvas.height = size; }
+    hudFace.clearRect(0, 0, size, size);
+    if (!portrait.naturalWidth) return;
+    const inner = size - 2 * Math.round(4 * size / 56), whole = Math.floor(inner / 48);
+    if (inner - whole * 48 <= inner * 0.15) {
+      const side = whole * 48, at = Math.round((size - side) / 2);
+      hudFace.imageSmoothingEnabled = false; hudFace.drawImage(portrait, 45, 18, 48, 48, at, at, side, side);
+    } else {
+      const big = document.createElement('canvas'), step = Math.ceil(inner / 48), b = big.getContext('2d'), at = Math.round((size - inner) / 2);
+      big.width = big.height = 48 * step; b.imageSmoothingEnabled = false; b.drawImage(portrait, 45, 18, 48, 48, 0, 0, big.width, big.height);
+      hudFace.imageSmoothingEnabled = true; hudFace.imageSmoothingQuality = 'high'; hudFace.drawImage(big, at, at, inner, inner);
+    }
+  };
+  addEventListener('resize', () => { fitHud(); fitAtlas(); drawHudFace(); }); document.addEventListener('fullscreenchange', () => { fitHud(); drawHudFace(); }); fitHud();
   // The face in the corner opens F2 정보 (Moru points it out once the first part is fitted).
   $('hud-face').addEventListener('click', () => { if (!saveBlocked && !onTitle && !screen && game.s.profile.registered) { openAudio(); pause('stats'); } });
-  hudFace.imageSmoothingEnabled = false;
-  portrait.onload = () => hudFace.drawImage(portrait, 40, 16, 48, 48, 4, 4, 48, 48);
-  portrait.src = 'art/animations/player/movement/locomotion/clips/idle-south-708a71c5/sheet.webp';
+  portrait.onload = drawHudFace;
+  portrait.src = 'art/animations/player/v2/clips/idle-south/sheet.webp';
   // Each place's art, in order of need (src/render/map-loader.js); nothing starts before the title is drawn and F2's
   // sheets are in.
   // Chapter 2's effects, hazards and places wait until it can be reached (2026-11-12: every visitor fetched them, with about 13 MB of its paintings).
@@ -343,6 +363,13 @@ try {
   // Sync between linked devices: the link this device holds, a problem to show in the settings, and a choice to make.
   let lastPlayWrite = 0, lastPlayUpload = -Infinity, link = readLink(localStorage), syncNote = '', syncBusy = false, syncConflict = null, syncMode = null;
   let pointer = { x: 14, y: 8 }, held = new Set(), mouseHeld = false, rightHeld = false, moveHeld = false, moveTarget = null, lastMouse = null, stuckSteps = 0, movedIn = null, pending = {}, gamepadLast = [], lastAutosave = game.s.time;
+  let wrenchFlash = null, wrenchLast = null, wrenchLockUntil = 0;
+  /** One polite live region that stays on the page: the sheets are rebuilt by innerHTML, and a region born filled is rarely read. */
+  function announce(text) {
+    let live = document.getElementById('sr-live');
+    if (!live) { live = Object.assign(document.createElement('div'), { id: 'sr-live', className: 'sr-only' }); live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite'); document.body.append(live); }
+    live.textContent = ''; requestAnimationFrame(() => { live.textContent = text; });
+  }
   let audio = null, lastSoundId = null, codexTab = 'elements', codexFilter = 'all', codexBack = null, mapPick = null, settingsTab = 'general', departChapter = null;
   // The in-game setting, or the same wish made once for every app on the device.
   const reducedMotion = () => game.s.profile.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -390,7 +417,7 @@ try {
     const side = c => (c === 'moruWhy' && game.villageFree && scripts.moruWhyFree ? 'moruWhyFree' : c);
     let choice = await talkBox.play(scripts[name]);
     while (scripts[choice]) { await talkBox.play(scripts[side(choice)]); choice = await talkBox.play(scripts[name]); }
-    $('hud').classList.remove('talking'); document.body.classList.remove('talking'); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
+    $('hud').classList.remove('talking'); document.body.classList.remove('talking'); drawHudFace(); screen = null; renderOverlay(true); $('game').focus({ preventScroll: true });
     return choice;
   }
   async function talkToNpc(npc) {
@@ -400,6 +427,7 @@ try {
     const choice = await talk(npc.script || npc.character);
     if (choice === 'open') game.talk();
     if (choice === 'elements') game.openElements();
+    if (choice === 'wrench') { wrenchLast = null; game.openWrench(); }
     if (choice === 'endPractice') { game.leavePractice(); updateHUD(); }
     if (choice === 'practice' && !game.enterPractice()) game.notify('속성 부품을 하나 이상 장착하면 시험할 수 있습니다.');
     renderOverlay(true);
@@ -757,6 +785,45 @@ try {
     const stats = data.slice.permanentStats, grouped = STAT_GROUPS.flatMap(([, ids]) => ids), rest = stats.filter(stat => !grouped.includes(stat.id));
     return [...STAT_GROUPS, ...(rest.length ? [['기타', rest.map(stat => stat.id)]] : [])].map(([name, ids]) => `<h3 class="stat-group">${name}</h3>${ids.map(id => stats.find(stat => stat.id === id)).filter(Boolean).map(statRow).join('')}`).join('');
   }
+  /**
+   * Moru's wrench enhancement (2026-11-25, slice.json wrenchEnhance): its own sheet, open from the start and apart from
+   * the tuning board (2026-11-26). The wrench on a plate whose rim changes with the attack tier it has reached, the next
+   * level with its chance and the enhancement's attack, a ladder of the fifteen levels grouped by attack tier (no meter
+   * and no chances on it, the user's call), and the last try's result kept on the plate as a tag until the next one.
+   */
+  /** The last try in one line for the screen reader (the page shows it as the plate's tag), with the gears left so two tries alike still read as two. */
+  function wrenchResultText(r) {
+    return `${r.level}강 ${r.result === 'success' ? '성공' : '실패'} · 톱니 ${r.cost} 사용${r.result === 'success' ? '' : ' · 단계 유지'} · 남은 톱니 ${Math.floor(game.s.profile.freeGears)}`;
+  }
+  function wrenchTier(i) {
+    // Tier of level i + 1: 0 for the base level, then 1-4 by how much attack its step adds (1%, 2%, 3%, 4%).
+    const gains = [...new Set(data.slice.wrenchEnhance.attackDamage)].sort((x, y) => x - y);
+    return i ? gains.indexOf(data.slice.wrenchEnhance.attackDamage[i - 1]) + 1 : 0;
+  }
+  function wrenchPanel() {
+    const profile = game.s.profile, level = wrenchLevel(profile), rule = data.slice.wrenchEnhance, step = wrenchStep(data, level), now = wrenchAttack(data, level), pct = value => `+${Number((value * 100).toFixed(1))}%`;
+    const flash = wrenchFlash, chance = step ? Math.round(step.chance * 100) : 0, short = step && profile.freeGears < step.cost; wrenchFlash = null;
+    const ladder = Array.from({ length: rule.maxLevel }, (_, i) => {
+      const tier = wrenchTier(i), cls = [i < level ? 'on' : i === level ? 'next' : '', i && tier !== wrenchTier(i - 1) ? 'gap' : ''].filter(Boolean).join(' ');
+      return `<li class="${cls}" title="${i + 1}강${i ? ` · 강화 공격력 ${pct(rule.attackDamage[i - 1])}` : ''}" aria-label="${i + 1}강${i < level ? ' 달성' : i === level ? ' 다음 단계' : ''}"${i === level ? ' aria-current="step"' : ''}><b>${i + 1}</b></li>`;
+    }).join('');
+    // The cost stands beside the chance as the try's second number (2026-11-26: it used to sit in the button and again in a
+    // result line, with the gears left repeating the header).
+    const next = step
+      ? `<div class="wb-step"><small>다음</small><strong>${level + 1}강</strong></div><div class="wb-stats"><div class="wb-chance"><small>성공 확률</small><b>${chance}%</b></div><div class="wb-cost${short ? ' short' : ''}"><small>필요 톱니</small><b>${ico('gear')} ${step.cost}</b></div></div><p class="wb-gain">강화 공격력 ${pct(now)} → <b>${pct(now + step.attackDamage)}</b></p>`
+      : `<div class="wb-step"><strong>최고 단계</strong></div><p class="wb-gain">강화 공격력 <b>${pct(now)}</b></p>`;
+    const stamp = flash ? `<em class="wb-stamp ${flash}">${flash === 'fail' ? '실패' : step ? '성공' : '완성'}</em>` : '';
+    // The last try stays on the plate as a tag until the next one: the level reached, or that it held.
+    const tag = wrenchLast ? `<span class="wb-tag ${wrenchLast.result}">${wrenchLast.result === 'fail' ? '단계 유지' : `${wrenchLast.level}강 달성`}</span>` : '';
+    return panel(`<div class="panel-header"><div><h2>모루의 렌치 강화</h2></div><strong>${ico('gear')} ${Math.floor(profile.freeGears)}</strong></div><p class="wb-desc">톱니를 내고 한 번 시도합니다. 실패하면 톱니는 사라지고 단계는 그대로입니다. 강화 공격력은 조율판과 따로 곱해져 그대로 반영됩니다.</p>`
+      + `<div class="wb-body"><div class="wb-plate tier-${wrenchTier(level - 1)}">${tag}${ico('action-wrench')}<b class="wb-level">${level}<small>강</small></b>${stamp}</div><div class="wb-next">${next}</div></div>`
+      + `<ol class="wb-ladder" aria-label="강화 단계">${ladder}</ol>`
+      // At the top Moru says a word where the button was, and 닫기 becomes the one action (review 2026-11-26, P2).
+      + (step ? `<div class="actions">${button(short ? `톱니 ${step.cost - Math.floor(profile.freeGears)} 부족` : '강화하기', 'wrench-enhance', short ? 'disabled' : '', 'primary wb-go')}${button('닫기', 'close-panel')}</div>`
+        : `<p class="wb-moru"><b>모루</b> 더 조일 데가 없군. 이만한 렌치는 나도 처음 본다.</p><div class="actions">${button('닫기', 'close-panel', '', 'primary wb-go')}</div>`), `side wrench-bench${flash ? ` flash-${flash}` : ''}${reducedMotion() ? ' still' : ''}`)
+      // Just after a try that left nothing to press, the sheet itself holds the focus, so a held Enter does not close it.
+      .replace('<section ', wrenchLast && (!step || short) ? '<section tabindex="-1" data-hold-focus ' : '<section ');
+  }
   function tuningPanel() {
     return panel(`<div class="panel-header"><div><h2>모루의 조율판</h2></div>${firstLook('tuning', '처음이라면 체력이나 렌치 공격력부터 올려 보세요. 가격 옆&nbsp;−&nbsp;버튼은 한 단계씩, 전체 무료 환급은 한꺼번에 톱니를 그대로 돌려줍니다.')}<strong>${ico('gear')} ${game.s.profile.freeGears}</strong></div><p>자유 톱니로 기본 능력을 올립니다. 전체 환급은 언제든 무료입니다.</p><div class="stat-list">${statGroups()}</div><p class="notice stat-hint">${game.s.profile.blueprints.includes('selfTuningBlueprint') ? '구형 자율 조율 설계도와 원본 조립 기록이 남았습니다. 멈춤 창의 수리 장부에서 볼 수 있습니다.' : game.s.profile.bossRecords.includes('captainBrass') ? '순찰 설계도와 첫 인장 기록이 남았습니다. 멈춤 창의 수리 장부에서 볼 수 있습니다.' : '렌치와 회피는 처음부터 완성되어 있습니다. 조율 없이도 도전할 수 있어요.'}</p><div class="actions">${button('닫기', 'close-panel', '', 'primary')}${button('전체 무료 환급', 'refund', '', 'quiet')}</div>`, 'side');
   }
@@ -794,7 +861,8 @@ try {
     const RUN = ['moveSpeed', 'critChance', 'attackSpeed', 'damageReduction', 'energyGain'], tuned = key => (game.stats[key] || 0) - (RUN.includes(key) ? game.upgradeAmount(key) : 0);
     if (id === 'maxHp') return game.p.maxHp + amount - game.upgradeAmount('maxHp');
     if (id === 'killHeal') return amount;
-    if (id === 'basicDamage') return game.attackBonus + amount;
+    // The wrench's enhancement is its own factor (game.js wrenchBonus); folded in here so the card's total still counts it.
+    if (id === 'basicDamage') return (1 + game.attackBonus) * (1 + game.wrenchBonus) - 1 + amount;
     // Same order as the game (game.js critChance, cooldownReduction): the tuning is capped, the part adds on top.
     if (id === 'skillCooldownReduction') return (game.tuning.cooldownReduction || 0) + amount;
     if (id === 'critChance') return game.critChance - game.upgradeAmount('critChance') + amount;
@@ -1041,11 +1109,11 @@ try {
   function statsBody() {
     const p = game.p, st = game.stats, c = data.combat, prof = game.s.profile, rank = id => prof.stats?.[id] || 0;
     const pct = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 1000) / 10}%`;
-    const damage = (1 + game.attackBonus) * (1 + Math.min(c.caps.runDamageBonus, game.upgradeAmount('basicDamage') || 0));
+    const damage = (1 + game.attackBonus) * (1 + game.wrenchBonus) * (1 + Math.min(c.caps.runDamageBonus, game.upgradeAmount('basicDamage') || 0));
     const crit = game.critChance, critHit = c.caps.critMultiplier + (st.critDamage || 0);
     const groups = [
       ['외장', [['체력', `${Math.round(p.hp)} / ${p.maxHp}`, `조율 ${rank('maxHp')}단계`], ['방어력', pct(st.damageReduction || 0), '받는 피해가 줄어듭니다'], ['이동속도', pct(st.moveSpeed || 0), `기본 초당 ${c.player.speed}칸`]]],
-      ['렌치', [['공격력', c.player.combo.map(blow => Math.round(blow.damage * damage)).join(' · '), '1·2·3타 피해'], ['공격속도', pct(st.attackSpeed || 0), ''], ['치명타', `${Math.round(crit * 100)}%`, `맞으면 피해 ×${Math.round(critHit * 100) / 100}`]]],
+      ['렌치', [['공격력', c.player.combo.map(blow => Math.round(blow.damage * damage)).join(' · '), `1·2·3타 피해${wrenchLevel(prof) > 1 ? ` · 렌치 ${wrenchLevel(prof)}강 ${pct(wrenchAttack(data, wrenchLevel(prof)))} 포함` : ''}`], ['공격속도', pct(st.attackSpeed || 0), ''], ['치명타', `${Math.round(crit * 100)}%`, `맞으면 피해 ×${Math.round(critHit * 100) / 100}`]]],
       ['회로', [['기술 대기시간', pct(-game.cooldownReduction), ''], ['축전 획득량', pct(st.energyGain || 0), ''], ['상태이상 위력', pct(st.statusPower || 0), '']]],
       ['주머니', [['자유 톱니 획득', pct(st.gearGain || 0), ''], ['동전 획득', pct(st.coinGain || 0), '']]]
     ];
@@ -1054,7 +1122,7 @@ try {
     return `<div class="f2-card"><div class="f2-who"><div class="f2-face" role="img" aria-label="F2"></div><b>${escapeHTML(callName(prof))}</b><small>제품 번호 F2 · 태엽 인형</small>`
       + `<div class="f2-hp"><i style="width:${Math.round(Math.max(0, p.hp) / p.maxHp * 100)}%"></i></div><small>체력 ${Math.round(p.hp)} / ${p.maxHp}</small>`
       + `<div class="f2-loadout">장착 속성<br>${loadout || '없음'}${game.fusion ? `<br>융합 <b>${escapeHTML(game.fusion.name)}</b>` : ''}</div></div>`
-      + `<div><div class="f2-groups">${rows}</div><p class="notice">모루의 조율판(영구)과 ${game.s.run ? '이번 원정에서 얻은 부품' : '원정에서 얻는 부품'}이 합쳐진 값입니다.</p></div></div>`;
+      + `<div><div class="f2-groups">${rows}</div><p class="notice">모루의 조율판·렌치 강화(영구)와 ${game.s.run ? '이번 원정에서 얻은 부품' : '원정에서 얻는 부품'}이 합쳐진 값입니다.</p></div></div>`;
   }
   function statsPanel() {
     return panel(`<div class="panel-header"><div><h2>F2 정보</h2></div>${button('닫기', 'resume', '', 'primary')}</div>${statsBody()}`, 'wide f2-info');
@@ -1223,16 +1291,20 @@ try {
     overlayKey = key;
     let html = '';
     if (mode === 'loadError') html = panel(`<h2>저장 파일을 확인해 주세요.</h2><p class="error">${escapeHTML(saveProblem(loadError))}</p><p>새 게임으로 바꾸기 전까지 기존 저장은 그대로 둡니다.</p><div class="actions">${button('새 게임으로 교체', 'confirm-new', '', 'danger')}</div>`, 'compact');
-    if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
+    if (mode === 'confirmNew') html = panel(`<h2>처음부터 다시 할까요?</h2><p>이 브라우저에 저장된 조율, 자유 톱니, 기록이 지워집니다. 다른 기기와의 연동은 끊어지고, 그 기기들의 진행은 그대로 남습니다.</p><div class="actions">${button('돌아가기', 'cancel-new')}${button('지우고 새로 시작', 'new-game', '', 'danger')}</div>`, 'compact');
     if (mode === 'confirmTransfer') { const incoming = transfer.incoming; html = panel(`<h2>이 진행으로 바꿀까요?</h2><p>가져올 진행: <b>${escapeHTML(saveSummary(incoming.state, incoming.savedAt, data))}</b><br>지금 이 기기: ${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</p><p>이 기기의 지금 진행은 지워집니다.${incoming.syncKey ? '<br>받으면 이 기기도 연결되어 그 뒤로는 저절로 이어집니다.' : ''}</p><div class="actions">${button('돌아가기', 'transfer-cancel')}${button('이 진행으로 바꾸기', 'transfer-apply', '', 'danger')}</div>`, 'compact'); }
-    if (mode === 'syncConflict') { const c = syncConflict; html = panel(`<h2>어느 진행으로 할까요?</h2><p>두 기기에서 따로 진행했습니다.</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep')}${button('다른 기기 진행 받기', 'sync-take', '', 'primary')}</div>`, 'compact'); }
+    if (mode === 'syncConflict') {
+      // When the other device's save holds less (it was started over), keeping this device's progress is the default.
+      const c = syncConflict, runs = state => ` · 원정 ${state.profile.runs || 0}회`;
+      html = panel(`<h2>어느 진행으로 할까요?</h2><p>${c.behind ? '다른 기기의 저장이 이 기기보다 진행이 적습니다. 그 기기에서 처음부터 다시 했을 수 있습니다.' : '두 기기에서 따로 진행했습니다.'}</p><p>다른 기기: <b>${escapeHTML(saveSummary(c.state, c.remote.at, data) + runs(c.state))}</b><br>이 기기: <b>${escapeHTML(hasProgress(game.s) ? saveSummary(game.s, localSavedAt(), data) + runs(game.s) : '진행 없음')}</b></p><p class="notice">고르지 않은 쪽 진행은 사라집니다.</p><div class="actions">${button('이 기기 진행 유지', 'sync-keep', '', c.behind ? 'primary' : '')}${button('다른 기기 진행 받기', 'sync-take', '', c.behind ? '' : 'primary')}</div>`, 'compact');
+    }
     if (mode === 'confirmAbandon') html = panel(`<h2>원정을 포기할까요?</h2><p>모은 자유 톱니와 기록은 작업대에 남습니다. 이번 원정에서 올린 기술 단계·임시 부품·동전은 잃습니다.</p><div class="actions">${button('돌아가기', 'cancel-abandon')}${button('원정 포기', 'abandon-confirmed', '', 'danger')}</div>`, 'compact');
     if (mode === 'controls') html = controlsPanel();
     if (mode === 'debug') html = debugPanel();
     if (mode === 'introDeath') html = panel(`<h2>다시 일어나 볼까요?</h2><p>아직 수리점에 등록하기 전입니다.<br>폐기장 전투의 시작 지점에서 바로 다시 시도합니다.</p><div class="actions">${button('렌치를 다시 잡기', 'intro', '', 'primary')}</div>`, 'compact');
     // The back yard opens one sheet: Moru's parts, to change what is fitted while trying it.
     if (mode === 'practice' && s.panel === 'elements') html = elementsPanel();
-    if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : s.panel === 'potions' ? potionsPanel() : tuningPanel();
+    if (mode === 'hub') html = s.panel === 'elements' ? elementsPanel() : s.panel === 'difficulty' ? difficultyPanel() : s.panel === 'potions' ? potionsPanel() : s.panel === 'wrench' ? wrenchPanel() : tuningPanel();
     if (mode === 'reward') html = rewardsPanel();
     // The night market's shop and the travelling merchant before the boss sell the same things; each has its own once-only list.
     // The travelling merchant waits before each chapter's boss (slice.json chapters[].merchant names who and where).
@@ -1273,7 +1345,7 @@ try {
     // Restored once the headings are drawn: the lists only take their final height then, and an earlier value is cut short.
     if (scrolled) restoreScroll($('overlay'), scrolled);
     fitAtlas();
-    if (html) { clearInput(); ((same && $('overlay').querySelector(`${same}:not(:disabled)`)) || $('overlay').querySelector('button:not(:disabled)'))?.focus({ preventScroll: true }); }
+    if (html) { clearInput(); ((same && $('overlay').querySelector(`${same}:not(:disabled)`)) || $('overlay').querySelector('[data-hold-focus]') || $('overlay').querySelector('button:not(:disabled)'))?.focus({ preventScroll: true }); }
   }
 
   /**
@@ -1540,11 +1612,12 @@ try {
     try { remote = await pullSync(link.key, undefined, undefined, statsDevice()); } catch (error) { if (error.reason === 'unlinked') { link = null; writeLink(localStorage, null); } return; }
     // Once the player has left the title, the choice waits for the next opening.
     if (!onTitle || screen !== 'title') return;
-    const plan = syncPlan(game.s, link, remote);
-    if (plan === 'keep') return;
+    if (syncPlan(game.s, link, remote) === 'keep') return;
     let state; try { state = decodeSave(remote.save, data); } catch { return; }
+    // A newer save with less progress (another device started over) is never taken without asking.
+    const plan = syncPlan(game.s, link, remote, state);
     if (plan === 'take') { takeRemote(state, remote); openTitle(); return; }
-    syncConflict = { state, remote }; screen = 'syncConflict'; renderOverlay(true);
+    syncConflict = { state, remote, behind: progressBehind(state, game.s) }; screen = 'syncConflict'; renderOverlay(true);
   }
   async function syncAction(name) {
     if (name === 'sync-now') await syncUpload(true);
@@ -1624,6 +1697,17 @@ try {
     if (name === 'tune-buy') { bought = game.tune(d.row, 'buy'); if (bought) sfx('tune'); }
     if (name === 'refund') game.tune(null, 'refund');
     if (name === 'tune-down') game.tune(d.row, 'down');
+    // A try is held off for 0.4 seconds after the last one, so a double click does not spend twice (up to 750 gears a try).
+    if (name === 'wrench-enhance' && performance.now() >= wrenchLockUntil) {
+      const level = wrenchLevel(game.s.profile), cost = wrenchStep(data, level)?.cost, result = game.enhance();
+      // The sheet stamps the result on the wrench's plate and keeps it as the plate's tag (wrenchPanel), with a sound.
+      if (result) {
+        wrenchFlash = result; wrenchLast = { result, level: level + 1, cost }; wrenchLockUntil = performance.now() + 400;
+        const top = level + 1 === data.slice.wrenchEnhance.maxLevel;
+        sfx(result === 'fail' ? 'enhance-fail' : top || wrenchTier(level) !== wrenchTier(level - 1) ? 'enhance-tier' : 'enhance-up');
+        announce(wrenchResultText(wrenchLast));
+      }
+    }
     if (name === 'reroll-card') { bought = game.rerollRewardCard(Number(d.index)); }
     if (name === 'reward') game.chooseReward(Number(d.index), d.replacement === undefined ? null : Number(d.replacement));
     if (name === 'shop-buy') bought = game.buyShop(d.id);
@@ -1657,7 +1741,9 @@ try {
     if (bought !== null) sfx(bought ? 'buy' : 'deny'); else if (!['reward', 'element'].includes(name)) sfx('click');
     if (name === 'confirm-new') screen = 'confirmNew';
     if (name === 'cancel-new') { if (onTitle) { resume(); return; } screen = 'loadError'; }
-    if (name === 'new-game') { const fromTitle = onTitle; game.state = new Game(data).s; writePlayTime(localStorage, 0); saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
+    // Starting over leaves the shared save on the server alone: the link is dropped, and the new save gets its own place
+    // there once it is registered (2026-11-26: a fresh start uploaded over the old progress, and linked devices took it).
+    if (name === 'new-game') { const fromTitle = onTitle; link = null; writeLink(localStorage, null); game.state = new Game(data).s; writePlayTime(localStorage, 0); saveBlocked = false; loadError = ''; lastAutosave = game.s.time; game.save(); if (fromTitle) { playOpening(true); return; } resume(); }
     renderOverlay(true); updateHUD();
     if (game.onFoot && !screen) $('game').focus({ preventScroll: true });
   }

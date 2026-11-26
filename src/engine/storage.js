@@ -79,6 +79,9 @@ export function decodeSave(raw, data) {
     delete s.profile.stats[id];
   }
   for (const stat of data.slice.permanentStats) if (!integerIn(s.profile.stats?.[stat.id], 0, stat.maxRank)) throw new Error('저장된 스탯 레벨이 올바르지 않습니다.');
+  // The wrench's enhancement level (2026-11-25): older saves have none and start at 1.
+  s.profile.wrenchLevel ??= 1;
+  if (!integerIn(s.profile.wrenchLevel, 1, data.slice.wrenchEnhance.maxLevel)) throw new Error('저장된 렌치 강화 단계가 올바르지 않습니다.');
   const modes = ['opening', 'intro', 'introDeath', 'registration', 'hub', 'combat', 'reward', 'route', 'shop', 'merchant', 'unwind', 'complete', 'returned', 'practice'];
   if (!modes.includes(s.mode) || !Number.isFinite(s.time) || !Number.isFinite(s.player.hp) || !Number.isFinite(s.player.x) || !Number.isFinite(s.player.y)) throw new Error('저장된 게임 상태가 올바르지 않습니다.');
   if (!Array.isArray(s.enemies) || !Array.isArray(s.casts) || !Array.isArray(s.projectiles) || !Array.isArray(s.effects)) throw new Error('저장된 전투 상태가 올바르지 않습니다.');

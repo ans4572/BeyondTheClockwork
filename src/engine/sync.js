@@ -17,11 +17,24 @@ export function progressMark(state) {
 }
 
 /**
- * On opening the game: `link` is { key, rev, mark } from the last upload or download, `remote` the server's { rev }.
- * keep — nothing newer elsewhere; take — another device moved on and this one did not; ask — both moved on.
+ * True when `other` holds less of what only ever grows than `mine`: fewer expeditions or cleared fights, fewer chapters
+ * cleared or bosses beaten, or not registered yet. A save started over on another device is behind this way.
  */
-export function syncPlan(local, link, remote) {
+export function progressBehind(other, mine) {
+  const a = other.profile, b = mine.profile, count = list => (Array.isArray(list) ? list.length : 0);
+  return (!a.registered && !!b.registered) || (a.runs || 0) < (b.runs || 0) || (a.combatClears || 0) < (b.combatClears || 0)
+    || count(a.cleared) < count(b.cleared) || count(a.bossRecords) < count(b.bossRecords);
+}
+
+/**
+ * On opening the game: `link` is { key, rev, mark } from the last upload or download, `remote` the server's { rev }.
+ * keep — nothing newer elsewhere; take — another device moved on and this one did not; ask — both moved on, or the
+ * newer save holds less progress than this one (2026-11-26: a player's progress vanished when a linked device started
+ * over and its fresh save was taken without asking). `remoteState` is the server's save decoded, when there is one.
+ */
+export function syncPlan(local, link, remote, remoteState = null) {
   if (!remote || remote.rev <= link.rev) return 'keep';
+  if (remoteState && progressBehind(remoteState, local)) return 'ask';
   return progressMark(local) === link.mark ? 'take' : 'ask';
 }
 

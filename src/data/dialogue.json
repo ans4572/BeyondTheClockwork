@@ -3,8 +3,14 @@
   "speakers": {
     "f2": {
       "name": "F2",
-      "sheet": "/art/animations/player/movement/locomotion/clips/idle-south-west-708a71c5/sheet.webp",
-      "cell": 128
+      "sheet": "/art/animations/player/v2/clips/idle-south-west/sheet.webp",
+      "cell": 132,
+      "crop": [
+        2,
+        2,
+        128,
+        128
+      ]
     },
     "moru": {
       "name": "모루",
@@ -356,6 +362,10 @@
           {
             "id": "elements",
             "label": "속성 부품을 본다"
+          },
+          {
+            "id": "wrench",
+            "label": "렌치를 강화한다"
           },
           {
             "id": "practice",

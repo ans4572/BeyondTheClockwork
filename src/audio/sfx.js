@@ -213,7 +213,12 @@ export const SFX = {
   buy: { file: 'buy', takes: 1, volume: 0.35, rate: [1.02, 1.02] },
   deny: { file: 'deny', takes: 1, volume: 0.2, rate: [1, 1] },
   tune: { file: 'tune', takes: 1, volume: 0.4, rate: [1, 1] },
-  equip: { file: 'equip', takes: 1, volume: 0.3, rate: [1.02, 1.02] }
+  equip: { file: 'equip', takes: 1, volume: 0.3, rate: [1.02, 1.02] },
+  // Moru's wrench enhancement (2026-11-26, Openverse/Freesound CC0, art/audio/CREDITS.md): a ringing anvil strike for a level
+  // gained, a dull clunk for a try that failed, a chime when the level opens a new attack tier. Volumes put them at tune's level.
+  'enhance-up': { file: 'enhance-up', takes: 1, volume: 0.35, rate: [1, 1] },
+  'enhance-fail': { file: 'enhance-fail', takes: 1, volume: 0.25, rate: [1, 1] },
+  'enhance-tier': { file: 'enhance-tier', takes: 1, volume: 0.4, rate: [1, 1] }
 };
 
 // A few recipes need local peak rounding before they join the shared dynamics bus.

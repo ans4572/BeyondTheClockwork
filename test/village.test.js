@@ -287,7 +287,7 @@ test('every dialogue line has a known speaker, fits the box, and every choice le
   const { speakers, scripts } = dialogue;
   for (const [name, lines] of Object.entries(scripts)) for (const { who, text, choices } of lines) {
     assert.ok(speakers[who], `${name} ${who}`); assert.ok(text.length <= 72, text);
-    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'practice', 'endPractice'].includes(id) || scripts[id], id);
+    for (const { id } of choices || []) assert.ok(['open', 'leave', 'register', 'elements', 'wrench', 'practice', 'endPractice'].includes(id) || scripts[id], id);
   }
   for (const { sheet } of Object.values(speakers)) assert.ok(fs.existsSync(new URL(`..${sheet}`, import.meta.url)), sheet);
   assert.equal(scripts.registration.at(-1).choices[0].id, 'register');

@@ -250,9 +250,11 @@ test('the admin page makes a transfer code from a player’s newest uploaded sav
   await pullSync(other.key, game, '', pc);
   assert.equal((await admin(`/api/admin/users/${pc}/transfer`, { method: 'POST' })).status, 200, 'opening the game links it');
   // Each return to the village replaces the save: the code carries the newest one, and the sync key with it.
-  g.s.profile.freeGears = 77; await pushSync(key, encodeSave(g.s), rev, game, '', phone);
+  g.s.profile.freeGears = 77; g.s.profile.stats.maxHp = 7; g.s.profile.ownedElements = ['fire', 'ice']; await pushSync(key, encodeSave(g.s), rev, game, '', phone);
   const detail = await (await admin(`/api/admin/users/${phone}`)).json();
   assert.equal(detail.saved.rev, 2); assert.equal(detail.saved.save, undefined, 'the page never sees the save itself');
+  // The restore form starts from the board and elements in that save (2026-11-26: it started every stat at 0).
+  assert.equal(detail.saved.tuning.stats.maxHp, 7); assert.deepEqual(detail.saved.tuning.owned, ['fire', 'ice']);
   assert.equal((await call(`/api/admin/users/${phone}/transfer`, { method: 'POST' })).status, 401, 'no token, no code');
   const made = await (await admin(`/api/admin/users/${phone}/transfer`, { method: 'POST' })).json();
   assert.ok(Date.parse(made.expiresAt) - Date.now() > 23 * 3600 * 1000, 'a day to pass it on');

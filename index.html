@@ -9,9 +9,10 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="태엽 밖으로 · Beyond the Clockwork">
   <meta property="og:description" content="모두가 행복하도록 만들어진 마을. 당신은 고장 나서, 자유로워졌다.">
-  <meta property="og:image" content="https://beyondtheclockwork.mungaeng.workers.dev/art/ui/key-art/key-art-v1.jpg">
+  <meta property="og:image" content="https://beyondtheclockwork.mungaeng.workers.dev/art/ui/key-art/key-art-v2.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="태엽 밖으로: 불량 판정서와 폐기 도장 옆에 렌치를 든 태엽 인형 F2가 서 있는 그림">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b5551'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-size='46' fill='%23f2c878'%3E⚙%3C/text%3E%3C/svg%3E">
   <!-- Shown by the HTML alone, before any script, style sheet or font arrives; removed once the title is drawn. -->
@@ -34,23 +35,21 @@
   <link rel="preload" href="art/fonts/Galmuri11-sub-v1.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="art/fonts/Galmuri11-Bold-sub-v1.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="art/fonts/NeoDunggeunmoPro.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="art/ui/title/f2-title-v5.png" as="image">
+  <link rel="preload" href="art/ui/title/f2-title-v6.png" as="image">
   <link rel="preload" href="src/data/combat.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/progression.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/slice.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/maps.json" as="fetch" crossorigin>
   <link rel="preload" href="src/data/dialogue.json" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-0-e4ec269254.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-1-1357da69eb.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-2-7163980870.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-3-70d9821837.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-4-5ebfd2f458.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-5-9714135b0c.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-6-c9d5bab159.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-7-0d3c28bd4c.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-8-88c63880d4.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-9-037b925925.webp" as="fetch" crossorigin>
-  <link rel="preload" href="art/atlases/f2-first-10-3df93e1949.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-0-907d875e91.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-1-b1fd27d713.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-2-403455a970.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-3-02ceadb0bf.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-4-baa98d9122.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-5-99467c6bf0.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-6-26c87b67d9.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-7-09791d8d34.webp" as="fetch" crossorigin>
+  <link rel="preload" href="art/atlases/f2-first-8-f92be46e05.webp" as="fetch" crossorigin>
   <link rel="modulepreload" href="src/engine/data.js">
   <link rel="modulepreload" href="src/engine/game.js">
   <link rel="modulepreload" href="src/ui/tool-icons.js">
@@ -137,7 +136,7 @@
       <div id="wipe" hidden></div>
       <div id="cutscene" hidden></div>
       <div id="hud">
-        <div class="hud-tag hud-vitals"><canvas id="hud-face" width="56" height="56"></canvas><div class="hud-bars"><div class="hud-bar"><i id="hp-fill"></i><b id="hp-text"></b></div><div class="hud-bar energy"><i id="energy-fill"></i><b id="energy-text"></b></div><div id="effects" class="hud-effects" hidden></div></div></div>
+        <div class="hud-tag hud-vitals"><canvas id="hud-face" width="56" height="56" role="button" aria-label="F2 정보" title="F2 정보"></canvas><div class="hud-bars"><div class="hud-bar"><i id="hp-fill"></i><b id="hp-text"></b></div><div class="hud-bar energy"><i id="energy-fill"></i><b id="energy-text"></b></div><div id="effects" class="hud-effects" hidden></div></div></div>
         <canvas id="minimap" class="hud-minimap" width="336" height="224" aria-label="미니맵" hidden></canvas>
         <div id="boss-bar" class="hud-boss" hidden><b id="boss-name"></b><div class="boss-track"><i id="boss-fill"></i><span id="boss-marks"></span></div><small id="boss-note"></small></div>
         <div class="hud-tag hud-wallet"><span title="자유 톱니" data-icon="gear"><b id="gears">0</b></span><span title="동전" data-icon="coin"><b id="coins">0</b></span></div>

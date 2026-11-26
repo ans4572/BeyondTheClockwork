@@ -77,6 +77,21 @@ export async function takePass(store, pass) {
 }
 
 /** What the admin page is shown of one synced save: enough to recognise the player, never the save itself. */
+/**
+ * The tuning board and the elements held in a save, for the admin page's restore form to start from (2026-11-26: the
+ * form started every stat at 0, so a restore code made as it stood emptied a player's board). Only small whole numbers
+ * and short ids pass; null when the save cannot be read.
+ */
+export function tuningOf(raw) {
+  try {
+    const p = JSON.parse(raw).state?.profile || {};
+    const stats = Object.fromEntries(Object.entries(p.stats && typeof p.stats === 'object' ? p.stats : {})
+      .filter(([id, rank]) => /^[a-zA-Z]{1,32}$/.test(id) && Number.isInteger(rank) && rank >= 0 && rank <= 1000).slice(0, 40));
+    const owned = (Array.isArray(p.ownedElements) ? p.ownedElements : []).filter(id => typeof id === 'string' && /^[a-zA-Z]{1,32}$/.test(id)).slice(0, 8);
+    return { stats, owned };
+  } catch { return null; }
+}
+
 function glance(raw) {
   try {
     const p = JSON.parse(raw).state?.profile || {};

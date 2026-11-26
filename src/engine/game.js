@@ -1,4 +1,4 @@
-import { createProfile, permanentStats, buyRank, refundRank, refundAll, enterChapter } from './progression.js';
+import { createProfile, permanentStats, buyRank, refundRank, refundAll, enterChapter, enhanceWrench, wrenchAttack, wrenchLevel } from './progression.js';
 import { chapterOf, chapterRooms, chapterLevels, chapterOpen, chapterCleared, clearChapter, chapterRecords, FIRST_CHAPTER } from './chapters.js';
 import { roomTitle } from './room-title.js';
 import { fitsMap, pointInPolygon, placeOf, roomPlace } from './map-geometry.js';
@@ -293,6 +293,8 @@ export class Game {
     return !!npc;
   }
   closePanel() { this.s.panel = null; }
+  /** Moru's wrench enhancement, its own panel apart from the tuning board (2026-11-26). */
+  openWrench() { if (this.s.mode === 'hub') this.s.panel = 'wrench'; }
   openElements() { if (this.s.mode === 'hub' || this.s.mode === 'practice') this.s.panel = 'elements'; }
   /** The back yard's skills follow the parts fitted there: the new pair, fresh waits and full charge. */
   refitPractice() {
@@ -366,6 +368,13 @@ export class Game {
     // One level of one row back (review 2026-11-24): the row's − button.
     if (action === 'down') result = refundRank(this.data, this.s.profile, statId) > 0;
     if (result) { const { x, y } = this.p; this.resetPlayer(); Object.assign(this.p, { x, y }); this.save(); }
+    return result;
+  }
+  /** One try at the wrench's next level, in the village only: 'success', 'fail', or false when nothing was spent. */
+  enhance() {
+    if (this.s.mode !== 'hub') return false;
+    const result = enhanceWrench(this.data, this.s.profile, this.random());
+    if (result) this.save();
     return result;
   }
   /** The expedition's difficulty (slice.json difficulty): a run saved before difficulties existed plays as the default. */
@@ -608,8 +617,11 @@ export class Game {
    * the crit part did nothing). The tuning's own ranks (maxRank 30) and each run part's maxRank are the only limits.
    *   attackBonus: tuning + the oil.  critChance: base + tuning + the run part + the glass spring.
    *   cooldownReduction: tuning + the run part.
+   * The wrench's enhancement is the one exception: a factor of its own (wrenchBonus), so its +33% stays a real +33% on
+   * a full board (2026-11-26, the user's call: added to the board it was worth only +17% there).
    */
   get attackBonus() { return (this.tuning.attackDamage || 0) + (this.potion?.attackDamage || 0); }
+  get wrenchBonus() { return wrenchAttack(this.data, wrenchLevel(this.s.profile)); }
   get critChance() { return (this.c.player.critChance || 0) + (this.tuning.critChance || 0) + this.upgradeAmount('critChance') + (this.perk('glassSpring')?.critBonus || 0); }
   get cooldownReduction() { return (this.tuning.cooldownReduction || 0) + this.upgradeAmount('skillCooldownReduction'); }
   damageMultiplier(enemy, basic = false, slot = null) {
@@ -620,7 +632,7 @@ export class Game {
     const runBonus = (basic ? this.upgradeAmount('basicDamage') : 0) + brand + crack + magnetic;
     const level = slot ? 1 + (slot.level - 1) * this.c.balance.skillLevelDamagePerLevel : 1;
     const rarity = slot ? this.c.balance.rarityDamage[slot.rarity] : 1;
-    return (1 + permanent) * (1 + Math.min(this.c.caps.runDamageBonus, runBonus)) * level * rarity * (1 + (this.perk('overheatEngine')?.damageBonus || 0));
+    return (1 + permanent) * (1 + this.wrenchBonus) * (1 + Math.min(this.c.caps.runDamageBonus, runBonus)) * level * rarity * (1 + (this.perk('overheatEngine')?.damageBonus || 0));
   }
   /** Skips the roll at zero chance so runs without the stat keep their random sequence. */
   rollCrit(enemy = null) {

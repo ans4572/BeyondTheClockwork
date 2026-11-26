@@ -508,7 +508,7 @@ body.cramped .panel h2 { font-size: 22px; margin-bottom: 4px; }
    the shop, the warning that the other device's progress is lost, the transfer code's expiry, the oil packed, the run
    tab's lines and the map's line about the picked stop). A small question sheet (.compact: new game, abandoning the run,
    taking another device's progress, the sync choice) keeps its first lines too: they say what will be lost. */
-body.cramped .panel:not(.compact) > p:first-of-type:not(.result-next):not(.atlas-detail):not(.run-picks-head), body.cramped .panel > p.notice.aside { display: none; }
+body.cramped .panel:not(.compact) > p:first-of-type:not(.result-next):not(.atlas-detail):not(.run-picks-head):not(.wb-desc), body.cramped .panel > p.notice.aside { display: none; }
 body.cramped .reward-grid { margin-top: 6px; gap: 8px; }
 body.cramped .reward-card { padding: 8px 10px; }
 body.cramped .reward-card .reward-icon, body.cramped .reward-skills img { width: 40px; height: 40px; margin-bottom: 4px; }
@@ -638,7 +638,7 @@ body.talking #touch .touch-pad, body.talking #touch .touch-zone { visibility: hi
 /* 2. F2's card on a phone: the face goes beside the name, so the parts and the fusion below it are not cut off. */
 body.cramped .f2-card { grid-template-columns: 170px 1fr; gap: 10px; }
 body.cramped .f2-who { display: grid; grid-template-columns: 56px 1fr; column-gap: 8px; align-items: center; padding: 8px; text-align: left; }
-body.cramped .f2-face { grid-row: 1 / span 4; width: 56px; height: 56px; margin: 0; background-position: -28px -14px; background-size: 448px 224px; }
+body.cramped .f2-face { grid-row: 1 / span 4; width: 56px; height: 56px; margin: 0; background-position: -30px -16px; background-size: 462px 231px; }
 body.cramped .f2-who b { font-size: 14px; }
 body.cramped .f2-who small { font-size: 11px; margin: 0; }
 body.cramped .f2-hp { margin: 4px 0 2px; }
@@ -781,3 +781,74 @@ body.touch .panel.element-panel .element-card .pick { min-height: 36px; }
 #touch.tools-column .touch-practice { right: var(--yard-right); top: calc(var(--yard-top) + 50px); }
 /* Moru's parts sheet on a short screen keeps its 닫기 row in view at the bottom (it sat below the fold). */
 body.cramped .element-panel > .actions { position: sticky; bottom: -10px; margin: 6px -16px -10px; padding: 6px 16px 10px; background: var(--paper); box-shadow: 0 -6px 6px -6px #2b334540; }
+
+/* Moru's wrench enhancement (main.js wrenchPanel, 2026-11-26): the wrench on a plate whose rim grows from dull brass to a
+   glowing gold with each attack tier, the next level beside it, the fifteen levels grouped by tier, the last try's result. */
+.panel.wrench-bench { width: min(500px, 100%); }
+.panel.wrench-bench .panel-header strong { font-size: 15px; }
+.panel p.wb-desc { margin: 6px 0 10px; font-size: 13px; line-height: 1.45; color: var(--label); }
+.wb-body { display: grid; grid-template-columns: 132px 1fr; gap: 16px; align-items: stretch; }
+.wb-plate { --rim: #8a6d3e; --core: #3d465c; position: relative; display: grid; place-items: center; min-height: 132px; overflow: hidden; background: radial-gradient(circle at 50% 42%, var(--core) 0, var(--ink) 72%); box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 5px var(--rim); }
+.wb-plate.tier-1 { --rim: var(--gold); --core: #4a5672; }
+.wb-plate.tier-2 { --rim: #f3cd6a; --core: #55607a; }
+.wb-plate.tier-3 { --rim: #e0893c; --core: #6a5a5a; box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 5px var(--rim), inset 0 0 0 7px #f3cd6a; }
+.wb-plate.tier-4 { --rim: #ffe08a; --core: #a07a3a; box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 5px var(--rim), inset 0 0 0 7px #e0893c, inset 0 0 0 9px #ffe08a, inset 0 0 34px #ffd45aaa; }
+.wb-plate .ico.px-icon { width: 88px; height: 88px; vertical-align: 0; }
+.wb-level { position: absolute; right: 10px; bottom: 7px; color: #f3cd6a; font-size: 22px; line-height: 1; text-shadow: 2px 2px 0 var(--ink); }
+.wb-level small { margin-left: 1px; font-size: 12px; }
+.wb-stamp { position: absolute; left: 50%; top: 50%; padding: 3px 12px; font-style: normal; font-weight: 700; font-size: 20px; white-space: nowrap; transform: translate(-50%, -50%) rotate(-8deg); animation: wb-stamp 1200ms steps(10) both; }
+.wb-stamp.success { background: #f3cd6a; color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.wb-stamp.fail { background: var(--red); color: var(--paper); box-shadow: 0 0 0 2px var(--ink); }
+@keyframes wb-stamp { 0% { opacity: 0; transform: translate(-50%, -50%) rotate(-8deg) scale(1.9); } 15% { opacity: 1; transform: translate(-50%, -50%) rotate(-8deg) scale(1); } 75% { opacity: 1; } 100% { opacity: 0; } }
+.wrench-bench.flash-success .wb-plate { animation: wb-glow 600ms steps(6); }
+.wrench-bench.flash-fail .wb-plate .ico { animation: wb-shake 320ms steps(4); }
+@keyframes wb-glow { 0% { filter: brightness(2.4); } 100% { filter: brightness(1); } }
+@keyframes wb-shake { 25% { transform: translateX(-6px) rotate(-6deg); } 50% { transform: translateX(5px) rotate(5deg); } 75% { transform: translateX(-3px); } }
+.wrench-bench.still .wb-plate, .wrench-bench.still .wb-plate .ico, .wrench-bench.still .wb-stamp { animation: none; }
+@media (prefers-reduced-motion: reduce) { .wrench-bench .wb-plate, .wrench-bench .wb-plate .ico, .wrench-bench .wb-stamp { animation: none; } }
+.wb-next { display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
+.wb-step { display: flex; align-items: baseline; gap: 6px; }
+.wb-step small, .wb-chance small { font-size: 12px; color: var(--label); }
+.wb-step strong { font-size: 20px; line-height: 1.1; }
+.wb-stats { display: flex; gap: 22px; }
+.wb-chance, .wb-cost { display: flex; flex-direction: column; justify-content: space-between; gap: 2px; }
+.wb-cost small { font-size: 12px; color: var(--label); }
+.wb-chance b { font-size: 34px; line-height: 1; }
+.wb-cost b { font-size: 20px; line-height: 1.1; white-space: nowrap; }
+.wb-cost.short b { color: var(--red); }
+.wb-tag { position: absolute; left: 9px; top: 9px; padding: 2px 6px; font-size: 11px; font-weight: 700; line-height: 1.2; white-space: nowrap; box-shadow: 0 0 0 2px var(--ink); }
+.wb-tag.success { background: #f3cd6a; color: var(--ink); }
+.wb-tag.fail { background: var(--red); color: var(--paper); }
+.panel p.wb-gain { margin: 0; font-size: 13px; }
+.wb-ladder { display: flex; gap: 2px; margin: 12px 0 0; padding: 0; list-style: none; }
+.wb-ladder li { flex: 1; display: grid; justify-items: center; padding: 5px 0 4px; background: var(--paper-low); box-shadow: inset 0 3px 0 #d8ccb0; line-height: 1.1; }
+.wb-ladder li.gap { margin-left: 7px; }
+.wb-ladder li b { font-size: 12px; color: #4f5568; }
+.wb-ladder li.on { background: #f3e2ae; box-shadow: inset 0 3px 0 var(--gold); }
+.wb-ladder li.on b { color: var(--ink); }
+.wb-ladder li.next { background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); }
+.wb-ladder li.next b { color: var(--ink); }
+.panel .wb-go { flex: 1; padding: 10px 14px; font-size: 15px; }
+.panel .wb-go:disabled { background: #d8ccb0; color: #454b5c; box-shadow: inset 0 0 0 2px #b8b19a; }
+.panel p.wb-moru { margin: 8px 0 0; padding: 7px 10px; background: var(--paper-low); box-shadow: inset 3px 0 0 var(--gold); font-size: 13px; }
+.panel p.wb-moru b { margin-right: 8px; }
+.wrench-bench:focus { outline: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wrench-bench .actions { margin-top: 6px; }
+body.cramped .panel p.wb-desc { margin: 2px 0 6px; font-size: 12px; }
+body.cramped .wb-body { grid-template-columns: 92px 1fr; gap: 12px; }
+body.cramped .wb-plate { min-height: 92px; }
+body.cramped .wb-plate .ico.px-icon { width: 60px; height: 60px; }
+body.cramped .wb-level { font-size: 17px; }
+body.cramped .wb-next { gap: 3px; }
+body.cramped .wb-step strong { font-size: 17px; }
+body.cramped .wb-chance b { font-size: 26px; }
+body.cramped .wb-ladder { margin-top: 8px; }
+body.cramped .wb-ladder { gap: 3px; }
+body.cramped .wb-ladder li { padding: 3px 0; }
+body.cramped .wb-ladder li b { font-size: 10px; letter-spacing: -0.5px; }
+body.cramped .wb-ladder li.gap { margin-left: 4px; }
+body.cramped .wb-stats { gap: 14px; }
+body.cramped .wb-cost b { font-size: 16px; }
+body.cramped .wb-tag { left: 6px; top: 6px; padding: 1px 4px; font-size: 10px; }
+body.cramped .panel .wb-go { padding: 6px 12px; font-size: 14px; }

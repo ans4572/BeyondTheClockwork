@@ -2435,6 +2435,13 @@
   "statChapters": {
     "ranksPerChapter": 10
   },
+  "wrenchEnhance": {
+    "maxLevel": 15,
+    "baseCost": 100,
+    "costStep": 50,
+    "chances": [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1],
+    "attackDamage": [0.01, 0.01, 0.01, 0.02, 0.02, 0.02, 0.02, 0.02, 0.03, 0.03, 0.03, 0.03, 0.04, 0.04]
+  },
   "perks": [
     {
       "id": "piggyBank",

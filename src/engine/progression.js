@@ -1,7 +1,7 @@
 import { chapterList, chapterOpen } from './chapters.js';
 
 export function createProfile(data) {
-  return { nickname: '', freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), registered: false, potion: null, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, playSeconds: 0, runs: 0, wins: 0, chapter: 1, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], records: {}, cleared: [], chapterRecords: {}, settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, cursorSize: 32, bindings: {}, controls: 'keys', mouseBindings: {}, arrowBindings: {} } };
+  return { nickname: '', freeGears: 0, loadout: [], stats: Object.fromEntries(data.slice.permanentStats.map(stat => [stat.id, 0])), wrenchLevel: 1, registered: false, potion: null, introRewardClaimed: false, firstReturnClaimed: false, combatClears: 0, playSeconds: 0, runs: 0, wins: 0, chapter: 1, bossRecords: [], blueprints: [], discoveredFusions: [], rewards: [], history: [], records: {}, cleared: [], chapterRecords: {}, settings: { reducedMotion: false, damageNumbers: true, sound: true, music: true, musicVolume: 0.6, cursorSize: 32, bindings: {}, controls: 'keys', mouseBindings: {}, arrowBindings: {} } };
 }
 
 /** Price of the next level of a stat that is currently at `rank`. */
@@ -52,6 +52,33 @@ export function refundRank(data, profile, statId) {
   const refund = statCost(stat, profile.stats[statId]);
   profile.freeGears += refund;
   return refund;
+}
+
+/**
+ * The wrench's enhancement (2026-11-25, slice.json wrenchEnhance): meant for those who have finished the tuning board, so
+ * it gives little for its price, but open from the start, apart from the board (2026-11-26: Moru's own choice and panel).
+ * The wrench starts at level 1; each step up costs free gears whether it takes or not, and a step that fails leaves the
+ * level where it was. The gears spent are never refunded.
+ */
+export const wrenchLevel = profile => profile.wrenchLevel || 1;
+/** The next step from `level`: its price, its chance and the attack it adds. Null at the top level. */
+export function wrenchStep(data, level) {
+  const rule = data.slice.wrenchEnhance;
+  if (level >= rule.maxLevel) return null;
+  return { cost: rule.baseCost + rule.costStep * (level - 1), chance: rule.chances[level - 1], attackDamage: rule.attackDamage[level - 1] };
+}
+/** Attack the wrench's level adds, on the same sum as the tuning board's attack. */
+export function wrenchAttack(data, level) {
+  return data.slice.wrenchEnhance.attackDamage.slice(0, Math.max(0, level - 1)).reduce((a, b) => a + b, 0);
+}
+/** One try at the next level with `roll` in [0, 1): 'success', 'fail', or false when it cannot be tried (nothing is spent). */
+export function enhanceWrench(data, profile, roll) {
+  const step = wrenchStep(data, wrenchLevel(profile));
+  if (!step || profile.freeGears < step.cost) return false;
+  profile.freeGears -= step.cost;
+  if (roll >= step.chance) return 'fail';
+  profile.wrenchLevel = wrenchLevel(profile) + 1;
+  return 'success';
 }
 
 export function refundAll(data, profile) {

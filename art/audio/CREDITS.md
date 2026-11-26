@@ -9,6 +9,14 @@
 | click, equip | UI Audio | click1, switch1 |
 | deny | Interface Sounds | error_001 |
 
+렌치 강화 소리 3개(2026-11-26)는 Openverse API로 찾은 Freesound의 CC0 녹음을 잘라 쓴다. 출처 표기 의무는 없지만 남겨 둔다.
+
+| 게임 이름 | 쓰는 곳 | 원본 | 만든 사람 | 쓴 구간 |
+|---|---|---|---|---|
+| enhance-up | 강화 성공 | [anvil1.wav](https://freesound.org/people/andrescompovigo/sounds/219627) | andrescompovigo | 2.79~4.96초 중 1초 |
+| enhance-fail | 강화 실패 | [LightClunk2.wav](https://freesound.org/people/BMacZero/sounds/94130) | BMacZero | 0.01~0.24초 |
+| enhance-tier | 공격력 구간이 오르는 강화 성공(2·5·10·14강) | [Fantasy_ui_Button_6.wav](https://freesound.org/people/ZenithInfinitiveStudios/sounds/376748) | ZenithInfinitiveStudios | 0.01~1.39초 |
+
 그 밖의 효과음은 녹음 파일 없이 코드로 합성한다. 플레이어(렌치·회피·피격 등), 얼음 기술, 적·보스 공격, 클리어·보상 소리는 `src/audio/coded.js`, 불·전기·바람 기술과 융합, 마을 종, 원정 실패 나팔은 `src/audio/elements.js`.
 
 ## 배경음악

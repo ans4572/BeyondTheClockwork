@@ -495,7 +495,12 @@ function loadRestoreKit() {
 function restoreDefaults(d, options) {
   const u = d.user, used = new Set(d.runs.flatMap(r => String(r.combo || '').split('+')).filter(Boolean));
   const first = options.chapters[0], cleared = u.clears > 0 && first ? [first.id] : [];
-  return { device: u.id, open: true, nickname: u.nickname || '', freeGears: u.gears || 0, stats: {}, owned: options.elements.map(e => e.id).filter(id => used.has(id)),
+  // The board and the elements come from the player's last save on the server when there is one (2026-11-26: the form
+  // started every stat at 0, and a code made as it stood emptied a player's board and dropped elements never taken out).
+  const kept = d.saved?.tuning, statIds = new Set(options.stats.map(s => s.id)), elementIds = options.elements.map(e => e.id);
+  const stats = kept ? Object.fromEntries(Object.entries(kept.stats || {}).filter(([id]) => statIds.has(id))) : {};
+  const owned = kept ? elementIds.filter(id => (kept.owned || []).includes(id)) : elementIds.filter(id => used.has(id));
+  return { device: u.id, open: true, from: kept ? d.saved.at : null, nickname: u.nickname || '', freeGears: u.gears || 0, stats, owned,
     cleared, bosses: cleared.length ? first.bosses.map(b => b.id) : [], inherit: true, runs: u.runs || 0, playSeconds: u.play_seconds || 0 };
 }
 /** The highest stat level the chosen chapters allow (ten for each chapter open), as in the game. */
@@ -511,7 +516,9 @@ function restoreBlock(d) {
   if (open && (!kit || !r.stats)) body = `<p class="hint">${restoreKit.failed ? '게임 데이터를 불러오지 못했어요. 접었다 다시 펼쳐 주세요.' : '게임 데이터를 불러오는 중…'}</p>`;
   else if (open) {
     const { options } = kit, cap = restoreCap(r, options), box = (attr, id, on, label) => `<label class="check"><input type="checkbox" ${attr}="${esc(id)}"${on ? ' checked' : ''}> ${esc(label)}</label>`;
-    const armed = state.restoreConfirm > Date.now();
+    const armed = state.restoreConfirm > Date.now(), emptyBoard = options.stats.every(s => !(Number(r.stats[s.id]) > 0)), noElements = !r.owned.length;
+    const empty = emptyBoard && noElements ? '조율판이 모두 0이고 보유 속성도 없어요. 이대로 만들면 유저의 조율판과 속성이 비어요.'
+      : emptyBoard ? '조율판이 모두 0이에요. 이대로 만들면 유저의 조율판이 비어요.' : noElements ? '보유 속성이 없어요. 이대로 만들면 유저의 속성이 비어요.' : '';
     body = `<div class="gift restore-form">
       <p class="hint">기기를 잃어 진행이 서버에도 없을 때, 진행을 직접 정해 새 세이브를 만들어요. 튜토리얼은 끝난 상태로 마을에서 시작해요.</p>
       <div class="gift-row"><input class="field" data-r="nickname" maxlength="12" placeholder="장부 이름" value="${esc(r.nickname)}" aria-label="장부 이름"><input class="field num" data-r="freeGears" type="number" min="0" step="1" value="${esc(r.freeGears)}" aria-label="자유 톱니"></div>
@@ -519,11 +526,13 @@ function restoreBlock(d) {
       ${options.chapters.map(c => `<div class="checks">${box('data-r-clear', c.id, r.cleared.includes(c.id), `${c.number}장 ${c.name} 클리어`)}${c.bosses.map(b => box('data-r-boss', b.id, r.bosses.includes(b.id), b.name)).join('')}</div>`).join('')}
       <p class="sub">보유 속성 <span class="mute">(앞의 둘을 장착해요)</span></p>
       <div class="checks">${options.elements.map(e => box('data-r-owned', e.id, r.owned.includes(e.id), e.name)).join('')}</div>
+      <p class="hint">${r.from ? `조율판과 보유 속성은 서버에 마지막으로 올라온 진행(${esc(when(Date.parse(r.from)))})에서 가져왔어요.` : '서버에 진행이 없어 조율판은 0, 보유 속성은 원정에서 쓴 것만 채웠어요. 유저에게 물어 채워 주세요.'}</p>
       <p class="sub">조율판 <span class="mute">(열린 장 기준 최대 ${cap}단계)</span></p>
       <div class="restore-grid">${options.stats.map(s => `<label>${esc(s.name)}<input class="field num" type="number" min="0" max="${Math.min(s.maxRank, cap)}" step="1" data-r-stat="${esc(s.id)}" value="${esc(r.stats[s.id] || 0)}"></label>`).join('')}</div>
       <label class="check"><input type="checkbox" data-r="inherit"${r.inherit ? ' checked' : ''}> 이 유저의 원정 기록·서버 기록·선물·메모를 새 기기로 옮기기</label>
       ${mine?.code ? codeShown(mine, true) : ''}${mine?.error ? `<p class="hint">${esc(mine.error)}</p>` : ''}
-      <button class="${mine?.code ? 'ghost' : 'primary'}${armed ? ' armed' : ''}" data-act="restore">${armed ? '한 번 더 누르면 복구 코드를 만들어요' : mine?.code ? '이 내용으로 새 복구 코드 만들기' : '복구 코드 만들기'}</button>
+      ${empty ? `<p class="error">${esc(empty)}</p>` : ''}
+      <button class="${mine?.code ? 'ghost' : 'primary'}${armed ? ' armed' : ''}" data-act="restore">${armed ? (empty ? '비어 있는 채로 · 한 번 더 누르면 이대로 만들어요' : '한 번 더 누르면 복구 코드를 만들어요') : mine?.code ? '이 내용으로 새 복구 코드 만들기' : '복구 코드 만들기'}</button>
     </div>`;
   }
   return `<details class="restore"${open ? ' open' : ''}><summary data-act="restore-open">기기를 잃은 유저: 진행 복구 코드</summary>${body}</details>`;

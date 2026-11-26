@@ -108,6 +108,39 @@ test('tuning, run parts and oil simply add up, with no cap over the sum', () => 
   // Damage: 30 ranks of tuning (90%) and the red oil (+12%) both count.
   g.s.profile.stats.attackDamage = 30; g.s.run.potion = 'attack'; assert.ok(Math.abs(g.attackBonus - 1.02) < 1e-9);
 });
+test('the wrench enhances to 15 for gears, apart from the board; a failed try keeps the level', () => {
+  const g = hub(), rule = data.slice.wrenchEnhance, profile = g.s.profile; profile.freeGears = 1e6;
+  assert.equal(profile.wrenchLevel, 1); assert.equal(g.attackBonus, 0);
+  // Open from the start, apart from the board (2026-11-26); the board is filled here only for the sums below.
+  for (const stat of data.slice.permanentStats) profile.stats[stat.id] = stat.maxRank;
+  // 1 → 2 always takes (100%); the price is paid.
+  g.random = () => 0.999; assert.equal(g.enhance(), 'success'); assert.equal(profile.wrenchLevel, 2); assert.equal(profile.freeGears, 1e6 - 100);
+  // 2 → 3 at 90%: a roll over it costs the gears and keeps the level, one under it goes up.
+  g.random = () => 0.95; assert.equal(g.enhance(), 'fail'); assert.equal(profile.wrenchLevel, 2); assert.equal(profile.freeGears, 1e6 - 250);
+  g.random = () => 0.89; assert.equal(g.enhance(), 'success'); assert.equal(profile.wrenchLevel, 3);
+  assert.ok(Math.abs(g.attackBonus - 0.9) < 1e-9); assert.ok(Math.abs(g.wrenchBonus - 0.02) < 1e-9);
+  // To the top: 33% in all, the last step at 10% for 750 gears, and nothing past it.
+  g.random = () => 0;
+  while (profile.wrenchLevel < rule.maxLevel) assert.equal(g.enhance(), 'success');
+  assert.equal(profile.wrenchLevel, 15); assert.ok(Math.abs(g.attackBonus - 0.9) < 1e-9); assert.ok(Math.abs(g.wrenchBonus - 0.33) < 1e-9);
+  // Its own factor (2026-11-26): on a full board the +33% is a real +33%, not added into the board's 90%.
+  assert.ok(Math.abs(g.damageMultiplier({}) - 1.9 * 1.33) < 1e-9);
+  assert.equal(rule.chances.at(-1), 0.1); assert.equal(rule.baseCost + rule.costStep * 13, 750);
+  const left = profile.freeGears; assert.equal(g.enhance(), false); assert.equal(profile.freeGears, left);
+  // Refunding the board gives back the board's gears only; the wrench keeps its level.
+  g.tune(null, 'refund'); assert.equal(profile.wrenchLevel, 15); assert.equal(g.attackBonus, 0); assert.ok(Math.abs(g.wrenchBonus - 0.33) < 1e-9);
+  // Short of gears, or out on an expedition: no try.
+  // An empty board does not close it.
+  profile.wrenchLevel = 5; profile.freeGears = 300; assert.equal(g.enhance(), 'success'); assert.equal(profile.wrenchLevel, 6); assert.equal(profile.freeGears, 0);
+  profile.wrenchLevel = 5; profile.freeGears = 10;
+  assert.equal(g.enhance(), false); assert.equal(profile.freeGears, 10);
+  g.openWrench(); assert.equal(g.s.panel, 'wrench'); g.closePanel();
+  profile.freeGears = 1e4; g.startRun(1); assert.equal(g.enhance(), false); g.openWrench(); assert.notEqual(g.s.panel, 'wrench');
+  // Saves: an older one without the level starts at 1, an impossible level is refused.
+  const raw = JSON.parse(encodeSave(hub().s)); delete raw.state.profile.wrenchLevel;
+  assert.equal(decodeSave(JSON.stringify(raw), data).profile.wrenchLevel, 1);
+  raw.state.profile.wrenchLevel = 16; assert.throws(() => decodeSave(JSON.stringify(raw), data));
+});
 test('crits use the cap and multiplier, and never touch damage over time', () => {
   const g = arena(), enemy = inert(g); enemy.hp = enemy.maxHp = 1e5;
   g.s.profile.stats.critChance = 20; g.s.profile.stats.critDamage = 20; g.random = () => 0.1;

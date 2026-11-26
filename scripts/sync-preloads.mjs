@@ -12,7 +12,7 @@ const EXTRA = [
   '<link rel="preload" href="art/fonts/Galmuri11-Bold-sub-v1.woff2" as="font" type="font/woff2" crossorigin>',
   '<link rel="preload" href="art/fonts/NeoDunggeunmoPro.woff2" as="font" type="font/woff2" crossorigin>',
   // The title's F2 picture; the loading card waits for it.
-  '<link rel="preload" href="art/ui/title/f2-title-v5.png" as="image">',
+  '<link rel="preload" href="art/ui/title/f2-title-v6.png" as="image">',
   ...['combat', 'progression', 'slice', 'maps', 'dialogue'].map(name => `<link rel="preload" href="src/data/${name}.json" as="fetch" crossorigin>`)
 ];
 

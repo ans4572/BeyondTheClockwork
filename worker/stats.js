@@ -18,7 +18,7 @@
 // ADMIN_TOKEN is a Worker secret set in the Cloudflare dashboard; it never lives in the repository.
 import { cleanEvent, koreanDay, isDeviceId, plainText, DIFFICULTIES, FIRST_CHAPTER_ID, EVENT_BYTES, ONLINE_SECONDS, GIFT_MAX_GEARS, GIFT_NOTE_MAX, MEMO_MAX } from '../src/engine/stats.js';
 import { MIN_CLEAR_SECONDS, comboElements } from '../src/engine/records.js';
-import { savedFor, adminCode, restoreCode, takePass, findSaves, codeFromSave } from './device-link.js';
+import { savedFor, adminCode, restoreCode, takePass, findSaves, codeFromSave, tuningOf } from './device-link.js';
 
 /** Tables are made on first use, so a fresh database needs no migration step. */
 const SCHEMA = [
@@ -307,9 +307,10 @@ export async function statsApi(request, url, env, reply, cors = {}) {
   if (one && !one[2] && method === 'GET') {
     const found = await user(db, one[1]);
     if (!found) return reply({ error: 'missing' }, 404);
-    // When this player last uploaded progress (the save a transfer code would carry), never the save itself.
+    // When this player last uploaded progress (the save a transfer code would carry), never the save itself; its tuning
+    // board and elements go along so the restore form starts from them.
     const saved = await savedFor(env.TRANSFER, one[1]).catch(() => null);
-    return reply({ ...found, saved: saved ? { at: saved.at, rev: saved.rev } : null });
+    return reply({ ...found, saved: saved ? { at: saved.at, rev: saved.rev, tuning: tuningOf(saved.save) } : null });
   }
   if (one && one[2] === '/transfer' && method === 'POST') {
     if (!env.TRANSFER) return reply({ error: 'unavailable' }, 503);
